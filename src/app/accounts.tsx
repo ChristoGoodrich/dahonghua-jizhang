@@ -1,0 +1,133 @@
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TextInput, Pressable, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { observer } from '@legendapp/state/react';
+import { store$, addAccount, removeAccount } from '@/store/ledger';
+import { acctBalance } from '@/domain/networth';
+import { fmt } from '@/domain/money';
+import { useTheme } from '@/theme/ThemeContext';
+import { ScreenHeader } from '@/components/ScreenHeader';
+import { I18N } from '@/i18n';
+
+export default observer(function AccountsScreen() {
+  const t = useTheme();
+  const lang = store$.lang.get();
+  const s = I18N[lang];
+  const accounts = store$.accounts.get();
+  const data = store$.data.get();
+
+  const [adding, setAdding] = useState(false);
+  const [name, setName] = useState('');
+  const [bal, setBal] = useState('');
+  const [kind, setKind] = useState<'cash' | 'credit' | 'prepaid'>('cash');
+
+  const kinds: { k: 'cash' | 'credit' | 'prepaid'; label: string }[] = [
+    { k: 'cash', label: s.acctKindCash },
+    { k: 'credit', label: s.acctKindCredit },
+    { k: 'prepaid', label: s.acctKindPrepaid },
+  ];
+  const acctEmoji = (kd?: string) => (kd === 'credit' ? '💳' : kd === 'prepaid' ? '🎫' : '👛');
+
+  function save() {
+    if (!name.trim()) return;
+    addAccount(name.trim(), parseFloat(bal.replace(/[^\d.]/g, '')) || 0, kind);
+    setName('');
+    setBal('');
+    setKind('cash');
+    setAdding(false);
+  }
+
+  return (
+    <View style={[styles.root, { backgroundColor: t.paper }]}>
+      <SafeAreaView edges={['top']} style={styles.safe}>
+        <ScreenHeader title={s.setAccounts} subtitle={s.setAccountsD} />
+        <ScrollView contentContainerStyle={styles.body} showsVerticalScrollIndicator={false}>
+          {accounts.map((a) => {
+            const isDef = a.id === 'default';
+            const bal = acctBalance(a.id, accounts, data);
+            const owed = a.kind === 'credit' && bal < 0;
+            return (
+              <View key={a.id} style={[styles.row, { backgroundColor: t.card }]}>
+                <View style={[styles.emo, { backgroundColor: t.paper }]}>
+                  <Text style={styles.emoText}>{acctEmoji(a.kind)}</Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.name, { color: t.ink }]}>
+                    {lang === 'zh' ? a.name : a.nameEn || a.name}
+                    {isDef ? ` · ${s.acctDefault}` : a.kind === 'credit' ? ` · ${s.acctKindCredit}` : ''}
+                  </Text>
+                  <Text style={[styles.sub, { color: owed ? t.hibiscus : t.inkSoft }]}>
+                    {owed ? s.acctOwed : s.acctBalance} {fmt(owed ? -bal : bal, lang)}
+                  </Text>
+                </View>
+                {!isDef && (
+                  <Pressable onPress={() => removeAccount(a.id)} hitSlop={10}>
+                    <Text style={[styles.del, { color: t.inkSoft }]}>✕</Text>
+                  </Pressable>
+                )}
+              </View>
+            );
+          })}
+
+          {adding ? (
+            <View style={[styles.form, { borderColor: t.line }]}>
+              <View style={[styles.toggle, { backgroundColor: t.line }]}>
+                {kinds.map(({ k, label }) => (
+                  <Pressable key={k} onPress={() => setKind(k)} style={[styles.toggleBtn, kind === k && { backgroundColor: t.card }]}>
+                    <Text style={[styles.toggleText, { color: kind === k ? t.ink : t.inkSoft }]}>{label}</Text>
+                  </Pressable>
+                ))}
+              </View>
+              <TextInput
+                style={[styles.field, { borderColor: t.line, color: t.ink, backgroundColor: t.card }]}
+                placeholder={s.acctName}
+                placeholderTextColor={t.inkSoft}
+                value={name}
+                onChangeText={setName}
+              />
+              <TextInput
+                style={[styles.field, { borderColor: t.line, color: t.ink, backgroundColor: t.card }]}
+                placeholder={s.acctBal}
+                placeholderTextColor={t.inkSoft}
+                keyboardType="numeric"
+                value={bal}
+                onChangeText={setBal}
+              />
+              <Pressable style={[styles.save, { backgroundColor: t.hibiscus }]} onPress={save}>
+                <Text style={styles.saveText}>{s.acctSaveBtn}</Text>
+              </Pressable>
+            </View>
+          ) : (
+            <Pressable
+              style={[styles.add, { borderColor: t.line, backgroundColor: t.paperWarm }]}
+              onPress={() => setAdding(true)}
+            >
+              <Text style={[styles.addText, { color: t.hibiscus }]}>{s.acctAdd}</Text>
+            </Pressable>
+          )}
+        </ScrollView>
+      </SafeAreaView>
+    </View>
+  );
+});
+
+const styles = StyleSheet.create({
+  root: { flex: 1 },
+  safe: { flex: 1, maxWidth: 480, width: '100%', alignSelf: 'center' },
+  body: { paddingHorizontal: 22, paddingBottom: 60, paddingTop: 6 },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 13, padding: 12, marginBottom: 8 },
+  emo: { width: 38, height: 38, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },
+  emoText: { fontSize: 19 },
+  name: { fontSize: 14, fontWeight: '650' as any },
+  sub: { fontSize: 11.5, marginTop: 2 },
+  del: { fontSize: 18, paddingHorizontal: 4 },
+  add: { borderWidth: 1, borderStyle: 'dashed', borderRadius: 12, padding: 12, alignItems: 'center', marginTop: 2 },
+  addText: { fontSize: 13, fontWeight: '600' },
+  form: { borderWidth: 1, borderRadius: 13, padding: 12, marginTop: 2, gap: 10 },
+  toggle: { flexDirection: 'row', borderRadius: 11, padding: 3 },
+  toggleBtn: { flex: 1, paddingVertical: 9, borderRadius: 9, alignItems: 'center' },
+  toggleText: { fontSize: 13, fontWeight: '600' },
+  field: { borderWidth: 1, borderRadius: 11, padding: 11, fontSize: 14 },
+  save: { borderRadius: 13, padding: 14, alignItems: 'center' },
+  saveText: { color: '#fff', fontSize: 15, fontWeight: '700' },
+});
