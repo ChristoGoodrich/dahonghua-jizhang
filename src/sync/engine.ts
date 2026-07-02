@@ -8,6 +8,7 @@ import { supabase } from './supabase';
 import { auth$ } from './auth';
 import { mergeById } from './merge';
 import { entryToRow, rowToEntry, type DbEntry } from './rows';
+import { createPushScheduler } from './pushScheduler';
 import { store$, type AppState } from '@/store/ledger';
 import type { Entry } from '@/domain/types';
 
@@ -21,9 +22,21 @@ type Config = Omit<AppState, 'data' | 'hydrated' | 'settings'> & { settings: Omi
 
 let channel: RealtimeChannel | null = null;
 const unsubs: (() => void)[] = [];
-let pushTimer: ReturnType<typeof setTimeout> | null = null;
-let pushWatermark = 0;
 let activeUser: string | null = null;
+
+// Debounced push + backoff retry, owning the watermark. Pure/tested in
+// pushScheduler.ts; here we just wire the store + Supabase I/O into it.
+const pusher = createPushScheduler<Entry>({
+  getDirty: (wm) => store$.data.peek().filter((e) => (e.updatedAt ?? 0) > wm),
+  stamp: (e) => e.updatedAt ?? 0,
+  pushItems: (items) => pushRows(items, activeUser!),
+  pushConfig: () => (activeUser ? pushConfig(activeUser) : Promise.resolve()),
+  onError: () => sync$.status.set('error'),
+  onSuccess: () => {
+    if (sync$.status.peek() === 'error') sync$.status.set('synced');
+    sync$.lastSync.set(Date.now());
+  },
+});
 
 function configSnapshot(): Config {
   const { data, hydrated, settings, ...rest } = store$.peek();
@@ -64,7 +77,7 @@ async function pullAndMerge(userId: string): Promise<void> {
   const remote = (rows as DbEntry[]).map(rowToEntry);
   const { merged, toPush } = mergeById(store$.data.peek(), remote);
   store$.data.set(merged);
-  pushWatermark = merged.reduce((m, e) => Math.max(m, e.updatedAt ?? 0), pushWatermark);
+  pusher.bumpWatermark(merged.reduce((m, e) => Math.max(m, e.updatedAt ?? 0), 0));
   await pushRows(toPush, userId);
 }
 
@@ -82,17 +95,9 @@ async function syncConfig(userId: string): Promise<void> {
   await pushConfig(userId);
 }
 
-function schedulePush(): void {
-  if (pushTimer) clearTimeout(pushTimer);
-  pushTimer = setTimeout(async () => {
-    if (!activeUser) return;
-    const dirty = store$.data.peek().filter((e) => (e.updatedAt ?? 0) > pushWatermark);
-    if (dirty.length) {
-      pushWatermark = dirty.reduce((m, e) => Math.max(m, e.updatedAt ?? 0), pushWatermark);
-      try { await pushRows(dirty, activeUser); } catch { /* retried on next change */ }
-    }
-    try { await pushConfig(activeUser); } catch { /* best effort */ }
-  }, 800);
+/** Manually re-attempt a failed push (e.g. from a "retry sync" button). */
+export function retrySync(): void {
+  if (activeUser) pusher.flushNow();
 }
 
 function subscribeRealtime(userId: string): void {
@@ -115,7 +120,7 @@ function subscribeRealtime(userId: string): void {
           copy[idx] = e;
           store$.data.set(copy);
         }
-        pushWatermark = Math.max(pushWatermark, e.updatedAt ?? 0);
+        pusher.bumpWatermark(e.updatedAt ?? 0);
       },
     )
     .subscribe();
@@ -129,8 +134,8 @@ async function start(userId: string): Promise<void> {
     await pullAndMerge(userId);
     await syncConfig(userId);
     subscribeRealtime(userId);
-    unsubs.push(store$.data.onChange(() => schedulePush()));
-    unsubs.push(store$.settings.onChange(() => schedulePush()));
+    unsubs.push(store$.data.onChange(() => pusher.schedule()));
+    unsubs.push(store$.settings.onChange(() => pusher.schedule()));
     sync$.status.set('synced');
     sync$.lastSync.set(Date.now());
   } catch {
@@ -143,7 +148,7 @@ function stop(): void {
   if (channel && supabase) supabase.removeChannel(channel);
   channel = null;
   while (unsubs.length) unsubs.pop()!();
-  pushWatermark = 0;
+  pusher.cancel();
   sync$.status.set('off');
 }
 

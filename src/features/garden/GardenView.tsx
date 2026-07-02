@@ -1,16 +1,22 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { useTheme } from '@/theme/ThemeContext';
 import { Flower } from '@/components/Flower';
-import { I18N, type Lang } from '@/i18n';
+import { I18N, daysUnit, flowersUnit, type Lang } from '@/i18n';
 
 interface Props {
   count: number;
   streak: number;
   lang: Lang;
+  goal: number;
+  onGoalChange: (goal: number) => void;
 }
 
-const GOAL = 28;
+export const GOAL_MIN = 7;
+export const GOAL_MAX = 60;
+export const GOAL_DEFAULT = 28;
+const GOAL_STEP = 7; // one row at a time (the wall is 7 columns wide)
+
 const HUES: { petal?: string; stroke?: string }[] = [
   {},
   { petal: '#E8949E' },
@@ -18,22 +24,47 @@ const HUES: { petal?: string; stroke?: string }[] = [
   { petal: '#E0A0C0', stroke: '#B06A8C' },
 ];
 
-export function GardenView({ count, streak, lang }: Props) {
+const clampGoal = (g: number) => Math.max(GOAL_MIN, Math.min(GOAL_MAX, g));
+
+export function GardenView({ count, streak, lang, goal, onGoalChange }: Props) {
   const t = useTheme();
   const s = I18N[lang];
+  const target = clampGoal(goal || GOAL_DEFAULT);
 
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
       <View style={[styles.wall, { backgroundColor: t.card }]}>
         <View style={styles.top}>
           <Text style={[styles.title, { color: t.ink }]}>{s.wallTitle}</Text>
-          <Text style={[styles.count, { color: t.hibiscus }]}>
-            {Math.min(count, GOAL)}/{GOAL} {s.flowersUnit}
-          </Text>
+          <View style={styles.goalRow}>
+            <Pressable
+              onPress={() => onGoalChange(clampGoal(target - GOAL_STEP))}
+              disabled={target <= GOAL_MIN}
+              hitSlop={8}
+              accessibilityRole="button"
+              accessibilityLabel={s.wallGoalDown}
+              style={[styles.stepper, { borderColor: t.line, opacity: target <= GOAL_MIN ? 0.35 : 1 }]}
+            >
+              <Text style={[styles.stepperText, { color: t.inkSoft }]}>−</Text>
+            </Pressable>
+            <Text style={[styles.count, { color: t.hibiscus }]}>
+              {Math.min(count, target)}/{target} {flowersUnit(lang, target)}
+            </Text>
+            <Pressable
+              onPress={() => onGoalChange(clampGoal(target + GOAL_STEP))}
+              disabled={target >= GOAL_MAX}
+              hitSlop={8}
+              accessibilityRole="button"
+              accessibilityLabel={s.wallGoalUp}
+              style={[styles.stepper, { borderColor: t.line, opacity: target >= GOAL_MAX ? 0.35 : 1 }]}
+            >
+              <Text style={[styles.stepperText, { color: t.inkSoft }]}>＋</Text>
+            </Pressable>
+          </View>
         </View>
         <Text style={[styles.sub, { color: t.inkSoft }]}>{s.wallSub}</Text>
         <View style={styles.garden}>
-          {Array.from({ length: GOAL }).map((_, i) => (
+          {Array.from({ length: target }).map((_, i) => (
             <View key={i} style={styles.cell}>
               <View style={[styles.slot, { backgroundColor: t.paper }, i >= count && styles.bud]}>
                 {i < count ? (
@@ -49,7 +80,7 @@ export function GardenView({ count, streak, lang }: Props) {
           <View style={[styles.streak, { backgroundColor: t.paperWarm, borderColor: t.line }]}>
             <Flower size={16} />
             <Text style={[styles.streakText, { color: t.ink }]}>
-              {s.streakLabel} {streak} {s.daysUnit}
+              {s.streakLabel} {streak} {daysUnit(lang, streak)}
             </Text>
           </View>
         </View>
@@ -64,7 +95,10 @@ const styles = StyleSheet.create({
   wall: { borderRadius: 16, padding: 18 },
   top: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 4 },
   title: { fontSize: 15, fontWeight: '700' },
-  count: { fontSize: 13, fontWeight: '700' },
+  goalRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  stepper: { width: 24, height: 24, borderRadius: 12, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  stepperText: { fontSize: 15, fontWeight: '700', lineHeight: 18 },
+  count: { fontSize: 13, fontWeight: '700', minWidth: 54, textAlign: 'center' },
   sub: { fontSize: 11.5, marginBottom: 14 },
   garden: { flexDirection: 'row', flexWrap: 'wrap' },
   cell: { width: `${100 / 7}%`, aspectRatio: 1, padding: 4 },

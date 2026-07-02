@@ -1,27 +1,33 @@
-import React, { useMemo, useState } from 'react';
-import { View, Text, StyleSheet, Pressable, TextInput } from 'react-native';
+import React, { useMemo, useRef, useState } from 'react';
+import { View, Text, StyleSheet, Pressable, TextInput, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { observer } from '@legendapp/state/react';
-import { store$, setLang } from '@/store/ledger';
+import { store$, setLang, patchSettings } from '@/store/ledger';
 import { useTheme } from '@/theme/ThemeContext';
 import { Flower } from '@/components/Flower';
 import { I18N } from '@/i18n';
 import { cycleRange, inCycle, shiftCycle } from '@/domain/cycle';
 import { streakDays } from '@/domain/streak';
 import { computeInsight } from '@/domain/insight';
+import { todayExpense } from '@/domain/budget';
 import { matchesSearch } from '@/domain/search';
 import { SummaryCard } from '@/features/summary/SummaryCard';
 import { EntryList } from '@/features/list/EntryList';
 import { RecordSheet } from '@/features/record/RecordSheet';
 import { MarkSheet } from '@/features/record/MarkSheet';
+import { DetailSheet } from '@/features/record/DetailSheet';
 import { TemplateChips } from '@/features/templates/TemplateChips';
 import { LedgerFilter } from '@/features/list/LedgerFilter';
 import { BudgetPot } from '@/features/budget/BudgetPot';
 import { InsightBanner } from '@/features/budget/InsightBanner';
 import { CalendarView } from '@/features/calendar/CalendarView';
 import { StatsView } from '@/features/stats/StatsView';
-import { GardenView } from '@/features/garden/GardenView';
+import { GardenView, GOAL_DEFAULT } from '@/features/garden/GardenView';
+import { BottomNav } from '@/features/nav/BottomNav';
+import { tapHaptic } from '@/util/haptics';
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 import { Toast } from '@/components/Toast';
 
 type Tab = 'list' | 'cal' | 'stats' | 'wall';
@@ -41,7 +47,8 @@ export const LedgerScreen = observer(function LedgerScreen() {
   const [tab, setTab] = useState<Tab>('list');
   const [sheetOpen, setSheetOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
-  const [toast, setToast] = useState<{ key: number; msg: string } | null>(null);
+  const [detailId, setDetailId] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ key: number; msg: string; undo?: () => void } | null>(null);
   const [searchQ, setSearchQ] = useState('');
   const [markId, setMarkId] = useState<string | null>(null);
 
@@ -64,21 +71,26 @@ export const LedgerScreen = observer(function LedgerScreen() {
     { year: 'numeric', month: 'long' },
   );
 
+  const fabScale = useRef(new Animated.Value(1)).current;
+  const springFab = (to: number) =>
+    Animated.spring(fabScale, { toValue: to, useNativeDriver: false, friction: 5, tension: 220 }).start();
+
   function openNew() {
+    tapHaptic();
     setEditId(null);
     setSheetOpen(true);
   }
   function openEdit(id: string) {
+    setDetailId(null);
     setEditId(id);
     setSheetOpen(true);
   }
+  const deleteToast = (restore: () => void) => setToast({ key: Date.now(), msg: s.deleted, undo: restore });
   function onSaved(isNew: boolean) {
     if (!isNew) return;
     const sd = streakDays(store$.data.peek().filter((d) => !d.deletedAt).map((d) => d.ts));
     setToast({ key: Date.now(), msg: sd > 1 ? s.toastStreak.replace('%d', String(sd)) : s.toastBloom });
   }
-
-  const tabs: Tab[] = ['list', 'cal', 'stats', 'wall'];
 
   return (
     <View style={[styles.root, { backgroundColor: t.paper }]}>
@@ -95,12 +107,16 @@ export const LedgerScreen = observer(function LedgerScreen() {
             <Pressable
               style={[styles.iconBtn, { borderColor: t.line, backgroundColor: t.card }]}
               onPress={() => router.push('/settings')}
+              accessibilityRole="button"
+              accessibilityLabel={s.setTitle}
             >
               <Text style={[styles.iconBtnText, { color: t.inkSoft }]}>⚙︎</Text>
             </Pressable>
             <Pressable
               style={[styles.iconBtn, { borderColor: t.line, backgroundColor: t.card }]}
               onPress={() => setLang(lang === 'zh' ? 'en' : 'zh')}
+              accessibilityRole="button"
+              accessibilityLabel={s.a11yLang}
             >
               <Text style={[styles.iconBtnText, { color: t.inkSoft }]}>{s.langBtn}</Text>
             </Pressable>
@@ -116,17 +132,16 @@ export const LedgerScreen = observer(function LedgerScreen() {
           onNext={() => setAnchor((a) => shiftCycle(a, 1, cycleStart))}
         />
 
-        {tab === 'list' && <BudgetPot exp={exp} budget={settings.budget} lang={lang} />}
+        {tab === 'list' && (
+          <BudgetPot
+            exp={exp}
+            budget={settings.budget}
+            lang={lang}
+            dailyBudget={settings.dailyBudget}
+            dailyUsed={todayExpense(cycleEntries)}
+          />
+        )}
         {tab === 'list' && <InsightBanner insight={insight} />}
-
-        <View style={styles.tabs}>
-          {tabs.map((k) => (
-            <Pressable key={k} style={styles.tab} onPress={() => setTab(k)}>
-              <Text style={[styles.tabText, { color: tab === k ? t.ink : t.inkSoft }]}>{s[k]}</Text>
-              {tab === k && <View style={[styles.tabDot, { backgroundColor: t.hibiscus }]} />}
-            </Pressable>
-          ))}
-        </View>
 
         {tab === 'list' && <LedgerFilter lang={lang} />}
         {tab === 'list' && <TemplateChips lang={lang} onLogged={() => setToast({ key: Date.now(), msg: s.toastBloom })} />}
@@ -142,7 +157,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
                 placeholderTextColor={t.inkSoft}
               />
               {searchQ.length > 0 && (
-                <Pressable onPress={() => setSearchQ('')} hitSlop={8}>
+                <Pressable onPress={() => setSearchQ('')} hitSlop={8} accessibilityRole="button" accessibilityLabel={s.a11yClearSearch}>
                   <Text style={{ color: t.inkSoft, fontSize: 16 }}>✕</Text>
                 </Pressable>
               )}
@@ -154,21 +169,38 @@ export const LedgerScreen = observer(function LedgerScreen() {
             entries={listEntries}
             customCats={customCats}
             lang={lang}
-            onEdit={openEdit}
+            onPress={setDetailId}
             onLongPress={setMarkId}
             emptyText={searchQ ? s.noResult : undefined}
           />
         )}
-        {tab === 'cal' && <CalendarView all={liveAll} anchor={anchor} cycleStart={cycleStart} lang={lang} />}
+        {tab === 'cal' && <CalendarView all={liveAll} anchor={anchor} cycleStart={cycleStart} customCats={customCats} lang={lang} />}
         {tab === 'stats' && (
-          <StatsView cycleEntries={cycleEntries} all={liveAll} anchor={anchor} cycleStart={cycleStart} customCats={customCats} lang={lang} />
+          <StatsView all={liveAll} anchor={anchor} cycleStart={cycleStart} customCats={customCats} lang={lang} onEntryPress={setDetailId} />
         )}
-        {tab === 'wall' && <GardenView count={cycleEntries.length} streak={streak} lang={lang} />}
+        {tab === 'wall' && (
+          <GardenView
+            count={cycleEntries.length}
+            streak={streak}
+            lang={lang}
+            goal={settings.gardenGoal ?? GOAL_DEFAULT}
+            onGoalChange={(g) => patchSettings({ gardenGoal: g })}
+          />
+        )}
       </SafeAreaView>
 
-      <Pressable style={[styles.fab, { backgroundColor: t.hibiscus }]} onPress={openNew}>
+      <BottomNav active={tab} onChange={setTab} lang={lang} />
+
+      <AnimatedPressable
+        style={[styles.fab, { backgroundColor: t.hibiscus, borderColor: t.paper, transform: [{ scale: fabScale }] }]}
+        onPress={openNew}
+        onPressIn={() => springFab(0.86)}
+        onPressOut={() => springFab(1)}
+        accessibilityRole="button"
+        accessibilityLabel={s.a11yAdd}
+      >
         <Text style={styles.fabPlus}>＋</Text>
-      </Pressable>
+      </AnimatedPressable>
 
       <RecordSheet
         visible={sheetOpen}
@@ -178,6 +210,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
         onClose={() => setSheetOpen(false)}
         onSaved={onSaved}
         onTemplateSaved={() => setToast({ key: Date.now(), msg: s.tmplSaved })}
+        onDeleted={deleteToast}
       />
 
       <MarkSheet
@@ -188,7 +221,30 @@ export const LedgerScreen = observer(function LedgerScreen() {
         onEdit={openEdit}
       />
 
-      {toast && <Toast key={toast.key} message={toast.msg} />}
+      <DetailSheet
+        entryId={detailId}
+        lang={lang}
+        customCats={customCats}
+        onClose={() => setDetailId(null)}
+        onEdit={openEdit}
+        onDeleted={deleteToast}
+      />
+
+      {toast && (
+        <Toast
+          key={toast.key}
+          message={toast.msg}
+          actionLabel={toast.undo ? s.undo : undefined}
+          onAction={
+            toast.undo
+              ? () => {
+                  toast.undo!();
+                  setToast(null);
+                }
+              : undefined
+          }
+        />
+      )}
     </View>
   );
 });
@@ -206,14 +262,10 @@ const styles = StyleSheet.create({
   searchWrap: { paddingHorizontal: 22, paddingTop: 2, paddingBottom: 2 },
   searchBar: { flexDirection: 'row', alignItems: 'center', gap: 8, borderWidth: 1, borderRadius: 13, paddingVertical: 9, paddingHorizontal: 13 },
   searchInput: { flex: 1, fontSize: 14, padding: 0 },
-  tabs: { flexDirection: 'row', paddingHorizontal: 22, paddingTop: 12, paddingBottom: 4 },
-  tab: { flex: 1, alignItems: 'center', paddingVertical: 8 },
-  tabText: { fontSize: 12.5, fontWeight: '600' },
-  tabDot: { width: 20, height: 3, borderRadius: 3, marginTop: 5 },
   fab: {
-    position: 'absolute', alignSelf: 'center', bottom: 26, width: 62, height: 62, borderRadius: 31,
-    alignItems: 'center', justifyContent: 'center',
-    shadowColor: '#D94E5C', shadowOpacity: 0.45, shadowRadius: 12, shadowOffset: { width: 0, height: 8 }, elevation: 8,
+    position: 'absolute', alignSelf: 'center', bottom: 44, width: 60, height: 60, borderRadius: 30,
+    borderWidth: 4, alignItems: 'center', justifyContent: 'center',
+    shadowColor: '#D94E5C', shadowOpacity: 0.45, shadowRadius: 12, shadowOffset: { width: 0, height: 8 }, elevation: 12,
   },
-  fabPlus: { color: '#fff', fontSize: 30, fontWeight: '300', lineHeight: 34 },
+  fabPlus: { color: '#fff', fontSize: 28, fontWeight: '300', lineHeight: 32 },
 });

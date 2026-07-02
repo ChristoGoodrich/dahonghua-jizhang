@@ -4,11 +4,21 @@
 // Supabase/network code so it can be unit-tested deterministically. The sync
 // engine feeds it local rows + rows pulled from the server and applies the
 // `merged` result to the store and pushes `toPush` back up.
+//
+// Two-tier conflict resolution:
+//   1. Field-level LWW when *both* versions carry per-field timestamps (`fieldTs`,
+//      written by updateEntry): concurrent edits to different fields of the same
+//      entry are both preserved.
+//   2. Whole-row LWW otherwise (legacy rows without fieldTs) — newest `updatedAt`
+//      wins, with a deterministic content tiebreaker on equal timestamps so all
+//      devices converge instead of diverging forever.
+// Deletion always takes precedence (a tombstone anywhere keeps the row deleted).
 
 export interface SyncRow {
   id: string;
   updatedAt?: number; // epoch ms; the conflict tiebreaker (missing → 0)
   deletedAt?: number | null; // soft delete — a tombstone still syncs
+  fieldTs?: Record<string, number>; // per-field last-write ms (enables field-level merge)
 }
 
 export interface MergeResult<T> {
@@ -16,24 +26,84 @@ export interface MergeResult<T> {
   toPush: T[]; // local rows the server hasn't seen the latest of
 }
 
-/** Merge local and remote rows by id, newest `updatedAt` winning. */
+/** Stable serialization for the equal-timestamp tiebreak (key order independent). */
+function stable(r: SyncRow): string {
+  return JSON.stringify(r, Object.keys(r).sort());
+}
+
+/**
+ * Order two versions of the same id: positive if `a` should win over `b`.
+ * Newer `updatedAt` wins; on a tie, the lexicographically larger serialization
+ * wins so every device converges on the same row.
+ */
+function compareRows(a: SyncRow, b: SyncRow): number {
+  const d = (a.updatedAt ?? 0) - (b.updatedAt ?? 0);
+  if (d !== 0) return d;
+  const sa = stable(a);
+  const sb = stable(b);
+  return sa < sb ? -1 : sa > sb ? 1 : 0;
+}
+
+function hasFieldTs(r: SyncRow): boolean {
+  return !!r.fieldTs && Object.keys(r.fieldTs).length > 0;
+}
+
+/** Pick a single field's value between two rows by its per-field timestamp. */
+function pickField(a: SyncRow, b: SyncRow, key: string): unknown {
+  const ta = a.fieldTs?.[key] ?? 0;
+  const tb = b.fieldTs?.[key] ?? 0;
+  const va = (a as unknown as Record<string, unknown>)[key];
+  const vb = (b as unknown as Record<string, unknown>)[key];
+  if (ta !== tb) return ta > tb ? va : vb;
+  if (va === undefined) return vb; // a field present on only one side survives
+  if (vb === undefined) return va;
+  return JSON.stringify(va) >= JSON.stringify(vb) ? va : vb; // deterministic tie
+}
+
+/** Field-level merge: each field taken from whichever side edited it more recently. */
+function mergeRow<T extends SyncRow>(a: T, b: T): T {
+  const keys = new Set<string>([...Object.keys(a), ...Object.keys(b)]);
+  ['id', 'updatedAt', 'deletedAt', 'fieldTs'].forEach((k) => keys.delete(k));
+  const out: Record<string, unknown> = {};
+  for (const k of keys) out[k] = pickField(a, b, k);
+
+  // tombstone precedence — once deleted anywhere, stays deleted (latest wins)
+  const dels = [a.deletedAt, b.deletedAt].filter((x): x is number => x != null);
+  if (dels.length) out.deletedAt = Math.max(...dels);
+
+  const ft: Record<string, number> = { ...(a.fieldTs ?? {}) };
+  for (const [k, v] of Object.entries(b.fieldTs ?? {})) ft[k] = Math.max(ft[k] ?? 0, v);
+  out.fieldTs = ft;
+
+  out.updatedAt = Math.max(a.updatedAt ?? 0, b.updatedAt ?? 0);
+  out.id = a.id;
+  return out as T;
+}
+
+/** Merge local and remote rows by id: field-level when both sides carry fieldTs,
+ *  else whole-row newest-wins with a deterministic tiebreaker. */
 export function mergeById<T extends SyncRow>(local: T[], remote: T[]): MergeResult<T> {
-  const at = (r: SyncRow) => r.updatedAt ?? 0;
-  const winner = new Map<string, T>();
-  for (const r of local) winner.set(r.id, r);
-  for (const r of remote) {
-    const cur = winner.get(r.id);
-    if (!cur || at(r) > at(cur)) winner.set(r.id, r);
-  }
-
+  const localById = new Map(local.map((r) => [r.id, r] as const));
   const remoteById = new Map(remote.map((r) => [r.id, r] as const));
+  const ids = new Set<string>([...localById.keys(), ...remoteById.keys()]);
+
+  const merged: T[] = [];
   const toPush: T[] = [];
-  for (const r of local) {
-    const rem = remoteById.get(r.id);
-    if (!rem || at(r) > at(rem)) toPush.push(r);
+  for (const id of ids) {
+    const l = localById.get(id);
+    const r = remoteById.get(id);
+    let win: T;
+    if (l && r) {
+      win = hasFieldTs(l) && hasFieldTs(r) ? mergeRow(l, r) : compareRows(r, l) > 0 ? r : l;
+    } else {
+      win = (l ?? r)!;
+    }
+    merged.push(win);
+    // upload when the server lacks the row or its stored copy differs from the winner
+    if (!r || stable(win) !== stable(r)) toPush.push(win);
   }
 
-  return { merged: [...winner.values()], toPush };
+  return { merged, toPush };
 }
 
 /** Visible (non-deleted) rows — the UI should render these. */

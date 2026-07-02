@@ -9,14 +9,20 @@ interface Props {
   exp: number;
   budget: number;
   lang: Lang;
+  dailyBudget?: number;
+  dailyUsed?: number;
 }
 
-export function BudgetPot({ exp, budget, lang }: Props) {
+export function BudgetPot({ exp, budget, lang, dailyBudget = 0, dailyUsed = 0 }: Props) {
   const t = useTheme();
   const s = I18N[lang];
-  if (!budget || budget <= 0) return null;
+  const hasMonthly = budget > 0;
+  const hasDaily = dailyBudget > 0;
+  if (!hasMonthly && !hasDaily) return null;
+  const dailyLeft = dailyBudget - dailyUsed;
+  const dailyOver = dailyLeft < 0;
 
-  const pct = Math.min((exp / budget) * 100, 100);
+  const pct = hasMonthly ? Math.min((exp / budget) * 100, 100) : Math.min((dailyUsed / dailyBudget) * 100, 100);
   const left = budget - exp;
 
   let petal = t.hibiscus;
@@ -35,17 +41,28 @@ export function BudgetPot({ exp, budget, lang }: Props) {
     <View style={[styles.box, { backgroundColor: t.card }]}>
       <Flower size={54} petal={petal} stamen={stamen} />
       <View style={styles.mid}>
-        <Text style={[styles.title, { color: t.ink }]}>
-          {s.budgetTitle} <Text style={{ color: t.inkSoft }}>· {fmtShort(budget, lang)}</Text>
-        </Text>
-        <View style={[styles.track, { backgroundColor: t.line }]}>
-          <View style={[styles.fill, { width: `${pct}%`, backgroundColor: fill }]} />
-        </View>
-        <Text style={[styles.sub, { color: t.inkSoft }]}>
-          {left >= 0
-            ? s.budgetSpentLeft.replace('%s', fmtShort(exp, lang)).replace('%s', fmtShort(left, lang))
-            : s.budgetOver.replace('%s', fmtShort(-left, lang))}
-        </Text>
+        {hasMonthly && (
+          <>
+            <Text style={[styles.title, { color: t.ink }]}>
+              {s.budgetTitle} <Text style={{ color: t.inkSoft }}>· {fmtShort(budget, lang)}</Text>
+            </Text>
+            <View style={[styles.track, { backgroundColor: t.line }]}>
+              <View style={[styles.fill, { width: `${pct}%`, backgroundColor: fill }]} />
+            </View>
+            <Text style={[styles.sub, { color: t.inkSoft }]}>
+              {left >= 0
+                ? s.budgetSpentLeft.replace('%s', fmtShort(exp, lang)).replace('%s', fmtShort(left, lang))
+                : s.budgetOver.replace('%s', fmtShort(-left, lang))}
+            </Text>
+          </>
+        )}
+        {hasDaily && (
+          <Text style={[hasMonthly ? styles.daily : styles.title, { color: dailyOver ? t.hibiscusDeep : hasMonthly ? t.inkSoft : t.ink }]}>
+            {s.budgetDailyLabel} · {dailyOver
+              ? s.budgetDailyOver.replace('%s', fmtShort(-dailyLeft, lang))
+              : s.budgetDailyLeft.replace('%s', fmtShort(dailyLeft, lang))}
+          </Text>
+        )}
       </View>
     </View>
   );
@@ -58,4 +75,5 @@ const styles = StyleSheet.create({
   track: { height: 8, borderRadius: 8, overflow: 'hidden', marginVertical: 6 },
   fill: { height: '100%', borderRadius: 8 },
   sub: { fontSize: 11 },
+  daily: { fontSize: 11, marginTop: 4, fontWeight: '600' },
 });

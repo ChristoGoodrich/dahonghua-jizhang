@@ -26,6 +26,7 @@ export interface DbEntry {
   from_sub: boolean | null;
   deleted_at: number | null;
   updated_at: number; // client epoch-ms
+  field_ts: Record<string, number> | null; // per-field last-write ms (field-level merge)
 }
 
 export function entryToRow(e: Entry, userId: string): DbEntry {
@@ -53,6 +54,7 @@ export function entryToRow(e: Entry, userId: string): DbEntry {
     from_sub: e.fromSub ?? null,
     deleted_at: e.deletedAt ?? null,
     updated_at: e.updatedAt ?? e.ts,
+    field_ts: e.fieldTs ?? null,
   };
 }
 
@@ -81,5 +83,6 @@ export function rowToEntry(r: DbEntry): Entry {
   if (r.refund_of != null) e.refundOf = r.refund_of;
   if (r.from_sub != null) e.fromSub = r.from_sub;
   if (r.deleted_at != null) e.deletedAt = r.deleted_at;
+  if (r.field_ts != null) e.fieldTs = r.field_ts;
   return e;
 }

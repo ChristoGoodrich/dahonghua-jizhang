@@ -22,4 +22,19 @@ describe('matchesSearch', () => {
   it('rejects non-matches', () => {
     expect(matchesSearch(entry, '交通', custom, 'zh')).toBe(false);
   });
+  it('matches tags and ledger', () => {
+    const tagged: Entry = { ...entry, tags: ['旅行', 'work'], ledger: '出差' };
+    expect(matchesSearch(tagged, '旅行', custom, 'zh')).toBe(true);
+    expect(matchesSearch(tagged, 'work', custom, 'en')).toBe(true);
+    expect(matchesSearch(tagged, '出差', custom, 'zh')).toBe(true);
+  });
+  it('supports amount comparators', () => {
+    expect(matchesSearch(entry, '>40', custom, 'zh')).toBe(true); // 48.5 > 40
+    expect(matchesSearch(entry, '>50', custom, 'zh')).toBe(false);
+    expect(matchesSearch(entry, '<50', custom, 'zh')).toBe(true);
+    expect(matchesSearch(entry, '>=48.5', custom, 'zh')).toBe(true);
+    expect(matchesSearch(entry, '<=48.5', custom, 'zh')).toBe(true);
+    expect(matchesSearch(entry, '=48.5', custom, 'zh')).toBe(true);
+    expect(matchesSearch(entry, '=49', custom, 'zh')).toBe(false);
+  });
 });

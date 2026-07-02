@@ -23,10 +23,10 @@ export function SummaryCard({ exp, inc, monthLabel, lang, onPrev, onNext }: Prop
       <View style={styles.monthRow}>
         <Text style={[styles.month, { color: t.inkSoft }]}>{monthLabel}</Text>
         <View style={styles.nav}>
-          <Pressable onPress={onPrev} hitSlop={10}>
+          <Pressable onPress={onPrev} hitSlop={10} accessibilityRole="button" accessibilityLabel={s.a11yMonthPrev}>
             <Text style={[styles.navBtn, { color: t.inkSoft }]}>‹</Text>
           </Pressable>
-          <Pressable onPress={onNext} hitSlop={10}>
+          <Pressable onPress={onNext} hitSlop={10} accessibilityRole="button" accessibilityLabel={s.a11yMonthNext}>
             <Text style={[styles.navBtn, { color: t.inkSoft }]}>›</Text>
           </Pressable>
         </View>

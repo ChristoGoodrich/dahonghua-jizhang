@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, Pressable, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import { observer } from '@legendapp/state/react';
 import { store$, addAccount, removeAccount } from '@/store/ledger';
 import { acctBalance } from '@/domain/networth';
@@ -11,6 +12,7 @@ import { I18N } from '@/i18n';
 
 export default observer(function AccountsScreen() {
   const t = useTheme();
+  const router = useRouter();
   const lang = store$.lang.get();
   const s = I18N[lang];
   const accounts = store$.accounts.get();
@@ -48,18 +50,21 @@ export default observer(function AccountsScreen() {
             const owed = a.kind === 'credit' && bal < 0;
             return (
               <View key={a.id} style={[styles.row, { backgroundColor: t.card }]}>
-                <View style={[styles.emo, { backgroundColor: t.paper }]}>
-                  <Text style={styles.emoText}>{acctEmoji(a.kind)}</Text>
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={[styles.name, { color: t.ink }]}>
-                    {lang === 'zh' ? a.name : a.nameEn || a.name}
-                    {isDef ? ` · ${s.acctDefault}` : a.kind === 'credit' ? ` · ${s.acctKindCredit}` : ''}
-                  </Text>
-                  <Text style={[styles.sub, { color: owed ? t.hibiscus : t.inkSoft }]}>
-                    {owed ? s.acctOwed : s.acctBalance} {fmt(owed ? -bal : bal, lang)}
-                  </Text>
-                </View>
+                <Pressable style={styles.rowMain} onPress={() => router.push(`/account-detail?id=${a.id}`)}>
+                  <View style={[styles.emo, { backgroundColor: t.paper }]}>
+                    <Text style={styles.emoText}>{acctEmoji(a.kind)}</Text>
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={[styles.name, { color: t.ink }]}>
+                      {lang === 'zh' ? a.name : a.nameEn || a.name}
+                      {isDef ? ` · ${s.acctDefault}` : a.kind === 'credit' ? ` · ${s.acctKindCredit}` : ''}
+                    </Text>
+                    <Text style={[styles.sub, { color: owed ? t.hibiscus : t.inkSoft }]}>
+                      {owed ? s.acctOwed : s.acctBalance} {fmt(owed ? -bal : bal, lang)}
+                    </Text>
+                  </View>
+                  <Text style={[styles.chev, { color: t.inkSoft }]}>›</Text>
+                </Pressable>
                 {!isDef && (
                   <Pressable onPress={() => removeAccount(a.id)} hitSlop={10}>
                     <Text style={[styles.del, { color: t.inkSoft }]}>✕</Text>
@@ -116,6 +121,8 @@ const styles = StyleSheet.create({
   safe: { flex: 1, maxWidth: 480, width: '100%', alignSelf: 'center' },
   body: { paddingHorizontal: 22, paddingBottom: 60, paddingTop: 6 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 13, padding: 12, marginBottom: 8 },
+  rowMain: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12 },
+  chev: { fontSize: 20, fontWeight: '700', paddingHorizontal: 2 },
   emo: { width: 38, height: 38, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },
   emoText: { fontSize: 19 },
   name: { fontSize: 14, fontWeight: '650' as any },

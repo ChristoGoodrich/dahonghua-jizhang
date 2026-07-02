@@ -1,9 +1,11 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '@/theme/ThemeContext';
+import { I18N, type Lang } from '@/i18n';
 
 interface Props {
   onKey: (key: string) => void; // digit | '.' | '+' '-' '×' '÷' | 'back' | 'clear' | 'eq'
+  lang: Lang;
 }
 
 // label shown, key sent. ⌫ = backspace, C = clear, = evaluates.
@@ -29,8 +31,23 @@ const ROWS: { label: string; k: string; kind?: 'op' | 'eq' | 'util' }[][] = [
   ],
 ];
 
-export function CalcKeypad({ onKey }: Props) {
+export function CalcKeypad({ onKey, lang }: Props) {
   const t = useTheme();
+  const s = I18N[lang];
+  const zh = lang === 'zh';
+  // Spoken label for keys whose glyph reads poorly to a screen reader.
+  const a11y = (k: string, label: string): string => {
+    switch (k) {
+      case 'back': return s.a11yKeyBack;
+      case 'clear': return s.a11yKeyClear;
+      case 'eq': return s.a11yKeyEq;
+      case '÷': return zh ? '除以' : 'divide';
+      case '×': return zh ? '乘以' : 'times';
+      case '-': return zh ? '减' : 'minus';
+      case '+': return zh ? '加' : 'plus';
+      default: return label;
+    }
+  };
   return (
     <View style={styles.pad}>
       {ROWS.map((row, ri) => (
@@ -44,6 +61,8 @@ export function CalcKeypad({ onKey }: Props) {
                 key={key.k}
                 onPress={() => onKey(key.k)}
                 style={[styles.key, wide && styles.keyWide, { backgroundColor: bg, borderColor: t.line }]}
+                accessibilityRole="button"
+                accessibilityLabel={a11y(key.k, key.label)}
               >
                 <Text style={[styles.keyText, { color: fg }]}>{key.label}</Text>
               </Pressable>

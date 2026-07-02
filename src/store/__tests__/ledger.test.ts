@@ -1,5 +1,5 @@
-import { store$, addEntry, addTransfer, updateEntry, removeEntry, runSubscriptions } from '../ledger';
-import { importV7 } from '@/migrate/importV7';
+import { store$, addEntry, addTransfer, updateEntry, removeEntry, runSubscriptions, buildBackup } from '../ledger';
+import { importV7, migrateBackup, CURRENT_BACKUP_VERSION } from '@/migrate/importV7';
 import type { Entry } from '@/domain/types';
 
 function reset() {
@@ -37,6 +37,19 @@ describe('ledger actions', () => {
     const e = addTransfer({ from: 'a', to: 'b', amt: 100 });
     expect(e.fee).toBeUndefined();
     expect(e.discount).toBeUndefined();
+  });
+
+  it('updateEntry stamps a per-field timestamp for each patched field', () => {
+    const e = addEntry({ io: 'exp', cat: 'food', amt: 10, note: 'a' });
+    const before = Date.now();
+    updateEntry(e.id, { note: 'edited', amt: 20 });
+    const d = store$.data.peek().find((x) => x.id === e.id)!;
+    expect(d.note).toBe('edited');
+    expect(d.fieldTs).toBeDefined();
+    expect(d.fieldTs!.note).toBeGreaterThanOrEqual(before);
+    expect(d.fieldTs!.amt).toBeGreaterThanOrEqual(before);
+    expect(d.fieldTs!.cat).toBeUndefined(); // untouched field isn't stamped
+    expect(d.fieldTs!.updatedAt).toBeUndefined(); // meta keys excluded
   });
 
   it('updates an existing entry', () => {
@@ -155,5 +168,38 @@ describe('importV7', () => {
 
   it('rejects a malformed backup', () => {
     expect(() => importV7({ nope: true })).toThrow();
+  });
+});
+
+describe('migrateBackup', () => {
+  const v7 = { app: 'dahonghua', version: 7, data: [{ id: 'a', ts: 1, io: 'exp' as const, cat: 'food', amt: 40 }] };
+
+  it('walks a v7 backup forward to the current version', () => {
+    expect(migrateBackup(v7).version).toBe(CURRENT_BACKUP_VERSION);
+  });
+
+  it('treats a versionless (legacy) file as v7', () => {
+    const { version, ...noVersion } = v7;
+    expect(migrateBackup(noVersion).version).toBe(CURRENT_BACKUP_VERSION);
+  });
+
+  it('leaves a current-version backup untouched', () => {
+    const cur = { ...v7, version: CURRENT_BACKUP_VERSION };
+    expect(migrateBackup(cur).version).toBe(CURRENT_BACKUP_VERSION);
+  });
+
+  it('throws on a version with no migration path', () => {
+    expect(() => migrateBackup({ version: 999, data: [] })).not.toThrow(); // newer passes through
+    expect(() => migrateBackup({ version: 3, data: [] })).toThrow(/migration path/);
+  });
+
+  it('round-trips buildBackup through importV7', () => {
+    addEntry({ io: 'exp', cat: 'food', amt: 25 });
+    const dump = buildBackup();
+    expect(dump.version).toBe(CURRENT_BACKUP_VERSION);
+    reset();
+    const res = importV7(dump);
+    expect(res.entries).toBe(1);
+    expect(store$.data.peek()[0].amt).toBe(25);
   });
 });

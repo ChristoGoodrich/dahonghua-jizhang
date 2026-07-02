@@ -1,20 +1,22 @@
-import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import Svg, { Polyline } from 'react-native-svg';
 import { useTheme } from '@/theme/ThemeContext';
 import { catOf, catName } from '@/domain/cats';
-import { fmt, fmtShort } from '@/domain/money';
-import { byCategory, statTotals, sixMonthTrend, comparison } from '@/domain/stats';
+import { fmt, fmtShort, fmtNum } from '@/domain/money';
+import { byCategory, overview, comparison, topEntries, byWeekday } from '@/domain/stats';
+import { CategoryDonut } from './CategoryDonut';
+import { PERIODS, periodRange, shiftPeriod, periodLabel, periodTrend, bucketLabel, entriesInPeriod, type Period } from '@/domain/period';
 import type { Category, Entry, IO } from '@/domain/types';
 import { I18N, type Lang } from '@/i18n';
 
 interface Props {
-  cycleEntries: Entry[];
   all: Entry[];
   anchor: Date;
   cycleStart: number;
   customCats: Record<IO, Category[]>;
   lang: Lang;
+  onEntryPress?: (id: string) => void; // open the read-only detail view
 }
 
 function Bar({ label, color, pct, value }: { label: React.ReactNode; color: string; pct: number; value: string }) {
@@ -30,65 +32,116 @@ function Bar({ label, color, pct, value }: { label: React.ReactNode; color: stri
   );
 }
 
-export function StatsView({ cycleEntries, all, anchor, cycleStart, customCats, lang }: Props) {
+export function StatsView({ all, anchor, cycleStart, customCats, lang, onEntryPress }: Props) {
   const t = useTheme();
   const s = I18N[lang];
+  const loc = lang === 'zh' ? 'zh-CN' : 'en-US';
+  // short weekday names by locale; 2023-01-01 was a Sunday, so +dow lands on each day
+  const wdLabel = (dow: number) => new Date(2023, 0, 1 + dow).toLocaleDateString(loc, { weekday: 'short' });
 
-  const totals = useMemo(() => statTotals(cycleEntries, anchor, cycleStart), [cycleEntries, anchor, cycleStart]);
-  const cats = useMemo(() => byCategory(cycleEntries), [cycleEntries]);
+  const [period, setPeriod] = useState<Period>('month');
+  const [pAnchor, setPAnchor] = useState<Date>(anchor);
+  const [io, setIo] = useState<IO>('exp');
+
+  const periodLabels: Record<Period, string> = { day: s.pDay, week: s.pWeek, month: s.pMonth, halfyear: s.pHalf, year: s.pYear };
+  const label = periodLabel(pAnchor, period, lang, cycleStart);
+  const isFuture = useMemo(() => periodRange(pAnchor, period, cycleStart).end.getTime() > Date.now(), [pAnchor, period, cycleStart]);
+
+  const rangeEntries = useMemo(() => entriesInPeriod(all, pAnchor, period, cycleStart), [all, pAnchor, period, cycleStart]);
+  const ov = useMemo(() => overview(rangeEntries), [rangeEntries]);
+  const cats = useMemo(() => byCategory(rangeEntries, io), [rangeEntries, io]);
   const catTotal = cats.reduce((a, c) => a + c.amt, 0);
-  const trend = useMemo(() => sixMonthTrend(all, anchor, cycleStart), [all, anchor, cycleStart]);
+  const trend = useMemo(() => periodTrend(all, pAnchor, period, cycleStart, io), [all, pAnchor, period, cycleStart, io]);
   const trendMax = Math.max(...trend.map((m) => m.total), 1);
-  const cmp = useMemo(() => comparison(all, anchor, cycleStart), [all, anchor, cycleStart]);
+  const trendColor = io === 'exp' ? t.hibiscus : t.leafDeep;
 
+  const top = useMemo(() => topEntries(rangeEntries, io, 5), [rangeEntries, io]);
+  const weekday = useMemo(() => byWeekday(rangeEntries, io), [rangeEntries, io]);
+  const wdMax = Math.max(...weekday.map((x) => x.amt), 1);
+  const wdHasData = weekday.some((x) => x.count > 0);
+
+  // month-only: cumulative this-vs-last comparison
+  const cmp = useMemo(() => (period === 'month' ? comparison(all, pAnchor, cycleStart) : null), [period, all, pAnchor, cycleStart]);
   let head = '';
-  if (cmp.lastTotal > 0) {
+  if (cmp && cmp.lastTotal > 0) {
     const diff = cmp.thisTotal - cmp.lastTotal;
     if (Math.abs(diff) / cmp.lastTotal < 0.05) head = s.cmpSame;
     else if (diff > 0) head = s.cmpUp.replace('%s', fmtShort(diff, lang));
     else head = s.cmpDown.replace('%s', fmtShort(-diff, lang));
   }
-
-  // comparison line chart geometry
   const W = 300, H = 120, pad = 6;
-  const mx = Math.max(...cmp.thisCum, ...cmp.lastCum, 1);
+  const mx = cmp ? Math.max(...cmp.thisCum, ...cmp.lastCum, 1) : 1;
   const pts = (arr: number[]) =>
     arr
       .map((v, i) => {
-        const x = pad + (i / Math.max(1, cmp.elapsedDays - 1)) * (W - 2 * pad);
+        const x = pad + (i / Math.max(1, (cmp?.elapsedDays ?? 1) - 1)) * (W - 2 * pad);
         const y = H - pad - (v / mx) * (H - 2 * pad);
         return `${x.toFixed(1)},${y.toFixed(1)}`;
       })
       .join(' ');
 
-  const tile = (label: string, value: string) => (
+  const tile = (lab: string, value: string, color?: string) => (
     <View style={[styles.stat, { backgroundColor: t.card }]}>
-      <Text style={[styles.statL, { color: t.inkSoft }]}>{label}</Text>
-      <Text style={[styles.statV, { color: t.ink }]}>{value}</Text>
+      <Text style={[styles.statL, { color: t.inkSoft }]}>{lab}</Text>
+      <Text style={[styles.statV, { color: color ?? t.ink }]}>{value}</Text>
     </View>
   );
 
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipRow} contentContainerStyle={styles.chipRowInner}>
+        {PERIODS.map((p) => {
+          const on = p === period;
+          return (
+            <Pressable key={p} onPress={() => setPeriod(p)} style={[styles.chip, { borderColor: on ? t.hibiscus : t.line, backgroundColor: on ? t.paperWarm : t.card }]}>
+              <Text style={{ fontSize: 13, fontWeight: '700', color: on ? t.hibiscus : t.inkSoft }}>{periodLabels[p]}</Text>
+            </Pressable>
+          );
+        })}
+      </ScrollView>
+
+      <View style={styles.nav}>
+        <Pressable onPress={() => setPAnchor((a) => shiftPeriod(a, period, -1, cycleStart))} hitSlop={10} style={styles.navBtn}>
+          <Text style={[styles.navArrow, { color: t.hibiscus }]}>‹</Text>
+        </Pressable>
+        <Text style={[styles.navLabel, { color: t.ink }]}>{label}</Text>
+        <Pressable onPress={() => !isFuture && setPAnchor((a) => shiftPeriod(a, period, 1, cycleStart))} hitSlop={10} style={styles.navBtn}>
+          <Text style={[styles.navArrow, { color: isFuture ? t.line : t.hibiscus }]}>›</Text>
+        </Pressable>
+      </View>
+
       <View style={styles.statGrid}>
-        {tile(s.stToday, fmt(totals.todayExp, lang))}
-        {tile(s.stAvg, fmt(totals.avg, lang))}
-        {tile(s.stTop, fmt(totals.top, lang))}
-        {tile(s.stCount, String(totals.count))}
+        {tile(s.ovExp, fmt(ov.exp, lang), t.hibiscusDeep)}
+        {tile(s.ovInc, fmt(ov.inc, lang), t.leafDeep)}
+        {tile(s.ovBalance, fmt(ov.balance, lang))}
+        {tile(s.ovCount, String(ov.count))}
+      </View>
+
+      <View style={styles.ioRow}>
+        {(['exp', 'inc'] as IO[]).map((k) => {
+          const on = k === io;
+          return (
+            <Pressable key={k} onPress={() => setIo(k)} style={[styles.ioBtn, { borderColor: on ? t.hibiscus : t.line, backgroundColor: on ? t.paperWarm : 'transparent' }]}>
+              <Text style={{ fontSize: 12.5, fontWeight: '700', color: on ? t.hibiscus : t.inkSoft }}>{k === 'exp' ? s.ovExp : s.ovInc}</Text>
+            </Pressable>
+          );
+        })}
       </View>
 
       <Text style={[styles.h3, { color: t.inkSoft }]}>{s.byCat}</Text>
       {cats.length === 0 ? (
         <Text style={[styles.emptyMini, { color: t.inkSoft }]}>{s.empty}</Text>
       ) : (
-        cats.map((c) => {
-          const cat = catOf('exp', c.cat, customCats);
+        <>
+        <CategoryDonut cats={cats} total={catTotal} io={io} customCats={customCats} lang={lang} centerLabel={io === 'exp' ? s.ovExp : s.ovInc} />
+        {cats.map((c) => {
+          const cat = catOf(io, c.cat, customCats);
           return (
             <Bar
               key={c.cat}
               color={cat.c}
               pct={catTotal ? (c.amt / catTotal) * 100 : 0}
-              value={fmt(c.amt, lang).slice(1)}
+              value={fmtNum(c.amt)}
               label={
                 <Text style={[styles.barLabText, { color: t.ink }]} numberOfLines={1}>
                   {cat.e} {catName(cat, lang)}
@@ -96,42 +149,85 @@ export function StatsView({ cycleEntries, all, anchor, cycleStart, customCats, l
               }
             />
           );
-        })
+        })}
+        </>
       )}
 
-      <Text style={[styles.h3, { color: t.inkSoft }]}>{s.trend}</Text>
+      <Text style={[styles.h3, { color: t.inkSoft }]}>{s.trendGeneric}</Text>
       {trend.map((m, i) => (
         <Bar
           key={i}
-          color={t.hibiscus}
+          color={trendColor}
           pct={(m.total / trendMax) * 100}
-          value={fmt(m.total, lang).slice(1)}
-          label={
-            <Text style={[styles.barLabText, { color: t.ink, width: 46 }]}>
-              {m.label.toLocaleDateString(lang === 'zh' ? 'zh-CN' : 'en-US', { month: 'short' })}
-            </Text>
-          }
+          value={fmtNum(m.total)}
+          label={<Text style={[styles.barLabText, { color: t.ink, width: 46 }]}>{bucketLabel(m.start, period, lang)}</Text>}
         />
       ))}
 
-      <Text style={[styles.h3, { color: t.inkSoft }]}>{s.cmpTitle}</Text>
-      {!!head && <Text style={[styles.cmpHead, { color: t.hibiscusDeep }]}>{head}</Text>}
-      <View style={[styles.chartCard, { backgroundColor: t.card }]}>
-        <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height={H} preserveAspectRatio="none">
-          <Polyline points={pts(cmp.lastCum)} fill="none" stroke={t.line} strokeWidth={2.5} />
-          <Polyline points={pts(cmp.thisCum)} fill="none" stroke={t.hibiscus} strokeWidth={2.5} />
-        </Svg>
-        <View style={styles.legend}>
-          <View style={styles.legendItem}>
-            <View style={[styles.legendDash, { backgroundColor: t.hibiscus }]} />
-            <Text style={[styles.legendText, { color: t.inkSoft }]}>{s.cmpThis} {fmtShort(cmp.thisTotal, lang)}</Text>
+      {io === 'exp' && top.length >= 2 && (
+        <>
+          <Text style={[styles.h3, { color: t.inkSoft }]}>{s.stTopSpend}</Text>
+          {top.map((d) => {
+            const cat = catOf(d.io, d.cat, customCats);
+            const note = d.note?.trim();
+            const row = (
+              <>
+                <Text style={styles.topEmoji}>{cat.e}</Text>
+                <View style={styles.topMid}>
+                  <Text style={[styles.topName, { color: t.ink }]} numberOfLines={1}>{note || catName(cat, lang)}</Text>
+                  <Text style={[styles.topSub, { color: t.inkSoft }]} numberOfLines={1}>
+                    {catName(cat, lang)} · {new Date(d.ts).toLocaleDateString(loc, { month: 'short', day: 'numeric' })}
+                  </Text>
+                </View>
+                <Text style={[styles.topAmt, { color: t.ink }]}>{fmt(d.amt, lang)}</Text>
+              </>
+            );
+            return onEntryPress ? (
+              <Pressable key={d.id} onPress={() => onEntryPress(d.id)} style={styles.topRow}>{row}</Pressable>
+            ) : (
+              <View key={d.id} style={styles.topRow}>{row}</View>
+            );
+          })}
+        </>
+      )}
+
+      {wdHasData && (
+        <>
+          <Text style={[styles.h3, { color: t.inkSoft }]}>{s.stByWeekday}</Text>
+          {weekday.map((x) => (
+            <Bar
+              key={x.dow}
+              color={trendColor}
+              pct={(x.amt / wdMax) * 100}
+              value={fmtNum(x.amt)}
+              label={<Text style={[styles.barLabText, { color: t.ink, width: 46 }]}>{wdLabel(x.dow)}</Text>}
+            />
+          ))}
+        </>
+      )}
+
+      {cmp && (
+        <>
+          <Text style={[styles.h3, { color: t.inkSoft }]}>{s.cmpTitle}</Text>
+          {!!head && <Text style={[styles.cmpHead, { color: t.hibiscusDeep }]}>{head}</Text>}
+          <View style={[styles.chartCard, { backgroundColor: t.card }]}>
+            <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height={H} preserveAspectRatio="none">
+              <Polyline points={pts(cmp.lastCum)} fill="none" stroke={t.line} strokeWidth={2.5} />
+              <Polyline points={pts(cmp.thisCum)} fill="none" stroke={t.hibiscus} strokeWidth={2.5} />
+            </Svg>
+            <View style={styles.legend}>
+              <View style={styles.legendItem}>
+                <View style={[styles.legendDash, { backgroundColor: t.hibiscus }]} />
+                <Text style={[styles.legendText, { color: t.inkSoft }]}>{s.cmpThis} {fmtShort(cmp.thisTotal, lang)}</Text>
+              </View>
+              <View style={styles.legendItem}>
+                <View style={[styles.legendDash, { backgroundColor: t.line }]} />
+                <Text style={[styles.legendText, { color: t.inkSoft }]}>{s.cmpLast} {fmtShort(cmp.lastTotal, lang)}</Text>
+              </View>
+            </View>
           </View>
-          <View style={styles.legendItem}>
-            <View style={[styles.legendDash, { backgroundColor: t.line }]} />
-            <Text style={[styles.legendText, { color: t.inkSoft }]}>{s.cmpLast} {fmtShort(cmp.lastTotal, lang)}</Text>
-          </View>
-        </View>
-      </View>
+        </>
+      )}
     </ScrollView>
   );
 }
@@ -139,10 +235,19 @@ export function StatsView({ cycleEntries, all, anchor, cycleStart, customCats, l
 const styles = StyleSheet.create({
   scroll: { flex: 1 },
   content: { paddingHorizontal: 22, paddingTop: 6, paddingBottom: 140 },
+  chipRow: { flexGrow: 0, marginBottom: 4 },
+  chipRowInner: { gap: 7, paddingVertical: 2 },
+  chip: { borderWidth: 1.5, borderRadius: 18, paddingVertical: 7, paddingHorizontal: 15 },
+  nav: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 18, marginVertical: 10 },
+  navBtn: { paddingHorizontal: 6 },
+  navArrow: { fontSize: 26, fontWeight: '700' },
+  navLabel: { fontSize: 15, fontWeight: '700', minWidth: 120, textAlign: 'center' },
   statGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   stat: { width: '47%', flexGrow: 1, borderRadius: 13, padding: 13, paddingHorizontal: 14 },
   statL: { fontSize: 11 },
   statV: { fontSize: 21, fontWeight: '700', marginTop: 3 },
+  ioRow: { flexDirection: 'row', gap: 8, marginTop: 14 },
+  ioBtn: { borderWidth: 1.5, borderRadius: 16, paddingVertical: 6, paddingHorizontal: 18 },
   h3: { fontSize: 13, fontWeight: '600', marginTop: 18, marginBottom: 10, marginHorizontal: 2 },
   emptyMini: { textAlign: 'center', paddingVertical: 20, fontSize: 13 },
   bar: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 11 },
@@ -151,6 +256,12 @@ const styles = StyleSheet.create({
   barTrack: { flex: 1, height: 9, borderRadius: 9, overflow: 'hidden' },
   barFill: { height: '100%', borderRadius: 9 },
   barVal: { fontSize: 12, width: 64, textAlign: 'right' },
+  topRow: { flexDirection: 'row', alignItems: 'center', gap: 11, paddingVertical: 8 },
+  topEmoji: { fontSize: 20, width: 26, textAlign: 'center' },
+  topMid: { flex: 1, minWidth: 0 },
+  topName: { fontSize: 13.5, fontWeight: '600' },
+  topSub: { fontSize: 11, marginTop: 1 },
+  topAmt: { fontSize: 13.5, fontWeight: '700' },
   cmpHead: { fontSize: 12.5, fontWeight: '600', marginHorizontal: 2, marginBottom: 10, marginTop: -2 },
   chartCard: { borderRadius: 14, padding: 14 },
   legend: { flexDirection: 'row', gap: 16, justifyContent: 'center', marginTop: 8 },

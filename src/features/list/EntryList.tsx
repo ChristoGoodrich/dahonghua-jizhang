@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { useTheme } from '@/theme/ThemeContext';
 import { Flower } from '@/components/Flower';
 import { catOf, catName } from '@/domain/cats';
-import { fmt } from '@/domain/money';
+import { fmt, fmtNum } from '@/domain/money';
 import { store$ } from '@/store/ledger';
 import type { Entry, Category, IO } from '@/domain/types';
 import type { Lang } from '@/i18n';
@@ -13,7 +13,7 @@ interface Props {
   entries: Entry[]; // already filtered to the cycle (and search)
   customCats: Record<IO, Category[]>;
   lang: Lang;
-  onEdit: (id: string) => void;
+  onPress: (id: string) => void; // open the read-only detail view
   onLongPress?: (id: string) => void; // open the mark menu (reimburse/refund)
   emptyText?: string; // overrides the default empty message (e.g. "no results")
 }
@@ -37,7 +37,7 @@ function dayLabel(key: string, lang: Lang, s: typeof I18N['zh']): string {
   });
 }
 
-export function EntryList({ entries, customCats, lang, onEdit, onLongPress, emptyText }: Props) {
+export function EntryList({ entries, customCats, lang, onPress, onLongPress, emptyText }: Props) {
   const t = useTheme();
   const s = I18N[lang];
   const accounts = store$.accounts.peek();
@@ -90,7 +90,7 @@ export function EntryList({ entries, customCats, lang, onEdit, onLongPress, empt
               return (
                 <Pressable
                   key={d.id}
-                  onPress={() => onEdit(d.id)}
+                  onPress={() => onPress(d.id)}
                   style={[styles.row, { backgroundColor: t.card }]}
                 >
                   <View style={[styles.emo, { backgroundColor: t.line }]}>
@@ -113,7 +113,7 @@ export function EntryList({ entries, customCats, lang, onEdit, onLongPress, empt
             return (
               <Pressable
                 key={d.id}
-                onPress={() => onEdit(d.id)}
+                onPress={() => onPress(d.id)}
                 onLongPress={() => onLongPress?.(d.id)}
                 delayLongPress={400}
                 style={[styles.row, { backgroundColor: t.card }]}
@@ -150,7 +150,7 @@ export function EntryList({ entries, customCats, lang, onEdit, onLongPress, empt
                   style={[styles.amt, { color: d.io === 'inc' ? t.leafDeep : t.ink }]}
                 >
                   {d.io === 'exp' ? '-' : '+'}
-                  {fmt(d.amt, lang).slice(1)}
+                  {fmtNum(d.amt)}
                 </Text>
               </Pressable>
             );

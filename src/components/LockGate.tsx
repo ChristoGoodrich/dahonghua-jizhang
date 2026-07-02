@@ -58,7 +58,7 @@ export const LockGate = observer(function LockGate({ children }: { children: Rea
 
 const styles = StyleSheet.create({
   overlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 100, elevation: 100, alignItems: 'center', justifyContent: 'center', gap: 18 },
-  title: { fontSize: 18, fontWeight: '750' as any },
+  title: { fontSize: 18, fontWeight: '700' },
   btn: { borderRadius: 24, paddingVertical: 12, paddingHorizontal: 28 },
   btnText: { color: '#fff', fontSize: 15, fontWeight: '700' },
 });

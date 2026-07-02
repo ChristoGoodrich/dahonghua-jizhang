@@ -10,6 +10,7 @@ import { importV7 } from '@/migrate/importV7';
 import { entriesToCSV } from '@/domain/export';
 import { shareTextFile } from '@/util/share';
 import { scheduleDailyReminder, cancelReminder, isValidTime } from '@/util/reminder';
+import { aiConfigured } from '@/ai/client';
 import { useTheme } from '@/theme/ThemeContext';
 import { Flower } from '@/components/Flower';
 import { THEME_KEYS, THEME_SWATCH } from '@/theme/tokens';
@@ -115,20 +116,9 @@ export default observer(function SettingsScreen() {
         <Text style={[styles.subtitle, { color: t.inkSoft }]}>{s.setSub}</Text>
 
         <ScrollView contentContainerStyle={styles.body} showsVerticalScrollIndicator={false}>
-          <Row
-            title={s.setBudget}
-            desc={s.setBudgetD}
-            right={
-              <TextInput
-                style={[styles.numInput, { borderColor: t.line, color: t.ink, backgroundColor: t.card }]}
-                keyboardType="numeric"
-                value={settings.budget ? String(settings.budget) : ''}
-                placeholder="0"
-                placeholderTextColor={t.inkSoft}
-                onChangeText={(v) => patchSettings({ budget: parseFloat(v.replace(/[^\d.]/g, '')) || 0 })}
-              />
-            }
-          />
+          <Pressable onPress={() => router.push('/budget')}>
+            <Row title={s.setBudgetNav} desc={s.setBudgetNavD} right={<Text style={[styles.chev, { color: t.hibiscus }]}>›</Text>} />
+          </Pressable>
           <Row
             title={s.setCycle}
             desc={s.setCycleD}
@@ -217,6 +207,22 @@ export default observer(function SettingsScreen() {
           <Pressable onPress={() => router.push('/review')}>
             <Row title={s.setReview} desc={s.setReviewD} right={<Text style={[styles.chev, { color: t.hibiscus }]}>›</Text>} />
           </Pressable>
+          {aiConfigured() && (
+            <Row
+              title={s.aiPrivacyTitle}
+              desc={s.aiPrivacyDesc}
+              right={
+                <Pressable
+                  onPress={() => patchSettings({ aiShareCategories: settings.aiShareCategories === false })}
+                  style={[styles.toggleBtn, { borderColor: t.hibiscus }]}
+                >
+                  <Text style={[styles.toggleText, { color: t.hibiscus }]}>
+                    {settings.aiShareCategories === false ? s.aiShareOff : s.aiShareOn}
+                  </Text>
+                </Pressable>
+              }
+            />
+          )}
           <Row
             title={s.remindTitle}
             desc={s.remindDesc}
