@@ -1,6 +1,7 @@
 import React from 'react';
 import TestRenderer, { act } from 'react-test-renderer';
 import { EntryList } from '../EntryList';
+import { Tap } from '@/components/ui/Tap';
 import { I18N } from '@/i18n';
 import type { Category, Entry, IO } from '@/domain/types';
 
@@ -53,8 +54,8 @@ describe('EntryList', () => {
     const r = render(
       <EntryList entries={[entries[0]]} customCats={noCustom} lang="zh" onPress={onPress} onLongPress={onLongPress} />,
     );
-    // the expense row Pressable is uniquely identified by delayLongPress={400}
-    const rows = r.root.findAll((n) => n.props?.delayLongPress === 400);
+    // the expense row is the one Tap uniquely identified by delayLongPress={400}
+    const rows = r.root.findAllByType(Tap).filter((n) => n.props?.delayLongPress === 400);
     expect(rows.length).toBe(1);
     act(() => rows[0].props.onPress());
     expect(onPress).toHaveBeenCalledWith('e1');

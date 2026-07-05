@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Pressable, StyleSheet, Animated, useWindowDimensions } from 'react-native';
 import { useTheme } from '@/theme/ThemeContext';
+import { shadow } from '@/theme/tokens';
 import { I18N, type Lang } from '@/i18n';
 import { tapHaptic } from '@/util/haptics';
 import { NavIcon } from './NavIcon';
@@ -12,7 +13,7 @@ const ORDER: NavKey[] = ['list', 'cal', 'stats', 'wall'];
 const LEFT: NavKey[] = ['list', 'cal'];
 const RIGHT: NavKey[] = ['stats', 'wall'];
 
-const PILL_W = 40;
+const PILL_W = 46;
 const MARGIN = 16; // bar marginHorizontal
 const MAX_W = 448; // bar maxWidth
 const PAD = 8; // bar paddingHorizontal
@@ -117,12 +118,12 @@ export function BottomNav({ active, onChange, lang }: Props) {
 
   return (
     <View style={styles.wrap} pointerEvents="box-none">
-      <View style={[styles.bar, { width: barW, backgroundColor: t.card, borderColor: t.line }]}>
+      <View style={[styles.bar, { width: barW, backgroundColor: t.card, borderColor: t.line }, shadow(t, 'lg')]}>
         <Animated.View
           style={[
             styles.indicator,
             {
-              backgroundColor: t.hibiscus + '22',
+              backgroundColor: t.tintStrong,
               transform: [
                 { translateX: tx },
                 { scaleX: stretch.interpolate({ inputRange: [0, 1], outputRange: [1, 1.45] }) },
@@ -144,20 +145,15 @@ const styles = StyleSheet.create({
   bar: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 62,
-    borderRadius: 24,
+    height: 64,
+    borderRadius: 26,
     borderWidth: BORDER,
     paddingHorizontal: PAD,
-    shadowColor: '#5A3A2E',
-    shadowOpacity: 0.14,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 10,
   },
-  indicator: { position: 'absolute', left: 0, top: 10, width: PILL_W, height: 26, borderRadius: 13 },
+  indicator: { position: 'absolute', left: 0, top: 10, width: PILL_W, height: 30, borderRadius: 15 },
   gap: { width: GAP },
-  item: { flex: 1, alignItems: 'center', justifyContent: 'center', height: '100%', gap: 1 },
+  item: { flex: 1, alignItems: 'center', justifyContent: 'center', height: '100%', gap: 2 },
   iconWrap: { alignItems: 'center', justifyContent: 'center', width: 40, height: 26 },
   iconOverlay: { position: 'absolute', top: 0, left: 0 },
-  label: { fontSize: 10, fontWeight: '700' },
+  label: { fontSize: 10, fontWeight: '800', letterSpacing: 0.2 },
 });

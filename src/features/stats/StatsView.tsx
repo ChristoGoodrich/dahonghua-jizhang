@@ -1,7 +1,10 @@
-import React, { useMemo, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Animated } from 'react-native';
 import Svg, { Polyline } from 'react-native-svg';
 import { useTheme } from '@/theme/ThemeContext';
+import { Chip } from '@/components/ui/Chip';
+import { Tap } from '@/components/ui/Tap';
+import { RAD, TABULAR, LABEL_TRACKED, shadow } from '@/theme/tokens';
 import { catOf, catName } from '@/domain/cats';
 import { fmt, fmtShort, fmtNum } from '@/domain/money';
 import { byCategory, overview, comparison, topEntries, byWeekday } from '@/domain/stats';
@@ -21,11 +24,24 @@ interface Props {
 
 function Bar({ label, color, pct, value }: { label: React.ReactNode; color: string; pct: number; value: string }) {
   const t = useTheme();
+  // springs from zero on mount and follows period/io switches
+  const w = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.spring(w, { toValue: pct, friction: 8, tension: 140, useNativeDriver: false }).start();
+  }, [pct, w]);
   return (
     <View style={styles.bar}>
       <View style={styles.barLab}>{label}</View>
       <View style={[styles.barTrack, { backgroundColor: t.line }]}>
-        <View style={[styles.barFill, { width: `${pct}%`, backgroundColor: color }]} />
+        <Animated.View
+          style={[
+            styles.barFill,
+            {
+              width: w.interpolate({ inputRange: [0, 100], outputRange: ['0%', '100%'], extrapolate: 'clamp' }),
+              backgroundColor: color,
+            },
+          ]}
+        />
       </View>
       <Text style={[styles.barVal, { color: t.inkSoft }]}>{value}</Text>
     </View>
@@ -81,33 +97,28 @@ export function StatsView({ all, anchor, cycleStart, customCats, lang, onEntryPr
       .join(' ');
 
   const tile = (lab: string, value: string, color?: string) => (
-    <View style={[styles.stat, { backgroundColor: t.card }]}>
+    <View style={[styles.stat, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'xs')]}>
       <Text style={[styles.statL, { color: t.inkSoft }]}>{lab}</Text>
-      <Text style={[styles.statV, { color: color ?? t.ink }]}>{value}</Text>
+      <Text style={[styles.statV, TABULAR, { color: color ?? t.ink }]} numberOfLines={1} adjustsFontSizeToFit>{value}</Text>
     </View>
   );
 
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipRow} contentContainerStyle={styles.chipRowInner}>
-        {PERIODS.map((p) => {
-          const on = p === period;
-          return (
-            <Pressable key={p} onPress={() => setPeriod(p)} style={[styles.chip, { borderColor: on ? t.hibiscus : t.line, backgroundColor: on ? t.paperWarm : t.card }]}>
-              <Text style={{ fontSize: 13, fontWeight: '700', color: on ? t.hibiscus : t.inkSoft }}>{periodLabels[p]}</Text>
-            </Pressable>
-          );
-        })}
+        {PERIODS.map((p) => (
+          <Chip key={p} label={periodLabels[p]} on={p === period} size="md" onPress={() => setPeriod(p)} />
+        ))}
       </ScrollView>
 
       <View style={styles.nav}>
-        <Pressable onPress={() => setPAnchor((a) => shiftPeriod(a, period, -1, cycleStart))} hitSlop={10} style={styles.navBtn}>
+        <Tap onPress={() => setPAnchor((a) => shiftPeriod(a, period, -1, cycleStart))} hitSlop={10} scaleTo={0.85} style={styles.navBtn}>
           <Text style={[styles.navArrow, { color: t.hibiscus }]}>‹</Text>
-        </Pressable>
+        </Tap>
         <Text style={[styles.navLabel, { color: t.ink }]}>{label}</Text>
-        <Pressable onPress={() => !isFuture && setPAnchor((a) => shiftPeriod(a, period, 1, cycleStart))} hitSlop={10} style={styles.navBtn}>
+        <Tap onPress={() => !isFuture && setPAnchor((a) => shiftPeriod(a, period, 1, cycleStart))} hitSlop={10} scaleTo={0.85} style={styles.navBtn}>
           <Text style={[styles.navArrow, { color: isFuture ? t.line : t.hibiscus }]}>›</Text>
-        </Pressable>
+        </Tap>
       </View>
 
       <View style={styles.statGrid}>
@@ -118,14 +129,9 @@ export function StatsView({ all, anchor, cycleStart, customCats, lang, onEntryPr
       </View>
 
       <View style={styles.ioRow}>
-        {(['exp', 'inc'] as IO[]).map((k) => {
-          const on = k === io;
-          return (
-            <Pressable key={k} onPress={() => setIo(k)} style={[styles.ioBtn, { borderColor: on ? t.hibiscus : t.line, backgroundColor: on ? t.paperWarm : 'transparent' }]}>
-              <Text style={{ fontSize: 12.5, fontWeight: '700', color: on ? t.hibiscus : t.inkSoft }}>{k === 'exp' ? s.ovExp : s.ovInc}</Text>
-            </Pressable>
-          );
-        })}
+        {(['exp', 'inc'] as IO[]).map((k) => (
+          <Chip key={k} label={k === 'exp' ? s.ovExp : s.ovInc} on={k === io} onPress={() => setIo(k)} />
+        ))}
       </View>
 
       <Text style={[styles.h3, { color: t.inkSoft }]}>{s.byCat}</Text>
@@ -183,7 +189,7 @@ export function StatsView({ all, anchor, cycleStart, customCats, lang, onEntryPr
               </>
             );
             return onEntryPress ? (
-              <Pressable key={d.id} onPress={() => onEntryPress(d.id)} style={styles.topRow}>{row}</Pressable>
+              <Tap key={d.id} onPress={() => onEntryPress(d.id)} scaleTo={0.98} style={styles.topRow}>{row}</Tap>
             ) : (
               <View key={d.id} style={styles.topRow}>{row}</View>
             );
@@ -210,7 +216,7 @@ export function StatsView({ all, anchor, cycleStart, customCats, lang, onEntryPr
         <>
           <Text style={[styles.h3, { color: t.inkSoft }]}>{s.cmpTitle}</Text>
           {!!head && <Text style={[styles.cmpHead, { color: t.hibiscusDeep }]}>{head}</Text>}
-          <View style={[styles.chartCard, { backgroundColor: t.card }]}>
+          <View style={[styles.chartCard, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'xs')]}>
             <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height={H} preserveAspectRatio="none">
               <Polyline points={pts(cmp.lastCum)} fill="none" stroke={t.line} strokeWidth={2.5} />
               <Polyline points={pts(cmp.thisCum)} fill="none" stroke={t.hibiscus} strokeWidth={2.5} />
@@ -237,35 +243,36 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: 22, paddingTop: 6, paddingBottom: 140 },
   chipRow: { flexGrow: 0, marginBottom: 4 },
   chipRowInner: { gap: 7, paddingVertical: 2 },
-  chip: { borderWidth: 1.5, borderRadius: 18, paddingVertical: 7, paddingHorizontal: 15 },
   nav: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 18, marginVertical: 10 },
   navBtn: { paddingHorizontal: 6 },
   navArrow: { fontSize: 26, fontWeight: '700' },
   navLabel: { fontSize: 15, fontWeight: '700', minWidth: 120, textAlign: 'center' },
   statGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  stat: { width: '47%', flexGrow: 1, borderRadius: 13, padding: 13, paddingHorizontal: 14 },
-  statL: { fontSize: 11 },
-  statV: { fontSize: 21, fontWeight: '700', marginTop: 3 },
+  stat: {
+    width: '47%', flexGrow: 1, borderRadius: RAD.md, borderWidth: StyleSheet.hairlineWidth,
+    padding: 13, paddingHorizontal: 15,
+  },
+  statL: { fontSize: 11, fontWeight: '600', letterSpacing: 0.4 },
+  statV: { fontSize: 21, fontWeight: '800', letterSpacing: -0.4, marginTop: 4 },
   ioRow: { flexDirection: 'row', gap: 8, marginTop: 14 },
-  ioBtn: { borderWidth: 1.5, borderRadius: 16, paddingVertical: 6, paddingHorizontal: 18 },
-  h3: { fontSize: 13, fontWeight: '600', marginTop: 18, marginBottom: 10, marginHorizontal: 2 },
+  h3: { ...LABEL_TRACKED, marginTop: 20, marginBottom: 10, marginHorizontal: 2 },
   emptyMini: { textAlign: 'center', paddingVertical: 20, fontSize: 13 },
   bar: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 11 },
   barLab: { width: 74, flexShrink: 0 },
   barLabText: { fontSize: 12.5 },
-  barTrack: { flex: 1, height: 9, borderRadius: 9, overflow: 'hidden' },
-  barFill: { height: '100%', borderRadius: 9 },
-  barVal: { fontSize: 12, width: 64, textAlign: 'right' },
+  barTrack: { flex: 1, height: 10, borderRadius: 5, overflow: 'hidden' },
+  barFill: { height: '100%', borderRadius: 5 },
+  barVal: { fontSize: 12, width: 64, textAlign: 'right', ...TABULAR },
   topRow: { flexDirection: 'row', alignItems: 'center', gap: 11, paddingVertical: 8 },
   topEmoji: { fontSize: 20, width: 26, textAlign: 'center' },
   topMid: { flex: 1, minWidth: 0 },
   topName: { fontSize: 13.5, fontWeight: '600' },
   topSub: { fontSize: 11, marginTop: 1 },
-  topAmt: { fontSize: 13.5, fontWeight: '700' },
+  topAmt: { fontSize: 13.5, fontWeight: '700', ...TABULAR },
   cmpHead: { fontSize: 12.5, fontWeight: '600', marginHorizontal: 2, marginBottom: 10, marginTop: -2 },
-  chartCard: { borderRadius: 14, padding: 14 },
+  chartCard: { borderRadius: RAD.md, borderWidth: StyleSheet.hairlineWidth, padding: 14 },
   legend: { flexDirection: 'row', gap: 16, justifyContent: 'center', marginTop: 8 },
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   legendDash: { width: 14, height: 3, borderRadius: 3 },
-  legendText: { fontSize: 11.5 },
+  legendText: { fontSize: 11.5, ...TABULAR },
 });

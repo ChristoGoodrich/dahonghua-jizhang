@@ -1,7 +1,26 @@
-import React, { useMemo, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Pressable, Animated } from 'react-native';
 import { useTheme } from '@/theme/ThemeContext';
+import { RAD, TABULAR, shadow } from '@/theme/tokens';
 import { Flower } from '@/components/Flower';
+
+/** Day panel eases in whenever a different day is selected (remount by key). */
+function PanelFade({ children }: { children: React.ReactNode }) {
+  const v = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.timing(v, { toValue: 1, duration: 200, useNativeDriver: true }).start();
+  }, [v]);
+  return (
+    <Animated.View
+      style={{
+        opacity: v,
+        transform: [{ translateY: v.interpolate({ inputRange: [0, 1], outputRange: [8, 0] }) }],
+      }}
+    >
+      {children}
+    </Animated.View>
+  );
+}
 import { cycleRange } from '@/domain/cycle';
 import { catOf, catName } from '@/domain/cats';
 import { fmt, fmtNum } from '@/domain/money';
@@ -75,7 +94,7 @@ export function CalendarView({ all, anchor, cycleStart, customCats, lang }: Prop
 
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-      <View style={[styles.wrap, { backgroundColor: t.card }]}>
+      <View style={[styles.wrap, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'sm')]}>
         <View style={styles.head}>
           {dows.map((d, i) => (
             <Text key={i} style={[styles.dow, { color: t.inkSoft }]}>{d}</Text>
@@ -94,7 +113,7 @@ export function CalendarView({ all, anchor, cycleStart, customCats, lang }: Prop
                 onPress={() => setSelected((p) => (p === c.key ? null : c.key))}
                 disabled={c.n === 0 && !c.isToday}
               >
-                <View style={[styles.inner, { backgroundColor: t.paper, borderColor: on ? t.hibiscus : 'transparent' }]}>
+                <View style={[styles.inner, { backgroundColor: on ? t.tint : t.paper, borderColor: on ? t.hibiscus : 'transparent' }]}>
                   {c.isToday ? (
                     <View style={[styles.todayDot, { backgroundColor: t.hibiscus }]}>
                       <Text style={styles.todayNum}>{c.day}</Text>
@@ -107,7 +126,7 @@ export function CalendarView({ all, anchor, cycleStart, customCats, lang }: Prop
                       <Flower key={i} size={9} />
                     ))}
                   </View>
-                  {c.exp > 0 && <Text style={[styles.sum, { color: t.hibiscusDeep }]}>{Math.round(c.exp)}</Text>}
+                  {c.exp > 0 && <Text style={[styles.sum, TABULAR, { color: t.hibiscusDeep }]}>{Math.round(c.exp)}</Text>}
                 </View>
               </Pressable>
             );
@@ -116,6 +135,7 @@ export function CalendarView({ all, anchor, cycleStart, customCats, lang }: Prop
       </View>
 
       {selected ? (
+        <PanelFade key={selected}>
         <View style={styles.panel}>
           <View style={styles.panelHead}>
             <Text style={[styles.panelDate, { color: t.ink }]}>{selLabel}</Text>
@@ -128,7 +148,7 @@ export function CalendarView({ all, anchor, cycleStart, customCats, lang }: Prop
               const isXfer = d.io === 'xfer';
               const c = isXfer ? null : catOf(d.io, d.cat, customCats);
               return (
-                <View key={d.id} style={[styles.row, { backgroundColor: t.card }]}>
+                <View key={d.id} style={[styles.row, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'xs')]}>
                   <View style={[styles.emo, { backgroundColor: isXfer ? t.line : c!.c + '22' }]}>
                     <Text style={styles.emoText}>{isXfer ? '🔄' : c!.e}</Text>
                   </View>
@@ -146,6 +166,7 @@ export function CalendarView({ all, anchor, cycleStart, customCats, lang }: Prop
             })
           )}
         </View>
+        </PanelFade>
       ) : (
         <Text style={[styles.hint, { color: t.inkSoft }]}>{s.calHint}</Text>
       )}
@@ -156,12 +177,12 @@ export function CalendarView({ all, anchor, cycleStart, customCats, lang }: Prop
 const styles = StyleSheet.create({
   scroll: { flex: 1 },
   content: { paddingHorizontal: 22, paddingTop: 6, paddingBottom: 140 },
-  wrap: { borderRadius: 16, padding: 16 },
+  wrap: { borderRadius: RAD.lg, borderWidth: StyleSheet.hairlineWidth, padding: 16 },
   head: { flexDirection: 'row', marginBottom: 6 },
-  dow: { flex: 1, textAlign: 'center', fontSize: 10.5, fontWeight: '600' },
+  dow: { flex: 1, textAlign: 'center', fontSize: 10.5, fontWeight: '700', letterSpacing: 0.5 },
   grid: { flexDirection: 'row', flexWrap: 'wrap' },
   cell: { width: `${100 / 7}%`, aspectRatio: 0.82, padding: 2 },
-  inner: { flex: 1, borderRadius: 9, paddingTop: 4, alignItems: 'center', borderWidth: 1.5 },
+  inner: { flex: 1, borderRadius: RAD.xs, paddingTop: 4, alignItems: 'center', borderWidth: 1.2 },
   dayNum: { fontSize: 10, fontWeight: '600' },
   todayDot: { width: 16, height: 16, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
   todayNum: { color: '#fff', fontSize: 10, fontWeight: '700', lineHeight: 12 },
@@ -172,11 +193,15 @@ const styles = StyleSheet.create({
   panelHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, paddingHorizontal: 2 },
   panelDate: { fontSize: 14, fontWeight: '700' },
   panelSum: { fontSize: 12, fontWeight: '600' },
-  row: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 13, padding: 11, paddingHorizontal: 13, marginBottom: 7 },
-  emo: { width: 36, height: 36, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },
+  row: {
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    borderRadius: RAD.md, borderWidth: StyleSheet.hairlineWidth,
+    padding: 11, paddingHorizontal: 13, marginBottom: 8,
+  },
+  emo: { width: 38, height: 38, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
   emoText: { fontSize: 18 },
   mid: { flex: 1, minWidth: 0 },
   cat: { fontSize: 14, fontWeight: '600' },
-  note: { fontSize: 11.5, marginTop: 1 },
-  amt: { fontWeight: '700', fontSize: 15 },
+  note: { fontSize: 11.5, marginTop: 2 },
+  amt: { fontWeight: '700', fontSize: 15, ...TABULAR },
 });

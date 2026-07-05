@@ -1,8 +1,32 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, ScrollView, Animated } from 'react-native';
 import { useTheme } from '@/theme/ThemeContext';
+import { Tap } from '@/components/ui/Tap';
+import { RAD, TABULAR, shadow } from '@/theme/tokens';
 import { Flower } from '@/components/Flower';
 import { I18N, daysUnit, flowersUnit, type Lang } from '@/i18n';
+
+/** Staggered bloom — each earned flower pops in with a small spring. */
+function Bloom({ index, children }: { index: number; children: React.ReactNode }) {
+  const v = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    const id = setTimeout(
+      () => Animated.spring(v, { toValue: 1, friction: 5, tension: 180, useNativeDriver: true }).start(),
+      Math.min(index * 45, 700),
+    );
+    return () => clearTimeout(id);
+  }, [index, v]);
+  return (
+    <Animated.View
+      style={{
+        opacity: v.interpolate({ inputRange: [0, 1], outputRange: [0, 1], extrapolate: 'clamp' }),
+        transform: [{ scale: v.interpolate({ inputRange: [0, 1], outputRange: [0.3, 1] }) }],
+      }}
+    >
+      {children}
+    </Animated.View>
+  );
+}
 
 interface Props {
   count: number;
@@ -33,33 +57,35 @@ export function GardenView({ count, streak, lang, goal, onGoalChange }: Props) {
 
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-      <View style={[styles.wall, { backgroundColor: t.card }]}>
+      <View style={[styles.wall, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'sm')]}>
         <View style={styles.top}>
           <Text style={[styles.title, { color: t.ink }]}>{s.wallTitle}</Text>
           <View style={styles.goalRow}>
-            <Pressable
+            <Tap
               onPress={() => onGoalChange(clampGoal(target - GOAL_STEP))}
               disabled={target <= GOAL_MIN}
               hitSlop={8}
+              scaleTo={0.85}
               accessibilityRole="button"
               accessibilityLabel={s.wallGoalDown}
-              style={[styles.stepper, { borderColor: t.line, opacity: target <= GOAL_MIN ? 0.35 : 1 }]}
+              style={[styles.stepper, { borderColor: t.line, backgroundColor: t.paper, opacity: target <= GOAL_MIN ? 0.35 : 1 }]}
             >
               <Text style={[styles.stepperText, { color: t.inkSoft }]}>−</Text>
-            </Pressable>
-            <Text style={[styles.count, { color: t.hibiscus }]}>
+            </Tap>
+            <Text style={[styles.count, TABULAR, { color: t.hibiscus }]}>
               {Math.min(count, target)}/{target} {flowersUnit(lang, target)}
             </Text>
-            <Pressable
+            <Tap
               onPress={() => onGoalChange(clampGoal(target + GOAL_STEP))}
               disabled={target >= GOAL_MAX}
               hitSlop={8}
+              scaleTo={0.85}
               accessibilityRole="button"
               accessibilityLabel={s.wallGoalUp}
-              style={[styles.stepper, { borderColor: t.line, opacity: target >= GOAL_MAX ? 0.35 : 1 }]}
+              style={[styles.stepper, { borderColor: t.line, backgroundColor: t.paper, opacity: target >= GOAL_MAX ? 0.35 : 1 }]}
             >
               <Text style={[styles.stepperText, { color: t.inkSoft }]}>＋</Text>
-            </Pressable>
+            </Tap>
           </View>
         </View>
         <Text style={[styles.sub, { color: t.inkSoft }]}>{s.wallSub}</Text>
@@ -68,7 +94,9 @@ export function GardenView({ count, streak, lang, goal, onGoalChange }: Props) {
             <View key={i} style={styles.cell}>
               <View style={[styles.slot, { backgroundColor: t.paper }, i >= count && styles.bud]}>
                 {i < count ? (
-                  <Flower size={34} {...HUES[i % HUES.length]} />
+                  <Bloom index={i}>
+                    <Flower size={34} {...HUES[i % HUES.length]} />
+                  </Bloom>
                 ) : (
                   <Flower size={34} petal="#E0CDB8" stamen="#D6C3AC" />
                 )}
@@ -92,7 +120,7 @@ export function GardenView({ count, streak, lang, goal, onGoalChange }: Props) {
 const styles = StyleSheet.create({
   scroll: { flex: 1 },
   content: { paddingHorizontal: 22, paddingTop: 6, paddingBottom: 140 },
-  wall: { borderRadius: 16, padding: 18 },
+  wall: { borderRadius: RAD.lg, borderWidth: StyleSheet.hairlineWidth, padding: 18 },
   top: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 4 },
   title: { fontSize: 15, fontWeight: '700' },
   goalRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },

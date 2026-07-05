@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Svg, { G, Circle } from 'react-native-svg';
 import { useTheme } from '@/theme/ThemeContext';
+import { TABULAR } from '@/theme/tokens';
 import { catOf } from '@/domain/cats';
 import { donutSlices, type CatTotal } from '@/domain/stats';
 import { fmtShort } from '@/domain/money';
@@ -58,7 +59,7 @@ export function CategoryDonut({ cats, total, io, customCats, lang, centerLabel }
         </Svg>
         <View style={styles.center} pointerEvents="none">
           <Text style={[styles.centerLabel, { color: t.inkSoft }]}>{centerLabel}</Text>
-          <Text style={[styles.centerVal, { color: t.ink }]} numberOfLines={1}>{fmtShort(total, lang)}</Text>
+          <Text style={[styles.centerVal, TABULAR, { color: t.ink }]} numberOfLines={1}>{fmtShort(total, lang)}</Text>
           {topCat && (
             <Text style={[styles.centerTop, { color: topCat.c }]} numberOfLines={1}>
               {topCat.e} {Math.round(top.frac * 100)}%
@@ -75,6 +76,6 @@ const styles = StyleSheet.create({
   chart: { width: SIZE, height: SIZE, alignItems: 'center', justifyContent: 'center' },
   center: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' },
   centerLabel: { fontSize: 11, fontWeight: '600' },
-  centerVal: { fontSize: 24, fontWeight: '800', marginTop: 2 },
+  centerVal: { fontSize: 24, fontWeight: '800', letterSpacing: -0.4, marginTop: 2 },
   centerTop: { fontSize: 12, fontWeight: '700', marginTop: 3 },
 });

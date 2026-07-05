@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '@/theme/ThemeContext';
+import { Tap } from '@/components/ui/Tap';
+import { RAD, TABULAR } from '@/theme/tokens';
 import { I18N, type Lang } from '@/i18n';
 
 interface Props {
@@ -54,18 +56,24 @@ export function CalcKeypad({ onKey, lang }: Props) {
         <View key={ri} style={styles.row}>
           {row.map((key) => {
             const wide = ROWS[ri].length === 2; // last row spans 2 wide buttons
-            const bg = key.kind === 'eq' ? t.hibiscus : key.kind === 'op' ? t.paperWarm : t.card;
+            const bg = key.kind === 'eq' ? t.hibiscus : key.kind === 'op' ? t.tint : t.card;
             const fg = key.kind === 'eq' ? '#fff' : key.kind === 'op' ? t.hibiscus : t.ink;
             return (
-              <Pressable
+              <Tap
                 key={key.k}
                 onPress={() => onKey(key.k)}
-                style={[styles.key, wide && styles.keyWide, { backgroundColor: bg, borderColor: t.line }]}
+                scaleTo={0.92}
+                haptic
+                style={[
+                  styles.key,
+                  wide && styles.keyWide,
+                  { backgroundColor: bg, borderColor: key.kind === 'eq' ? t.hibiscus : t.line },
+                ]}
                 accessibilityRole="button"
                 accessibilityLabel={a11y(key.k, key.label)}
               >
-                <Text style={[styles.keyText, { color: fg }]}>{key.label}</Text>
-              </Pressable>
+                <Text style={[styles.keyText, TABULAR, { color: fg }]}>{key.label}</Text>
+              </Tap>
             );
           })}
         </View>
@@ -78,7 +86,7 @@ const styles = StyleSheet.create({
   pad: { gap: 7, marginTop: 10 },
   row: { flexDirection: 'row', gap: 7 },
   key: {
-    flex: 1, height: 46, borderRadius: 11, borderWidth: 1,
+    flex: 1, height: 46, borderRadius: RAD.sm, borderWidth: StyleSheet.hairlineWidth,
     alignItems: 'center', justifyContent: 'center',
   },
   keyWide: { flex: 1 },

@@ -1,6 +1,9 @@
 import React from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
+import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { useTheme } from '@/theme/ThemeContext';
+import { Tap } from '@/components/ui/Tap';
+import { Icon } from '@/components/ui/Icon';
+import { RAD } from '@/theme/tokens';
 import { I18N, type Lang } from '@/i18n';
 
 interface Props {
@@ -29,9 +32,9 @@ export function AIQuickEntry({ value, busy, msg, onChangeText, onSubmit, lang }:
           returnKeyType="go"
           editable={!busy}
         />
-        <Pressable onPress={onSubmit} disabled={busy} style={[styles.aiBtn, { backgroundColor: busy ? t.line : t.hibiscus }]} accessibilityRole="button" accessibilityLabel={s.a11yAI}>
-          <Text style={styles.aiBtnText}>{busy ? s.aiParsing : '✨'}</Text>
-        </Pressable>
+        <Tap onPress={onSubmit} disabled={busy} scaleTo={0.92} style={[styles.aiBtn, { backgroundColor: busy ? t.line : t.hibiscus }]} accessibilityRole="button" accessibilityLabel={s.a11yAI}>
+          {busy ? <Text style={styles.aiBtnText}>{s.aiParsing}</Text> : <Icon name="sparkle" color="#fff" size={18} />}
+        </Tap>
       </View>
       {!!msg && <Text style={[styles.aiMsg, { color: t.hibiscusDeep }]}>{msg}</Text>}
     </View>
@@ -41,8 +44,11 @@ export function AIQuickEntry({ value, busy, msg, onChangeText, onSubmit, lang }:
 const styles = StyleSheet.create({
   aiWrap: { marginBottom: 10 },
   aiRow: { flexDirection: 'row', gap: 8, alignItems: 'center' },
-  aiInput: { flex: 1, borderWidth: 1, borderRadius: 11, paddingVertical: 9, paddingHorizontal: 12, fontSize: 14 },
-  aiBtn: { borderRadius: 11, paddingVertical: 9, paddingHorizontal: 14, minWidth: 46, alignItems: 'center', justifyContent: 'center' },
-  aiBtnText: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  aiInput: {
+    flex: 1, borderWidth: StyleSheet.hairlineWidth, borderRadius: RAD.sm,
+    height: 40, paddingVertical: 0, paddingHorizontal: 13, fontSize: 14,
+  },
+  aiBtn: { borderRadius: RAD.sm, height: 40, paddingHorizontal: 14, minWidth: 48, alignItems: 'center', justifyContent: 'center' },
+  aiBtnText: { color: '#fff', fontSize: 13, fontWeight: '700' },
   aiMsg: { fontSize: 11.5, fontWeight: '600', marginTop: 6, marginHorizontal: 2 },
 });

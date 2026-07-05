@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, TextInput, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -26,11 +26,33 @@ import { StatsView } from '@/features/stats/StatsView';
 import { GardenView, GOAL_DEFAULT } from '@/features/garden/GardenView';
 import { BottomNav } from '@/features/nav/BottomNav';
 import { tapHaptic } from '@/util/haptics';
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+import { Tap } from '@/components/ui/Tap';
+import { Icon } from '@/components/ui/Icon';
+import { GradientFill } from '@/components/ui/GradientFill';
+import { RAD, shadow } from '@/theme/tokens';
 import { Toast } from '@/components/Toast';
+import { PetalBurst } from '@/components/PetalBurst';
 
 type Tab = 'list' | 'cal' | 'stats' | 'wall';
+
+/** Remounts with a `key` per tab — content fades in and settles upward. */
+function TabFade({ children }: { children: React.ReactNode }) {
+  const v = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.timing(v, { toValue: 1, duration: 220, useNativeDriver: true }).start();
+  }, [v]);
+  return (
+    <Animated.View
+      style={{
+        flex: 1,
+        opacity: v,
+        transform: [{ translateY: v.interpolate({ inputRange: [0, 1], outputRange: [10, 0] }) }],
+      }}
+    >
+      {children}
+    </Animated.View>
+  );
+}
 
 export const LedgerScreen = observer(function LedgerScreen() {
   const t = useTheme();
@@ -51,6 +73,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
   const [toast, setToast] = useState<{ key: number; msg: string; undo?: () => void } | null>(null);
   const [searchQ, setSearchQ] = useState('');
   const [markId, setMarkId] = useState<string | null>(null);
+  const [burst, setBurst] = useState<number | null>(null);
 
   const liveAll = useMemo(() => data.filter((d) => !d.deletedAt), [data]);
   const cycleEntries = useMemo(
@@ -71,10 +94,6 @@ export const LedgerScreen = observer(function LedgerScreen() {
     { year: 'numeric', month: 'long' },
   );
 
-  const fabScale = useRef(new Animated.Value(1)).current;
-  const springFab = (to: number) =>
-    Animated.spring(fabScale, { toValue: to, useNativeDriver: false, friction: 5, tension: 220 }).start();
-
   function openNew() {
     tapHaptic();
     setEditId(null);
@@ -86,10 +105,14 @@ export const LedgerScreen = observer(function LedgerScreen() {
     setSheetOpen(true);
   }
   const deleteToast = (restore: () => void) => setToast({ key: Date.now(), msg: s.deleted, undo: restore });
+  function celebrate(msg: string) {
+    setToast({ key: Date.now(), msg });
+    setBurst(Date.now());
+  }
   function onSaved(isNew: boolean) {
     if (!isNew) return;
     const sd = streakDays(store$.data.peek().filter((d) => !d.deletedAt).map((d) => d.ts));
-    setToast({ key: Date.now(), msg: sd > 1 ? s.toastStreak.replace('%d', String(sd)) : s.toastBloom });
+    celebrate(sd > 1 ? s.toastStreak.replace('%d', String(sd)) : s.toastBloom);
   }
 
   return (
@@ -104,22 +127,24 @@ export const LedgerScreen = observer(function LedgerScreen() {
             </View>
           </View>
           <View style={styles.topBtns}>
-            <Pressable
-              style={[styles.iconBtn, { borderColor: t.line, backgroundColor: t.card }]}
+            <Tap
+              style={[styles.iconBtn, { borderColor: t.line, backgroundColor: t.card }, shadow(t, 'xs')]}
+              scaleTo={0.88}
               onPress={() => router.push('/settings')}
               accessibilityRole="button"
               accessibilityLabel={s.setTitle}
             >
-              <Text style={[styles.iconBtnText, { color: t.inkSoft }]}>⚙︎</Text>
-            </Pressable>
-            <Pressable
-              style={[styles.iconBtn, { borderColor: t.line, backgroundColor: t.card }]}
+              <Icon name="sliders" color={t.inkSoft} size={17} />
+            </Tap>
+            <Tap
+              style={[styles.iconBtn, { borderColor: t.line, backgroundColor: t.card }, shadow(t, 'xs')]}
+              scaleTo={0.88}
               onPress={() => setLang(lang === 'zh' ? 'en' : 'zh')}
               accessibilityRole="button"
               accessibilityLabel={s.a11yLang}
             >
               <Text style={[styles.iconBtnText, { color: t.inkSoft }]}>{s.langBtn}</Text>
-            </Pressable>
+            </Tap>
           </View>
         </View>
 
@@ -132,75 +157,76 @@ export const LedgerScreen = observer(function LedgerScreen() {
           onNext={() => setAnchor((a) => shiftCycle(a, 1, cycleStart))}
         />
 
-        {tab === 'list' && (
-          <BudgetPot
-            exp={exp}
-            budget={settings.budget}
-            lang={lang}
-            dailyBudget={settings.dailyBudget}
-            dailyUsed={todayExpense(cycleEntries)}
-          />
-        )}
-        {tab === 'list' && <InsightBanner insight={insight} />}
-
-        {tab === 'list' && <LedgerFilter lang={lang} />}
-        {tab === 'list' && <TemplateChips lang={lang} onLogged={() => setToast({ key: Date.now(), msg: s.toastBloom })} />}
-        {tab === 'list' && (
-          <View style={styles.searchWrap}>
-            <View style={[styles.searchBar, { backgroundColor: t.card, borderColor: t.line }]}>
-              <Text style={{ color: t.inkSoft }}>🔍</Text>
-              <TextInput
-                style={[styles.searchInput, { color: t.ink }]}
-                value={searchQ}
-                onChangeText={setSearchQ}
-                placeholder={s.searchPh}
-                placeholderTextColor={t.inkSoft}
+        <TabFade key={tab}>
+          {tab === 'list' && (
+            <>
+              <BudgetPot
+                exp={exp}
+                budget={settings.budget}
+                lang={lang}
+                dailyBudget={settings.dailyBudget}
+                dailyUsed={todayExpense(cycleEntries)}
               />
-              {searchQ.length > 0 && (
-                <Pressable onPress={() => setSearchQ('')} hitSlop={8} accessibilityRole="button" accessibilityLabel={s.a11yClearSearch}>
-                  <Text style={{ color: t.inkSoft, fontSize: 16 }}>✕</Text>
-                </Pressable>
-              )}
-            </View>
-          </View>
-        )}
-        {tab === 'list' && (
-          <EntryList
-            entries={listEntries}
-            customCats={customCats}
-            lang={lang}
-            onPress={setDetailId}
-            onLongPress={setMarkId}
-            emptyText={searchQ ? s.noResult : undefined}
-          />
-        )}
-        {tab === 'cal' && <CalendarView all={liveAll} anchor={anchor} cycleStart={cycleStart} customCats={customCats} lang={lang} />}
-        {tab === 'stats' && (
-          <StatsView all={liveAll} anchor={anchor} cycleStart={cycleStart} customCats={customCats} lang={lang} onEntryPress={setDetailId} />
-        )}
-        {tab === 'wall' && (
-          <GardenView
-            count={cycleEntries.length}
-            streak={streak}
-            lang={lang}
-            goal={settings.gardenGoal ?? GOAL_DEFAULT}
-            onGoalChange={(g) => patchSettings({ gardenGoal: g })}
-          />
-        )}
+              <InsightBanner insight={insight} />
+              <LedgerFilter lang={lang} />
+              <TemplateChips lang={lang} onLogged={() => celebrate(s.toastBloom)} />
+              <View style={styles.searchWrap}>
+                <View style={[styles.searchBar, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'xs')]}>
+                  <Icon name="search" color={t.inkSoft} size={17} />
+                  <TextInput
+                    style={[styles.searchInput, { color: t.ink }]}
+                    value={searchQ}
+                    onChangeText={setSearchQ}
+                    placeholder={s.searchPh}
+                    placeholderTextColor={t.inkSoft}
+                  />
+                  {searchQ.length > 0 && (
+                    <Pressable onPress={() => setSearchQ('')} hitSlop={8} accessibilityRole="button" accessibilityLabel={s.a11yClearSearch}>
+                      <View style={[styles.searchClear, { backgroundColor: t.line }]}>
+                        <Icon name="close" color={t.inkSoft} size={11} strokeWidth={2.4} />
+                      </View>
+                    </Pressable>
+                  )}
+                </View>
+              </View>
+              <EntryList
+                entries={listEntries}
+                customCats={customCats}
+                lang={lang}
+                onPress={setDetailId}
+                onLongPress={setMarkId}
+                emptyText={searchQ ? s.noResult : undefined}
+              />
+            </>
+          )}
+          {tab === 'cal' && <CalendarView all={liveAll} anchor={anchor} cycleStart={cycleStart} customCats={customCats} lang={lang} />}
+          {tab === 'stats' && (
+            <StatsView all={liveAll} anchor={anchor} cycleStart={cycleStart} customCats={customCats} lang={lang} onEntryPress={setDetailId} />
+          )}
+          {tab === 'wall' && (
+            <GardenView
+              count={cycleEntries.length}
+              streak={streak}
+              lang={lang}
+              goal={settings.gardenGoal ?? GOAL_DEFAULT}
+              onGoalChange={(g) => patchSettings({ gardenGoal: g })}
+            />
+          )}
+        </TabFade>
       </SafeAreaView>
 
       <BottomNav active={tab} onChange={setTab} lang={lang} />
 
-      <AnimatedPressable
-        style={[styles.fab, { backgroundColor: t.hibiscus, borderColor: t.paper, transform: [{ scale: fabScale }] }]}
+      <Tap
+        style={[styles.fab, { borderColor: t.card }, shadow(t, 'glow')]}
+        scaleTo={0.86}
         onPress={openNew}
-        onPressIn={() => springFab(0.86)}
-        onPressOut={() => springFab(1)}
         accessibilityRole="button"
         accessibilityLabel={s.a11yAdd}
       >
-        <Text style={styles.fabPlus}>＋</Text>
-      </AnimatedPressable>
+        <GradientFill from={t.gradFrom} to={t.gradTo} radius={28} />
+        <Icon name="plus" color="#fff" size={28} strokeWidth={2.5} />
+      </Tap>
 
       <RecordSheet
         visible={sheetOpen}
@@ -230,6 +256,8 @@ export const LedgerScreen = observer(function LedgerScreen() {
         onDeleted={deleteToast}
       />
 
+      {burst != null && <PetalBurst key={burst} onDone={() => setBurst(null)} />}
+
       {toast && (
         <Toast
           key={toast.key}
@@ -254,18 +282,27 @@ const styles = StyleSheet.create({
   safe: { flex: 1, maxWidth: 480, width: '100%', alignSelf: 'center' },
   top: { paddingHorizontal: 22, paddingTop: 14, paddingBottom: 8, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },
   brand: { flexDirection: 'row', alignItems: 'center', gap: 11 },
-  title: { fontSize: 18, fontWeight: '800', letterSpacing: 0.5 },
-  sub: { fontSize: 10, letterSpacing: 3, fontWeight: '600' },
-  topBtns: { flexDirection: 'row', gap: 7 },
-  iconBtn: { borderWidth: 1, borderRadius: 20, paddingVertical: 6, paddingHorizontal: 11 },
-  iconBtnText: { fontSize: 12, fontWeight: '600' },
-  searchWrap: { paddingHorizontal: 22, paddingTop: 2, paddingBottom: 2 },
-  searchBar: { flexDirection: 'row', alignItems: 'center', gap: 8, borderWidth: 1, borderRadius: 13, paddingVertical: 9, paddingHorizontal: 13 },
-  searchInput: { flex: 1, fontSize: 14, padding: 0 },
-  fab: {
-    position: 'absolute', alignSelf: 'center', bottom: 44, width: 60, height: 60, borderRadius: 30,
-    borderWidth: 4, alignItems: 'center', justifyContent: 'center',
-    shadowColor: '#D94E5C', shadowOpacity: 0.45, shadowRadius: 12, shadowOffset: { width: 0, height: 8 }, elevation: 12,
+  title: { fontSize: 19, fontWeight: '800', letterSpacing: 0.4 },
+  sub: { fontSize: 10, letterSpacing: 3, fontWeight: '700', marginTop: 1 },
+  topBtns: { flexDirection: 'row', gap: 8 },
+  iconBtn: {
+    width: 36, height: 36, borderRadius: 18, borderWidth: 1,
+    alignItems: 'center', justifyContent: 'center',
   },
-  fabPlus: { color: '#fff', fontSize: 28, fontWeight: '300', lineHeight: 32 },
+  iconBtnText: { fontSize: 12, fontWeight: '700' },
+  searchWrap: { paddingHorizontal: 22, paddingTop: 4, paddingBottom: 2 },
+  searchBar: {
+    flexDirection: 'row', alignItems: 'center', gap: 9,
+    borderWidth: StyleSheet.hairlineWidth, borderRadius: RAD.pill,
+    paddingVertical: 10, paddingHorizontal: 15,
+  },
+  searchInput: { flex: 1, fontSize: 14, padding: 0 },
+  searchClear: {
+    width: 20, height: 20, borderRadius: 10,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  fab: {
+    position: 'absolute', alignSelf: 'center', bottom: 46, width: 62, height: 62, borderRadius: 31,
+    borderWidth: 3, alignItems: 'center', justifyContent: 'center', overflow: 'hidden',
+  },
 });

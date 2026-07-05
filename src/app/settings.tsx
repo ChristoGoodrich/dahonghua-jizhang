@@ -13,7 +13,10 @@ import { scheduleDailyReminder, cancelReminder, isValidTime } from '@/util/remin
 import { aiConfigured } from '@/ai/client';
 import { useTheme } from '@/theme/ThemeContext';
 import { Flower } from '@/components/Flower';
-import { THEME_KEYS, THEME_SWATCH } from '@/theme/tokens';
+import { Tap } from '@/components/ui/Tap';
+import { Icon } from '@/components/ui/Icon';
+import { Btn } from '@/components/ui/Btn';
+import { THEME_KEYS, THEME_SWATCH, RAD, shadow } from '@/theme/tokens';
 import { I18N } from '@/i18n';
 
 async function readFileText(uri: string): Promise<string> {
@@ -99,17 +102,23 @@ export default observer(function SettingsScreen() {
     </View>
   );
 
+  const chev = <Icon name="chevR" color={t.hibiscus} size={17} strokeWidth={2} />;
+
   return (
     <View style={[styles.root, { backgroundColor: t.paper }]}>
       <SafeAreaView edges={['top']} style={styles.safe}>
         <View style={styles.header}>
-          <Pressable
+          <Tap
             onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
             hitSlop={12}
-            style={styles.back}
+            scaleTo={0.92}
+            accessibilityRole="button"
+            accessibilityLabel={s.back}
+            style={[styles.back, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'xs')]}
           >
-            <Text style={[styles.backText, { color: t.hibiscus }]}>‹ {s.back}</Text>
-          </Pressable>
+            <Icon name="chevL" color={t.hibiscus} size={15} strokeWidth={2.2} />
+            <Text style={[styles.backText, { color: t.hibiscus }]}>{s.back}</Text>
+          </Tap>
           <Flower size={28} center="yen" petal={t.hibiscus} stroke={t.hibiscusDeep} />
         </View>
         <Text style={[styles.title, { color: t.ink }]}>{s.setTitle}</Text>
@@ -117,7 +126,7 @@ export default observer(function SettingsScreen() {
 
         <ScrollView contentContainerStyle={styles.body} showsVerticalScrollIndicator={false}>
           <Pressable onPress={() => router.push('/budget')}>
-            <Row title={s.setBudgetNav} desc={s.setBudgetNavD} right={<Text style={[styles.chev, { color: t.hibiscus }]}>›</Text>} />
+            <Row title={s.setBudgetNav} desc={s.setBudgetNavD} right={chev} />
           </Pressable>
           <Row
             title={s.setCycle}
@@ -138,88 +147,110 @@ export default observer(function SettingsScreen() {
             <Text style={[styles.rowTitle, { color: t.ink }]}>{s.setTheme}</Text>
             <Text style={[styles.rowDesc, { color: t.inkSoft }]}>{s.setThemeD}</Text>
             <View style={styles.themes}>
-              {THEME_KEYS.map((k) => (
-                <Pressable
-                  key={k}
-                  onPress={() => patchSettings({ theme: k })}
-                  style={[
-                    styles.themeDot,
-                    { backgroundColor: THEME_SWATCH[k] + '22', borderColor: settings.theme === k ? t.ink : 'transparent' },
-                  ]}
-                >
-                  <Flower size={24} petal={THEME_SWATCH[k]} />
-                </Pressable>
-              ))}
+              {THEME_KEYS.map((k) => {
+                const on = settings.theme === k;
+                return (
+                  <Tap
+                    key={k}
+                    onPress={() => patchSettings({ theme: k })}
+                    scaleTo={0.88}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected: on }}
+                    accessibilityLabel={k}
+                    style={[
+                      styles.themeDot,
+                      { backgroundColor: THEME_SWATCH[k] + '22', borderColor: on ? THEME_SWATCH[k] : 'transparent' },
+                      on && shadow(t, 'xs'),
+                    ]}
+                  >
+                    <Flower size={26} petal={THEME_SWATCH[k]} />
+                    {on && (
+                      <View style={[styles.themeCheck, { backgroundColor: THEME_SWATCH[k], borderColor: t.card }]}>
+                        <Icon name="check" color="#fff" size={9} strokeWidth={3} />
+                      </View>
+                    )}
+                  </Tap>
+                );
+              })}
             </View>
           </View>
           <Row
             title={s.darkTitle}
             desc={s.darkDesc}
             right={
-              <Pressable
+              <Tap
                 onPress={() => patchSettings({ dark: !settings.dark })}
-                style={[styles.toggleBtn, { borderColor: t.hibiscus }]}
+                scaleTo={0.9}
+                accessibilityRole="button"
+                accessibilityLabel={s.darkTitle}
+                style={[styles.toggleBtn, { borderColor: t.hibiscus, backgroundColor: t.tint }]}
               >
-                <Text style={{ fontSize: 16 }}>{settings.dark ? '🌙' : '☀️'}</Text>
-              </Pressable>
+                <Icon name={settings.dark ? 'moon' : 'sun'} color={t.hibiscus} size={16} />
+              </Tap>
             }
           />
           <Row
             title={s.langTitle}
             desc={s.langDesc}
             right={
-              <Pressable
+              <Tap
                 onPress={() => setLang(lang === 'zh' ? 'en' : 'zh')}
-                style={[styles.toggleBtn, { borderColor: t.hibiscus }]}
+                scaleTo={0.9}
+                accessibilityRole="button"
+                accessibilityLabel={s.langTitle}
+                style={[styles.toggleBtn, { borderColor: t.hibiscus, backgroundColor: t.tint }]}
               >
                 <Text style={[styles.toggleText, { color: t.hibiscus }]}>{lang === 'zh' ? '中' : 'EN'}</Text>
-              </Pressable>
+              </Tap>
             }
           />
 
           <Pressable onPress={() => router.push('/accounts')}>
-            <Row title={s.setAccounts} desc={s.setAccountsD} right={<Text style={[styles.chev, { color: t.hibiscus }]}>›</Text>} />
+            <Row title={s.setAccounts} desc={s.setAccountsD} right={chev} />
           </Pressable>
           <Pressable onPress={() => router.push('/assets')}>
-            <Row title={s.setAssets} desc={s.setAssetsD} right={<Text style={[styles.chev, { color: t.hibiscus }]}>›</Text>} />
+            <Row title={s.setAssets} desc={s.setAssetsD} right={chev} />
           </Pressable>
           <Pressable onPress={() => router.push('/loans')}>
-            <Row title={s.setLoans} desc={s.setLoansD} right={<Text style={[styles.chev, { color: t.hibiscus }]}>›</Text>} />
+            <Row title={s.setLoans} desc={s.setLoansD} right={chev} />
           </Pressable>
           <Pressable onPress={() => router.push('/subs')}>
-            <Row title={s.setSubs} desc={s.setSubsD} right={<Text style={[styles.chev, { color: t.hibiscus }]}>›</Text>} />
+            <Row title={s.setSubs} desc={s.setSubsD} right={chev} />
           </Pressable>
           <Pressable onPress={() => router.push('/reimburse')}>
-            <Row title={s.setReimburse} desc={s.setReimburseD} right={<Text style={[styles.chev, { color: t.hibiscus }]}>›</Text>} />
+            <Row title={s.setReimburse} desc={s.setReimburseD} right={chev} />
           </Pressable>
           <Pressable onPress={() => router.push('/templates')}>
-            <Row title={s.setTemplates} desc={s.setTemplatesD} right={<Text style={[styles.chev, { color: t.hibiscus }]}>›</Text>} />
+            <Row title={s.setTemplates} desc={s.setTemplatesD} right={chev} />
           </Pressable>
           <Pressable onPress={() => router.push('/tags')}>
-            <Row title={s.setTags} desc={s.setTagsD} right={<Text style={[styles.chev, { color: t.hibiscus }]}>›</Text>} />
+            <Row title={s.setTags} desc={s.setTagsD} right={chev} />
           </Pressable>
           <Pressable onPress={() => router.push('/currency')}>
-            <Row title={s.setCurrency} desc={s.setCurrencyD} right={<Text style={[styles.chev, { color: t.hibiscus }]}>›</Text>} />
+            <Row title={s.setCurrency} desc={s.setCurrencyD} right={chev} />
           </Pressable>
           <Pressable onPress={() => router.push('/account')}>
-            <Row title={s.setSync} desc={s.setSyncD} right={<Text style={[styles.chev, { color: t.hibiscus }]}>›</Text>} />
+            <Row title={s.setSync} desc={s.setSyncD} right={chev} />
           </Pressable>
           <Pressable onPress={() => router.push('/review')}>
-            <Row title={s.setReview} desc={s.setReviewD} right={<Text style={[styles.chev, { color: t.hibiscus }]}>›</Text>} />
+            <Row title={s.setReview} desc={s.setReviewD} right={chev} />
           </Pressable>
           {aiConfigured() && (
             <Row
               title={s.aiPrivacyTitle}
               desc={s.aiPrivacyDesc}
               right={
-                <Pressable
+                <Tap
                   onPress={() => patchSettings({ aiShareCategories: settings.aiShareCategories === false })}
-                  style={[styles.toggleBtn, { borderColor: t.hibiscus }]}
+                  scaleTo={0.9}
+                  accessibilityRole="button"
+                  accessibilityLabel={s.aiPrivacyTitle}
+                  style={[styles.toggleBtn, { borderColor: t.hibiscus, backgroundColor: t.tint }]}
                 >
                   <Text style={[styles.toggleText, { color: t.hibiscus }]}>
                     {settings.aiShareCategories === false ? s.aiShareOff : s.aiShareOn}
                   </Text>
-                </Pressable>
+                </Tap>
               }
             />
           )}
@@ -240,9 +271,15 @@ export default observer(function SettingsScreen() {
             title={s.setLock}
             desc={s.setLockD}
             right={
-              <Pressable onPress={toggleLock} style={[styles.toggleBtn, { borderColor: t.hibiscus }]}>
+              <Tap
+                onPress={toggleLock}
+                scaleTo={0.9}
+                accessibilityRole="button"
+                accessibilityLabel={s.setLock}
+                style={[styles.toggleBtn, { borderColor: t.hibiscus, backgroundColor: t.tint }]}
+              >
                 <Text style={[styles.toggleText, { color: t.hibiscus }]}>{settings.lock ? s.lockDisable : s.lockEnable}</Text>
-              </Pressable>
+              </Tap>
             }
           />
 
@@ -250,16 +287,10 @@ export default observer(function SettingsScreen() {
             <Text style={[styles.rowTitle, { color: t.ink }]}>{s.dataTitle}</Text>
             <Text style={[styles.rowDesc, { color: t.inkSoft }]}>{s.dataDesc}</Text>
             <View style={styles.exportRow}>
-              <Pressable style={[styles.exportBtn, { borderColor: t.line, backgroundColor: t.card }]} onPress={exportCSV}>
-                <Text style={[styles.exportText, { color: t.hibiscus }]}>{s.exportCsv}</Text>
-              </Pressable>
-              <Pressable style={[styles.exportBtn, { borderColor: t.line, backgroundColor: t.card }]} onPress={exportBackup}>
-                <Text style={[styles.exportText, { color: t.hibiscus }]}>{s.exportBackup}</Text>
-              </Pressable>
+              <Btn label={s.exportCsv} variant="ghost" onPress={exportCSV} style={styles.exportBtn} />
+              <Btn label={s.exportBackup} variant="ghost" onPress={exportBackup} style={styles.exportBtn} />
             </View>
-            <Pressable style={[styles.importBtn, { backgroundColor: t.hibiscus }]} onPress={pickAndImport}>
-              <Text style={styles.importText}>{s.importBtn}</Text>
-            </Pressable>
+            <Btn label={s.importBtn} onPress={pickAndImport} style={styles.importBtn} />
             {!!status && <Text style={[styles.status, { color: t.leafDeep }]}>{status}</Text>}
           </View>
         </ScrollView>
@@ -272,25 +303,37 @@ const styles = StyleSheet.create({
   root: { flex: 1 },
   safe: { flex: 1, maxWidth: 480, width: '100%', alignSelf: 'center' },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 22, paddingTop: 10 },
-  back: { paddingVertical: 4 },
-  backText: { fontSize: 15, fontWeight: '600' },
-  title: { fontSize: 22, fontWeight: '800', paddingHorizontal: 22, marginTop: 6 },
-  subtitle: { fontSize: 12, paddingHorizontal: 22, marginTop: 2, marginBottom: 8 },
+  back: {
+    flexDirection: 'row', alignItems: 'center', gap: 3,
+    borderWidth: 1, borderRadius: 999,
+    paddingVertical: 6, paddingLeft: 9, paddingRight: 13,
+  },
+  backText: { fontSize: 13.5, fontWeight: '700' },
+  title: { fontSize: 24, fontWeight: '800', letterSpacing: 0.2, paddingHorizontal: 22, marginTop: 10 },
+  subtitle: { fontSize: 12, paddingHorizontal: 22, marginTop: 3, marginBottom: 8 },
   body: { paddingHorizontal: 22, paddingBottom: 60 },
-  row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 14, borderBottomWidth: 1, gap: 12 },
-  rowCol: { paddingVertical: 14, borderBottomWidth: 1 },
+  row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 14, borderBottomWidth: StyleSheet.hairlineWidth, gap: 12 },
+  rowCol: { paddingVertical: 14, borderBottomWidth: StyleSheet.hairlineWidth },
   rowTitle: { fontSize: 14, fontWeight: '600' },
-  rowDesc: { fontSize: 11.5, marginTop: 2 },
-  numInput: { width: 90, borderWidth: 1, borderRadius: 9, paddingVertical: 8, paddingHorizontal: 10, fontSize: 14, textAlign: 'right' },
-  themes: { flexDirection: 'row', gap: 10, marginTop: 10 },
-  themeDot: { width: 40, height: 40, borderRadius: 20, borderWidth: 2.5, alignItems: 'center', justifyContent: 'center' },
-  toggleBtn: { borderWidth: 1, borderRadius: 20, paddingVertical: 6, paddingHorizontal: 13, minWidth: 44, alignItems: 'center' },
+  rowDesc: { fontSize: 11.5, marginTop: 2, lineHeight: 16 },
+  numInput: {
+    width: 90, borderWidth: StyleSheet.hairlineWidth, borderRadius: RAD.xs,
+    paddingVertical: 8, paddingHorizontal: 10, fontSize: 14, textAlign: 'right',
+    fontVariant: ['tabular-nums'],
+  },
+  themes: { flexDirection: 'row', gap: 12, marginTop: 12 },
+  themeDot: { width: 44, height: 44, borderRadius: 22, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
+  themeCheck: {
+    position: 'absolute', right: -3, top: -3, width: 16, height: 16, borderRadius: 8,
+    borderWidth: 1.5, alignItems: 'center', justifyContent: 'center',
+  },
+  toggleBtn: {
+    borderWidth: 1, borderRadius: 999, paddingVertical: 7, paddingHorizontal: 13,
+    minWidth: 44, alignItems: 'center', justifyContent: 'center',
+  },
   toggleText: { fontSize: 13, fontWeight: '700' },
-  chev: { fontSize: 20, fontWeight: '700' },
   exportRow: { flexDirection: 'row', gap: 10, marginTop: 12 },
-  exportBtn: { flex: 1, borderWidth: 1, borderRadius: 12, paddingVertical: 12, alignItems: 'center' },
-  exportText: { fontSize: 13, fontWeight: '700' },
-  importBtn: { marginTop: 10, borderRadius: 13, padding: 14, alignItems: 'center' },
-  importText: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  exportBtn: { flex: 1 },
+  importBtn: { marginTop: 10 },
   status: { marginTop: 10, fontSize: 13, fontWeight: '600', textAlign: 'center' },
 });

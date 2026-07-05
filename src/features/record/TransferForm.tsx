@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, Text, TextInput, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TextInput, ScrollView, StyleSheet } from 'react-native';
 import { useTheme } from '@/theme/ThemeContext';
+import { Chip } from '@/components/ui/Chip';
+import { RAD } from '@/theme/tokens';
 import { I18N, type Lang } from '@/i18n';
 import type { Account } from '@/domain/types';
 
@@ -30,33 +32,31 @@ export function TransferForm({ accounts, acct, acctTo, fee, discount, setAcct, s
   }
 
   const chip = (a: Account, on: boolean, onPress: () => void) => (
-    <Pressable
-      key={a.id}
-      onPress={onPress}
-      style={[styles.acctChip, { borderColor: on ? t.hibiscus : t.line, backgroundColor: on ? t.paperWarm : t.card }]}
-    >
-      <Text style={{ fontSize: 12.5, fontWeight: '600', color: on ? t.hibiscus : t.inkSoft }}>{nameOf(a)}</Text>
-    </Pressable>
+    <Chip key={a.id} label={nameOf(a)} on={on} onPress={onPress} />
   );
 
   return (
     <View style={styles.xferWrap}>
       <Text style={[styles.pickLabel, { color: t.inkSoft }]}>{s.xferFrom}</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.acctRow} keyboardShouldPersistTaps="handled">
-        {accounts.map((a) =>
-          chip(a, a.id === acct, () => {
-            setAcct(a.id);
-            if (a.id === acctTo) {
-              const o = accounts.find((x) => x.id !== a.id);
-              setAcctTo(o ? o.id : '');
-            }
-          }),
-        )}
+        <View style={styles.acctInner}>
+          {accounts.map((a) =>
+            chip(a, a.id === acct, () => {
+              setAcct(a.id);
+              if (a.id === acctTo) {
+                const o = accounts.find((x) => x.id !== a.id);
+                setAcctTo(o ? o.id : '');
+              }
+            }),
+          )}
+        </View>
       </ScrollView>
 
       <Text style={[styles.pickLabel, { color: t.inkSoft }]}>{s.xferTo}</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.acctRow} keyboardShouldPersistTaps="handled">
-        {accounts.filter((a) => a.id !== acct).map((a) => chip(a, a.id === acctTo, () => setAcctTo(a.id)))}
+        <View style={styles.acctInner}>
+          {accounts.filter((a) => a.id !== acct).map((a) => chip(a, a.id === acctTo, () => setAcctTo(a.id)))}
+        </View>
       </ScrollView>
 
       <View style={styles.xferFeeRow}>
@@ -90,9 +90,9 @@ export function TransferForm({ accounts, acct, acctTo, fee, discount, setAcct, s
 const styles = StyleSheet.create({
   xferWrap: { marginBottom: 12, gap: 6 },
   acctRow: { marginBottom: 12 },
-  acctChip: { borderWidth: 1.5, borderRadius: 20, paddingVertical: 7, paddingHorizontal: 13, marginRight: 7 },
-  pickLabel: { fontSize: 11, fontWeight: '600', marginBottom: 6 },
-  field: { borderWidth: 1, borderRadius: 11, padding: 11, fontSize: 14 },
+  acctInner: { flexDirection: 'row', gap: 7, paddingVertical: 2 },
+  pickLabel: { fontSize: 11, fontWeight: '700', letterSpacing: 0.8, marginBottom: 6 },
+  field: { borderWidth: StyleSheet.hairlineWidth, borderRadius: RAD.xs, padding: 11, fontSize: 14, fontVariant: ['tabular-nums'] },
   xferFeeRow: { flexDirection: 'row', gap: 12, marginTop: 4 },
   xferFeeCol: { flex: 1, gap: 5 },
   convLine: { fontSize: 11, fontWeight: '600', textAlign: 'center', marginBottom: 10 },

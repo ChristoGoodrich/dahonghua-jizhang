@@ -1,7 +1,12 @@
 import React from 'react';
-import { View, Text, Pressable, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { observer } from '@legendapp/state/react';
 import { useTheme } from '@/theme/ThemeContext';
+import { Tap } from '@/components/ui/Tap';
+import { Icon } from '@/components/ui/Icon';
+import { GradientFill } from '@/components/ui/GradientFill';
+import { SheetShell } from '@/components/ui/SheetShell';
+import { RAD, TABULAR, shadow } from '@/theme/tokens';
 import { catOf, catName } from '@/domain/cats';
 import { fmt, fmtShort } from '@/domain/money';
 import { store$, removeEntry } from '@/store/ledger';
@@ -63,19 +68,18 @@ export const DetailSheet = observer(function DetailSheet({ entryId, lang, custom
     ) : null;
 
   return (
-    <View style={styles.overlay}>
-      <Pressable style={styles.mask} onPress={onClose} accessibilityRole="button" accessibilityLabel={s.back} />
-      <View style={[styles.sheet, { backgroundColor: t.paper }]}>
-        <View style={[styles.grip, { backgroundColor: t.line }]} />
-        <Text style={[styles.title, { color: t.inkSoft }]}>{s.dtTitle}</Text>
+    <SheetShell onClose={onClose} closeLabel={s.back}>
+      <Text style={[styles.title, { color: t.inkSoft }]}>{s.dtTitle}</Text>
 
         <View style={styles.hero}>
-          <Text style={styles.heroEmoji}>{c.e}</Text>
+          <View style={[styles.heroEmoWrap, { backgroundColor: c.c + (t.isDark ? '30' : '1F') }]}>
+            <Text style={styles.heroEmoji}>{c.e}</Text>
+          </View>
           <View style={styles.heroMid}>
             <Text style={[styles.heroCat, { color: t.ink }]} numberOfLines={1}>{catName(c, lang)}</Text>
             {!!d.note && <Text style={[styles.heroNote, { color: t.inkSoft }]}>{d.note}</Text>}
           </View>
-          <Text style={[styles.heroAmt, { color: amountColor }]}>{sign}{fmt(d.amt, lang)}</Text>
+          <Text style={[styles.heroAmt, TABULAR, { color: amountColor }]}>{sign}{fmt(d.amt, lang)}</Text>
         </View>
 
         <ScrollView style={styles.rows} contentContainerStyle={styles.rowsInner} showsVerticalScrollIndicator={false}>
@@ -96,46 +100,51 @@ export const DetailSheet = observer(function DetailSheet({ entryId, lang, custom
         </ScrollView>
 
         <View style={styles.actions}>
-          <Pressable
+          <Tap
             style={[styles.actionBtn, { borderColor: t.line, backgroundColor: t.card }]}
+            scaleTo={0.97}
             onPress={del}
             accessibilityRole="button"
             accessibilityLabel={s.del}
           >
-            <Text style={[styles.actionText, { color: t.hibiscusDeep }]}>🗑  {s.del}</Text>
-          </Pressable>
-          <Pressable
-            style={[styles.actionBtn, { backgroundColor: t.hibiscus }]}
+            <Icon name="trash" color={t.hibiscusDeep} size={17} />
+            <Text style={[styles.actionText, { color: t.hibiscusDeep }]}>{s.del}</Text>
+          </Tap>
+          <Tap
+            style={[styles.actionBtn, styles.actionPrimary, shadow(t, 'glow')]}
+            scaleTo={0.97}
             onPress={() => { onClose(); onEdit(entryId!); }}
             accessibilityRole="button"
             accessibilityLabel={s.markEdit}
           >
-            <Text style={[styles.actionText, { color: '#fff' }]}>✏️  {s.markEdit}</Text>
-          </Pressable>
+            <GradientFill from={t.gradFrom} to={t.gradTo} radius={RAD.sm} />
+            <Icon name="edit" color="#fff" size={17} />
+            <Text style={[styles.actionText, { color: '#fff' }]}>{s.markEdit}</Text>
+          </Tap>
         </View>
-      </View>
-    </View>
+    </SheetShell>
   );
 });
 
 const styles = StyleSheet.create({
-  overlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 60, elevation: 60 },
-  mask: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(43,38,34,0.4)' },
-  sheet: { position: 'absolute', left: 0, right: 0, bottom: 0, maxWidth: 480, alignSelf: 'center', width: '100%', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 22, paddingBottom: 32 },
-  grip: { width: 38, height: 4, borderRadius: 4, alignSelf: 'center', marginBottom: 14 },
-  title: { fontSize: 12, fontWeight: '600', marginBottom: 10 },
+  title: { fontSize: 12, fontWeight: '700', letterSpacing: 1, marginBottom: 10 },
   hero: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 6 },
-  heroEmoji: { fontSize: 30, width: 40, textAlign: 'center' },
+  heroEmoWrap: { width: 46, height: 46, borderRadius: 15, alignItems: 'center', justifyContent: 'center' },
+  heroEmoji: { fontSize: 24 },
   heroMid: { flex: 1, minWidth: 0 },
   heroCat: { fontSize: 17, fontWeight: '700' },
   heroNote: { fontSize: 12.5, marginTop: 2 },
-  heroAmt: { fontSize: 20, fontWeight: '800' },
+  heroAmt: { fontSize: 21, fontWeight: '800', letterSpacing: -0.4 },
   rows: { maxHeight: 320, marginTop: 8 },
   rowsInner: { paddingBottom: 4 },
-  row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, paddingVertical: 11, borderBottomWidth: 1 },
+  row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, paddingVertical: 11, borderBottomWidth: StyleSheet.hairlineWidth },
   rowLabel: { fontSize: 13, flexShrink: 0 },
   rowValue: { fontSize: 13, fontWeight: '600', flex: 1, textAlign: 'right' },
   actions: { flexDirection: 'row', gap: 10, marginTop: 18 },
-  actionBtn: { flex: 1, borderWidth: 1, borderRadius: 14, paddingVertical: 13, alignItems: 'center' },
+  actionBtn: {
+    flex: 1, borderWidth: 1, borderRadius: RAD.sm, paddingVertical: 13,
+    alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7,
+  },
+  actionPrimary: { borderWidth: 0, overflow: 'hidden' },
   actionText: { fontSize: 14, fontWeight: '700' },
 });

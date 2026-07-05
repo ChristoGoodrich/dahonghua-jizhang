@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View, Text, TextInput, Pressable, StyleSheet, ScrollView,
-  KeyboardAvoidingView, Platform,
+  KeyboardAvoidingView, Platform, Animated,
 } from 'react-native';
 import { useTheme } from '@/theme/ThemeContext';
 import { Flower } from '@/components/Flower';
+import { Chip } from '@/components/ui/Chip';
+import { Btn } from '@/components/ui/Btn';
+import { RAD, SPRING, TABULAR, shadow } from '@/theme/tokens';
 import { allCats, catName, catOf } from '@/domain/cats';
 import { toBase, curSymbol } from '@/domain/money';
 import { evalExpr, hasOperator, applyKey } from '@/domain/calc';
@@ -55,6 +58,14 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
   const [aiText, setAiText] = useState('');
   const [aiBusy, setAiBusy] = useState(false);
   const [aiMsg, setAiMsg] = useState('');
+
+  // entrance: mask fades in while the sheet springs up from below
+  const enter = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    if (!visible) return;
+    enter.setValue(0);
+    Animated.spring(enter, { toValue: 1, useNativeDriver: true, ...SPRING.soft }).start();
+  }, [visible, enter]);
 
   async function runAI() {
     const text = aiText.trim();
@@ -214,28 +225,49 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
 
   return (
     <View style={styles.overlay}>
-      <Pressable style={styles.mask} onPress={onClose} accessibilityRole="button" accessibilityLabel={s.back} />
+      <Animated.View style={[StyleSheet.absoluteFill, { opacity: enter }]}>
+        <Pressable
+          style={[styles.mask, { backgroundColor: t.overlay }]}
+          onPress={onClose}
+          accessibilityRole="button"
+          accessibilityLabel={s.back}
+        />
+      </Animated.View>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.sheetWrap}
         pointerEvents="box-none"
       >
-        <View style={[styles.sheet, { backgroundColor: t.paper }]}>
+        <Animated.View
+          style={[
+            styles.sheet,
+            { backgroundColor: t.paper },
+            shadow(t, 'lg'),
+            {
+              opacity: enter.interpolate({ inputRange: [0, 0.4, 1], outputRange: [0, 1, 1], extrapolate: 'clamp' }),
+              // clamp so the spring's overshoot can't lift the sheet off the bottom edge
+              transform: [{ translateY: enter.interpolate({ inputRange: [0, 1], outputRange: [56, 0], extrapolate: 'clamp' }) }],
+            },
+          ]}
+        >
           <View style={[styles.grip, { backgroundColor: t.line }]} />
 
-          <View style={[styles.toggle, { backgroundColor: t.line }]}>
+          <View style={[styles.toggle, { backgroundColor: t.isDark ? '#151312' : t.paperWarm, borderColor: t.line }]}>
             {(['exp', 'inc', 'xfer'] as IO[]).map((k) => (
               <Pressable
                 key={k}
                 onPress={() => pickIO(k)}
-                style={[styles.toggleBtn, io === k && { backgroundColor: t.card }]}
+                style={[
+                  styles.toggleBtn,
+                  io === k && [styles.toggleOn, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'xs')],
+                ]}
                 accessibilityRole="tab"
                 accessibilityState={{ selected: io === k }}
               >
                 <Text
                   style={[
                     styles.toggleText,
-                    { color: io === k ? (k === 'inc' ? t.leafDeep : t.ink) : t.inkSoft },
+                    { color: io === k ? (k === 'inc' ? t.leafDeep : k === 'exp' ? t.hibiscus : t.ink) : t.inkSoft },
                   ]}
                 >
                   {k === 'exp' ? s.exp : k === 'inc' ? s.inc : s.xfer}
@@ -245,9 +277,9 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
           </View>
 
           <View style={styles.amtRow}>
-            <Text style={[styles.cur, { color: t.inkSoft }]}>{curSymbol(cur)}</Text>
+            <Text style={[styles.cur, { color: accent }]}>{curSymbol(cur)}</Text>
             <Text
-              style={[styles.amtInput, { color: amt ? t.ink : t.inkSoft }]}
+              style={[styles.amtInput, TABULAR, { color: amt ? t.ink : t.line }]}
               numberOfLines={1}
               adjustsFontSizeToFit
             >
@@ -255,7 +287,7 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
             </Text>
           </View>
           {hasOperator(amt) && (
-            <Text style={[styles.convLine, { color: t.inkSoft }]}>
+            <Text style={[styles.convLine, TABULAR, { color: t.inkSoft }]}>
               = {curSymbol(cur)}{evalExpr(amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </Text>
           )}
@@ -313,14 +345,9 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
               <>
                 <Text style={[styles.pickLabel, { color: t.inkSoft }]}>{s.tagPick}</Text>
                 <View style={styles.tagWrap}>
-                  {tags.normal.map((g) => {
-                    const on = sheetTags.includes(g);
-                    return (
-                      <Pressable key={g} onPress={() => toggleTag(g)} style={[styles.tagChip, { borderColor: on ? t.hibiscus : t.line, backgroundColor: on ? t.paperWarm : t.card }]}>
-                        <Text style={{ fontSize: 12.5, fontWeight: '600', color: on ? t.hibiscus : t.inkSoft }}>{g}</Text>
-                      </Pressable>
-                    );
-                  })}
+                  {tags.normal.map((g) => (
+                    <Chip key={g} label={g} on={sheetTags.includes(g)} onPress={() => toggleTag(g)} />
+                  ))}
                 </View>
               </>
             )}
@@ -331,11 +358,7 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
                 <View style={styles.tagWrap}>
                   {tags.ledger.map((g) => {
                     const on = ledger === g;
-                    return (
-                      <Pressable key={g} onPress={() => setLedger(on ? '' : g)} style={[styles.tagChip, styles.ledgerChip, { borderColor: on ? t.hibiscus : t.line, backgroundColor: on ? t.paperWarm : t.card }]}>
-                        <Text style={{ fontSize: 12.5, fontWeight: '600', color: on ? t.hibiscus : t.inkSoft }}>{g}</Text>
-                      </Pressable>
-                    );
+                    return <Chip key={g} label={g} on={on} dashed onPress={() => setLedger(on ? '' : g)} />;
                   })}
                 </View>
               </>
@@ -344,23 +367,22 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
 
           <CalcKeypad onKey={onKey} lang={lang} />
 
-          <Pressable style={[styles.save, { backgroundColor: accent }]} onPress={save}>
-            <Flower size={20} petal="#fff" stamen="#fff" />
-            <Text style={styles.saveText}>{s.save}</Text>
-          </Pressable>
+          <Btn
+            label={s.save}
+            onPress={save}
+            gradient={io === 'inc' ? [t.leaf, t.leafDeep] : [t.gradFrom, t.gradTo]}
+            leading={<Flower size={20} petal="#fff" stamen="#fff" />}
+            style={styles.save}
+          />
 
           {!editId && io !== 'xfer' && (
-            <Pressable style={[styles.del, { borderColor: t.line }]} onPress={saveAsTemplate}>
-              <Text style={[styles.delText, { color: t.hibiscus }]}>{s.tmplSaveBtn}</Text>
-            </Pressable>
+            <Btn label={s.tmplSaveBtn} onPress={saveAsTemplate} variant="ghost" style={styles.del} />
           )}
 
           {!!editId && (
-            <Pressable style={[styles.del, { borderColor: t.line }]} onPress={del}>
-              <Text style={[styles.delText, { color: t.hibiscus }]}>{s.del}</Text>
-            </Pressable>
+            <Btn label={s.del} onPress={del} variant="ghost" tone={t.hibiscusDeep} style={styles.del} />
           )}
-        </View>
+        </Animated.View>
       </KeyboardAvoidingView>
     </View>
   );
@@ -368,25 +390,35 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
 
 const styles = StyleSheet.create({
   overlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 50, elevation: 50 },
-  mask: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(43,38,34,0.4)' },
+  mask: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 },
   sheetWrap: { flex: 1, justifyContent: 'flex-end' },
-  sheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 22, paddingTop: 12, paddingBottom: 26, maxHeight: '94%' },
-  grip: { width: 38, height: 4, borderRadius: 4, alignSelf: 'center', marginBottom: 10 },
-  toggle: { flexDirection: 'row', borderRadius: 11, padding: 3, marginBottom: 10 },
-  toggleBtn: { flex: 1, paddingVertical: 8, borderRadius: 9, alignItems: 'center' },
-  toggleText: { fontSize: 13.5, fontWeight: '600' },
-  amtRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 4, marginBottom: 2 },
-  cur: { fontSize: 22, fontWeight: '600' },
-  amtInput: { fontSize: 38, fontWeight: '700', flex: 1, textAlign: 'center', padding: 0 },
-  convLine: { fontSize: 11, fontWeight: '600', textAlign: 'center', marginBottom: 10 },
+  sheet: {
+    borderTopLeftRadius: RAD.xl, borderTopRightRadius: RAD.xl,
+    padding: 22, paddingTop: 12, paddingBottom: 26, maxHeight: '94%',
+    // match the app column on wide screens (DetailSheet/MarkSheet do the same)
+    maxWidth: 480, width: '100%', alignSelf: 'center',
+  },
+  grip: { width: 40, height: 4.5, borderRadius: 4, alignSelf: 'center', marginBottom: 12 },
+  toggle: {
+    flexDirection: 'row', borderRadius: RAD.sm, padding: 3, marginBottom: 10,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  toggleBtn: { flex: 1, paddingVertical: 8, borderRadius: RAD.sm - 3, alignItems: 'center' },
+  toggleOn: { borderWidth: StyleSheet.hairlineWidth },
+  toggleText: { fontSize: 13.5, fontWeight: '700' },
+  // symbol + number sit together as one centered group (no full-width flex,
+  // which would park the symbol at the screen edge)
+  amtRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7, marginTop: 6, marginBottom: 2, paddingHorizontal: 24 },
+  cur: { fontSize: 22, fontWeight: '700' },
+  amtInput: { fontSize: 42, fontWeight: '800', letterSpacing: -0.8, flexShrink: 1, textAlign: 'center', padding: 0 },
+  convLine: { fontSize: 11.5, fontWeight: '600', textAlign: 'center', marginBottom: 10 },
   middle: { flexShrink: 1, marginTop: 4, marginBottom: 6 },
-  pickLabel: { fontSize: 11, fontWeight: '600', marginBottom: 6 },
+  pickLabel: { fontSize: 11, fontWeight: '700', letterSpacing: 0.8, marginBottom: 7 },
   tagWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 7, marginBottom: 12 },
-  tagChip: { borderWidth: 1, borderRadius: 18, paddingVertical: 6, paddingHorizontal: 12 },
-  ledgerChip: { borderStyle: 'dashed' },
-  note: { borderWidth: 1, borderRadius: 11, padding: 11, paddingHorizontal: 13, fontSize: 14, marginBottom: 12 },
-  save: { flexDirection: 'row', borderRadius: 13, padding: 14, alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 4 },
-  saveText: { color: '#fff', fontSize: 16, fontWeight: '700' },
-  del: { borderWidth: 1, borderRadius: 13, padding: 11, alignItems: 'center', marginTop: 8 },
-  delText: { fontSize: 13, fontWeight: '600' },
+  note: {
+    borderWidth: StyleSheet.hairlineWidth, borderRadius: RAD.sm,
+    padding: 12, paddingHorizontal: 14, fontSize: 14, marginBottom: 12,
+  },
+  save: { marginTop: 4 },
+  del: { marginTop: 8, paddingVertical: 10 },
 });

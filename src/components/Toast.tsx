@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, Pressable, StyleSheet, Text } from 'react-native';
 import { useTheme } from '@/theme/ThemeContext';
+import { SPRING, shadow } from '@/theme/tokens';
 import { Flower } from './Flower';
 
 interface Props {
@@ -17,7 +18,7 @@ export function Toast({ message, actionLabel, onAction }: Props) {
   const interactive = !!actionLabel;
 
   useEffect(() => {
-    Animated.timing(o, { toValue: 1, duration: 250, useNativeDriver: true }).start();
+    Animated.spring(o, { toValue: 1, useNativeDriver: true, ...SPRING.soft }).start();
     const id = setTimeout(
       () => Animated.timing(o, { toValue: 0, duration: 300, useNativeDriver: true }).start(),
       interactive ? 4200 : 1700,
@@ -30,10 +31,14 @@ export function Toast({ message, actionLabel, onAction }: Props) {
       pointerEvents={interactive ? 'box-none' : 'none'}
       style={[
         styles.toast,
+        { backgroundColor: t.ink },
+        shadow(t, 'lg'),
         {
-          backgroundColor: t.ink,
-          opacity: o,
-          transform: [{ translateY: o.interpolate({ inputRange: [0, 1], outputRange: [20, 0] }) }],
+          opacity: o.interpolate({ inputRange: [0, 0.6, 1], outputRange: [0, 1, 1], extrapolate: 'clamp' }),
+          transform: [
+            { translateY: o.interpolate({ inputRange: [0, 1], outputRange: [26, 0], extrapolate: 'clamp' }) },
+            { scale: o.interpolate({ inputRange: [0, 1], outputRange: [0.92, 1] }) },
+          ],
         },
       ]}
     >

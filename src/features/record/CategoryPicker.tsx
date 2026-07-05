@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { useTheme } from '@/theme/ThemeContext';
+import { Chip } from '@/components/ui/Chip';
+import { Tap } from '@/components/ui/Tap';
+import { RAD } from '@/theme/tokens';
 import { allCats, catName, EMOJI_POOL } from '@/domain/cats';
 import { addCustomCat, addSubcat, removeSubcat } from '@/store/ledger';
 import { EmojiPicker } from './EmojiPicker';
@@ -66,22 +69,30 @@ export function CategoryPicker({
           {cats.map((c) => {
             const on = c.k === cat;
             return (
-              <Pressable key={c.k} onPress={() => onPickCat(c.k)} style={[styles.catPick, on && { borderColor: t.hibiscus }]}>
-                <View style={[styles.catEmo, { backgroundColor: t.card }]}>
+              <Tap
+                key={c.k}
+                onPress={() => onPickCat(c.k)}
+                scaleTo={0.9}
+                accessibilityRole="button"
+                accessibilityState={{ selected: on }}
+                accessibilityLabel={catName(c, lang)}
+                style={[styles.catPick, on && { borderColor: t.hibiscus, backgroundColor: t.tint }]}
+              >
+                <View style={[styles.catEmo, { backgroundColor: on ? 'transparent' : t.card }]}>
                   <Text style={styles.catEmoText}>{c.e}</Text>
                 </View>
-                <Text style={[styles.catName, { color: on ? t.hibiscus : t.inkSoft }]} numberOfLines={1}>
+                <Text style={[styles.catName, { color: on ? t.hibiscus : t.inkSoft }, on && styles.catNameOn]} numberOfLines={1}>
                   {catName(c, lang)}
                 </Text>
-              </Pressable>
+              </Tap>
             );
           })}
-          <Pressable style={styles.catPick} onPress={() => setAddingCat((v) => !v)}>
+          <Tap style={styles.catPick} scaleTo={0.9} onPress={() => setAddingCat((v) => !v)} accessibilityRole="button" accessibilityLabel={s.newCat}>
             <View style={[styles.catEmo, styles.catEmoAdd, { backgroundColor: t.paperWarm, borderColor: t.line }]}>
               <Text style={[styles.catEmoText, { color: t.inkSoft }]}>＋</Text>
             </View>
             <Text style={[styles.catName, { color: t.inkSoft }]}>{s.newCat}</Text>
-          </Pressable>
+          </Tap>
         </View>
       </View>
 
@@ -106,20 +117,16 @@ export function CategoryPicker({
           {(subcats[cat] ?? []).map((sc) => {
             const on = subcat === sc.k;
             return (
-              <Pressable
+              <Chip
                 key={sc.k}
+                label={sc.name}
+                on={on}
                 onPress={() => onPickSubcat(on ? '' : sc.k)}
                 onLongPress={() => removeSubcat(cat, sc.k)}
-                delayLongPress={500}
-                style={[styles.tagChip, { borderColor: on ? t.hibiscus : t.line, backgroundColor: on ? t.paperWarm : t.card }]}
-              >
-                <Text style={{ fontSize: 12.5, fontWeight: '600', color: on ? t.hibiscus : t.inkSoft }}>{sc.name}</Text>
-              </Pressable>
+              />
             );
           })}
-          <Pressable onPress={() => setAddingSubcat((v) => !v)} style={[styles.tagChip, styles.ledgerChip, { borderColor: t.line, backgroundColor: t.card }]}>
-            <Text style={{ fontSize: 12.5, fontWeight: '600', color: t.inkSoft }}>{s.subcatAdd}</Text>
-          </Pressable>
+          <Chip label={s.subcatAdd} dashed onPress={() => setAddingSubcat((v) => !v)} />
         </View>
         {addingSubcat && (
           <View style={styles.subcatForm}>
@@ -139,19 +146,12 @@ export function CategoryPicker({
 
       {accounts.length > 1 && (
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.acctRow} keyboardShouldPersistTaps="handled">
-          {accounts.map((a) => {
-            const on = a.id === acct;
-            const nm = lang === 'zh' ? a.name : a.nameEn || a.name;
-            return (
-              <Pressable
-                key={a.id}
-                onPress={() => onPickAcct(a.id)}
-                style={[styles.acctChip, { borderColor: on ? t.hibiscus : t.line, backgroundColor: on ? t.paperWarm : t.card }]}
-              >
-                <Text style={{ fontSize: 12.5, fontWeight: '600', color: on ? t.hibiscus : t.inkSoft }}>{nm}</Text>
-              </Pressable>
-            );
-          })}
+          <View style={styles.acctInner}>
+            {accounts.map((a) => {
+              const nm = lang === 'zh' ? a.name : a.nameEn || a.name;
+              return <Chip key={a.id} label={nm} on={a.id === acct} onPress={() => onPickAcct(a.id)} />;
+            })}
+          </View>
         </ScrollView>
       )}
     </>
@@ -163,22 +163,21 @@ const styles = StyleSheet.create({
   cats: { flexDirection: 'row', flexWrap: 'wrap', rowGap: 4, columnGap: 6 },
   catPick: {
     width: '18.4%', alignItems: 'center', gap: 4, paddingVertical: 7,
-    borderRadius: 12, borderWidth: 1.5, borderColor: 'transparent',
+    borderRadius: RAD.sm, borderWidth: 1.2, borderColor: 'transparent',
   },
-  catEmo: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-  catEmoAdd: { borderWidth: 1.5, borderStyle: 'dashed' },
+  catEmo: { width: 40, height: 40, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
+  catEmoAdd: { borderWidth: 1.2, borderStyle: 'dashed' },
   catEmoText: { fontSize: 19 },
   catName: { fontSize: 10.5 },
-  catForm: { borderWidth: 1, borderRadius: 13, padding: 12, marginBottom: 12, gap: 10 },
-  field: { borderWidth: 1, borderRadius: 11, padding: 11, fontSize: 14 },
+  catNameOn: { fontWeight: '700' },
+  catForm: { borderWidth: 1, borderRadius: RAD.sm, padding: 12, marginBottom: 12, gap: 10 },
+  field: { borderWidth: StyleSheet.hairlineWidth, borderRadius: RAD.xs, padding: 11, fontSize: 14 },
   subcatWrap: { marginBottom: 12 },
   subcatChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 7 },
   subcatForm: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 10 },
-  subcatSave: { borderRadius: 11, paddingVertical: 11, paddingHorizontal: 16, alignItems: 'center' },
-  tagChip: { borderWidth: 1, borderRadius: 18, paddingVertical: 6, paddingHorizontal: 12 },
-  ledgerChip: { borderStyle: 'dashed' },
+  subcatSave: { borderRadius: RAD.xs, paddingVertical: 11, paddingHorizontal: 16, alignItems: 'center' },
   acctRow: { marginBottom: 12 },
-  acctChip: { borderWidth: 1.5, borderRadius: 20, paddingVertical: 7, paddingHorizontal: 13, marginRight: 7 },
-  save: { flexDirection: 'row', borderRadius: 13, padding: 14, alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 4 },
+  acctInner: { flexDirection: 'row', gap: 7, paddingVertical: 2 },
+  save: { flexDirection: 'row', borderRadius: RAD.sm, padding: 14, alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 4 },
   saveText: { color: '#fff', fontSize: 16, fontWeight: '700' },
 });
