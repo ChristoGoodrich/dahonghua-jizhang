@@ -34,6 +34,17 @@ jest.mock('expo-file-system/legacy', () => {
   return jest.requireMock('expo-file-system');
 });
 
+// expo-print mock
+jest.mock('expo-print', () => ({
+  printToFileAsync: async ({ html }) => ({ uri: 'file:///mock-print/output.pdf' }),
+}));
+
+// expo-sharing mock
+jest.mock('expo-sharing', () => ({
+  isAvailableAsync: async () => true,
+  shareAsync: async (uri) => {},
+}));
+
 // expo-sqlite needs a mock for Jest — create an in-memory SQLite-like interface
 jest.mock('expo-sqlite', () => {
   const databases = new Map();
