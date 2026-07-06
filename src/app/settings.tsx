@@ -213,6 +213,9 @@ export default observer(function SettingsScreen() {
           <Pressable onPress={() => router.push('/review')}>
             <Row title={s.setReview} desc={s.setReviewD} right={chev} />
           </Pressable>
+          <Pressable onPress={() => router.push('/feedback')}>
+            <Row title={lang === 'zh' ? '意见反馈' : 'Feedback'} desc={lang === 'zh' ? '你的建议让大红花更好' : 'Help us improve Red Blossom'} right={chev} />
+          </Pressable>
           {aiConfigured() && (
             <Row
               title={s.aiPrivacyTitle}
