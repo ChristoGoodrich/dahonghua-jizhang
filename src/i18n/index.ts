@@ -47,6 +47,13 @@ export interface Strings {
   setTheme: string; setThemeD: string; darkTitle: string; darkDesc: string;
   langTitle: string; langDesc: string; dataTitle: string; dataDesc: string; importBtn: string;
   back: string;
+  // bill import (支付宝 / 微信 CSV → entries)
+  billImportNav: string; billImportNavD: string;
+  billImportTitle: string; billImportSub: string;
+  biPick: string; biParsing: string; biHint: string; biNoHeader: string;
+  biSourceLabel: string; biAlipay: string; biWechat: string; biGeneric: string;
+  biPreview: string; biFresh: string; biDup: string; biSkip: string; // %d
+  biConfirm: string; biImported: string; biNothing: string; biMore: string; // %d
   // accounts
   setAccounts: string; setAccountsD: string; acctAdd: string;
   acctName: string; acctBal: string; acctSaveBtn: string; acctBalance: string; acctDefault: string;
@@ -158,6 +165,14 @@ export const I18N: Record<Lang, Strings> = {
     setTheme: '花色主题', setThemeD: '换个心情', darkTitle: '深色模式', darkDesc: '夜里记账更护眼',
     langTitle: '语言', langDesc: '中文 / English', dataTitle: '从备份导入', dataDesc: '读取旧版「备份全部数据」的 JSON',
     importBtn: '选择备份文件', back: '返回',
+    billImportNav: '导入账单', billImportNavD: '从支付宝 / 微信 CSV 导入',
+    billImportTitle: '导入账单', billImportSub: '支持支付宝、微信导出的 CSV 账单',
+    biPick: '选择账单文件', biParsing: '解析中…',
+    biHint: '在支付宝或微信里导出「交易明细」CSV，再到这里选择文件。会自动识别列、匹配分类，并跳过已存在的账单。',
+    biNoHeader: '未找到账单表头，请确认这是支付宝或微信导出的 CSV 文件',
+    biSourceLabel: '来源', biAlipay: '支付宝', biWechat: '微信', biGeneric: '通用 CSV',
+    biPreview: '账单预览', biFresh: '可导入', biDup: '已存在 · 跳过', biSkip: '已忽略',
+    biConfirm: '导入', biImported: '已导入', biNothing: '没有可导入的新账单', biMore: '等',
     setAccounts: '账户', setAccountsD: '现金、信用卡、微信…分开记', acctAdd: '＋ 添加账户',
     acctName: '账户名（如 微信）', acctBal: '初始余额', acctSaveBtn: '保存账户', acctBalance: '余额', acctDefault: '默认',
     acctKind: '类型', acctKindCash: '现金', acctKindCredit: '信用', acctKindPrepaid: '储值', acctOwed: '欠款',
@@ -245,6 +260,14 @@ export const I18N: Record<Lang, Strings> = {
     setTheme: 'Flower theme', setThemeD: 'Switch the mood', darkTitle: 'Dark mode', darkDesc: 'Easier on the eyes at night',
     langTitle: 'Language', langDesc: '中文 / English', dataTitle: 'Import from backup', dataDesc: "Read the old app's full-backup JSON",
     importBtn: 'Choose backup file', back: 'Back',
+    billImportNav: 'Import bills', billImportNavD: 'From an Alipay / WeChat CSV',
+    billImportTitle: 'Import bills', billImportSub: 'CSV exports from Alipay & WeChat Pay',
+    biPick: 'Choose a bill file', biParsing: 'Parsing…',
+    biHint: 'Export your transaction CSV from Alipay or WeChat, then pick the file here. Columns are auto-detected, categories matched, and existing bills skipped.',
+    biNoHeader: "Couldn't find a bill header — make sure this is an Alipay or WeChat CSV export",
+    biSourceLabel: 'Source', biAlipay: 'Alipay', biWechat: 'WeChat', biGeneric: 'Generic CSV',
+    biPreview: 'Preview', biFresh: 'To import', biDup: 'Already exists · skip', biSkip: 'Ignored',
+    biConfirm: 'Import', biImported: 'Imported', biNothing: 'No new bills to import', biMore: 'and more',
     setAccounts: 'Accounts', setAccountsD: 'Cash, card, wallet… kept apart', acctAdd: '＋ Add account',
     acctName: 'Account name (e.g. Card)', acctBal: 'Starting balance', acctSaveBtn: 'Save account', acctBalance: 'Balance', acctDefault: 'Default',
     acctKind: 'Type', acctKindCash: 'Cash', acctKindCredit: 'Credit', acctKindPrepaid: 'Prepaid', acctOwed: 'Owed',
