@@ -5,6 +5,16 @@ import { Platform } from 'react-native';
 
 const HHMM = /^([01]?\d|2[0-3]):([0-5]\d)$/;
 
+/** Lazy-load expo-notifications. Returns null on web. */
+async function loadNotifications(): Promise<any | null> {
+  if (Platform.OS === 'web') return null;
+  try {
+    return require('expo-notifications');
+  } catch {
+    return null;
+  }
+}
+
 export function isValidTime(time: string): boolean {
   return HHMM.test(time.trim());
 }
@@ -13,7 +23,8 @@ export function isValidTime(time: string): boolean {
  *  unsupported or permission denied. */
 export async function scheduleDailyReminder(time: string, title: string, body: string): Promise<boolean> {
   if (Platform.OS === 'web' || !isValidTime(time)) return false;
-  const Notifications: any = await import('expo-notifications');
+  const Notifications = await loadNotifications();
+  if (!Notifications) return false;
   const perm = await Notifications.getPermissionsAsync();
   const granted = perm.granted || (await Notifications.requestPermissionsAsync()).granted;
   if (!granted) return false;
@@ -27,7 +38,42 @@ export async function scheduleDailyReminder(time: string, title: string, body: s
 }
 
 export async function cancelReminder(): Promise<void> {
-  if (Platform.OS === 'web') return;
-  const Notifications: any = await import('expo-notifications');
+  const Notifications = await loadNotifications();
+  if (!Notifications) return;
   await Notifications.cancelAllScheduledNotificationsAsync();
+}
+
+/** Send an immediate budget-warning notification. */
+export async function scheduleBudgetWarning(percentage: number, remaining: string, lang: 'zh' | 'en' = 'zh'): Promise<void> {
+  const Notifications = await loadNotifications();
+  if (!Notifications) return;
+  const perm = await Notifications.getPermissionsAsync();
+  const granted = perm.granted || (await Notifications.requestPermissionsAsync()).granted;
+  if (!granted) return;
+  const title = lang === 'zh' ? '预算预警' : 'Budget Warning';
+  const body = lang === 'zh'
+    ? `已使用 ${percentage}%，还剩 ${remaining}`
+    : `${percentage}% used, ${remaining} left`;
+  await Notifications.scheduleNotificationAsync({
+    content: { title, body },
+    trigger: null,
+  });
+}
+
+/** Schedule a daily repeating reminder at the given hour:minute. */
+export async function scheduleCustomReminder(hour: number, minute: number, lang: 'zh' | 'en' = 'zh'): Promise<boolean> {
+  if (hour < 0 || hour > 23 || minute < 0 || minute > 59) return false;
+  const Notifications = await loadNotifications();
+  if (!Notifications) return false;
+  const perm = await Notifications.getPermissionsAsync();
+  const granted = perm.granted || (await Notifications.requestPermissionsAsync()).granted;
+  if (!granted) return false;
+  await Notifications.cancelAllScheduledNotificationsAsync();
+  const title = lang === 'zh' ? '记账提醒' : 'Reminder';
+  const body = lang === 'zh' ? '别忘了记一笔哦 🌺' : "Don't forget to log an entry 🌺";
+  await Notifications.scheduleNotificationAsync({
+    content: { title, body },
+    trigger: { type: Notifications.SchedulableTriggerInputType.DAILY, hour, minute },
+  });
+  return true;
 }
