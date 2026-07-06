@@ -9,6 +9,8 @@ import { catOf, catName } from '@/domain/cats';
 import { fmt, fmtShort, fmtNum } from '@/domain/money';
 import { byCategory, overview, comparison, topEntries, byWeekday } from '@/domain/stats';
 import { CategoryDonut } from './CategoryDonut';
+import { TrendChart } from './TrendChart';
+import { dailyTrend } from '@/domain/trends';
 import { PERIODS, periodRange, shiftPeriod, periodLabel, periodTrend, bucketLabel, entriesInPeriod, type Period } from '@/domain/period';
 import type { Category, Entry, IO } from '@/domain/types';
 import { I18N, type Lang } from '@/i18n';
@@ -75,6 +77,7 @@ export function StatsView({ all, anchor, cycleStart, customCats, lang, onEntryPr
   const weekday = useMemo(() => byWeekday(rangeEntries, io), [rangeEntries, io]);
   const wdMax = Math.max(...weekday.map((x) => x.amt), 1);
   const wdHasData = weekday.some((x) => x.count > 0);
+  const trendData = useMemo(() => dailyTrend(all, 7), [all]);
 
   // month-only: cumulative this-vs-last comparison
   const cmp = useMemo(() => (period === 'month' ? comparison(all, pAnchor, cycleStart) : null), [period, all, pAnchor, cycleStart]);
@@ -127,6 +130,8 @@ export function StatsView({ all, anchor, cycleStart, customCats, lang, onEntryPr
         {tile(s.ovBalance, fmt(ov.balance, lang))}
         {tile(s.ovCount, String(ov.count))}
       </View>
+
+      <TrendChart data={trendData} lang={lang} type="both" />
 
       <View style={styles.ioRow}>
         {(['exp', 'inc'] as IO[]).map((k) => (
