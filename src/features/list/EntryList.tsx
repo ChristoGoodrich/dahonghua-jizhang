@@ -21,6 +21,7 @@ interface Props {
   onDelete?: (id: string) => void;
   onEdit?: (id: string) => void;
   emptyText?: string; // overrides the default empty message (e.g. "no results")
+  columns?: number; // 1 (default) or 2+ for tablet
 }
 
 interface DayGroup {
@@ -33,7 +34,8 @@ interface DayGroup {
 
 type FlatItem =
   | { type: 'header'; key: string; label: string; dayExp: number; dayInc: number }
-  | { type: 'entry'; key: string; entry: Entry; groupKey: string };
+  | { type: 'entry'; key: string; entry: Entry; groupKey: string }
+  | { type: 'entryrow'; key: string; entries: Entry[]; groupKey: string };
 
 const HEADER_HEIGHT = 30;
 const ROW_HEIGHT = 67;
@@ -50,7 +52,7 @@ function dayLabel(key: string, lang: Lang, s: typeof I18N['zh']): string {
   });
 }
 
-export function EntryList({ entries, customCats, lang, onPress, onLongPress, onDelete, onEdit, emptyText }: Props) {
+export function EntryList({ entries, customCats, lang, onPress, onLongPress, onDelete, onEdit, emptyText, columns = 1 }: Props) {
   const t = useTheme();
   const s = I18N[lang];
   const accounts = store$.accounts.peek();
@@ -93,12 +95,20 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
     const items: FlatItem[] = [];
     for (const g of groups) {
       items.push({ type: 'header', key: g.key, label: g.label, dayExp: g.dayExp, dayInc: g.dayInc });
-      for (const d of g.items) {
-        items.push({ type: 'entry', key: d.id, entry: d, groupKey: g.key });
+      if (columns > 1) {
+        // Group entries into rows of `columns` items for multi-column layout
+        for (let i = 0; i < g.items.length; i += columns) {
+          const rowEntries = g.items.slice(i, i + columns);
+          items.push({ type: 'entryrow', key: `row-${g.key}-${i}`, entries: rowEntries, groupKey: g.key });
+        }
+      } else {
+        for (const d of g.items) {
+          items.push({ type: 'entry', key: d.id, entry: d, groupKey: g.key });
+        }
       }
     }
     return items;
-  }, [groups]);
+  }, [groups, columns]);
 
   const rowStyle = useMemo(() => [
     styles.row,
@@ -107,6 +117,7 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
   ], [t]);
 
   const getItemLayout = useCallback((_data: ArrayLike<FlatItem> | null | undefined, index: number) => {
+    if (columns > 1) return undefined as any;
     let offset = 0;
     for (let i = 0; i < index; i++) {
       const item = flatData[i];
@@ -115,22 +126,9 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
     const item = flatData[index];
     const length = item.type === 'header' ? HEADER_HEIGHT : ROW_HEIGHT;
     return { length, offset, index };
-  }, [flatData]);
+  }, [flatData, columns]);
 
-  const renderItem = useCallback(({ item }: { item: FlatItem }) => {
-    if (item.type === 'header') {
-      return (
-        <View style={styles.dayHead}>
-          <Text style={[styles.dayLabel, { color: t.inkSoft }]}>{item.label}</Text>
-          <Text style={[styles.dayLabel, TABULAR, { color: t.inkSoft }]}>
-            {item.dayExp > 0 || item.dayInc === 0
-              ? `${s.exp} ${fmt(item.dayExp, lang)}`
-              : `${s.inc} ${fmt(item.dayInc, lang)}`}
-          </Text>
-        </View>
-      );
-    }
-    const d = item.entry;
+  const renderSingleEntry = useCallback((d: Entry) => {
     if (d.io === 'xfer') {
       return (
         <SwipeableRow onDelete={onDelete ? () => onDelete(d.id) : undefined} onEdit={onEdit ? () => onEdit(d.id) : undefined}>
@@ -159,15 +157,15 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
     }
     const c = catOf(d.io, d.cat, customCats);
     return (
-        <SwipeableRow onDelete={onDelete ? () => onDelete(d.id) : undefined} onEdit={onEdit ? () => onEdit(d.id) : undefined}>
-          <Tap
-            onPress={() => onPress(d.id)}
-            onLongPress={() => onLongPress?.(d.id)}
-            delayLongPress={400}
-            scaleTo={0.98}
-            style={rowStyle}
-            accessibilityLabel={`${catName(c, lang)}, ${d.io === 'exp' ? '-' : '+'}${fmtNum(d.amt)}${d.note ? ', ' + d.note : ''}`}
-          >
+      <SwipeableRow onDelete={onDelete ? () => onDelete(d.id) : undefined} onEdit={onEdit ? () => onEdit(d.id) : undefined}>
+        <Tap
+          onPress={() => onPress(d.id)}
+          onLongPress={() => onLongPress?.(d.id)}
+          delayLongPress={400}
+          scaleTo={0.98}
+          style={rowStyle}
+          accessibilityLabel={`${catName(c, lang)}, ${d.io === 'exp' ? '-' : '+'}${fmtNum(d.amt)}${d.note ? ', ' + d.note : ''}`}
+        >
           <View style={[styles.emo, { backgroundColor: c.c + (t.isDark ? '30' : '1F') }]}>
             <Text style={styles.emoText}>{c.e}</Text>
           </View>
@@ -195,6 +193,34 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
     );
   }, [t, s, lang, customCats, rowStyle, onPress, onLongPress, onDelete, onEdit, acctName]);
 
+  const renderItem = useCallback(({ item }: { item: FlatItem }) => {
+    if (item.type === 'header') {
+      return (
+        <View style={styles.dayHead}>
+          <Text style={[styles.dayLabel, { color: t.inkSoft }]}>{item.label}</Text>
+          <Text style={[styles.dayLabel, TABULAR, { color: t.inkSoft }]}>
+            {item.dayExp > 0 || item.dayInc === 0
+              ? `${s.exp} ${fmt(item.dayExp, lang)}`
+              : `${s.inc} ${fmt(item.dayInc, lang)}`}
+          </Text>
+        </View>
+      );
+    }
+    if (item.type === 'entryrow') {
+      // Multi-column row for tablet
+      return (
+        <View style={styles.gridRow}>
+          {item.entries.map((entry) => (
+            <View key={entry.id} style={[styles.gridCol, { flex: 1 }]}>
+              {renderSingleEntry(entry)}
+            </View>
+          ))}
+        </View>
+      );
+    }
+    return renderSingleEntry(item.entry);
+  }, [t, s, lang, renderSingleEntry]);
+
   if (!entries.length) {
     return (
       <View style={styles.empty}>
@@ -212,6 +238,8 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
       renderItem={renderItem}
       keyExtractor={(item) => item.key}
       getItemLayout={getItemLayout}
+      numColumns={columns}
+      columnWrapperStyle={columns > 1 ? styles.columnGap : undefined}
       maxToRenderPerBatch={10}
       windowSize={5}
       removeClippedSubviews={true}
@@ -254,4 +282,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   emptyText: { fontSize: 13, textAlign: 'center' },
+  columnGap: { gap: 8 },
+  gridRow: { flexDirection: 'row', gap: 8, marginBottom: 8 },
+  gridCol: { flex: 1 },
 });
