@@ -49,6 +49,8 @@ export interface Settings {
   lock?: boolean; // require biometric/device auth on launch
   gardenGoal?: number; // flowers to fill the monthly garden wall (default 28)
   aiShareCategories?: boolean; // send category names to the AI parser (default true)
+  weeklyBudget?: number; // 周预算
+  budgetMode?: 'monthly' | 'weekly'; // 预算模式
 }
 
 export type ThemeKey = 'default' | 'sakura' | 'daisy' | 'jasmine';

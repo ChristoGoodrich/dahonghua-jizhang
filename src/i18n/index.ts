@@ -26,6 +26,8 @@ export interface Strings {
   budgetScreenTitle: string; budgetScreenSub: string;
   budgetMonthlySec: string; budgetDailySec: string; budgetCatSec: string; budgetCatSecD: string;
   budgetDailyD: string; budgetCatHint: string;
+  setBudgetWeekly: string; setBudgetWeeklyD: string;
+  budgetWeeklyLabel: string; budgetWeeklyLeft: string; budgetWeeklyOver: string; // %s
   insightDailyOver: string; // %s
   // stats
   stToday: string; stAvg: string; stTop: string; stCount: string;
@@ -118,6 +120,8 @@ export const I18N: Record<Lang, Strings> = {
     budgetScreenTitle: '预算', budgetScreenSub: '给花盆设个水位线',
     budgetMonthlySec: '每月预算', budgetDailySec: '每日预算', budgetCatSec: '分类预算', budgetCatSecD: '给单个分类单独设上限',
     budgetDailyD: '每天的花销上限', budgetCatHint: '留空表示该分类不限',
+    setBudgetWeekly: '每周预算', setBudgetWeeklyD: '按周控制花销',
+    budgetWeeklyLabel: '本周预算', budgetWeeklyLeft: '本周还能花 %s', budgetWeeklyOver: '本周超了 %s',
     insightDailyOver: '今天花超了，超出 %s。',
     stToday: '今日花掉', stAvg: '日均', stTop: '最大单笔', stCount: '贴花数',
     stTopSpend: '最大支出 Top', stByWeekday: '按星期',
@@ -191,6 +195,8 @@ export const I18N: Record<Lang, Strings> = {
     budgetScreenTitle: 'Budgets', budgetScreenSub: 'Set the water line for your pot',
     budgetMonthlySec: 'Monthly budget', budgetDailySec: 'Daily budget', budgetCatSec: 'Category budgets', budgetCatSecD: 'Cap individual categories',
     budgetDailyD: 'A spending cap for each day', budgetCatHint: 'Leave blank for no cap',
+    setBudgetWeekly: 'Weekly budget', setBudgetWeeklyD: 'Control spending by week',
+    budgetWeeklyLabel: 'This week', budgetWeeklyLeft: '%s left this week', budgetWeeklyOver: '%s over this week',
     insightDailyOver: 'Over today’s budget by %s.',
     stToday: 'Today', stAvg: 'Daily avg', stTop: 'Largest', stCount: 'Flowers',
     stTopSpend: 'Top spending', stByWeekday: 'By weekday',
