@@ -110,6 +110,8 @@ export interface Strings {
   reportTitle: string; reportGenerate: string; reportGenerating: string; reportShare: string;
   reportTotalExp: string; reportTotalInc: string; reportBalance: string; reportByCategory: string;
   reportTransactions: string;
+  // insights
+  insightsTitle: string; insightsSub: string;
   // themes
   themeOcean: string; themeForest: string; themeSunset: string;
 }
@@ -199,6 +201,7 @@ export const I18N: Record<Lang, Strings> = {
     reportTitle: '月度报告', reportGenerate: '生成报告', reportGenerating: '生成中...', reportShare: '分享报告',
     reportTotalExp: '总支出', reportTotalInc: '总收入', reportBalance: '结余', reportByCategory: '分类统计',
     reportTransactions: '交易明细',
+    insightsTitle: 'AI 智能洞察', insightsSub: '基于历史数据的支出预测',
     themeOcean: '海洋', themeForest: '森林', themeSunset: '日落',
   },
   en: {
@@ -285,6 +288,7 @@ export const I18N: Record<Lang, Strings> = {
     reportTitle: 'Monthly Report', reportGenerate: 'Generate Report', reportGenerating: 'Generating...', reportShare: 'Share Report',
     reportTotalExp: 'Total Expense', reportTotalInc: 'Total Income', reportBalance: 'Balance', reportByCategory: 'By Category',
     reportTransactions: 'Transactions',
+    insightsTitle: 'AI Insights', insightsSub: 'Expense forecast based on history',
     themeOcean: 'Ocean', themeForest: 'Forest', themeSunset: 'Sunset',
   },
 };

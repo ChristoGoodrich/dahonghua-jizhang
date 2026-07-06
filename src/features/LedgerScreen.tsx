@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Pressable, TextInput, Animated, Platform } from
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useWebKeyboard } from '@/hooks/useWebKeyboard';
+import { useResponsive } from '@/hooks/useResponsive';
 import { observer } from '@legendapp/state/react';
 import { store$, setLang, patchSettings, addEntry } from '@/store/ledger';
 import { useTheme } from '@/theme/ThemeContext';
@@ -61,6 +62,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
   const t = useTheme();
   const router = useRouter();
   const navPad = useNavBottomPad();
+  const responsive = useResponsive();
   const lang = store$.lang.get();
   const s = I18N[lang];
   const data = store$.data.get();
@@ -150,16 +152,25 @@ export const LedgerScreen = observer(function LedgerScreen() {
 
   return (
     <View style={[styles.root, { backgroundColor: t.paper }, Platform.OS === 'web' && styles.rootWeb]}>
-      <SafeAreaView edges={['top']} style={styles.safe}>
+      <SafeAreaView edges={['top']} style={[styles.safe, { maxWidth: responsive.maxContentWidth }]}>
         <View style={styles.top}>
           <View style={styles.brand}>
             <Flower size={42} center="yen" petal={t.hibiscus} stroke={t.hibiscusDeep} />
             <View>
-              <Text style={[styles.title, { color: t.ink }]}>{s.title}</Text>
+              <Text style={[styles.title, { color: t.ink, fontSize: responsive.fontSize.title }]}>{s.title}</Text>
               <Text style={[styles.sub, { color: t.hibiscus }]}>{s.sub}</Text>
             </View>
           </View>
           <View style={styles.topBtns}>
+            <Tap
+              style={[styles.iconBtn, { borderColor: t.line, backgroundColor: t.card }, shadow(t, 'xs')]}
+              scaleTo={0.88}
+              onPress={() => router.push('/insights')}
+              accessibilityRole="button"
+              accessibilityLabel={s.insightsTitle}
+            >
+              <Icon name="sparkle" color={t.hibiscus} size={17} />
+            </Tap>
             <Tap
               style={[styles.iconBtn, { borderColor: t.line, backgroundColor: t.card }, shadow(t, 'xs')]}
               scaleTo={0.88}
@@ -236,6 +247,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
                 entries={listEntries}
                 customCats={customCats}
                 lang={lang}
+                columns={responsive.columns}
                 onPress={setDetailId}
                 onLongPress={setMarkId}
                 emptyText={searchQ ? s.noResult : undefined}
@@ -326,7 +338,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
 const styles = StyleSheet.create({
   root: { flex: 1 },
   rootWeb: { alignItems: 'center' as const },
-  safe: { flex: 1, maxWidth: 480, width: '100%', alignSelf: 'center' },
+  safe: { flex: 1, width: '100%', alignSelf: 'center' },
   top: { paddingHorizontal: 22, paddingTop: 14, paddingBottom: 8, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },
   brand: { flexDirection: 'row', alignItems: 'center', gap: 11 },
   title: { fontSize: 19, fontWeight: '800', letterSpacing: 0.4 },
