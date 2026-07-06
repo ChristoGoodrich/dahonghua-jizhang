@@ -7,6 +7,7 @@ import { RAD, TABULAR, shadow } from '@/theme/tokens';
 import { catOf, catName } from '@/domain/cats';
 import { fmt, fmtNum } from '@/domain/money';
 import { store$ } from '@/store/ledger';
+import { SwipeableRow } from '@/features/list/SwipeableRow';
 import type { Entry, Category, IO } from '@/domain/types';
 import type { Lang } from '@/i18n';
 import { I18N } from '@/i18n';
@@ -17,6 +18,8 @@ interface Props {
   lang: Lang;
   onPress: (id: string) => void; // open the read-only detail view
   onLongPress?: (id: string) => void; // open the mark menu (reimburse/refund)
+  onDelete?: (id: string) => void;
+  onEdit?: (id: string) => void;
   emptyText?: string; // overrides the default empty message (e.g. "no results")
 }
 
@@ -40,7 +43,7 @@ function dayLabel(key: string, lang: Lang, s: typeof I18N['zh']): string {
   });
 }
 
-export function EntryList({ entries, customCats, lang, onPress, onLongPress, emptyText }: Props) {
+export function EntryList({ entries, customCats, lang, onPress, onLongPress, onDelete, onEdit, emptyText }: Props) {
   const t = useTheme();
   const s = I18N[lang];
   const accounts = store$.accounts.peek();
@@ -116,56 +119,59 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, emp
           {g.items.map((d) => {
             if (d.io === 'xfer') {
               return (
-                <Tap key={d.id} onPress={() => onPress(d.id)} scaleTo={0.98} style={rowStyle}>
-                  <View style={[styles.emo, { backgroundColor: t.paperWarm }]}>
-                    <Text style={styles.emoText}>🔄</Text>
-                  </View>
-                  <View style={styles.mid}>
-                    <View style={styles.catRow}>
-                      <Text style={[styles.cat, { color: t.ink }]}>{s.xferLabel}</Text>
+                <SwipeableRow key={d.id} onDelete={onDelete ? () => onDelete(d.id) : undefined} onEdit={onEdit ? () => onEdit(d.id) : undefined}>
+                  <Tap onPress={() => onPress(d.id)} scaleTo={0.98} style={rowStyle}>
+                    <View style={[styles.emo, { backgroundColor: t.paperWarm }]}>
+                      <Text style={styles.emoText}>🔄</Text>
                     </View>
-                    <Text style={[styles.note, { color: t.inkSoft }]} numberOfLines={1}>
-                      {acctName(d.acct)} → {acctName(d.acctTo)}
-                      {d.note ? ' · ' + d.note : ''}
-                    </Text>
-                  </View>
-                  <Text style={[styles.amt, TABULAR, { color: t.inkSoft }]}>{fmt(d.amt, lang)}</Text>
-                </Tap>
+                    <View style={styles.mid}>
+                      <View style={styles.catRow}>
+                        <Text style={[styles.cat, { color: t.ink }]}>{s.xferLabel}</Text>
+                      </View>
+                      <Text style={[styles.note, { color: t.inkSoft }]} numberOfLines={1}>
+                        {acctName(d.acct)} → {acctName(d.acctTo)}
+                        {d.note ? ' · ' + d.note : ''}
+                      </Text>
+                    </View>
+                    <Text style={[styles.amt, TABULAR, { color: t.inkSoft }]}>{fmt(d.amt, lang)}</Text>
+                  </Tap>
+                </SwipeableRow>
               );
             }
             const c = catOf(d.io, d.cat, customCats);
             return (
-              <Tap
-                key={d.id}
-                onPress={() => onPress(d.id)}
-                onLongPress={() => onLongPress?.(d.id)}
-                delayLongPress={400}
-                scaleTo={0.98}
-                style={rowStyle}
-              >
-                <View style={[styles.emo, { backgroundColor: c.c + (t.isDark ? '30' : '1F') }]}>
-                  <Text style={styles.emoText}>{c.e}</Text>
-                </View>
-                <View style={styles.mid}>
-                  <View style={styles.catRow}>
-                    <Text style={[styles.cat, { color: t.ink }]}>{catName(c, lang)}</Text>
-                    {d.rb === 'pending' && <Badge tone="pending" text={s.rbPending} />}
-                    {d.rb === 'done' && <Badge tone="done" text={s.rbDone} />}
-                    {!!d.refund && <Badge tone="refund" text={s.markRefund} />}
-                  </View>
-                  {!!d.note && (
-                    <Text style={[styles.note, { color: t.inkSoft }]} numberOfLines={1}>
-                      {d.note}
-                    </Text>
-                  )}
-                </View>
-                <Text
-                  style={[styles.amt, TABULAR, { color: d.io === 'inc' ? t.leafDeep : t.ink }]}
+              <SwipeableRow key={d.id} onDelete={onDelete ? () => onDelete(d.id) : undefined} onEdit={onEdit ? () => onEdit(d.id) : undefined}>
+                <Tap
+                  onPress={() => onPress(d.id)}
+                  onLongPress={() => onLongPress?.(d.id)}
+                  delayLongPress={400}
+                  scaleTo={0.98}
+                  style={rowStyle}
                 >
-                  {d.io === 'exp' ? '-' : '+'}
-                  {fmtNum(d.amt)}
-                </Text>
-              </Tap>
+                  <View style={[styles.emo, { backgroundColor: c.c + (t.isDark ? '30' : '1F') }]}>
+                    <Text style={styles.emoText}>{c.e}</Text>
+                  </View>
+                  <View style={styles.mid}>
+                    <View style={styles.catRow}>
+                      <Text style={[styles.cat, { color: t.ink }]}>{catName(c, lang)}</Text>
+                      {d.rb === 'pending' && <Badge tone="pending" text={s.rbPending} />}
+                      {d.rb === 'done' && <Badge tone="done" text={s.rbDone} />}
+                      {!!d.refund && <Badge tone="refund" text={s.markRefund} />}
+                    </View>
+                    {!!d.note && (
+                      <Text style={[styles.note, { color: t.inkSoft }]} numberOfLines={1}>
+                        {d.note}
+                      </Text>
+                    )}
+                  </View>
+                  <Text
+                    style={[styles.amt, TABULAR, { color: d.io === 'inc' ? t.leafDeep : t.ink }]}
+                  >
+                    {d.io === 'exp' ? '-' : '+'}
+                    {fmtNum(d.amt)}
+                  </Text>
+                </Tap>
+              </SwipeableRow>
             );
           })}
         </View>
