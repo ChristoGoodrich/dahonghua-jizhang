@@ -5,7 +5,9 @@ import { Flower } from '@/components/Flower';
 import { RAD, TABULAR, shadow } from '@/theme/tokens';
 import { fmtShort } from '@/domain/money';
 import { I18N, type Lang } from '@/i18n';
+import { cycleRange, cycleDays } from '@/domain/cycle';
 import { BudgetProgress } from './BudgetProgress';
+import { BudgetForecast } from './BudgetForecast';
 
 interface Props {
   exp: number;
@@ -16,9 +18,10 @@ interface Props {
   budgetMode?: 'monthly' | 'weekly';
   weeklyBudget?: number;
   weeklySpent?: number;
+  cycleStart?: number;
 }
 
-export function BudgetPot({ exp, budget, lang, dailyBudget = 0, dailyUsed = 0, budgetMode, weeklyBudget = 0, weeklySpent = 0 }: Props) {
+export function BudgetPot({ exp, budget, lang, dailyBudget = 0, dailyUsed = 0, budgetMode, weeklyBudget = 0, weeklySpent = 0, cycleStart = 1 }: Props) {
   const t = useTheme();
   const s = I18N[lang];
   const hasWeekly = budgetMode === 'weekly' && weeklyBudget > 0;
@@ -30,6 +33,11 @@ export function BudgetPot({ exp, budget, lang, dailyBudget = 0, dailyUsed = 0, b
 
   const pct = hasMonthly ? Math.min((exp / budget) * 100, 100) : Math.min((dailyUsed / dailyBudget) * 100, 100);
   const left = budget - exp;
+
+  const now = new Date();
+  const { start } = cycleRange(now, cycleStart);
+  const daysInCycle = cycleDays(now, cycleStart);
+  const daysElapsed = Math.max(1, Math.round((now.getTime() - start.getTime()) / 864e5));
 
   let petal = t.hibiscus;
   let stamen = t.stamen;
@@ -60,6 +68,7 @@ export function BudgetPot({ exp, budget, lang, dailyBudget = 0, dailyUsed = 0, b
                 ? s.budgetSpentLeft.replace('%s', fmtShort(exp, lang)).replace('%s', fmtShort(left, lang))
                 : s.budgetOver.replace('%s', fmtShort(-left, lang))}
             </Text>
+            <BudgetForecast spent={exp} budget={budget} daysElapsed={daysElapsed} daysInCycle={daysInCycle} lang={lang} />
           </>
         )}
         {hasWeekly && (
