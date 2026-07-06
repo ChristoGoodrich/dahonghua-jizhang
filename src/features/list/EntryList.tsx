@@ -116,8 +116,10 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
     shadow(t, 'xs'),
   ], [t]);
 
+  // Single-column only: rows have known heights so we can skip measurement. For
+  // multi-column (tablet) the prop is omitted entirely (see the FlatList below) —
+  // returning undefined here would trip VirtualizedList's frame-metrics invariant.
   const getItemLayout = useCallback((_data: ArrayLike<FlatItem> | null | undefined, index: number) => {
-    if (columns > 1) return undefined as any;
     let offset = 0;
     for (let i = 0; i < index; i++) {
       const item = flatData[i];
@@ -237,7 +239,7 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
       data={flatData}
       renderItem={renderItem}
       keyExtractor={(item) => item.key}
-      getItemLayout={getItemLayout}
+      getItemLayout={columns > 1 ? undefined : getItemLayout}
       numColumns={columns}
       columnWrapperStyle={columns > 1 ? styles.columnGap : undefined}
       maxToRenderPerBatch={10}

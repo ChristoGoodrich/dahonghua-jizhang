@@ -226,6 +226,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
               <InsightBanner insight={dueInsight ?? insight} />
               <LedgerFilter lang={lang} />
               <TemplateChips lang={lang} onLogged={() => celebrate(s.toastBloom)} />
+              <QuickEntry lang={lang} onSubmit={quickSubmit} />
               <View style={styles.searchWrap}>
                 <View style={[styles.searchBar, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'xs')]}>
                   <Icon name="search" color={t.inkSoft} size={17} />
@@ -274,8 +275,6 @@ export const LedgerScreen = observer(function LedgerScreen() {
       </SafeAreaView>
 
       <BottomNav active={tab} onChange={setTab} lang={lang} />
-
-      <QuickEntry lang={lang} onSubmit={quickSubmit} />
 
       <Tap
         style={[styles.fab, { bottom: navPad + 30, backgroundColor: t.hibiscus, borderColor: t.card }, shadow(t, 'glow')]}
