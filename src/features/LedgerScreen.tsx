@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, StyleSheet, Pressable, TextInput, Animated } from 'react-native';
+import { View, Text, StyleSheet, Pressable, TextInput, Animated, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useWebKeyboard } from '@/hooks/useWebKeyboard';
 import { observer } from '@legendapp/state/react';
 import { store$, setLang, patchSettings, addEntry } from '@/store/ledger';
 import { useTheme } from '@/theme/ThemeContext';
@@ -77,6 +78,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
   const [searchQ, setSearchQ] = useState('');
   const [markId, setMarkId] = useState<string | null>(null);
   const [burst, setBurst] = useState<number | null>(null);
+  const searchRef = useRef<TextInput>(null);
 
   const liveAll = useMemo(() => data.filter((d) => !d.deletedAt), [data]);
   const cycleEntries = useMemo(
@@ -127,8 +129,27 @@ export const LedgerScreen = observer(function LedgerScreen() {
     onSaved(true);
   }, [onSaved]);
 
+  useWebKeyboard(
+    useMemo(
+      () => ({
+        n: () => {
+          if (!sheetOpen) openNew();
+        },
+        '/': () => {
+          searchRef.current?.focus();
+        },
+        Escape: () => {
+          if (sheetOpen) setSheetOpen(false);
+          else if (detailId) setDetailId(null);
+          else if (markId) setMarkId(null);
+        },
+      }),
+      [sheetOpen, detailId, markId, openNew],
+    ),
+  );
+
   return (
-    <View style={[styles.root, { backgroundColor: t.paper }]}>
+    <View style={[styles.root, { backgroundColor: t.paper }, Platform.OS === 'web' && styles.rootWeb]}>
       <SafeAreaView edges={['top']} style={styles.safe}>
         <View style={styles.top}>
           <View style={styles.brand}>
@@ -195,6 +216,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
                 <View style={[styles.searchBar, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'xs')]}>
                   <Icon name="search" color={t.inkSoft} size={17} />
                   <TextInput
+                    ref={searchRef}
                     style={[styles.searchInput, { color: t.ink }]}
                     value={searchQ}
                     onChangeText={setSearchQ}
@@ -303,6 +325,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
+  rootWeb: { alignItems: 'center' as const },
   safe: { flex: 1, maxWidth: 480, width: '100%', alignSelf: 'center' },
   top: { paddingHorizontal: 22, paddingTop: 14, paddingBottom: 8, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },
   brand: { flexDirection: 'row', alignItems: 'center', gap: 11 },
