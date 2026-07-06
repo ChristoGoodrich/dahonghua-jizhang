@@ -56,7 +56,7 @@ export interface Settings {
   maxBackups?: number;
 }
 
-export type ThemeKey = 'default' | 'sakura' | 'daisy' | 'jasmine';
+export type ThemeKey = 'default' | 'sakura' | 'daisy' | 'jasmine' | 'ocean' | 'forest' | 'sunset';
 
 export interface Category {
   k: string;

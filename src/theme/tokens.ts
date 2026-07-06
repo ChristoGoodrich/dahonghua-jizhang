@@ -57,6 +57,18 @@ const THEME_ACCENTS: Record<ThemeKey, Partial<typeof BASE>> = {
     hibiscus: '#7C9C8F', hibiscusDeep: '#5C7C6F', hibiscusSoft: '#A8C2B8', stamen: '#E8A838',
     paper: '#F6F9F5', paperWarm: '#ECF1EA', line: '#DCE6DA',
   },
+  ocean: {
+    hibiscus: '#4A90B8', hibiscusDeep: '#3670A0', hibiscusSoft: '#8DC0E0', stamen: '#E8A838',
+    paper: '#F2F7FB', paperWarm: '#E4EEF6', line: '#D0DEE8',
+  },
+  forest: {
+    hibiscus: '#5C8A5C', hibiscusDeep: '#3E6B3E', hibiscusSoft: '#94C494', stamen: '#E8A838',
+    paper: '#F3F7F2', paperWarm: '#E6EDE5', line: '#D5DFD4',
+  },
+  sunset: {
+    hibiscus: '#D97840', hibiscusDeep: '#B85E2A', hibiscusSoft: '#E8AB80', stamen: '#E8A838',
+    paper: '#FBF5EF', paperWarm: '#F6EBE0', line: '#EEDDD0',
+  },
 };
 
 // surface overrides for dark mode (accent is kept)
@@ -80,11 +92,12 @@ export function makeTheme(themeKey: ThemeKey = 'default', dark = false): Theme {
   };
 }
 
-export const THEME_KEYS: ThemeKey[] = ['default', 'sakura', 'daisy', 'jasmine'];
+export const THEME_KEYS: ThemeKey[] = ['default', 'sakura', 'daisy', 'jasmine', 'ocean', 'forest', 'sunset'];
 
 // representative accent swatch for the theme picker
 export const THEME_SWATCH: Record<ThemeKey, string> = {
   default: '#D94E5C', sakura: '#E8869B', daisy: '#E0A93C', jasmine: '#7C9C8F',
+  ocean: '#4A90B8', forest: '#5C8A5C', sunset: '#D97840',
 };
 
 // ---------------------------------------------------------------------------
