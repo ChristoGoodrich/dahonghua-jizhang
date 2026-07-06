@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, TextInput, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -86,40 +86,44 @@ export const LedgerScreen = observer(function LedgerScreen() {
     () => (searchQ ? cycleEntries.filter((d) => matchesSearch(d, searchQ, customCats, lang)) : cycleEntries),
     [cycleEntries, searchQ, customCats, lang],
   );
-  const exp = cycleEntries.filter((d) => d.io === 'exp').reduce((a, d) => a + d.amt, 0);
-  const inc = cycleEntries.filter((d) => d.io === 'inc').reduce((a, d) => a + d.amt, 0);
+  const exp = useMemo(() => cycleEntries.filter((d) => d.io === 'exp').reduce((a, d) => a + d.amt, 0), [cycleEntries]);
+  const inc = useMemo(() => cycleEntries.filter((d) => d.io === 'inc').reduce((a, d) => a + d.amt, 0), [cycleEntries]);
   const insight = useMemo(() => computeInsight(cycleEntries, settings, customCats, lang), [cycleEntries, settings, customCats, lang]);
-  const streak = useMemo(() => streakDays(data.filter((d) => !d.deletedAt).map((d) => d.ts)), [data]);
+  const streak = useMemo(() => streakDays(liveAll.map((d) => d.ts)), [liveAll]);
 
-  const monthLabel = cycleRange(anchor, cycleStart).start.toLocaleDateString(
-    lang === 'zh' ? 'zh-CN' : 'en-US',
-    { year: 'numeric', month: 'long' },
+  const monthLabel = useMemo(
+    () =>
+      cycleRange(anchor, cycleStart).start.toLocaleDateString(
+        lang === 'zh' ? 'zh-CN' : 'en-US',
+        { year: 'numeric', month: 'long' },
+      ),
+    [anchor, cycleStart, lang],
   );
 
-  function openNew() {
+  const openNew = useCallback(() => {
     tapHaptic();
     setEditId(null);
     setSheetOpen(true);
-  }
-  function openEdit(id: string) {
+  }, []);
+  const openEdit = useCallback((id: string) => {
     setDetailId(null);
     setEditId(id);
     setSheetOpen(true);
-  }
-  const deleteToast = (restore: () => void) => setToast({ key: Date.now(), msg: s.deleted, undo: restore });
-  function celebrate(msg: string) {
+  }, []);
+  const deleteToast = useCallback((restore: () => void) => setToast({ key: Date.now(), msg: s.deleted, undo: restore }), [s.deleted]);
+  const celebrate = useCallback((msg: string) => {
     setToast({ key: Date.now(), msg });
     setBurst(Date.now());
-  }
-  function onSaved(isNew: boolean) {
+  }, []);
+  const onSaved = useCallback((isNew: boolean) => {
     if (!isNew) return;
     const sd = streakDays(store$.data.peek().filter((d) => !d.deletedAt).map((d) => d.ts));
     celebrate(sd > 1 ? s.toastStreak.replace('%d', String(sd)) : s.toastBloom);
-  }
-  function quickSubmit(amount: number, note: string) {
+  }, [celebrate, s.toastStreak, s.toastBloom]);
+  const quickSubmit = useCallback((amount: number, note: string) => {
     addEntry({ io: 'exp', cat: 'food', amt: amount, note: note || undefined });
     onSaved(true);
-  }
+  }, [onSaved]);
 
   return (
     <View style={[styles.root, { backgroundColor: t.paper }]}>
