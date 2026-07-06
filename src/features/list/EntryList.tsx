@@ -134,7 +134,12 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
     if (d.io === 'xfer') {
       return (
         <SwipeableRow onDelete={onDelete ? () => onDelete(d.id) : undefined} onEdit={onEdit ? () => onEdit(d.id) : undefined}>
-          <Tap onPress={() => onPress(d.id)} scaleTo={0.98} style={rowStyle}>
+          <Tap
+            onPress={() => onPress(d.id)}
+            scaleTo={0.98}
+            style={rowStyle}
+            accessibilityLabel={`${s.xferLabel}, ${fmt(d.amt, lang)}, ${acctName(d.acct)} → ${acctName(d.acctTo)}${d.note ? ', ' + d.note : ''}`}
+          >
             <View style={[styles.emo, { backgroundColor: t.paperWarm }]}>
               <Text style={styles.emoText}>🔄</Text>
             </View>
@@ -154,14 +159,15 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
     }
     const c = catOf(d.io, d.cat, customCats);
     return (
-      <SwipeableRow onDelete={onDelete ? () => onDelete(d.id) : undefined} onEdit={onEdit ? () => onEdit(d.id) : undefined}>
-        <Tap
-          onPress={() => onPress(d.id)}
-          onLongPress={() => onLongPress?.(d.id)}
-          delayLongPress={400}
-          scaleTo={0.98}
-          style={rowStyle}
-        >
+        <SwipeableRow onDelete={onDelete ? () => onDelete(d.id) : undefined} onEdit={onEdit ? () => onEdit(d.id) : undefined}>
+          <Tap
+            onPress={() => onPress(d.id)}
+            onLongPress={() => onLongPress?.(d.id)}
+            delayLongPress={400}
+            scaleTo={0.98}
+            style={rowStyle}
+            accessibilityLabel={`${catName(c, lang)}, ${d.io === 'exp' ? '-' : '+'}${fmtNum(d.amt)}${d.note ? ', ' + d.note : ''}`}
+          >
           <View style={[styles.emo, { backgroundColor: c.c + (t.isDark ? '30' : '1F') }]}>
             <Text style={styles.emoText}>{c.e}</Text>
           </View>

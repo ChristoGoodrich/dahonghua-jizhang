@@ -336,7 +336,7 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
             ))}
           </View>
 
-          <View style={styles.amtRow}>
+          <View style={styles.amtRow} accessible accessibilityLabel={`${s.amountPh}: ${amt || '0'} ${curSymbol(cur)}`}>
             <Text style={[styles.cur, { color: accent }]}>{curSymbol(cur)}</Text>
             <Text
               style={[styles.amtInput, TABULAR, { color: amt ? t.ink : t.line }]}
@@ -403,6 +403,7 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
               onChangeText={setNote}
               placeholder={s.note}
               placeholderTextColor={t.inkSoft}
+              accessibilityLabel={s.note}
             />
 
             {io !== 'xfer' && tags.normal.length > 0 && (
