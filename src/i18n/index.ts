@@ -59,6 +59,10 @@ export interface Strings {
   acctName: string; acctBal: string; acctSaveBtn: string; acctBalance: string; acctDefault: string;
   acctKind: string; acctKindCash: string; acctKindCredit: string; acctKindPrepaid: string; acctOwed: string;
   acctTxTitle: string;
+  // credit-card statement cycle (信用卡账单周期)
+  acctStmtDay: string; acctDueDay: string;
+  stmtBilledDue: string; stmtUnbilled: string; stmtOverpay: string; stmtDueOn: string;
+  stmtDaysLeft: string; stmtDueToday: string; stmtOverdue: string; // %d
   // net worth
   setAssets: string; setAssetsD: string; assetNet: string; assetTotal: string; assetDebt: string;
   assetAdd: string; assetAsset: string; assetLiab: string; assetName: string; assetVal: string; assetSave: string;
@@ -177,6 +181,9 @@ export const I18N: Record<Lang, Strings> = {
     acctName: '账户名（如 微信）', acctBal: '初始余额', acctSaveBtn: '保存账户', acctBalance: '余额', acctDefault: '默认',
     acctKind: '类型', acctKindCash: '现金', acctKindCredit: '信用', acctKindPrepaid: '储值', acctOwed: '欠款',
     acctTxTitle: '账户流水',
+    acctStmtDay: '出账日', acctDueDay: '还款日',
+    stmtBilledDue: '本期待还', stmtUnbilled: '未出账', stmtOverpay: '溢缴款', stmtDueOn: '还款日',
+    stmtDaysLeft: '%d 天后', stmtDueToday: '今天', stmtOverdue: '逾期 %d 天',
     setAssets: '资产净值', setAssetsD: '资产、负债、净资产一目了然', assetNet: '净资产', assetTotal: '资产', assetDebt: '负债',
     assetAdd: '＋ 添加资产/负债', assetAsset: '资产', assetLiab: '负债', assetName: '名称（如 招商信用卡）', assetVal: '金额', assetSave: '保存',
     setLoans: '借入借出', setLoansD: '谁欠我、我欠谁，还款进度', loanLend: '借出（别人欠我）', loanBorrow: '借入（我欠别人）',
@@ -272,6 +279,9 @@ export const I18N: Record<Lang, Strings> = {
     acctName: 'Account name (e.g. Card)', acctBal: 'Starting balance', acctSaveBtn: 'Save account', acctBalance: 'Balance', acctDefault: 'Default',
     acctKind: 'Type', acctKindCash: 'Cash', acctKindCredit: 'Credit', acctKindPrepaid: 'Prepaid', acctOwed: 'Owed',
     acctTxTitle: 'Transactions',
+    acctStmtDay: 'Statement day', acctDueDay: 'Due day',
+    stmtBilledDue: 'Amount due', stmtUnbilled: 'Unbilled', stmtOverpay: 'Overpaid', stmtDueOn: 'Due',
+    stmtDaysLeft: 'in %dd', stmtDueToday: 'today', stmtOverdue: '%dd overdue',
     setAssets: 'Net worth', setAssetsD: 'Assets, liabilities, net worth at a glance', assetNet: 'Net worth', assetTotal: 'Assets', assetDebt: 'Liabilities',
     assetAdd: '＋ Add asset/liability', assetAsset: 'Asset', assetLiab: 'Liability', assetName: 'Name (e.g. Credit card)', assetVal: 'Amount', assetSave: 'Save',
     setLoans: 'Loans', setLoansD: 'Who owes whom, with repayment', loanLend: 'Lent (they owe me)', loanBorrow: 'Borrowed (I owe them)',

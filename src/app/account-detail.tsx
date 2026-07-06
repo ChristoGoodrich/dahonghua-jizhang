@@ -5,6 +5,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { observer } from '@legendapp/state/react';
 import { store$ } from '@/store/ledger';
 import { acctBalance } from '@/domain/networth';
+import { statementSummary } from '@/domain/statement';
 import { catOf, catName } from '@/domain/cats';
 import { fmt, fmtNum } from '@/domain/money';
 import { useTheme } from '@/theme/ThemeContext';
@@ -49,6 +50,17 @@ export default observer(function AccountDetailScreen() {
   const owed = account?.kind === 'credit' && bal < 0;
   const title = account ? (lang === 'zh' ? account.name : account.nameEn || account.name) : s.setAccounts;
 
+  const stmt = account ? statementSummary(account, accounts, data) : null;
+  const dueText = (() => {
+    if (!stmt || stmt.dueDate == null || stmt.daysToDue == null) return '';
+    const dateStr = new Date(stmt.dueDate).toLocaleDateString(lang === 'zh' ? 'zh-CN' : 'en-US', { month: 'short', day: 'numeric' });
+    const d = stmt.daysToDue;
+    const rel = d > 0 ? s.stmtDaysLeft.replace('%d', String(d))
+      : d === 0 ? s.stmtDueToday
+      : s.stmtOverdue.replace('%d', String(-d));
+    return `${dateStr} · ${rel}`;
+  })();
+
   return (
     <View style={[styles.root, { backgroundColor: t.paper }]}>
       <SafeAreaView edges={['top']} style={styles.safe}>
@@ -58,6 +70,35 @@ export default observer(function AccountDetailScreen() {
             <Text style={[styles.balLabel, { color: t.paper }]}>{owed ? s.acctOwed : s.acctBalance}</Text>
             <Text style={[styles.balVal, { color: t.paper }]}>{fmt(owed ? -bal : bal, lang)}</Text>
           </View>
+
+          {stmt && (
+            <View style={[styles.stmtCard, { backgroundColor: t.card, borderColor: t.line }]}>
+              <View style={styles.stmtTop}>
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.stmtLabel, { color: t.inkSoft }]}>{s.stmtBilledDue}</Text>
+                  <Text style={[styles.stmtDue, { color: stmt.billedDue > 0 ? t.hibiscus : t.ink }]}>
+                    {fmt(stmt.billedDue, lang)}
+                  </Text>
+                </View>
+                {!!dueText && (
+                  <View style={styles.stmtDueBox}>
+                    <Text style={[styles.stmtLabel, { color: t.inkSoft }]}>{s.stmtDueOn}</Text>
+                    <Text style={[styles.stmtDueText, { color: t.ink }]}>{dueText}</Text>
+                  </View>
+                )}
+              </View>
+              <View style={[styles.stmtMeta, { borderTopColor: t.line }]}>
+                <Text style={[styles.stmtMetaText, { color: t.inkSoft }]}>
+                  {s.stmtUnbilled} {fmt(stmt.unbilled, lang)}
+                </Text>
+                {stmt.overpay > 0 && (
+                  <Text style={[styles.stmtMetaText, { color: t.leafDeep }]}>
+                    {s.stmtOverpay} {fmt(stmt.overpay, lang)}
+                  </Text>
+                )}
+              </View>
+            </View>
+          )}
 
           {rows.length === 0 ? (
             <Text style={[styles.empty, { color: t.inkSoft }]}>{s.empty}</Text>
@@ -99,6 +140,14 @@ const styles = StyleSheet.create({
   balCard: { borderRadius: 16, padding: 18, marginBottom: 14 },
   balLabel: { fontSize: 11, letterSpacing: 2, opacity: 0.6, textTransform: 'uppercase' },
   balVal: { fontSize: 30, fontWeight: '800', marginTop: 4 },
+  stmtCard: { borderWidth: 1, borderRadius: 14, padding: 15, marginBottom: 14 },
+  stmtTop: { flexDirection: 'row', alignItems: 'flex-start' },
+  stmtLabel: { fontSize: 11, marginBottom: 3 },
+  stmtDue: { fontSize: 24, fontWeight: '800', fontVariant: ['tabular-nums'] },
+  stmtDueBox: { alignItems: 'flex-end' },
+  stmtDueText: { fontSize: 13, fontWeight: '700' },
+  stmtMeta: { flexDirection: 'row', gap: 14, borderTopWidth: 1, marginTop: 12, paddingTop: 10 },
+  stmtMetaText: { fontSize: 12, fontWeight: '600' },
   empty: { textAlign: 'center', paddingVertical: 40, fontSize: 13 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 13, padding: 11, paddingHorizontal: 13, marginBottom: 7 },
   emo: { width: 38, height: 38, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },

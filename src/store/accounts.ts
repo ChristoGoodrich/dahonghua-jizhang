@@ -2,8 +2,18 @@
 import type { Account } from '@/domain/types';
 import { store$, newId } from './state';
 
-export function addAccount(name: string, balance = 0, kind: Account['kind'] = 'cash'): Account {
+export function addAccount(
+  name: string,
+  balance = 0,
+  kind: Account['kind'] = 'cash',
+  opts?: { statementDay?: number; dueDay?: number },
+): Account {
   const a: Account = { id: newId('a'), name, nameEn: name, balance, kind };
+  // statement/due days only apply to credit cards
+  if (kind === 'credit') {
+    if (opts?.statementDay) a.statementDay = opts.statementDay;
+    if (opts?.dueDay) a.dueDay = opts.dueDay;
+  }
   store$.accounts.set([...store$.accounts.peek(), a]);
   return a;
 }

@@ -22,6 +22,13 @@ export default observer(function AccountsScreen() {
   const [name, setName] = useState('');
   const [bal, setBal] = useState('');
   const [kind, setKind] = useState<'cash' | 'credit' | 'prepaid'>('cash');
+  const [stmtDay, setStmtDay] = useState('');
+  const [dueDay, setDueDay] = useState('');
+
+  const clampDay = (v: string) => {
+    const n = parseInt(v.replace(/[^\d]/g, ''), 10);
+    return Number.isFinite(n) ? Math.max(1, Math.min(28, n)) : undefined;
+  };
 
   const kinds: { k: 'cash' | 'credit' | 'prepaid'; label: string }[] = [
     { k: 'cash', label: s.acctKindCash },
@@ -32,10 +39,15 @@ export default observer(function AccountsScreen() {
 
   function save() {
     if (!name.trim()) return;
-    addAccount(name.trim(), parseFloat(bal.replace(/[^\d.]/g, '')) || 0, kind);
+    addAccount(name.trim(), parseFloat(bal.replace(/[^\d.]/g, '')) || 0, kind, {
+      statementDay: clampDay(stmtDay),
+      dueDay: clampDay(dueDay),
+    });
     setName('');
     setBal('');
     setKind('cash');
+    setStmtDay('');
+    setDueDay('');
     setAdding(false);
   }
 
@@ -98,6 +110,26 @@ export default observer(function AccountsScreen() {
                 value={bal}
                 onChangeText={setBal}
               />
+              {kind === 'credit' && (
+                <View style={styles.dayRow}>
+                  <TextInput
+                    style={[styles.field, styles.dayField, { borderColor: t.line, color: t.ink, backgroundColor: t.card }]}
+                    placeholder={s.acctStmtDay}
+                    placeholderTextColor={t.inkSoft}
+                    keyboardType="numeric"
+                    value={stmtDay}
+                    onChangeText={setStmtDay}
+                  />
+                  <TextInput
+                    style={[styles.field, styles.dayField, { borderColor: t.line, color: t.ink, backgroundColor: t.card }]}
+                    placeholder={s.acctDueDay}
+                    placeholderTextColor={t.inkSoft}
+                    keyboardType="numeric"
+                    value={dueDay}
+                    onChangeText={setDueDay}
+                  />
+                </View>
+              )}
               <Pressable style={[styles.save, { backgroundColor: t.hibiscus }]} onPress={save}>
                 <Text style={styles.saveText}>{s.acctSaveBtn}</Text>
               </Pressable>
@@ -135,6 +167,8 @@ const styles = StyleSheet.create({
   toggleBtn: { flex: 1, paddingVertical: 9, borderRadius: 9, alignItems: 'center' },
   toggleText: { fontSize: 13, fontWeight: '600' },
   field: { borderWidth: 1, borderRadius: 11, padding: 11, fontSize: 14 },
+  dayRow: { flexDirection: 'row', gap: 10 },
+  dayField: { flex: 1 },
   save: { borderRadius: 13, padding: 14, alignItems: 'center' },
   saveText: { color: '#fff', fontSize: 15, fontWeight: '700' },
 });

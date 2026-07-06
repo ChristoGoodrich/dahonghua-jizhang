@@ -1,13 +1,42 @@
 // Smart insight banner — ported from v7's computeInsight().
 // Priority: total-budget state -> category-budget breach -> biggest category.
-import type { Category, Entry, IO, Settings } from './types';
+import type { Account, Category, Entry, IO, Settings } from './types';
 import { catOf, catName } from './cats';
 import { dailyStatus } from './budget';
+import { dueSoon } from './statement';
+import { fmtShort } from './money';
 import { I18N, type Lang } from '@/i18n';
 
 export interface Insight {
   ic: string;
   text: string;
+}
+
+/**
+ * A repayment reminder for the soonest credit card with an outstanding statement
+ * balance due within a week (past-due included). Returns null when nothing is
+ * due — the caller falls back to the spending insight. Higher priority than
+ * spending insights because it is time-sensitive money.
+ */
+export function creditDueInsight(
+  accounts: Account[],
+  entries: Entry[],
+  lang: Lang,
+  ref: number = Date.now(),
+): Insight | null {
+  const due = dueSoon(accounts, entries, ref, 7);
+  if (!due.length) return null;
+  const r = due[0];
+  const name = lang === 'zh' ? r.account.name : r.account.nameEn || r.account.name;
+  const when =
+    r.daysToDue > 0 ? I18N[lang].stmtDaysLeft.replace('%d', String(r.daysToDue))
+    : r.daysToDue === 0 ? I18N[lang].stmtDueToday
+    : I18N[lang].stmtOverdue.replace('%d', String(-r.daysToDue));
+  const amt = fmtShort(r.billedDue, lang);
+  return {
+    ic: '💳',
+    text: lang === 'zh' ? `${name} ${when}还款，待还 ${amt}` : `${name} due ${when} · ${amt} to repay`,
+  };
 }
 
 export function computeInsight(

@@ -11,7 +11,7 @@ import { Flower } from '@/components/Flower';
 import { I18N } from '@/i18n';
 import { cycleRange, inCycle, shiftCycle } from '@/domain/cycle';
 import { streakDays } from '@/domain/streak';
-import { computeInsight } from '@/domain/insight';
+import { computeInsight, creditDueInsight } from '@/domain/insight';
 import { todayExpense } from '@/domain/budget';
 import { matchesSearch } from '@/domain/search';
 import { SummaryCard } from '@/features/summary/SummaryCard';
@@ -69,6 +69,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
   const customCats = store$.customCats.get();
   const settings = store$.settings.get();
   const curLedger = store$.curLedger.get();
+  const accounts = store$.accounts.get();
   const cycleStart = settings.cycleStart || 1;
 
   const [anchor, setAnchor] = useState(() => new Date());
@@ -94,6 +95,8 @@ export const LedgerScreen = observer(function LedgerScreen() {
   const exp = useMemo(() => cycleEntries.filter((d) => d.io === 'exp').reduce((a, d) => a + d.amt, 0), [cycleEntries]);
   const inc = useMemo(() => cycleEntries.filter((d) => d.io === 'inc').reduce((a, d) => a + d.amt, 0), [cycleEntries]);
   const insight = useMemo(() => computeInsight(cycleEntries, settings, customCats, lang), [cycleEntries, settings, customCats, lang]);
+  // a credit-card repayment reminder takes priority over the spending insight
+  const dueInsight = useMemo(() => creditDueInsight(accounts, liveAll, lang), [accounts, liveAll, lang]);
   const streak = useMemo(() => streakDays(liveAll.map((d) => d.ts)), [liveAll]);
 
   const monthLabel = useMemo(
@@ -220,7 +223,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
                 dailyBudget={settings.dailyBudget}
                 dailyUsed={todayExpense(cycleEntries)}
               />
-              <InsightBanner insight={insight} />
+              <InsightBanner insight={dueInsight ?? insight} />
               <LedgerFilter lang={lang} />
               <TemplateChips lang={lang} onLogged={() => celebrate(s.toastBloom)} />
               <View style={styles.searchWrap}>
