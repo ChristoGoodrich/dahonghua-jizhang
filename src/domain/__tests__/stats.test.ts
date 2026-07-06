@@ -1,4 +1,4 @@
-import { byCategory, statTotals, sixMonthTrend, comparison, donutSlices, topEntries, byWeekday } from '../stats';
+import { byCategory, statTotals, sixMonthTrend, comparison, donutSlices, topEntries, byWeekday, byTimeOfDay, timeBucketOf } from '../stats';
 import { computeInsight } from '../insight';
 import type { Entry } from '../types';
 
@@ -87,6 +87,36 @@ describe('byWeekday', () => {
     expect(r[0]).toEqual({ dow: 0, amt: 10, count: 1 }); // Sunday
     expect(r[1]).toEqual({ dow: 1, amt: 8, count: 2 }); // Monday
     expect(r[2]).toEqual({ dow: 2, amt: 0, count: 0 });
+  });
+});
+
+describe('timeBucketOf', () => {
+  it('maps hours to the 7 named periods', () => {
+    expect(timeBucketOf(2)).toBe('dawn'); // 凌晨
+    expect(timeBucketOf(6)).toBe('earlyMorning'); // 清晨
+    expect(timeBucketOf(9)).toBe('morning'); // 上午
+    expect(timeBucketOf(12)).toBe('noon'); // 中午
+    expect(timeBucketOf(15)).toBe('afternoon'); // 下午
+    expect(timeBucketOf(18)).toBe('dusk'); // 傍晚
+    expect(timeBucketOf(22)).toBe('night'); // 晚上
+    expect(timeBucketOf(0)).toBe('dawn'); // boundary
+    expect(timeBucketOf(23)).toBe('night');
+  });
+});
+
+describe('byTimeOfDay', () => {
+  it('buckets expenses into chronological periods and ignores other io', () => {
+    const at = (h: number) => new Date(2026, 5, 8, h, 30).getTime();
+    const r = byTimeOfDay([
+      E({ amt: 20, ts: at(12) }), // noon
+      E({ amt: 8, ts: at(12) }), // noon
+      E({ amt: 50, ts: at(21) }), // night
+      E({ io: 'inc', amt: 999, ts: at(21) }), // ignored (income)
+    ]);
+    expect(r).toHaveLength(7);
+    expect(r.map((x) => x.key)).toEqual(['dawn', 'earlyMorning', 'morning', 'noon', 'afternoon', 'dusk', 'night']);
+    expect(r.find((x) => x.key === 'noon')).toEqual({ key: 'noon', amt: 28, count: 2 });
+    expect(r.find((x) => x.key === 'night')).toEqual({ key: 'night', amt: 50, count: 1 });
   });
 });
 

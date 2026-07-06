@@ -32,6 +32,8 @@ export interface Strings {
   // stats
   stToday: string; stAvg: string; stTop: string; stCount: string;
   stTopSpend: string; stByWeekday: string;
+  stByTime: string; // 记账时段 (by time of day)
+  todDawn: string; todEarlyMorning: string; todMorning: string; todNoon: string; todAfternoon: string; todDusk: string; todNight: string;
   byCat: string; trend: string; trendGeneric: string;
   pDay: string; pWeek: string; pMonth: string; pHalf: string; pYear: string;
   ovExp: string; ovInc: string; ovBalance: string; ovCount: string;
@@ -154,6 +156,8 @@ export const I18N: Record<Lang, Strings> = {
     insightDailyOver: '今天花超了，超出 %s。',
     stToday: '今日花掉', stAvg: '日均', stTop: '最大单笔', stCount: '贴花数',
     stTopSpend: '最大支出 Top', stByWeekday: '按星期',
+    stByTime: '按时段',
+    todDawn: '凌晨', todEarlyMorning: '清晨', todMorning: '上午', todNoon: '中午', todAfternoon: '下午', todDusk: '傍晚', todNight: '晚上',
     byCat: '花在哪儿了', trend: '近6月趋势', trendGeneric: '近6期趋势',
     pDay: '日', pWeek: '周', pMonth: '月', pHalf: '半年', pYear: '年',
     ovExp: '支出', ovInc: '收入', ovBalance: '结余', ovCount: '笔数',
@@ -252,6 +256,8 @@ export const I18N: Record<Lang, Strings> = {
     insightDailyOver: 'Over today’s budget by %s.',
     stToday: 'Today', stAvg: 'Daily avg', stTop: 'Largest', stCount: 'Flowers',
     stTopSpend: 'Top spending', stByWeekday: 'By weekday',
+    stByTime: 'By time of day',
+    todDawn: 'Late night', todEarlyMorning: 'Early AM', todMorning: 'Morning', todNoon: 'Noon', todAfternoon: 'Afternoon', todDusk: 'Dusk', todNight: 'Night',
     byCat: 'Where it goes', trend: '6-month trend', trendGeneric: 'Last 6 periods',
     pDay: 'Day', pWeek: 'Week', pMonth: 'Month', pHalf: 'Half', pYear: 'Year',
     ovExp: 'Expense', ovInc: 'Income', ovBalance: 'Balance', ovCount: 'Entries',

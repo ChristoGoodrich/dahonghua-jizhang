@@ -7,7 +7,7 @@ import { Tap } from '@/components/ui/Tap';
 import { RAD, TABULAR, LABEL_TRACKED, shadow } from '@/theme/tokens';
 import { catOf, catName } from '@/domain/cats';
 import { fmt, fmtShort, fmtNum } from '@/domain/money';
-import { byCategory, overview, comparison, topEntries, byWeekday } from '@/domain/stats';
+import { byCategory, overview, comparison, topEntries, byWeekday, byTimeOfDay } from '@/domain/stats';
 import { CategoryDonut } from './CategoryDonut';
 import { TrendChart } from './TrendChart';
 import { dailyTrend } from '@/domain/trends';
@@ -77,6 +77,12 @@ export function StatsView({ all, anchor, cycleStart, customCats, lang, onEntryPr
   const weekday = useMemo(() => byWeekday(rangeEntries, io), [rangeEntries, io]);
   const wdMax = Math.max(...weekday.map((x) => x.amt), 1);
   const wdHasData = weekday.some((x) => x.count > 0);
+
+  const timeOfDay = useMemo(() => byTimeOfDay(rangeEntries, io), [rangeEntries, io]);
+  const todMax = Math.max(...timeOfDay.map((x) => x.amt), 1);
+  const todHasData = timeOfDay.some((x) => x.count > 0);
+  const todLabel = (key: string) =>
+    (({ dawn: s.todDawn, earlyMorning: s.todEarlyMorning, morning: s.todMorning, noon: s.todNoon, afternoon: s.todAfternoon, dusk: s.todDusk, night: s.todNight }) as Record<string, string>)[key] ?? key;
   const trendData = useMemo(() => dailyTrend(all, 7), [all]);
 
   // month-only: cumulative this-vs-last comparison
@@ -212,6 +218,21 @@ export function StatsView({ all, anchor, cycleStart, customCats, lang, onEntryPr
               pct={(x.amt / wdMax) * 100}
               value={fmtNum(x.amt)}
               label={<Text style={[styles.barLabText, { color: t.ink, width: 46 }]}>{wdLabel(x.dow)}</Text>}
+            />
+          ))}
+        </>
+      )}
+
+      {todHasData && (
+        <>
+          <Text style={[styles.h3, { color: t.inkSoft }]}>{s.stByTime}</Text>
+          {timeOfDay.map((x) => (
+            <Bar
+              key={x.key}
+              color={trendColor}
+              pct={(x.amt / todMax) * 100}
+              value={fmtNum(x.amt)}
+              label={<Text style={[styles.barLabText, { color: t.ink, width: 46 }]}>{todLabel(x.key)}</Text>}
             />
           ))}
         </>

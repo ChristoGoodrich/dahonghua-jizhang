@@ -64,6 +64,44 @@ export function byWeekday(entries: Entry[], io: IO = 'exp'): WeekdayTotal[] {
   return buckets;
 }
 
+// Named time-of-day periods (凌晨/清晨/上午/中午/下午/傍晚/晚上), matching Cookie
+// 记账时段. Ranges are [from, to) in local hours; keys map to i18n labels.
+export const TIME_RANGES: { key: string; from: number; to: number }[] = [
+  { key: 'dawn', from: 0, to: 5 }, // 凌晨
+  { key: 'earlyMorning', from: 5, to: 8 }, // 清晨
+  { key: 'morning', from: 8, to: 11 }, // 上午
+  { key: 'noon', from: 11, to: 13 }, // 中午
+  { key: 'afternoon', from: 13, to: 17 }, // 下午
+  { key: 'dusk', from: 17, to: 19 }, // 傍晚
+  { key: 'night', from: 19, to: 24 }, // 晚上
+];
+
+/** The time-of-day period key for a 0..23 hour. */
+export function timeBucketOf(hour: number): string {
+  for (const r of TIME_RANGES) if (hour >= r.from && hour < r.to) return r.key;
+  return 'night';
+}
+
+export interface TimeBucket {
+  key: string;
+  amt: number;
+  count: number;
+}
+
+/** Totals bucketed by time-of-day period for the given io (default expense).
+ *  Always returns the 7 periods in chronological order. */
+export function byTimeOfDay(entries: Entry[], io: IO = 'exp'): TimeBucket[] {
+  const buckets: TimeBucket[] = TIME_RANGES.map((r) => ({ key: r.key, amt: 0, count: 0 }));
+  const idx = new Map(TIME_RANGES.map((r, i) => [r.key, i]));
+  for (const d of entries) {
+    if (d.io !== io) continue;
+    const b = buckets[idx.get(timeBucketOf(new Date(d.ts).getHours()))!];
+    b.amt += d.amt;
+    b.count += 1;
+  }
+  return buckets;
+}
+
 export interface Overview {
   exp: number;
   inc: number;
