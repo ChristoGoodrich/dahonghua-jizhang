@@ -9,6 +9,8 @@ import { auth$ } from './auth';
 import { mergeById } from './merge';
 import { entryToRow, rowToEntry, type DbEntry } from './rows';
 import { createPushScheduler } from './pushScheduler';
+import { loadConflictLog, logConflict } from './conflictLog';
+import { loadOfflineQueue, dequeueChanges } from './offlineQueue';
 import { store$, type AppState } from '@/store/ledger';
 import type { Entry } from '@/domain/types';
 
@@ -75,10 +77,30 @@ async function pullAndMerge(userId: string): Promise<void> {
   const { data: rows, error } = await supabase.from('entries').select('*').eq('user_id', userId);
   if (error) throw error;
   const remote = (rows as DbEntry[]).map(rowToEntry);
-  const { merged, toPush } = mergeById(store$.data.peek(), remote);
+  const { merged, toPush } = mergeById(store$.data.peek(), remote, (info) => {
+    logConflict({ ...info, timestamp: Date.now() });
+  });
   store$.data.set(merged);
   pusher.bumpWatermark(merged.reduce((m, e) => Math.max(m, e.updatedAt ?? 0), 0));
   await pushRows(toPush, userId);
+
+  // Apply any queued offline changes
+  const queued = await dequeueChanges();
+  if (queued.length) {
+    const current = store$.data.peek();
+    const updated = [...current];
+    for (const change of queued) {
+      const idx = updated.findIndex((e) => e.id === change.entryId);
+      if (change.type === 'upsert' && change.data) {
+        const entry = change.data as unknown as Entry;
+        if (idx < 0) updated.push(entry);
+        else updated[idx] = entry;
+      } else if (change.type === 'delete' && idx >= 0) {
+        updated[idx] = { ...updated[idx], deletedAt: change.timestamp };
+      }
+    }
+    store$.data.set(updated);
+  }
 }
 
 async function pushConfig(userId: string): Promise<void> {
@@ -131,6 +153,8 @@ async function start(userId: string): Promise<void> {
   activeUser = userId;
   sync$.status.set('syncing');
   try {
+    await loadConflictLog();
+    await loadOfflineQueue();
     await pullAndMerge(userId);
     await syncConfig(userId);
     subscribeRealtime(userId);

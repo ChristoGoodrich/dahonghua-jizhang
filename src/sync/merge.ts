@@ -80,9 +80,20 @@ function mergeRow<T extends SyncRow>(a: T, b: T): T {
   return out as T;
 }
 
+export interface ConflictInfo {
+  entryId: string;
+  localUpdatedAt: number;
+  remoteUpdatedAt: number;
+  resolution: 'local' | 'remote' | 'merged';
+}
+
 /** Merge local and remote rows by id: field-level when both sides carry fieldTs,
  *  else whole-row newest-wins with a deterministic tiebreaker. */
-export function mergeById<T extends SyncRow>(local: T[], remote: T[]): MergeResult<T> {
+export function mergeById<T extends SyncRow>(
+  local: T[],
+  remote: T[],
+  onConflict?: (info: ConflictInfo) => void,
+): MergeResult<T> {
   const localById = new Map(local.map((r) => [r.id, r] as const));
   const remoteById = new Map(remote.map((r) => [r.id, r] as const));
   const ids = new Set<string>([...localById.keys(), ...remoteById.keys()]);
@@ -94,7 +105,19 @@ export function mergeById<T extends SyncRow>(local: T[], remote: T[]): MergeResu
     const r = remoteById.get(id);
     let win: T;
     if (l && r) {
-      win = hasFieldTs(l) && hasFieldTs(r) ? mergeRow(l, r) : compareRows(r, l) > 0 ? r : l;
+      const bothHaveFieldTs = hasFieldTs(l) && hasFieldTs(r);
+      if (bothHaveFieldTs) {
+        win = mergeRow(l, r);
+        if (onConflict && stable(l) !== stable(r)) {
+          onConflict({ entryId: id, localUpdatedAt: l.updatedAt ?? 0, remoteUpdatedAt: r.updatedAt ?? 0, resolution: 'merged' });
+        }
+      } else {
+        const cmp = compareRows(r, l);
+        win = cmp > 0 ? r : l;
+        if (onConflict && stable(l) !== stable(r)) {
+          onConflict({ entryId: id, localUpdatedAt: l.updatedAt ?? 0, remoteUpdatedAt: r.updatedAt ?? 0, resolution: cmp > 0 ? 'remote' : 'local' });
+        }
+      }
     } else {
       win = (l ?? r)!;
     }
