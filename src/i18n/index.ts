@@ -95,6 +95,11 @@ export interface Strings {
   syncSynced: string; syncSyncing: string; syncError: string;
   // export + reminder
   exportCsv: string; exportBackup: string; exportDone: string;
+  // backup
+  backupCreate: string; backupCreating: string; backupCreated: string; backupRestore: string;
+  backupRestoreConfirm: string; backupRestoreDone: string; backupList: string; backupEmpty: string;
+  backupAuto: string; backupAutoD: string; backupFreq: string; backupFreqDaily: string;
+  backupFreqWeekly: string; backupMax: string; backupMaxD: string;
   remindTitle: string; remindDesc: string; remindOff: string; remindBody: string;
 }
 
@@ -173,6 +178,10 @@ export const I18N: Record<Lang, Strings> = {
     syncSynced: '已同步 🌺', syncSyncing: '同步中…', syncError: '同步出错，稍后自动重试',
     exportCsv: '导出 CSV', exportBackup: '导出备份 (JSON)', exportDone: '已导出 🌺',
     remindTitle: '每日提醒', remindDesc: '到点提醒你记一笔', remindOff: '关闭', remindBody: '今天还没贴花，来记一笔吧 🌺',
+    backupCreate: '创建备份', backupCreating: '备份中…', backupCreated: '备份已创建 🌺', backupRestore: '恢复备份',
+    backupRestoreConfirm: '恢复会覆盖当前数据，确定？', backupRestoreDone: '已恢复 🌺', backupList: '备份列表', backupEmpty: '还没有备份',
+    backupAuto: '自动备份', backupAutoD: '定期备份数据', backupFreq: '备份频率', backupFreqDaily: '每天',
+    backupFreqWeekly: '每周', backupMax: '最大备份数', backupMaxD: '超出自动删除最旧的备份',
   },
   en: {
     title: 'Red Blossom', sub: 'RED BLOSSOM', net: 'SAVED THIS MONTH', exp: 'Spent', inc: 'In',
@@ -248,6 +257,10 @@ export const I18N: Record<Lang, Strings> = {
     syncSynced: 'Synced 🌺', syncSyncing: 'Syncing…', syncError: 'Sync error — retrying',
     exportCsv: 'Export CSV', exportBackup: 'Export backup (JSON)', exportDone: 'Exported 🌺',
     remindTitle: 'Daily reminder', remindDesc: 'A nudge to log an entry', remindOff: 'Off', remindBody: 'No flower yet today — log one 🌺',
+    backupCreate: 'Create backup', backupCreating: 'Backing up…', backupCreated: 'Backup created 🌺', backupRestore: 'Restore backup',
+    backupRestoreConfirm: 'This will overwrite current data. Continue?', backupRestoreDone: 'Restored 🌺', backupList: 'Backups', backupEmpty: 'No backups yet',
+    backupAuto: 'Auto backup', backupAutoD: 'Back up data automatically', backupFreq: 'Frequency', backupFreqDaily: 'Daily',
+    backupFreqWeekly: 'Weekly', backupMax: 'Max backups', backupMaxD: 'Oldest deleted when exceeded',
   },
 };
 

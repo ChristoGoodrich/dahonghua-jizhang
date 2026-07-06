@@ -51,6 +51,9 @@ export interface Settings {
   aiShareCategories?: boolean; // send category names to the AI parser (default true)
   weeklyBudget?: number; // 周预算
   budgetMode?: 'monthly' | 'weekly'; // 预算模式
+  autoBackup?: boolean;
+  backupFrequency?: 'daily' | 'weekly';
+  maxBackups?: number;
 }
 
 export type ThemeKey = 'default' | 'sakura' | 'daisy' | 'jasmine';
