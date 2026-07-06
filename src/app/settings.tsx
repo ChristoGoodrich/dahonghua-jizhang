@@ -16,8 +16,9 @@ import { Flower } from '@/components/Flower';
 import { Tap } from '@/components/ui/Tap';
 import { Icon } from '@/components/ui/Icon';
 import { Btn } from '@/components/ui/Btn';
-import { THEME_KEYS, THEME_SWATCH, RAD, shadow } from '@/theme/tokens';
+import { RAD, shadow } from '@/theme/tokens';
 import { I18N } from '@/i18n';
+import { ThemePicker } from '@/features/settings/ThemePicker';
 
 async function readFileText(uri: string): Promise<string> {
   if (Platform.OS === 'web') {
@@ -146,33 +147,7 @@ export default observer(function SettingsScreen() {
           <View style={[styles.rowCol, { borderBottomColor: t.line }]}>
             <Text style={[styles.rowTitle, { color: t.ink }]}>{s.setTheme}</Text>
             <Text style={[styles.rowDesc, { color: t.inkSoft }]}>{s.setThemeD}</Text>
-            <View style={styles.themes}>
-              {THEME_KEYS.map((k) => {
-                const on = settings.theme === k;
-                return (
-                  <Tap
-                    key={k}
-                    onPress={() => patchSettings({ theme: k })}
-                    scaleTo={0.88}
-                    accessibilityRole="button"
-                    accessibilityState={{ selected: on }}
-                    accessibilityLabel={k}
-                    style={[
-                      styles.themeDot,
-                      { backgroundColor: THEME_SWATCH[k] + '22', borderColor: on ? THEME_SWATCH[k] : 'transparent' },
-                      on && shadow(t, 'xs'),
-                    ]}
-                  >
-                    <Flower size={26} petal={THEME_SWATCH[k]} />
-                    {on && (
-                      <View style={[styles.themeCheck, { backgroundColor: THEME_SWATCH[k], borderColor: t.card }]}>
-                        <Icon name="check" color="#fff" size={9} strokeWidth={3} />
-                      </View>
-                    )}
-                  </Tap>
-                );
-              })}
-            </View>
+            <ThemePicker lang={lang} currentTheme={settings.theme} />
           </View>
           <Row
             title={s.darkTitle}
@@ -323,12 +298,6 @@ const styles = StyleSheet.create({
     width: 90, borderWidth: StyleSheet.hairlineWidth, borderRadius: RAD.xs,
     paddingVertical: 8, paddingHorizontal: 10, fontSize: 14, textAlign: 'right',
     fontVariant: ['tabular-nums'],
-  },
-  themes: { flexDirection: 'row', gap: 12, marginTop: 12 },
-  themeDot: { width: 44, height: 44, borderRadius: 22, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
-  themeCheck: {
-    position: 'absolute', right: -3, top: -3, width: 16, height: 16, borderRadius: 8,
-    borderWidth: 1.5, alignItems: 'center', justifyContent: 'center',
   },
   toggleBtn: {
     borderWidth: 1, borderRadius: 999, paddingVertical: 7, paddingHorizontal: 13,
