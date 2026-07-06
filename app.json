@@ -37,7 +37,15 @@
           }
         }
       ],
-      "expo-sharing"
+      "expo-sharing",
+      "expo-sqlite",
+      [
+        "react-native-widget-extension",
+        {
+          "widgetsFolder": "WidgetExtension",
+          "deploymentTarget": "16.2"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
