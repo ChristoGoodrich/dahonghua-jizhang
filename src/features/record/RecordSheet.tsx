@@ -3,6 +3,7 @@ import {
   View, Text, TextInput, Pressable, StyleSheet, ScrollView,
   KeyboardAvoidingView, Platform, Animated,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/theme/ThemeContext';
 import { Flower } from '@/components/Flower';
 import { Chip } from '@/components/ui/Chip';
@@ -17,6 +18,7 @@ import { I18N } from '@/i18n';
 import { store$, addEntry, addTransfer, updateEntry, removeEntry, addTemplate } from '@/store/ledger';
 import { CalcKeypad } from './CalcKeypad';
 import { AIQuickEntry } from './AIQuickEntry';
+import { VoiceEntry } from './VoiceEntry';
 import { CurrencyRow } from './CurrencyRow';
 import { CategoryPicker } from './CategoryPicker';
 import { TransferForm } from './TransferForm';
@@ -36,6 +38,7 @@ interface Props {
 
 export function RecordSheet({ visible, editId, lang, customCats, onClose, onSaved, onTemplateSaved, onDeleted }: Props) {
   const t = useTheme();
+  const insets = useSafeAreaInsets();
   const s = I18N[lang];
   const accounts = store$.accounts.get();
   const tags = store$.tags.get();
@@ -89,6 +92,34 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
     } finally {
       setAiBusy(false);
     }
+  }
+
+  function onVoiceResult(text: string) {
+    setAiText(text);
+    // Auto-trigger AI parse after voice recognition
+    const trimmed = text.trim();
+    if (!trimmed || aiBusy) return;
+    setAiBusy(true);
+    setAiMsg('');
+    (async () => {
+      try {
+        const shareCats = store$.settings.aiShareCategories.peek() !== false;
+        const draft = await parseEntryText(trimmed, customCats, lang, shareCats);
+        if (!draft) {
+          setAiMsg(s.aiUnconfigured);
+        } else {
+          setIO(draft.io);
+          setCat(draft.cat);
+          setAmt(draft.amt);
+          if (draft.note) setNote(draft.note);
+          setAiText('');
+        }
+      } catch {
+        setAiMsg(s.aiFailed);
+      } finally {
+        setAiBusy(false);
+      }
+    })();
   }
 
   useEffect(() => {
@@ -241,7 +272,7 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
         <Animated.View
           style={[
             styles.sheet,
-            { backgroundColor: t.paper },
+            { backgroundColor: t.paper, paddingBottom: Math.max(26, insets.bottom + 12) },
             shadow(t, 'lg'),
             {
               opacity: enter.interpolate({ inputRange: [0, 0.4, 1], outputRange: [0, 1, 1], extrapolate: 'clamp' }),
@@ -294,7 +325,10 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
 
           <ScrollView style={styles.middle} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
             {io !== 'xfer' && aiConfigured() && (
-              <AIQuickEntry value={aiText} busy={aiBusy} msg={aiMsg} onChangeText={setAiText} onSubmit={runAI} lang={lang} />
+              <>
+                <VoiceEntry lang={lang} onResult={onVoiceResult} />
+                <AIQuickEntry value={aiText} busy={aiBusy} msg={aiMsg} onChangeText={setAiText} onSubmit={runAI} lang={lang} />
+              </>
             )}
 
             {io !== 'xfer' && (
