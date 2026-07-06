@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import React, { useMemo, useCallback } from 'react';
+import { View, Text, StyleSheet, FlatList } from 'react-native';
 import { useTheme } from '@/theme/ThemeContext';
 import { Flower } from '@/components/Flower';
 import { Tap } from '@/components/ui/Tap';
@@ -30,6 +30,13 @@ interface DayGroup {
   dayInc: number;
   items: Entry[];
 }
+
+type FlatItem =
+  | { type: 'header'; key: string; label: string; dayExp: number; dayInc: number }
+  | { type: 'entry'; key: string; entry: Entry; groupKey: string };
+
+const HEADER_HEIGHT = 30;
+const ROW_HEIGHT = 67;
 
 function dayLabel(key: string, lang: Lang, s: typeof I18N['zh']): string {
   const today = new Date().toDateString();
@@ -82,6 +89,106 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
     </View>
   );
 
+  const flatData = useMemo<FlatItem[]>(() => {
+    const items: FlatItem[] = [];
+    for (const g of groups) {
+      items.push({ type: 'header', key: g.key, label: g.label, dayExp: g.dayExp, dayInc: g.dayInc });
+      for (const d of g.items) {
+        items.push({ type: 'entry', key: d.id, entry: d, groupKey: g.key });
+      }
+    }
+    return items;
+  }, [groups]);
+
+  const rowStyle = useMemo(() => [
+    styles.row,
+    { backgroundColor: t.card, borderColor: t.line },
+    shadow(t, 'xs'),
+  ], [t]);
+
+  const getItemLayout = useCallback((_data: ArrayLike<FlatItem> | null | undefined, index: number) => {
+    let offset = 0;
+    for (let i = 0; i < index; i++) {
+      const item = flatData[i];
+      offset += item.type === 'header' ? HEADER_HEIGHT : ROW_HEIGHT;
+    }
+    const item = flatData[index];
+    const length = item.type === 'header' ? HEADER_HEIGHT : ROW_HEIGHT;
+    return { length, offset, index };
+  }, [flatData]);
+
+  const renderItem = useCallback(({ item }: { item: FlatItem }) => {
+    if (item.type === 'header') {
+      return (
+        <View style={styles.dayHead}>
+          <Text style={[styles.dayLabel, { color: t.inkSoft }]}>{item.label}</Text>
+          <Text style={[styles.dayLabel, TABULAR, { color: t.inkSoft }]}>
+            {item.dayExp > 0 || item.dayInc === 0
+              ? `${s.exp} ${fmt(item.dayExp, lang)}`
+              : `${s.inc} ${fmt(item.dayInc, lang)}`}
+          </Text>
+        </View>
+      );
+    }
+    const d = item.entry;
+    if (d.io === 'xfer') {
+      return (
+        <SwipeableRow onDelete={onDelete ? () => onDelete(d.id) : undefined} onEdit={onEdit ? () => onEdit(d.id) : undefined}>
+          <Tap onPress={() => onPress(d.id)} scaleTo={0.98} style={rowStyle}>
+            <View style={[styles.emo, { backgroundColor: t.paperWarm }]}>
+              <Text style={styles.emoText}>🔄</Text>
+            </View>
+            <View style={styles.mid}>
+              <View style={styles.catRow}>
+                <Text style={[styles.cat, { color: t.ink }]}>{s.xferLabel}</Text>
+              </View>
+              <Text style={[styles.note, { color: t.inkSoft }]} numberOfLines={1}>
+                {acctName(d.acct)} → {acctName(d.acctTo)}
+                {d.note ? ' · ' + d.note : ''}
+              </Text>
+            </View>
+            <Text style={[styles.amt, TABULAR, { color: t.inkSoft }]}>{fmt(d.amt, lang)}</Text>
+          </Tap>
+        </SwipeableRow>
+      );
+    }
+    const c = catOf(d.io, d.cat, customCats);
+    return (
+      <SwipeableRow onDelete={onDelete ? () => onDelete(d.id) : undefined} onEdit={onEdit ? () => onEdit(d.id) : undefined}>
+        <Tap
+          onPress={() => onPress(d.id)}
+          onLongPress={() => onLongPress?.(d.id)}
+          delayLongPress={400}
+          scaleTo={0.98}
+          style={rowStyle}
+        >
+          <View style={[styles.emo, { backgroundColor: c.c + (t.isDark ? '30' : '1F') }]}>
+            <Text style={styles.emoText}>{c.e}</Text>
+          </View>
+          <View style={styles.mid}>
+            <View style={styles.catRow}>
+              <Text style={[styles.cat, { color: t.ink }]}>{catName(c, lang)}</Text>
+              {d.rb === 'pending' && <Badge tone="pending" text={s.rbPending} />}
+              {d.rb === 'done' && <Badge tone="done" text={s.rbDone} />}
+              {!!d.refund && <Badge tone="refund" text={s.markRefund} />}
+            </View>
+            {!!d.note && (
+              <Text style={[styles.note, { color: t.inkSoft }]} numberOfLines={1}>
+                {d.note}
+              </Text>
+            )}
+          </View>
+          <Text
+            style={[styles.amt, TABULAR, { color: d.io === 'inc' ? t.leafDeep : t.ink }]}
+          >
+            {d.io === 'exp' ? '-' : '+'}
+            {fmtNum(d.amt)}
+          </Text>
+        </Tap>
+      </SwipeableRow>
+    );
+  }, [t, s, lang, customCats, rowStyle, onPress, onLongPress, onDelete, onEdit, acctName]);
+
   if (!entries.length) {
     return (
       <View style={styles.empty}>
@@ -93,90 +200,20 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
     );
   }
 
-  const rowStyle = [
-    styles.row,
-    { backgroundColor: t.card, borderColor: t.line },
-    shadow(t, 'xs'),
-  ];
-
   return (
-    <ScrollView
+    <FlatList
+      data={flatData}
+      renderItem={renderItem}
+      keyExtractor={(item) => item.key}
+      getItemLayout={getItemLayout}
+      maxToRenderPerBatch={10}
+      windowSize={5}
+      removeClippedSubviews={true}
+      initialNumToRender={10}
       style={styles.scroll}
       contentContainerStyle={styles.scrollContent}
       showsVerticalScrollIndicator={false}
-    >
-      {groups.map((g) => (
-        <View key={g.key} style={styles.group}>
-          <View style={styles.dayHead}>
-            <Text style={[styles.dayLabel, { color: t.inkSoft }]}>{g.label}</Text>
-            <Text style={[styles.dayLabel, TABULAR, { color: t.inkSoft }]}>
-              {/* income-only days (payday!) show the inflow instead of a ¥0 outflow */}
-              {g.dayExp > 0 || g.dayInc === 0
-                ? `${s.exp} ${fmt(g.dayExp, lang)}`
-                : `${s.inc} ${fmt(g.dayInc, lang)}`}
-            </Text>
-          </View>
-          {g.items.map((d) => {
-            if (d.io === 'xfer') {
-              return (
-                <SwipeableRow key={d.id} onDelete={onDelete ? () => onDelete(d.id) : undefined} onEdit={onEdit ? () => onEdit(d.id) : undefined}>
-                  <Tap onPress={() => onPress(d.id)} scaleTo={0.98} style={rowStyle}>
-                    <View style={[styles.emo, { backgroundColor: t.paperWarm }]}>
-                      <Text style={styles.emoText}>🔄</Text>
-                    </View>
-                    <View style={styles.mid}>
-                      <View style={styles.catRow}>
-                        <Text style={[styles.cat, { color: t.ink }]}>{s.xferLabel}</Text>
-                      </View>
-                      <Text style={[styles.note, { color: t.inkSoft }]} numberOfLines={1}>
-                        {acctName(d.acct)} → {acctName(d.acctTo)}
-                        {d.note ? ' · ' + d.note : ''}
-                      </Text>
-                    </View>
-                    <Text style={[styles.amt, TABULAR, { color: t.inkSoft }]}>{fmt(d.amt, lang)}</Text>
-                  </Tap>
-                </SwipeableRow>
-              );
-            }
-            const c = catOf(d.io, d.cat, customCats);
-            return (
-              <SwipeableRow key={d.id} onDelete={onDelete ? () => onDelete(d.id) : undefined} onEdit={onEdit ? () => onEdit(d.id) : undefined}>
-                <Tap
-                  onPress={() => onPress(d.id)}
-                  onLongPress={() => onLongPress?.(d.id)}
-                  delayLongPress={400}
-                  scaleTo={0.98}
-                  style={rowStyle}
-                >
-                  <View style={[styles.emo, { backgroundColor: c.c + (t.isDark ? '30' : '1F') }]}>
-                    <Text style={styles.emoText}>{c.e}</Text>
-                  </View>
-                  <View style={styles.mid}>
-                    <View style={styles.catRow}>
-                      <Text style={[styles.cat, { color: t.ink }]}>{catName(c, lang)}</Text>
-                      {d.rb === 'pending' && <Badge tone="pending" text={s.rbPending} />}
-                      {d.rb === 'done' && <Badge tone="done" text={s.rbDone} />}
-                      {!!d.refund && <Badge tone="refund" text={s.markRefund} />}
-                    </View>
-                    {!!d.note && (
-                      <Text style={[styles.note, { color: t.inkSoft }]} numberOfLines={1}>
-                        {d.note}
-                      </Text>
-                    )}
-                  </View>
-                  <Text
-                    style={[styles.amt, TABULAR, { color: d.io === 'inc' ? t.leafDeep : t.ink }]}
-                  >
-                    {d.io === 'exp' ? '-' : '+'}
-                    {fmtNum(d.amt)}
-                  </Text>
-                </Tap>
-              </SwipeableRow>
-            );
-          })}
-        </View>
-      ))}
-    </ScrollView>
+    />
   );
 }
 
