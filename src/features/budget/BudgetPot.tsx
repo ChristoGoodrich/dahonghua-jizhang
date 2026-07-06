@@ -5,6 +5,7 @@ import { Flower } from '@/components/Flower';
 import { RAD, TABULAR, shadow } from '@/theme/tokens';
 import { fmtShort } from '@/domain/money';
 import { I18N, type Lang } from '@/i18n';
+import { BudgetProgress } from './BudgetProgress';
 
 interface Props {
   exp: number;
@@ -12,14 +13,18 @@ interface Props {
   lang: Lang;
   dailyBudget?: number;
   dailyUsed?: number;
+  budgetMode?: 'monthly' | 'weekly';
+  weeklyBudget?: number;
+  weeklySpent?: number;
 }
 
-export function BudgetPot({ exp, budget, lang, dailyBudget = 0, dailyUsed = 0 }: Props) {
+export function BudgetPot({ exp, budget, lang, dailyBudget = 0, dailyUsed = 0, budgetMode, weeklyBudget = 0, weeklySpent = 0 }: Props) {
   const t = useTheme();
   const s = I18N[lang];
-  const hasMonthly = budget > 0;
+  const hasWeekly = budgetMode === 'weekly' && weeklyBudget > 0;
+  const hasMonthly = !hasWeekly && budget > 0;
   const hasDaily = dailyBudget > 0;
-  if (!hasMonthly && !hasDaily) return null;
+  if (!hasMonthly && !hasDaily && !hasWeekly) return null;
   const dailyLeft = dailyBudget - dailyUsed;
   const dailyOver = dailyLeft < 0;
 
@@ -56,6 +61,9 @@ export function BudgetPot({ exp, budget, lang, dailyBudget = 0, dailyUsed = 0 }:
                 : s.budgetOver.replace('%s', fmtShort(-left, lang))}
             </Text>
           </>
+        )}
+        {hasWeekly && (
+          <BudgetProgress label={s.budgetWeeklyLabel} spent={weeklySpent} total={weeklyBudget} lang={lang} />
         )}
         {hasDaily && (
           <Text style={[hasMonthly ? styles.daily : styles.title, TABULAR, { color: dailyOver ? t.hibiscusDeep : hasMonthly ? t.inkSoft : t.ink }]}>
