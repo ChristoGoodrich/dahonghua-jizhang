@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Pressable, TextInput, Animated } from 'react-na
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { observer } from '@legendapp/state/react';
-import { store$, setLang, patchSettings } from '@/store/ledger';
+import { store$, setLang, patchSettings, addEntry } from '@/store/ledger';
 import { useTheme } from '@/theme/ThemeContext';
 import { Flower } from '@/components/Flower';
 import { I18N } from '@/i18n';
@@ -17,6 +17,7 @@ import { EntryList } from '@/features/list/EntryList';
 import { RecordSheet } from '@/features/record/RecordSheet';
 import { MarkSheet } from '@/features/record/MarkSheet';
 import { DetailSheet } from '@/features/record/DetailSheet';
+import { QuickEntry } from '@/features/record/QuickEntry';
 import { TemplateChips } from '@/features/templates/TemplateChips';
 import { LedgerFilter } from '@/features/list/LedgerFilter';
 import { BudgetPot } from '@/features/budget/BudgetPot';
@@ -24,7 +25,7 @@ import { InsightBanner } from '@/features/budget/InsightBanner';
 import { CalendarView } from '@/features/calendar/CalendarView';
 import { StatsView } from '@/features/stats/StatsView';
 import { GardenView, GOAL_DEFAULT } from '@/features/garden/GardenView';
-import { BottomNav } from '@/features/nav/BottomNav';
+import { BottomNav, useNavBottomPad } from '@/features/nav/BottomNav';
 import { tapHaptic } from '@/util/haptics';
 import { Tap } from '@/components/ui/Tap';
 import { Icon } from '@/components/ui/Icon';
@@ -57,6 +58,7 @@ function TabFade({ children }: { children: React.ReactNode }) {
 export const LedgerScreen = observer(function LedgerScreen() {
   const t = useTheme();
   const router = useRouter();
+  const navPad = useNavBottomPad();
   const lang = store$.lang.get();
   const s = I18N[lang];
   const data = store$.data.get();
@@ -113,6 +115,10 @@ export const LedgerScreen = observer(function LedgerScreen() {
     if (!isNew) return;
     const sd = streakDays(store$.data.peek().filter((d) => !d.deletedAt).map((d) => d.ts));
     celebrate(sd > 1 ? s.toastStreak.replace('%d', String(sd)) : s.toastBloom);
+  }
+  function quickSubmit(amount: number, note: string) {
+    addEntry({ io: 'exp', cat: 'food', amt: amount, note: note || undefined });
+    onSaved(true);
   }
 
   return (
@@ -217,14 +223,16 @@ export const LedgerScreen = observer(function LedgerScreen() {
 
       <BottomNav active={tab} onChange={setTab} lang={lang} />
 
+      <QuickEntry lang={lang} onSubmit={quickSubmit} />
+
       <Tap
-        style={[styles.fab, { borderColor: t.card }, shadow(t, 'glow')]}
+        style={[styles.fab, { bottom: navPad + 30, backgroundColor: t.hibiscus, borderColor: t.card }, shadow(t, 'glow')]}
         scaleTo={0.86}
         onPress={openNew}
         accessibilityRole="button"
         accessibilityLabel={s.a11yAdd}
       >
-        <GradientFill from={t.gradFrom} to={t.gradTo} radius={28} />
+        <GradientFill from={t.gradFrom} to={t.gradTo} />
         <Icon name="plus" color="#fff" size={28} strokeWidth={2.5} />
       </Tap>
 
@@ -261,6 +269,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
       {toast && (
         <Toast
           key={toast.key}
+          bottom={navPad + 88}
           message={toast.msg}
           actionLabel={toast.undo ? s.undo : undefined}
           onAction={
@@ -302,7 +311,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   fab: {
-    position: 'absolute', alignSelf: 'center', bottom: 46, width: 62, height: 62, borderRadius: 31,
+    position: 'absolute', alignSelf: 'center', width: 62, height: 62, borderRadius: 31,
     borderWidth: 3, alignItems: 'center', justifyContent: 'center', overflow: 'hidden',
   },
 });
