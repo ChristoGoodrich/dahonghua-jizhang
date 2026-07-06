@@ -27,6 +27,7 @@ import { StatsView } from '@/features/stats/StatsView';
 import { GardenView, GOAL_DEFAULT } from '@/features/garden/GardenView';
 import { BottomNav, useNavBottomPad } from '@/features/nav/BottomNav';
 import { tapHaptic } from '@/util/haptics';
+import { trackEvent, AnalyticsEvents } from '@/util/analytics';
 import { Tap } from '@/components/ui/Tap';
 import { Icon } from '@/components/ui/Icon';
 import { GradientFill } from '@/components/ui/GradientFill';
@@ -117,6 +118,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
   }, []);
   const onSaved = useCallback((isNew: boolean) => {
     if (!isNew) return;
+    trackEvent(AnalyticsEvents.ENTRY_CREATED);
     const sd = streakDays(store$.data.peek().filter((d) => !d.deletedAt).map((d) => d.ts));
     celebrate(sd > 1 ? s.toastStreak.replace('%d', String(sd)) : s.toastBloom);
   }, [celebrate, s.toastStreak, s.toastBloom]);
