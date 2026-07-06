@@ -23,13 +23,30 @@ export function toBase(amt: number, code: string | undefined, currencies: Curren
   return r ? amt * r : amt;
 }
 
-/** Display symbol for the active language ('¥' for zh, '$' for en — matches v7). */
+// The symbol every fmt()/fmtShort() call renders, driven by the user's base
+// currency. Wired to the store at boot (see wireDisplaySymbol in store/ledger).
+// Until set — and in unit tests — it falls back to the language default so the
+// pure formatters keep working standalone.
+let displaySymbol: string | null = null;
+
+/** Point all money formatting at the base-currency symbol. Pass null to fall
+ *  back to the per-language default. */
+export function setDisplaySymbol(sym: string | null): void {
+  displaySymbol = sym;
+}
+
+/** Display symbol for the active currency, falling back to the language default. */
 export function curOf(lang: 'zh' | 'en'): string {
-  return lang === 'zh' ? '￥' : '$';
+  return displaySymbol ?? (lang === 'zh' ? '￥' : '$');
+}
+
+/** Number-only formatting (no currency symbol) — for rows that render their own sign. */
+export function fmtNum(n: number): string {
+  return Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 export function fmt(n: number, lang: 'zh' | 'en' = 'zh'): string {
-  return curOf(lang) + Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return curOf(lang) + fmtNum(n);
 }
 
 export function fmtShort(n: number, lang: 'zh' | 'en' = 'zh'): string {

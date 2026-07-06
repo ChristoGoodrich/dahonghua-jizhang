@@ -1,36 +1,56 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, StyleSheet, Text } from 'react-native';
+import { Animated, Pressable, StyleSheet, Text } from 'react-native';
 import { useTheme } from '@/theme/ThemeContext';
+import { SPRING, shadow } from '@/theme/tokens';
 import { Flower } from './Flower';
 
+interface Props {
+  message: string;
+  // Optional action (e.g. "Undo"). When present the toast lingers and is tappable.
+  actionLabel?: string;
+  onAction?: () => void;
+  /** Distance from the screen bottom (host adjusts for nav bar + insets). */
+  bottom?: number;
+}
+
 // Mount with a fresh `key` to (re)trigger the show/hide animation.
-export function Toast({ message }: { message: string }) {
+export function Toast({ message, actionLabel, onAction, bottom = 104 }: Props) {
   const t = useTheme();
   const o = useRef(new Animated.Value(0)).current;
+  const interactive = !!actionLabel;
 
   useEffect(() => {
-    Animated.timing(o, { toValue: 1, duration: 250, useNativeDriver: true }).start();
+    Animated.spring(o, { toValue: 1, useNativeDriver: true, ...SPRING.soft }).start();
     const id = setTimeout(
       () => Animated.timing(o, { toValue: 0, duration: 300, useNativeDriver: true }).start(),
-      1700,
+      interactive ? 4200 : 1700,
     );
     return () => clearTimeout(id);
-  }, [o]);
+  }, [o, interactive]);
 
   return (
     <Animated.View
-      pointerEvents="none"
+      pointerEvents={interactive ? 'box-none' : 'none'}
       style={[
         styles.toast,
+        { backgroundColor: t.ink, bottom },
+        shadow(t, 'lg'),
         {
-          backgroundColor: t.ink,
-          opacity: o,
-          transform: [{ translateY: o.interpolate({ inputRange: [0, 1], outputRange: [20, 0] }) }],
+          opacity: o.interpolate({ inputRange: [0, 0.6, 1], outputRange: [0, 1, 1], extrapolate: 'clamp' }),
+          transform: [
+            { translateY: o.interpolate({ inputRange: [0, 1], outputRange: [26, 0], extrapolate: 'clamp' }) },
+            { scale: o.interpolate({ inputRange: [0, 1], outputRange: [0.92, 1] }) },
+          ],
         },
       ]}
     >
       <Flower size={18} petal="#fff" stamen="#fff" />
       <Text style={[styles.text, { color: t.paper }]}>{message}</Text>
+      {interactive && (
+        <Pressable onPress={onAction} hitSlop={10} accessibilityRole="button" accessibilityLabel={actionLabel}>
+          <Text style={[styles.action, { color: t.hibiscusSoft }]}>{actionLabel}</Text>
+        </Pressable>
+      )}
     </Animated.View>
   );
 }
@@ -38,7 +58,6 @@ export function Toast({ message }: { message: string }) {
 const styles = StyleSheet.create({
   toast: {
     position: 'absolute',
-    bottom: 104,
     alignSelf: 'center',
     flexDirection: 'row',
     alignItems: 'center',
@@ -48,4 +67,5 @@ const styles = StyleSheet.create({
     borderRadius: 24,
   },
   text: { fontSize: 13.5, fontWeight: '600' },
+  action: { fontSize: 13.5, fontWeight: '800', marginLeft: 4 },
 });

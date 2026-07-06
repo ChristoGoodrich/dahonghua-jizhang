@@ -34,6 +34,13 @@ describe('entry <-> row mapping', () => {
     expect(rowToEntry(entryToRow(e, 'u')).deletedAt).toBe(999);
   });
 
+  it('round-trips per-field timestamps (fieldTs)', () => {
+    const e: Entry = { id: 'ft', ts: 1, io: 'exp', cat: 'food', amt: 5, updatedAt: 9, fieldTs: { note: 7, amt: 9 } };
+    const row = entryToRow(e, 'u');
+    expect(row.field_ts).toEqual({ note: 7, amt: 9 });
+    expect(rowToEntry(row).fieldTs).toEqual({ note: 7, amt: 9 });
+  });
+
   it('round-trips a transfer entry (acctTo/fee/discount)', () => {
     const e: Entry = {
       id: 'x', ts: 1, io: 'xfer', cat: 'transfer', amt: 200,

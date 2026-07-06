@@ -2,7 +2,8 @@
 // Priority: total-budget state -> category-budget breach -> biggest category.
 import type { Category, Entry, IO, Settings } from './types';
 import { catOf, catName } from './cats';
-import type { Lang } from '@/i18n';
+import { dailyStatus } from './budget';
+import { I18N, type Lang } from '@/i18n';
 
 export interface Insight {
   ic: string;
@@ -27,6 +28,12 @@ export function computeInsight(
       return { ic: '🥀', text: zh ? '这月预算花超了，花有点蔫了。下个月重新种 🌱' : 'Over budget this cycle — the pot wilted. Replant next month 🌱' };
     if (pct >= 80)
       return { ic: '🌼', text: zh ? `预算用了 ${Math.round(pct)}%，省着点就能让花开满。` : `${Math.round(pct)}% of budget used — ease up to keep it blooming.` };
+  }
+
+  const daily = dailyStatus(md, settings);
+  if (daily.over) {
+    const over = Math.round(daily.used - daily.limit);
+    return { ic: '⏳', text: I18N[lang].insightDailyOver.replace('%s', String(over)) };
   }
 
   const byCat = new Map<string, number>();

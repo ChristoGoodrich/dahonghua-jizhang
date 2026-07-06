@@ -1,9 +1,13 @@
 import React from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '@/theme/ThemeContext';
+import { Tap } from '@/components/ui/Tap';
+import { RAD, TABULAR } from '@/theme/tokens';
+import { I18N, type Lang } from '@/i18n';
 
 interface Props {
   onKey: (key: string) => void; // digit | '.' | '+' '-' '×' '÷' | 'back' | 'clear' | 'eq'
+  lang: Lang;
 }
 
 // label shown, key sent. ⌫ = backspace, C = clear, = evaluates.
@@ -29,24 +33,47 @@ const ROWS: { label: string; k: string; kind?: 'op' | 'eq' | 'util' }[][] = [
   ],
 ];
 
-export function CalcKeypad({ onKey }: Props) {
+export function CalcKeypad({ onKey, lang }: Props) {
   const t = useTheme();
+  const s = I18N[lang];
+  const zh = lang === 'zh';
+  // Spoken label for keys whose glyph reads poorly to a screen reader.
+  const a11y = (k: string, label: string): string => {
+    switch (k) {
+      case 'back': return s.a11yKeyBack;
+      case 'clear': return s.a11yKeyClear;
+      case 'eq': return s.a11yKeyEq;
+      case '÷': return zh ? '除以' : 'divide';
+      case '×': return zh ? '乘以' : 'times';
+      case '-': return zh ? '减' : 'minus';
+      case '+': return zh ? '加' : 'plus';
+      default: return label;
+    }
+  };
   return (
     <View style={styles.pad}>
       {ROWS.map((row, ri) => (
         <View key={ri} style={styles.row}>
           {row.map((key) => {
             const wide = ROWS[ri].length === 2; // last row spans 2 wide buttons
-            const bg = key.kind === 'eq' ? t.hibiscus : key.kind === 'op' ? t.paperWarm : t.card;
+            const bg = key.kind === 'eq' ? t.hibiscus : key.kind === 'op' ? t.tint : t.card;
             const fg = key.kind === 'eq' ? '#fff' : key.kind === 'op' ? t.hibiscus : t.ink;
             return (
-              <Pressable
+              <Tap
                 key={key.k}
                 onPress={() => onKey(key.k)}
-                style={[styles.key, wide && styles.keyWide, { backgroundColor: bg, borderColor: t.line }]}
+                scaleTo={0.92}
+                haptic
+                style={[
+                  styles.key,
+                  wide && styles.keyWide,
+                  { backgroundColor: bg, borderColor: key.kind === 'eq' ? t.hibiscus : t.line },
+                ]}
+                accessibilityRole="button"
+                accessibilityLabel={a11y(key.k, key.label)}
               >
-                <Text style={[styles.keyText, { color: fg }]}>{key.label}</Text>
-              </Pressable>
+                <Text style={[styles.keyText, TABULAR, { color: fg }]}>{key.label}</Text>
+              </Tap>
             );
           })}
         </View>
@@ -59,7 +86,7 @@ const styles = StyleSheet.create({
   pad: { gap: 7, marginTop: 10 },
   row: { flexDirection: 'row', gap: 7 },
   key: {
-    flex: 1, height: 46, borderRadius: 11, borderWidth: 1,
+    flex: 1, height: 46, borderRadius: RAD.sm, borderWidth: StyleSheet.hairlineWidth,
     alignItems: 'center', justifyContent: 'center',
   },
   keyWide: { flex: 1 },

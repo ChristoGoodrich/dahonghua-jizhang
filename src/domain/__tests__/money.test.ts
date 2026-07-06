@@ -1,4 +1,4 @@
-import { toBase, curSymbol, fmtShort } from '../money';
+import { toBase, curSymbol, fmtShort, fmt, fmtNum, setDisplaySymbol } from '../money';
 import type { Currencies } from '../types';
 
 const currencies: Currencies = { base: 'CNY', rates: { USD: 7.2, JPY: 0.048 } };
@@ -30,5 +30,28 @@ describe('fmtShort', () => {
   it('rounds and prefixes the language symbol', () => {
     expect(fmtShort(1234.6, 'zh')).toBe('￥1,235');
     expect(fmtShort(1000, 'en')).toBe('$1,000');
+  });
+});
+
+describe('setDisplaySymbol', () => {
+  afterEach(() => setDisplaySymbol(null)); // restore language-default fallback
+
+  it('overrides the language default for fmt/fmtShort with the base currency symbol', () => {
+    setDisplaySymbol(curSymbol('AUD'));
+    expect(fmt(1000, 'zh')).toBe('A$1,000.00');
+    expect(fmt(1000, 'en')).toBe('A$1,000.00');
+    expect(fmtShort(1000, 'en')).toBe('A$1,000');
+  });
+
+  it('falls back to the language symbol when cleared', () => {
+    setDisplaySymbol(null);
+    expect(fmt(50, 'zh')).toBe('￥50.00');
+    expect(fmt(50, 'en')).toBe('$50.00');
+  });
+});
+
+describe('fmtNum', () => {
+  it('formats with two decimals and no currency symbol', () => {
+    expect(fmtNum(1234.5)).toBe('1,234.50');
   });
 });

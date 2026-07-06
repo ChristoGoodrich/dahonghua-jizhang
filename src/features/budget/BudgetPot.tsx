@@ -2,22 +2,42 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '@/theme/ThemeContext';
 import { Flower } from '@/components/Flower';
+import { RAD, TABULAR, shadow } from '@/theme/tokens';
 import { fmtShort } from '@/domain/money';
 import { I18N, type Lang } from '@/i18n';
+import { cycleRange, cycleDays } from '@/domain/cycle';
+import { BudgetProgress } from './BudgetProgress';
+import { BudgetForecast } from './BudgetForecast';
 
 interface Props {
   exp: number;
   budget: number;
   lang: Lang;
+  dailyBudget?: number;
+  dailyUsed?: number;
+  budgetMode?: 'monthly' | 'weekly';
+  weeklyBudget?: number;
+  weeklySpent?: number;
+  cycleStart?: number;
 }
 
-export function BudgetPot({ exp, budget, lang }: Props) {
+export function BudgetPot({ exp, budget, lang, dailyBudget = 0, dailyUsed = 0, budgetMode, weeklyBudget = 0, weeklySpent = 0, cycleStart = 1 }: Props) {
   const t = useTheme();
   const s = I18N[lang];
-  if (!budget || budget <= 0) return null;
+  const hasWeekly = budgetMode === 'weekly' && weeklyBudget > 0;
+  const hasMonthly = !hasWeekly && budget > 0;
+  const hasDaily = dailyBudget > 0;
+  if (!hasMonthly && !hasDaily && !hasWeekly) return null;
+  const dailyLeft = dailyBudget - dailyUsed;
+  const dailyOver = dailyLeft < 0;
 
-  const pct = Math.min((exp / budget) * 100, 100);
+  const pct = hasMonthly ? Math.min((exp / budget) * 100, 100) : Math.min((dailyUsed / dailyBudget) * 100, 100);
   const left = budget - exp;
+
+  const now = new Date();
+  const { start } = cycleRange(now, cycleStart);
+  const daysInCycle = cycleDays(now, cycleStart);
+  const daysElapsed = Math.max(1, Math.round((now.getTime() - start.getTime()) / 864e5));
 
   let petal = t.hibiscus;
   let stamen = t.stamen;
@@ -32,30 +52,51 @@ export function BudgetPot({ exp, budget, lang }: Props) {
   }
 
   return (
-    <View style={[styles.box, { backgroundColor: t.card }]}>
+    <View style={[styles.box, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'xs')]}>
       <Flower size={54} petal={petal} stamen={stamen} />
       <View style={styles.mid}>
-        <Text style={[styles.title, { color: t.ink }]}>
-          {s.budgetTitle} <Text style={{ color: t.inkSoft }}>· {fmtShort(budget, lang)}</Text>
-        </Text>
-        <View style={[styles.track, { backgroundColor: t.line }]}>
-          <View style={[styles.fill, { width: `${pct}%`, backgroundColor: fill }]} />
-        </View>
-        <Text style={[styles.sub, { color: t.inkSoft }]}>
-          {left >= 0
-            ? s.budgetSpentLeft.replace('%s', fmtShort(exp, lang)).replace('%s', fmtShort(left, lang))
-            : s.budgetOver.replace('%s', fmtShort(-left, lang))}
-        </Text>
+        {hasMonthly && (
+          <>
+            <Text style={[styles.title, { color: t.ink }]}>
+              {s.budgetTitle} <Text style={[TABULAR, { color: t.inkSoft }]}>· {fmtShort(budget, lang)}</Text>
+            </Text>
+            <View style={[styles.track, { backgroundColor: t.isDark ? t.line : t.paperWarm }]}>
+              <View style={[styles.fill, { width: `${pct}%`, backgroundColor: fill }]} />
+            </View>
+            <Text style={[styles.sub, TABULAR, { color: t.inkSoft }]}>
+              {left >= 0
+                ? s.budgetSpentLeft.replace('%s', fmtShort(exp, lang)).replace('%s', fmtShort(left, lang))
+                : s.budgetOver.replace('%s', fmtShort(-left, lang))}
+            </Text>
+            <BudgetForecast spent={exp} budget={budget} daysElapsed={daysElapsed} daysInCycle={daysInCycle} lang={lang} />
+          </>
+        )}
+        {hasWeekly && (
+          <BudgetProgress label={s.budgetWeeklyLabel} spent={weeklySpent} total={weeklyBudget} lang={lang} />
+        )}
+        {hasDaily && (
+          <Text style={[hasMonthly ? styles.daily : styles.title, TABULAR, { color: dailyOver ? t.hibiscusDeep : hasMonthly ? t.inkSoft : t.ink }]}>
+            {s.budgetDailyLabel} · {dailyOver
+              ? s.budgetDailyOver.replace('%s', fmtShort(-dailyLeft, lang))
+              : s.budgetDailyLeft.replace('%s', fmtShort(dailyLeft, lang))}
+          </Text>
+        )}
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  box: { marginHorizontal: 22, marginTop: 12, borderRadius: 16, padding: 14, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', gap: 14 },
+  box: {
+    marginHorizontal: 22, marginTop: 12, borderRadius: RAD.md,
+    borderWidth: StyleSheet.hairlineWidth,
+    padding: 14, paddingHorizontal: 16,
+    flexDirection: 'row', alignItems: 'center', gap: 14,
+  },
   mid: { flex: 1, minWidth: 0 },
   title: { fontSize: 13, fontWeight: '700' },
-  track: { height: 8, borderRadius: 8, overflow: 'hidden', marginVertical: 6 },
-  fill: { height: '100%', borderRadius: 8 },
+  track: { height: 8, borderRadius: 4, overflow: 'hidden', marginVertical: 7 },
+  fill: { height: '100%', borderRadius: 4 },
   sub: { fontSize: 11 },
+  daily: { fontSize: 11, marginTop: 4, fontWeight: '600' },
 });

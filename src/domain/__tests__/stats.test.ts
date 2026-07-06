@@ -1,9 +1,23 @@
-import { byCategory, statTotals, sixMonthTrend, comparison } from '../stats';
+import { byCategory, statTotals, sixMonthTrend, comparison, donutSlices, topEntries, byWeekday } from '../stats';
 import { computeInsight } from '../insight';
 import type { Entry } from '../types';
 
 const E = (over: Partial<Entry>): Entry => ({ id: Math.random().toString(36), ts: Date.now(), io: 'exp', cat: 'food', amt: 0, ...over });
 const noCustom = { exp: [], inc: [] };
+
+describe('donutSlices', () => {
+  it('returns cumulative fractions that sum to 1', () => {
+    const slices = donutSlices([{ cat: 'food', amt: 60 }, { cat: 'trans', amt: 40 }], 100);
+    expect(slices).toEqual([
+      { cat: 'food', frac: 0.6, start: 0 },
+      { cat: 'trans', frac: 0.4, start: 0.6 },
+    ]);
+    expect(slices.reduce((s, x) => s + x.frac, 0)).toBeCloseTo(1);
+  });
+  it('is empty when total is zero', () => {
+    expect(donutSlices([{ cat: 'food', amt: 0 }], 0)).toEqual([]);
+  });
+});
 
 describe('byCategory', () => {
   it('groups expenses by category, sorted descending', () => {
@@ -50,6 +64,29 @@ describe('comparison', () => {
     expect(r.thisCum).toHaveLength(r.elapsedDays);
     expect(r.thisTotal).toBe(10);
     expect(r.lastTotal).toBe(20);
+  });
+});
+
+describe('topEntries', () => {
+  it('returns the N largest expenses, descending, ignoring other io', () => {
+    const r = topEntries(
+      [E({ amt: 10 }), E({ amt: 50 }), E({ amt: 30 }), E({ io: 'inc', amt: 999 })],
+      'exp',
+      2,
+    );
+    expect(r.map((d) => d.amt)).toEqual([50, 30]);
+  });
+});
+
+describe('byWeekday', () => {
+  it('buckets expenses Sunday-first by day of week', () => {
+    const sun = new Date(2026, 5, 7).getTime(); // 2026-06-07 is a Sunday
+    const mon = new Date(2026, 5, 8).getTime();
+    const r = byWeekday([E({ amt: 10, ts: sun }), E({ amt: 5, ts: mon }), E({ amt: 3, ts: mon }), E({ io: 'inc', amt: 99, ts: sun })]);
+    expect(r).toHaveLength(7);
+    expect(r[0]).toEqual({ dow: 0, amt: 10, count: 1 }); // Sunday
+    expect(r[1]).toEqual({ dow: 1, amt: 8, count: 2 }); // Monday
+    expect(r[2]).toEqual({ dow: 2, amt: 0, count: 0 });
   });
 });
 
