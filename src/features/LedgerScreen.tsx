@@ -136,6 +136,15 @@ export const LedgerScreen = observer(function LedgerScreen() {
             <Tap
               style={[styles.iconBtn, { borderColor: t.line, backgroundColor: t.card }, shadow(t, 'xs')]}
               scaleTo={0.88}
+              onPress={() => router.push('/report')}
+              accessibilityRole="button"
+              accessibilityLabel={s.setReview}
+            >
+              <Icon name="receipt" color={t.inkSoft} size={17} />
+            </Tap>
+            <Tap
+              style={[styles.iconBtn, { borderColor: t.line, backgroundColor: t.card }, shadow(t, 'xs')]}
+              scaleTo={0.88}
               onPress={() => router.push('/settings')}
               accessibilityRole="button"
               accessibilityLabel={s.setTitle}
