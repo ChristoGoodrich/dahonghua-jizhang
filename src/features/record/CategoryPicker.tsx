@@ -159,13 +159,13 @@ export function CategoryPicker({
 }
 
 const styles = StyleSheet.create({
-  catScroll: { marginBottom: 10 },
-  cats: { flexDirection: 'row', flexWrap: 'wrap', rowGap: 4, columnGap: 6 },
+  catScroll: { marginBottom: 8 },
+  cats: { flexDirection: 'row', flexWrap: 'wrap', rowGap: 3, columnGap: 6 },
   catPick: {
-    width: '18.4%', alignItems: 'center', gap: 4, paddingVertical: 7,
+    width: '18.4%', alignItems: 'center', gap: 3, paddingVertical: 4,
     borderRadius: RAD.sm, borderWidth: 1.2, borderColor: 'transparent',
   },
-  catEmo: { width: 40, height: 40, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
+  catEmo: { width: 38, height: 38, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
   catEmoAdd: { borderWidth: 1.2, borderStyle: 'dashed' },
   catEmoText: { fontSize: 19 },
   catName: { fontSize: 10.5 },

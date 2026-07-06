@@ -9,10 +9,12 @@ interface Props {
   // Optional action (e.g. "Undo"). When present the toast lingers and is tappable.
   actionLabel?: string;
   onAction?: () => void;
+  /** Distance from the screen bottom (host adjusts for nav bar + insets). */
+  bottom?: number;
 }
 
 // Mount with a fresh `key` to (re)trigger the show/hide animation.
-export function Toast({ message, actionLabel, onAction }: Props) {
+export function Toast({ message, actionLabel, onAction, bottom = 104 }: Props) {
   const t = useTheme();
   const o = useRef(new Animated.Value(0)).current;
   const interactive = !!actionLabel;
@@ -31,7 +33,7 @@ export function Toast({ message, actionLabel, onAction }: Props) {
       pointerEvents={interactive ? 'box-none' : 'none'}
       style={[
         styles.toast,
-        { backgroundColor: t.ink },
+        { backgroundColor: t.ink, bottom },
         shadow(t, 'lg'),
         {
           opacity: o.interpolate({ inputRange: [0, 0.6, 1], outputRange: [0, 1, 1], extrapolate: 'clamp' }),
@@ -56,7 +58,6 @@ export function Toast({ message, actionLabel, onAction }: Props) {
 const styles = StyleSheet.create({
   toast: {
     position: 'absolute',
-    bottom: 104,
     alignSelf: 'center',
     flexDirection: 'row',
     alignItems: 'center',

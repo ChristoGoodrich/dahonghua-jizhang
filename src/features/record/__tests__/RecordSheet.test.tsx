@@ -1,5 +1,6 @@
 import React from 'react';
 import TestRenderer, { act, type ReactTestInstance } from 'react-test-renderer';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { RecordSheet } from '../RecordSheet';
 import { store$ } from '@/store/ledger';
 import { I18N } from '@/i18n';
@@ -7,6 +8,12 @@ import type { Category, IO } from '@/domain/types';
 
 const noCustom: Record<IO, Category[]> = { exp: [], inc: [], xfer: [] };
 const s = I18N.zh;
+
+// the sheet reads safe-area insets (like in the app, which mounts a provider at the root)
+const METRICS = { insets: { top: 0, left: 0, right: 0, bottom: 0 }, frame: { x: 0, y: 0, width: 390, height: 844 } };
+const withProvider = (el: React.ReactElement) => (
+  <SafeAreaProvider initialMetrics={METRICS}>{el}</SafeAreaProvider>
+);
 
 beforeEach(() => {
   store$.data.set([]);
@@ -33,14 +40,16 @@ describe('RecordSheet save flow', () => {
     let r!: TestRenderer.ReactTestRenderer;
     act(() => {
       r = TestRenderer.create(
-        <RecordSheet
-          visible
-          editId={null}
-          lang="zh"
-          customCats={noCustom}
-          onClose={onClose}
-          onSaved={onSaved}
-        />,
+        withProvider(
+          <RecordSheet
+            visible
+            editId={null}
+            lang="zh"
+            customCats={noCustom}
+            onClose={onClose}
+            onSaved={onSaved}
+          />,
+        ),
       );
     });
 
@@ -69,7 +78,9 @@ describe('RecordSheet save flow', () => {
     let r!: TestRenderer.ReactTestRenderer;
     act(() => {
       r = TestRenderer.create(
-        <RecordSheet visible editId={null} lang="zh" customCats={noCustom} onClose={onClose} onSaved={onSaved} />,
+        withProvider(
+          <RecordSheet visible editId={null} lang="zh" customCats={noCustom} onClose={onClose} onSaved={onSaved} />,
+        ),
       );
     });
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Pressable, StyleSheet, Animated, useWindowDimensions } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/theme/ThemeContext';
 import { shadow } from '@/theme/tokens';
 import { I18N, type Lang } from '@/i18n';
@@ -72,9 +73,16 @@ interface Props {
   lang: Lang;
 }
 
+/** Bottom padding under the floating bar — respects the gesture/home inset. */
+export function useNavBottomPad(): number {
+  const insets = useSafeAreaInsets();
+  return Math.max(16, insets.bottom + 6);
+}
+
 export function BottomNav({ active, onChange, lang }: Props) {
   const t = useTheme();
   const s = I18N[lang];
+  const bottomPad = useNavBottomPad();
   const { width: screenW } = useWindowDimensions();
   const tx = useRef(new Animated.Value(0)).current; // sliding indicator translateX
   const stretch = useRef(new Animated.Value(0)).current; // 0..1 liquid squash-stretch during slide
@@ -117,7 +125,7 @@ export function BottomNav({ active, onChange, lang }: Props) {
   );
 
   return (
-    <View style={styles.wrap} pointerEvents="box-none">
+    <View style={[styles.wrap, { paddingBottom: bottomPad }]} pointerEvents="box-none">
       <View style={[styles.bar, { width: barW, backgroundColor: t.card, borderColor: t.line }, shadow(t, 'lg')]}>
         <Animated.View
           style={[
@@ -141,7 +149,7 @@ export function BottomNav({ active, onChange, lang }: Props) {
 }
 
 const styles = StyleSheet.create({
-  wrap: { position: 'absolute', left: 0, right: 0, bottom: 0, alignItems: 'center', paddingBottom: 16 },
+  wrap: { position: 'absolute', left: 0, right: 0, bottom: 0, alignItems: 'center' },
   bar: {
     flexDirection: 'row',
     alignItems: 'center',

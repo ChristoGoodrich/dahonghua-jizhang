@@ -56,7 +56,7 @@ export function SummaryCard({ exp, inc, monthLabel, lang, onPrev, onNext }: Prop
       <View style={[styles.card, { backgroundColor: t.ink }, shadow(t, 'md')]}>
         {/* diagonal accent wash gives the ink slab depth without breaking contrast;
             gentler on the cream dark-mode surface where red shows much stronger */}
-        <GradientFill from={t.gradFrom} to={t.gradTo} radius={RAD.lg} direction="diagonal" opacity={t.isDark ? 0.09 : 0.16} />
+        <GradientFill from={t.gradFrom} to={t.gradTo} direction="diagonal" opacity={t.isDark ? 0.09 : 0.16} />
         <View style={styles.bgFlower}>
           <Flower size={132} petal={t.paper} stamen={t.paper} />
         </View>

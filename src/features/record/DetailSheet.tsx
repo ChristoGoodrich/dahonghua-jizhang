@@ -111,13 +111,13 @@ export const DetailSheet = observer(function DetailSheet({ entryId, lang, custom
             <Text style={[styles.actionText, { color: t.hibiscusDeep }]}>{s.del}</Text>
           </Tap>
           <Tap
-            style={[styles.actionBtn, styles.actionPrimary, shadow(t, 'glow')]}
+            style={[styles.actionBtn, styles.actionPrimary, { backgroundColor: t.hibiscus }, shadow(t, 'glow')]}
             scaleTo={0.97}
             onPress={() => { onClose(); onEdit(entryId!); }}
             accessibilityRole="button"
             accessibilityLabel={s.markEdit}
           >
-            <GradientFill from={t.gradFrom} to={t.gradTo} radius={RAD.sm} />
+            <GradientFill from={t.gradFrom} to={t.gradTo} />
             <Icon name="edit" color="#fff" size={17} />
             <Text style={[styles.actionText, { color: '#fff' }]}>{s.markEdit}</Text>
           </Tap>

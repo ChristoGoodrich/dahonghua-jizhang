@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, Pressable, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/theme/ThemeContext';
 import { RAD, SPRING, shadow } from '@/theme/tokens';
 
@@ -14,6 +15,7 @@ interface Props {
  *  One entrance for every sheet so the app moves with a single voice. */
 export function SheetShell({ onClose, closeLabel, children }: Props) {
   const t = useTheme();
+  const insets = useSafeAreaInsets();
   const enter = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -39,7 +41,7 @@ export function SheetShell({ onClose, closeLabel, children }: Props) {
         <Animated.View
           style={[
             styles.sheet,
-            { backgroundColor: t.paper },
+            { backgroundColor: t.paper, paddingBottom: Math.max(32, insets.bottom + 18) },
             shadow(t, 'lg'),
             {
               opacity: enter.interpolate({ inputRange: [0, 0.4, 1], outputRange: [0, 1, 1], extrapolate: 'clamp' }),

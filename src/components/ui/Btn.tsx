@@ -37,12 +37,14 @@ export function Btn({ label, onPress, variant = 'primary', tone, gradient, leadi
       style={[
         styles.btn,
         variant === 'ghost' && [styles.ghost, { borderColor: t.line, backgroundColor: t.card }],
-        primary && [shadow(t, 'glow'), { shadowColor: gTo }],
+        // solid base under the gradient: keeps Android elevation happy (it
+        // needs an opaque bg) and the button legible if the SVG ever fails
+        primary && [shadow(t, 'glow'), { shadowColor: gTo, backgroundColor: gFrom }],
         disabled && { opacity: 0.45 },
         style,
       ]}
     >
-      {primary && <GradientFill from={gFrom} to={gTo} radius={RAD.sm} />}
+      {primary && <GradientFill from={gFrom} to={gTo} />}
       {leading}
       <Text style={[styles.text, variant === 'quiet' && styles.quietText, { color }]}>{label}</Text>
     </Tap>
