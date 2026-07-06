@@ -226,6 +226,9 @@ export default observer(function SettingsScreen() {
           <Pressable onPress={() => router.push('/tags')}>
             <Row title={s.setTags} desc={s.setTagsD} right={chev} />
           </Pressable>
+          <Pressable onPress={() => router.push('/backup')}>
+            <Row title={s.backupAuto} desc={s.backupAutoD} right={chev} />
+          </Pressable>
           <Pressable onPress={() => router.push('/currency')}>
             <Row title={s.setCurrency} desc={s.setCurrencyD} right={chev} />
           </Pressable>
