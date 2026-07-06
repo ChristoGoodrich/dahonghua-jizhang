@@ -19,6 +19,7 @@ import { store$, addEntry, addTransfer, updateEntry, removeEntry, addTemplate } 
 import { CalcKeypad } from './CalcKeypad';
 import { AIQuickEntry } from './AIQuickEntry';
 import { VoiceEntry } from './VoiceEntry';
+import { CameraEntry } from './CameraEntry';
 import { CurrencyRow } from './CurrencyRow';
 import { CategoryPicker } from './CategoryPicker';
 import { TransferForm } from './TransferForm';
@@ -98,6 +99,34 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
     setAiText(text);
     // Auto-trigger AI parse after voice recognition
     const trimmed = text.trim();
+    if (!trimmed || aiBusy) return;
+    setAiBusy(true);
+    setAiMsg('');
+    (async () => {
+      try {
+        const shareCats = store$.settings.aiShareCategories.peek() !== false;
+        const draft = await parseEntryText(trimmed, customCats, lang, shareCats);
+        if (!draft) {
+          setAiMsg(s.aiUnconfigured);
+        } else {
+          setIO(draft.io);
+          setCat(draft.cat);
+          setAmt(draft.amt);
+          if (draft.note) setNote(draft.note);
+          setAiText('');
+        }
+      } catch {
+        setAiMsg(s.aiFailed);
+      } finally {
+        setAiBusy(false);
+      }
+    })();
+  }
+
+  function onCameraResult(_imageUri: string, recognizedText?: string) {
+    if (!recognizedText) return;
+    setAiText(recognizedText);
+    const trimmed = recognizedText.trim();
     if (!trimmed || aiBusy) return;
     setAiBusy(true);
     setAiMsg('');
@@ -327,6 +356,7 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
             {io !== 'xfer' && aiConfigured() && (
               <>
                 <VoiceEntry lang={lang} onResult={onVoiceResult} />
+                <CameraEntry lang={lang} onResult={onCameraResult} />
                 <AIQuickEntry value={aiText} busy={aiBusy} msg={aiMsg} onChangeText={setAiText} onSubmit={runAI} lang={lang} />
               </>
             )}
