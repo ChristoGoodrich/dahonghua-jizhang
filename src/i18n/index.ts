@@ -101,6 +101,17 @@ export interface Strings {
   backupAuto: string; backupAutoD: string; backupFreq: string; backupFreqDaily: string;
   backupFreqWeekly: string; backupMax: string; backupMaxD: string;
   remindTitle: string; remindDesc: string; remindOff: string; remindBody: string;
+  // voice
+  voiceTitle: string; voiceListening: string; voiceHint: string;
+  // camera
+  cameraTitle: string; cameraTake: string; cameraGallery: string; cameraProcessing: string;
+  cameraPermission: string; cameraPermissionDesc: string;
+  // report
+  reportTitle: string; reportGenerate: string; reportGenerating: string; reportShare: string;
+  reportTotalExp: string; reportTotalInc: string; reportBalance: string; reportByCategory: string;
+  reportTransactions: string;
+  // themes
+  themeOcean: string; themeForest: string; themeSunset: string;
 }
 
 export const I18N: Record<Lang, Strings> = {
@@ -182,6 +193,13 @@ export const I18N: Record<Lang, Strings> = {
     backupRestoreConfirm: '恢复会覆盖当前数据，确定？', backupRestoreDone: '已恢复 🌺', backupList: '备份列表', backupEmpty: '还没有备份',
     backupAuto: '自动备份', backupAutoD: '定期备份数据', backupFreq: '备份频率', backupFreqDaily: '每天',
     backupFreqWeekly: '每周', backupMax: '最大备份数', backupMaxD: '超出自动删除最旧的备份',
+    voiceTitle: '语音记账', voiceListening: '正在听...', voiceHint: '说出花费，如"午饭35"',
+    cameraTitle: '拍照记账', cameraTake: '拍照', cameraGallery: '相册', cameraProcessing: '识别中...',
+    cameraPermission: '需要相机权限', cameraPermissionDesc: '请在设置中允许访问相机',
+    reportTitle: '月度报告', reportGenerate: '生成报告', reportGenerating: '生成中...', reportShare: '分享报告',
+    reportTotalExp: '总支出', reportTotalInc: '总收入', reportBalance: '结余', reportByCategory: '分类统计',
+    reportTransactions: '交易明细',
+    themeOcean: '海洋', themeForest: '森林', themeSunset: '日落',
   },
   en: {
     title: 'Red Blossom', sub: 'RED BLOSSOM', net: 'SAVED THIS MONTH', exp: 'Spent', inc: 'In',
@@ -261,6 +279,13 @@ export const I18N: Record<Lang, Strings> = {
     backupRestoreConfirm: 'This will overwrite current data. Continue?', backupRestoreDone: 'Restored 🌺', backupList: 'Backups', backupEmpty: 'No backups yet',
     backupAuto: 'Auto backup', backupAutoD: 'Back up data automatically', backupFreq: 'Frequency', backupFreqDaily: 'Daily',
     backupFreqWeekly: 'Weekly', backupMax: 'Max backups', backupMaxD: 'Oldest deleted when exceeded',
+    voiceTitle: 'Voice Entry', voiceListening: 'Listening...', voiceHint: 'Say your expense, e.g. "lunch 35"',
+    cameraTitle: 'Camera Entry', cameraTake: 'Take Photo', cameraGallery: 'Gallery', cameraProcessing: 'Processing...',
+    cameraPermission: 'Camera Permission Required', cameraPermissionDesc: 'Please allow camera access in settings',
+    reportTitle: 'Monthly Report', reportGenerate: 'Generate Report', reportGenerating: 'Generating...', reportShare: 'Share Report',
+    reportTotalExp: 'Total Expense', reportTotalInc: 'Total Income', reportBalance: 'Balance', reportByCategory: 'By Category',
+    reportTransactions: 'Transactions',
+    themeOcean: 'Ocean', themeForest: 'Forest', themeSunset: 'Sunset',
   },
 };
 
