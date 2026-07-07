@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { useTheme } from '@/theme/ThemeContext';
 import { Chip } from '@/components/ui/Chip';
@@ -41,9 +41,17 @@ export function CategoryPicker({
   const [newSubcatName, setNewSubcatName] = useState('');
 
   // collapse the add-forms when the type / category changes (mirrors the sheet's
-  // previous inline reset behaviour)
-  useEffect(() => setAddingCat(false), [io]);
-  useEffect(() => setAddingSubcat(false), [cat]);
+  // previous inline reset behaviour) — adjusted during render, not in an effect
+  const [prevIo, setPrevIo] = useState(io);
+  if (prevIo !== io) {
+    setPrevIo(io);
+    setAddingCat(false);
+  }
+  const [prevCat, setPrevCat] = useState(cat);
+  if (prevCat !== cat) {
+    setPrevCat(cat);
+    setAddingSubcat(false);
+  }
 
   function createCat() {
     const nm = newCatName.trim().replace(/[<>]/g, '').slice(0, 24);

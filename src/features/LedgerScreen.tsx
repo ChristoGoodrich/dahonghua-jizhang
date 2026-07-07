@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useWebKeyboard } from '@/hooks/useWebKeyboard';
 import { useResponsive } from '@/hooks/useResponsive';
+import { useAnimatedValue } from '@/hooks/useAnimatedValue';
 import { observer } from '@legendapp/state/react';
 import { store$, setLang, patchSettings, addEntry } from '@/store/ledger';
 import { useTheme } from '@/theme/ThemeContext';
@@ -41,7 +42,7 @@ type Tab = 'list' | 'cal' | 'stats' | 'wall';
 
 /** Remounts with a `key` per tab — content fades in and settles upward. */
 function TabFade({ children }: { children: React.ReactNode }) {
-  const v = useRef(new Animated.Value(0)).current;
+  const v = useAnimatedValue(0);
   useEffect(() => {
     Animated.timing(v, { toValue: 1, duration: 220, useNativeDriver: true }).start();
   }, [v]);
@@ -315,7 +316,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
         onDeleted={deleteToast}
       />
 
-      {burst != null && <PetalBurst key={burst} onDone={() => setBurst(null)} />}
+      {burst != null && <PetalBurst key={burst} seed={burst} onDone={() => setBurst(null)} />}
 
       {toast && (
         <Toast

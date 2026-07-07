@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View, Text, TextInput, Pressable, StyleSheet, ScrollView,
   KeyboardAvoidingView, Platform, Animated,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useAnimatedValue } from '@/hooks/useAnimatedValue';
 import { useTheme } from '@/theme/ThemeContext';
 import { Flower } from '@/components/Flower';
 import { Chip } from '@/components/ui/Chip';
@@ -64,7 +65,7 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
   const [aiMsg, setAiMsg] = useState('');
 
   // entrance: mask fades in while the sheet springs up from below
-  const enter = useRef(new Animated.Value(0)).current;
+  const enter = useAnimatedValue(0);
   useEffect(() => {
     if (!visible) return;
     enter.setValue(0);
@@ -151,13 +152,19 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
     })();
   }
 
-  useEffect(() => {
-    if (!visible) return;
-    setAiText('');
-    setAiMsg('');
-    const baseNow = store$.currencies.base.peek() || 'CNY';
-    if (editId) {
-      const d = store$.data.peek().find((x) => x.id === editId);
+  // Re-initialize the form whenever the sheet opens or switches target entry.
+  // Adjusted during render (guarded by initKey) rather than in an effect, so
+  // the first visible frame already shows the right values — and creating a
+  // category mid-entry no longer wipes the half-typed form.
+  const [initKey, setInitKey] = useState<string | null>(null);
+  const formKey = visible ? (editId ?? '') : null;
+  if (initKey !== formKey) {
+    setInitKey(formKey);
+    if (formKey !== null) {
+      setAiText('');
+      setAiMsg('');
+      const baseNow = store$.currencies.base.peek() || 'CNY';
+      const d = editId ? store$.data.peek().find((x) => x.id === editId) : undefined;
       if (d) {
         setIO(d.io);
         setCat(d.cat);
@@ -172,22 +179,22 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
         setLedger(d.ledger ?? '');
         setCur(d.cur ?? baseNow);
         setSubcat(d.subcat ?? '');
-        return;
+      } else {
+        setIO('exp');
+        setCat(allCats('exp', customCats)[0].k);
+        setAmt('');
+        setNote('');
+        setAcct(store$.curAccount.peek());
+        setAcctTo('');
+        setFee('');
+        setDiscount('');
+        setSheetTags([]);
+        setLedger(store$.curLedger.peek() || '');
+        setCur(baseNow);
+        setSubcat('');
       }
     }
-    setIO('exp');
-    setCat(allCats('exp', customCats)[0].k);
-    setAmt('');
-    setNote('');
-    setAcct(store$.curAccount.peek());
-    setAcctTo('');
-    setFee('');
-    setDiscount('');
-    setSheetTags([]);
-    setLedger(store$.curLedger.peek() || '');
-    setCur(baseNow);
-    setSubcat('');
-  }, [visible, editId, customCats]);
+  }
 
   function pickIO(next: IO) {
     setIO(next);

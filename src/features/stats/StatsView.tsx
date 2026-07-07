@@ -1,6 +1,7 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Animated } from 'react-native';
 import Svg, { Polyline } from 'react-native-svg';
+import { useAnimatedValue } from '@/hooks/useAnimatedValue';
 import { useTheme } from '@/theme/ThemeContext';
 import { Chip } from '@/components/ui/Chip';
 import { Tap } from '@/components/ui/Tap';
@@ -27,7 +28,7 @@ interface Props {
 function Bar({ label, color, pct, value }: { label: React.ReactNode; color: string; pct: number; value: string }) {
   const t = useTheme();
   // springs from zero on mount and follows period/io switches
-  const w = useRef(new Animated.Value(0)).current;
+  const w = useAnimatedValue(0);
   useEffect(() => {
     Animated.spring(w, { toValue: pct, friction: 8, tension: 140, useNativeDriver: false }).start();
   }, [pct, w]);
@@ -63,7 +64,10 @@ export function StatsView({ all, anchor, cycleStart, customCats, lang, onEntryPr
 
   const periodLabels: Record<Period, string> = { day: s.pDay, week: s.pWeek, month: s.pMonth, halfyear: s.pHalf, year: s.pYear };
   const label = periodLabel(pAnchor, period, lang, cycleStart);
-  const isFuture = useMemo(() => periodRange(pAnchor, period, cycleStart).end.getTime() > Date.now(), [pAnchor, period, cycleStart]);
+  // "now" frozen at mount keeps render pure — fresh enough to gate the
+  // next-period arrow, since the stats tab remounts on every visit
+  const [openedAt] = useState(() => Date.now());
+  const isFuture = useMemo(() => periodRange(pAnchor, period, cycleStart).end.getTime() > openedAt, [pAnchor, period, cycleStart, openedAt]);
 
   const rangeEntries = useMemo(() => entriesInPeriod(all, pAnchor, period, cycleStart), [all, pAnchor, period, cycleStart]);
   const ov = useMemo(() => overview(rangeEntries), [rangeEntries]);

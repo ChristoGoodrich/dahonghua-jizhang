@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Pressable, StyleSheet, Animated, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useAnimatedValue } from '@/hooks/useAnimatedValue';
 import { useTheme } from '@/theme/ThemeContext';
 import { shadow } from '@/theme/tokens';
 import { I18N, type Lang } from '@/i18n';
@@ -30,7 +31,7 @@ interface ItemProps {
 
 function NavItem({ k, active, label, onPress }: ItemProps) {
   const t = useTheme();
-  const av = useRef(new Animated.Value(active ? 1 : 0)).current;
+  const av = useAnimatedValue(active ? 1 : 0);
 
   useEffect(() => {
     Animated.spring(av, { toValue: active ? 1 : 0, useNativeDriver: false, friction: 6, tension: 175 }).start();
@@ -84,8 +85,8 @@ export function BottomNav({ active, onChange, lang }: Props) {
   const s = I18N[lang];
   const bottomPad = useNavBottomPad();
   const { width: screenW } = useWindowDimensions();
-  const tx = useRef(new Animated.Value(0)).current; // sliding indicator translateX
-  const stretch = useRef(new Animated.Value(0)).current; // 0..1 liquid squash-stretch during slide
+  const tx = useAnimatedValue(0); // sliding indicator translateX
+  const stretch = useAnimatedValue(0); // 0..1 liquid squash-stretch during slide
   const firstRef = useRef(true);
   const activeIdx = ORDER.indexOf(active);
 

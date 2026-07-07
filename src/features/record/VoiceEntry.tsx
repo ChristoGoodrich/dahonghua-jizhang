@@ -1,9 +1,10 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
+import { useAnimatedValue } from '@/hooks/useAnimatedValue';
 import { useTheme } from '@/theme/ThemeContext';
 import { Tap } from '@/components/ui/Tap';
 import { tapHaptic } from '@/util/haptics';
-import { I18N, type Lang } from '@/i18n';
+import { type Lang } from '@/i18n';
 import { RAD } from '@/theme/tokens';
 
 interface Props {
@@ -45,10 +46,9 @@ function MicSvg({ color, size = 20 }: { color: string; size?: number }) {
  */
 export function VoiceEntry({ lang, onResult }: Props) {
   const t = useTheme();
-  const s = I18N[lang];
   const [listening, setListening] = useState(false);
   const [transcript, setTranscript] = useState('');
-  const pulse = useRef(new Animated.Value(1)).current;
+  const pulse = useAnimatedValue(1);
 
   function toggle() {
     tapHaptic();

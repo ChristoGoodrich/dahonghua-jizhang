@@ -1,5 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { Animated, Pressable, StyleSheet, Text } from 'react-native';
+import { useAnimatedValue } from '@/hooks/useAnimatedValue';
 import { useTheme } from '@/theme/ThemeContext';
 import { SPRING, shadow } from '@/theme/tokens';
 import { Flower } from './Flower';
@@ -16,7 +17,7 @@ interface Props {
 // Mount with a fresh `key` to (re)trigger the show/hide animation.
 export function Toast({ message, actionLabel, onAction, bottom = 104 }: Props) {
   const t = useTheme();
-  const o = useRef(new Animated.Value(0)).current;
+  const o = useAnimatedValue(0);
   const interactive = !!actionLabel;
 
   useEffect(() => {
