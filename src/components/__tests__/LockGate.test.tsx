@@ -21,18 +21,24 @@ function textOf(json: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTes
   return textOf(json.children as never);
 }
 
+let tree: TestRenderer.ReactTestRenderer | undefined;
+
 async function renderGate() {
-  let r!: TestRenderer.ReactTestRenderer;
   await act(async () => {
-    r = TestRenderer.create(<LockGate><Text>APP CONTENT</Text></LockGate>);
+    tree = TestRenderer.create(<LockGate><Text>APP CONTENT</Text></LockGate>);
   });
   await act(async () => {}); // flush the tryUnlock promise chain
-  return r;
+  return tree!;
 }
 
 const lockTitle = I18N.zh.lockTitle;
 
 afterEach(() => {
+  // Unmount before touching store$ — the gate is an observer, and mutating the
+  // lock while it is still mounted schedules a re-render that can land after
+  // Jest tears the environment down.
+  act(() => tree?.unmount());
+  tree = undefined;
   store$.settings.lock.set(false);
   jest.clearAllMocks();
 });

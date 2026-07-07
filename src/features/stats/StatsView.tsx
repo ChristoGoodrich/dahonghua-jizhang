@@ -30,7 +30,9 @@ function Bar({ label, color, pct, value }: { label: React.ReactNode; color: stri
   // springs from zero on mount and follows period/io switches
   const w = useAnimatedValue(0);
   useEffect(() => {
-    Animated.spring(w, { toValue: pct, friction: 8, tension: 140, useNativeDriver: false }).start();
+    const anim = Animated.spring(w, { toValue: pct, friction: 8, tension: 140, useNativeDriver: false });
+    anim.start();
+    return () => anim.stop(); // unmounted bars must not keep ticking (leaks past Jest teardown)
   }, [pct, w]);
   return (
     <View style={styles.bar}>
