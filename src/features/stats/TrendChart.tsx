@@ -16,7 +16,6 @@ const CHART_WIDTH = Dimensions.get('window').width - 44; // match content paddin
 
 export function TrendChart({ data, lang, type = 'both' }: Props) {
   const t = useTheme();
-  const loc = lang === 'zh' ? 'zh-CN' : 'en-US';
 
   if (data.length === 0) return null;
 

@@ -4,7 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useTheme } from '@/theme/ThemeContext';
 import { Tap } from '@/components/ui/Tap';
 import { tapHaptic } from '@/util/haptics';
-import { I18N, type Lang } from '@/i18n';
+import { type Lang } from '@/i18n';
 import { RAD } from '@/theme/tokens';
 
 interface Props {
@@ -71,7 +71,6 @@ function GallerySvg({ color, size = 20 }: { color: string; size?: number }) {
  */
 export function CameraEntry({ lang, onResult }: Props) {
   const t = useTheme();
-  const s = I18N[lang];
   const [image, setImage] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
 

@@ -4,7 +4,6 @@ import { useTheme } from '@/theme/ThemeContext';
 import { fmt } from '@/domain/money';
 import type { Lang } from '@/i18n';
 import { I18N } from '@/i18n';
-import { RAD } from '@/theme/tokens';
 
 interface Props {
   label: string;
