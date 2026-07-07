@@ -6,13 +6,16 @@
 import type { Account, Asset, Entry, Loan } from './types';
 
 /** Running balance of an account: its starting balance +/- its entries.
- *  Entries with no acct are attributed to the default account (matches v7). */
-export function acctBalance(id: string, accounts: Account[], data: Entry[]): number {
+ *  Entries with no acct are attributed to the default account (matches v7).
+ *  Pass `asOf` (epoch ms) to get the balance as of that instant (used by the
+ *  credit-card statement math to value the balance at a statement close). */
+export function acctBalance(id: string, accounts: Account[], data: Entry[], asOf?: number): number {
   const a = accounts.find((x) => x.id === id);
   if (!a) return 0;
   let bal = a.balance || 0;
   for (const d of data) {
     if (d.deletedAt) continue;
+    if (asOf != null && d.ts > asOf) continue;
     if (d.io === 'xfer') {
       // money moves between accounts; fee leaves the FROM, discount credits the TO
       if (d.acct === id) bal -= d.amt + (d.fee ?? 0);

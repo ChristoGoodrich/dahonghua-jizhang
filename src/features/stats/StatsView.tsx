@@ -1,13 +1,14 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Animated } from 'react-native';
 import Svg, { Polyline } from 'react-native-svg';
+import { useAnimatedValue } from '@/hooks/useAnimatedValue';
 import { useTheme } from '@/theme/ThemeContext';
 import { Chip } from '@/components/ui/Chip';
 import { Tap } from '@/components/ui/Tap';
 import { RAD, TABULAR, LABEL_TRACKED, shadow } from '@/theme/tokens';
 import { catOf, catName } from '@/domain/cats';
 import { fmt, fmtShort, fmtNum } from '@/domain/money';
-import { byCategory, overview, comparison, topEntries, byWeekday } from '@/domain/stats';
+import { byCategory, overview, comparison, topEntries, byWeekday, byTimeOfDay } from '@/domain/stats';
 import { CategoryDonut } from './CategoryDonut';
 import { TrendChart } from './TrendChart';
 import { dailyTrend } from '@/domain/trends';
@@ -27,9 +28,11 @@ interface Props {
 function Bar({ label, color, pct, value }: { label: React.ReactNode; color: string; pct: number; value: string }) {
   const t = useTheme();
   // springs from zero on mount and follows period/io switches
-  const w = useRef(new Animated.Value(0)).current;
+  const w = useAnimatedValue(0);
   useEffect(() => {
-    Animated.spring(w, { toValue: pct, friction: 8, tension: 140, useNativeDriver: false }).start();
+    const anim = Animated.spring(w, { toValue: pct, friction: 8, tension: 140, useNativeDriver: false });
+    anim.start();
+    return () => anim.stop(); // unmounted bars must not keep ticking (leaks past Jest teardown)
   }, [pct, w]);
   return (
     <View style={styles.bar}>
@@ -63,7 +66,10 @@ export function StatsView({ all, anchor, cycleStart, customCats, lang, onEntryPr
 
   const periodLabels: Record<Period, string> = { day: s.pDay, week: s.pWeek, month: s.pMonth, halfyear: s.pHalf, year: s.pYear };
   const label = periodLabel(pAnchor, period, lang, cycleStart);
-  const isFuture = useMemo(() => periodRange(pAnchor, period, cycleStart).end.getTime() > Date.now(), [pAnchor, period, cycleStart]);
+  // "now" frozen at mount keeps render pure — fresh enough to gate the
+  // next-period arrow, since the stats tab remounts on every visit
+  const [openedAt] = useState(() => Date.now());
+  const isFuture = useMemo(() => periodRange(pAnchor, period, cycleStart).end.getTime() > openedAt, [pAnchor, period, cycleStart, openedAt]);
 
   const rangeEntries = useMemo(() => entriesInPeriod(all, pAnchor, period, cycleStart), [all, pAnchor, period, cycleStart]);
   const ov = useMemo(() => overview(rangeEntries), [rangeEntries]);
@@ -77,6 +83,12 @@ export function StatsView({ all, anchor, cycleStart, customCats, lang, onEntryPr
   const weekday = useMemo(() => byWeekday(rangeEntries, io), [rangeEntries, io]);
   const wdMax = Math.max(...weekday.map((x) => x.amt), 1);
   const wdHasData = weekday.some((x) => x.count > 0);
+
+  const timeOfDay = useMemo(() => byTimeOfDay(rangeEntries, io), [rangeEntries, io]);
+  const todMax = Math.max(...timeOfDay.map((x) => x.amt), 1);
+  const todHasData = timeOfDay.some((x) => x.count > 0);
+  const todLabel = (key: string) =>
+    (({ dawn: s.todDawn, earlyMorning: s.todEarlyMorning, morning: s.todMorning, noon: s.todNoon, afternoon: s.todAfternoon, dusk: s.todDusk, night: s.todNight }) as Record<string, string>)[key] ?? key;
   const trendData = useMemo(() => dailyTrend(all, 7), [all]);
 
   // month-only: cumulative this-vs-last comparison
@@ -212,6 +224,21 @@ export function StatsView({ all, anchor, cycleStart, customCats, lang, onEntryPr
               pct={(x.amt / wdMax) * 100}
               value={fmtNum(x.amt)}
               label={<Text style={[styles.barLabText, { color: t.ink, width: 46 }]}>{wdLabel(x.dow)}</Text>}
+            />
+          ))}
+        </>
+      )}
+
+      {todHasData && (
+        <>
+          <Text style={[styles.h3, { color: t.inkSoft }]}>{s.stByTime}</Text>
+          {timeOfDay.map((x) => (
+            <Bar
+              key={x.key}
+              color={trendColor}
+              pct={(x.amt / todMax) * 100}
+              value={fmtNum(x.amt)}
+              label={<Text style={[styles.barLabText, { color: t.ink, width: 46 }]}>{todLabel(x.key)}</Text>}
             />
           ))}
         </>

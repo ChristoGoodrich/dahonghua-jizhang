@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useWebKeyboard } from '@/hooks/useWebKeyboard';
 import { useResponsive } from '@/hooks/useResponsive';
+import { useAnimatedValue } from '@/hooks/useAnimatedValue';
 import { observer } from '@legendapp/state/react';
 import { store$, setLang, patchSettings, addEntry } from '@/store/ledger';
 import { useTheme } from '@/theme/ThemeContext';
@@ -11,7 +12,7 @@ import { Flower } from '@/components/Flower';
 import { I18N } from '@/i18n';
 import { cycleRange, inCycle, shiftCycle } from '@/domain/cycle';
 import { streakDays } from '@/domain/streak';
-import { computeInsight } from '@/domain/insight';
+import { computeInsight, creditDueInsight } from '@/domain/insight';
 import { todayExpense } from '@/domain/budget';
 import { matchesSearch } from '@/domain/search';
 import { SummaryCard } from '@/features/summary/SummaryCard';
@@ -41,7 +42,7 @@ type Tab = 'list' | 'cal' | 'stats' | 'wall';
 
 /** Remounts with a `key` per tab — content fades in and settles upward. */
 function TabFade({ children }: { children: React.ReactNode }) {
-  const v = useRef(new Animated.Value(0)).current;
+  const v = useAnimatedValue(0);
   useEffect(() => {
     Animated.timing(v, { toValue: 1, duration: 220, useNativeDriver: true }).start();
   }, [v]);
@@ -69,6 +70,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
   const customCats = store$.customCats.get();
   const settings = store$.settings.get();
   const curLedger = store$.curLedger.get();
+  const accounts = store$.accounts.get();
   const cycleStart = settings.cycleStart || 1;
 
   const [anchor, setAnchor] = useState(() => new Date());
@@ -94,6 +96,8 @@ export const LedgerScreen = observer(function LedgerScreen() {
   const exp = useMemo(() => cycleEntries.filter((d) => d.io === 'exp').reduce((a, d) => a + d.amt, 0), [cycleEntries]);
   const inc = useMemo(() => cycleEntries.filter((d) => d.io === 'inc').reduce((a, d) => a + d.amt, 0), [cycleEntries]);
   const insight = useMemo(() => computeInsight(cycleEntries, settings, customCats, lang), [cycleEntries, settings, customCats, lang]);
+  // a credit-card repayment reminder takes priority over the spending insight
+  const dueInsight = useMemo(() => creditDueInsight(accounts, liveAll, lang), [accounts, liveAll, lang]);
   const streak = useMemo(() => streakDays(liveAll.map((d) => d.ts)), [liveAll]);
 
   const monthLabel = useMemo(
@@ -220,9 +224,10 @@ export const LedgerScreen = observer(function LedgerScreen() {
                 dailyBudget={settings.dailyBudget}
                 dailyUsed={todayExpense(cycleEntries)}
               />
-              <InsightBanner insight={insight} />
+              <InsightBanner insight={dueInsight ?? insight} />
               <LedgerFilter lang={lang} />
               <TemplateChips lang={lang} onLogged={() => celebrate(s.toastBloom)} />
+              <QuickEntry lang={lang} onSubmit={quickSubmit} />
               <View style={styles.searchWrap}>
                 <View style={[styles.searchBar, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'xs')]}>
                   <Icon name="search" color={t.inkSoft} size={17} />
@@ -272,8 +277,6 @@ export const LedgerScreen = observer(function LedgerScreen() {
 
       <BottomNav active={tab} onChange={setTab} lang={lang} />
 
-      <QuickEntry lang={lang} onSubmit={quickSubmit} />
-
       <Tap
         style={[styles.fab, { bottom: navPad + 30, backgroundColor: t.hibiscus, borderColor: t.card }, shadow(t, 'glow')]}
         scaleTo={0.86}
@@ -313,7 +316,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
         onDeleted={deleteToast}
       />
 
-      {burst != null && <PetalBurst key={burst} onDone={() => setBurst(null)} />}
+      {burst != null && <PetalBurst key={burst} seed={burst} onDone={() => setBurst(null)} />}
 
       {toast && (
         <Toast

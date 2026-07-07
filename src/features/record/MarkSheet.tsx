@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { useTheme } from '@/theme/ThemeContext';
 import { Tap } from '@/components/ui/Tap';
@@ -20,30 +20,9 @@ interface Props {
   onEdit: (id: string) => void;
 }
 
-export function MarkSheet({ entryId, lang, customCats, onClose, onEdit }: Props) {
+function ActionRow({ icon, text, onPress }: { icon: IconName; text: string; onPress: () => void }) {
   const t = useTheme();
-  const s = I18N[lang];
-  const [refunding, setRefunding] = useState(false);
-  const [refundAmt, setRefundAmt] = useState('');
-
-  useEffect(() => {
-    setRefunding(false);
-    setRefundAmt('');
-  }, [entryId]);
-
-  if (!entryId) return null;
-  const d = store$.data.peek().find((x) => x.id === entryId);
-  if (!d) return null;
-  const c = catOf(d.io, d.cat, customCats);
-  const isPending = d.rb === 'pending';
-
-  function doRefund() {
-    const v = parseFloat(refundAmt.replace(/[^\d.]/g, '')) || 0;
-    if (v > 0) refundEntry(entryId!, v, lang);
-    onClose();
-  }
-
-  const ActionRow = ({ icon, text, onPress }: { icon: IconName; text: string; onPress: () => void }) => (
+  return (
     <Tap
       style={[styles.btn, { borderColor: t.line, backgroundColor: t.card }, shadow(t, 'xs')]}
       scaleTo={0.97}
@@ -60,6 +39,30 @@ export function MarkSheet({ entryId, lang, customCats, onClose, onEdit }: Props)
       </View>
     </Tap>
   );
+}
+
+export function MarkSheet({ entryId, ...rest }: Props) {
+  if (!entryId) return null;
+  // remount per entry so the refund form state starts fresh each time
+  return <MarkSheetBody key={entryId} entryId={entryId} {...rest} />;
+}
+
+function MarkSheetBody({ entryId, lang, customCats, onClose, onEdit }: Omit<Props, 'entryId'> & { entryId: string }) {
+  const t = useTheme();
+  const s = I18N[lang];
+  const [refunding, setRefunding] = useState(false);
+  const [refundAmt, setRefundAmt] = useState('');
+
+  const d = store$.data.peek().find((x) => x.id === entryId);
+  if (!d) return null;
+  const c = catOf(d.io, d.cat, customCats);
+  const isPending = d.rb === 'pending';
+
+  function doRefund() {
+    const v = parseFloat(refundAmt.replace(/[^\d.]/g, '')) || 0;
+    if (v > 0) refundEntry(entryId, v, lang);
+    onClose();
+  }
 
   return (
     <SheetShell onClose={onClose} closeLabel={s.back}>
@@ -70,7 +73,7 @@ export function MarkSheet({ entryId, lang, customCats, onClose, onEdit }: Props)
         </Text>
 
         {d.io === 'exp' && (
-          <ActionRow icon="receipt" text={isPending ? s.rbUnmark : s.rbMark} onPress={() => { toggleReimburse(entryId!); onClose(); }} />
+          <ActionRow icon="receipt" text={isPending ? s.rbUnmark : s.rbMark} onPress={() => { toggleReimburse(entryId); onClose(); }} />
         )}
 
         {d.io === 'exp' && !refunding && (
@@ -94,7 +97,7 @@ export function MarkSheet({ entryId, lang, customCats, onClose, onEdit }: Props)
           </View>
         )}
 
-        <ActionRow icon="edit" text={s.markEdit} onPress={() => { onClose(); onEdit(entryId!); }} />
+        <ActionRow icon="edit" text={s.markEdit} onPress={() => { onClose(); onEdit(entryId); }} />
     </SheetShell>
   );
 }

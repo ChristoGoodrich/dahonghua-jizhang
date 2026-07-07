@@ -1,6 +1,5 @@
 import { generateReportHTML, generateMonthlyReport, shareReport } from '../pdf';
 import type { Entry, Category } from '@/domain/types';
-import type { Lang } from '@/i18n';
 
 const sampleEntries: Entry[] = [
   { id: '1', ts: new Date(2025, 0, 15).getTime(), io: 'exp', cat: 'food', amt: 35, note: 'Lunch' },

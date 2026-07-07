@@ -1,3 +1,25 @@
+// JS-driven Animated springs/timings advance on setTimeout "frames". Tests
+// render with react-test-renderer and never unmount, so in-flight animations
+// keep scheduling timers past Jest environment teardown and crash the process
+// (flaky under --coverage, hard-fails CI). Complete them synchronously instead:
+// every suite only asserts settled UI, never mid-animation frames.
+const { Animated } = require('react-native');
+for (const kind of ['spring', 'timing', 'decay']) {
+  const real = Animated[kind].bind(Animated);
+  Animated[kind] = (value, config) => {
+    const anim = real(value, config);
+    anim.start = (cb) => {
+      if (config && config.toValue !== undefined) value.setValue(config.toValue);
+      if (cb) cb({ finished: true });
+    };
+    anim.stop = () => {};
+    return anim;
+  };
+}
+// A synchronously-completing animation inside Animated.loop would recurse
+// forever — loops (VoiceEntry pulse) become inert instead.
+Animated.loop = () => ({ start: () => {}, stop: () => {}, reset: () => {} });
+
 // AsyncStorage isn't a real native module under Jest — use its official mock so
 // modules that import it (the ledger store) load cleanly in the node test env.
 jest.mock('@react-native-async-storage/async-storage', () =>

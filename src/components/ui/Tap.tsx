@@ -1,5 +1,6 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { Animated, Pressable, type PressableProps, type StyleProp, type ViewStyle } from 'react-native';
+import { useAnimatedValue } from '@/hooks/useAnimatedValue';
 import { SPRING } from '@/theme/tokens';
 import { tapHaptic } from '@/util/haptics';
 
@@ -16,7 +17,7 @@ interface Props extends Omit<PressableProps, 'style'> {
 
 /** Pressable with a springy scale-down — the app-wide touch feedback. */
 export function Tap({ scaleTo = 0.96, haptic, style, onPress, onPressIn, onPressOut, children, ...rest }: Props) {
-  const v = useRef(new Animated.Value(1)).current;
+  const v = useAnimatedValue(1);
   const to = (x: number) =>
     Animated.spring(v, { toValue: x, useNativeDriver: true, ...SPRING.snappy }).start();
   return (

@@ -229,6 +229,27 @@ export function setCatBudget(catKey: string, amt: number): void {
   store$.settings.catBudgets.set(cb);
 }
 
+/** Bulk-append imported bills (e.g. from an Alipay/WeChat CSV) as entries in a
+ *  single store write. Each becomes a normal expense/income entry, stamped for
+ *  sync. Returns the number added. */
+export function importBills(
+  bills: { io: 'exp' | 'inc'; cat: string; amt: number; note: string; ts: number }[],
+): number {
+  if (!bills.length) return 0;
+  const now = Date.now();
+  const entries: Entry[] = bills.map((b, i) => ({
+    id: newId('bi'),
+    ts: b.ts,
+    io: b.io,
+    cat: b.cat,
+    amt: b.amt,
+    note: b.note || undefined,
+    updatedAt: now + i, // keep updatedAt distinct so LWW ordering is stable
+  }));
+  store$.data.set([...store$.data.peek(), ...entries]);
+  return entries.length;
+}
+
 /** Full backup payload (importable via importV7). Excludes the device lock. */
 export function buildBackup(): Record<string, unknown> {
   const { hydrated, settings, ...rest } = store$.peek();

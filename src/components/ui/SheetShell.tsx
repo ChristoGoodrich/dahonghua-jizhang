@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { Animated, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useAnimatedValue } from '@/hooks/useAnimatedValue';
 import { useTheme } from '@/theme/ThemeContext';
 import { RAD, SPRING, shadow } from '@/theme/tokens';
 
@@ -16,7 +17,7 @@ interface Props {
 export function SheetShell({ onClose, closeLabel, children }: Props) {
   const t = useTheme();
   const insets = useSafeAreaInsets();
-  const enter = useRef(new Animated.Value(0)).current;
+  const enter = useAnimatedValue(0);
 
   useEffect(() => {
     Animated.spring(enter, { toValue: 1, useNativeDriver: true, ...SPRING.soft }).start();

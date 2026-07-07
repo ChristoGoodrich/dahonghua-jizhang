@@ -1,6 +1,5 @@
 // Pure category suggestion and anomaly detection — no network, fully testable.
 import type { Entry, Category, IO } from '@/domain/types';
-import { allCats, catName } from '@/domain/cats';
 import type { Lang } from '@/i18n';
 
 export interface CategorySuggestion {

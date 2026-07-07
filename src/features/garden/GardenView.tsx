@@ -1,5 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Animated } from 'react-native';
+import { useAnimatedValue } from '@/hooks/useAnimatedValue';
 import { useTheme } from '@/theme/ThemeContext';
 import { Tap } from '@/components/ui/Tap';
 import { RAD, TABULAR, shadow } from '@/theme/tokens';
@@ -8,7 +9,7 @@ import { I18N, daysUnit, flowersUnit, type Lang } from '@/i18n';
 
 /** Staggered bloom — each earned flower pops in with a small spring. */
 function Bloom({ index, children }: { index: number; children: React.ReactNode }) {
-  const v = useRef(new Animated.Value(0)).current;
+  const v = useAnimatedValue(0);
   useEffect(() => {
     const id = setTimeout(
       () => Animated.spring(v, { toValue: 1, friction: 5, tension: 180, useNativeDriver: true }).start(),
