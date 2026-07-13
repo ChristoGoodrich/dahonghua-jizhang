@@ -36,7 +36,9 @@ export function CategoryDonut({ cats, total, io, customCats, lang, centerLabel }
         <Svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`}>
           {/* track */}
           <Circle cx={SIZE / 2} cy={SIZE / 2} r={R} fill="none" stroke={t.line} strokeWidth={STROKE} opacity={0.4} />
-          <G rotation={-90} originX={SIZE / 2} originY={SIZE / 2}>
+          {/* transform string, not rotation/origin props — those emit a
+              `transform-origin` DOM attribute on web that React DOM rejects */}
+          <G transform={`rotate(-90 ${SIZE / 2} ${SIZE / 2})`}>
             {slices.map((sl) => {
               const color = catOf(io, sl.cat, customCats).c;
               const seg = sl.frac * C;

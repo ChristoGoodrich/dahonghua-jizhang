@@ -1,3 +1,60 @@
+# Changelog — UX overhaul (2026-07-13)
+
+Full-flow UI/UX pass focused on visual efficiency and operation logic.
+**329 tests / 48 suites green, `tsc --noEmit` clean, eslint 0 errors; net −409 lines
+and two runtime dependencies removed.**
+
+## Visual efficiency
+
+- **Home puts the ledger first** — on a 375×812 phone the entry list used to start
+  *below* the bottom nav (8 fixed blocks stacked above it). The summary card, budget
+  line, insight banner, ledger filter and template chips are now the list's own
+  scrollable header (`EntryList` gained a `header` prop), so the first screen shows
+  real entries and everything above scrolls away.
+- **Compact budget card** — the 4-row 10px forecast table (duplicated/confusing
+  numbers) shrank to one progress line + today line; the full forecast moved to the
+  budget screen, which the card now opens on tap (chevron affordance).
+- **Header decluttered** — 4 icon buttons → 2 (search toggle, settings). Language
+  switch lives in Settings; insights/report entries moved into the stats tab.
+- **Stats trend chart rewritten** in the app's own hand-rolled SVG voice — the old
+  `react-native-chart-kit` line chart locked its width at module load (overflowed
+  the viewport), ignored the period selector and spammed web warnings. Now titled
+  "近 7 天走势", responsive, dependency-free.
+
+## Operation logic
+
+- **Global search** — the search icon opens a pinned bar; queries now span *all*
+  months (was: current cycle only), with the summary header yielding space during
+  a search. `/` shortcut preserved on web.
+- **Removed three fake/broken entry paths** — the home quick-entry row hardcoded
+  every entry to the 餐饮 category (data corruption); the voice and camera buttons
+  in the record sheet were non-functional placeholder shells (mic listened 3s and
+  dropped the result; photo OCR silently discarded). The real AI text entry stays,
+  now a single compact row so categories are visible the moment the sheet opens.
+- **Record sheet actions in one row** — [存为模板 | 贴朵花] (edit mode: [删除 | 保存]).
+- **Settings grouped into 6 section cards** — 预算与周期 / 个性化 / 钱包与资产 /
+  记账工具 / 数据与安全 / 其他 (was a flat 20-row list).
+- **Analysis entries consolidated** — the stats tab gained a "更多分析" footer
+  (AI 洞察 / 月度报告 / 本月回顾); the double month-navigator on the stats tab is
+  gone; the calendar tab gained its own month nav row.
+- **Tappable notices** — the budget card opens the budget screen; the credit-card
+  due banner opens that account's history.
+- **Credit-card statement semantics fixed** — payments made after the statement
+  close now pay down the bill first (bank semantics): the banner shows the true
+  remaining 待还, `billedDue + unbilled === currentDebt`, and a fully repaid bill
+  drops its reminder (previously the full billed amount showed forever). Covered
+  by 5 new tests.
+
+## Plumbing
+
+- Web boot params `?tab=` `?sheet=1` `?noanim=1` (`src/util/boot.ts`) — deep links
+  for the web build and hooks for headless screenshot verification.
+- `Flower`/`CategoryDonut` use SVG `transform` strings instead of `rotation`/`origin`
+  props, killing the `transform-origin` React DOM warning on web.
+- Removed deps: `react-native-chart-kit`, `expo-image-picker` (both orphaned).
+
+---
+
 # Changelog — code-review improvement pass
 
 A round of improvements addressing all 19 items from the code review. Every batch

@@ -39,8 +39,9 @@ export function Flower({
             cy={p.cy}
             rx={18}
             ry={20}
-            origin={`${p.cx}, ${p.cy}`}
-            rotation={p.rot}
+            // SVG-standard transform string: rotation/origin props render as a
+            // `transform-origin` DOM attribute on web, which React DOM rejects
+            transform={`rotate(${p.rot} ${p.cx} ${p.cy})`}
           />
         ))}
       </G>

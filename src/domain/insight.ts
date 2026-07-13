@@ -10,6 +10,7 @@ import { I18N, type Lang } from '@/i18n';
 export interface Insight {
   ic: string;
   text: string;
+  acctId?: string; // set when the insight concerns one account — the banner links there
 }
 
 /**
@@ -36,6 +37,7 @@ export function creditDueInsight(
   return {
     ic: '💳',
     text: lang === 'zh' ? `${name} ${when}还款，待还 ${amt}` : `${name} due ${when} · ${amt} to repay`,
+    acctId: r.account.id,
   };
 }
 

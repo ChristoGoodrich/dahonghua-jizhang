@@ -13,10 +13,6 @@ jest.mock('@/theme/ThemeContext', () => ({
   }),
 }));
 
-jest.mock('react-native-chart-kit', () => ({
-  LineChart: 'LineChart',
-}));
-
 const mockData = [
   { date: '2024-01-01', exp: 100, inc: 200 },
   { date: '2024-01-02', exp: 150, inc: 250 },
@@ -24,7 +20,7 @@ const mockData = [
 ];
 
 describe('TrendChart', () => {
-  it('renders chart with data', () => {
+  it('renders one polyline + per-day axis labels for a single series', () => {
     let r!: TestRenderer.ReactTestRenderer;
     act(() => {
       r = TestRenderer.create(
@@ -32,9 +28,11 @@ describe('TrendChart', () => {
       );
     });
 
-    const json = r.toJSON();
-    expect(json).toBeTruthy();
-    expect(JSON.stringify(json)).toContain('LineChart');
+    const json = JSON.stringify(r.toJSON());
+    expect(json).toContain('RNSVGPath'); // the polyline (jest renders svg natively)
+    expect((json.match(/RNSVGCircle/g) ?? []).length).toBe(3); // one dot per day
+    expect(json).toContain('1/1');
+    expect(json).toContain('1/3'); // date labels present
   });
 
   it('renders legend when type is both', () => {

@@ -59,12 +59,41 @@ describe('statementSummary', () => {
     expect(sm.overpay).toBe(200);
   });
 
-  it('counts a post-close payment against unbilled, not billed', () => {
-    // billed 1000 (Jan 2); pay 400 after close (Jan 10) -> billed still 1000, no new charges
+  it('a post-close payment pays down the bill first (bank semantics)', () => {
+    // billed 1000 (Jan 2); pay 400 after close (Jan 10) -> 600 of the bill remains
     const sm = statementSummary(card, accounts, [spend(2, 1000), pay(10, 400)], ref)!;
-    expect(sm.billedDue).toBe(1000);
+    expect(sm.billedDue).toBe(600);
     expect(sm.unbilled).toBe(0); // a payment isn't a new charge
     expect(sm.currentDebt).toBe(600);
+  });
+
+  it('splits a partially repaid bill from new charges, and they sum to the debt', () => {
+    // billed 1000; then +300 new spend and a 400 payment after close
+    const sm = statementSummary(card, accounts, [spend(2, 1000), spend(10, 300), pay(12, 400)], ref)!;
+    expect(sm.billedDue).toBe(600);
+    expect(sm.unbilled).toBe(300);
+    expect(sm.currentDebt).toBe(900);
+    expect(sm.billedDue + sm.unbilled).toBe(sm.currentDebt);
+  });
+
+  it('payment beyond the bill offsets unbilled charges', () => {
+    // billed 1000; new spend 300; pay 1200 -> bill cleared, 200 left against the 300
+    const sm = statementSummary(card, accounts, [spend(2, 1000), spend(10, 300), pay(12, 1200)], ref)!;
+    expect(sm.billedDue).toBe(0);
+    expect(sm.unbilled).toBe(100);
+    expect(sm.currentDebt).toBe(100);
+  });
+
+  it('a transfer into the card counts as a payment', () => {
+    const xferIn: Entry = { id: 'x1', ts: new Date(2026, 0, 10).getTime(), io: 'xfer', cat: 'transfer', amt: 1000, acct: 'default', acctTo: 'c1' };
+    const sm = statementSummary(card, accounts, [spend(2, 1000), xferIn], ref)!;
+    expect(sm.billedDue).toBe(0);
+    expect(sm.currentDebt).toBe(0);
+  });
+
+  it('a fully repaid bill drops out of dueSoon even with new unbilled spend', () => {
+    const entries = [spend(2, 1000), pay(10, 1000), spend(12, 300)];
+    expect(dueSoon(accounts, entries, ref, 7)).toHaveLength(0);
   });
 
   it('returns null for a non-credit or unconfigured account', () => {

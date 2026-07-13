@@ -5,11 +5,12 @@ import { observer } from '@legendapp/state/react';
 import { store$, patchSettings, setCatBudget } from '@/store/ledger';
 import { allCats, catName } from '@/domain/cats';
 import { curSymbol, fmtShort } from '@/domain/money';
-import { inCycle } from '@/domain/cycle';
+import { inCycle, cycleRange, cycleDays } from '@/domain/cycle';
 import { monthlyStatus, dailyStatus, type TierStatus } from '@/domain/budget';
 import { byCategory } from '@/domain/stats';
 import { useTheme } from '@/theme/ThemeContext';
 import { ScreenHeader } from '@/components/ScreenHeader';
+import { BudgetForecast } from '@/features/budget/BudgetForecast';
 import { I18N } from '@/i18n';
 
 const num = (v: string) => parseFloat(v.replace(/[^\d.]/g, '')) || 0;
@@ -39,9 +40,12 @@ export default observer(function BudgetScreen() {
 
   // live spend for the current cycle
   const cycleStart = settings.cycleStart || 1;
-  const cycleEntries = data.filter((d) => !d.deletedAt && inCycle(d.ts, new Date(), cycleStart));
+  const now = new Date();
+  const cycleEntries = data.filter((d) => !d.deletedAt && inCycle(d.ts, now, cycleStart));
   const monthly = monthlyStatus(cycleEntries, settings);
   const daily = dailyStatus(cycleEntries, settings);
+  const daysInCycle = cycleDays(now, cycleStart);
+  const daysElapsed = Math.max(1, Math.round((now.getTime() - cycleRange(now, cycleStart).start.getTime()) / 864e5));
   const byCat = byCategory(cycleEntries, 'exp');
   const spentOf = (k: string) => byCat.find((x) => x.cat === k)?.amt ?? 0;
 
@@ -76,6 +80,9 @@ export default observer(function BudgetScreen() {
             <ProgressBar status={monthly} />
             {monthly.limit > 0 && (
               <Text style={[styles.usage, { color: monthly.over ? t.hibiscusDeep : t.inkSoft }]}>{usageText(monthly)}</Text>
+            )}
+            {monthly.limit > 0 && (
+              <BudgetForecast spent={monthly.used} budget={monthly.limit} daysElapsed={daysElapsed} daysInCycle={daysInCycle} lang={lang} />
             )}
           </View>
 

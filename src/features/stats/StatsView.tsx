@@ -23,6 +23,7 @@ interface Props {
   customCats: Record<IO, Category[]>;
   lang: Lang;
   onEntryPress?: (id: string) => void; // open the read-only detail view
+  footer?: React.ReactElement; // extra content at the end of the scroll (e.g. deep-analysis links)
 }
 
 function Bar({ label, color, pct, value }: { label: React.ReactNode; color: string; pct: number; value: string }) {
@@ -53,7 +54,7 @@ function Bar({ label, color, pct, value }: { label: React.ReactNode; color: stri
   );
 }
 
-export function StatsView({ all, anchor, cycleStart, customCats, lang, onEntryPress }: Props) {
+export function StatsView({ all, anchor, cycleStart, customCats, lang, onEntryPress, footer }: Props) {
   const t = useTheme();
   const s = I18N[lang];
   const loc = lang === 'zh' ? 'zh-CN' : 'en-US';
@@ -143,6 +144,7 @@ export function StatsView({ all, anchor, cycleStart, customCats, lang, onEntryPr
         {tile(s.ovCount, String(ov.count))}
       </View>
 
+      <Text style={[styles.h3, { color: t.inkSoft }]}>{s.trend7d}</Text>
       <TrendChart data={trendData} lang={lang} type="both" />
 
       <View style={styles.ioRow}>
@@ -266,6 +268,8 @@ export function StatsView({ all, anchor, cycleStart, customCats, lang, onEntryPr
           </View>
         </>
       )}
+
+      {footer}
     </ScrollView>
   );
 }

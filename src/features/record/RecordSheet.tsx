@@ -17,10 +17,9 @@ import type { Category, IO } from '@/domain/types';
 import type { Lang } from '@/i18n';
 import { I18N } from '@/i18n';
 import { store$, addEntry, addTransfer, updateEntry, removeEntry, addTemplate } from '@/store/ledger';
+import { NO_ANIM } from '@/util/boot';
 import { CalcKeypad } from './CalcKeypad';
 import { AIQuickEntry } from './AIQuickEntry';
-import { VoiceEntry } from './VoiceEntry';
-import { CameraEntry } from './CameraEntry';
 import { CurrencyRow } from './CurrencyRow';
 import { CategoryPicker } from './CategoryPicker';
 import { TransferForm } from './TransferForm';
@@ -65,9 +64,9 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
   const [aiMsg, setAiMsg] = useState('');
 
   // entrance: mask fades in while the sheet springs up from below
-  const enter = useAnimatedValue(0);
+  const enter = useAnimatedValue(NO_ANIM ? 1 : 0);
   useEffect(() => {
-    if (!visible) return;
+    if (!visible || NO_ANIM) return;
     enter.setValue(0);
     Animated.spring(enter, { toValue: 1, useNativeDriver: true, ...SPRING.soft }).start();
   }, [visible, enter]);
@@ -94,62 +93,6 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
     } finally {
       setAiBusy(false);
     }
-  }
-
-  function onVoiceResult(text: string) {
-    setAiText(text);
-    // Auto-trigger AI parse after voice recognition
-    const trimmed = text.trim();
-    if (!trimmed || aiBusy) return;
-    setAiBusy(true);
-    setAiMsg('');
-    (async () => {
-      try {
-        const shareCats = store$.settings.aiShareCategories.peek() !== false;
-        const draft = await parseEntryText(trimmed, customCats, lang, shareCats);
-        if (!draft) {
-          setAiMsg(s.aiUnconfigured);
-        } else {
-          setIO(draft.io);
-          setCat(draft.cat);
-          setAmt(draft.amt);
-          if (draft.note) setNote(draft.note);
-          setAiText('');
-        }
-      } catch {
-        setAiMsg(s.aiFailed);
-      } finally {
-        setAiBusy(false);
-      }
-    })();
-  }
-
-  function onCameraResult(_imageUri: string, recognizedText?: string) {
-    if (!recognizedText) return;
-    setAiText(recognizedText);
-    const trimmed = recognizedText.trim();
-    if (!trimmed || aiBusy) return;
-    setAiBusy(true);
-    setAiMsg('');
-    (async () => {
-      try {
-        const shareCats = store$.settings.aiShareCategories.peek() !== false;
-        const draft = await parseEntryText(trimmed, customCats, lang, shareCats);
-        if (!draft) {
-          setAiMsg(s.aiUnconfigured);
-        } else {
-          setIO(draft.io);
-          setCat(draft.cat);
-          setAmt(draft.amt);
-          if (draft.note) setNote(draft.note);
-          setAiText('');
-        }
-      } catch {
-        setAiMsg(s.aiFailed);
-      } finally {
-        setAiBusy(false);
-      }
-    })();
   }
 
   // Re-initialize the form whenever the sheet opens or switches target entry.
@@ -361,11 +304,7 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
 
           <ScrollView style={styles.middle} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
             {io !== 'xfer' && aiConfigured() && (
-              <>
-                <VoiceEntry lang={lang} onResult={onVoiceResult} />
-                <CameraEntry lang={lang} onResult={onCameraResult} />
-                <AIQuickEntry value={aiText} busy={aiBusy} msg={aiMsg} onChangeText={setAiText} onSubmit={runAI} lang={lang} />
-              </>
+              <AIQuickEntry value={aiText} busy={aiBusy} msg={aiMsg} onChangeText={setAiText} onSubmit={runAI} lang={lang} />
             )}
 
             {io !== 'xfer' && (
@@ -439,21 +378,22 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
 
           <CalcKeypad onKey={onKey} lang={lang} />
 
-          <Btn
-            label={s.save}
-            onPress={save}
-            gradient={io === 'inc' ? [t.leaf, t.leafDeep] : [t.gradFrom, t.gradTo]}
-            leading={<Flower size={20} petal="#fff" stamen="#fff" />}
-            style={styles.save}
-          />
-
-          {!editId && io !== 'xfer' && (
-            <Btn label={s.tmplSaveBtn} onPress={saveAsTemplate} variant="ghost" style={styles.del} />
-          )}
-
-          {!!editId && (
-            <Btn label={s.del} onPress={del} variant="ghost" tone={t.hibiscusDeep} style={styles.del} />
-          )}
+          {/* secondary action sits beside save — one row instead of two */}
+          <View style={styles.actions}>
+            {!editId && io !== 'xfer' && (
+              <Btn label={s.tmplSaveBtn} onPress={saveAsTemplate} variant="ghost" style={styles.secondaryBtn} />
+            )}
+            {!!editId && (
+              <Btn label={s.del} onPress={del} variant="ghost" tone={t.hibiscusDeep} style={styles.secondaryBtn} />
+            )}
+            <Btn
+              label={s.save}
+              onPress={save}
+              gradient={io === 'inc' ? [t.leaf, t.leafDeep] : [t.gradFrom, t.gradTo]}
+              leading={<Flower size={20} petal="#fff" stamen="#fff" />}
+              style={styles.primaryBtn}
+            />
+          </View>
         </Animated.View>
       </KeyboardAvoidingView>
     </View>
@@ -491,6 +431,7 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth, borderRadius: RAD.sm,
     padding: 12, paddingHorizontal: 14, fontSize: 14, marginBottom: 12,
   },
-  save: { marginTop: 4 },
-  del: { marginTop: 8, paddingVertical: 10 },
+  actions: { flexDirection: 'row', gap: 10, marginTop: 4, alignItems: 'stretch' },
+  secondaryBtn: { flex: 1 },
+  primaryBtn: { flex: 1.9 },
 });

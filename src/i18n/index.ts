@@ -17,7 +17,7 @@ export interface Strings {
   aiPlaceholder: string; aiParsing: string; aiFailed: string; aiUnconfigured: string;
   aiPrivacyTitle: string; aiPrivacyDesc: string; aiShareOn: string; aiShareOff: string;
   // accessibility labels (screen readers)
-  a11yMonthPrev: string; a11yMonthNext: string; a11yAdd: string; a11yClearSearch: string;
+  a11yMonthPrev: string; a11yMonthNext: string; a11yAdd: string; a11yClearSearch: string; a11ySearch: string;
   a11yLang: string; a11yAI: string; a11yKeyBack: string; a11yKeyClear: string; a11yKeyEq: string;
   // budget + insight
   budgetTitle: string; budgetNone: string; budgetSpentLeft: string; budgetOver: string; // %s
@@ -45,6 +45,8 @@ export interface Strings {
   wallGoalUp: string; wallGoalDown: string;
   // settings
   setTitle: string; setSub: string;
+  setGroupBudget: string; setGroupLook: string; setGroupWallet: string; setGroupTools: string; setGroupData: string; setGroupOther: string;
+  statsMore: string; statsMoreD: string; trend7d: string;
   setBudget: string; setBudgetD: string; setCycle: string; setCycleD: string;
   setTheme: string; setThemeD: string; darkTitle: string; darkDesc: string;
   langTitle: string; langDesc: string; dataTitle: string; dataDesc: string; importBtn: string;
@@ -142,7 +144,7 @@ export const I18N: Record<Lang, Strings> = {
     importOk: '导入成功 🌺', importFail: '文件不对，导入失败', comingSoon: '即将上线 🌱',
     aiPlaceholder: '说一句，比如「午饭35」', aiParsing: '…', aiFailed: 'AI 解析失败，手动记吧', aiUnconfigured: '还没配置 AI，去 AI_SETUP 看看',
     aiPrivacyTitle: '向 AI 发送分类', aiPrivacyDesc: '关闭后只发送内置分类，自定义分类名不外发', aiShareOn: '发送', aiShareOff: '不发送',
-    a11yMonthPrev: '上一个月', a11yMonthNext: '下一个月', a11yAdd: '记一笔', a11yClearSearch: '清除搜索',
+    a11yMonthPrev: '上一个月', a11yMonthNext: '下一个月', a11yAdd: '记一笔', a11yClearSearch: '清除搜索', a11ySearch: '搜索',
     a11yLang: '切换语言', a11yAI: 'AI 智能记账', a11yKeyBack: '退格', a11yKeyClear: '清空', a11yKeyEq: '等于',
     budgetTitle: '本月预算', budgetNone: '还没设预算，去设置里设一个',
     budgetSpentLeft: '已花 %s，还剩 %s', budgetOver: '超了 %s，下月再争取小红花',
@@ -168,6 +170,8 @@ export const I18N: Record<Lang, Strings> = {
     streakLabel: '连续贴花',
     wallGoalUp: '增加目标', wallGoalDown: '减少目标',
     setTitle: '设置', setSub: '把大红花调成你的样子',
+    setGroupBudget: '预算与周期', setGroupLook: '个性化', setGroupWallet: '钱包与资产', setGroupTools: '记账工具', setGroupData: '数据与安全', setGroupOther: '其他',
+    statsMore: '更多分析', statsMoreD: '洞察、报表与月度回顾', trend7d: '近 7 天走势',
     setBudget: '每月预算', setBudgetD: '花盆水位会跟着预算走',
     setCycle: '记账周期起始日', setCycleD: '几号开始算新的一月（默认1号）',
     setTheme: '花色主题', setThemeD: '换个心情', darkTitle: '深色模式', darkDesc: '夜里记账更护眼',
@@ -242,7 +246,7 @@ export const I18N: Record<Lang, Strings> = {
     importOk: 'Imported 🌺', importFail: 'Bad file — import failed', comingSoon: 'Coming soon 🌱',
     aiPlaceholder: 'Say it, e.g. “lunch 35”', aiParsing: '…', aiFailed: 'AI parse failed — enter it manually', aiUnconfigured: 'AI not configured — see AI_SETUP',
     aiPrivacyTitle: 'Send categories to AI', aiPrivacyDesc: 'Off = only built-in categories are sent; custom names stay on device', aiShareOn: 'On', aiShareOff: 'Off',
-    a11yMonthPrev: 'Previous month', a11yMonthNext: 'Next month', a11yAdd: 'Add entry', a11yClearSearch: 'Clear search',
+    a11yMonthPrev: 'Previous month', a11yMonthNext: 'Next month', a11yAdd: 'Add entry', a11yClearSearch: 'Clear search', a11ySearch: 'Search',
     a11yLang: 'Switch language', a11yAI: 'AI parse', a11yKeyBack: 'Backspace', a11yKeyClear: 'Clear', a11yKeyEq: 'Equals',
     budgetTitle: 'Monthly budget', budgetNone: 'No budget yet — set one in Settings',
     budgetSpentLeft: '%s spent, %s left', budgetOver: '%s over — aim for more flowers next month',
@@ -268,6 +272,8 @@ export const I18N: Record<Lang, Strings> = {
     streakLabel: 'Streak',
     wallGoalUp: 'Increase goal', wallGoalDown: 'Decrease goal',
     setTitle: 'Settings', setSub: 'Make Red Blossom yours',
+    setGroupBudget: 'Budget & cycle', setGroupLook: 'Appearance', setGroupWallet: 'Wallet & assets', setGroupTools: 'Tools', setGroupData: 'Data & security', setGroupOther: 'More',
+    statsMore: 'More analysis', statsMoreD: 'Insights, reports & recap', trend7d: 'Last 7 days',
     setBudget: 'Monthly budget', setBudgetD: 'The pot fills against this',
     setCycle: 'Cycle start day', setCycleD: 'Which day a new month begins (default 1st)',
     setTheme: 'Flower theme', setThemeD: 'Switch the mood', darkTitle: 'Dark mode', darkDesc: 'Easier on the eyes at night',

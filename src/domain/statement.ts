@@ -60,9 +60,9 @@ export function dueDateFor(closeMs: number, statementDay: number, dueDay: number
 
 export interface StatementSummary {
   statementClose: number; // 出账日 (epoch ms, end of close day)
-  billedDue: number; // 本期待还: debt owed as of the last statement close (≥0)
+  billedDue: number; // 本期待还: statement debt still unpaid (payments since close offset it first)
   overpay: number; // 溢缴款: credit balance as of the last close (≥0)
-  unbilled: number; // 未出账: net new charges since the close (≥0)
+  unbilled: number; // 未出账: new charges since the close, net of any payment beyond the bill (≥0)
   currentDebt: number; // 待还: total debt right now (≥0)
   dueDate: number | null; // 还款日 (epoch ms), null if no dueDay set
   daysToDue: number | null; // whole days from today to the due date (may be <0 if overdue)
@@ -71,6 +71,11 @@ export interface StatementSummary {
 /**
  * Summarize a credit account's current statement cycle. Returns null unless the
  * account is a credit card with a `statementDay` configured.
+ *
+ * Payments made after the close pay down the statement FIRST (standard card
+ * semantics — a repaid bill stops showing 待还 and its due reminder), and only
+ * the remainder offsets unbilled charges. billedDue + unbilled === currentDebt
+ * whenever the card carries debt.
  */
 export function statementSummary(
   account: Account,
@@ -83,11 +88,31 @@ export function statementSummary(
   const billedBal = acctBalance(account.id, accounts, entries, close);
   const nowBal = acctBalance(account.id, accounts, entries);
   const dueDate = account.dueDay ? dueDateFor(close, account.statementDay, account.dueDay) : null;
+
+  // direction-split activity since the close: inflows are payments/refunds
+  // (income to the card, transfers in), outflows are new charges
+  let inflow = 0;
+  let outflow = 0;
+  // no upper bound: currentDebt (acctBalance with no cutoff) sees every entry,
+  // so the split must too or the billed+unbilled=debt invariant breaks
+  for (const d of entries) {
+    if (d.deletedAt || d.ts <= close) continue;
+    if (d.io === 'inc' && d.acct === account.id) inflow += d.amt;
+    else if (d.io === 'exp' && d.acct === account.id) outflow += d.amt;
+    else if (d.io === 'xfer') {
+      if (d.acctTo === account.id) inflow += d.amt + (d.discount ?? 0);
+      if (d.acct === account.id) outflow += d.amt + (d.fee ?? 0);
+    }
+  }
+  const billedAtClose = billedBal < 0 ? -billedBal : 0;
+  const billedDue = Math.max(0, billedAtClose - inflow);
+  const inflowBeyondBill = Math.max(0, inflow - billedAtClose);
+
   return {
     statementClose: close,
-    billedDue: billedBal < 0 ? -billedBal : 0,
+    billedDue,
     overpay: billedBal > 0 ? billedBal : 0,
-    unbilled: Math.max(0, billedBal - nowBal), // debt grew since close = new charges
+    unbilled: Math.max(0, outflow - inflowBeyondBill),
     currentDebt: nowBal < 0 ? -nowBal : 0,
     dueDate,
     daysToDue: dueDate != null ? Math.round((startOfDay(dueDate) - startOfDay(ref)) / DAY_MS) : null,

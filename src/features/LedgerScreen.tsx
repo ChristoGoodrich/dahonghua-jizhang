@@ -6,7 +6,7 @@ import { useWebKeyboard } from '@/hooks/useWebKeyboard';
 import { useResponsive } from '@/hooks/useResponsive';
 import { useAnimatedValue } from '@/hooks/useAnimatedValue';
 import { observer } from '@legendapp/state/react';
-import { store$, setLang, patchSettings, addEntry } from '@/store/ledger';
+import { store$, patchSettings } from '@/store/ledger';
 import { useTheme } from '@/theme/ThemeContext';
 import { Flower } from '@/components/Flower';
 import { I18N } from '@/i18n';
@@ -20,7 +20,6 @@ import { EntryList } from '@/features/list/EntryList';
 import { RecordSheet } from '@/features/record/RecordSheet';
 import { MarkSheet } from '@/features/record/MarkSheet';
 import { DetailSheet } from '@/features/record/DetailSheet';
-import { QuickEntry } from '@/features/record/QuickEntry';
 import { TemplateChips } from '@/features/templates/TemplateChips';
 import { LedgerFilter } from '@/features/list/LedgerFilter';
 import { BudgetPot } from '@/features/budget/BudgetPot';
@@ -30,6 +29,7 @@ import { StatsView } from '@/features/stats/StatsView';
 import { GardenView, GOAL_DEFAULT } from '@/features/garden/GardenView';
 import { BottomNav, useNavBottomPad } from '@/features/nav/BottomNav';
 import { tapHaptic } from '@/util/haptics';
+import { bootParam, NO_ANIM } from '@/util/boot';
 import { trackEvent, AnalyticsEvents } from '@/util/analytics';
 import { Tap } from '@/components/ui/Tap';
 import { Icon } from '@/components/ui/Icon';
@@ -40,10 +40,15 @@ import { PetalBurst } from '@/components/PetalBurst';
 
 type Tab = 'list' | 'cal' | 'stats' | 'wall';
 
+// Web deep-link bootstrap (?tab=stats, ?sheet=1) — see util/boot.
+const BOOT_TAB: Tab | null = (['list', 'cal', 'stats', 'wall'] as const).find((k) => k === bootParam('tab')) ?? null;
+const BOOT_SHEET = bootParam('sheet') === '1';
+
 /** Remounts with a `key` per tab — content fades in and settles upward. */
 function TabFade({ children }: { children: React.ReactNode }) {
-  const v = useAnimatedValue(0);
+  const v = useAnimatedValue(NO_ANIM ? 1 : 0);
   useEffect(() => {
+    if (NO_ANIM) return;
     Animated.timing(v, { toValue: 1, duration: 220, useNativeDriver: true }).start();
   }, [v]);
   return (
@@ -56,6 +61,34 @@ function TabFade({ children }: { children: React.ReactNode }) {
     >
       {children}
     </Animated.View>
+  );
+}
+
+/** Compact ‹ month › row for tabs that don't carry the summary card. */
+function MonthNav({ label, onPrev, onNext, prevLabel, nextLabel }: {
+  label: string; onPrev: () => void; onNext: () => void; prevLabel: string; nextLabel: string;
+}) {
+  const t = useTheme();
+  const btn = (dir: 'chevL' | 'chevR', onPress: () => void, a11y: string) => (
+    <Tap
+      onPress={onPress}
+      scaleTo={0.88}
+      hitSlop={8}
+      accessibilityRole="button"
+      accessibilityLabel={a11y}
+      style={[styles.monthNavBtn, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'xs')]}
+    >
+      <Icon name={dir} color={t.inkSoft} size={15} strokeWidth={2.2} />
+    </Tap>
+  );
+  return (
+    <View style={styles.monthNav}>
+      <Text style={[styles.monthNavLabel, { color: t.ink }]}>{label}</Text>
+      <View style={styles.monthNavBtns}>
+        {btn('chevL', onPrev, prevLabel)}
+        {btn('chevR', onNext, nextLabel)}
+      </View>
+    </View>
   );
 }
 
@@ -74,11 +107,12 @@ export const LedgerScreen = observer(function LedgerScreen() {
   const cycleStart = settings.cycleStart || 1;
 
   const [anchor, setAnchor] = useState(() => new Date());
-  const [tab, setTab] = useState<Tab>('list');
-  const [sheetOpen, setSheetOpen] = useState(false);
+  const [tab, setTab] = useState<Tab>(BOOT_TAB ?? 'list');
+  const [sheetOpen, setSheetOpen] = useState(BOOT_SHEET);
   const [editId, setEditId] = useState<string | null>(null);
   const [detailId, setDetailId] = useState<string | null>(null);
   const [toast, setToast] = useState<{ key: number; msg: string; undo?: () => void } | null>(null);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [searchQ, setSearchQ] = useState('');
   const [markId, setMarkId] = useState<string | null>(null);
   const [burst, setBurst] = useState<number | null>(null);
@@ -89,9 +123,14 @@ export const LedgerScreen = observer(function LedgerScreen() {
     () => liveAll.filter((d) => inCycle(d.ts, anchor, cycleStart) && (!curLedger || d.ledger === curLedger)),
     [liveAll, anchor, cycleStart, curLedger],
   );
+  // searching spans ALL months (you rarely remember which month a thing was
+  // in) — only ledger scope is kept; the day groups carry the dates anyway
   const listEntries = useMemo(
-    () => (searchQ ? cycleEntries.filter((d) => matchesSearch(d, searchQ, customCats, lang)) : cycleEntries),
-    [cycleEntries, searchQ, customCats, lang],
+    () =>
+      searchQ
+        ? liveAll.filter((d) => (!curLedger || d.ledger === curLedger) && matchesSearch(d, searchQ, customCats, lang))
+        : cycleEntries,
+    [cycleEntries, liveAll, curLedger, searchQ, customCats, lang],
   );
   const exp = useMemo(() => cycleEntries.filter((d) => d.io === 'exp').reduce((a, d) => a + d.amt, 0), [cycleEntries]);
   const inc = useMemo(() => cycleEntries.filter((d) => d.io === 'inc').reduce((a, d) => a + d.amt, 0), [cycleEntries]);
@@ -130,10 +169,16 @@ export const LedgerScreen = observer(function LedgerScreen() {
     const sd = streakDays(store$.data.peek().filter((d) => !d.deletedAt).map((d) => d.ts));
     celebrate(sd > 1 ? s.toastStreak.replace('%d', String(sd)) : s.toastBloom);
   }, [celebrate, s.toastStreak, s.toastBloom]);
-  const quickSubmit = useCallback((amount: number, note: string) => {
-    addEntry({ io: 'exp', cat: 'food', amt: amount, note: note || undefined });
-    onSaved(true);
-  }, [onSaved]);
+  const openSearch = useCallback(() => {
+    setTab('list');
+    setSearchOpen(true);
+    // autoFocus covers the fresh mount; this covers re-taps while already open
+    setTimeout(() => searchRef.current?.focus(), 50);
+  }, []);
+  const closeSearch = useCallback(() => {
+    setSearchOpen(false);
+    setSearchQ('');
+  }, []);
 
   useWebKeyboard(
     useMemo(
@@ -141,16 +186,15 @@ export const LedgerScreen = observer(function LedgerScreen() {
         n: () => {
           if (!sheetOpen) openNew();
         },
-        '/': () => {
-          searchRef.current?.focus();
-        },
+        '/': openSearch,
         Escape: () => {
           if (sheetOpen) setSheetOpen(false);
           else if (detailId) setDetailId(null);
           else if (markId) setMarkId(null);
+          else if (searchOpen) closeSearch();
         },
       }),
-      [sheetOpen, detailId, markId, openNew],
+      [sheetOpen, detailId, markId, searchOpen, openNew, openSearch, closeSearch],
     ),
   );
 
@@ -169,20 +213,11 @@ export const LedgerScreen = observer(function LedgerScreen() {
             <Tap
               style={[styles.iconBtn, { borderColor: t.line, backgroundColor: t.card }, shadow(t, 'xs')]}
               scaleTo={0.88}
-              onPress={() => router.push('/insights')}
+              onPress={searchOpen ? closeSearch : openSearch}
               accessibilityRole="button"
-              accessibilityLabel={s.insightsTitle}
+              accessibilityLabel={s.a11ySearch}
             >
-              <Icon name="sparkle" color={t.hibiscus} size={17} />
-            </Tap>
-            <Tap
-              style={[styles.iconBtn, { borderColor: t.line, backgroundColor: t.card }, shadow(t, 'xs')]}
-              scaleTo={0.88}
-              onPress={() => router.push('/report')}
-              accessibilityRole="button"
-              accessibilityLabel={s.setReview}
-            >
-              <Icon name="receipt" color={t.inkSoft} size={17} />
+              <Icon name="search" color={searchOpen ? t.hibiscus : t.inkSoft} size={17} />
             </Tap>
             <Tap
               style={[styles.iconBtn, { borderColor: t.line, backgroundColor: t.card }, shadow(t, 'xs')]}
@@ -193,75 +228,118 @@ export const LedgerScreen = observer(function LedgerScreen() {
             >
               <Icon name="sliders" color={t.inkSoft} size={17} />
             </Tap>
-            <Tap
-              style={[styles.iconBtn, { borderColor: t.line, backgroundColor: t.card }, shadow(t, 'xs')]}
-              scaleTo={0.88}
-              onPress={() => setLang(lang === 'zh' ? 'en' : 'zh')}
-              accessibilityRole="button"
-              accessibilityLabel={s.a11yLang}
-            >
-              <Text style={[styles.iconBtnText, { color: t.inkSoft }]}>{s.langBtn}</Text>
-            </Tap>
           </View>
         </View>
 
-        <SummaryCard
-          exp={exp}
-          inc={inc}
-          monthLabel={monthLabel}
-          lang={lang}
-          onPrev={() => setAnchor((a) => shiftCycle(a, -1, cycleStart))}
-          onNext={() => setAnchor((a) => shiftCycle(a, 1, cycleStart))}
-        />
+        {searchOpen && tab === 'list' && (
+          <View style={styles.searchWrap}>
+            <View style={[styles.searchBar, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'xs')]}>
+              <Icon name="search" color={t.inkSoft} size={17} />
+              <TextInput
+                ref={searchRef}
+                style={[styles.searchInput, { color: t.ink }]}
+                value={searchQ}
+                onChangeText={setSearchQ}
+                placeholder={s.searchPh}
+                placeholderTextColor={t.inkSoft}
+                autoFocus
+                accessibilityLabel={s.a11ySearch}
+              />
+              <Pressable onPress={searchQ ? () => setSearchQ('') : closeSearch} hitSlop={8} accessibilityRole="button" accessibilityLabel={s.a11yClearSearch}>
+                <View style={[styles.searchClear, { backgroundColor: t.line }]}>
+                  <Icon name="close" color={t.inkSoft} size={11} strokeWidth={2.4} />
+                </View>
+              </Pressable>
+            </View>
+          </View>
+        )}
 
         <TabFade key={tab}>
           {tab === 'list' && (
-            <>
-              <BudgetPot
-                exp={exp}
-                budget={settings.budget}
-                lang={lang}
-                dailyBudget={settings.dailyBudget}
-                dailyUsed={todayExpense(cycleEntries)}
-              />
-              <InsightBanner insight={dueInsight ?? insight} />
-              <LedgerFilter lang={lang} />
-              <TemplateChips lang={lang} onLogged={() => celebrate(s.toastBloom)} />
-              <QuickEntry lang={lang} onSubmit={quickSubmit} />
-              <View style={styles.searchWrap}>
-                <View style={[styles.searchBar, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'xs')]}>
-                  <Icon name="search" color={t.inkSoft} size={17} />
-                  <TextInput
-                    ref={searchRef}
-                    style={[styles.searchInput, { color: t.ink }]}
-                    value={searchQ}
-                    onChangeText={setSearchQ}
-                    placeholder={s.searchPh}
-                    placeholderTextColor={t.inkSoft}
-                  />
-                  {searchQ.length > 0 && (
-                    <Pressable onPress={() => setSearchQ('')} hitSlop={8} accessibilityRole="button" accessibilityLabel={s.a11yClearSearch}>
-                      <View style={[styles.searchClear, { backgroundColor: t.line }]}>
-                        <Icon name="close" color={t.inkSoft} size={11} strokeWidth={2.4} />
-                      </View>
-                    </Pressable>
+            <EntryList
+              entries={listEntries}
+              customCats={customCats}
+              lang={lang}
+              columns={responsive.columns}
+              onPress={setDetailId}
+              onLongPress={setMarkId}
+              emptyText={searchQ ? s.noResult : undefined}
+              header={
+                <>
+                  {!searchQ && (
+                    <>
+                      <SummaryCard
+                        exp={exp}
+                        inc={inc}
+                        monthLabel={monthLabel}
+                        lang={lang}
+                        onPrev={() => setAnchor((a) => shiftCycle(a, -1, cycleStart))}
+                        onNext={() => setAnchor((a) => shiftCycle(a, 1, cycleStart))}
+                      />
+                      <BudgetPot
+                        exp={exp}
+                        budget={settings.budget}
+                        lang={lang}
+                        dailyBudget={settings.dailyBudget}
+                        dailyUsed={todayExpense(cycleEntries)}
+                        onPress={() => router.push('/budget')}
+                      />
+                      <InsightBanner
+                        insight={dueInsight ?? insight}
+                        onPress={dueInsight?.acctId ? () => router.push(`/account-detail?id=${dueInsight.acctId}`) : undefined}
+                      />
+                      <LedgerFilter lang={lang} />
+                      <TemplateChips lang={lang} onLogged={() => celebrate(s.toastBloom)} />
+                    </>
                   )}
-                </View>
-              </View>
-              <EntryList
-                entries={listEntries}
-                customCats={customCats}
-                lang={lang}
-                columns={responsive.columns}
-                onPress={setDetailId}
-                onLongPress={setMarkId}
-                emptyText={searchQ ? s.noResult : undefined}
+                </>
+              }
+            />
+          )}
+          {tab === 'cal' && (
+            <>
+              <MonthNav
+                label={monthLabel}
+                onPrev={() => setAnchor((a) => shiftCycle(a, -1, cycleStart))}
+                onNext={() => setAnchor((a) => shiftCycle(a, 1, cycleStart))}
+                prevLabel={s.a11yMonthPrev}
+                nextLabel={s.a11yMonthNext}
               />
+              <CalendarView all={liveAll} anchor={anchor} cycleStart={cycleStart} customCats={customCats} lang={lang} />
             </>
           )}
-          {tab === 'cal' && <CalendarView all={liveAll} anchor={anchor} cycleStart={cycleStart} customCats={customCats} lang={lang} />}
           {tab === 'stats' && (
-            <StatsView all={liveAll} anchor={anchor} cycleStart={cycleStart} customCats={customCats} lang={lang} onEntryPress={setDetailId} />
+            <StatsView
+              all={liveAll}
+              anchor={anchor}
+              cycleStart={cycleStart}
+              customCats={customCats}
+              lang={lang}
+              onEntryPress={setDetailId}
+              footer={
+                <View style={styles.moreWrap}>
+                  <Text style={[styles.moreHead, { color: t.inkSoft }]}>{s.statsMore}</Text>
+                  {([
+                    { lead: <Icon name="sparkle" color={t.hibiscus} size={17} />, title: s.insightsTitle, route: '/insights' as const },
+                    { lead: <Icon name="receipt" color={t.hibiscus} size={17} />, title: s.reportTitle, route: '/report' as const },
+                    { lead: <Flower size={17} petal={t.hibiscus} stroke={t.hibiscusDeep} />, title: s.setReview, route: '/review' as const },
+                  ]).map((r) => (
+                    <Tap
+                      key={r.route}
+                      onPress={() => router.push(r.route)}
+                      scaleTo={0.98}
+                      accessibilityRole="button"
+                      accessibilityLabel={r.title}
+                      style={[styles.moreRow, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'xs')]}
+                    >
+                      {r.lead}
+                      <Text style={[styles.moreTitle, { color: t.ink }]}>{r.title}</Text>
+                      <Icon name="chevR" color={t.inkSoft} size={15} strokeWidth={2} />
+                    </Tap>
+                  ))}
+                </View>
+              }
+            />
           )}
           {tab === 'wall' && (
             <GardenView
@@ -351,8 +429,22 @@ const styles = StyleSheet.create({
     width: 36, height: 36, borderRadius: 18, borderWidth: 1,
     alignItems: 'center', justifyContent: 'center',
   },
-  iconBtnText: { fontSize: 12, fontWeight: '700' },
-  searchWrap: { paddingHorizontal: 22, paddingTop: 4, paddingBottom: 2 },
+  monthNav: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 22, paddingTop: 8, paddingBottom: 2 },
+  monthNavLabel: { fontSize: 14, fontWeight: '700', letterSpacing: 0.2 },
+  monthNavBtns: { marginLeft: 'auto', flexDirection: 'row', gap: 8 },
+  monthNavBtn: {
+    width: 30, height: 30, borderRadius: 15, borderWidth: 1,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  searchWrap: { paddingHorizontal: 22, paddingTop: 6, paddingBottom: 4 },
+  moreWrap: { marginTop: 20 },
+  moreHead: { fontSize: 11.5, fontWeight: '700', letterSpacing: 1.2, marginBottom: 9, marginHorizontal: 2 },
+  moreRow: {
+    flexDirection: 'row', alignItems: 'center', gap: 11,
+    borderRadius: RAD.md, borderWidth: StyleSheet.hairlineWidth,
+    paddingVertical: 13, paddingHorizontal: 15, marginBottom: 8,
+  },
+  moreTitle: { flex: 1, fontSize: 14, fontWeight: '600' },
   searchBar: {
     flexDirection: 'row', alignItems: 'center', gap: 9,
     borderWidth: StyleSheet.hairlineWidth, borderRadius: RAD.pill,

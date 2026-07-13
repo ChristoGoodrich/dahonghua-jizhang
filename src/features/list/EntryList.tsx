@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ScrollView } from 'react-native';
 import { useTheme } from '@/theme/ThemeContext';
 import { Flower } from '@/components/Flower';
 import { Tap } from '@/components/ui/Tap';
@@ -22,6 +22,9 @@ interface Props {
   onEdit?: (id: string) => void;
   emptyText?: string; // overrides the default empty message (e.g. "no results")
   columns?: number; // 1 (default) or 2+ for tablet
+  // Scrolls WITH the list (summary card, budget line, filters…) so fixed chrome
+  // never squeezes the entries off-screen on small phones.
+  header?: React.ReactElement;
 }
 
 interface DayGroup {
@@ -52,7 +55,7 @@ function dayLabel(key: string, lang: Lang, s: typeof I18N['zh']): string {
   });
 }
 
-export function EntryList({ entries, customCats, lang, onPress, onLongPress, onDelete, onEdit, emptyText, columns = 1 }: Props) {
+export function EntryList({ entries, customCats, lang, onPress, onLongPress, onDelete, onEdit, emptyText, columns = 1, header }: Props) {
   const t = useTheme();
   const s = I18N[lang];
   const accounts = store$.accounts.peek();
@@ -220,17 +223,24 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
         </View>
       );
     }
-    return renderSingleEntry(item.entry);
+    return <View style={styles.itemPad}>{renderSingleEntry(item.entry)}</View>;
   }, [t, s, lang, renderSingleEntry]);
 
   if (!entries.length) {
-    return (
+    const empty = (
       <View style={styles.empty}>
         <View style={[styles.emptyDisc, { backgroundColor: t.paperWarm }]}>
           <Flower size={56} petal="#E0CDB8" stamen="#D6C3AC" />
         </View>
         <Text style={[styles.emptyText, { color: t.inkSoft }]}>{emptyText ?? s.empty}</Text>
       </View>
+    );
+    if (!header) return empty;
+    return (
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        {header}
+        {empty}
+      </ScrollView>
     );
   }
 
@@ -239,9 +249,11 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
       data={flatData}
       renderItem={renderItem}
       keyExtractor={(item) => item.key}
-      getItemLayout={columns > 1 ? undefined : getItemLayout}
+      // a header of unknown height would skew the precomputed offsets
+      getItemLayout={columns > 1 || header ? undefined : getItemLayout}
       numColumns={columns}
       columnWrapperStyle={columns > 1 ? styles.columnGap : undefined}
+      ListHeaderComponent={header}
       maxToRenderPerBatch={10}
       windowSize={5}
       removeClippedSubviews={true}
@@ -255,9 +267,12 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
 
 const styles = StyleSheet.create({
   scroll: { flex: 1 },
-  scrollContent: { paddingHorizontal: 22, paddingTop: 6, paddingBottom: 140 },
+  // horizontal padding lives on the rows (not the container) so a full-bleed
+  // `header` (whose children carry their own 22px margins) doesn't double-pad
+  scrollContent: { paddingTop: 6, paddingBottom: 140 },
+  itemPad: { marginHorizontal: 22 },
   group: { marginTop: 16 },
-  dayHead: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 4, paddingBottom: 7 },
+  dayHead: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 4, paddingBottom: 7, marginHorizontal: 22, marginTop: 8 },
   dayLabel: { fontSize: 12, fontWeight: '700', letterSpacing: 0.3 },
   row: {
     borderRadius: RAD.md,
@@ -285,6 +300,6 @@ const styles = StyleSheet.create({
   },
   emptyText: { fontSize: 13, textAlign: 'center' },
   columnGap: { gap: 8 },
-  gridRow: { flexDirection: 'row', gap: 8, marginBottom: 8 },
+  gridRow: { flexDirection: 'row', gap: 8, marginBottom: 8, marginHorizontal: 22 },
   gridCol: { flex: 1 },
 });

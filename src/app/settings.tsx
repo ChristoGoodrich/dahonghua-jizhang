@@ -93,13 +93,23 @@ export default observer(function SettingsScreen() {
     }
   }
 
-  const Row = ({ title, desc, right }: { title: string; desc?: string; right: React.ReactNode }) => (
-    <View style={[styles.row, { borderBottomColor: t.line }]}>
+  const Row = ({ title, desc, right, last }: { title: string; desc?: string; right: React.ReactNode; last?: boolean }) => (
+    <View style={[styles.row, { borderBottomColor: t.line }, last && styles.rowLast]}>
       <View style={{ flex: 1 }}>
         <Text style={[styles.rowTitle, { color: t.ink }]}>{title}</Text>
         {!!desc && <Text style={[styles.rowDesc, { color: t.inkSoft }]}>{desc}</Text>}
       </View>
       {right}
+    </View>
+  );
+
+  // grouped sections make the long list scannable — related rows share a card
+  const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
+    <View style={styles.section}>
+      <Text style={[styles.sectionHead, { color: t.inkSoft }]}>{title}</Text>
+      <View style={[styles.sectionCard, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'xs')]}>
+        {children}
+      </View>
     </View>
   );
 
@@ -126,157 +136,171 @@ export default observer(function SettingsScreen() {
         <Text style={[styles.subtitle, { color: t.inkSoft }]}>{s.setSub}</Text>
 
         <ScrollView contentContainerStyle={styles.body} showsVerticalScrollIndicator={false}>
-          <Pressable onPress={() => router.push('/budget')}>
-            <Row title={s.setBudgetNav} desc={s.setBudgetNavD} right={chev} />
-          </Pressable>
-          <Row
-            title={s.setCycle}
-            desc={s.setCycleD}
-            right={
-              <TextInput
-                style={[styles.numInput, { borderColor: t.line, color: t.ink, backgroundColor: t.card }]}
-                keyboardType="numeric"
-                value={String(settings.cycleStart || 1)}
-                onChangeText={(v) => {
-                  const n = Math.max(1, Math.min(28, parseInt(v.replace(/[^\d]/g, ''), 10) || 1));
-                  patchSettings({ cycleStart: n });
-                }}
-              />
-            }
-          />
-          <View style={[styles.rowCol, { borderBottomColor: t.line }]}>
-            <Text style={[styles.rowTitle, { color: t.ink }]}>{s.setTheme}</Text>
-            <Text style={[styles.rowDesc, { color: t.inkSoft }]}>{s.setThemeD}</Text>
-            <ThemePicker lang={lang} currentTheme={settings.theme} />
-          </View>
-          <Row
-            title={s.darkTitle}
-            desc={s.darkDesc}
-            right={
-              <Tap
-                onPress={() => patchSettings({ dark: !settings.dark })}
-                scaleTo={0.9}
-                accessibilityRole="button"
-                accessibilityLabel={s.darkTitle}
-                style={[styles.toggleBtn, { borderColor: t.hibiscus, backgroundColor: t.tint }]}
-              >
-                <Icon name={settings.dark ? 'moon' : 'sun'} color={t.hibiscus} size={16} />
-              </Tap>
-            }
-          />
-          <Row
-            title={s.langTitle}
-            desc={s.langDesc}
-            right={
-              <Tap
-                onPress={() => setLang(lang === 'zh' ? 'en' : 'zh')}
-                scaleTo={0.9}
-                accessibilityRole="button"
-                accessibilityLabel={s.langTitle}
-                style={[styles.toggleBtn, { borderColor: t.hibiscus, backgroundColor: t.tint }]}
-              >
-                <Text style={[styles.toggleText, { color: t.hibiscus }]}>{lang === 'zh' ? '中' : 'EN'}</Text>
-              </Tap>
-            }
-          />
-
-          <Pressable onPress={() => router.push('/accounts')}>
-            <Row title={s.setAccounts} desc={s.setAccountsD} right={chev} />
-          </Pressable>
-          <Pressable onPress={() => router.push('/assets')}>
-            <Row title={s.setAssets} desc={s.setAssetsD} right={chev} />
-          </Pressable>
-          <Pressable onPress={() => router.push('/loans')}>
-            <Row title={s.setLoans} desc={s.setLoansD} right={chev} />
-          </Pressable>
-          <Pressable onPress={() => router.push('/subs')}>
-            <Row title={s.setSubs} desc={s.setSubsD} right={chev} />
-          </Pressable>
-          <Pressable onPress={() => router.push('/reimburse')}>
-            <Row title={s.setReimburse} desc={s.setReimburseD} right={chev} />
-          </Pressable>
-          <Pressable onPress={() => router.push('/templates')}>
-            <Row title={s.setTemplates} desc={s.setTemplatesD} right={chev} />
-          </Pressable>
-          <Pressable onPress={() => router.push('/tags')}>
-            <Row title={s.setTags} desc={s.setTagsD} right={chev} />
-          </Pressable>
-          <Pressable onPress={() => router.push('/backup')}>
-            <Row title={s.backupAuto} desc={s.backupAutoD} right={chev} />
-          </Pressable>
-          <Pressable onPress={() => router.push('/import-bills')}>
-            <Row title={s.billImportNav} desc={s.billImportNavD} right={chev} />
-          </Pressable>
-          <Pressable onPress={() => router.push('/currency')}>
-            <Row title={s.setCurrency} desc={s.setCurrencyD} right={chev} />
-          </Pressable>
-          <Pressable onPress={() => router.push('/account')}>
-            <Row title={s.setSync} desc={s.setSyncD} right={chev} />
-          </Pressable>
-          <Pressable onPress={() => router.push('/review')}>
-            <Row title={s.setReview} desc={s.setReviewD} right={chev} />
-          </Pressable>
-          <Pressable onPress={() => router.push('/feedback')}>
-            <Row title={lang === 'zh' ? '意见反馈' : 'Feedback'} desc={lang === 'zh' ? '你的建议让大红花更好' : 'Help us improve Red Blossom'} right={chev} />
-          </Pressable>
-          {aiConfigured() && (
+          <Section title={s.setGroupBudget}>
+            <Pressable onPress={() => router.push('/budget')}>
+              <Row title={s.setBudgetNav} desc={s.setBudgetNavD} right={chev} />
+            </Pressable>
             <Row
-              title={s.aiPrivacyTitle}
-              desc={s.aiPrivacyDesc}
+              title={s.setCycle}
+              desc={s.setCycleD}
+              right={
+                <TextInput
+                  style={[styles.numInput, { borderColor: t.line, color: t.ink, backgroundColor: t.card }]}
+                  keyboardType="numeric"
+                  value={String(settings.cycleStart || 1)}
+                  onChangeText={(v) => {
+                    const n = Math.max(1, Math.min(28, parseInt(v.replace(/[^\d]/g, ''), 10) || 1));
+                    patchSettings({ cycleStart: n });
+                  }}
+                />
+              }
+            />
+            <Row
+              title={s.remindTitle}
+              desc={s.remindDesc}
+              last
+              right={
+                <TextInput
+                  style={[styles.numInput, { borderColor: t.line, color: t.ink, backgroundColor: t.card }]}
+                  placeholder="21:00"
+                  placeholderTextColor={t.inkSoft}
+                  defaultValue={settings.remindTime ?? ''}
+                  onEndEditing={(e) => onReminderChange(e.nativeEvent.text)}
+                />
+              }
+            />
+          </Section>
+
+          <Section title={s.setGroupLook}>
+            <View style={[styles.rowCol, { borderBottomColor: t.line }]}>
+              <Text style={[styles.rowTitle, { color: t.ink }]}>{s.setTheme}</Text>
+              <Text style={[styles.rowDesc, { color: t.inkSoft }]}>{s.setThemeD}</Text>
+              <ThemePicker lang={lang} currentTheme={settings.theme} />
+            </View>
+            <Row
+              title={s.darkTitle}
+              desc={s.darkDesc}
               right={
                 <Tap
-                  onPress={() => patchSettings({ aiShareCategories: settings.aiShareCategories === false })}
+                  onPress={() => patchSettings({ dark: !settings.dark })}
                   scaleTo={0.9}
                   accessibilityRole="button"
-                  accessibilityLabel={s.aiPrivacyTitle}
+                  accessibilityLabel={s.darkTitle}
                   style={[styles.toggleBtn, { borderColor: t.hibiscus, backgroundColor: t.tint }]}
                 >
-                  <Text style={[styles.toggleText, { color: t.hibiscus }]}>
-                    {settings.aiShareCategories === false ? s.aiShareOff : s.aiShareOn}
-                  </Text>
+                  <Icon name={settings.dark ? 'moon' : 'sun'} color={t.hibiscus} size={16} />
                 </Tap>
               }
             />
-          )}
-          <Row
-            title={s.remindTitle}
-            desc={s.remindDesc}
-            right={
-              <TextInput
-                style={[styles.numInput, { borderColor: t.line, color: t.ink, backgroundColor: t.card }]}
-                placeholder="21:00"
-                placeholderTextColor={t.inkSoft}
-                defaultValue={settings.remindTime ?? ''}
-                onEndEditing={(e) => onReminderChange(e.nativeEvent.text)}
-              />
-            }
-          />
-          <Row
-            title={s.setLock}
-            desc={s.setLockD}
-            right={
-              <Tap
-                onPress={toggleLock}
-                scaleTo={0.9}
-                accessibilityRole="button"
-                accessibilityLabel={s.setLock}
-                style={[styles.toggleBtn, { borderColor: t.hibiscus, backgroundColor: t.tint }]}
-              >
-                <Text style={[styles.toggleText, { color: t.hibiscus }]}>{settings.lock ? s.lockDisable : s.lockEnable}</Text>
-              </Tap>
-            }
-          />
+            <Row
+              title={s.langTitle}
+              desc={s.langDesc}
+              last
+              right={
+                <Tap
+                  onPress={() => setLang(lang === 'zh' ? 'en' : 'zh')}
+                  scaleTo={0.9}
+                  accessibilityRole="button"
+                  accessibilityLabel={s.langTitle}
+                  style={[styles.toggleBtn, { borderColor: t.hibiscus, backgroundColor: t.tint }]}
+                >
+                  <Text style={[styles.toggleText, { color: t.hibiscus }]}>{lang === 'zh' ? '中' : 'EN'}</Text>
+                </Tap>
+              }
+            />
+          </Section>
 
-          <View style={[styles.rowCol, { borderBottomWidth: 0 }]}>
-            <Text style={[styles.rowTitle, { color: t.ink }]}>{s.dataTitle}</Text>
-            <Text style={[styles.rowDesc, { color: t.inkSoft }]}>{s.dataDesc}</Text>
-            <View style={styles.exportRow}>
-              <Btn label={s.exportCsv} variant="ghost" onPress={exportCSV} style={styles.exportBtn} />
-              <Btn label={s.exportBackup} variant="ghost" onPress={exportBackup} style={styles.exportBtn} />
+          <Section title={s.setGroupWallet}>
+            <Pressable onPress={() => router.push('/accounts')}>
+              <Row title={s.setAccounts} desc={s.setAccountsD} right={chev} />
+            </Pressable>
+            <Pressable onPress={() => router.push('/assets')}>
+              <Row title={s.setAssets} desc={s.setAssetsD} right={chev} />
+            </Pressable>
+            <Pressable onPress={() => router.push('/loans')}>
+              <Row title={s.setLoans} desc={s.setLoansD} right={chev} />
+            </Pressable>
+            <Pressable onPress={() => router.push('/subs')}>
+              <Row title={s.setSubs} desc={s.setSubsD} right={chev} />
+            </Pressable>
+            <Pressable onPress={() => router.push('/reimburse')}>
+              <Row title={s.setReimburse} desc={s.setReimburseD} right={chev} />
+            </Pressable>
+            <Pressable onPress={() => router.push('/currency')}>
+              <Row title={s.setCurrency} desc={s.setCurrencyD} right={chev} last />
+            </Pressable>
+          </Section>
+
+          <Section title={s.setGroupTools}>
+            <Pressable onPress={() => router.push('/templates')}>
+              <Row title={s.setTemplates} desc={s.setTemplatesD} right={chev} />
+            </Pressable>
+            <Pressable onPress={() => router.push('/tags')}>
+              <Row title={s.setTags} desc={s.setTagsD} right={chev} />
+            </Pressable>
+            <Pressable onPress={() => router.push('/import-bills')}>
+              <Row title={s.billImportNav} desc={s.billImportNavD} right={chev} last />
+            </Pressable>
+          </Section>
+
+          <Section title={s.setGroupData}>
+            <Pressable onPress={() => router.push('/backup')}>
+              <Row title={s.backupAuto} desc={s.backupAutoD} right={chev} />
+            </Pressable>
+            <Pressable onPress={() => router.push('/account')}>
+              <Row title={s.setSync} desc={s.setSyncD} right={chev} />
+            </Pressable>
+            <Row
+              title={s.setLock}
+              desc={s.setLockD}
+              right={
+                <Tap
+                  onPress={toggleLock}
+                  scaleTo={0.9}
+                  accessibilityRole="button"
+                  accessibilityLabel={s.setLock}
+                  style={[styles.toggleBtn, { borderColor: t.hibiscus, backgroundColor: t.tint }]}
+                >
+                  <Text style={[styles.toggleText, { color: t.hibiscus }]}>{settings.lock ? s.lockDisable : s.lockEnable}</Text>
+                </Tap>
+              }
+            />
+            {aiConfigured() && (
+              <Row
+                title={s.aiPrivacyTitle}
+                desc={s.aiPrivacyDesc}
+                right={
+                  <Tap
+                    onPress={() => patchSettings({ aiShareCategories: settings.aiShareCategories === false })}
+                    scaleTo={0.9}
+                    accessibilityRole="button"
+                    accessibilityLabel={s.aiPrivacyTitle}
+                    style={[styles.toggleBtn, { borderColor: t.hibiscus, backgroundColor: t.tint }]}
+                  >
+                    <Text style={[styles.toggleText, { color: t.hibiscus }]}>
+                      {settings.aiShareCategories === false ? s.aiShareOff : s.aiShareOn}
+                    </Text>
+                  </Tap>
+                }
+              />
+            )}
+            <View style={[styles.rowCol, styles.rowLast]}>
+              <Text style={[styles.rowTitle, { color: t.ink }]}>{s.dataTitle}</Text>
+              <Text style={[styles.rowDesc, { color: t.inkSoft }]}>{s.dataDesc}</Text>
+              <View style={styles.exportRow}>
+                <Btn label={s.exportCsv} variant="ghost" onPress={exportCSV} style={styles.exportBtn} />
+                <Btn label={s.exportBackup} variant="ghost" onPress={exportBackup} style={styles.exportBtn} />
+              </View>
+              <Btn label={s.importBtn} onPress={pickAndImport} style={styles.importBtn} />
+              {!!status && <Text style={[styles.status, { color: t.leafDeep }]}>{status}</Text>}
             </View>
-            <Btn label={s.importBtn} onPress={pickAndImport} style={styles.importBtn} />
-            {!!status && <Text style={[styles.status, { color: t.leafDeep }]}>{status}</Text>}
-          </View>
+          </Section>
+
+          <Section title={s.setGroupOther}>
+            <Pressable onPress={() => router.push('/feedback')}>
+              <Row title={lang === 'zh' ? '意见反馈' : 'Feedback'} desc={lang === 'zh' ? '你的建议让大红花更好' : 'Help us improve Red Blossom'} right={chev} last />
+            </Pressable>
+          </Section>
         </ScrollView>
       </SafeAreaView>
     </View>
@@ -296,8 +320,12 @@ const styles = StyleSheet.create({
   title: { fontSize: 24, fontWeight: '800', letterSpacing: 0.2, paddingHorizontal: 22, marginTop: 10 },
   subtitle: { fontSize: 12, paddingHorizontal: 22, marginTop: 3, marginBottom: 8 },
   body: { paddingHorizontal: 22, paddingBottom: 60 },
+  section: { marginTop: 16 },
+  sectionHead: { fontSize: 11.5, fontWeight: '700', letterSpacing: 1.2, marginBottom: 7, marginLeft: 4 },
+  sectionCard: { borderRadius: RAD.md, borderWidth: StyleSheet.hairlineWidth, paddingHorizontal: 16 },
   row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 14, borderBottomWidth: StyleSheet.hairlineWidth, gap: 12 },
   rowCol: { paddingVertical: 14, borderBottomWidth: StyleSheet.hairlineWidth },
+  rowLast: { borderBottomWidth: 0 },
   rowTitle: { fontSize: 14, fontWeight: '600' },
   rowDesc: { fontSize: 11.5, marginTop: 2, lineHeight: 16 },
   numInput: {
