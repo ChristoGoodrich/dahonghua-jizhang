@@ -56,6 +56,7 @@ export interface Settings {
   autoBackup?: boolean;
   backupFrequency?: 'daily' | 'weekly';
   maxBackups?: number;
+  hideAmounts?: boolean; // mask balances on the asset/account screens (shoulder-surfing privacy)
 }
 
 export type ThemeKey = 'default' | 'sakura' | 'daisy' | 'jasmine' | 'ocean' | 'forest' | 'sunset';

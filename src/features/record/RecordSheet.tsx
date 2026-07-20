@@ -17,12 +17,14 @@ import type { Category, IO } from '@/domain/types';
 import type { Lang } from '@/i18n';
 import { I18N } from '@/i18n';
 import { store$, addEntry, addTransfer, updateEntry, removeEntry, addTemplate } from '@/store/ledger';
+import { noteSuggestions } from '@/domain/notes';
 import { NO_ANIM } from '@/util/boot';
 import { CalcKeypad } from './CalcKeypad';
 import { AIQuickEntry } from './AIQuickEntry';
 import { CurrencyRow } from './CurrencyRow';
 import { CategoryPicker } from './CategoryPicker';
 import { TransferForm } from './TransferForm';
+import { DateField } from './DateField';
 import { aiConfigured, parseEntryText } from '@/ai/client';
 
 interface Props {
@@ -31,7 +33,9 @@ interface Props {
   lang: Lang;
   customCats: Record<IO, Category[]>;
   onClose: () => void;
-  onSaved: (isNew: boolean) => void;
+  // keepOpen=true means the sheet stays up (再记); the host should skip
+  // celebration UI that the sheet overlay would cover anyway.
+  onSaved: (isNew: boolean, keepOpen?: boolean) => void;
   onTemplateSaved?: () => void;
   // Called after a delete with a restore fn, so the host can offer an undo toast.
   onDeleted?: (restore: () => void) => void;
@@ -59,9 +63,20 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
   const [ledger, setLedger] = useState('');
   const [cur, setCur] = useState(base);
   const [subcat, setSubcat] = useState('');
+  // null = "now" — materialized at save time so the entry carries the moment it
+  // was saved, and render stays pure (no Date.now() during render)
+  const [ts, setTs] = useState<number | null>(null);
+  const [flash, setFlash] = useState('');
   const [aiText, setAiText] = useState('');
   const [aiBusy, setAiBusy] = useState(false);
   const [aiMsg, setAiMsg] = useState('');
+
+  // transient 再记 confirmation — cleared by timer, timer cleared on unmount
+  useEffect(() => {
+    if (!flash) return;
+    const id = setTimeout(() => setFlash(''), 1600);
+    return () => clearTimeout(id);
+  }, [flash]);
 
   // entrance: mask fades in while the sheet springs up from below
   const enter = useAnimatedValue(NO_ANIM ? 1 : 0);
@@ -108,9 +123,11 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
       setAiMsg('');
       const baseNow = store$.currencies.base.peek() || 'CNY';
       const d = editId ? store$.data.peek().find((x) => x.id === editId) : undefined;
+      setFlash('');
       if (d) {
         setIO(d.io);
         setCat(d.cat);
+        setTs(d.ts);
         // show the original foreign amount when editing a converted entry
         setAmt(String(d.origAmt ?? d.amt));
         setNote(d.note ?? '');
@@ -125,6 +142,7 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
       } else {
         setIO('exp');
         setCat(allCats('exp', customCats)[0].k);
+        setTs(null);
         setAmt('');
         setNote('');
         setAcct(store$.curAccount.peek());
@@ -156,14 +174,19 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
     setAmt((prev) => applyKey(prev, k));
   }
 
-  function save() {
+  // Write the entry (add or update). Returns the amount as typed (in the
+  // entry's own currency) for feedback, or null when the form isn't saveable.
+  function writeEntry(): number | null {
     const value = evalExpr(amt);
-    if (!value || value <= 0) return;
+    if (!value || value <= 0) return null;
     const trimmed = note.trim();
-    const isNew = !editId;
+    // only patch ts on edit when the user actually re-dated the entry, so an
+    // untouched date doesn't get a fresh fieldTs stamp for sync merging
+    const origTs = editId ? store$.data.peek().find((x) => x.id === editId)?.ts : undefined;
+    const tsPatch = ts !== null && origTs !== undefined && origTs !== ts ? { ts } : {};
 
     if (io === 'xfer') {
-      if (!acctTo || acct === acctTo) return; // need two distinct accounts
+      if (!acctTo || acct === acctTo) return null; // need two distinct accounts
       const feeN = parseFloat(fee) || 0;
       const discN = parseFloat(discount) || 0;
       if (editId) {
@@ -173,13 +196,12 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
           note: trimmed || undefined, ledger: ledger || undefined,
           // clear exp/inc-only fields if an entry was converted into a transfer
           subcat: undefined, cur: undefined, origAmt: undefined,
+          ...tsPatch,
         });
       } else {
-        addTransfer({ from: acct, to: acctTo, amt: value, fee: feeN, discount: discN, note: trimmed, ledger });
+        addTransfer({ from: acct, to: acctTo, amt: value, fee: feeN, discount: discN, note: trimmed, ledger, ts: ts ?? undefined });
       }
-      onSaved(isNew);
-      onClose();
-      return;
+      return value;
     }
 
     const storeAmt = toBase(value, cur, currencies); // always persist in base currency
@@ -192,12 +214,31 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
       origAmt: foreign ? value : undefined,
     };
     if (editId) {
-      updateEntry(editId, { io, cat, amt: storeAmt, note: trimmed, acct, ...extra });
+      updateEntry(editId, { io, cat, amt: storeAmt, note: trimmed, acct, ...extra, ...tsPatch });
     } else {
-      addEntry({ io, cat, amt: storeAmt, note: trimmed, acct, ...extra });
+      addEntry({ io, cat, amt: storeAmt, note: trimmed, acct, ...extra, ts: ts ?? undefined });
     }
-    onSaved(isNew);
+    return value;
+  }
+
+  function save() {
+    if (writeEntry() === null) return;
+    onSaved(!editId);
     onClose();
+  }
+
+  // 再记 — save and keep the sheet open for the next entry of the same kind:
+  // io/category/account/currency/date/tags/ledger stay, amount+note+subcat clear.
+  function saveNext() {
+    const value = writeEntry();
+    if (value === null) return;
+    onSaved(true, true);
+    setAmt('');
+    setNote('');
+    setSubcat('');
+    setFee('');
+    setDiscount('');
+    setFlash(s.savedNext.replace('%s', curSymbol(cur) + value.toFixed(2)));
   }
 
   function saveAsTemplate() {
@@ -226,6 +267,8 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
   }
 
   const accent = io === 'inc' ? t.leaf : t.hibiscus;
+  // auto-learned note chips for the selected category (frequency + recency)
+  const noteSugg = io === 'xfer' || !visible ? [] : noteSuggestions(store$.data.get(), io, cat);
   const converted =
     cur !== base && !!evalExpr(amt)
       ? s.curConverted.replace('%s', curSymbol(base) + toBase(evalExpr(amt), cur, currencies).toFixed(2))
@@ -296,11 +339,17 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
               {amt || s.amountPh}
             </Text>
           </View>
-          {hasOperator(amt) && (
-            <Text style={[styles.convLine, TABULAR, { color: t.inkSoft }]}>
-              = {curSymbol(cur)}{evalExpr(amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </Text>
-          )}
+          {/* fixed-height slot: live "=" preview while typing math, or the 再记
+              confirmation — constant height so the layout never jumps mid-entry */}
+          <View style={styles.subLine}>
+            {hasOperator(amt) ? (
+              <Text style={[styles.subLineText, TABULAR, { color: t.inkSoft }]}>
+                = {curSymbol(cur)}{evalExpr(amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </Text>
+            ) : flash ? (
+              <Text style={[styles.subLineText, { color: t.leafDeep }]}>{flash}</Text>
+            ) : null}
+          </View>
 
           <ScrollView style={styles.middle} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
             {io !== 'xfer' && aiConfigured() && (
@@ -343,6 +392,8 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
               />
             )}
 
+            <DateField ts={ts} onChange={setTs} lang={lang} />
+
             <TextInput
               style={[styles.note, { backgroundColor: t.card, borderColor: t.line, color: t.ink }]}
               value={note}
@@ -351,6 +402,14 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
               placeholderTextColor={t.inkSoft}
               accessibilityLabel={s.note}
             />
+
+            {noteSugg.length > 0 && (
+              <View style={styles.tagWrap}>
+                {noteSugg.map((n) => (
+                  <Chip key={n} label={n} on={note === n} onPress={() => setNote(note === n ? '' : n)} />
+                ))}
+              </View>
+            )}
 
             {io !== 'xfer' && tags.normal.length > 0 && (
               <>
@@ -378,10 +437,13 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
 
           <CalcKeypad onKey={onKey} lang={lang} />
 
-          {/* secondary action sits beside save — one row instead of two */}
+          {/* secondary actions sit beside save — one row instead of two */}
           <View style={styles.actions}>
             {!editId && io !== 'xfer' && (
               <Btn label={s.tmplSaveBtn} onPress={saveAsTemplate} variant="ghost" style={styles.secondaryBtn} />
+            )}
+            {!editId && (
+              <Btn label={s.saveNext} onPress={saveNext} variant="ghost" style={styles.secondaryBtn} />
             )}
             {!!editId && (
               <Btn label={s.del} onPress={del} variant="ghost" tone={t.hibiscusDeep} style={styles.secondaryBtn} />
@@ -423,7 +485,8 @@ const styles = StyleSheet.create({
   amtRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7, marginTop: 6, marginBottom: 2, paddingHorizontal: 24 },
   cur: { fontSize: 22, fontWeight: '700' },
   amtInput: { fontSize: 42, fontWeight: '800', letterSpacing: -0.8, flexShrink: 1, textAlign: 'center', padding: 0 },
-  convLine: { fontSize: 11.5, fontWeight: '600', textAlign: 'center', marginBottom: 10 },
+  subLine: { minHeight: 18, marginBottom: 4, justifyContent: 'center' },
+  subLineText: { fontSize: 11.5, fontWeight: '600', textAlign: 'center' },
   middle: { flexShrink: 1, marginTop: 4, marginBottom: 6 },
   pickLabel: { fontSize: 11, fontWeight: '700', letterSpacing: 0.8, marginBottom: 7 },
   tagWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 7, marginBottom: 12 },
@@ -432,6 +495,7 @@ const styles = StyleSheet.create({
     padding: 12, paddingHorizontal: 14, fontSize: 14, marginBottom: 12,
   },
   actions: { flexDirection: 'row', gap: 10, marginTop: 4, alignItems: 'stretch' },
-  secondaryBtn: { flex: 1 },
+  // tight horizontal padding so three-across still fits a 375pt sheet
+  secondaryBtn: { flex: 1, paddingHorizontal: 6 },
   primaryBtn: { flex: 1.9 },
 });

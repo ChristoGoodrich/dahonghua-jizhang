@@ -11,6 +11,8 @@ export interface Strings {
   note: string; save: string; del: string; empty: string;
   deleted: string; undo: string;
   today: string; yesterday: string; langBtn: string; newCat: string; amountPh: string;
+  dayBefore: string; pickDate: string; saveNext: string; savedNext: string; // savedNext has %s
+  a11yHideAmts: string; a11yShowAmts: string;
   toastBloom: string; toastStreak: string; // toastStreak has %d
   importOk: string; importFail: string; comingSoon: string;
   // ai quick-entry
@@ -140,6 +142,8 @@ export const I18N: Record<Lang, Strings> = {
     note: '备注（可选）', save: '贴朵花', del: '删除这笔', empty: '还没贴花，点下面那朵开始吧',
     deleted: '已删除一笔', undo: '撤销',
     today: '今天', yesterday: '昨天', langBtn: 'EN', newCat: '新建', amountPh: '0',
+    dayBefore: '前天', pickDate: '选择日期', saveNext: '再记', savedNext: '已记 %s，继续 🌺',
+    a11yHideAmts: '隐藏金额', a11yShowAmts: '显示金额',
     toastBloom: '贴上一朵花 🌺', toastStreak: '已连续 %d 天！',
     importOk: '导入成功 🌺', importFail: '文件不对，导入失败', comingSoon: '即将上线 🌱',
     aiPlaceholder: '说一句，比如「午饭35」', aiParsing: '…', aiFailed: 'AI 解析失败，手动记吧', aiUnconfigured: '还没配置 AI，去 AI_SETUP 看看',
@@ -242,6 +246,8 @@ export const I18N: Record<Lang, Strings> = {
     note: 'Note (optional)', save: 'Add a flower', del: 'Delete entry', empty: 'No flowers yet — tap the bloom below to start',
     deleted: 'Entry deleted', undo: 'Undo',
     today: 'Today', yesterday: 'Yesterday', langBtn: '中', newCat: 'New', amountPh: '0',
+    dayBefore: '2 days ago', pickDate: 'Pick a date', saveNext: 'Again', savedNext: 'Saved %s — keep going 🌺',
+    a11yHideAmts: 'Hide amounts', a11yShowAmts: 'Show amounts',
     toastBloom: 'A flower bloomed 🌺', toastStreak: '%d-day streak!',
     importOk: 'Imported 🌺', importFail: 'Bad file — import failed', comingSoon: 'Coming soon 🌱',
     aiPlaceholder: 'Say it, e.g. “lunch 35”', aiParsing: '…', aiFailed: 'AI parse failed — enter it manually', aiUnconfigured: 'AI not configured — see AI_SETUP',
@@ -311,7 +317,7 @@ export const I18N: Record<Lang, Strings> = {
     refundAmt: 'Refund amount', refundDone: '%s refunded', refundFull: 'Fully refunded',
     dtTitle: 'Entry details', dtType: 'Type', dtTime: 'Time', dtAccount: 'Account', dtSubcat: 'Subcategory',
     dtReimburse: 'Reimbursement', dtRefund: 'Refund', dtFromSub: 'From subscription', dtOrig: 'Original',
-    setTemplates: 'Quick templates', setTemplatesD: 'Save regulars, log in one tap', tmplSaveBtn: 'Save as template', tmplSaved: 'Saved as template 🌺', tmplEmpty: 'No templates yet — save one after an entry',
+    setTemplates: 'Quick templates', setTemplatesD: 'Save regulars, log in one tap', tmplSaveBtn: 'Template', tmplSaved: 'Saved as template 🌺', tmplEmpty: 'No templates yet — save one after an entry',
     setTags: 'Tags', setTagsD: 'Tag entries for flexible stats', tagAdd: '＋ New tag', tagNormal: 'Tags', tagLedger: 'Ledgers',
     tagName: 'Tag name (e.g. Travel)', tagPick: 'Tags', ledgerPick: 'Ledger', ledgerAll: 'All ledgers',
     setCurrency: 'Currencies', setCurrencyD: 'Auto-convert for study/travel', curMain: 'Base currency', curRate: 'Rate (1 foreign = ? base)', curAddRate: '＋ Add currency',

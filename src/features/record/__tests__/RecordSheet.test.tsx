@@ -90,4 +90,91 @@ describe('RecordSheet save flow', () => {
     expect(onSaved).not.toHaveBeenCalled();
     expect(onClose).not.toHaveBeenCalled();
   });
+
+  it('再记 writes the entry, keeps the sheet open, and clears for the next one', () => {
+    const onSaved = jest.fn();
+    const onClose = jest.fn();
+    let r!: TestRenderer.ReactTestRenderer;
+    act(() => {
+      r = TestRenderer.create(
+        withProvider(
+          <RecordSheet visible editId={null} lang="zh" customCats={noCustom} onClose={onClose} onSaved={onSaved} />,
+        ),
+      );
+    });
+
+    const keypad = r.root.find((n) => typeof n.props?.onKey === 'function');
+    act(() => {
+      keypad.props.onKey('4');
+      keypad.props.onKey('5');
+    });
+    act(() => pressableFor(s.saveNext, r.root).props.onPress());
+
+    expect(store$.data.peek()).toHaveLength(1);
+    expect(store$.data.peek()[0].amt).toBe(45);
+    expect(onSaved).toHaveBeenCalledWith(true, true);
+    expect(onClose).not.toHaveBeenCalled();
+
+    // amount cleared — a second entry can be typed straight away
+    act(() => keypad.props.onKey('8'));
+    act(() => pressableFor(s.saveNext, r.root).props.onPress());
+    const data = store$.data.peek();
+    expect(data).toHaveLength(2);
+    expect(data[1].amt).toBe(8);
+  });
+
+  it('saves on a backdated day picked via the date field quick chips', () => {
+    const onSaved = jest.fn();
+    const onClose = jest.fn();
+    let r!: TestRenderer.ReactTestRenderer;
+    act(() => {
+      r = TestRenderer.create(
+        withProvider(
+          <RecordSheet visible editId={null} lang="zh" customCats={noCustom} onClose={onClose} onSaved={onSaved} />,
+        ),
+      );
+    });
+
+    const keypad = r.root.find((n) => typeof n.props?.onKey === 'function');
+    act(() => keypad.props.onKey('9'));
+
+    // open the date field, then pick 昨天 from the quick chips
+    const dateChip = r.root.findAll((n) => n.props?.accessibilityLabel === s.pickDate && typeof n.props?.onPress === 'function')[0];
+    act(() => dateChip.props.onPress());
+    act(() => pressableFor(s.yesterday, r.root).props.onPress());
+    act(() => pressableFor(s.save, r.root).props.onPress());
+
+    const d = store$.data.peek()[0];
+    const y = new Date();
+    y.setDate(y.getDate() - 1);
+    const saved = new Date(d.ts);
+    expect([saved.getFullYear(), saved.getMonth(), saved.getDate()]).toEqual([y.getFullYear(), y.getMonth(), y.getDate()]);
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it('suggests recent notes for the selected category and fills on tap', () => {
+    store$.data.set([
+      { id: 'n1', ts: 1, io: 'exp', cat: 'food', amt: 20, note: '午饭' },
+      { id: 'n2', ts: 2, io: 'exp', cat: 'food', amt: 21, note: '午饭' },
+    ]);
+    const onSaved = jest.fn();
+    const onClose = jest.fn();
+    let r!: TestRenderer.ReactTestRenderer;
+    act(() => {
+      r = TestRenderer.create(
+        withProvider(
+          <RecordSheet visible editId={null} lang="zh" customCats={noCustom} onClose={onClose} onSaved={onSaved} />,
+        ),
+      );
+    });
+
+    act(() => pressableFor('午饭', r.root).props.onPress());
+
+    const keypad = r.root.find((n) => typeof n.props?.onKey === 'function');
+    act(() => keypad.props.onKey('3'));
+    act(() => pressableFor(s.save, r.root).props.onPress());
+
+    const saved = store$.data.peek().find((d) => d.id !== 'n1' && d.id !== 'n2')!;
+    expect(saved.note).toBe('午饭');
+  });
 });

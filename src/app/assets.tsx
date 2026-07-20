@@ -8,6 +8,7 @@ import { fmt } from '@/domain/money';
 import { useTheme } from '@/theme/ThemeContext';
 import { Flower } from '@/components/Flower';
 import { ScreenHeader } from '@/components/ScreenHeader';
+import { EyeToggle } from '@/components/EyeToggle';
 import { I18N } from '@/i18n';
 
 export default observer(function AssetsScreen() {
@@ -19,6 +20,8 @@ export default observer(function AssetsScreen() {
   const assets = store$.assets.get();
   const loans = store$.loans.get();
   const p = netWorthParts(accounts, data, assets, loans);
+  const hide = store$.settings.hideAmounts.get() === true;
+  const m = (v: number) => (hide ? '****' : fmt(v, lang));
 
   const [adding, setAdding] = useState(false);
   const [type, setType] = useState<'asset' | 'liab'>('asset');
@@ -38,22 +41,22 @@ export default observer(function AssetsScreen() {
   return (
     <View style={[styles.root, { backgroundColor: t.paper }]}>
       <SafeAreaView edges={['top']} style={styles.safe}>
-        <ScreenHeader title={s.setAssets} subtitle={s.setAssetsD} />
+        <ScreenHeader title={s.setAssets} subtitle={s.setAssetsD} right={<EyeToggle />} />
         <ScrollView contentContainerStyle={styles.body} showsVerticalScrollIndicator={false}>
           <View style={[styles.card, { backgroundColor: t.ink }]}>
             <View style={styles.bgFlower}>
               <Flower size={90} petal="#ffffff" stamen="#ffffff" />
             </View>
             <Text style={[styles.nwLabel, { color: t.paper }]}>{s.assetNet}</Text>
-            <Text style={[styles.nwVal, { color: t.paper }]}>{fmt(p.net, lang)}</Text>
+            <Text style={[styles.nwVal, { color: t.paper }]}>{m(p.net)}</Text>
             <View style={styles.nwIo}>
               <View>
                 <Text style={[styles.nwK, { color: t.paper }]}>{s.assetTotal}</Text>
-                <Text style={[styles.nwV, { color: '#9DC4B3' }]}>{fmt(p.asset, lang)}</Text>
+                <Text style={[styles.nwV, { color: '#9DC4B3' }]}>{m(p.asset)}</Text>
               </View>
               <View>
                 <Text style={[styles.nwK, { color: t.paper }]}>{s.assetDebt}</Text>
-                <Text style={[styles.nwV, { color: t.hibiscusSoft }]}>{fmt(p.liab, lang)}</Text>
+                <Text style={[styles.nwV, { color: t.hibiscusSoft }]}>{m(p.liab)}</Text>
               </View>
             </View>
           </View>
@@ -68,7 +71,7 @@ export default observer(function AssetsScreen() {
                   <Text style={styles.emoText}>{a.kind === 'credit' ? '💳' : a.kind === 'prepaid' ? '🎫' : '👛'}</Text>
                 </View>
                 <Text style={[styles.name, { color: t.ink, flex: 1 }]}>{lang === 'zh' ? a.name : a.nameEn || a.name}</Text>
-                <Text style={[styles.amt, { color: debt ? t.hibiscus : t.ink }]}>{fmt(bal, lang)}</Text>
+                <Text style={[styles.amt, { color: debt ? t.hibiscus : t.ink }]}>{m(bal)}</Text>
               </View>
             );
           })}
@@ -83,8 +86,8 @@ export default observer(function AssetsScreen() {
               </View>
               <Text style={[styles.name, { color: t.ink, flex: 1 }]}>{a.name}</Text>
               <Text style={[styles.amt, { color: a.type === 'liab' ? t.hibiscus : t.leafDeep }]}>
-                {a.type === 'liab' ? '-' : ''}
-                {fmt(a.val, lang)}
+                {a.type === 'liab' && !hide ? '-' : ''}
+                {m(a.val)}
               </Text>
               <Pressable onPress={() => removeAsset(a.id)} hitSlop={10}>
                 <Text style={[styles.del, { color: t.inkSoft }]}>✕</Text>

@@ -8,6 +8,7 @@ import { acctBalance } from '@/domain/networth';
 import { fmt } from '@/domain/money';
 import { useTheme } from '@/theme/ThemeContext';
 import { ScreenHeader } from '@/components/ScreenHeader';
+import { EyeToggle } from '@/components/EyeToggle';
 import { I18N } from '@/i18n';
 
 export default observer(function AccountsScreen() {
@@ -17,6 +18,7 @@ export default observer(function AccountsScreen() {
   const s = I18N[lang];
   const accounts = store$.accounts.get();
   const data = store$.data.get();
+  const hide = store$.settings.hideAmounts.get() === true;
 
   const [adding, setAdding] = useState(false);
   const [name, setName] = useState('');
@@ -54,7 +56,7 @@ export default observer(function AccountsScreen() {
   return (
     <View style={[styles.root, { backgroundColor: t.paper }]}>
       <SafeAreaView edges={['top']} style={styles.safe}>
-        <ScreenHeader title={s.setAccounts} subtitle={s.setAccountsD} />
+        <ScreenHeader title={s.setAccounts} subtitle={s.setAccountsD} right={<EyeToggle />} />
         <ScrollView contentContainerStyle={styles.body} showsVerticalScrollIndicator={false}>
           {accounts.map((a) => {
             const isDef = a.id === 'default';
@@ -72,7 +74,7 @@ export default observer(function AccountsScreen() {
                       {isDef ? ` · ${s.acctDefault}` : a.kind === 'credit' ? ` · ${s.acctKindCredit}` : ''}
                     </Text>
                     <Text style={[styles.sub, { color: owed ? t.hibiscus : t.inkSoft }]}>
-                      {owed ? s.acctOwed : s.acctBalance} {fmt(owed ? -bal : bal, lang)}
+                      {owed ? s.acctOwed : s.acctBalance} {hide ? '****' : fmt(owed ? -bal : bal, lang)}
                     </Text>
                   </View>
                   <Text style={[styles.chev, { color: t.inkSoft }]}>›</Text>

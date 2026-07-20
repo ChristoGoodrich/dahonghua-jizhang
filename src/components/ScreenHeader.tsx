@@ -9,8 +9,9 @@ import { Flower } from '@/components/Flower';
 import { store$ } from '@/store/ledger';
 import { I18N } from '@/i18n';
 
-/** Shared back-header + title for the settings sub-screens. */
-export function ScreenHeader({ title, subtitle }: { title: string; subtitle?: string }) {
+/** Shared back-header + title for the settings sub-screens. An optional `right`
+ *  node (e.g. the hide-amounts eye) replaces the decorative flower mark. */
+export function ScreenHeader({ title, subtitle, right }: { title: string; subtitle?: string; right?: React.ReactNode }) {
   const t = useTheme();
   const router = useRouter();
   const s = I18N[store$.lang.get()];
@@ -28,7 +29,7 @@ export function ScreenHeader({ title, subtitle }: { title: string; subtitle?: st
           <Icon name="chevL" color={t.hibiscus} size={15} strokeWidth={2.2} />
           <Text style={[styles.backText, { color: t.hibiscus }]}>{s.back}</Text>
         </Tap>
-        <Flower size={28} center="yen" petal={t.hibiscus} stroke={t.hibiscusDeep} />
+        {right ?? <Flower size={28} center="yen" petal={t.hibiscus} stroke={t.hibiscusDeep} />}
       </View>
       <Text style={[styles.title, { color: t.ink }]}>{title}</Text>
       {!!subtitle && <Text style={[styles.subtitle, { color: t.inkSoft }]}>{subtitle}</Text>}

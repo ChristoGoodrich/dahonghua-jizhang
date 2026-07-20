@@ -163,9 +163,10 @@ export const LedgerScreen = observer(function LedgerScreen() {
     setToast({ key: Date.now(), msg });
     setBurst(Date.now());
   }, []);
-  const onSaved = useCallback((isNew: boolean) => {
+  const onSaved = useCallback((isNew: boolean, keepOpen?: boolean) => {
     if (!isNew) return;
     trackEvent(AnalyticsEvents.ENTRY_CREATED);
+    if (keepOpen) return; // 再记: sheet still covers the screen — it shows its own inline confirmation
     const sd = streakDays(store$.data.peek().filter((d) => !d.deletedAt).map((d) => d.ts));
     celebrate(sd > 1 ? s.toastStreak.replace('%d', String(sd)) : s.toastBloom);
   }, [celebrate, s.toastStreak, s.toastBloom]);
@@ -394,11 +395,13 @@ export const LedgerScreen = observer(function LedgerScreen() {
         onDeleted={deleteToast}
       />
 
-      {burst != null && <PetalBurst key={burst} seed={burst} onDone={() => setBurst(null)} />}
+      {/* prefixed keys: burst + toast are set with Date.now() in the same tick
+          (celebrate), so bare numbers collide as sibling keys */}
+      {burst != null && <PetalBurst key={`b${burst}`} seed={burst} onDone={() => setBurst(null)} />}
 
       {toast && (
         <Toast
-          key={toast.key}
+          key={`t${toast.key}`}
           bottom={navPad + 88}
           message={toast.msg}
           actionLabel={toast.undo ? s.undo : undefined}
