@@ -152,6 +152,27 @@ describe('RecordSheet save flow', () => {
     expect(onClose).toHaveBeenCalled();
   });
 
+  it('pre-dates a new entry from initialTs (calendar 补记这天)', () => {
+    const day = new Date(2026, 6, 3, 12).getTime();
+    const onSaved = jest.fn();
+    const onClose = jest.fn();
+    let r!: TestRenderer.ReactTestRenderer;
+    act(() => {
+      r = TestRenderer.create(
+        withProvider(
+          <RecordSheet visible editId={null} initialTs={day} lang="zh" customCats={noCustom} onClose={onClose} onSaved={onSaved} />,
+        ),
+      );
+    });
+
+    const keypad = r.root.find((n) => typeof n.props?.onKey === 'function');
+    act(() => keypad.props.onKey('7'));
+    act(() => pressableFor(s.save, r.root).props.onPress());
+
+    const d = new Date(store$.data.peek()[0].ts);
+    expect([d.getFullYear(), d.getMonth(), d.getDate()]).toEqual([2026, 6, 3]);
+  });
+
   it('suggests recent notes for the selected category and fills on tap', () => {
     store$.data.set([
       { id: 'n1', ts: 1, io: 'exp', cat: 'food', amt: 20, note: '午饭' },

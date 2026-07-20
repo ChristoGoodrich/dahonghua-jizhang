@@ -8,6 +8,7 @@
 // function here is pure so the parsing rules can be unit-tested without any file I/O.
 import type { Category, Entry, IO } from './types';
 import { allCats } from './cats';
+import { decodeGbkJs, decodeUtf8Js } from './encoding';
 
 export type BillSource = 'alipay' | 'wechat' | 'generic';
 
@@ -84,16 +85,24 @@ export function looksLikeUtf8(bytes: Uint8Array): boolean {
  * label (some RN engines) so it never throws — worst case the user re-saves the
  * CSV as UTF-8.
  */
-export function decodeBillText(bytes: Uint8Array): string {
-  if (bytes.length >= 3 && bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf) {
-    return new TextDecoder('utf-8').decode(bytes);
-  }
-  if (looksLikeUtf8(bytes)) return new TextDecoder('utf-8').decode(bytes);
+/** Platform TextDecoder when available (web, Node); null when the engine lacks
+ *  it or the label is unsupported (Hermes has no 'gbk'). */
+function tryTextDecoder(label: string, bytes: Uint8Array): string | null {
   try {
-    return new TextDecoder('gbk').decode(bytes);
+    if (typeof TextDecoder !== 'undefined') return new TextDecoder(label).decode(bytes);
   } catch {
-    return new TextDecoder('utf-8').decode(bytes);
+    // unsupported label on this engine — fall through to the JS decoder
   }
+  return null;
+}
+
+export function decodeBillText(bytes: Uint8Array): string {
+  const bom = bytes.length >= 3 && bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf;
+  if (bom || looksLikeUtf8(bytes)) {
+    // TextDecoder strips the BOM itself; the JS fallback needs it sliced off
+    return tryTextDecoder('utf-8', bytes) ?? decodeUtf8Js(bom ? bytes.subarray(3) : bytes);
+  }
+  return tryTextDecoder('gbk', bytes) ?? decodeGbkJs(bytes);
 }
 
 // ---------- 1. CSV parsing ----------

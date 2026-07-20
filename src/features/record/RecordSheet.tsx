@@ -30,6 +30,8 @@ import { aiConfigured, parseEntryText } from '@/ai/client';
 interface Props {
   visible: boolean;
   editId: string | null;
+  /** Pre-picked date for a NEW entry (e.g. calendar 补记这天); null = now. */
+  initialTs?: number | null;
   lang: Lang;
   customCats: Record<IO, Category[]>;
   onClose: () => void;
@@ -41,7 +43,7 @@ interface Props {
   onDeleted?: (restore: () => void) => void;
 }
 
-export function RecordSheet({ visible, editId, lang, customCats, onClose, onSaved, onTemplateSaved, onDeleted }: Props) {
+export function RecordSheet({ visible, editId, initialTs, lang, customCats, onClose, onSaved, onTemplateSaved, onDeleted }: Props) {
   const t = useTheme();
   const insets = useSafeAreaInsets();
   const s = I18N[lang];
@@ -142,7 +144,7 @@ export function RecordSheet({ visible, editId, lang, customCats, onClose, onSave
       } else {
         setIO('exp');
         setCat(allCats('exp', customCats)[0].k);
-        setTs(null);
+        setTs(initialTs ?? null);
         setAmt('');
         setNote('');
         setAcct(store$.curAccount.peek());

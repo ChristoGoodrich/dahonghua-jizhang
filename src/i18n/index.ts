@@ -12,7 +12,7 @@ export interface Strings {
   deleted: string; undo: string;
   today: string; yesterday: string; langBtn: string; newCat: string; amountPh: string;
   dayBefore: string; pickDate: string; saveNext: string; savedNext: string; // savedNext has %s
-  a11yHideAmts: string; a11yShowAmts: string;
+  a11yHideAmts: string; a11yShowAmts: string; calAddHere: string;
   toastBloom: string; toastStreak: string; // toastStreak has %d
   importOk: string; importFail: string; comingSoon: string;
   // ai quick-entry
@@ -143,7 +143,7 @@ export const I18N: Record<Lang, Strings> = {
     deleted: '已删除一笔', undo: '撤销',
     today: '今天', yesterday: '昨天', langBtn: 'EN', newCat: '新建', amountPh: '0',
     dayBefore: '前天', pickDate: '选择日期', saveNext: '再记', savedNext: '已记 %s，继续 🌺',
-    a11yHideAmts: '隐藏金额', a11yShowAmts: '显示金额',
+    a11yHideAmts: '隐藏金额', a11yShowAmts: '显示金额', calAddHere: '补记这天',
     toastBloom: '贴上一朵花 🌺', toastStreak: '已连续 %d 天！',
     importOk: '导入成功 🌺', importFail: '文件不对，导入失败', comingSoon: '即将上线 🌱',
     aiPlaceholder: '说一句，比如「午饭35」', aiParsing: '…', aiFailed: 'AI 解析失败，手动记吧', aiUnconfigured: '还没配置 AI，去 AI_SETUP 看看',
@@ -247,7 +247,7 @@ export const I18N: Record<Lang, Strings> = {
     deleted: 'Entry deleted', undo: 'Undo',
     today: 'Today', yesterday: 'Yesterday', langBtn: '中', newCat: 'New', amountPh: '0',
     dayBefore: '2 days ago', pickDate: 'Pick a date', saveNext: 'Again', savedNext: 'Saved %s — keep going 🌺',
-    a11yHideAmts: 'Hide amounts', a11yShowAmts: 'Show amounts',
+    a11yHideAmts: 'Hide amounts', a11yShowAmts: 'Show amounts', calAddHere: 'Add on this day',
     toastBloom: 'A flower bloomed 🌺', toastStreak: '%d-day streak!',
     importOk: 'Imported 🌺', importFail: 'Bad file — import failed', comingSoon: 'Coming soon 🌱',
     aiPlaceholder: 'Say it, e.g. “lunch 35”', aiParsing: '…', aiFailed: 'AI parse failed — enter it manually', aiUnconfigured: 'AI not configured — see AI_SETUP',

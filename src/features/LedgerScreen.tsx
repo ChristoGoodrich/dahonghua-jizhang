@@ -11,6 +11,7 @@ import { useTheme } from '@/theme/ThemeContext';
 import { Flower } from '@/components/Flower';
 import { I18N } from '@/i18n';
 import { cycleRange, inCycle, shiftCycle } from '@/domain/cycle';
+import { sameDay } from '@/domain/dates';
 import { streakDays } from '@/domain/streak';
 import { computeInsight, creditDueInsight } from '@/domain/insight';
 import { todayExpense } from '@/domain/budget';
@@ -110,6 +111,8 @@ export const LedgerScreen = observer(function LedgerScreen() {
   const [tab, setTab] = useState<Tab>(BOOT_TAB ?? 'list');
   const [sheetOpen, setSheetOpen] = useState(BOOT_SHEET);
   const [editId, setEditId] = useState<string | null>(null);
+  // pre-picked date for a new entry (calendar "补记这天"); null = now
+  const [sheetInitTs, setSheetInitTs] = useState<number | null>(null);
   const [detailId, setDetailId] = useState<string | null>(null);
   const [toast, setToast] = useState<{ key: number; msg: string; undo?: () => void } | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -151,6 +154,14 @@ export const LedgerScreen = observer(function LedgerScreen() {
   const openNew = useCallback(() => {
     tapHaptic();
     setEditId(null);
+    setSheetInitTs(null);
+    setSheetOpen(true);
+  }, []);
+  // calendar day panel → new entry pre-dated to that day (today keeps "now")
+  const openNewAt = useCallback((ts: number) => {
+    tapHaptic();
+    setEditId(null);
+    setSheetInitTs(sameDay(ts, Date.now()) ? null : ts);
     setSheetOpen(true);
   }, []);
   const openEdit = useCallback((id: string) => {
@@ -306,7 +317,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
                 prevLabel={s.a11yMonthPrev}
                 nextLabel={s.a11yMonthNext}
               />
-              <CalendarView all={liveAll} anchor={anchor} cycleStart={cycleStart} customCats={customCats} lang={lang} />
+              <CalendarView all={liveAll} anchor={anchor} cycleStart={cycleStart} customCats={customCats} lang={lang} onAddDay={openNewAt} />
             </>
           )}
           {tab === 'stats' && (
@@ -370,6 +381,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
       <RecordSheet
         visible={sheetOpen}
         editId={editId}
+        initialTs={sheetInitTs}
         lang={lang}
         customCats={customCats}
         onClose={() => setSheetOpen(false)}

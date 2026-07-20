@@ -1,12 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { observer } from '@legendapp/state/react';
 import { useTheme } from '@/theme/ThemeContext';
 import { Flower } from '@/components/Flower';
 import { Tap } from '@/components/ui/Tap';
 import { Icon } from '@/components/ui/Icon';
 import { GradientFill } from '@/components/ui/GradientFill';
+import { EyeToggle } from '@/components/EyeToggle';
 import { RAD, TABULAR, shadow } from '@/theme/tokens';
 import { fmt } from '@/domain/money';
+import { store$ } from '@/store/ledger';
 import type { Lang } from '@/i18n';
 import { I18N } from '@/i18n';
 
@@ -19,9 +22,12 @@ interface Props {
   onNext: () => void;
 }
 
-export function SummaryCard({ exp, inc, monthLabel, lang, onPrev, onNext }: Props) {
+// observer: reacts to settings.hideAmounts (the shared privacy eye)
+export const SummaryCard = observer(function SummaryCard({ exp, inc, monthLabel, lang, onPrev, onNext }: Props) {
   const t = useTheme();
   const s = I18N[lang];
+  const hide = store$.settings.hideAmounts.get() === true;
+  const m = (v: number) => (hide ? '****' : fmt(v, lang));
   const net = inc - exp;
   const flow = inc + exp;
   const expPct = flow > 0 ? (exp / flow) * 100 : 0;
@@ -48,6 +54,7 @@ export function SummaryCard({ exp, inc, monthLabel, lang, onPrev, onNext }: Prop
       <View style={styles.monthRow}>
         <Text style={[styles.month, { color: t.ink }]}>{monthLabel}</Text>
         <View style={styles.nav}>
+          <EyeToggle />
           {navBtn('chevL', onPrev, s.a11yMonthPrev)}
           {navBtn('chevR', onNext, s.a11yMonthNext)}
         </View>
@@ -63,7 +70,7 @@ export function SummaryCard({ exp, inc, monthLabel, lang, onPrev, onNext }: Prop
 
         <Text style={[styles.label, { color: t.paper }]}>{s.net}</Text>
         <Text style={[styles.net, TABULAR, { color: net < 0 ? expTone : t.paper }]} numberOfLines={1} adjustsFontSizeToFit>
-          {fmt(net, lang)}
+          {m(net)}
         </Text>
 
         <View style={styles.io}>
@@ -72,14 +79,14 @@ export function SummaryCard({ exp, inc, monthLabel, lang, onPrev, onNext }: Prop
               <View style={[styles.dot, { backgroundColor: expTone }]} />
               <Text style={[styles.ioK, { color: t.paper }]}>{s.exp}</Text>
             </View>
-            <Text style={[styles.ioV, TABULAR, { color: expTone }]}>{fmt(exp, lang)}</Text>
+            <Text style={[styles.ioV, TABULAR, { color: expTone }]}>{m(exp)}</Text>
           </View>
           <View style={styles.ioCol}>
             <View style={styles.ioHead}>
               <View style={[styles.dot, { backgroundColor: incTone }]} />
               <Text style={[styles.ioK, { color: t.paper }]}>{s.inc}</Text>
             </View>
-            <Text style={[styles.ioV, TABULAR, { color: incTone }]}>{fmt(inc, lang)}</Text>
+            <Text style={[styles.ioV, TABULAR, { color: incTone }]}>{m(inc)}</Text>
           </View>
         </View>
 
@@ -91,7 +98,7 @@ export function SummaryCard({ exp, inc, monthLabel, lang, onPrev, onNext }: Prop
       </View>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   wrap: { paddingHorizontal: 22, paddingTop: 6, paddingBottom: 8 },

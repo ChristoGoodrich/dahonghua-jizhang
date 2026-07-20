@@ -34,6 +34,8 @@ interface Props {
   cycleStart: number;
   customCats: Record<IO, Category[]>;
   lang: Lang;
+  /** 补记这天 — open a new entry pre-dated to the tapped day (noon). */
+  onAddDay?: (ts: number) => void;
 }
 
 interface Cell {
@@ -42,11 +44,12 @@ interface Cell {
   n: number;
   exp: number;
   isToday: boolean;
+  future: boolean;
 }
 
 const keyOf = (x: Date) => `${x.getFullYear()}-${x.getMonth()}-${x.getDate()}`;
 
-export function CalendarView({ all, anchor, cycleStart, customCats, lang }: Props) {
+export function CalendarView({ all, anchor, cycleStart, customCats, lang, onAddDay }: Props) {
   const t = useTheme();
   const s = I18N[lang];
   const [selected, setSelected] = useState<string | null>(null);
@@ -69,7 +72,7 @@ export function CalendarView({ all, anchor, cycleStart, customCats, lang }: Prop
       const cur = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
       const k = keyOf(cur);
       const info = map.get(k);
-      out.push({ key: k, day: cur.getDate(), n: info?.n ?? 0, exp: info?.exp ?? 0, isToday: k === todayKey });
+      out.push({ key: k, day: cur.getDate(), n: info?.n ?? 0, exp: info?.exp ?? 0, isToday: k === todayKey, future: cur.getTime() > new Date().getTime() });
     }
     return { leading: start.getDay(), cells: out };
   }, [all, anchor, cycleStart]);
@@ -90,6 +93,11 @@ export function CalendarView({ all, anchor, cycleStart, customCats, lang }: Prop
         weekday: 'short',
       })
     : '';
+  // no backfilling into the future (mirrors the record sheet's date grid)
+  const selFuture = selDate
+    ? new Date(selDate[0], selDate[1], selDate[2]).getTime() >
+      new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()).getTime()
+    : false;
 
   const dows = lang === 'zh' ? ['日', '一', '二', '三', '四', '五', '六'] : ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
@@ -112,7 +120,9 @@ export function CalendarView({ all, anchor, cycleStart, customCats, lang }: Prop
                 key={c.key}
                 style={styles.cell}
                 onPress={() => setSelected((p) => (p === c.key ? null : c.key))}
-                disabled={c.n === 0 && !c.isToday}
+                // empty past days stay tappable when 补记这天 is available —
+                // backfilling matters most on days with nothing recorded
+                disabled={c.n === 0 && !c.isToday && (!onAddDay || c.future)}
               >
                 <View style={[styles.inner, { backgroundColor: on ? t.tint : t.paper, borderColor: on ? t.hibiscus : 'transparent' }]}>
                   {c.isToday ? (
@@ -166,6 +176,16 @@ export function CalendarView({ all, anchor, cycleStart, customCats, lang }: Prop
               );
             })
           )}
+          {!!onAddDay && !!selDate && !selFuture && (
+            <Pressable
+              onPress={() => onAddDay(new Date(selDate[0], selDate[1], selDate[2], 12).getTime())}
+              accessibilityRole="button"
+              accessibilityLabel={s.calAddHere}
+              style={[styles.addDay, { borderColor: t.line, backgroundColor: t.paperWarm }]}
+            >
+              <Text style={[styles.addDayText, { color: t.hibiscus }]}>＋ {s.calAddHere}</Text>
+            </Pressable>
+          )}
         </View>
         </PanelFade>
       ) : (
@@ -191,6 +211,8 @@ const styles = StyleSheet.create({
   sum: { fontSize: 8.5, fontWeight: '700', marginTop: 'auto', marginBottom: 2 },
   hint: { textAlign: 'center', fontSize: 11.5, marginTop: 12 },
   panel: { marginTop: 14 },
+  addDay: { borderWidth: 1, borderStyle: 'dashed', borderRadius: 12, padding: 11, alignItems: 'center', marginTop: 2 },
+  addDayText: { fontSize: 12.5, fontWeight: '600' },
   panelHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, paddingHorizontal: 2 },
   panelDate: { fontSize: 14, fontWeight: '700' },
   panelSum: { fontSize: 12, fontWeight: '600' },
