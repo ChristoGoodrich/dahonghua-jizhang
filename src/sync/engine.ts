@@ -1,7 +1,9 @@
 // Sync engine — wires the local store to Supabase: initial pull+merge, push of
 // local changes, realtime subscription, and per-user config (profiles) sync.
 // Entirely no-op when sync isn't configured. The pure mapping/merge it relies on
-// (rows.ts, merge.ts) are unit-tested; this orchestration needs a live project.
+// (rows.ts, merge.ts) are unit-tested; this orchestration is covered in
+// __tests__/engine.test.ts against a faked Supabase client, so a live project is
+// only needed to validate the schema and RLS policies, not the logic.
 import type { RealtimeChannel } from '@supabase/supabase-js';
 import { observable } from '@legendapp/state';
 import { supabase } from './supabase';
@@ -101,12 +103,22 @@ async function pullAndMerge(userId: string): Promise<void> {
 
 async function pushConfig(userId: string): Promise<void> {
   if (!supabase) return;
-  await supabase.from('profiles').upsert({ id: userId, config: configSnapshot() });
+  // The error MUST be checked (pushRows does the same). Swallowing it let the
+  // scheduler count a failed upload as a success: status stayed "synced", no
+  // retry was queued, and the change never reached the cloud while the UI said
+  // it had. Config is now pushed on every store change, so this is the hot path.
+  const { error } = await supabase.from('profiles').upsert({ id: userId, config: configSnapshot() });
+  if (error) throw error;
 }
 
 async function syncConfig(userId: string): Promise<void> {
   if (!supabase) return;
-  const { data } = await supabase.from('profiles').select('config').eq('id', userId).maybeSingle();
+  const { data, error } = await supabase.from('profiles').select('config').eq('id', userId).maybeSingle();
+  // Throw rather than fall through: on a failed read `remote` is undefined, which
+  // is indistinguishable from "this account has no config yet" — so the device
+  // would skip adopting the cloud config and immediately push its own defaults
+  // over it. That silently wipes an existing account's config on a new device.
+  if (error) throw error;
   const remote = data?.config as Partial<Config> | undefined;
   // a device joining an existing account adopts the cloud config first
   if (remote && Object.keys(remote).length) applyConfig(remote);
