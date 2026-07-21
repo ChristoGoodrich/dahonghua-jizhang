@@ -191,18 +191,28 @@ export function addTransfer(p: {
   return entry;
 }
 
+/**
+ * Apply a patch to an entry, stamping a write time for every field touched.
+ *
+ * EVERY mutation that writes entry fields must go through this. The per-field
+ * timestamps are what make the sync merge resolve a field by recency; a field
+ * written without one falls through to merge.ts's deterministic *content*
+ * tiebreak, which compares serialized values. That silently reverts edits:
+ * a newer `rb:'done'` loses to an older `rb:'pending'` purely because "done"
+ * sorts before "pending".
+ *
+ * Passing `undefined` for a key clears it, and still stamps — so the clear wins
+ * over a stale device that still holds a value.
+ */
+export function stampEntry<T extends Entry>(d: T, patch: Partial<Entry>, now: number): T {
+  const fieldTs = { ...(d.fieldTs ?? {}) };
+  for (const k of Object.keys(patch)) if (k !== 'fieldTs' && k !== 'updatedAt') fieldTs[k] = now;
+  return { ...d, ...patch, fieldTs, updatedAt: now };
+}
+
 export function updateEntry(id: string, patch: Partial<Entry>): void {
   const now = Date.now();
-  store$.data.set(
-    store$.data.peek().map((d) => {
-      if (d.id !== id) return d;
-      // stamp every edited field so a field-level merge can preserve concurrent
-      // edits to *different* fields of the same entry across devices
-      const fieldTs = { ...(d.fieldTs ?? {}) };
-      for (const k of Object.keys(patch)) if (k !== 'fieldTs' && k !== 'updatedAt') fieldTs[k] = now;
-      return { ...d, ...patch, fieldTs, updatedAt: now };
-    }),
-  );
+  store$.data.set(store$.data.peek().map((d) => (d.id === id ? stampEntry(d, patch, now) : d)));
 }
 
 /** Soft-delete an entry (tombstone for sync), keeping refund bookkeeping
@@ -217,11 +227,11 @@ export function removeEntry(id: string): void {
     // give the refunded amount back to the original when deleting a refund income
     if (d.refundOf && x.id === d.refundOf && x.refund) {
       const refund = Math.max(0, x.refund - d.amt);
-      return { ...x, refund: refund || undefined, updatedAt: now };
+      return stampEntry(x, { refund: refund || undefined }, now);
     }
     // tombstone the entry itself and any refund incomes pointing at it
     if (x.id === id || x.refundOf === id) {
-      return { ...x, deletedAt: now, updatedAt: now };
+      return stampEntry(x, { deletedAt: now }, now);
     }
     return x;
   });

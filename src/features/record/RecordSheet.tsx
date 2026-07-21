@@ -114,6 +114,12 @@ export const RecordSheet = observer(function RecordSheet({ visible, editId, init
       const draft = await parseEntryText(text, customCats, lang, shareCats);
       if (!draft) {
         setAiMsg(s.aiUnconfigured);
+      } else if (!draft.amt) {
+        // normalizeParsed turns anything unusable into a valid-LOOKING draft:
+        // amount 0 (rendered as ''), category falling back to the last one. That
+        // used to be applied anyway — silently flipping the category to 其他 and
+        // clearing the box, so the user lost what they typed and saw no error.
+        setAiMsg(s.aiFailed);
       } else {
         setIO(draft.io);
         setCat(draft.cat);
