@@ -1,5 +1,5 @@
 import {
-  store$, setBaseCurrency, setRate, addRate, removeRate,
+  store$, setBaseCurrency, setRate, addRate, removeRate, updateRates,
   addSubcat, removeSubcat,
 } from '../ledger';
 
@@ -70,5 +70,80 @@ describe('subcategory actions', () => {
     const k = store$.subcats.peek().food[0].k;
     removeSubcat('food', k);
     expect(store$.subcats.peek().food.map((s) => s.name)).toEqual(['午餐']);
+  });
+});
+
+// updateRates writes the numbers that multiply every foreign-currency amount, so
+// a poisoned table silently misvalues the whole ledger. It was uncovered.
+describe('updateRates', () => {
+  const okResponse = (rates: Record<string, unknown>) => ({
+    ok: true,
+    json: async () => ({ rates }),
+  });
+  let fetchMock: jest.Mock;
+
+  beforeEach(() => {
+    fetchMock = jest.fn();
+    global.fetch = fetchMock as unknown as typeof fetch;
+    store$.currencies.set({ base: 'CNY', rates: { USD: 1, JPY: 1 } });
+  });
+
+  it('inverts the API quote into "1 foreign = N base"', async () => {
+    // the API returns base->foreign (1 CNY = 0.14 USD); we store the inverse
+    fetchMock.mockResolvedValue(okResponse({ USD: 0.14, JPY: 21 }));
+    await expect(updateRates()).resolves.toBe(true);
+    const r = store$.currencies.rates.peek();
+    expect(r.USD).toBeCloseTo(1 / 0.14, 4);
+    expect(r.JPY).toBeCloseTo(1 / 21, 4);
+  });
+
+  it('does nothing when no currencies are tracked', async () => {
+    store$.currencies.set({ base: 'CNY', rates: {} });
+    await expect(updateRates()).resolves.toBe(false);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('leaves the table untouched on a non-ok status', async () => {
+    fetchMock.mockResolvedValue({ ok: false, status: 500 });
+    await expect(updateRates()).resolves.toBe(false);
+    expect(store$.currencies.rates.peek()).toEqual({ USD: 1, JPY: 1 });
+  });
+
+  it('leaves the table untouched when the network fails', async () => {
+    fetchMock.mockRejectedValue(new Error('offline'));
+    await expect(updateRates()).resolves.toBe(false);
+    expect(store$.currencies.rates.peek()).toEqual({ USD: 1, JPY: 1 });
+  });
+
+  it('rejects a response with no rates object', async () => {
+    fetchMock.mockResolvedValue({ ok: true, json: async () => ({}) });
+    await expect(updateRates()).resolves.toBe(false);
+    expect(store$.currencies.rates.peek()).toEqual({ USD: 1, JPY: 1 });
+  });
+
+  it('skips zero, negative and non-numeric quotes instead of poisoning the table', async () => {
+    // 1/0 is Infinity and a negative rate would flip every converted amount
+    fetchMock.mockResolvedValue(okResponse({ USD: 0, JPY: -5 }));
+    await expect(updateRates()).resolves.toBe(false);
+    expect(store$.currencies.rates.peek()).toEqual({ USD: 1, JPY: 1 });
+
+    fetchMock.mockResolvedValue(okResponse({ USD: 'abc', JPY: null }));
+    await expect(updateRates()).resolves.toBe(false);
+    expect(store$.currencies.rates.peek()).toEqual({ USD: 1, JPY: 1 });
+  });
+
+  it('applies the good quotes and keeps the previous value for the bad ones', async () => {
+    fetchMock.mockResolvedValue(okResponse({ USD: 0.14, JPY: 0 }));
+    await expect(updateRates()).resolves.toBe(true);
+    const r = store$.currencies.rates.peek();
+    expect(r.USD).toBeCloseTo(1 / 0.14, 4);
+    expect(r.JPY).toBe(1); // untouched, not Infinity
+  });
+
+  it('queries the API for the current base currency', async () => {
+    store$.currencies.set({ base: 'AUD', rates: { USD: 1 } });
+    fetchMock.mockResolvedValue(okResponse({ USD: 0.65 }));
+    await updateRates();
+    expect(fetchMock.mock.calls[0][0]).toContain('/latest/AUD');
   });
 });
