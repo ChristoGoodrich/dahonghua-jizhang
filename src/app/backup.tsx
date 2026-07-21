@@ -51,12 +51,17 @@ export default observer(function BackupScreen() {
 
   async function onRestore(path: string) {
     Alert.alert(s.backupRestore, s.backupRestoreConfirm, [
-      { text: s.del, style: 'cancel' },
+      // was `s.del` ("删除这笔" / "Delete entry") — a destructive-sounding label on
+      // the button that actually cancels
+      { text: s.cancel, style: 'cancel' },
       {
         text: s.backupRestore,
+        style: 'destructive',
         onPress: async () => {
           try {
             const bd = await restoreBackup(path);
+            // snapshot the current ledger before it is replaced
+            await createBackup().catch(() => {});
             importV7(adaptForImport(bd));
             setStatus(s.backupRestoreDone);
             await load();

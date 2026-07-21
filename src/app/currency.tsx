@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, Pressable, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Pressable, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { observer } from '@legendapp/state/react';
 import { store$, setBaseCurrency, setRate, addRate, removeRate, updateRates } from '@/store/ledger';
@@ -25,6 +25,24 @@ export default observer(function CurrencyScreen() {
     setStatus(ok ? s.curUpdated : s.curUpdateFail);
   }
 
+  // Switching the base re-denominates the whole ledger, so it needs an explicit
+  // confirmation and a rate to convert with.
+  function pickBase(code: string) {
+    if (code === base) return;
+    if (!rates[code]) {
+      setStatus(s.curBaseNoRate.replace('%s', code));
+      return;
+    }
+    Alert.alert(s.curBaseSwitch, s.curBaseConfirm.replace('%s', code), [
+      { text: s.cancel, style: 'cancel' },
+      {
+        text: s.curBaseSwitch,
+        style: 'destructive',
+        onPress: () => setStatus(setBaseCurrency(code) === 'ok' ? s.curBaseDone : s.curBaseNoRate.replace('%s', code)),
+      },
+    ]);
+  }
+
   const addable = ALL_CODES.filter((c) => c !== base && !(c in rates));
 
   return (
@@ -37,7 +55,7 @@ export default observer(function CurrencyScreen() {
             {ALL_CODES.map((c) => {
               const on = c === base;
               return (
-                <Pressable key={c} onPress={() => setBaseCurrency(c)} style={[styles.chip, { borderColor: on ? t.hibiscus : t.line, backgroundColor: on ? t.paperWarm : t.card }]}>
+                <Pressable key={c} onPress={() => pickBase(c)} style={[styles.chip, { borderColor: on ? t.hibiscus : t.line, backgroundColor: on ? t.paperWarm : t.card }]}>
                   <Text style={{ fontSize: 12.5, fontWeight: '700', color: on ? t.hibiscus : t.inkSoft }}>{CUR_NAMES[c]}</Text>
                 </Pressable>
               );

@@ -21,6 +21,9 @@ export function runSubscriptions(now: Date = new Date()): string[] {
   const data = [...store$.data.peek()];
   const fired: string[] = [];
   let changed = false;
+  // a fully-charged installment advances lastCharged without posting anything;
+  // that cursor still has to be persisted or it is recomputed on every boot
+  let cursorMoved = false;
   const nextSubs = subs.map((sub) => {
     const { charges, lastCharged } = computeDueCharges(sub, now);
     if (!charges.length) return sub;
@@ -30,21 +33,30 @@ export function runSubscriptions(now: Date = new Date()): string[] {
       const remaining = Math.max(0, sub.periods - (sub.charged ?? 0));
       toApply = charges.slice(0, remaining);
     }
-    if (!toApply.length) return { ...sub, lastCharged }; // advance the cursor, charge nothing
+    if (!toApply.length) {
+      cursorMoved = true; // still commit the advanced cursor (see `changed` below)
+      return { ...sub, lastCharged };
+    }
     changed = true;
     for (const ts of toApply) {
+      // Deterministic id per (subscription, charge instant) instead of a random
+      // one. hydrate() runs runSubscriptions() at boot, racing the initial cloud
+      // pull, so a second device charges from its own stale `lastCharged` before
+      // it ever sees that the first device already did. With random ids both
+      // charges survive the merge and the user is billed twice; with a derived
+      // id they are the same row and collapse into one.
+      const id = `sub_${sub.id}_${ts}`;
+      if (data.some((d) => d.id === id)) continue; // already charged locally
       if (sub.kind === 'transfer' && sub.from && sub.to) {
-        data.push({ id: newId('sub'), ts, io: 'xfer', cat: 'transfer', amt: sub.amt, acct: sub.from, acctTo: sub.to, note: sub.name, fromSub: true, updatedAt: Date.now() });
+        data.push({ id, ts, io: 'xfer', cat: 'transfer', amt: sub.amt, acct: sub.from, acctTo: sub.to, note: sub.name, fromSub: true, updatedAt: Date.now() });
       } else {
-        data.push({ id: newId('sub'), ts, io: 'exp', cat: sub.cat || 'home', amt: sub.amt, note: sub.name, fromSub: true, updatedAt: Date.now() });
+        data.push({ id, ts, io: 'exp', cat: sub.cat || 'home', amt: sub.amt, note: sub.name, fromSub: true, updatedAt: Date.now() });
       }
       fired.push(sub.name);
     }
     return { ...sub, lastCharged, ...(sub.periods ? { charged: (sub.charged ?? 0) + toApply.length } : {}) };
   });
-  if (changed) {
-    store$.data.set(data);
-    store$.subs.set(nextSubs);
-  }
+  if (changed) store$.data.set(data);
+  if (changed || cursorMoved) store$.subs.set(nextSubs);
   return fired;
 }

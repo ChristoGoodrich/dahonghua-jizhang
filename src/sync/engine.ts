@@ -10,7 +10,6 @@ import { mergeById } from './merge';
 import { entryToRow, rowToEntry, type DbEntry } from './rows';
 import { createPushScheduler } from './pushScheduler';
 import { loadConflictLog, logConflict } from './conflictLog';
-import { loadOfflineQueue, dequeueChanges } from './offlineQueue';
 import { store$, type AppState } from '@/store/ledger';
 import type { Entry } from '@/domain/types';
 
@@ -23,6 +22,7 @@ type Settings = AppState['settings'];
 type Config = Omit<AppState, 'data' | 'hydrated' | 'settings'> & { settings: Omit<Settings, 'lock'> };
 
 let channel: RealtimeChannel | null = null;
+let configChannel: RealtimeChannel | null = null;
 const unsubs: (() => void)[] = [];
 let activeUser: string | null = null;
 
@@ -46,7 +46,21 @@ function configSnapshot(): Config {
   return { ...rest, settings: safeSettings } as Config;
 }
 
+// Set while a remote config is being written into the store, so the store
+// subscription below doesn't treat the echo as a local edit and push it straight
+// back (which would ping-pong between devices).
+let applyingRemote = false;
+
 function applyConfig(cfg: Partial<Config>): void {
+  applyingRemote = true;
+  try {
+    applyConfigInner(cfg);
+  } finally {
+    applyingRemote = false;
+  }
+}
+
+function applyConfigInner(cfg: Partial<Config>): void {
   const keepLock = store$.settings.lock.peek();
   if (cfg.lang) store$.lang.set(cfg.lang);
   if (cfg.settings) store$.settings.set({ ...cfg.settings, lock: keepLock } as Settings);
@@ -83,24 +97,6 @@ async function pullAndMerge(userId: string): Promise<void> {
   store$.data.set(merged);
   pusher.bumpWatermark(merged.reduce((m, e) => Math.max(m, e.updatedAt ?? 0), 0));
   await pushRows(toPush, userId);
-
-  // Apply any queued offline changes
-  const queued = await dequeueChanges();
-  if (queued.length) {
-    const current = store$.data.peek();
-    const updated = [...current];
-    for (const change of queued) {
-      const idx = updated.findIndex((e) => e.id === change.entryId);
-      if (change.type === 'upsert' && change.data) {
-        const entry = change.data as unknown as Entry;
-        if (idx < 0) updated.push(entry);
-        else updated[idx] = entry;
-      } else if (change.type === 'delete' && idx >= 0) {
-        updated[idx] = { ...updated[idx], deletedAt: change.timestamp };
-      }
-    }
-    store$.data.set(updated);
-  }
 }
 
 async function pushConfig(userId: string): Promise<void> {
@@ -148,18 +144,43 @@ function subscribeRealtime(userId: string): void {
     .subscribe();
 }
 
+/** Config (accounts, subs, tags…) lives in a single `profiles.config` blob, so it
+ *  needs its own channel — the entries channel never carries it. Without this a
+ *  device only saw another device's account/tag edits after a restart. */
+function subscribeConfigRealtime(userId: string): void {
+  if (!supabase) return;
+  configChannel = supabase
+    .channel('config-sync')
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'profiles', filter: `id=eq.${userId}` },
+      (payload) => {
+        const row = payload.new as { config?: Partial<Config> } | undefined;
+        if (row?.config && Object.keys(row.config).length) applyConfig(row.config);
+      },
+    )
+    .subscribe();
+}
+
 async function start(userId: string): Promise<void> {
   if (!supabase || activeUser === userId) return;
   activeUser = userId;
   sync$.status.set('syncing');
   try {
     await loadConflictLog();
-    await loadOfflineQueue();
     await pullAndMerge(userId);
     await syncConfig(userId);
     subscribeRealtime(userId);
-    unsubs.push(store$.data.onChange(() => pusher.schedule()));
-    unsubs.push(store$.settings.onChange(() => pusher.schedule()));
+    subscribeConfigRealtime(userId);
+    // Subscribe at the ROOT, not just data+settings: the synced config blob also
+    // carries accounts, assets, loans, subs, templates, tags, currencies,
+    // customCats, subcats, curLedger and lang. Watching only data+settings meant
+    // creating an account (and nothing else) was never uploaded at all.
+    unsubs.push(
+      store$.onChange(() => {
+        if (!applyingRemote) pusher.schedule();
+      }),
+    );
     sync$.status.set('synced');
     sync$.lastSync.set(Date.now());
   } catch {
@@ -169,8 +190,12 @@ async function start(userId: string): Promise<void> {
 
 function stop(): void {
   activeUser = null;
-  if (channel && supabase) supabase.removeChannel(channel);
+  if (supabase) {
+    if (channel) supabase.removeChannel(channel);
+    if (configChannel) supabase.removeChannel(configChannel);
+  }
   channel = null;
+  configChannel = null;
   while (unsubs.length) unsubs.pop()!();
   pusher.cancel();
   sync$.status.set('off');

@@ -129,8 +129,21 @@ export function wireDisplaySymbol(): void {
   store$.currencies.base.onChange(apply);
 }
 
+// Monotonic counter so IDs minted inside one millisecond can't collide. The
+// timestamp alone repeats across a tight loop (bulk bill import, subscription
+// catch-up), and 4 random base36 chars is only ~1.7M of space — a 1000-row
+// import reliably produced duplicate ids, which silently merge into one row on
+// the next sync upsert (onConflict user_id,id). Counter + 8 chars removes it.
+let idSeq = 0;
+
 export function newId(prefix = ''): string {
-  return prefix + Date.now() + Math.random().toString(36).slice(2, 6);
+  idSeq = (idSeq + 1) % 0x10000;
+  return (
+    prefix +
+    Date.now().toString(36) +
+    idSeq.toString(36).padStart(4, '0') +
+    Math.random().toString(36).slice(2, 10)
+  );
 }
 
 // ---------- core entry CRUD ----------

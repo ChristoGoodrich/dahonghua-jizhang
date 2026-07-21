@@ -17,12 +17,37 @@ export interface V7Backup {
   tags?: Tags;
   subcats?: Record<string, { k: string; name: string }[]>;
   curAccount?: string;
+  curLedger?: string;
+  lang?: string;
   currencies?: Currencies;
 }
 
 export interface ImportResult {
   entries: number;
   net: number;
+  skipped: number; // malformed rows dropped instead of being written to the ledger
+}
+
+const IO_VALUES: ReadonlySet<string> = new Set<IO>(['exp', 'inc', 'xfer']);
+
+/** A row is only allowed into the ledger if the fields every reader depends on
+ *  are present and well-typed. Without this an array of anything at all (the
+ *  only thing migrateBackup checked) would replace the whole ledger — and rows
+ *  missing `id` silently break edit, delete and sync upsert downstream. */
+function isValidEntry(x: unknown): x is Entry {
+  if (!x || typeof x !== 'object') return false;
+  const e = x as Partial<Entry>;
+  return (
+    typeof e.id === 'string' &&
+    e.id.length > 0 &&
+    typeof e.ts === 'number' &&
+    Number.isFinite(e.ts) &&
+    typeof e.io === 'string' &&
+    IO_VALUES.has(e.io) &&
+    typeof e.cat === 'string' &&
+    typeof e.amt === 'number' &&
+    Number.isFinite(e.amt)
+  );
 }
 
 /** The backup schema version this build writes (kept in sync with buildBackup). */
@@ -57,24 +82,47 @@ export function migrateBackup(raw: unknown): V7Backup {
   return b;
 }
 
-/** Validate, migrate, and apply a backup to the store. Throws on a bad file. */
+/** Validate, migrate, and apply a backup to the store. Throws on a bad file.
+ *  Malformed rows are dropped (reported as `skipped`) rather than written. */
 export function importV7(backup: unknown): ImportResult {
   const b = migrateBackup(backup);
 
-  store$.data.set(b.data!);
+  const raw = b.data!;
+  const valid = raw.filter(isValidEntry);
+  // an array that parsed but yielded nothing usable is the wrong file, not an
+  // empty ledger — refuse rather than wipe the user's data
+  if (!valid.length && raw.length) throw new Error('not a valid 大红花记账 backup');
+
+  // Restamp so the restore actually reaches the cloud. Imported rows carry the
+  // backup's own updatedAt (v7 web exports have none at all → 0), which sits
+  // below the push watermark, so the pusher's `updatedAt > watermark` filter
+  // skipped them forever and the next pull could overwrite them. A restore is an
+  // explicit "this wins", so stale fieldTs is dropped too and whole-row LWW with
+  // a fresh timestamp makes the backup authoritative.
+  const now = Date.now();
+  const stamped = valid.map((e, i) => {
+    const { fieldTs, ...rest } = e;
+    return { ...rest, updatedAt: now + i };
+  });
+  store$.data.set(stamped);
 
   if (b.settings) {
     // never carry secrets across — the native app uses account auth + biometrics
-    const { passcode, passHash, passSalt, ...safe } = b.settings;
+    const { passcode, passHash, passSalt, lock, ...safe } = b.settings;
+    // Carry EVERY persisted setting. buildBackup writes the full Settings object,
+    // so restoring a hand-picked subset silently reset the user's daily/weekly
+    // budgets, budget mode, garden goal, archived ledgers and privacy toggles.
+    // `lock` stays device-local and is deliberately never restored.
     store$.settings.assign({
+      ...safe,
       budget: safe.budget ?? 0,
       cycleStart: safe.cycleStart ?? 1,
       theme: safe.theme ?? 'default',
       dark: safe.dark ?? false,
-      catBudgets: safe.catBudgets,
-      remindTime: safe.remindTime,
     });
   }
+  if (b.lang === 'zh' || b.lang === 'en') store$.lang.set(b.lang);
+  if (typeof b.curLedger === 'string') store$.curLedger.set(b.curLedger);
   if (b.customCats) store$.customCats.set(b.customCats);
   if (Array.isArray(b.accounts) && b.accounts.length) store$.accounts.set(b.accounts);
   if (Array.isArray(b.assets)) store$.assets.set(b.assets);
@@ -86,7 +134,6 @@ export function importV7(backup: unknown): ImportResult {
   if (b.currencies) store$.currencies.set(b.currencies);
   if (b.subcats && typeof b.subcats === 'object') store$.subcats.set(b.subcats);
 
-  const data = b.data!; // migrateBackup guarantees this is an array
-  const net = data.reduce((s, d) => s + (d.io === 'inc' ? d.amt : -d.amt), 0);
-  return { entries: data.length, net };
+  const net = stamped.reduce((s, d) => s + (d.io === 'inc' ? d.amt : -d.amt), 0);
+  return { entries: stamped.length, net, skipped: raw.length - stamped.length };
 }

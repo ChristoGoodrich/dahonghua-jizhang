@@ -15,6 +15,9 @@ export interface Strings {
   a11yHideAmts: string; a11yShowAmts: string; calAddHere: string;
   toastBloom: string; toastStreak: string; // toastStreak has %d
   importOk: string; importFail: string; comingSoon: string;
+  cancel: string; importSkipped: string;
+  curBaseSwitch: string; curBaseConfirm: string; curBaseDone: string; curBaseNoRate: string;
+  errAmount: string; errXferTo: string; errXferSame: string; errNoRate: string;
   // ai quick-entry
   aiPlaceholder: string; aiParsing: string; aiFailed: string; aiUnconfigured: string;
   aiPrivacyTitle: string; aiPrivacyDesc: string; aiShareOn: string; aiShareOff: string;
@@ -147,6 +150,11 @@ export const I18N: Record<Lang, Strings> = {
     a11yHideAmts: '隐藏金额', a11yShowAmts: '显示金额', calAddHere: '补记这天',
     toastBloom: '贴上一朵花 🌺', toastStreak: '已连续 %d 天！',
     importOk: '导入成功 🌺', importFail: '文件不对，导入失败', comingSoon: '即将上线 🌱',
+    cancel: '取消', importSkipped: '跳过 %d 条格式错误',
+    curBaseSwitch: '切换主货币', curBaseConfirm: '所有金额将按当前汇率换算成 %s，确定？',
+    curBaseDone: '已换算 🌺', curBaseNoRate: '请先设置 %s 的汇率',
+    errAmount: '先填个金额吧', errXferTo: '选一个转入账户', errXferSame: '转入和转出不能是同一个账户',
+    errNoRate: '请先设置 %s 的汇率',
     aiPlaceholder: '说一句，比如「午饭35」', aiParsing: '…', aiFailed: 'AI 解析失败，手动记吧', aiUnconfigured: '还没配置 AI，去 AI_SETUP 看看',
     aiPrivacyTitle: '向 AI 发送分类', aiPrivacyDesc: '关闭后只发送内置分类，自定义分类名不外发', aiShareOn: '发送', aiShareOff: '不发送',
     a11yMonthPrev: '上一个月', a11yMonthNext: '下一个月', a11yAdd: '记一笔', a11yClearSearch: '清除搜索', a11ySearch: '搜索',
@@ -252,6 +260,11 @@ export const I18N: Record<Lang, Strings> = {
     a11yHideAmts: 'Hide amounts', a11yShowAmts: 'Show amounts', calAddHere: 'Add on this day',
     toastBloom: 'A flower bloomed 🌺', toastStreak: '%d-day streak!',
     importOk: 'Imported 🌺', importFail: 'Bad file — import failed', comingSoon: 'Coming soon 🌱',
+    cancel: 'Cancel', importSkipped: '%d malformed rows skipped',
+    curBaseSwitch: 'Switch base currency', curBaseConfirm: 'All amounts will be converted to %s at the current rate. Continue?',
+    curBaseDone: 'Converted 🌺', curBaseNoRate: 'Set a rate for %s first',
+    errAmount: 'Enter an amount first', errXferTo: 'Pick an account to transfer to', errXferSame: 'From and to must differ',
+    errNoRate: 'Set a rate for %s first',
     aiPlaceholder: 'Say it, e.g. “lunch 35”', aiParsing: '…', aiFailed: 'AI parse failed — enter it manually', aiUnconfigured: 'AI not configured — see AI_SETUP',
     aiPrivacyTitle: 'Send categories to AI', aiPrivacyDesc: 'Off = only built-in categories are sent; custom names stay on device', aiShareOn: 'On', aiShareOff: 'Off',
     a11yMonthPrev: 'Previous month', a11yMonthNext: 'Next month', a11yAdd: 'Add entry', a11yClearSearch: 'Clear search', a11ySearch: 'Search',

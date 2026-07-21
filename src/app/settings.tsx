@@ -9,6 +9,7 @@ import { store$, patchSettings, setLang, buildBackup } from '@/store/ledger';
 import { importV7 } from '@/migrate/importV7';
 import { entriesToCSV } from '@/domain/export';
 import { shareTextFile } from '@/util/share';
+import { createBackup } from '@/util/backup';
 import { scheduleDailyReminder, cancelReminder, isValidTime } from '@/util/reminder';
 import { aiConfigured } from '@/ai/client';
 import { useTheme } from '@/theme/ThemeContext';
@@ -86,8 +87,16 @@ export default observer(function SettingsScreen() {
       const r = await DocumentPicker.getDocumentAsync({ type: ['application/json', '*/*'], copyToCacheDirectory: true });
       if (r.canceled || !r.assets?.length) return;
       const text = await readFileText(r.assets[0].uri);
-      const res = importV7(JSON.parse(text));
-      setStatus(`${s.importOk} · ${res.entries}`);
+      const parsed = JSON.parse(text);
+      // Import replaces the ledger outright, so snapshot the current data first —
+      // it's the only way back if the file turns out to be the wrong one.
+      await createBackup().catch(() => {});
+      const res = importV7(parsed);
+      setStatus(
+        res.skipped > 0
+          ? `${s.importOk} · ${res.entries} · ${s.importSkipped.replace('%d', String(res.skipped))}`
+          : `${s.importOk} · ${res.entries}`,
+      );
     } catch {
       setStatus(s.importFail);
     }
