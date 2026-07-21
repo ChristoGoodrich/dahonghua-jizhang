@@ -70,10 +70,27 @@ export function resolveCategory(label: string, io: IO, customCats: Record<IO, Ca
   return (partial ?? list[list.length - 1]).k;
 }
 
+// Above this an "amount" is a hallucination, not a transaction. The bound also
+// keeps the result below 1e21, where String() switches to exponential notation —
+// "1e+21" fed into the amount field would be read by evalExpr as 1 + 21 = 22.
+const MAX_AMOUNT = 1e12;
+
+/** Coerce whatever the model put in `amount` into a number, or NaN.
+ *  Models very often return the amount as a STRING ("35", "¥35", "35.00"),
+ *  which a bare Number.isFinite check rejects outright. */
+function toAmount(v: unknown): number {
+  if (typeof v === 'number') return v;
+  if (typeof v === 'string') return parseFloat(v.replace(/[^\d.-]/g, ''));
+  return NaN;
+}
+
 /** Convert a (possibly imperfect) ParsedEntry into a sheet-ready draft. */
 export function normalizeParsed(raw: ParsedEntry, customCats: Record<IO, Category[]>): EntryDraft {
   const io: IO = raw.io === 'inc' ? 'inc' : 'exp';
-  const amount = Number.isFinite(raw.amount) ? Math.max(0, Math.round(raw.amount * 100) / 100) : 0;
+  const n = toAmount(raw.amount);
+  // out-of-range resolves to 0, which the caller surfaces as a parse failure —
+  // better than silently clamping the user's amount to something they never said
+  const amount = Number.isFinite(n) && n <= MAX_AMOUNT ? Math.max(0, Math.round(n * 100) / 100) : 0;
   return {
     io,
     cat: resolveCategory(raw.category, io, customCats),

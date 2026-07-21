@@ -72,3 +72,41 @@ describe('buildUserPrompt', () => {
     expect(priv).toContain('餐饮'); // built-ins still present, so AI can still classify
   });
 });
+
+// Models do not reliably honour the schema. These are the deviations seen most
+// often, and the two that used to slip through into a real entry amount.
+describe('normalizeParsed against malformed model output', () => {
+  const amt = (raw: unknown) => normalizeParsed(raw as ParsedEntry, noCustom).amt;
+
+  it('accepts an amount returned as a string', () => {
+    // the single most common deviation; Number.isFinite('35') is false, so this
+    // used to resolve to 0 and silently produce nothing
+    expect(amt({ io: 'exp', amount: '35', category: '餐饮' })).toBe('35');
+    expect(amt({ io: 'exp', amount: '35.50', category: '餐饮' })).toBe('35.5');
+    expect(amt({ io: 'exp', amount: '¥35', category: '餐饮' })).toBe('35');
+  });
+
+  it('rejects an implausible amount rather than letting it become an entry', () => {
+    expect(amt({ io: 'exp', amount: 1e21, category: '餐饮' })).toBe('');
+    expect(amt({ io: 'exp', amount: 5e15, category: '餐饮' })).toBe('');
+    // 1e21 formats as "1e+21", which the amount field's parser reads as 1+21=22
+    expect(amt({ io: 'exp', amount: 1e21, category: '餐饮' })).not.toContain('e');
+  });
+
+  it('still accepts a large but plausible amount', () => {
+    expect(amt({ io: 'exp', amount: 250000, category: '餐饮' })).toBe('250000');
+  });
+
+  it('survives a non-object reply', () => {
+    const d = normalizeParsed([1, 2, 3] as unknown as ParsedEntry, noCustom);
+    expect(d.amt).toBe('');
+    expect(d.io).toBe('exp');
+  });
+
+  it('coerces junk amounts to nothing', () => {
+    expect(amt({ io: 'exp', amount: 'abc', category: '餐饮' })).toBe('');
+    expect(amt({ io: 'exp', amount: null, category: '餐饮' })).toBe('');
+    expect(amt({ io: 'exp', amount: Infinity, category: '餐饮' })).toBe('');
+    expect(amt({ io: 'exp', amount: -50, category: '餐饮' })).toBe('');
+  });
+});
