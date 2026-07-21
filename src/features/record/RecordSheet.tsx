@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { observer } from '@legendapp/state/react';
 import {
   View, Text, TextInput, Pressable, StyleSheet, ScrollView,
   KeyboardAvoidingView, Platform, Animated,
@@ -46,11 +47,16 @@ interface Props {
   onDeleted?: (restore: () => void) => void;
 }
 
-export function RecordSheet({ visible, editId, initialTs, dupeId, lang, customCats, onClose, onSaved, onTemplateSaved, onDeleted }: Props) {
+// observer(): the component reads store$ (accounts, tags, currencies, subcats…)
+// with .get(), but those reads only subscribe inside an observer. Unwrapped it
+// re-rendered solely because its parent did, so tag/currency/subcat edits made
+// on another screen didn't reach the open sheet.
+export const RecordSheet = observer(function RecordSheet({ visible, editId, initialTs, dupeId, lang, customCats, onClose, onSaved, onTemplateSaved, onDeleted }: Props) {
   const t = useTheme();
   const insets = useSafeAreaInsets();
   const s = I18N[lang];
   const accounts = store$.accounts.get();
+  const entries = store$.data.get();
   const tags = store$.tags.get();
   const currencies = store$.currencies.get();
   const subcats = store$.subcats.get();
@@ -71,15 +77,17 @@ export function RecordSheet({ visible, editId, initialTs, dupeId, lang, customCa
   // null = "now" — materialized at save time so the entry carries the moment it
   // was saved, and render stays pure (no Date.now() during render)
   const [ts, setTs] = useState<number | null>(null);
-  const [flash, setFlash] = useState('');
+  // transient line under the amount: the 再记 confirmation, or the reason a save
+  // was rejected (the button used to just do nothing)
+  const [flash, setFlash] = useState<{ msg: string; err?: boolean } | null>(null);
   const [aiText, setAiText] = useState('');
   const [aiBusy, setAiBusy] = useState(false);
   const [aiMsg, setAiMsg] = useState('');
 
-  // transient 再记 confirmation — cleared by timer, timer cleared on unmount
+  // cleared by timer, timer cleared on unmount; errors linger a little longer
   useEffect(() => {
     if (!flash) return;
-    const id = setTimeout(() => setFlash(''), 1600);
+    const id = setTimeout(() => setFlash(null), flash.err ? 2800 : 1600);
     return () => clearTimeout(id);
   }, [flash]);
 
@@ -138,7 +146,7 @@ export function RecordSheet({ visible, editId, initialTs, dupeId, lang, customCa
       // fresh entry (editId stays null → saves via addEntry, dated today)
       const srcId = editId ?? dupeId ?? null;
       const d = srcId ? store$.data.peek().find((x) => x.id === srcId) : undefined;
-      setFlash('');
+      setFlash(null);
       if (d) {
         setIO(d.io);
         setCat(d.cat);
@@ -189,6 +197,20 @@ export function RecordSheet({ visible, editId, initialTs, dupeId, lang, customCa
     setAmt((prev) => applyKey(prev, k));
   }
 
+  /** Why this form can't be saved yet, or null when it's good to go. Every
+   *  rejection needs a message: the save button used to silently do nothing on
+   *  a zero amount or an incomplete transfer, which reads as a broken button. */
+  function validationError(): string | null {
+    const value = evalExpr(amt);
+    if (!value || value <= 0) return s.errAmount;
+    if (io === 'xfer') {
+      if (!acctTo) return s.errXferTo;
+      if (acct === acctTo) return s.errXferSame;
+    }
+    if (cur !== base && !currencies.rates?.[cur]) return s.errNoRate.replace('%s', cur);
+    return null;
+  }
+
   // Write the entry (add or update). Returns the amount as typed (in the
   // entry's own currency) for feedback, or null when the form isn't saveable.
   function writeEntry(): number | null {
@@ -237,6 +259,11 @@ export function RecordSheet({ visible, editId, initialTs, dupeId, lang, customCa
   }
 
   function save() {
+    const err = validationError();
+    if (err) {
+      setFlash({ msg: err, err: true });
+      return;
+    }
     if (writeEntry() === null) return;
     onSaved(!editId);
     onClose();
@@ -245,6 +272,11 @@ export function RecordSheet({ visible, editId, initialTs, dupeId, lang, customCa
   // 再记 — save and keep the sheet open for the next entry of the same kind:
   // io/category/account/currency/date/tags/ledger stay, amount+note+subcat clear.
   function saveNext() {
+    const err = validationError();
+    if (err) {
+      setFlash({ msg: err, err: true });
+      return;
+    }
     const value = writeEntry();
     if (value === null) return;
     onSaved(true, true);
@@ -253,12 +285,15 @@ export function RecordSheet({ visible, editId, initialTs, dupeId, lang, customCa
     setSubcat('');
     setFee('');
     setDiscount('');
-    setFlash(s.savedNext.replace('%s', curSymbol(cur) + value.toFixed(2)));
+    setFlash({ msg: s.savedNext.replace('%s', curSymbol(cur) + value.toFixed(2)) });
   }
 
   function saveAsTemplate() {
     const value = evalExpr(amt);
-    if (!value || value <= 0) return;
+    if (!value || value <= 0) {
+      setFlash({ msg: s.errAmount, err: true });
+      return;
+    }
     const trimmed = note.trim();
     const c = catOf(io, cat, customCats);
     addTemplate({ io, cat, amt: value, note: trimmed, name: trimmed || catName(c, lang) });
@@ -272,18 +307,32 @@ export function RecordSheet({ visible, editId, initialTs, dupeId, lang, customCa
 
   function del() {
     if (editId) {
-      // Snapshot before the tombstone so the host's undo toast can restore
-      // the entry (and any refund bookkeeping removeEntry rewrote) verbatim.
-      const prev = store$.data.peek();
+      // Snapshot only the rows removeEntry actually rewrites (the entry, its
+      // refund incomes, and the original it refunds) so undo restores those by
+      // id. Replaying a whole-array snapshot would also roll back anything
+      // added or synced in from another device during the undo window.
+      const before = store$.data.peek();
+      const target = before.find((x) => x.id === editId);
+      const touched = before.filter(
+        (x) => x.id === editId || x.refundOf === editId || (!!target?.refundOf && x.id === target.refundOf),
+      );
       removeEntry(editId);
-      onDeleted?.(() => store$.data.set(prev));
+      onDeleted?.(() => {
+        const byId = new Map(touched.map((e) => [e.id, e] as const));
+        store$.data.set(store$.data.peek().map((e) => byId.get(e.id) ?? e));
+      });
     }
     onClose();
   }
 
   const accent = io === 'inc' ? t.leaf : t.hibiscus;
-  // auto-learned note chips for the selected category (frequency + recency)
-  const noteSugg = io === 'xfer' || !visible ? [] : noteSuggestions(store$.data.get(), io, cat);
+  // auto-learned note chips for the selected category (frequency + recency).
+  // Memoized: this scans the entire ledger, and it used to re-run on every
+  // render — i.e. on every keypress of the amount keypad.
+  const noteSugg = useMemo(
+    () => (io === 'xfer' || !visible ? [] : noteSuggestions(entries, io, cat)),
+    [entries, io, cat, visible],
+  );
   const converted =
     cur !== base && !!evalExpr(amt)
       ? s.curConverted.replace('%s', curSymbol(base) + toBase(evalExpr(amt), cur, currencies).toFixed(2))
@@ -362,7 +411,7 @@ export function RecordSheet({ visible, editId, initialTs, dupeId, lang, customCa
                 = {curSymbol(cur)}{evalExpr(amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </Text>
             ) : flash ? (
-              <Text style={[styles.subLineText, { color: t.leafDeep }]}>{flash}</Text>
+              <Text style={[styles.subLineText, { color: flash.err ? t.hibiscus : t.leafDeep }]}>{flash.msg}</Text>
             ) : null}
           </View>
 
@@ -475,7 +524,7 @@ export function RecordSheet({ visible, editId, initialTs, dupeId, lang, customCa
       </KeyboardAvoidingView>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   overlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 50, elevation: 50 },

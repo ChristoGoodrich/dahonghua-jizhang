@@ -15,9 +15,31 @@ const withProvider = (el: React.ReactElement) => (
   <SafeAreaProvider initialMetrics={METRICS}>{el}</SafeAreaProvider>
 );
 
+// Every renderer this suite creates, so it can be torn down. RecordSheet is an
+// observer: left mounted, it stays subscribed to store$ and the next test's
+// beforeEach mutation re-renders the abandoned tree — after Jest has torn the
+// environment down, which surfaces as "import a file after the Jest environment
+// has been torn down" and forces the worker to be killed.
+const mounted: TestRenderer.ReactTestRenderer[] = [];
+
+function render(el: React.ReactElement): TestRenderer.ReactTestRenderer {
+  let r!: TestRenderer.ReactTestRenderer;
+  act(() => {
+    r = TestRenderer.create(withProvider(el));
+  });
+  mounted.push(r);
+  return r;
+}
+
 beforeEach(() => {
   store$.data.set([]);
   store$.curAccount.set('default');
+});
+
+afterEach(() => {
+  act(() => {
+    while (mounted.length) mounted.pop()!.unmount();
+  });
 });
 
 // Walk up from a text node to the nearest ancestor with an onPress handler.
@@ -37,21 +59,16 @@ describe('RecordSheet save flow', () => {
     const onSaved = jest.fn();
     const onClose = jest.fn();
 
-    let r!: TestRenderer.ReactTestRenderer;
-    act(() => {
-      r = TestRenderer.create(
-        withProvider(
-          <RecordSheet
-            visible
-            editId={null}
-            lang="zh"
-            customCats={noCustom}
-            onClose={onClose}
-            onSaved={onSaved}
-          />,
-        ),
-      );
-    });
+    const r = render(
+      <RecordSheet
+        visible
+        editId={null}
+        lang="zh"
+        customCats={noCustom}
+        onClose={onClose}
+        onSaved={onSaved}
+      />,
+    );
 
     // type "30" on the calculator keypad
     const keypad = r.root.find((n) => typeof n.props?.onKey === 'function');
@@ -75,14 +92,9 @@ describe('RecordSheet save flow', () => {
   it('does not save a zero/empty amount', () => {
     const onSaved = jest.fn();
     const onClose = jest.fn();
-    let r!: TestRenderer.ReactTestRenderer;
-    act(() => {
-      r = TestRenderer.create(
-        withProvider(
-          <RecordSheet visible editId={null} lang="zh" customCats={noCustom} onClose={onClose} onSaved={onSaved} />,
-        ),
-      );
-    });
+    const r = render(
+      <RecordSheet visible editId={null} lang="zh" customCats={noCustom} onClose={onClose} onSaved={onSaved} />,
+    );
 
     act(() => pressableFor(s.save, r.root).props.onPress()); // no amount typed
 
@@ -94,14 +106,9 @@ describe('RecordSheet save flow', () => {
   it('再记 writes the entry, keeps the sheet open, and clears for the next one', () => {
     const onSaved = jest.fn();
     const onClose = jest.fn();
-    let r!: TestRenderer.ReactTestRenderer;
-    act(() => {
-      r = TestRenderer.create(
-        withProvider(
-          <RecordSheet visible editId={null} lang="zh" customCats={noCustom} onClose={onClose} onSaved={onSaved} />,
-        ),
-      );
-    });
+    const r = render(
+      <RecordSheet visible editId={null} lang="zh" customCats={noCustom} onClose={onClose} onSaved={onSaved} />,
+    );
 
     const keypad = r.root.find((n) => typeof n.props?.onKey === 'function');
     act(() => {
@@ -126,14 +133,9 @@ describe('RecordSheet save flow', () => {
   it('saves on a backdated day picked via the date field quick chips', () => {
     const onSaved = jest.fn();
     const onClose = jest.fn();
-    let r!: TestRenderer.ReactTestRenderer;
-    act(() => {
-      r = TestRenderer.create(
-        withProvider(
-          <RecordSheet visible editId={null} lang="zh" customCats={noCustom} onClose={onClose} onSaved={onSaved} />,
-        ),
-      );
-    });
+    const r = render(
+      <RecordSheet visible editId={null} lang="zh" customCats={noCustom} onClose={onClose} onSaved={onSaved} />,
+    );
 
     const keypad = r.root.find((n) => typeof n.props?.onKey === 'function');
     act(() => keypad.props.onKey('9'));
@@ -156,14 +158,9 @@ describe('RecordSheet save flow', () => {
     const day = new Date(2026, 6, 3, 12).getTime();
     const onSaved = jest.fn();
     const onClose = jest.fn();
-    let r!: TestRenderer.ReactTestRenderer;
-    act(() => {
-      r = TestRenderer.create(
-        withProvider(
-          <RecordSheet visible editId={null} initialTs={day} lang="zh" customCats={noCustom} onClose={onClose} onSaved={onSaved} />,
-        ),
-      );
-    });
+    const r = render(
+      <RecordSheet visible editId={null} initialTs={day} lang="zh" customCats={noCustom} onClose={onClose} onSaved={onSaved} />,
+    );
 
     const keypad = r.root.find((n) => typeof n.props?.onKey === 'function');
     act(() => keypad.props.onKey('7'));
@@ -180,14 +177,9 @@ describe('RecordSheet save flow', () => {
     ]);
     const onSaved = jest.fn();
     const onClose = jest.fn();
-    let r!: TestRenderer.ReactTestRenderer;
-    act(() => {
-      r = TestRenderer.create(
-        withProvider(
-          <RecordSheet visible editId={null} dupeId="src" lang="zh" customCats={noCustom} onClose={onClose} onSaved={onSaved} />,
-        ),
-      );
-    });
+    const r = render(
+      <RecordSheet visible editId={null} dupeId="src" lang="zh" customCats={noCustom} onClose={onClose} onSaved={onSaved} />,
+    );
 
     // prefilled amount from the source shows on the keypad display; just save it
     act(() => pressableFor(s.save, r.root).props.onPress());
@@ -215,14 +207,9 @@ describe('RecordSheet save flow', () => {
     ]);
     const onSaved = jest.fn();
     const onClose = jest.fn();
-    let r!: TestRenderer.ReactTestRenderer;
-    act(() => {
-      r = TestRenderer.create(
-        withProvider(
-          <RecordSheet visible editId={null} lang="zh" customCats={noCustom} onClose={onClose} onSaved={onSaved} />,
-        ),
-      );
-    });
+    const r = render(
+      <RecordSheet visible editId={null} lang="zh" customCats={noCustom} onClose={onClose} onSaved={onSaved} />,
+    );
 
     act(() => pressableFor('午饭', r.root).props.onPress());
 

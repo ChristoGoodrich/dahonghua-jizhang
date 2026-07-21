@@ -19,8 +19,23 @@ const MIMO_URL =
   (MIMO_KEY?.startsWith('tp-') ? 'https://token-plan-cn.xiaomimimo.com/v1' : 'https://api.xiaomimimo.com/v1');
 const MIMO_MODEL = process.env.EXPO_PUBLIC_MIMO_MODEL || 'mimo-v2.5-pro';
 
+// A hung request would otherwise leave the quick-entry field spinning forever —
+// there is no cancel affordance, so the timeout is the only way out.
+const TIMEOUT_MS = 20000;
+
 export function aiConfigured(): boolean {
   return !!PROXY || !!MIMO_KEY;
+}
+
+/** fetch with a hard deadline; rejects like a network failure on timeout. */
+async function fetchWithTimeout(url: string, init: RequestInit): Promise<Response> {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+  try {
+    return await fetch(url, { ...init, signal: ctrl.signal });
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 export class AIError extends Error {}
@@ -47,7 +62,7 @@ async function callProxy(text: string, customCats: Record<IO, Category[]>, lang:
   };
   let res: Response;
   try {
-    res = await fetch(PROXY!, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    res = await fetchWithTimeout(PROXY!, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   } catch {
     throw new AIError('network');
   }
@@ -66,7 +81,7 @@ async function callMiMo(text: string, customCats: Record<IO, Category[]>, lang: 
   ];
   let res: Response;
   try {
-    res = await fetch(`${MIMO_URL}/chat/completions`, {
+    res = await fetchWithTimeout(`${MIMO_URL}/chat/completions`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${MIMO_KEY}` },
       // thinking disabled — this is a simple structured extraction, not a reasoning

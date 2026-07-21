@@ -15,7 +15,12 @@ export function curSymbol(code: string): string {
   return SYMBOLS[code] ?? code + ' ';
 }
 
-/** Convert a foreign amount into the base currency. */
+/** Convert a foreign amount into the base currency.
+ *
+ *  A missing rate falls through UNCONVERTED — which would store a foreign number
+ *  as if it were base currency. Callers must not reach here without a rate; the
+ *  record sheet blocks the save instead (see validationError). Kept permissive
+ *  so pure formatting paths can't throw. */
 export function toBase(amt: number, code: string | undefined, currencies: Currencies): number {
   const base = currencies.base || 'CNY';
   if (!code || code === base) return amt;
