@@ -137,7 +137,9 @@ export function newId(prefix = ''): string {
 
 export function addEntry(e: Omit<Entry, 'id' | 'ts'> & { ts?: number }): Entry {
   const now = Date.now();
-  const entry: Entry = { id: newId(), ts: e.ts ?? now, ...e, updatedAt: now };
+  // computed fields go AFTER the spread so an explicit `ts: undefined` in the
+  // caller's payload can't clobber the `e.ts ?? now` fallback (spread order)
+  const entry: Entry = { ...e, id: newId(), ts: e.ts ?? now, updatedAt: now };
   store$.data.set([...store$.data.peek(), entry]);
   if (entry.acct) store$.curAccount.set(entry.acct);
   return entry;

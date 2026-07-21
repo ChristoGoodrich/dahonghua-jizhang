@@ -113,6 +113,8 @@ export const LedgerScreen = observer(function LedgerScreen() {
   const [editId, setEditId] = useState<string | null>(null);
   // pre-picked date for a new entry (calendar "补记这天"); null = now
   const [sheetInitTs, setSheetInitTs] = useState<number | null>(null);
+  // source entry to copy into a new entry (再记一笔); null = blank new entry
+  const [sheetDupeId, setSheetDupeId] = useState<string | null>(null);
   const [detailId, setDetailId] = useState<string | null>(null);
   const [toast, setToast] = useState<{ key: number; msg: string; undo?: () => void } | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -155,6 +157,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
     tapHaptic();
     setEditId(null);
     setSheetInitTs(null);
+    setSheetDupeId(null);
     setSheetOpen(true);
   }, []);
   // calendar day panel → new entry pre-dated to that day (today keeps "now")
@@ -162,11 +165,22 @@ export const LedgerScreen = observer(function LedgerScreen() {
     tapHaptic();
     setEditId(null);
     setSheetInitTs(sameDay(ts, Date.now()) ? null : ts);
+    setSheetDupeId(null);
     setSheetOpen(true);
   }, []);
   const openEdit = useCallback((id: string) => {
     setDetailId(null);
     setEditId(id);
+    setSheetDupeId(null);
+    setSheetOpen(true);
+  }, []);
+  // detail sheet → new entry pre-filled from an existing one (再记一笔), dated today
+  const openDuplicate = useCallback((id: string) => {
+    tapHaptic();
+    setDetailId(null);
+    setEditId(null);
+    setSheetInitTs(null);
+    setSheetDupeId(id);
     setSheetOpen(true);
   }, []);
   const deleteToast = useCallback((restore: () => void) => setToast({ key: Date.now(), msg: s.deleted, undo: restore }), [s.deleted]);
@@ -382,6 +396,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
         visible={sheetOpen}
         editId={editId}
         initialTs={sheetInitTs}
+        dupeId={sheetDupeId}
         lang={lang}
         customCats={customCats}
         onClose={() => setSheetOpen(false)}
@@ -404,6 +419,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
         customCats={customCats}
         onClose={() => setDetailId(null)}
         onEdit={openEdit}
+        onDuplicate={openDuplicate}
         onDeleted={deleteToast}
       />
 

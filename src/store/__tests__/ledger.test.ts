@@ -19,6 +19,14 @@ describe('ledger actions', () => {
     expect(store$.curAccount.peek()).toBe('a1');
   });
 
+  it('falls back to now when ts is explicitly undefined (spread-order regression)', () => {
+    // the record sheet passes `ts: ts ?? undefined`; an explicit undefined key
+    // must not clobber the now-fallback, or entries would sort/group as NaN
+    const e = addEntry({ io: 'exp', cat: 'food', amt: 10, ts: undefined });
+    expect(e.ts).toBeGreaterThan(0);
+    expect(Number.isFinite(e.ts)).toBe(true);
+  });
+
   it('addTransfer writes one xfer entry with from/to/fee/discount', () => {
     const e = addTransfer({ from: 'a', to: 'b', amt: 100, fee: 2, discount: 1, note: ' move ' });
     expect(e.io).toBe('xfer');

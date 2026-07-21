@@ -19,12 +19,13 @@ interface Props {
   customCats: Record<IO, Category[]>;
   onClose: () => void;
   onEdit: (id: string) => void;
+  onDuplicate?: (id: string) => void;
   onDeleted?: (restore: () => void) => void;
 }
 
 // Read-only view of a single entry — full breakdown (tags, subcategory, account,
 // reimbursement, refund…) without dropping the user into the edit form.
-export const DetailSheet = observer(function DetailSheet({ entryId, lang, customCats, onClose, onEdit, onDeleted }: Props) {
+export const DetailSheet = observer(function DetailSheet({ entryId, lang, customCats, onClose, onEdit, onDuplicate, onDeleted }: Props) {
   const t = useTheme();
   const s = I18N[lang];
   const loc = lang === 'zh' ? 'zh-CN' : 'en-US';
@@ -99,28 +100,44 @@ export const DetailSheet = observer(function DetailSheet({ entryId, lang, custom
           <Row label={s.dtFromSub} value={d.fromSub ? '✓' : ''} />
         </ScrollView>
 
-        <View style={styles.actions}>
-          <Tap
-            style={[styles.actionBtn, { borderColor: t.line, backgroundColor: t.card }]}
-            scaleTo={0.97}
-            onPress={del}
-            accessibilityRole="button"
-            accessibilityLabel={s.del}
-          >
-            <Icon name="trash" color={t.hibiscusDeep} size={17} />
-            <Text style={[styles.actionText, { color: t.hibiscusDeep }]}>{s.del}</Text>
-          </Tap>
-          <Tap
-            style={[styles.actionBtn, styles.actionPrimary, { backgroundColor: t.hibiscus }, shadow(t, 'glow')]}
-            scaleTo={0.97}
-            onPress={() => { onClose(); onEdit(entryId!); }}
-            accessibilityRole="button"
-            accessibilityLabel={s.markEdit}
-          >
-            <GradientFill from={t.gradFrom} to={t.gradTo} />
-            <Icon name="edit" color="#fff" size={17} />
-            <Text style={[styles.actionText, { color: '#fff' }]}>{s.markEdit}</Text>
-          </Tap>
+        <View style={styles.actionsCol}>
+          {/* 再记一笔 is the primary action — opening a past entry is most often a
+              prelude to logging another like it (a daily coffee, the commute) */}
+          {onDuplicate && (
+            <Tap
+              style={[styles.actionBtn, styles.actionPrimary, { backgroundColor: t.hibiscus }, shadow(t, 'glow')]}
+              scaleTo={0.97}
+              onPress={() => { onClose(); onDuplicate(entryId!); }}
+              accessibilityRole="button"
+              accessibilityLabel={s.dtDupe}
+            >
+              <GradientFill from={t.gradFrom} to={t.gradTo} />
+              <Icon name="plus" color="#fff" size={17} strokeWidth={2.5} />
+              <Text style={[styles.actionText, { color: '#fff' }]}>{s.dtDupe}</Text>
+            </Tap>
+          )}
+          <View style={styles.actions}>
+            <Tap
+              style={[styles.actionBtn, { borderColor: t.line, backgroundColor: t.card }]}
+              scaleTo={0.97}
+              onPress={del}
+              accessibilityRole="button"
+              accessibilityLabel={s.del}
+            >
+              <Icon name="trash" color={t.hibiscusDeep} size={17} />
+              <Text style={[styles.actionText, { color: t.hibiscusDeep }]}>{s.del}</Text>
+            </Tap>
+            <Tap
+              style={[styles.actionBtn, { borderColor: t.line, backgroundColor: t.card }]}
+              scaleTo={0.97}
+              onPress={() => { onClose(); onEdit(entryId!); }}
+              accessibilityRole="button"
+              accessibilityLabel={s.markEdit}
+            >
+              <Icon name="edit" color={t.ink} size={17} />
+              <Text style={[styles.actionText, { color: t.ink }]}>{s.markEdit}</Text>
+            </Tap>
+          </View>
         </View>
     </SheetShell>
   );
@@ -140,7 +157,8 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, paddingVertical: 11, borderBottomWidth: StyleSheet.hairlineWidth },
   rowLabel: { fontSize: 13, flexShrink: 0 },
   rowValue: { fontSize: 13, fontWeight: '600', flex: 1, textAlign: 'right' },
-  actions: { flexDirection: 'row', gap: 10, marginTop: 18 },
+  actionsCol: { gap: 10, marginTop: 18 },
+  actions: { flexDirection: 'row', gap: 10 },
   actionBtn: {
     flex: 1, borderWidth: 1, borderRadius: RAD.sm, paddingVertical: 13,
     alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7,

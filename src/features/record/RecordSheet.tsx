@@ -33,6 +33,8 @@ interface Props {
   editId: string | null;
   /** Pre-picked date for a NEW entry (e.g. calendar 补记这天); null = now. */
   initialTs?: number | null;
+  /** Copy an existing entry's fields into a NEW entry (再记一笔). Ignored when editId is set. */
+  dupeId?: string | null;
   lang: Lang;
   customCats: Record<IO, Category[]>;
   onClose: () => void;
@@ -44,7 +46,7 @@ interface Props {
   onDeleted?: (restore: () => void) => void;
 }
 
-export function RecordSheet({ visible, editId, initialTs, lang, customCats, onClose, onSaved, onTemplateSaved, onDeleted }: Props) {
+export function RecordSheet({ visible, editId, initialTs, dupeId, lang, customCats, onClose, onSaved, onTemplateSaved, onDeleted }: Props) {
   const t = useTheme();
   const insets = useSafeAreaInsets();
   const s = I18N[lang];
@@ -123,19 +125,24 @@ export function RecordSheet({ visible, editId, initialTs, lang, customCats, onCl
   // the first visible frame already shows the right values — and creating a
   // category mid-entry no longer wipes the half-typed form.
   const [initKey, setInitKey] = useState<string | null>(null);
-  const formKey = visible ? (editId ?? '') : null;
+  // dupeId encodes into the key so opening a duplicate re-inits even though it's
+  // a NEW entry (editId null); a plain new-entry open uses ''.
+  const formKey = visible ? (editId ?? (dupeId ? 'd' + dupeId : '')) : null;
   if (initKey !== formKey) {
     setInitKey(formKey);
     if (formKey !== null) {
       setAiText('');
       setAiMsg('');
       const baseNow = store$.currencies.base.peek() || 'CNY';
-      const d = editId ? store$.data.peek().find((x) => x.id === editId) : undefined;
+      // edit loads the target; duplicate copies a source entry's fields into a
+      // fresh entry (editId stays null → saves via addEntry, dated today)
+      const srcId = editId ?? dupeId ?? null;
+      const d = srcId ? store$.data.peek().find((x) => x.id === srcId) : undefined;
       setFlash('');
       if (d) {
         setIO(d.io);
         setCat(d.cat);
-        setTs(d.ts);
+        setTs(editId ? d.ts : initialTs ?? null); // dupe keeps no date → "now"
         // show the original foreign amount when editing a converted entry
         setAmt(String(d.origAmt ?? d.amt));
         setNote(d.note ?? '');

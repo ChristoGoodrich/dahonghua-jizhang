@@ -173,6 +173,41 @@ describe('RecordSheet save flow', () => {
     expect([d.getFullYear(), d.getMonth(), d.getDate()]).toEqual([2026, 6, 3]);
   });
 
+  it('再记一笔 copies a source entry into a NEW entry dated today', () => {
+    const srcTs = new Date(2026, 0, 5, 8).getTime(); // old date
+    store$.data.set([
+      { id: 'src', ts: srcTs, io: 'exp', cat: 'coffee', amt: 18, note: '拿铁', acct: 'a_wallet', subcat: 'sc1', tags: ['日常'] },
+    ]);
+    const onSaved = jest.fn();
+    const onClose = jest.fn();
+    let r!: TestRenderer.ReactTestRenderer;
+    act(() => {
+      r = TestRenderer.create(
+        withProvider(
+          <RecordSheet visible editId={null} dupeId="src" lang="zh" customCats={noCustom} onClose={onClose} onSaved={onSaved} />,
+        ),
+      );
+    });
+
+    // prefilled amount from the source shows on the keypad display; just save it
+    act(() => pressableFor(s.save, r.root).props.onPress());
+
+    const created = store$.data.peek().find((d) => d.id !== 'src')!;
+    expect(created).toBeTruthy();
+    expect(created.io).toBe('exp');
+    expect(created.cat).toBe('coffee');
+    expect(created.amt).toBe(18);
+    expect(created.note).toBe('拿铁');
+    expect(created.acct).toBe('a_wallet');
+    expect(created.subcat).toBe('sc1');
+    expect(created.tags).toEqual(['日常']);
+    // NEW entry, not an edit of the source; dated ~now, not the old source date
+    expect(store$.data.peek()).toHaveLength(2);
+    expect(created.ts).toBeGreaterThan(srcTs);
+    expect(Math.abs(created.ts - Date.now())).toBeLessThan(5000);
+    expect(onSaved).toHaveBeenCalledWith(true); // isNew
+  });
+
   it('suggests recent notes for the selected category and fills on tap', () => {
     store$.data.set([
       { id: 'n1', ts: 1, io: 'exp', cat: 'food', amt: 20, note: '午饭' },
