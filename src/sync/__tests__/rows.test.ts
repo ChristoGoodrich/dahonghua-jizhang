@@ -34,6 +34,22 @@ describe('entry <-> row mapping', () => {
     expect(rowToEntry(entryToRow(e, 'u')).deletedAt).toBe(999);
   });
 
+  // Provenance drives billImport's dedup relaxation, so losing it on a pull
+  // would make the next CSV import duplicate every auto-captured payment.
+  it('round-trips the capture source (src)', () => {
+    const notif: Entry = { id: 's1', ts: 1, io: 'exp', cat: 'food', amt: 5, src: 'notif', updatedAt: 1 };
+    expect(entryToRow(notif, 'u').src).toBe('notif');
+    expect(rowToEntry(entryToRow(notif, 'u')).src).toBe('notif');
+    const bill: Entry = { id: 's2', ts: 1, io: 'exp', cat: 'food', amt: 5, src: 'bill', updatedAt: 1 };
+    expect(rowToEntry(entryToRow(bill, 'u')).src).toBe('bill');
+  });
+
+  it('leaves src null/absent for a hand-typed entry', () => {
+    const e: Entry = { id: 's3', ts: 1, io: 'exp', cat: 'food', amt: 5, updatedAt: 1 };
+    expect(entryToRow(e, 'u').src).toBeNull();
+    expect(rowToEntry(entryToRow(e, 'u'))).not.toHaveProperty('src');
+  });
+
   it('round-trips per-field timestamps (fieldTs)', () => {
     const e: Entry = { id: 'ft', ts: 1, io: 'exp', cat: 'food', amt: 5, updatedAt: 9, fieldTs: { note: 7, amt: 9 } };
     const row = entryToRow(e, 'u');

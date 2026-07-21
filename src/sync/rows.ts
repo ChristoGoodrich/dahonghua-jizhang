@@ -1,6 +1,6 @@
 // Pure Entry <-> Supabase row mapping (snake_case columns). Kept separate from
 // the network engine so the round-trip can be unit-tested without Supabase.
-import type { Entry, IO } from '@/domain/types';
+import type { Entry, EntrySource, IO } from '@/domain/types';
 
 export interface DbEntry {
   id: string;
@@ -24,6 +24,7 @@ export interface DbEntry {
   refund: number | null;
   refund_of: string | null;
   from_sub: boolean | null;
+  src: string | null; // 'bill' | 'notif' | null (manual)
   deleted_at: number | null;
   updated_at: number; // client epoch-ms
   field_ts: Record<string, number> | null; // per-field last-write ms (field-level merge)
@@ -52,6 +53,7 @@ export function entryToRow(e: Entry, userId: string): DbEntry {
     refund: e.refund ?? null,
     refund_of: e.refundOf ?? null,
     from_sub: e.fromSub ?? null,
+    src: e.src ?? null,
     deleted_at: e.deletedAt ?? null,
     updated_at: e.updatedAt ?? e.ts,
     field_ts: e.fieldTs ?? null,
@@ -82,6 +84,7 @@ export function rowToEntry(r: DbEntry): Entry {
   if (r.refund != null) e.refund = r.refund;
   if (r.refund_of != null) e.refundOf = r.refund_of;
   if (r.from_sub != null) e.fromSub = r.from_sub;
+  if (r.src != null) e.src = r.src as EntrySource;
   if (r.deleted_at != null) e.deletedAt = r.deleted_at;
   if (r.field_ts != null) e.fieldTs = r.field_ts;
   return e;

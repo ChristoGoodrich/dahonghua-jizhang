@@ -13,6 +13,10 @@ you want a cloud account + real-time multi-device sync. Until configured, the
 2. Paste the contents of [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql) and **Run**.
    - This creates `profiles` + `entries`, row-level security (each user only sees
      their own rows), `updated_at` triggers, and adds both tables to the realtime publication.
+3. Run every later migration in [`supabase/migrations/`](supabase/migrations) the same way,
+   **in filename order** (`0002_transfers.sql`, `0003_field_ts.sql`, `0004_entry_src.sql`, …).
+   Each is additive and safe to re-run. Skipping one doesn't fail loudly — the client
+   just loses that column's data on every sync round-trip.
 
 ## 3. Turn on email code sign-in
 1. **Authentication → Providers → Email**: make sure Email is enabled.

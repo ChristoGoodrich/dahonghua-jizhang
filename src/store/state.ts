@@ -269,6 +269,7 @@ export function importBills(
     cat: b.cat,
     amt: b.amt,
     note: b.note || undefined,
+    src: 'bill',
     updatedAt: now + i, // keep updatedAt distinct so LWW ordering is stable
   }));
   store$.data.set([...store$.data.peek(), ...entries]);

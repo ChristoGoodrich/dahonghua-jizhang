@@ -1,0 +1,23 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+  <application>
+    <!--
+      The listener is bound by the system, from another process, so it has to be
+      exported. That is not a hole: android:permission means only a caller
+      holding BIND_NOTIFICATION_LISTENER_SERVICE — i.e. the OS — can bind, and
+      the user still has to grant notification access by hand in Settings.
+
+      The name must be fully qualified. A leading-dot name in a *library*
+      manifest resolves against the merged application id (com.dahonghua.app),
+      not this module, and the service would silently never be found.
+    -->
+    <service
+      android:name="expo.modules.notifcapture.NotifCaptureService"
+      android:label="大红花记账 · 自动记账"
+      android:exported="true"
+      android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+      <intent-filter>
+        <action android:name="android.service.notification.NotificationListenerService" />
+      </intent-filter>
+    </service>
+  </application>
+</manifest>

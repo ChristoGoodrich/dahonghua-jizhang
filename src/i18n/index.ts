@@ -63,6 +63,15 @@ export interface Strings {
   biSourceLabel: string; biAlipay: string; biWechat: string; biGeneric: string;
   biPreview: string; biFresh: string; biDup: string; biSkip: string; // %d
   biConfirm: string; biImported: string; biNothing: string; biMore: string; // %d
+  // auto capture (Android payment notifications → entries)
+  capNav: string; capNavD: string; capTitle: string; capSub: string;
+  capUnsupported: string; capIntro: string;
+  capStepGrant: string; capStepGrantD: string; capGrant: string; capGranted: string;
+  capStepOn: string; capStepOnD: string; capOn: string; capOff: string;
+  capStepAlive: string; capStepAliveD: string;
+  capPending: string; capPendingEmpty: string; capConfirm: string; capDismiss: string;
+  capUnparsed: string; capUnparsedD: string; capClear: string;
+  capAcctNote: string;
   // accounts
   setAccounts: string; setAccountsD: string; acctAdd: string;
   acctName: string; acctBal: string; acctSaveBtn: string; acctBalance: string; acctDefault: string;
@@ -198,6 +207,21 @@ export const I18N: Record<Lang, Strings> = {
     biSourceLabel: '来源', biAlipay: '支付宝', biWechat: '微信', biGeneric: '通用 CSV',
     biPreview: '账单预览', biFresh: '可导入', biDup: '已存在 · 跳过', biSkip: '已忽略',
     biConfirm: '导入', biImported: '已导入', biNothing: '没有可导入的新账单', biMore: '等',
+    capNav: '自动记账', capNavD: '读取支付通知，自动记一笔',
+    capTitle: '自动记账', capSub: '支付宝、微信、银行的支付通知自动入账',
+    capUnsupported: '自动记账只在 Android 版可用。iOS 不开放读取其他应用的通知，请用「导入账单」。',
+    capIntro: '开启后，收到支付通知会自动记一笔。识别不出商家的会放进「待确认」，点一下即可入账。每月再导一次账单 CSV 可以兜住漏掉的。',
+    capStepGrant: '① 开启通知使用权', capStepGrantD: '在系统设置里允许大红花记账读取通知',
+    capGrant: '去授权', capGranted: '已授权',
+    capStepOn: '② 打开自动记账', capStepOnD: '关闭后不再读取任何通知',
+    capOn: '已开启', capOff: '已关闭',
+    capStepAlive: '③ 让它活着（小米必做）',
+    capStepAliveD: 'HyperOS 会杀掉后台服务，服务被杀后就静默停止记账。设置 → 应用设置 → 应用管理 → 大红花记账：开启「自动启动」，把「省电策略」改为「无限制」；再从最近任务界面下拉锁定本应用。',
+    capPending: '待确认', capPendingEmpty: '没有待确认的记录',
+    capConfirm: '记一笔', capDismiss: '忽略',
+    capUnparsed: '没认出来的通知', capUnparsedD: '这些通知来自已监听的应用，但没解析出金额。留在这里是为了让识别规则能照着真实文案改。',
+    capClear: '清空',
+    capAcctNote: '通知里读不到账户和账本，自动记录的这笔会留空，可以在明细里补。',
     setAccounts: '账户', setAccountsD: '现金、信用卡、微信…分开记', acctAdd: '＋ 添加账户',
     acctName: '账户名（如 微信）', acctBal: '初始余额', acctSaveBtn: '保存账户', acctBalance: '余额', acctDefault: '默认',
     acctKind: '类型', acctKindCash: '现金', acctKindCredit: '信用', acctKindPrepaid: '储值', acctOwed: '欠款',
@@ -308,6 +332,21 @@ export const I18N: Record<Lang, Strings> = {
     biSourceLabel: 'Source', biAlipay: 'Alipay', biWechat: 'WeChat', biGeneric: 'Generic CSV',
     biPreview: 'Preview', biFresh: 'To import', biDup: 'Already exists · skip', biSkip: 'Ignored',
     biConfirm: 'Import', biImported: 'Imported', biNothing: 'No new bills to import', biMore: 'and more',
+    capNav: 'Auto capture', capNavD: 'Log payments from notifications',
+    capTitle: 'Auto capture', capSub: 'Turn payment notifications into entries',
+    capUnsupported: 'Auto capture is Android-only. iOS does not let apps read other apps’ notifications — use Import bills instead.',
+    capIntro: 'Once on, a payment notification becomes an entry by itself. Anything without a recognizable merchant waits under Needs review — one tap to log it. A monthly CSV import still catches whatever slipped through.',
+    capStepGrant: '① Grant notification access', capStepGrantD: 'Allow Red Blossom to read notifications in system settings',
+    capGrant: 'Grant', capGranted: 'Granted',
+    capStepOn: '② Turn auto capture on', capStepOnD: 'Nothing is read while this is off',
+    capOn: 'On', capOff: 'Off',
+    capStepAlive: '③ Keep it alive',
+    capStepAliveD: 'Aggressive battery managers (notably MIUI/HyperOS) unbind background services, and capture stops silently. Allow autostart for Red Blossom and set its battery policy to unrestricted, then lock it in the recents screen.',
+    capPending: 'Needs review', capPendingEmpty: 'Nothing waiting',
+    capConfirm: 'Log it', capDismiss: 'Ignore',
+    capUnparsed: 'Not recognized', capUnparsedD: 'These came from a watched app but no amount could be read. They stay here so the rules can be tuned against real wording.',
+    capClear: 'Clear',
+    capAcctNote: 'A notification says nothing about the account or ledger, so captured entries leave those blank — fill them in from the list.',
     setAccounts: 'Accounts', setAccountsD: 'Cash, card, wallet… kept apart', acctAdd: '＋ Add account',
     acctName: 'Account name (e.g. Card)', acctBal: 'Starting balance', acctSaveBtn: 'Save account', acctBalance: 'Balance', acctDefault: 'Default',
     acctKind: 'Type', acctKindCash: 'Cash', acctKindCredit: 'Credit', acctKindPrepaid: 'Prepaid', acctOwed: 'Owed',

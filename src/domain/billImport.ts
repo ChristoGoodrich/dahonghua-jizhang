@@ -336,8 +336,17 @@ function ymd(ts: number): string {
   const d = new Date(ts);
   return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
 }
-function dedupKey(io: string, amt: number, ts: number, note: string): string {
-  return `${io}|${amt.toFixed(2)}|${ymd(ts)}|${note}`;
+/** Coarse dedup key: same direction, same amount, same calendar day. The note is
+ *  matched separately because not every source spells it the same way. */
+function looseKey(io: string, amt: number, ts: number): string {
+  return `${io}|${amt.toFixed(2)}|${ymd(ts)}`;
+}
+
+/** An existing entry still available to absorb a candidate. */
+interface Slot {
+  note: string;
+  /** Match this slot on amount+day alone, ignoring the note. */
+  anyNote: boolean;
 }
 
 /**
@@ -345,25 +354,40 @@ function dedupKey(io: string, amt: number, ts: number, note: string): string {
  * in the store. Dedup is multiset-based against existing (non-deleted) entries —
  * each existing entry is "consumed" once — so re-importing the same file is
  * idempotent while genuine same-day duplicates in a first import are preserved.
+ *
+ * Notification-captured entries (`src: 'notif'`) match on amount + day alone.
+ * A notification only carries the merchant ("星巴克") while the CSV row for that
+ * same payment reads "星巴克咖啡(国贸店) · 消费", so a note-sensitive match would
+ * call them different transactions and the monthly CSV import would duplicate
+ * every payment the listener already captured. An exact note match is still
+ * tried first, so a hand-typed entry is preferred over a captured one when both
+ * could absorb the same row.
  */
 export function toCandidates(
   bills: RawBill[],
   existing: Entry[],
   custom: Record<IO, Category[]>,
 ): Candidate[] {
-  const counts = new Map<string, number>();
+  const buckets = new Map<string, Slot[]>();
   for (const e of existing) {
     if (e.deletedAt || e.io === 'xfer') continue;
-    const k = dedupKey(e.io, e.amt, e.ts, e.note ?? '');
-    counts.set(k, (counts.get(k) ?? 0) + 1);
+    const k = looseKey(e.io, e.amt, e.ts);
+    const slot: Slot = { note: e.note ?? '', anyNote: e.src === 'notif' };
+    const bucket = buckets.get(k);
+    if (bucket) bucket.push(slot);
+    else buckets.set(k, [slot]);
   }
   return bills.map((b) => {
     const note = composeNote(b);
     const cat = mapCategory(b.io, b.srcCat, note, custom);
-    const k = dedupKey(b.io, b.amt, b.ts, note);
-    const remaining = counts.get(k) ?? 0;
-    const dup = remaining > 0;
-    if (dup) counts.set(k, remaining - 1);
+    const bucket = buckets.get(looseKey(b.io, b.amt, b.ts));
+    let hit = -1;
+    if (bucket) {
+      hit = bucket.findIndex((s) => s.note === note);
+      if (hit < 0) hit = bucket.findIndex((s) => s.anyNote);
+    }
+    const dup = hit >= 0;
+    if (bucket && dup) bucket.splice(hit, 1); // consume it — one row per entry
     return { io: b.io, cat, amt: b.amt, note, ts: b.ts, dup };
   });
 }

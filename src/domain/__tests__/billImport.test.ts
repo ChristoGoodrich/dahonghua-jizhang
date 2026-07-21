@@ -185,6 +185,63 @@ describe('toCandidates + dedup', () => {
   });
 });
 
+// The notification listener writes the merchant only ("瑞幸咖啡"); the CSV row
+// for that same payment reads "瑞幸咖啡 · 标准美式". Without the relaxed match the
+// monthly import would re-add every payment the listener already captured.
+describe('dedup against notification-captured entries', () => {
+  const coffeeDay = new Date(2026, 5, 2).getTime();
+
+  it('matches a notif entry on amount + day despite a different note', () => {
+    const captured: Entry[] = [
+      { id: 'n1', ts: coffeeDay, io: 'exp', cat: 'food', amt: 15.9, note: '瑞幸咖啡', src: 'notif' },
+    ];
+    const cands = toCandidates(parseBills(ALIPAY).bills, captured, custom);
+    expect(cands.find((c) => c.amt === 15.9)!.dup).toBe(true);
+  });
+
+  it('does NOT relax the match for hand-typed or CSV-imported entries', () => {
+    const typed: Entry[] = [
+      { id: 'h1', ts: coffeeDay, io: 'exp', cat: 'food', amt: 15.9, note: '咖啡' },
+      { id: 'b1', ts: coffeeDay, io: 'exp', cat: 'trans', amt: 23, note: '打车', src: 'bill' },
+    ];
+    const cands = toCandidates(parseBills(ALIPAY).bills, typed, custom);
+    expect(cands.find((c) => c.amt === 15.9)!.dup).toBe(false);
+    expect(cands.find((c) => c.amt === 23)!.dup).toBe(false);
+  });
+
+  it('consumes a notif entry only once', () => {
+    const bills = [
+      { ts: coffeeDay, io: 'exp' as const, amt: 5, desc: '地铁' },
+      { ts: coffeeDay, io: 'exp' as const, amt: 5, desc: '地铁' },
+    ];
+    const one: Entry[] = [{ id: 'n2', ts: coffeeDay, io: 'exp', cat: 'trans', amt: 5, note: '北京地铁', src: 'notif' }];
+    const cands = toCandidates(bills, one, custom);
+    expect(cands.filter((c) => c.dup)).toHaveLength(1);
+  });
+
+  it('prefers an exact note match over a loose notif match', () => {
+    const bills = [{ ts: coffeeDay, io: 'exp' as const, amt: 5, desc: '地铁' }];
+    const existing: Entry[] = [
+      { id: 'n3', ts: coffeeDay, io: 'exp', cat: 'trans', amt: 5, note: '北京地铁', src: 'notif' },
+      { id: 'h3', ts: coffeeDay, io: 'exp', cat: 'trans', amt: 5, note: '地铁' },
+    ];
+    // the hand-typed entry absorbs the row, leaving the captured one free to
+    // absorb a later duplicate rather than being spent on the first match
+    const cands = toCandidates(bills, existing, custom);
+    expect(cands[0].dup).toBe(true);
+    const second = toCandidates([...bills, ...bills], existing, custom);
+    expect(second.filter((c) => c.dup)).toHaveLength(2);
+  });
+
+  it('still separates different days and directions', () => {
+    const existing: Entry[] = [
+      { id: 'n4', ts: new Date(2026, 5, 1).getTime(), io: 'exp', cat: 'food', amt: 15.9, note: '瑞幸', src: 'notif' },
+    ];
+    const cands = toCandidates(parseBills(ALIPAY).bills, existing, custom);
+    expect(cands.find((c) => c.amt === 15.9)!.dup).toBe(false); // one day earlier
+  });
+});
+
 describe('prepareImport', () => {
   it('summarizes fresh income/expense totals and dup/skip counts', () => {
     const prev = prepareImport(ALIPAY, [], custom);

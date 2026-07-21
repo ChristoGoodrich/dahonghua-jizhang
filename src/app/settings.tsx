@@ -248,7 +248,10 @@ export default observer(function SettingsScreen() {
               <Row title={s.setTags} desc={s.setTagsD} right={chev} />
             </Pressable>
             <Pressable onPress={() => router.push('/import-bills')}>
-              <Row title={s.billImportNav} desc={s.billImportNavD} right={chev} last />
+              <Row title={s.billImportNav} desc={s.billImportNavD} right={chev} />
+            </Pressable>
+            <Pressable onPress={() => router.push('/auto-capture')}>
+              <Row title={s.capNav} desc={s.capNavD} right={chev} last />
             </Pressable>
           </Section>
 
