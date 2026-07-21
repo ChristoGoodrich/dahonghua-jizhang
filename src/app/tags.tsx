@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, Pressable, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { observer } from '@legendapp/state/react';
-import { store$, addTag, removeTag } from '@/store/ledger';
+import { store$, addTag, removeTag, archiveLedger } from '@/store/ledger';
+import { pickerLedgers, archivedLedgers } from '@/domain/archive';
 import type { Tags } from '@/domain/types';
 import { useTheme } from '@/theme/ThemeContext';
 import { ScreenHeader } from '@/components/ScreenHeader';
@@ -13,6 +14,9 @@ export default observer(function TagsScreen() {
   const lang = store$.lang.get();
   const s = I18N[lang];
   const tags = store$.tags.get();
+  const archivedL = store$.settings.archivedLedgers.get() ?? [];
+  const activeLedgers = pickerLedgers(tags.ledger, archivedL);
+  const archivedLedgerList = archivedLedgers(tags.ledger, archivedL);
 
   const [adding, setAdding] = useState(false);
   const [type, setType] = useState<keyof Tags>('normal');
@@ -36,12 +40,42 @@ export default observer(function TagsScreen() {
           list.map((g) => (
             <View key={g} style={[styles.chip, kind === 'ledger' && styles.ledgerChip, { borderColor: t.line, backgroundColor: t.card }]}>
               <Text style={{ fontSize: 12.5, fontWeight: '600', color: t.inkSoft }}>{g}</Text>
-              <Pressable onPress={() => removeTag(kind, g)} hitSlop={8}>
-                <Text style={{ fontSize: 13, color: t.inkSoft, opacity: 0.6 }}>✕</Text>
-              </Pressable>
+              {/* ledgers archive first (keep history), then delete once archived */}
+              {kind === 'ledger' ? (
+                <Pressable onPress={() => archiveLedger(g, true)} hitSlop={8} accessibilityRole="button" accessibilityLabel={s.archive}>
+                  <Text style={{ fontSize: 13, color: t.inkSoft, opacity: 0.6 }}>📥</Text>
+                </Pressable>
+              ) : (
+                <Pressable onPress={() => removeTag(kind, g)} hitSlop={8}>
+                  <Text style={{ fontSize: 13, color: t.inkSoft, opacity: 0.6 }}>✕</Text>
+                </Pressable>
+              )}
             </View>
           ))
         )}
+      </View>
+    </>
+  );
+
+  // Rendered inline (see below), NOT as a nested zero-prop component — the React
+  // Compiler hoists an argument-less inner component as dependency-free and drops
+  // its closure over `t`/`s` (→ "t is not defined"). Building a node is safe.
+  const archivedLedgersBlock = (
+    <>
+      <Text style={[styles.sectionHead, { color: t.inkSoft, marginTop: 16 }]}>{s.archivedSection} · {archivedLedgerList.length}</Text>
+      <Text style={[styles.archHint, { color: t.inkSoft }]}>{s.archivedHint}</Text>
+      <View style={styles.chips}>
+        {archivedLedgerList.map((g) => (
+          <View key={g} style={[styles.chip, styles.ledgerChip, { borderColor: t.line, backgroundColor: t.card, opacity: 0.7 }]}>
+            <Text style={{ fontSize: 12.5, fontWeight: '600', color: t.inkSoft }}>{g}</Text>
+            <Pressable onPress={() => archiveLedger(g, false)} hitSlop={8} accessibilityRole="button" accessibilityLabel={s.unarchive}>
+              <Text style={{ fontSize: 13, color: t.hibiscus }}>↩</Text>
+            </Pressable>
+            <Pressable onPress={() => removeTag('ledger', g)} hitSlop={8} accessibilityRole="button" accessibilityLabel="✕">
+              <Text style={{ fontSize: 13, color: t.inkSoft, opacity: 0.6 }}>✕</Text>
+            </Pressable>
+          </View>
+        ))}
       </View>
     </>
   );
@@ -52,7 +86,8 @@ export default observer(function TagsScreen() {
         <ScreenHeader title={s.setTags} subtitle={s.setTagsD} />
         <ScrollView contentContainerStyle={styles.body} showsVerticalScrollIndicator={false}>
           <Section title={s.tagNormal} list={tags.normal} kind="normal" />
-          <Section title={s.tagLedger} list={tags.ledger} kind="ledger" />
+          <Section title={s.tagLedger} list={activeLedgers} kind="ledger" />
+          {archivedLedgerList.length > 0 && archivedLedgersBlock}
 
           {adding ? (
             <View style={[styles.form, { borderColor: t.line }]}>
@@ -84,6 +119,7 @@ const styles = StyleSheet.create({
   safe: { flex: 1, maxWidth: 480, width: '100%', alignSelf: 'center' },
   body: { paddingHorizontal: 22, paddingBottom: 60, paddingTop: 6 },
   sectionHead: { fontSize: 12, fontWeight: '600', marginTop: 12, marginBottom: 8 },
+  archHint: { fontSize: 11, marginBottom: 8 },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 7 },
   chip: { flexDirection: 'row', alignItems: 'center', gap: 6, borderWidth: 1, borderRadius: 18, paddingVertical: 6, paddingHorizontal: 12 },
   ledgerChip: { borderStyle: 'dashed' },

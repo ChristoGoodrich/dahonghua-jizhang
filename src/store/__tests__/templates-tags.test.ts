@@ -1,6 +1,7 @@
 import {
   store$, addTemplate, removeTemplate, logTemplate,
-  addTag, removeTag, setCurLedger,
+  addTag, removeTag, setCurLedger, archiveLedger,
+  addAccount, archiveAccount,
 } from '../ledger';
 
 beforeEach(() => {
@@ -9,6 +10,8 @@ beforeEach(() => {
   store$.tags.set({ normal: [], ledger: [] });
   store$.curLedger.set('');
   store$.curAccount.set('default');
+  store$.accounts.set([{ id: 'default', name: '默认', nameEn: 'Default', balance: 0 }]);
+  store$.settings.set({ budget: 0, cycleStart: 1, theme: 'default', dark: false });
 });
 
 describe('templates', () => {
@@ -52,5 +55,34 @@ describe('tags', () => {
     setCurLedger('家庭');
     removeTag('ledger', '家庭');
     expect(store$.curLedger.peek()).toBe('');
+  });
+
+  it('archives/unarchives a ledger and resets the active filter on archive', () => {
+    addTag('ledger', '日本行');
+    setCurLedger('日本行');
+    archiveLedger('日本行', true);
+    expect(store$.settings.archivedLedgers.peek()).toEqual(['日本行']);
+    expect(store$.curLedger.peek()).toBe(''); // active filter reset
+    // tag still exists (history preserved), just archived
+    expect(store$.tags.peek().ledger).toEqual(['日本行']);
+    archiveLedger('日本行', false);
+    expect(store$.settings.archivedLedgers.peek()).toBeUndefined();
+  });
+});
+
+describe('account archiving', () => {
+  it('archives a non-default account and clears it as current', () => {
+    const a = addAccount('旧卡', 0, 'credit');
+    store$.curAccount.set(a.id);
+    archiveAccount(a.id, true);
+    expect(store$.accounts.peek().find((x) => x.id === a.id)?.archived).toBe(true);
+    expect(store$.curAccount.peek()).toBe('default'); // no longer the default target
+    archiveAccount(a.id, false);
+    expect(store$.accounts.peek().find((x) => x.id === a.id)?.archived).toBeUndefined();
+  });
+
+  it('never archives the default account', () => {
+    archiveAccount('default', true);
+    expect(store$.accounts.peek().find((x) => x.id === 'default')?.archived).toBeUndefined();
   });
 });

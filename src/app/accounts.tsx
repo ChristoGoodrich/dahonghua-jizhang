@@ -3,8 +3,9 @@ import { View, Text, StyleSheet, TextInput, Pressable, ScrollView } from 'react-
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { observer } from '@legendapp/state/react';
-import { store$, addAccount, removeAccount } from '@/store/ledger';
+import { store$, addAccount, removeAccount, archiveAccount } from '@/store/ledger';
 import { acctBalance } from '@/domain/networth';
+import { archivedAccounts } from '@/domain/archive';
 import { fmt } from '@/domain/money';
 import { useTheme } from '@/theme/ThemeContext';
 import { ScreenHeader } from '@/components/ScreenHeader';
@@ -39,6 +40,51 @@ export default observer(function AccountsScreen() {
   ];
   const acctEmoji = (kd?: string) => (kd === 'credit' ? '💳' : kd === 'prepaid' ? '🎫' : '👛');
 
+  const active = accounts.filter((a) => !a.archived);
+  const archived = archivedAccounts(accounts);
+
+  const AccountRow = ({ a }: { a: (typeof accounts)[number] }) => {
+    const isDef = a.id === 'default';
+    const bal = acctBalance(a.id, accounts, data);
+    const owed = a.kind === 'credit' && bal < 0;
+    return (
+      <View style={[styles.row, { backgroundColor: t.card }, a.archived && styles.rowArchived]}>
+        <Pressable style={styles.rowMain} onPress={() => router.push(`/account-detail?id=${a.id}`)}>
+          <View style={[styles.emo, { backgroundColor: t.paper }]}>
+            <Text style={styles.emoText}>{acctEmoji(a.kind)}</Text>
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.name, { color: t.ink }]}>
+              {lang === 'zh' ? a.name : a.nameEn || a.name}
+              {isDef ? ` · ${s.acctDefault}` : a.kind === 'credit' ? ` · ${s.acctKindCredit}` : ''}
+            </Text>
+            <Text style={[styles.sub, { color: owed ? t.hibiscus : t.inkSoft }]}>
+              {owed ? s.acctOwed : s.acctBalance} {hide ? '****' : fmt(owed ? -bal : bal, lang)}
+            </Text>
+          </View>
+          <Text style={[styles.chev, { color: t.inkSoft }]}>›</Text>
+        </Pressable>
+        {!isDef && (
+          <View style={styles.rowActions}>
+            <Pressable
+              onPress={() => archiveAccount(a.id, !a.archived)}
+              hitSlop={8}
+              accessibilityRole="button"
+              accessibilityLabel={a.archived ? s.unarchive : s.archive}
+            >
+              <Text style={[styles.act, { color: a.archived ? t.hibiscus : t.inkSoft }]}>{a.archived ? '↩' : '📥'}</Text>
+            </Pressable>
+            {a.archived && (
+              <Pressable onPress={() => removeAccount(a.id)} hitSlop={8} accessibilityRole="button" accessibilityLabel="✕">
+                <Text style={[styles.del, { color: t.inkSoft }]}>✕</Text>
+              </Pressable>
+            )}
+          </View>
+        )}
+      </View>
+    );
+  };
+
   function save() {
     if (!name.trim()) return;
     addAccount(name.trim(), parseFloat(bal.replace(/[^\d.]/g, '')) || 0, kind, {
@@ -58,35 +104,19 @@ export default observer(function AccountsScreen() {
       <SafeAreaView edges={['top']} style={styles.safe}>
         <ScreenHeader title={s.setAccounts} subtitle={s.setAccountsD} right={<EyeToggle />} />
         <ScrollView contentContainerStyle={styles.body} showsVerticalScrollIndicator={false}>
-          {accounts.map((a) => {
-            const isDef = a.id === 'default';
-            const bal = acctBalance(a.id, accounts, data);
-            const owed = a.kind === 'credit' && bal < 0;
-            return (
-              <View key={a.id} style={[styles.row, { backgroundColor: t.card }]}>
-                <Pressable style={styles.rowMain} onPress={() => router.push(`/account-detail?id=${a.id}`)}>
-                  <View style={[styles.emo, { backgroundColor: t.paper }]}>
-                    <Text style={styles.emoText}>{acctEmoji(a.kind)}</Text>
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <Text style={[styles.name, { color: t.ink }]}>
-                      {lang === 'zh' ? a.name : a.nameEn || a.name}
-                      {isDef ? ` · ${s.acctDefault}` : a.kind === 'credit' ? ` · ${s.acctKindCredit}` : ''}
-                    </Text>
-                    <Text style={[styles.sub, { color: owed ? t.hibiscus : t.inkSoft }]}>
-                      {owed ? s.acctOwed : s.acctBalance} {hide ? '****' : fmt(owed ? -bal : bal, lang)}
-                    </Text>
-                  </View>
-                  <Text style={[styles.chev, { color: t.inkSoft }]}>›</Text>
-                </Pressable>
-                {!isDef && (
-                  <Pressable onPress={() => removeAccount(a.id)} hitSlop={10}>
-                    <Text style={[styles.del, { color: t.inkSoft }]}>✕</Text>
-                  </Pressable>
-                )}
-              </View>
-            );
-          })}
+          {active.map((a) => (
+            <AccountRow key={a.id} a={a} />
+          ))}
+
+          {archived.length > 0 && (
+            <>
+              <Text style={[styles.archHead, { color: t.inkSoft }]}>{s.archivedSection} · {archived.length}</Text>
+              <Text style={[styles.archHint, { color: t.inkSoft }]}>{s.archivedHint}</Text>
+              {archived.map((a) => (
+                <AccountRow key={a.id} a={a} />
+              ))}
+            </>
+          )}
 
           {adding ? (
             <View style={[styles.form, { borderColor: t.line }]}>
@@ -155,7 +185,12 @@ const styles = StyleSheet.create({
   safe: { flex: 1, maxWidth: 480, width: '100%', alignSelf: 'center' },
   body: { paddingHorizontal: 22, paddingBottom: 60, paddingTop: 6 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 13, padding: 12, marginBottom: 8 },
+  rowArchived: { opacity: 0.62 },
   rowMain: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12 },
+  rowActions: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  act: { fontSize: 16 },
+  archHead: { fontSize: 12, fontWeight: '700', marginTop: 14, marginBottom: 2, paddingHorizontal: 2 },
+  archHint: { fontSize: 11, marginBottom: 8, paddingHorizontal: 2 },
   chev: { fontSize: 20, fontWeight: '700', paddingHorizontal: 2 },
   emo: { width: 38, height: 38, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },
   emoText: { fontSize: 19 },

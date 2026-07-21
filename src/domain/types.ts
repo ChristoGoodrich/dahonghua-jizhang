@@ -38,6 +38,7 @@ export interface Account {
   kind?: 'cash' | 'credit' | 'prepaid'; // default 'cash'; a 'credit' account is a liability
   statementDay?: number; // credit card: 出账日 (statement closes this day-of-month, 1..28)
   dueDay?: number; // credit card: 还款日 (payment due this day-of-month, 1..28)
+  archived?: boolean; // hidden from new-entry pickers; history + balance preserved
 }
 
 export interface Settings {
@@ -57,6 +58,7 @@ export interface Settings {
   backupFrequency?: 'daily' | 'weekly';
   maxBackups?: number;
   hideAmounts?: boolean; // mask balances on the asset/account screens (shoulder-surfing privacy)
+  archivedLedgers?: string[]; // ledgers hidden from the filter/picker; entries keep the tag
 }
 
 export type ThemeKey = 'default' | 'sakura' | 'daisy' | 'jasmine' | 'ocean' | 'forest' | 'sunset';

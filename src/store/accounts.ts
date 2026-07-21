@@ -25,3 +25,15 @@ export function removeAccount(id: string): void {
   store$.accounts.set(store$.accounts.peek().filter((a) => a.id !== id));
   if (store$.curAccount.peek() === id) store$.curAccount.set('default');
 }
+
+/** Archive/unarchive an account. Archived accounts vanish from the record-sheet
+ *  pickers but keep their transactions and balance; the default account can't be
+ *  archived (it's the fallback every orphaned entry migrates to). */
+export function archiveAccount(id: string, archived: boolean): void {
+  if (id === 'default') return;
+  store$.accounts.set(
+    store$.accounts.peek().map((a) => (a.id === id ? { ...a, archived: archived || undefined } : a)),
+  );
+  // don't leave a just-archived account as the "current" default for new entries
+  if (archived && store$.curAccount.peek() === id) store$.curAccount.set('default');
+}

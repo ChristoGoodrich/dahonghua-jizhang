@@ -13,6 +13,7 @@ import { RAD, SPRING, TABULAR, shadow } from '@/theme/tokens';
 import { allCats, catName, catOf } from '@/domain/cats';
 import { toBase, curSymbol } from '@/domain/money';
 import { evalExpr, hasOperator, applyKey } from '@/domain/calc';
+import { pickerAccounts, pickerLedgers } from '@/domain/archive';
 import type { Category, IO } from '@/domain/types';
 import type { Lang } from '@/i18n';
 import { I18N } from '@/i18n';
@@ -79,6 +80,11 @@ export function RecordSheet({ visible, editId, initialTs, lang, customCats, onCl
     const id = setTimeout(() => setFlash(''), 1600);
     return () => clearTimeout(id);
   }, [flash]);
+
+  // archived accounts/ledgers drop out of the pickers, but a currently-selected
+  // one stays (editing an old entry that lives on an archived account/ledger)
+  const visibleAccts = pickerAccounts(accounts, [acct, acctTo]);
+  const visibleLedgers = pickerLedgers(tags.ledger, store$.settings.archivedLedgers.get() ?? [], ledger);
 
   // entrance: mask fades in while the sheet springs up from below
   const enter = useAnimatedValue(NO_ANIM ? 1 : 0);
@@ -164,7 +170,7 @@ export function RecordSheet({ visible, editId, initialTs, lang, customCats, onCl
     setSubcat('');
     if (next === 'xfer') {
       const from = acct || store$.curAccount.peek();
-      const to = accounts.find((a) => a.id !== from);
+      const to = visibleAccts.find((a) => a.id !== from);
       setAcct(from);
       setAcctTo(to ? to.id : '');
       return;
@@ -371,7 +377,7 @@ export function RecordSheet({ visible, editId, initialTs, lang, customCats, onCl
                   onPickSubcat={setSubcat}
                   acct={acct}
                   onPickAcct={setAcct}
-                  accounts={accounts}
+                  accounts={visibleAccts}
                   subcats={subcats}
                   customCats={customCats}
                   lang={lang}
@@ -381,7 +387,7 @@ export function RecordSheet({ visible, editId, initialTs, lang, customCats, onCl
 
             {io === 'xfer' && (
               <TransferForm
-                accounts={accounts}
+                accounts={visibleAccts}
                 acct={acct}
                 acctTo={acctTo}
                 fee={fee}
@@ -424,11 +430,11 @@ export function RecordSheet({ visible, editId, initialTs, lang, customCats, onCl
               </>
             )}
 
-            {tags.ledger.length > 0 && (
+            {visibleLedgers.length > 0 && (
               <>
                 <Text style={[styles.pickLabel, { color: t.inkSoft }]}>{s.ledgerPick}</Text>
                 <View style={styles.tagWrap}>
-                  {tags.ledger.map((g) => {
+                  {visibleLedgers.map((g) => {
                     const on = ledger === g;
                     return <Chip key={g} label={g} on={on} dashed onPress={() => setLedger(on ? '' : g)} />;
                   })}

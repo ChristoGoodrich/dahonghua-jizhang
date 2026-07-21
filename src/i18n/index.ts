@@ -65,6 +65,7 @@ export interface Strings {
   acctName: string; acctBal: string; acctSaveBtn: string; acctBalance: string; acctDefault: string;
   acctKind: string; acctKindCash: string; acctKindCredit: string; acctKindPrepaid: string; acctOwed: string;
   acctTxTitle: string;
+  archive: string; unarchive: string; archivedSection: string; archivedHint: string;
   // credit-card statement cycle (信用卡账单周期)
   acctStmtDay: string; acctDueDay: string;
   stmtBilledDue: string; stmtUnbilled: string; stmtOverpay: string; stmtDueOn: string;
@@ -193,6 +194,7 @@ export const I18N: Record<Lang, Strings> = {
     acctName: '账户名（如 微信）', acctBal: '初始余额', acctSaveBtn: '保存账户', acctBalance: '余额', acctDefault: '默认',
     acctKind: '类型', acctKindCash: '现金', acctKindCredit: '信用', acctKindPrepaid: '储值', acctOwed: '欠款',
     acctTxTitle: '账户流水',
+    archive: '归档', unarchive: '恢复', archivedSection: '已归档', archivedHint: '不出现在记账选择里，历史与余额保留',
     acctStmtDay: '出账日', acctDueDay: '还款日',
     stmtBilledDue: '本期待还', stmtUnbilled: '未出账', stmtOverpay: '溢缴款', stmtDueOn: '还款日',
     stmtDaysLeft: '%d 天后', stmtDueToday: '今天', stmtOverdue: '逾期 %d 天',
@@ -297,6 +299,7 @@ export const I18N: Record<Lang, Strings> = {
     acctName: 'Account name (e.g. Card)', acctBal: 'Starting balance', acctSaveBtn: 'Save account', acctBalance: 'Balance', acctDefault: 'Default',
     acctKind: 'Type', acctKindCash: 'Cash', acctKindCredit: 'Credit', acctKindPrepaid: 'Prepaid', acctOwed: 'Owed',
     acctTxTitle: 'Transactions',
+    archive: 'Archive', unarchive: 'Restore', archivedSection: 'Archived', archivedHint: 'Hidden from entry pickers; history & balance kept',
     acctStmtDay: 'Statement day', acctDueDay: 'Due day',
     stmtBilledDue: 'Amount due', stmtUnbilled: 'Unbilled', stmtOverpay: 'Overpaid', stmtDueOn: 'Due',
     stmtDaysLeft: 'in %dd', stmtDueToday: 'today', stmtOverdue: '%dd overdue',

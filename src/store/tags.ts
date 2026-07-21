@@ -15,3 +15,13 @@ export function removeTag(type: keyof Tags, name: string): void {
 export function setCurLedger(ledger: string): void {
   store$.curLedger.set(ledger);
 }
+
+/** Archive/unarchive a ledger. Archived ledgers drop out of the filter bar and
+ *  the record-sheet picker; entries already tagged with it keep the tag. If the
+ *  active filter is the ledger being archived, reset to "all". */
+export function archiveLedger(name: string, archived: boolean): void {
+  const list = store$.settings.archivedLedgers.peek() ?? [];
+  const next = archived ? (list.includes(name) ? list : [...list, name]) : list.filter((l) => l !== name);
+  store$.settings.archivedLedgers.set(next.length ? next : undefined);
+  if (archived && store$.curLedger.peek() === name) store$.curLedger.set('');
+}
