@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { observer } from '@legendapp/state/react';
 import { store$, addAccount, removeAccount, archiveAccount } from '@/store/ledger';
-import { acctBalance } from '@/domain/networth';
+import { acctBalances } from '@/domain/networth';
 import { archivedAccounts } from '@/domain/archive';
 import { fmt } from '@/domain/money';
 import { useTheme } from '@/theme/ThemeContext';
@@ -42,10 +42,12 @@ export default observer(function AccountsScreen() {
 
   const active = accounts.filter((a) => !a.archived);
   const archived = archivedAccounts(accounts);
+  // one ledger pass for the whole list, not one per row
+  const balances = acctBalances(accounts, data);
 
   const AccountRow = ({ a }: { a: (typeof accounts)[number] }) => {
     const isDef = a.id === 'default';
-    const bal = acctBalance(a.id, accounts, data);
+    const bal = balances.get(a.id) ?? 0;
     const owed = a.kind === 'credit' && bal < 0;
     return (
       <View style={[styles.row, { backgroundColor: t.card }, a.archived && styles.rowArchived]}>

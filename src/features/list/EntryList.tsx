@@ -59,10 +59,15 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
   const t = useTheme();
   const s = I18N[lang];
   const accounts = store$.accounts.peek();
-  const acctName = (id?: string) => {
-    const a = accounts.find((x) => x.id === id);
-    return a ? (lang === 'zh' ? a.name : a.nameEn || a.name) : s.xferLabel;
-  };
+  // Memoized: recreating this each render invalidated renderSingleEntry's
+  // useCallback, which re-rendered every visible row on any parent state change.
+  const acctName = useMemo(() => {
+    const byId = new Map(accounts.map((a) => [a.id, a] as const));
+    return (id?: string) => {
+      const a = id ? byId.get(id) : undefined;
+      return a ? (lang === 'zh' ? a.name : a.nameEn || a.name) : s.xferLabel;
+    };
+  }, [accounts, lang, s.xferLabel]);
 
   const groups = useMemo<DayGroup[]>(() => {
     const sorted = [...entries].sort((a, b) => b.ts - a.ts);
@@ -82,16 +87,25 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
   }, [entries, lang, s]);
 
   // reimburse/refund badges — alpha tints over the card so they hold up in dark mode
-  const badgeTones = {
-    pending: { bg: t.stamen + '2E', fg: t.isDark ? t.stamen : '#9A7B45' },
-    done: { bg: t.leaf + '30', fg: t.leafDeep },
-    refund: { bg: t.hibiscus + '26', fg: t.isDark ? t.hibiscusSoft : t.hibiscusDeep },
-  };
+  const badgeTones = useMemo(
+    () => ({
+      pending: { bg: t.stamen + '2E', fg: t.isDark ? t.stamen : '#9A7B45' },
+      done: { bg: t.leaf + '30', fg: t.leafDeep },
+      refund: { bg: t.hibiscus + '26', fg: t.isDark ? t.hibiscusSoft : t.hibiscusDeep },
+    }),
+    [t],
+  );
 
-  const Badge = ({ tone, text }: { tone: keyof typeof badgeTones; text: string }) => (
-    <View style={[styles.badge, { backgroundColor: badgeTones[tone].bg }]}>
-      <Text style={[styles.badgeText, { color: badgeTones[tone].fg }]}>{text}</Text>
-    </View>
+  // rendered as a plain call, not <Badge/>: declaring a component inside the
+  // render body gives it a new identity every pass, so React unmounts and
+  // remounts the badge subtree on each row render instead of updating it
+  const badge = useCallback(
+    (tone: keyof typeof badgeTones, text: string) => (
+      <View style={[styles.badge, { backgroundColor: badgeTones[tone].bg }]}>
+        <Text style={[styles.badgeText, { color: badgeTones[tone].fg }]}>{text}</Text>
+      </View>
+    ),
+    [badgeTones],
   );
 
   const flatData = useMemo<FlatItem[]>(() => {
@@ -177,9 +191,9 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
           <View style={styles.mid}>
             <View style={styles.catRow}>
               <Text style={[styles.cat, { color: t.ink }]}>{catName(c, lang)}</Text>
-              {d.rb === 'pending' && <Badge tone="pending" text={s.rbPending} />}
-              {d.rb === 'done' && <Badge tone="done" text={s.rbDone} />}
-              {!!d.refund && <Badge tone="refund" text={s.markRefund} />}
+              {d.rb === 'pending' && badge('pending', s.rbPending)}
+              {d.rb === 'done' && badge('done', s.rbDone)}
+              {!!d.refund && badge('refund', s.markRefund)}
             </View>
             {!!d.note && (
               <Text style={[styles.note, { color: t.inkSoft }]} numberOfLines={1}>
@@ -196,7 +210,7 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
         </Tap>
       </SwipeableRow>
     );
-  }, [t, s, lang, customCats, rowStyle, onPress, onLongPress, onDelete, onEdit, acctName]);
+  }, [t, s, lang, customCats, rowStyle, onPress, onLongPress, onDelete, onEdit, acctName, badge]);
 
   const renderItem = useCallback(({ item }: { item: FlatItem }) => {
     if (item.type === 'header') {

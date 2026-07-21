@@ -119,6 +119,9 @@ export const LedgerScreen = observer(function LedgerScreen() {
   const [toast, setToast] = useState<{ key: number; msg: string; undo?: () => void } | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQ, setSearchQ] = useState('');
+  // The input stays instant; the (whole-ledger) filter runs on this trailing
+  // value so typing doesn't re-scan every entry on every keystroke.
+  const [searchTerm, setSearchTerm] = useState('');
   const [markId, setMarkId] = useState<string | null>(null);
   const [burst, setBurst] = useState<number | null>(null);
   const searchRef = useRef<TextInput>(null);
@@ -130,12 +133,17 @@ export const LedgerScreen = observer(function LedgerScreen() {
   );
   // searching spans ALL months (you rarely remember which month a thing was
   // in) — only ledger scope is kept; the day groups carry the dates anyway
+  useEffect(() => {
+    const id = setTimeout(() => setSearchTerm(searchQ), 180);
+    return () => clearTimeout(id);
+  }, [searchQ]);
+
   const listEntries = useMemo(
     () =>
-      searchQ
-        ? liveAll.filter((d) => (!curLedger || d.ledger === curLedger) && matchesSearch(d, searchQ, customCats, lang))
+      searchTerm
+        ? liveAll.filter((d) => (!curLedger || d.ledger === curLedger) && matchesSearch(d, searchTerm, customCats, lang))
         : cycleEntries,
-    [cycleEntries, liveAll, curLedger, searchQ, customCats, lang],
+    [cycleEntries, liveAll, curLedger, searchTerm, customCats, lang],
   );
   const exp = useMemo(() => cycleEntries.filter((d) => d.io === 'exp').reduce((a, d) => a + d.amt, 0), [cycleEntries]);
   const inc = useMemo(() => cycleEntries.filter((d) => d.io === 'inc').reduce((a, d) => a + d.amt, 0), [cycleEntries]);
@@ -204,6 +212,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
   const closeSearch = useCallback(() => {
     setSearchOpen(false);
     setSearchQ('');
+    setSearchTerm('');
   }, []);
 
   useWebKeyboard(
@@ -289,7 +298,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
               columns={responsive.columns}
               onPress={setDetailId}
               onLongPress={setMarkId}
-              emptyText={searchQ ? s.noResult : undefined}
+              emptyText={searchTerm ? s.noResult : undefined}
               header={
                 <>
                   {!searchQ && (

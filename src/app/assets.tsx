@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TextInput, Pressable, ScrollView } from 'react-
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { observer } from '@legendapp/state/react';
 import { store$, addAsset, removeAsset } from '@/store/ledger';
-import { acctBalance, netWorthParts } from '@/domain/networth';
+import { acctBalances, netWorthParts } from '@/domain/networth';
 import { fmt } from '@/domain/money';
 import { useTheme } from '@/theme/ThemeContext';
 import { Flower } from '@/components/Flower';
@@ -20,6 +20,8 @@ export default observer(function AssetsScreen() {
   const assets = store$.assets.get();
   const loans = store$.loans.get();
   const p = netWorthParts(accounts, data, assets, loans);
+  // one ledger pass for the account list below, not one per row
+  const balances = acctBalances(accounts, data);
   const hide = store$.settings.hideAmounts.get() === true;
   const m = (v: number) => (hide ? '****' : fmt(v, lang));
 
@@ -63,7 +65,7 @@ export default observer(function AssetsScreen() {
 
           <Text style={[styles.sectionHead, { color: t.inkSoft }]}>{s.setAccounts}</Text>
           {accounts.map((a) => {
-            const bal = acctBalance(a.id, accounts, data);
+            const bal = balances.get(a.id) ?? 0;
             const debt = a.kind === 'credit' && bal < 0;
             return (
               <View key={a.id} style={[styles.row, { backgroundColor: t.card }]}>

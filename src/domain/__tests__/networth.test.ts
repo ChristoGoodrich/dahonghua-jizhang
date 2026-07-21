@@ -1,4 +1,4 @@
-import { acctBalance, totalAccountBalance, loanRemaining, netWorthParts } from '../networth';
+import { acctBalance, acctBalances, totalAccountBalance, loanRemaining, netWorthParts } from '../networth';
 import type { Account, Asset, Entry, Loan } from '../types';
 
 const accounts: Account[] = [
@@ -113,5 +113,39 @@ describe('netWorthParts with transactional credit accounts', () => {
     expect(after.asset).toBe(300); // cash 500-200
     expect(after.liab).toBe(0); // visa -200+200 = 0
     expect(after.net).toBe(300); // unchanged
+  });
+});
+
+// The batch form exists so the accounts screen and net-worth card stop being
+// O(accounts × entries); it must agree with the single-account form exactly.
+describe('acctBalances (batch)', () => {
+  it('matches acctBalance for every account', () => {
+    const batch = acctBalances(accounts, data);
+    for (const a of accounts) {
+      expect(batch.get(a.id)).toBe(acctBalance(a.id, accounts, data));
+    }
+  });
+
+  it('honours the asOf cutoff like the single-account form', () => {
+    const batch = acctBalances(accounts, data, 2);
+    for (const a of accounts) {
+      expect(batch.get(a.id)).toBe(acctBalance(a.id, accounts, data, 2));
+    }
+  });
+
+  it('handles transfers, fees and discounts on both sides', () => {
+    const xfer: Entry[] = [
+      { id: 'x', ts: 1, io: 'xfer', cat: 'transfer', amt: 100, acct: 'default', acctTo: 'card', fee: 5, discount: 2 },
+    ];
+    const batch = acctBalances(accounts, xfer);
+    expect(batch.get('default')).toBe(100 - 100 - 5); // principal + fee leave
+    expect(batch.get('card')).toBe(0 + 100 + 2); // principal + discount arrive
+  });
+
+  it('ignores entries pointing at an account that no longer exists', () => {
+    const orphan: Entry[] = [{ id: 'o', ts: 1, io: 'exp', cat: 'food', amt: 40, acct: 'gone' }];
+    const batch = acctBalances(accounts, orphan);
+    expect(batch.get('default')).toBe(100);
+    expect(batch.has('gone')).toBe(false);
   });
 });
