@@ -126,19 +126,3 @@ export interface Tags {
   ledger: string[];
 }
 
-export type FamilyRole = 'owner' | 'admin' | 'member';
-
-export interface FamilyMember {
-  userId: string;
-  name: string;
-  role: FamilyRole;
-  joinedAt: number;
-}
-
-export interface FamilyGroup {
-  id: string;
-  name: string;
-  members: FamilyMember[];
-  createdBy: string;
-  createdAt: number;
-}

@@ -6,6 +6,8 @@
 // (`@/store/ledger`) and acts as the boot composition root (`hydrate`).
 import { store$, startAutosave, loadPersisted, wireDisplaySymbol } from './state';
 import { runSubscriptions } from './subscriptions';
+import { loadAnalytics } from '@/util/analytics';
+import { runAutoBackup } from '@/util/backup';
 
 export * from './state';
 export * from './accounts';
@@ -23,5 +25,12 @@ export async function hydrate(): Promise<void> {
   store$.hydrated.set(true);
   wireDisplaySymbol();
   startAutosave();
+  // trackEvent() drops everything until the store is loaded, so this has to
+  // happen before anything can be recorded
+  await loadAnalytics().catch(() => {});
+  // snapshot the restored ledger before this session can change it, honouring
+  // the user's auto-backup toggle/frequency
+  const st = store$.settings.peek();
+  runAutoBackup({ enabled: st.autoBackup, frequency: st.backupFrequency, maxBackups: st.maxBackups }).catch(() => {});
   runSubscriptions(); // catch up any subscription charges missed while away
 }
