@@ -39,7 +39,7 @@ export function Btn({ label, onPress, variant = 'primary', tone, gradient, leadi
         variant === 'ghost' && [styles.ghost, { borderColor: t.line, backgroundColor: t.card }],
         // solid base under the gradient: keeps Android elevation happy (it
         // needs an opaque bg) and the button legible if the SVG ever fails
-        primary && [shadow(t, 'glow'), { shadowColor: gTo, backgroundColor: gFrom }],
+        primary && [shadow(t, 'glow', gTo), { backgroundColor: gFrom }],
         disabled && { opacity: 0.45 },
         style,
       ]}

@@ -6,7 +6,7 @@ import { useWebKeyboard } from '@/hooks/useWebKeyboard';
 import { useResponsive } from '@/hooks/useResponsive';
 import { useAnimatedValue } from '@/hooks/useAnimatedValue';
 import { observer } from '@legendapp/state/react';
-import { store$, patchSettings } from '@/store/ledger';
+import { store$ } from '@/store/ledger';
 import { useTheme } from '@/theme/ThemeContext';
 import { Flower } from '@/components/Flower';
 import { I18N } from '@/i18n';
@@ -27,8 +27,10 @@ import { BudgetPot } from '@/features/budget/BudgetPot';
 import { InsightBanner } from '@/features/budget/InsightBanner';
 import { CalendarView } from '@/features/calendar/CalendarView';
 import { StatsView } from '@/features/stats/StatsView';
-import { GardenView, GOAL_DEFAULT } from '@/features/garden/GardenView';
+import { AssetsView } from '@/features/assets/AssetsView';
+import { MeView } from '@/features/me/MeView';
 import { BottomNav, useNavBottomPad } from '@/features/nav/BottomNav';
+import { NavIcon } from '@/features/nav/NavIcon';
 import { tapHaptic } from '@/util/haptics';
 import { bootParam, NO_ANIM } from '@/util/boot';
 import { trackEvent, AnalyticsEvents } from '@/util/analytics';
@@ -39,10 +41,16 @@ import { RAD, shadow } from '@/theme/tokens';
 import { Toast } from '@/components/Toast';
 import { PetalBurst } from '@/components/PetalBurst';
 
-type Tab = 'list' | 'cal' | 'stats' | 'wall';
+type Tab = 'list' | 'stats' | 'assets' | 'me';
+/** The 明细 tab reads the same entries two ways. */
+type ListMode = 'list' | 'cal';
 
 // Web deep-link bootstrap (?tab=stats, ?sheet=1) — see util/boot.
-const BOOT_TAB: Tab | null = (['list', 'cal', 'stats', 'wall'] as const).find((k) => k === bootParam('tab')) ?? null;
+// ?tab=cal / ?tab=wall predate the 4-tab reshuffle; keep them working.
+const BOOT_RAW = bootParam('tab');
+const BOOT_TAB: Tab | null =
+  BOOT_RAW === 'cal' ? 'list' : BOOT_RAW === 'wall' ? 'me' : (['list', 'stats', 'assets', 'me'] as const).find((k) => k === BOOT_RAW) ?? null;
+const BOOT_MODE: ListMode = BOOT_RAW === 'cal' ? 'cal' : 'list';
 const BOOT_SHEET = bootParam('sheet') === '1';
 
 /** Remounts with a `key` per tab — content fades in and settles upward. */
@@ -77,7 +85,7 @@ function MonthNav({ label, onPrev, onNext, prevLabel, nextLabel }: {
       hitSlop={8}
       accessibilityRole="button"
       accessibilityLabel={a11y}
-      style={[styles.monthNavBtn, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'xs')]}
+      style={[styles.monthNavBtn, { backgroundColor: t.card, borderColor: t.line }]}
     >
       <Icon name={dir} color={t.inkSoft} size={15} strokeWidth={2.2} />
     </Tap>
@@ -109,6 +117,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
 
   const [anchor, setAnchor] = useState(() => new Date());
   const [tab, setTab] = useState<Tab>(BOOT_TAB ?? 'list');
+  const [listMode, setListMode] = useState<ListMode>(BOOT_MODE);
   const [sheetOpen, setSheetOpen] = useState(BOOT_SHEET);
   const [editId, setEditId] = useState<string | null>(null);
   // pre-picked date for a new entry (calendar "补记这天"); null = now
@@ -246,27 +255,33 @@ export const LedgerScreen = observer(function LedgerScreen() {
           </View>
           <View style={styles.topBtns}>
             <Tap
-              style={[styles.iconBtn, { borderColor: t.line, backgroundColor: t.card }, shadow(t, 'xs')]}
-              scaleTo={0.88}
+              style={[styles.iconBtn, { borderColor: t.line, backgroundColor: t.card }]}
               onPress={searchOpen ? closeSearch : openSearch}
               accessibilityRole="button"
               accessibilityLabel={s.a11ySearch}
             >
               <Icon name="search" color={searchOpen ? t.hibiscus : t.inkSoft} size={17} />
             </Tap>
-            <Tap
-              style={[styles.iconBtn, { borderColor: t.line, backgroundColor: t.card }, shadow(t, 'xs')]}
-              scaleTo={0.88}
-              onPress={() => router.push('/settings')}
-              accessibilityRole="button"
-              accessibilityLabel={s.setTitle}
-            >
-              <Icon name="sliders" color={t.inkSoft} size={17} />
-            </Tap>
+            {/* the calendar is a *view* of the ledger, not a destination — it
+                rides here instead of eating a tab slot */}
+            {tab === 'list' && (
+              <Tap
+                style={[
+                  styles.iconBtn,
+                  { borderColor: listMode === 'cal' ? t.hibiscus : t.line, backgroundColor: listMode === 'cal' ? t.tint : t.card },
+                ]}
+                onPress={() => setListMode((m) => (m === 'cal' ? 'list' : 'cal'))}
+                accessibilityRole="button"
+                accessibilityState={{ selected: listMode === 'cal' }}
+                accessibilityLabel={listMode === 'cal' ? s.a11yListToggle : s.a11yCalToggle}
+              >
+                <NavIcon name={listMode === 'cal' ? 'list' : 'cal'} color={listMode === 'cal' ? t.hibiscus : t.inkSoft} size={18} />
+              </Tap>
+            )}
           </View>
         </View>
 
-        {searchOpen && tab === 'list' && (
+        {searchOpen && tab === 'list' && listMode === 'list' && (
           <View style={styles.searchWrap}>
             <View style={[styles.searchBar, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'xs')]}>
               <Icon name="search" color={t.inkSoft} size={17} />
@@ -289,8 +304,8 @@ export const LedgerScreen = observer(function LedgerScreen() {
           </View>
         )}
 
-        <TabFade key={tab}>
-          {tab === 'list' && (
+        <TabFade key={`${tab}${listMode}`}>
+          {tab === 'list' && listMode === 'list' && (
             <EntryList
               entries={listEntries}
               customCats={customCats}
@@ -331,7 +346,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
               }
             />
           )}
-          {tab === 'cal' && (
+          {tab === 'list' && listMode === 'cal' && (
             <>
               <MonthNav
                 label={monthLabel}
@@ -376,15 +391,8 @@ export const LedgerScreen = observer(function LedgerScreen() {
               }
             />
           )}
-          {tab === 'wall' && (
-            <GardenView
-              count={cycleEntries.length}
-              streak={streak}
-              lang={lang}
-              goal={settings.gardenGoal ?? GOAL_DEFAULT}
-              onGoalChange={(g) => patchSettings({ gardenGoal: g })}
-            />
-          )}
+          {tab === 'assets' && <AssetsView lang={lang} />}
+          {tab === 'me' && <MeView lang={lang} count={cycleEntries.length} streak={streak} />}
         </TabFade>
       </SafeAreaView>
 
@@ -392,7 +400,8 @@ export const LedgerScreen = observer(function LedgerScreen() {
 
       <Tap
         style={[styles.fab, { bottom: navPad + 30, backgroundColor: t.hibiscus, borderColor: t.card }, shadow(t, 'glow')]}
-        scaleTo={0.86}
+        feedback="both"
+        scaleTo={0.9}
         onPress={openNew}
         accessibilityRole="button"
         accessibilityLabel={s.a11yAdd}

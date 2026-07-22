@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, FlatList, ScrollView } from 'react-native';
 import { useTheme } from '@/theme/ThemeContext';
 import { Flower } from '@/components/Flower';
 import { Tap } from '@/components/ui/Tap';
-import { RAD, TABULAR, shadow } from '@/theme/tokens';
+import { RAD, TABULAR } from '@/theme/tokens';
 import { catOf, catName } from '@/domain/cats';
 import { fmt, fmtNum } from '@/domain/money';
 import { store$ } from '@/store/ledger';
@@ -127,11 +127,9 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
     return items;
   }, [groups, columns]);
 
-  const rowStyle = useMemo(() => [
-    styles.row,
-    { backgroundColor: t.card, borderColor: t.line },
-    shadow(t, 'xs'),
-  ], [t]);
+  // no drop shadow: fifty stacked cards each casting one turns the list into
+  // grey mush — the card/paper contrast plus the hairline is the separation
+  const rowStyle = useMemo(() => [styles.row, { backgroundColor: t.card, borderColor: t.line }], [t]);
 
   // Single-column only: rows have known heights so we can skip measurement. For
   // multi-column (tablet) the prop is omitted entirely (see the FlatList below) —

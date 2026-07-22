@@ -6,7 +6,7 @@ import { catOf, catName } from '@/domain/cats';
 import { fmtShort } from '@/domain/money';
 import { useTheme } from '@/theme/ThemeContext';
 import { Tap } from '@/components/ui/Tap';
-import { RAD, TABULAR, shadow } from '@/theme/tokens';
+import { RAD, TABULAR } from '@/theme/tokens';
 import type { Lang } from '@/i18n';
 
 /** Horizontal one-tap quick-log chips for saved templates (home, list tab). */
@@ -26,7 +26,7 @@ export const TemplateChips = observer(function TemplateChips({ lang, onLogged }:
             haptic
             scaleTo={0.93}
             onPress={() => { logTemplate(tp.id); onLogged(); }}
-            style={[styles.chip, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'xs')]}
+            style={[styles.chip, { backgroundColor: t.card, borderColor: t.line }]}
           >
             <View style={[styles.emo, { backgroundColor: c.c + (t.isDark ? '30' : '1F') }]}>
               <Text style={styles.emoText}>{c.e}</Text>

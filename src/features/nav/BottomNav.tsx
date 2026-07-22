@@ -8,12 +8,15 @@ import { I18N, type Lang } from '@/i18n';
 import { tapHaptic } from '@/util/haptics';
 import { NavIcon } from './NavIcon';
 
-export type NavKey = 'list' | 'cal' | 'stats' | 'wall';
+// 明细 / 统计 are the two reading views of the ledger; 资产 / 我的 are the two
+// hubs (money you hold · everything else). The calendar moved into 明细's own
+// header toggle and the garden into 我的, which freed these two slots.
+export type NavKey = 'list' | 'stats' | 'assets' | 'me';
 
-const ORDER: NavKey[] = ['list', 'cal', 'stats', 'wall'];
+const ORDER: NavKey[] = ['list', 'stats', 'assets', 'me'];
 // Split 2 | (center FAB) | 2 — Cookie-style raised center button.
-const LEFT: NavKey[] = ['list', 'cal'];
-const RIGHT: NavKey[] = ['stats', 'wall'];
+const LEFT: NavKey[] = ['list', 'stats'];
+const RIGHT: NavKey[] = ['assets', 'me'];
 
 const PILL_W = 46;
 const MARGIN = 16; // bar marginHorizontal

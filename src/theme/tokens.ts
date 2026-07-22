@@ -87,7 +87,10 @@ export function makeTheme(themeKey: ThemeKey = 'default', dark = false): Theme {
     gradTo: base.hibiscusDeep,
     shadow: dark ? '#000000' : '#6B4632',
     glow: base.hibiscusDeep,
-    overlay: dark ? 'rgba(0,0,0,0.55)' : 'rgba(43,38,34,0.42)',
+    // warm ink rather than black — a neutral-black scrim reads as a cheap
+    // dimmer over the paper palette; this keeps the room lit while the sheet
+    // still separates cleanly
+    overlay: dark ? 'rgba(10,8,7,0.58)' : 'rgba(58,44,36,0.32)',
     isDark: dark,
   };
 }
@@ -115,32 +118,37 @@ export const TABULAR: TextStyle = { fontVariant: ['tabular-nums'] };
 /** Small tracked section label (Chinese has no caps, so tracking does the work). */
 export const LABEL_TRACKED: TextStyle = { fontSize: 12, fontWeight: '700', letterSpacing: 1 };
 
-/** Theme-aware soft shadows. Border hairlines still come from `t.line`. */
-export function shadow(t: Theme, level: 'xs' | 'sm' | 'md' | 'lg' | 'glow'): ViewStyle {
+/** `#RRGGBB` → `rgba(r,g,b,a)` — box-shadow needs the alpha inside the color.
+ *  Defaults to black so a partial theme (test mocks) still yields a valid CSS
+ *  color instead of throwing mid-render. */
+function rgba(hex: string | undefined, a: number): string {
+  const h = (hex ?? '#000000').replace('#', '');
+  const n = parseInt(h.length === 3 ? h.replace(/./g, (c) => c + c) : h, 16);
+  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
+}
+
+/** Theme-aware soft shadows. Border hairlines still come from `t.line`.
+ *
+ *  Emitted as `boxShadow`, never `elevation`: Android's elevation shadow is a
+ *  hard grey drop that ignores shadowColor/blur, so the warm, wide, barely-there
+ *  shadow this palette is built on only survives as a real box-shadow (RN 0.85 +
+ *  react-native-web 0.21 both take the CSS string on every platform). Keep the
+ *  levels *quiet* — depth here comes from the paper/card contrast and the
+ *  hairline border; the shadow is only there to lift a surface off the page. */
+export function shadow(t: Theme, level: 'xs' | 'sm' | 'md' | 'lg' | 'glow', glowColor?: string): ViewStyle {
   if (level === 'glow') {
-    return {
-      shadowColor: t.glow,
-      shadowOpacity: t.isDark ? 0.5 : 0.35,
-      shadowRadius: 18,
-      shadowOffset: { width: 0, height: 5 },
-      elevation: 12,
-    };
+    // accent-tinted, not a dark drop — a primary button should feel warm, not heavy
+    return { boxShadow: `0px 5px 16px ${rgba(glowColor ?? t.glow, t.isDark ? 0.34 : 0.2)}` };
   }
   const table = {
-    xs: { opacity: t.isDark ? 0.3 : 0.05, radius: 5, y: 2, elevation: 1 },
-    sm: { opacity: t.isDark ? 0.35 : 0.08, radius: 9, y: 4, elevation: 3 },
-    md: { opacity: t.isDark ? 0.4 : 0.12, radius: 14, y: 7, elevation: 7 },
-    // floating layers (nav bar, sheets, toast): tight offset + wide blur reads
-    // as ambient depth instead of a hard drop that the viewport edge clips off
-    lg: { opacity: t.isDark ? 0.55 : 0.18, radius: 24, y: 8, elevation: 12 },
+    xs: { a: t.isDark ? 0.28 : 0.045, blur: 4, y: 1 },
+    sm: { a: t.isDark ? 0.32 : 0.06, blur: 10, y: 3 },
+    md: { a: t.isDark ? 0.38 : 0.08, blur: 20, y: 7 },
+    // floating layers (nav bar, sheets, toast): wide blur reads as ambient depth
+    // instead of a hard drop that the viewport edge clips off
+    lg: { a: t.isDark ? 0.5 : 0.12, blur: 30, y: 12 },
   }[level];
-  return {
-    shadowColor: t.shadow,
-    shadowOpacity: table.opacity,
-    shadowRadius: table.radius,
-    shadowOffset: { width: 0, height: table.y },
-    elevation: table.elevation,
-  };
+  return { boxShadow: `0px ${table.y}px ${table.blur}px ${rgba(t.shadow, table.a)}` };
 }
 
 /** Shared spring characters — snappy for touch feedback, soft for layout moves. */

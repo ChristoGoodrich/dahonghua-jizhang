@@ -43,7 +43,7 @@ export const SummaryCard = observer(function SummaryCard({ exp, inc, monthLabel,
       hitSlop={8}
       accessibilityRole="button"
       accessibilityLabel={label}
-      style={[styles.navBtn, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'xs')]}
+      style={[styles.navBtn, { backgroundColor: t.card, borderColor: t.line }]}
     >
       <Icon name={dir} color={t.inkSoft} size={15} strokeWidth={2.2} />
     </Tap>

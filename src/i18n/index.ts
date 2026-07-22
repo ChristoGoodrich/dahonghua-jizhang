@@ -7,7 +7,14 @@ export interface Strings {
   // transfer (转账)
   xfer: string; xferFrom: string; xferTo: string; xferFee: string; xferDiscount: string;
   xferNeedAccts: string; xferLabel: string;
-  list: string; cal: string; stats: string; wall: string;
+  list: string; cal: string; stats: string; wall: string; assets: string; me: string;
+  // tab hubs (资产 / 我的)
+  a11yCalToggle: string; a11yListToggle: string;
+  asAccounts: string; asManage: string; asManageD: string; asOther: string; asOtherD: string;
+  asEmpty: string;
+  meGroupTools: string; meGroupData: string; meGroupMore: string;
+  meGardenSub: string; // %d flowers %d streak
+  meAbout: string; meAboutD: string;
   note: string; save: string; del: string; empty: string;
   deleted: string; undo: string;
   today: string; yesterday: string; langBtn: string; newCat: string; amountPh: string;
@@ -51,6 +58,7 @@ export interface Strings {
   // settings
   setTitle: string; setSub: string;
   setGroupBudget: string; setGroupLook: string; setGroupWallet: string; setGroupTools: string; setGroupData: string; setGroupOther: string;
+  setGroupPref: string; setGroupSafety: string;
   statsMore: string; statsMoreD: string; trend7d: string;
   setBudget: string; setBudgetD: string; setCycle: string; setCycleD: string;
   setTheme: string; setThemeD: string; darkTitle: string; darkDesc: string;
@@ -152,7 +160,14 @@ export const I18N: Record<Lang, Strings> = {
     title: '大红花记账', sub: 'RED BLOSSOM', net: '本月攒下的 · SAVED', exp: '花掉', inc: '进账',
     xfer: '转账', xferFrom: '转出账户', xferTo: '转入账户', xferFee: '手续费', xferDiscount: '优惠',
     xferNeedAccts: '转账需要至少两个账户，先去设置里添加', xferLabel: '转账',
-    list: '明细', cal: '日历', stats: '统计', wall: '集花墙',
+    list: '明细', cal: '日历', stats: '统计', wall: '集花墙', assets: '资产', me: '我的',
+    a11yCalToggle: '切换到日历', a11yListToggle: '切换到明细',
+    asAccounts: '我的账户', asManage: '管理账户', asManageD: '新增、归档、信用卡账单日',
+    asOther: '其他资产 / 负债', asOtherD: '房产、车、公积金…手动登记',
+    asEmpty: '还没有账户，先加一个钱包吧',
+    meGroupTools: '记账工具', meGroupData: '数据与同步', meGroupMore: '更多',
+    meGardenSub: '本月 %d 朵 · 连续 %d 天',
+    meAbout: '关于大红花', meAboutD: '版本、开源许可与致谢',
     note: '备注（可选）', save: '贴朵花', del: '删除这笔', empty: '还没贴花，点下面那朵开始吧',
     deleted: '已删除一笔', undo: '撤销',
     today: '今天', yesterday: '昨天', langBtn: 'EN', newCat: '新建', amountPh: '0',
@@ -193,12 +208,13 @@ export const I18N: Record<Lang, Strings> = {
     streakLabel: '连续贴花',
     wallGoalUp: '增加目标', wallGoalDown: '减少目标',
     setTitle: '设置', setSub: '把大红花调成你的样子',
-    setGroupBudget: '预算与周期', setGroupLook: '个性化', setGroupWallet: '钱包与资产', setGroupTools: '记账工具', setGroupData: '数据与安全', setGroupOther: '其他',
+    setGroupBudget: '预算与周期', setGroupLook: '个性化', setGroupWallet: '钱包与资产', setGroupTools: '记账工具', setGroupData: '数据与备份', setGroupOther: '其他',
+    setGroupPref: '记账偏好', setGroupSafety: '安全与隐私',
     statsMore: '更多分析', statsMoreD: '洞察、报表与月度回顾', trend7d: '近 7 天走势',
     setBudget: '每月预算', setBudgetD: '花盆水位会跟着预算走',
     setCycle: '记账周期起始日', setCycleD: '几号开始算新的一月（默认1号）',
     setTheme: '花色主题', setThemeD: '换个心情', darkTitle: '深色模式', darkDesc: '夜里记账更护眼',
-    langTitle: '语言', langDesc: '中文 / English', dataTitle: '从备份导入', dataDesc: '读取旧版「备份全部数据」的 JSON',
+    langTitle: '语言', langDesc: '中文 / English', dataTitle: '导出与导入', dataDesc: '导出表格或整份备份；也可读取旧版「备份全部数据」的 JSON',
     importBtn: '选择备份文件', back: '返回',
     billImportNav: '导入账单', billImportNavD: '从支付宝 / 微信 CSV 导入',
     billImportTitle: '导入账单', billImportSub: '支持支付宝、微信导出的 CSV 账单',
@@ -278,7 +294,14 @@ export const I18N: Record<Lang, Strings> = {
     title: 'Red Blossom', sub: 'RED BLOSSOM', net: 'SAVED THIS MONTH', exp: 'Spent', inc: 'In',
     xfer: 'Transfer', xferFrom: 'From', xferTo: 'To', xferFee: 'Fee', xferDiscount: 'Bonus',
     xferNeedAccts: 'Transfers need at least two accounts — add one in Settings', xferLabel: 'Transfer',
-    list: 'Activity', cal: 'Calendar', stats: 'Stats', wall: 'Garden',
+    list: 'Activity', cal: 'Calendar', stats: 'Stats', wall: 'Garden', assets: 'Assets', me: 'Me',
+    a11yCalToggle: 'Switch to calendar', a11yListToggle: 'Switch to activity',
+    asAccounts: 'My accounts', asManage: 'Manage accounts', asManageD: 'Add, archive, card statement days',
+    asOther: 'Other assets / debts', asOtherD: 'Property, car, funds — tracked by hand',
+    asEmpty: 'No accounts yet — add your first wallet',
+    meGroupTools: 'Tools', meGroupData: 'Data & sync', meGroupMore: 'More',
+    meGardenSub: '%d flowers this month · %d-day streak',
+    meAbout: 'About Red Blossom', meAboutD: 'Version, licences & credits',
     note: 'Note (optional)', save: 'Add a flower', del: 'Delete entry', empty: 'No flowers yet — tap the bloom below to start',
     deleted: 'Entry deleted', undo: 'Undo',
     today: 'Today', yesterday: 'Yesterday', langBtn: '中', newCat: 'New', amountPh: '0',
@@ -319,12 +342,13 @@ export const I18N: Record<Lang, Strings> = {
     streakLabel: 'Streak',
     wallGoalUp: 'Increase goal', wallGoalDown: 'Decrease goal',
     setTitle: 'Settings', setSub: 'Make Red Blossom yours',
-    setGroupBudget: 'Budget & cycle', setGroupLook: 'Appearance', setGroupWallet: 'Wallet & assets', setGroupTools: 'Tools', setGroupData: 'Data & security', setGroupOther: 'More',
+    setGroupBudget: 'Budget & cycle', setGroupLook: 'Appearance', setGroupWallet: 'Wallet & assets', setGroupTools: 'Tools', setGroupData: 'Data & backup', setGroupOther: 'More',
+    setGroupPref: 'Entry preferences', setGroupSafety: 'Security & privacy',
     statsMore: 'More analysis', statsMoreD: 'Insights, reports & recap', trend7d: 'Last 7 days',
     setBudget: 'Monthly budget', setBudgetD: 'The pot fills against this',
     setCycle: 'Cycle start day', setCycleD: 'Which day a new month begins (default 1st)',
     setTheme: 'Flower theme', setThemeD: 'Switch the mood', darkTitle: 'Dark mode', darkDesc: 'Easier on the eyes at night',
-    langTitle: 'Language', langDesc: '中文 / English', dataTitle: 'Import from backup', dataDesc: "Read the old app's full-backup JSON",
+    langTitle: 'Language', langDesc: '中文 / English', dataTitle: 'Export & import', dataDesc: "Export a sheet or a full backup — or read the old app's backup JSON",
     importBtn: 'Choose backup file', back: 'Back',
     billImportNav: 'Import bills', billImportNavD: 'From an Alipay / WeChat CSV',
     billImportTitle: 'Import bills', billImportSub: 'CSV exports from Alipay & WeChat Pay',

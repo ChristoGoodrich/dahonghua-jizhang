@@ -1,9 +1,12 @@
 import React from 'react';
-import Svg, { Rect, Line, Circle } from 'react-native-svg';
-import type { NavKey } from './BottomNav';
+import Svg, { Rect, Line, Circle, Path } from 'react-native-svg';
+
+/** Nav keys plus the two glyphs that live outside the bar: the calendar toggle
+ *  in the list header and the garden mark on the 我的 hub. */
+export type NavIconName = 'list' | 'cal' | 'stats' | 'assets' | 'me' | 'wall';
 
 interface Props {
-  name: NavKey;
+  name: NavIconName;
   color: string;
   size?: number;
 }
@@ -43,7 +46,16 @@ export function NavIcon({ name, color, size = 22 }: Props) {
         </>
       )}
 
-      {name === 'wall' && (
+      {name === 'assets' && (
+        <>
+          {/* wallet: pouch + fold-over flap + clasp */}
+          <Rect x={3.5} y={6.5} width={17} height={13} rx={3.4} {...line} />
+          <Path d="M3.5 10.5 H14 a2 2 0 0 0 2 -2 V5.5" {...line} />
+          <Circle cx={16.5} cy={13} r={1.4} fill={color} stroke="none" />
+        </>
+      )}
+
+      {(name === 'me' || name === 'wall') && (
         <>
           {/* five-petal hibiscus — the brand mark */}
           {[-90, -18, 54, 126, 198].map((deg) => {

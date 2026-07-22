@@ -4,7 +4,6 @@ import { useRouter } from 'expo-router';
 import { useTheme } from '@/theme/ThemeContext';
 import { Tap } from '@/components/ui/Tap';
 import { Icon } from '@/components/ui/Icon';
-import { shadow } from '@/theme/tokens';
 import { Flower } from '@/components/Flower';
 import { store$ } from '@/store/ledger';
 import { I18N } from '@/i18n';
@@ -24,7 +23,7 @@ export function ScreenHeader({ title, subtitle, right }: { title: string; subtit
           scaleTo={0.92}
           accessibilityRole="button"
           accessibilityLabel={s.back}
-          style={[styles.back, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'xs')]}
+          style={[styles.back, { backgroundColor: t.card, borderColor: t.line }]}
         >
           <Icon name="chevL" color={t.hibiscus} size={15} strokeWidth={2.2} />
           <Text style={[styles.backText, { color: t.hibiscus }]}>{s.back}</Text>
