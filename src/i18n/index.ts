@@ -119,6 +119,7 @@ export interface Strings {
   setReview: string; setReviewD: string; reviewSaved: string; reviewActiveDays: string; reviewShare: string;
   // app lock
   setLock: string; setLockD: string; lockEnable: string; lockDisable: string; lockTitle: string; lockUnlock: string; lockPrompt: string;
+  lockRetry: string; lockFailed: string; lockUnavailable: string;
   // cloud sync / account
   setSync: string; setSyncD: string; syncNotConfigured: string; syncEmail: string; syncSendCode: string;
   syncCode: string; syncVerify: string; syncSignedInAs: string; syncSignOut: string; syncCodeSent: string; syncFailed: string;
@@ -255,6 +256,7 @@ export const I18N: Record<Lang, Strings> = {
     subcatAdd: '＋ 子分类', subcatName: '子分类名（如 早餐）', subcatMgr: '管理子分类', subcatHint: '长按分类管理子分类',
     setReview: '本月回顾', setReviewD: '你的花园小结', reviewSaved: '这个月攒下', reviewActiveDays: '记账天数', reviewShare: '分享战报',
     setLock: '密码锁', setLockD: '打开 App 需验证身份（指纹/面容/设备密码）', lockEnable: '开启', lockDisable: '关闭', lockTitle: '大红花已锁定', lockUnlock: '解锁', lockPrompt: '验证身份解锁大红花记账',
+    lockRetry: '重试', lockFailed: '验证未通过，再试一次', lockUnavailable: '暂时无法验证，请稍后重试',
     setSync: '云同步 / 账号', setSyncD: '登录后多设备实时同步', syncNotConfigured: '未配置云后端。按 SYNC_SETUP.md 创建 Supabase 项目并填入密钥后即可启用。', syncEmail: '邮箱', syncSendCode: '发送验证码', syncCode: '验证码（查收邮箱）', syncVerify: '登录', syncSignedInAs: '已登录', syncSignOut: '退出登录', syncCodeSent: '验证码已发送 🌺', syncFailed: '出错了，请重试',
     syncSynced: '已同步 🌺', syncSyncing: '同步中…', syncError: '同步出错，稍后自动重试',
     exportCsv: '导出 CSV', exportBackup: '导出备份 (JSON)', exportDone: '已导出 🌺',
@@ -380,6 +382,7 @@ export const I18N: Record<Lang, Strings> = {
     subcatAdd: '＋ Subcategory', subcatName: 'Subcategory (e.g. Breakfast)', subcatMgr: 'Manage subcategories', subcatHint: 'Long-press a category to manage',
     setReview: 'Month in review', setReviewD: 'Your garden recap', reviewSaved: 'Saved this month', reviewActiveDays: 'Active days', reviewShare: 'Share recap',
     setLock: 'App lock', setLockD: 'Require auth to open (biometrics / device passcode)', lockEnable: 'Enable', lockDisable: 'Disable', lockTitle: 'Red Blossom is locked', lockUnlock: 'Unlock', lockPrompt: 'Authenticate to open Red Blossom',
+    lockRetry: 'Try again', lockFailed: "That didn't match — try again", lockUnavailable: 'Authentication is unavailable right now',
     setSync: 'Cloud sync / account', setSyncD: 'Sign in for real-time multi-device sync', syncNotConfigured: 'No cloud backend configured. Follow SYNC_SETUP.md to create a Supabase project and add the keys to enable it.', syncEmail: 'Email', syncSendCode: 'Send code', syncCode: 'Code (check your email)', syncVerify: 'Sign in', syncSignedInAs: 'Signed in', syncSignOut: 'Sign out', syncCodeSent: 'Code sent 🌺', syncFailed: 'Something went wrong — try again',
     syncSynced: 'Synced 🌺', syncSyncing: 'Syncing…', syncError: 'Sync error — retrying',
     exportCsv: 'Export CSV', exportBackup: 'Export backup (JSON)', exportDone: 'Exported 🌺',
