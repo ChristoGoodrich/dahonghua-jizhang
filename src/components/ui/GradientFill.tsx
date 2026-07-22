@@ -8,6 +8,10 @@ interface Props {
   /** Gradient direction; diagonal reads best on buttons and cards. */
   direction?: 'diagonal' | 'vertical';
   opacity?: number;
+  /** End-stop opacity — set it below `opacity` for a sheen that fades out. */
+  toOpacity?: number;
+  /** Skip the web z-index push (for a highlight that must paint *over* content). */
+  above?: boolean;
 }
 
 /** Absolute-fill SVG gradient — no extra native deps.
@@ -16,20 +20,20 @@ interface Props {
  *  (web defaults the viewport to 300×150; Android under-resolves against the
  *  measured box), but a 1×1 rect scaled by the viewBox cannot drift. Rounded
  *  corners come from the parent's borderRadius + overflow:hidden. */
-export function GradientFill({ from, to, direction = 'diagonal', opacity = 1 }: Props) {
+export function GradientFill({ from, to, direction = 'diagonal', opacity = 1, toOpacity, above }: Props) {
   // web renders all SVG ids in one namespace — make each instance unique
   const id = 'g' + useId().replace(/[^a-zA-Z0-9]/g, '');
   return (
     <Svg
       viewBox="0 0 1 1"
       preserveAspectRatio="none"
-      style={[StyleSheet.absoluteFill, styles.under]}
+      style={[StyleSheet.absoluteFill, above ? null : styles.under]}
       pointerEvents="none"
     >
       <Defs>
         <LinearGradient id={id} x1="0" y1="0" x2={direction === 'diagonal' ? '1' : '0'} y2="1">
           <Stop offset="0" stopColor={from} stopOpacity={opacity} />
-          <Stop offset="1" stopColor={to} stopOpacity={opacity} />
+          <Stop offset="1" stopColor={to} stopOpacity={toOpacity ?? opacity} />
         </LinearGradient>
       </Defs>
       <Rect x="0" y="0" width="1" height="1" fill={`url(#${id})`} />

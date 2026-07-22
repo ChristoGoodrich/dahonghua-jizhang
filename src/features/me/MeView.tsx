@@ -6,7 +6,7 @@ import { store$ } from '@/store/ledger';
 import { useTheme } from '@/theme/ThemeContext';
 import { Flower } from '@/components/Flower';
 import { Tap } from '@/components/ui/Tap';
-import { Icon } from '@/components/ui/Icon';
+import { Icon, type IconName } from '@/components/ui/Icon';
 import { Group, NavRow } from '@/components/ui/Rows';
 import { GOAL_DEFAULT } from '@/features/garden/GardenView';
 import { RAD, TABULAR } from '@/theme/tokens';
@@ -28,6 +28,9 @@ export const MeView = observer(function MeView({ lang, count, streak }: Props) {
   const router = useRouter();
   const goal = store$.settings.gardenGoal.get() ?? GOAL_DEFAULT;
   const pct = Math.min(1, goal > 0 ? count / goal : 0);
+  // every row wears the same stroke and the same accent — that uniformity is
+  // what makes a long options list read as one surface
+  const glyph = (name: IconName) => <Icon name={name} color={t.hibiscus} size={19} strokeWidth={1.7} />;
 
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -55,30 +58,31 @@ export const MeView = observer(function MeView({ lang, count, streak }: Props) {
       </Tap>
 
       <Group title={s.meGroupTools}>
-        <NavRow lead="🌱" title={s.setBudgetNav} desc={s.setBudgetNavD} onPress={() => router.push('/budget')} />
-        <NavRow lead="⚡" title={s.setTemplates} desc={s.setTemplatesD} onPress={() => router.push('/templates')} />
-        <NavRow lead="🏷️" title={s.setTags} desc={s.setTagsD} onPress={() => router.push('/tags')} />
-        <NavRow lead="🔁" title={s.setSubs} desc={s.setSubsD} onPress={() => router.push('/subs')} />
-        <NavRow lead="🧾" title={s.setReimburse} desc={s.setReimburseD} onPress={() => router.push('/reimburse')} last />
+        <NavRow lead={glyph('sprout')} title={s.setBudgetNav} desc={s.setBudgetNavD} onPress={() => router.push('/budget')} />
+        <NavRow lead={glyph('bolt')} title={s.setTemplates} desc={s.setTemplatesD} onPress={() => router.push('/templates')} />
+        <NavRow lead={glyph('tag')} title={s.setTags} desc={s.setTagsD} onPress={() => router.push('/tags')} />
+        <NavRow lead={glyph('repeat')} title={s.setSubs} desc={s.setSubsD} onPress={() => router.push('/subs')} />
+        <NavRow lead={glyph('receipt')} title={s.setReimburse} desc={s.setReimburseD} onPress={() => router.push('/reimburse')} last />
       </Group>
 
       <Group title={s.meGroupData}>
-        <NavRow lead="📥" title={s.billImportNav} desc={s.billImportNavD} onPress={() => router.push('/import-bills')} />
-        <NavRow lead="🔔" title={s.capNav} desc={s.capNavD} onPress={() => router.push('/auto-capture')} />
-        <NavRow lead="☁️" title={s.setSync} desc={s.setSyncD} onPress={() => router.push('/account')} />
-        <NavRow lead="🗄️" title={s.backupAuto} desc={s.backupAutoD} onPress={() => router.push('/backup')} last />
+        <NavRow lead={glyph('download')} title={s.billImportNav} desc={s.billImportNavD} onPress={() => router.push('/import-bills')} />
+        <NavRow lead={glyph('bell')} title={s.capNav} desc={s.capNavD} onPress={() => router.push('/auto-capture')} />
+        <NavRow lead={glyph('cloud')} title={s.setSync} desc={s.setSyncD} onPress={() => router.push('/account')} />
+        <NavRow lead={glyph('archive')} title={s.backupAuto} desc={s.backupAutoD} onPress={() => router.push('/backup')} last />
       </Group>
 
       {/* 洞察 / 报表 / 月度回顾 live under the 统计 tab, next to the numbers they
           explain — repeating them here would just make this list longer. */}
       <Group title={s.meGroupMore}>
+        <NavRow lead={glyph('sliders')} title={s.setTitle} desc={s.setSub} onPress={() => router.push('/settings')} />
         <NavRow
-          lead={<Icon name="sliders" color={t.hibiscus} size={16} />}
-          title={s.setTitle}
-          desc={s.setSub}
-          onPress={() => router.push('/settings')}
+          lead={glyph('mail')}
+          title={lang === 'zh' ? '意见反馈' : 'Feedback'}
+          desc={lang === 'zh' ? '你的建议让大红花更好' : 'Help us improve Red Blossom'}
+          onPress={() => router.push('/feedback')}
+          last
         />
-        <NavRow lead="💌" title={lang === 'zh' ? '意见反馈' : 'Feedback'} desc={lang === 'zh' ? '你的建议让大红花更好' : 'Help us improve Red Blossom'} onPress={() => router.push('/feedback')} last />
       </Group>
     </ScrollView>
   );

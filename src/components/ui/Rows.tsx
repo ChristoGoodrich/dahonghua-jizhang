@@ -21,7 +21,8 @@ export function Group({ title, children, style }: { title?: string; children: Re
 interface RowProps {
   title: string;
   desc?: string;
-  /** Small leading glyph (emoji string or an <Icon/>) shown in a tinted tile. */
+  /** Leading line glyph — an `<Icon/>` in the accent color, never an emoji:
+   *  a column of emoji brings its own clashing palette to every row. */
   lead?: React.ReactNode;
   /** Trailing node — a value, a toggle. Omitted rows that navigate get a chevron. */
   right?: React.ReactNode;
@@ -33,11 +34,7 @@ function RowBody({ title, desc, lead, right, chevron }: RowProps & { chevron: bo
   const t = useTheme();
   return (
     <>
-      {lead != null && (
-        <View style={[styles.lead, { backgroundColor: t.tint }]}>
-          {typeof lead === 'string' ? <Text style={styles.leadText}>{lead}</Text> : lead}
-        </View>
-      )}
+      {lead != null && <View style={styles.lead}>{lead}</View>}
       <View style={styles.mid}>
         <Text style={[styles.title, { color: t.ink }]}>{title}</Text>
         {!!desc && <Text style={[styles.desc, { color: t.inkSoft }]}>{desc}</Text>}
@@ -97,8 +94,7 @@ const styles = StyleSheet.create({
   },
   stack: { paddingVertical: 14, paddingHorizontal: 16, borderBottomWidth: StyleSheet.hairlineWidth },
   rowLast: { borderBottomWidth: 0 },
-  lead: { width: 30, height: 30, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
-  leadText: { fontSize: 16 },
+  lead: { width: 24, alignItems: 'center', justifyContent: 'center' },
   mid: { flex: 1, minWidth: 0 },
   title: { fontSize: 14, fontWeight: '600' },
   desc: { fontSize: 11.5, marginTop: 2, lineHeight: 16 },

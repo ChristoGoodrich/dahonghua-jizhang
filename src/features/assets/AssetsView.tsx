@@ -9,13 +9,14 @@ import { useTheme } from '@/theme/ThemeContext';
 import { Flower } from '@/components/Flower';
 import { EyeToggle } from '@/components/EyeToggle';
 import { Tap } from '@/components/ui/Tap';
-import { Icon } from '@/components/ui/Icon';
+import { Icon, type IconName } from '@/components/ui/Icon';
 import { GradientFill } from '@/components/ui/GradientFill';
 import { Group, NavRow } from '@/components/ui/Rows';
 import { RAD, TABULAR, shadow } from '@/theme/tokens';
 import { I18N, type Lang } from '@/i18n';
 
-const acctEmoji = (kind?: string) => (kind === 'credit' ? '💳' : kind === 'prepaid' ? '🎫' : '👛');
+/** Credit cards get the card glyph; cash and stored-value both read as a wallet. */
+const acctIcon = (kind?: string): IconName => (kind === 'credit' ? 'card' : 'wallet');
 
 /** 资产 tab — everything you hold or owe, one level deep.
  *  Net worth on top, then the live account balances (the number people open the
@@ -31,6 +32,7 @@ export const AssetsView = observer(function AssetsView({ lang }: { lang: Lang })
   const hide = store$.settings.hideAmounts.get() === true;
 
   const m = (v: number) => (hide ? '****' : fmt(v, lang));
+  const glyph = (name: IconName) => <Icon name={name} color={t.hibiscus} size={19} strokeWidth={1.7} />;
   const p = netWorthParts(accounts, data, assets, loans);
   const balances = acctBalances(accounts, data);
   const active = accounts.filter((a) => !a.archived);
@@ -80,7 +82,7 @@ export const AssetsView = observer(function AssetsView({ lang }: { lang: Lang })
               style={[styles.acct, { backgroundColor: t.card, borderColor: t.line }]}
             >
               <View style={[styles.emo, { backgroundColor: t.paperWarm }]}>
-                <Text style={styles.emoText}>{acctEmoji(a.kind)}</Text>
+                <Icon name={acctIcon(a.kind)} color={owed ? t.hibiscus : t.inkSoft} size={19} strokeWidth={1.7} />
               </View>
               <View style={styles.acctMid}>
                 <Text style={[styles.acctName, { color: t.ink }]} numberOfLines={1}>
@@ -100,20 +102,20 @@ export const AssetsView = observer(function AssetsView({ lang }: { lang: Lang })
       )}
 
       <Group>
-        <NavRow lead="🏦" title={s.asManage} desc={s.asManageD} onPress={() => router.push('/accounts')} />
+        <NavRow lead={glyph('wallet')} title={s.asManage} desc={s.asManageD} onPress={() => router.push('/accounts')} />
         <NavRow
-          lead="📄"
+          lead={glyph('layers')}
           title={s.asOther}
           desc={assets.length > 0 ? `${assets.length} · ${s.asOtherD}` : s.asOtherD}
           onPress={() => router.push('/assets')}
         />
         <NavRow
-          lead="🤝"
+          lead={glyph('swap')}
           title={s.setLoans}
           desc={openLoans > 0 ? `${openLoans} · ${s.setLoansD}` : s.setLoansD}
           onPress={() => router.push('/loans')}
         />
-        <NavRow lead="🌏" title={s.setCurrency} desc={s.setCurrencyD} onPress={() => router.push('/currency')} last />
+        <NavRow lead={glyph('globe')} title={s.setCurrency} desc={s.setCurrencyD} onPress={() => router.push('/currency')} last />
       </Group>
     </ScrollView>
   );
@@ -140,7 +142,6 @@ const styles = StyleSheet.create({
     padding: 11, paddingHorizontal: 13, marginBottom: 8,
   },
   emo: { width: 38, height: 38, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-  emoText: { fontSize: 18 },
   acctMid: { flex: 1, minWidth: 0 },
   acctName: { fontSize: 14.5, fontWeight: '600' },
   acctSub: { fontSize: 11.5, marginTop: 2 },

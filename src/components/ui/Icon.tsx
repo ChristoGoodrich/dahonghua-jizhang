@@ -5,7 +5,10 @@ export type IconName =
   | 'search' | 'close' | 'sliders' | 'globe'
   | 'chevL' | 'chevR' | 'plus' | 'minus'
   | 'trash' | 'edit' | 'check' | 'swap'
-  | 'sun' | 'moon' | 'sparkle' | 'receipt' | 'undo';
+  | 'sun' | 'moon' | 'sparkle' | 'receipt' | 'undo'
+  // hub rows — one stroke voice instead of a wall of mismatched emoji
+  | 'sprout' | 'bolt' | 'tag' | 'repeat' | 'download' | 'bell'
+  | 'cloud' | 'archive' | 'mail' | 'wallet' | 'card' | 'layers';
 
 interface Props {
   name: IconName;
@@ -118,6 +121,78 @@ export function Icon({ name, color, size = 20, strokeWidth = 1.8 }: Props) {
         <>
           <Path d="M8.5 5 L4.5 9 L8.5 13" {...line} />
           <Path d="M4.5 9 H14 A5.5 5.5 0 0 1 14 20 H8" {...line} />
+        </>
+      )}
+      {name === 'sprout' && (
+        <>
+          <Path d="M12 20 V11" {...line} />
+          <Path d="M12 11 C12 7.5 9.5 5.5 6 5.5 C6 9 8.5 11 12 11 Z" {...line} />
+          <Path d="M12 12.5 C12 9.8 14 8.2 16.8 8.2 C16.8 10.9 14.8 12.5 12 12.5 Z" {...line} />
+        </>
+      )}
+      {name === 'bolt' && <Path d="M13.5 3.5 L6.5 13 H11.5 L10.5 20.5 L17.5 11 H12.5 Z" {...line} />}
+      {name === 'tag' && (
+        <>
+          <Path d="M11.4 4.2 H18.4 A1.4 1.4 0 0 1 19.8 5.6 V12.6 L11.6 20.2 A1.4 1.4 0 0 1 9.6 20.2 L3.8 14.4 A1.4 1.4 0 0 1 3.8 12.4 Z" {...line} />
+          <Circle cx={15.6} cy={8.4} r={1.5} {...line} />
+        </>
+      )}
+      {name === 'repeat' && (
+        <>
+          <Path d="M5 10.5 A6.5 6.5 0 0 1 17.5 8.5" {...line} />
+          <Path d="M17.8 4.6 V8.8 H13.6" {...line} />
+          <Path d="M19 13.5 A6.5 6.5 0 0 1 6.5 15.5" {...line} />
+          <Path d="M6.2 19.4 V15.2 H10.4" {...line} />
+        </>
+      )}
+      {name === 'download' && (
+        <>
+          <Line x1={12} y1={3.8} x2={12} y2={14.2} {...line} />
+          <Path d="M7.8 10.2 L12 14.4 L16.2 10.2" {...line} />
+          <Path d="M4.5 16 V18.4 A1.6 1.6 0 0 0 6.1 20 H17.9 A1.6 1.6 0 0 0 19.5 18.4 V16" {...line} />
+        </>
+      )}
+      {name === 'bell' && (
+        <>
+          <Path d="M6.5 16.5 V11 A5.5 5.5 0 0 1 17.5 11 V16.5 L19 18.5 H5 Z" {...line} />
+          <Path d="M10.2 18.5 A2 2 0 0 0 13.8 18.5" {...line} />
+        </>
+      )}
+      {name === 'cloud' && (
+        <Path d="M7.5 18.5 A4 4 0 0 1 7.7 10.6 A5.2 5.2 0 0 1 17.4 10.9 A3.9 3.9 0 0 1 17 18.5 Z" {...line} />
+      )}
+      {name === 'archive' && (
+        <>
+          <Path d="M4 5.5 H20 V9 H4 Z" {...line} />
+          <Path d="M5.4 9 V18 A1.6 1.6 0 0 0 7 19.6 H17 A1.6 1.6 0 0 0 18.6 18 V9" {...line} />
+          <Line x1={10} y1={13} x2={14} y2={13} {...line} />
+        </>
+      )}
+      {name === 'mail' && (
+        <>
+          <Path d="M4 6.5 H20 A1 1 0 0 1 21 7.5 V17 A1 1 0 0 1 20 18 H4 A1 1 0 0 1 3 17 V7.5 A1 1 0 0 1 4 6.5 Z" {...line} />
+          <Path d="M3.4 7.2 L12 13.4 L20.6 7.2" {...line} />
+        </>
+      )}
+      {name === 'wallet' && (
+        <>
+          <Path d="M3.8 7.5 H18.5 A1.7 1.7 0 0 1 20.2 9.2 V17.8 A1.7 1.7 0 0 1 18.5 19.5 H5.5 A1.7 1.7 0 0 1 3.8 17.8 Z" {...line} />
+          <Path d="M3.8 10 V6.6 A1.4 1.4 0 0 1 5.2 5.2 H15.5" {...line} />
+          <Circle cx={16.4} cy={13.5} r={1.3} {...line} />
+        </>
+      )}
+      {name === 'card' && (
+        <>
+          <Path d="M3.5 6.5 H20.5 V17.5 H3.5 Z" {...line} />
+          <Line x1={3.5} y1={10.2} x2={20.5} y2={10.2} {...line} />
+          <Line x1={6.8} y1={14.2} x2={11} y2={14.2} {...line} />
+        </>
+      )}
+      {name === 'layers' && (
+        <>
+          <Path d="M12 3.6 L20.5 8 L12 12.4 L3.5 8 Z" {...line} />
+          <Path d="M4.4 12 L12 15.9 L19.6 12" {...line} />
+          <Path d="M4.4 16 L12 19.9 L19.6 16" {...line} />
         </>
       )}
       {name === 'sparkle' && (

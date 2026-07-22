@@ -1,8 +1,10 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Pressable, StyleSheet, Animated, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { BlurView } from 'expo-blur';
 import { useAnimatedValue } from '@/hooks/useAnimatedValue';
 import { useTheme } from '@/theme/ThemeContext';
+import { GradientFill } from '@/components/ui/GradientFill';
 import { shadow } from '@/theme/tokens';
 import { I18N, type Lang } from '@/i18n';
 import { tapHaptic } from '@/util/haptics';
@@ -24,6 +26,10 @@ const MAX_W = 448; // bar maxWidth
 const PAD = 8; // bar paddingHorizontal
 const BORDER = 1; // bar borderWidth
 const GAP = 74; // center spacer for the FAB
+const RADIUS = 26;
+// the lit edge of a glass slab — white on light, a dim rim on dark
+const GLASS_EDGE = 'rgba(255,255,255,0.65)';
+const GLASS_EDGE_DARK = 'rgba(255,255,255,0.14)';
 
 interface ItemProps {
   k: NavKey;
@@ -130,23 +136,42 @@ export function BottomNav({ active, onChange, lang }: Props) {
 
   return (
     <View style={[styles.wrap, { paddingBottom: bottomPad }]} pointerEvents="box-none">
-      <View style={[styles.bar, { width: barW, backgroundColor: t.card, borderColor: t.line }, shadow(t, 'lg')]}>
-        <Animated.View
-          style={[
-            styles.indicator,
-            {
-              backgroundColor: t.tintStrong,
-              transform: [
-                { translateX: tx },
-                { scaleX: stretch.interpolate({ inputRange: [0, 1], outputRange: [1, 1.45] }) },
-              ],
-            },
-          ]}
-          pointerEvents="none"
-        />
-        {LEFT.map(item)}
-        <View style={styles.gap} />
-        {RIGHT.map(item)}
+      <View style={[styles.barShadow, { width: barW }, shadow(t, 'sm')]}>
+        <BlurView
+          intensity={t.isDark ? 70 : 62}
+          tint={t.isDark ? 'dark' : 'light'}
+          // Android has no free backdrop blur; this is the opt-in real one
+          experimentalBlurMethod="dimezisBlurView"
+          style={[styles.bar, { borderColor: t.isDark ? GLASS_EDGE_DARK : GLASS_EDGE }]}
+        >
+          {/* glass body: a thin wash of the *warm* surface color over the blur —
+              the blur alone is neutral-white and would read cold against paper.
+              Kept under 50% so entries stay visible through the bar (and so a
+              device without real backdrop blur still gets a translucent slab). */}
+          <View style={[styles.fill, { backgroundColor: t.card + (t.isDark ? '8C' : '73') }]} pointerEvents="none" />
+          {/* specular sheen along the top edge — the thing that reads as "glass" */}
+          <View style={styles.sheen} pointerEvents="none">
+            <GradientFill from="#FFFFFF" to="#FFFFFF" direction="vertical" opacity={t.isDark ? 0.14 : 0.5} toOpacity={0} above />
+          </View>
+
+          <Animated.View
+            style={[
+              styles.indicator,
+              {
+                backgroundColor: t.hibiscus + (t.isDark ? '2E' : '1F'),
+                borderColor: t.hibiscus + (t.isDark ? '4D' : '38'),
+                transform: [
+                  { translateX: tx },
+                  { scaleX: stretch.interpolate({ inputRange: [0, 1], outputRange: [1, 1.45] }) },
+                ],
+              },
+            ]}
+            pointerEvents="none"
+          />
+          {LEFT.map(item)}
+          <View style={styles.gap} />
+          {RIGHT.map(item)}
+        </BlurView>
       </View>
     </View>
   );
@@ -154,15 +179,24 @@ export function BottomNav({ active, onChange, lang }: Props) {
 
 const styles = StyleSheet.create({
   wrap: { position: 'absolute', left: 0, right: 0, bottom: 0, alignItems: 'center' },
+  // shadow lives on a plain wrapper: a shadow on the blur view itself would be
+  // clipped by its own overflow:hidden (needed to round the blur)
+  barShadow: { borderRadius: RADIUS },
   bar: {
     flexDirection: 'row',
     alignItems: 'center',
     height: 64,
-    borderRadius: 26,
+    borderRadius: RADIUS,
     borderWidth: BORDER,
     paddingHorizontal: PAD,
+    overflow: 'hidden',
   },
-  indicator: { position: 'absolute', left: 0, top: 10, width: PILL_W, height: 30, borderRadius: 15 },
+  fill: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 },
+  sheen: { position: 'absolute', top: 0, left: 0, right: 0, height: 26 },
+  indicator: {
+    position: 'absolute', left: 0, top: 10, width: PILL_W, height: 30,
+    borderRadius: 15, borderWidth: StyleSheet.hairlineWidth,
+  },
   gap: { width: GAP },
   item: { flex: 1, alignItems: 'center', justifyContent: 'center', height: '100%', gap: 2 },
   iconWrap: { alignItems: 'center', justifyContent: 'center', width: 40, height: 26 },
