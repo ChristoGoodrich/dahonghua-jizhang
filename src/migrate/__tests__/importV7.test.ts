@@ -81,7 +81,7 @@ describe('importV7 settings restore', () => {
       settings: {
         budget: 3000, cycleStart: 5, theme: 'ocean', dark: true,
         dailyBudget: 100, weeklyBudget: 700, budgetMode: 'weekly',
-        gardenGoal: 30, hideAmounts: true, archivedLedgers: ['old'],
+        hideAmounts: true, archivedLedgers: ['old'],
         aiShareCategories: false, autoBackup: true, backupFrequency: 'weekly',
       },
     });
@@ -89,7 +89,6 @@ describe('importV7 settings restore', () => {
     expect(st.dailyBudget).toBe(100);
     expect(st.weeklyBudget).toBe(700);
     expect(st.budgetMode).toBe('weekly');
-    expect(st.gardenGoal).toBe(30);
     expect(st.hideAmounts).toBe(true);
     expect(st.archivedLedgers).toEqual(['old']);
     expect(st.aiShareCategories).toBe(false);

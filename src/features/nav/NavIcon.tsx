@@ -1,9 +1,8 @@
 import React from 'react';
 import Svg, { Rect, Line, Circle, Path } from 'react-native-svg';
 
-/** Nav keys plus the two glyphs that live outside the bar: the calendar toggle
- *  in the list header and the garden mark on the 我的 hub. */
-export type NavIconName = 'list' | 'cal' | 'stats' | 'assets' | 'me' | 'wall';
+/** Nav keys plus the calendar toggle that lives in the 明细 header. */
+export type NavIconName = 'list' | 'cal' | 'stats' | 'assets' | 'me';
 
 interface Props {
   name: NavIconName;
@@ -55,7 +54,7 @@ export function NavIcon({ name, color, size = 22 }: Props) {
         </>
       )}
 
-      {(name === 'me' || name === 'wall') && (
+      {name === 'me' && (
         <>
           {/* five-petal hibiscus — the brand mark */}
           {[-90, -18, 54, 126, 198].map((deg) => {

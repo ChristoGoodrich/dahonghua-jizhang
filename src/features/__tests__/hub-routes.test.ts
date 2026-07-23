@@ -26,8 +26,7 @@ describe('hub navigation targets', () => {
     }
   });
 
-  it('keeps the garden reachable now that it lost its tab', () => {
-    expect(fs.existsSync(path.join(SRC, 'app', 'garden.tsx'))).toBe(true);
-    expect(routesIn(HUBS[1])).toContain('garden');
+  it('routes to the settings screen from the 我的 hub', () => {
+    expect(routesIn(HUBS[1])).toContain('settings');
   });
 });

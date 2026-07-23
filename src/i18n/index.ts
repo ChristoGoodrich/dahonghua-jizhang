@@ -7,13 +7,13 @@ export interface Strings {
   // transfer (转账)
   xfer: string; xferFrom: string; xferTo: string; xferFee: string; xferDiscount: string;
   xferNeedAccts: string; xferLabel: string;
-  list: string; cal: string; stats: string; wall: string; assets: string; me: string;
+  list: string; cal: string; stats: string; assets: string; me: string;
   // tab hubs (资产 / 我的)
   a11yCalToggle: string; a11yListToggle: string;
   asAccounts: string; asManage: string; asManageD: string; asOther: string; asOtherD: string;
   asEmpty: string;
   meGroupTools: string; meGroupData: string; meGroupMore: string;
-  meGardenSub: string; // %d flowers %d streak
+  meStreakLine: string; // %f = flowers this cycle · %d = streak, both count-aware
   meAbout: string; meAboutD: string;
   note: string; save: string; del: string; empty: string;
   deleted: string; undo: string;
@@ -53,8 +53,7 @@ export interface Strings {
   // calendar
   calHint: string;
   // garden
-  wallTitle: string; wallSub: string; streakLabel: string;
-  wallGoalUp: string; wallGoalDown: string;
+  streakLabel: string;
   // settings
   setTitle: string; setSub: string;
   setGroupBudget: string; setGroupLook: string; setGroupWallet: string; setGroupTools: string; setGroupData: string; setGroupOther: string;
@@ -160,13 +159,13 @@ export const I18N: Record<Lang, Strings> = {
     title: '大红花记账', sub: 'RED BLOSSOM', net: '本月攒下的 · SAVED', exp: '花掉', inc: '进账',
     xfer: '转账', xferFrom: '转出账户', xferTo: '转入账户', xferFee: '手续费', xferDiscount: '优惠',
     xferNeedAccts: '转账需要至少两个账户，先去设置里添加', xferLabel: '转账',
-    list: '明细', cal: '日历', stats: '统计', wall: '集花墙', assets: '资产', me: '我的',
+    list: '明细', cal: '日历', stats: '统计', assets: '资产', me: '我的',
     a11yCalToggle: '切换到日历', a11yListToggle: '切换到明细',
     asAccounts: '我的账户', asManage: '管理账户', asManageD: '新增、归档、信用卡账单日',
     asOther: '其他资产 / 负债', asOtherD: '房产、车、公积金…手动登记',
     asEmpty: '还没有账户，先加一个钱包吧',
     meGroupTools: '记账工具', meGroupData: '数据与同步', meGroupMore: '更多',
-    meGardenSub: '本月 %d 朵 · 连续 %d 天',
+    meStreakLine: '本月贴了 %f · 连续 %d',
     meAbout: '关于大红花', meAboutD: '版本、开源许可与致谢',
     note: '备注（可选）', save: '贴朵花', del: '删除这笔', empty: '还没贴花，点下面那朵开始吧',
     deleted: '已删除一笔', undo: '撤销',
@@ -204,9 +203,7 @@ export const I18N: Record<Lang, Strings> = {
     cmpTitle: '本月 vs 上月同期', cmpThis: '本月', cmpLast: '上月同期',
     cmpUp: '比上月同期多 %s', cmpDown: '比上月同期少 %s', cmpSame: '和上月同期差不多',
     calHint: '每朵花代表当天记的一笔，数字是当日花掉',
-    wallTitle: '本月集花墙', wallSub: '每记一笔，贴一朵花。集满整版，这个月你就赢了。',
     streakLabel: '连续贴花',
-    wallGoalUp: '增加目标', wallGoalDown: '减少目标',
     setTitle: '设置', setSub: '把大红花调成你的样子',
     setGroupBudget: '预算与周期', setGroupLook: '个性化', setGroupWallet: '钱包与资产', setGroupTools: '记账工具', setGroupData: '数据与备份', setGroupOther: '其他',
     setGroupPref: '记账偏好', setGroupSafety: '安全与隐私',
@@ -294,13 +291,13 @@ export const I18N: Record<Lang, Strings> = {
     title: 'Red Blossom', sub: 'RED BLOSSOM', net: 'SAVED THIS MONTH', exp: 'Spent', inc: 'In',
     xfer: 'Transfer', xferFrom: 'From', xferTo: 'To', xferFee: 'Fee', xferDiscount: 'Bonus',
     xferNeedAccts: 'Transfers need at least two accounts — add one in Settings', xferLabel: 'Transfer',
-    list: 'Activity', cal: 'Calendar', stats: 'Stats', wall: 'Garden', assets: 'Assets', me: 'Me',
+    list: 'Activity', cal: 'Calendar', stats: 'Stats', assets: 'Assets', me: 'Me',
     a11yCalToggle: 'Switch to calendar', a11yListToggle: 'Switch to activity',
     asAccounts: 'My accounts', asManage: 'Manage accounts', asManageD: 'Add, archive, card statement days',
     asOther: 'Other assets / debts', asOtherD: 'Property, car, funds — tracked by hand',
     asEmpty: 'No accounts yet — add your first wallet',
     meGroupTools: 'Tools', meGroupData: 'Data & sync', meGroupMore: 'More',
-    meGardenSub: '%d flowers this month · %d-day streak',
+    meStreakLine: '%f this month · %d in a row',
     meAbout: 'About Red Blossom', meAboutD: 'Version, licences & credits',
     note: 'Note (optional)', save: 'Add a flower', del: 'Delete entry', empty: 'No flowers yet — tap the bloom below to start',
     deleted: 'Entry deleted', undo: 'Undo',
@@ -338,9 +335,7 @@ export const I18N: Record<Lang, Strings> = {
     cmpTitle: 'This month vs last (so far)', cmpThis: 'This month', cmpLast: 'Last month',
     cmpUp: '%s more than last month so far', cmpDown: '%s less than last month so far', cmpSame: 'about the same as last month',
     calHint: 'Each flower = one entry; number = spent that day',
-    wallTitle: "This month's garden", wallSub: 'One entry, one flower. Fill the garden to win the month.',
     streakLabel: 'Streak',
-    wallGoalUp: 'Increase goal', wallGoalDown: 'Decrease goal',
     setTitle: 'Settings', setSub: 'Make Red Blossom yours',
     setGroupBudget: 'Budget & cycle', setGroupLook: 'Appearance', setGroupWallet: 'Wallet & assets', setGroupTools: 'Tools', setGroupData: 'Data & backup', setGroupOther: 'More',
     setGroupPref: 'Entry preferences', setGroupSafety: 'Security & privacy',
