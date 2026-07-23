@@ -85,6 +85,9 @@ export function PetalBurst({ seed, onDone }: Props) {
 
   return (
     <View style={styles.stage} pointerEvents="none">
+      {/* petals launch from the record button, which now sits at the right end
+          of the nav row rather than dead center */}
+      <View style={styles.origin}>
       {specs.map((sp, i) => {
         const v = anims[i];
         return (
@@ -117,6 +120,7 @@ export function PetalBurst({ seed, onDone }: Props) {
           </Animated.View>
         );
       })}
+      </View>
     </View>
   );
 }
@@ -126,10 +130,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    bottom: 96, // just above the FAB, where the flower is "planted"
+    bottom: 96, // just above the record button, where the flower is "planted"
     alignItems: 'center',
     zIndex: 45,
     elevation: 45,
   },
+  // mirrors BottomNav's row geometry (MAX_W 448, gutter 16, button 60) so the
+  // launch point tracks the button on both phone and wide layouts
+  origin: { width: '100%', maxWidth: 448, alignItems: 'flex-end', paddingRight: 46 },
   petal: { position: 'absolute', bottom: 0 },
 });

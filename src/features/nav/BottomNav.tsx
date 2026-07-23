@@ -5,6 +5,8 @@ import { BlurView } from 'expo-blur';
 import { useAnimatedValue } from '@/hooks/useAnimatedValue';
 import { useTheme } from '@/theme/ThemeContext';
 import { GradientFill } from '@/components/ui/GradientFill';
+import { Icon } from '@/components/ui/Icon';
+import { Tap } from '@/components/ui/Tap';
 import { shadow } from '@/theme/tokens';
 import { I18N, type Lang } from '@/i18n';
 import { tapHaptic } from '@/util/haptics';
@@ -16,17 +18,18 @@ import { NavIcon } from './NavIcon';
 export type NavKey = 'list' | 'stats' | 'assets' | 'me';
 
 const ORDER: NavKey[] = ['list', 'stats', 'assets', 'me'];
-// Split 2 | (center FAB) | 2 — Cookie-style raised center button.
-const LEFT: NavKey[] = ['list', 'stats'];
-const RIGHT: NavKey[] = ['assets', 'me'];
 
 const PILL_W = 46;
-const MARGIN = 16; // bar marginHorizontal
-const MAX_W = 448; // bar maxWidth
+const MARGIN = 16; // outer gutter
+const MAX_W = 448; // bar + button, combined
 const PAD = 8; // bar paddingHorizontal
 const BORDER = 1; // bar borderWidth
-const GAP = 74; // center spacer for the FAB
 const RADIUS = 26;
+// The record button is its own capsule beside the bar (iOS 26 style) rather
+// than a notch cut into it: the bar stays one uninterrupted glass slab, and
+// the primary action gets to be a separate object with its own weight.
+const ADD = 60;
+const ADD_GAP = 10;
 // the lit edge of a glass slab — white on light, a dim rim on dark
 const GLASS_EDGE = 'rgba(255,255,255,0.65)';
 const GLASS_EDGE_DARK = 'rgba(255,255,255,0.14)';
@@ -80,6 +83,8 @@ function NavItem({ k, active, label, onPress }: ItemProps) {
 interface Props {
   active: NavKey;
   onChange: (k: NavKey) => void;
+  /** The primary action — the record button that sits beside the bar. */
+  onAdd: () => void;
   lang: Lang;
 }
 
@@ -89,7 +94,7 @@ export function useNavBottomPad(): number {
   return Math.max(16, insets.bottom + 6);
 }
 
-export function BottomNav({ active, onChange, lang }: Props) {
+export function BottomNav({ active, onChange, onAdd, lang }: Props) {
   const t = useTheme();
   const s = I18N[lang];
   const bottomPad = useNavBottomPad();
@@ -101,13 +106,12 @@ export function BottomNav({ active, onChange, lang }: Props) {
 
   // Bar width is a deterministic function of screen width (no onLayout needed —
   // it's flaky on the static web export). Compute each tab's icon-center x.
-  const barW = Math.min(screenW - 2 * MARGIN, MAX_W);
+  const rowW = Math.min(screenW - 2 * MARGIN, MAX_W);
+  const barW = rowW - ADD - ADD_GAP;
   const innerW = barW - 2 * BORDER - 2 * PAD; // flex content width
-  const itemW = (innerW - GAP) / 4;
-  const centerOf = (i: number) => {
-    const offset = i < 2 ? i * itemW : i * itemW + GAP; // items 2,3 sit after the center gap
-    return PAD + offset + itemW / 2; // in the indicator's (padding-box) coordinate space
-  };
+  const itemW = innerW / 4;
+  // in the indicator's (padding-box) coordinate space
+  const centerOf = (i: number) => PAD + i * itemW + itemW / 2;
   const target = centerOf(activeIdx) - PILL_W / 2;
 
   useEffect(() => {
@@ -136,7 +140,8 @@ export function BottomNav({ active, onChange, lang }: Props) {
 
   return (
     <View style={[styles.wrap, { paddingBottom: bottomPad }]} pointerEvents="box-none">
-      <View style={[styles.barShadow, { width: barW }, shadow(t, 'sm')]}>
+      <View style={[styles.row, { width: rowW }]}>
+        <View style={[styles.barShadow, { width: barW }, shadow(t, 'sm')]}>
         <BlurView
           intensity={t.isDark ? 70 : 62}
           tint={t.isDark ? 'dark' : 'light'}
@@ -148,7 +153,7 @@ export function BottomNav({ active, onChange, lang }: Props) {
               the blur alone is neutral-white and would read cold against paper.
               Kept under 50% so entries stay visible through the bar (and so a
               device without real backdrop blur still gets a translucent slab). */}
-          <View style={[styles.fill, { backgroundColor: t.card + (t.isDark ? '8C' : '73') }]} pointerEvents="none" />
+          <View style={[styles.fill, { backgroundColor: t.card + (t.isDark ? '9E' : '8A') }]} pointerEvents="none" />
           {/* specular sheen along the top edge — the thing that reads as "glass" */}
           <View style={styles.sheen} pointerEvents="none">
             <GradientFill from="#FFFFFF" to="#FFFFFF" direction="vertical" opacity={t.isDark ? 0.14 : 0.5} toOpacity={0} above />
@@ -168,10 +173,31 @@ export function BottomNav({ active, onChange, lang }: Props) {
             ]}
             pointerEvents="none"
           />
-          {LEFT.map(item)}
-          <View style={styles.gap} />
-          {RIGHT.map(item)}
+          {ORDER.map(item)}
         </BlurView>
+        </View>
+
+        {/* Same material as the bar — glass edge, top sheen, matching height —
+            but filled with the accent so it still reads as the one primary act. */}
+        <Tap
+          onPress={onAdd}
+          haptic
+          feedback="both"
+          scaleTo={0.9}
+          accessibilityRole="button"
+          accessibilityLabel={s.a11yAdd}
+          style={[
+            styles.add,
+            { backgroundColor: t.hibiscus, borderColor: t.isDark ? GLASS_EDGE_DARK : GLASS_EDGE },
+            shadow(t, 'glow'),
+          ]}
+        >
+          <GradientFill from={t.gradFrom} to={t.gradTo} />
+          <View style={styles.addSheen} pointerEvents="none">
+            <GradientFill from="#FFFFFF" to="#FFFFFF" direction="vertical" opacity={0.34} toOpacity={0} above />
+          </View>
+          <Icon name="plus" color="#fff" size={26} strokeWidth={2.4} />
+        </Tap>
       </View>
     </View>
   );
@@ -179,6 +205,12 @@ export function BottomNav({ active, onChange, lang }: Props) {
 
 const styles = StyleSheet.create({
   wrap: { position: 'absolute', left: 0, right: 0, bottom: 0, alignItems: 'center' },
+  row: { flexDirection: 'row', alignItems: 'center', gap: ADD_GAP },
+  add: {
+    width: ADD, height: ADD, borderRadius: ADD / 2, borderWidth: BORDER,
+    alignItems: 'center', justifyContent: 'center', overflow: 'hidden',
+  },
+  addSheen: { position: 'absolute', top: 0, left: 0, right: 0, height: ADD / 2 },
   // shadow lives on a plain wrapper: a shadow on the blur view itself would be
   // clipped by its own overflow:hidden (needed to round the blur)
   barShadow: { borderRadius: RADIUS },
@@ -197,7 +229,6 @@ const styles = StyleSheet.create({
     position: 'absolute', left: 0, top: 10, width: PILL_W, height: 30,
     borderRadius: 15, borderWidth: StyleSheet.hairlineWidth,
   },
-  gap: { width: GAP },
   item: { flex: 1, alignItems: 'center', justifyContent: 'center', height: '100%', gap: 2 },
   iconWrap: { alignItems: 'center', justifyContent: 'center', width: 40, height: 26 },
   iconOverlay: { position: 'absolute', top: 0, left: 0 },

@@ -36,7 +36,6 @@ import { bootParam, NO_ANIM } from '@/util/boot';
 import { trackEvent, AnalyticsEvents } from '@/util/analytics';
 import { Tap } from '@/components/ui/Tap';
 import { Icon } from '@/components/ui/Icon';
-import { GradientFill } from '@/components/ui/GradientFill';
 import { RAD, shadow } from '@/theme/tokens';
 import { Toast } from '@/components/Toast';
 import { PetalBurst } from '@/components/PetalBurst';
@@ -396,19 +395,8 @@ export const LedgerScreen = observer(function LedgerScreen() {
         </TabFade>
       </SafeAreaView>
 
-      <BottomNav active={tab} onChange={setTab} lang={lang} />
-
-      <Tap
-        style={[styles.fab, { bottom: navPad + 30, backgroundColor: t.hibiscus, borderColor: t.card }, shadow(t, 'glow')]}
-        feedback="both"
-        scaleTo={0.9}
-        onPress={openNew}
-        accessibilityRole="button"
-        accessibilityLabel={s.a11yAdd}
-      >
-        <GradientFill from={t.gradFrom} to={t.gradTo} />
-        <Icon name="plus" color="#fff" size={28} strokeWidth={2.5} />
-      </Tap>
+      {/* the record button lives inside the nav row now — see BottomNav */}
+      <BottomNav active={tab} onChange={setTab} onAdd={openNew} lang={lang} />
 
       <RecordSheet
         visible={sheetOpen}
@@ -503,9 +491,5 @@ const styles = StyleSheet.create({
   searchClear: {
     width: 20, height: 20, borderRadius: 10,
     alignItems: 'center', justifyContent: 'center',
-  },
-  fab: {
-    position: 'absolute', alignSelf: 'center', width: 62, height: 62, borderRadius: 31,
-    borderWidth: 3, alignItems: 'center', justifyContent: 'center', overflow: 'hidden',
   },
 });
