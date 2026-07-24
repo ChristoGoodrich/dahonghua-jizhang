@@ -23,6 +23,7 @@ export interface Strings {
   toastBloom: string; toastStreak: string; // toastStreak has %d
   importOk: string; importFail: string; comingSoon: string;
   cancel: string; importSkipped: string;
+  delConfirmTitle: string; delConfirmMsg: string; delConfirmBtn: string;
   curBaseSwitch: string; curBaseConfirm: string; curBaseDone: string; curBaseNoRate: string;
   errAmount: string; errXferTo: string; errXferSame: string; errNoRate: string;
   // ai quick-entry
@@ -97,7 +98,7 @@ export interface Strings {
   loanSave: string; loanAdd: string; loanOwedMe: string; loanIOwe: string; loanRemain: string; loanCleared: string;
   loanRepay: string; repayAmt: string; loanProgress: string;
   // search + custom category
-  searchPh: string; noResult: string; newCatTitle: string; catNamePh: string; catCreate: string;
+  searchPh: string; noResult: string; noResultHint: string; newCatTitle: string; catNamePh: string; catCreate: string;
   // subscriptions
   setSubs: string; setSubsD: string; subAdd: string; subName: string; subAmtL: string;
   subFreqL: string; subDayL: string; subMonthL: string; subCatL: string; subSaveBtn: string;
@@ -175,6 +176,7 @@ export const I18N: Record<Lang, Strings> = {
     toastBloom: '贴上一朵花 🌺', toastStreak: '已连续 %d 天！',
     importOk: '导入成功 🌺', importFail: '文件不对，导入失败', comingSoon: '即将上线 🌱',
     cancel: '取消', importSkipped: '跳过 %d 条格式错误',
+    delConfirmTitle: '确认删除', delConfirmMsg: '删除后无法撤销，确定要删除吗？', delConfirmBtn: '删除',
     curBaseSwitch: '切换主货币', curBaseConfirm: '所有金额将按当前汇率换算成 %s，确定？',
     curBaseDone: '已换算 🌺', curBaseNoRate: '请先设置 %s 的汇率',
     errAmount: '先填个金额吧', errXferTo: '选一个转入账户', errXferSame: '转入和转出不能是同一个账户',
@@ -249,7 +251,7 @@ export const I18N: Record<Lang, Strings> = {
     setLoans: '借入借出', setLoansD: '谁欠我、我欠谁，还款进度', loanLend: '借出（别人欠我）', loanBorrow: '借入（我欠别人）',
     loanWho: '对方（如 张三）', loanAmt: '金额', loanSave: '保存', loanAdd: '＋ 新增借贷', loanOwedMe: '待收回', loanIOwe: '待还款',
     loanRemain: '剩余 %s', loanCleared: '已结清 🌺', loanRepay: '记一笔还款', repayAmt: '还款金额', loanProgress: '还款进度',
-    searchPh: '搜分类、备注、标签，或 >100', noResult: '没找到相关记录', newCatTitle: '新建分类', catNamePh: '分类名称', catCreate: '创建分类',
+    searchPh: '搜分类、备注、标签，或 >100', noResult: '没找到相关记录', noResultHint: '试试其他关键词，或点 + 记一笔新账', newCatTitle: '新建分类', catNamePh: '分类名称', catCreate: '创建分类',
     setSubs: '订阅 / 分期', setSubsD: '订阅、分期、循环转账，到期自动记账', subAdd: '＋ 添加订阅', subName: '名称（如 Netflix）', subAmtL: '每期金额',
     subFreqL: '周期', subDayL: '每期几号扣费', subMonthL: '每年几月扣费', subCatL: '分类', subSaveBtn: '保存订阅',
     subMonthly: '每月', subYearly: '每年', subNext: '下次 %s', subDueToday: '今天扣费 · 已自动记账',
@@ -307,6 +309,7 @@ export const I18N: Record<Lang, Strings> = {
     toastBloom: 'A flower bloomed 🌺', toastStreak: '%d-day streak!',
     importOk: 'Imported 🌺', importFail: 'Bad file — import failed', comingSoon: 'Coming soon 🌱',
     cancel: 'Cancel', importSkipped: '%d malformed rows skipped',
+    delConfirmTitle: 'Confirm delete', delConfirmMsg: 'This cannot be undone. Are you sure?', delConfirmBtn: 'Delete',
     curBaseSwitch: 'Switch base currency', curBaseConfirm: 'All amounts will be converted to %s at the current rate. Continue?',
     curBaseDone: 'Converted 🌺', curBaseNoRate: 'Set a rate for %s first',
     errAmount: 'Enter an amount first', errXferTo: 'Pick an account to transfer to', errXferSame: 'From and to must differ',
@@ -381,7 +384,7 @@ export const I18N: Record<Lang, Strings> = {
     setLoans: 'Loans', setLoansD: 'Who owes whom, with repayment', loanLend: 'Lent (they owe me)', loanBorrow: 'Borrowed (I owe them)',
     loanWho: 'Person (e.g. Alex)', loanAmt: 'Amount', loanSave: 'Save', loanAdd: '＋ New loan', loanOwedMe: 'Owed to me', loanIOwe: 'I owe',
     loanRemain: '%s left', loanCleared: 'Settled 🌺', loanRepay: 'Log a repayment', repayAmt: 'Repayment amount', loanProgress: 'Repayment',
-    searchPh: 'Search category, note, tag, or >100', noResult: 'No matching entries', newCatTitle: 'New category', catNamePh: 'Category name', catCreate: 'Create',
+    searchPh: 'Search category, note, tag, or >100', noResult: 'No matching entries', noResultHint: 'Try different keywords, or tap + to log a new entry', newCatTitle: 'New category', catNamePh: 'Category name', catCreate: 'Create',
     setSubs: 'Subscriptions', setSubsD: 'Subscriptions, installments & transfers — auto-logged', subAdd: '＋ Add subscription', subName: 'Name (e.g. Netflix)', subAmtL: 'Amount per cycle',
     subFreqL: 'Frequency', subDayL: 'Charge day', subMonthL: 'Charge month', subCatL: 'Category', subSaveBtn: 'Save subscription',
     subMonthly: 'Monthly', subYearly: 'Yearly', subNext: 'Next %s', subDueToday: 'Due today · auto-logged',

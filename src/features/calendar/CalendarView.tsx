@@ -4,6 +4,11 @@ import { useAnimatedValue } from '@/hooks/useAnimatedValue';
 import { useTheme } from '@/theme/ThemeContext';
 import { RAD, TABULAR, shadow } from '@/theme/tokens';
 import { Flower } from '@/components/Flower';
+import { cycleRange } from '@/domain/cycle';
+import { catOf, catName } from '@/domain/cats';
+import { fmt, fmtNum } from '@/domain/money';
+import type { Category, Entry, IO } from '@/domain/types';
+import { I18N, type Lang } from '@/i18n';
 
 /** Day panel eases in whenever a different day is selected (remount by key). */
 function PanelFade({ children }: { children: React.ReactNode }) {
@@ -22,11 +27,6 @@ function PanelFade({ children }: { children: React.ReactNode }) {
     </Animated.View>
   );
 }
-import { cycleRange } from '@/domain/cycle';
-import { catOf, catName } from '@/domain/cats';
-import { fmt, fmtNum } from '@/domain/money';
-import type { Category, Entry, IO } from '@/domain/types';
-import { I18N, type Lang } from '@/i18n';
 
 interface Props {
   all: Entry[];

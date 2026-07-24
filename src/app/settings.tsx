@@ -36,6 +36,8 @@ export default observer(function SettingsScreen() {
   const s = I18N[lang];
   const settings = store$.settings.get();
   const [status, setStatus] = useState('');
+  const [reminderValue, setReminderValue] = useState(settings.remindTime ?? '');
+  const [reminderError, setReminderError] = useState('');
 
   async function toggleLock() {
     if (settings.lock) {
@@ -141,13 +143,25 @@ export default observer(function SettingsScreen() {
               desc={s.remindDesc}
               last
               right={
-                <TextInput
-                  style={[styles.numInput, { borderColor: t.line, color: t.ink, backgroundColor: t.card }]}
-                  placeholder="21:00"
-                  placeholderTextColor={t.inkSoft}
-                  defaultValue={settings.remindTime ?? ''}
-                  onEndEditing={(e) => onReminderChange(e.nativeEvent.text)}
-                />
+                <View style={styles.reminderWrap}>
+                  <TextInput
+                    style={[styles.numInput, { borderColor: reminderError ? t.hibiscus : t.line, color: t.ink, backgroundColor: t.card }]}
+                    placeholder="21:00"
+                    placeholderTextColor={t.inkSoft}
+                    value={reminderValue}
+                    onChangeText={(v) => {
+                      setReminderValue(v);
+                      // Real-time validation
+                      if (v && !isValidTime(v)) {
+                        setReminderError(lang === 'zh' ? '格式 HH:MM' : 'Format HH:MM');
+                      } else {
+                        setReminderError('');
+                      }
+                    }}
+                    onEndEditing={() => onReminderChange(reminderValue)}
+                  />
+                  {!!reminderError && <Text style={[styles.reminderError, { color: t.hibiscus }]}>{reminderError}</Text>}
+                </View>
               }
             />
           </Group>
@@ -228,4 +242,6 @@ const styles = StyleSheet.create({
   exportBtn: { flex: 1 },
   importBtn: { marginTop: 10 },
   status: { marginTop: 10, fontSize: 13, fontWeight: '600', textAlign: 'center' },
+  reminderWrap: { alignItems: 'flex-end' },
+  reminderError: { fontSize: 10, marginTop: 2 },
 });

@@ -54,9 +54,20 @@ export const DetailSheet = observer(function DetailSheet({ entryId, lang, custom
   });
 
   function del() {
-    const prev = store$.data.peek();
+    // Snapshot only the rows removeEntry actually rewrites (the entry, its
+    // refund incomes, and the original it refunds) so undo restores those by
+    // id. Replaying a whole-array snapshot would also roll back anything
+    // added or synced in from another device during the undo window.
+    const before = store$.data.peek();
+    const target = before.find((x) => x.id === entryId);
+    const touched = before.filter(
+      (x) => x.id === entryId || x.refundOf === entryId || (!!target?.refundOf && x.id === target.refundOf),
+    );
     removeEntry(entryId!);
-    onDeleted?.(() => store$.data.set(prev));
+    onDeleted?.(() => {
+      const byId = new Map(touched.map((e) => [e.id, e] as const));
+      store$.data.set(store$.data.peek().map((e) => byId.get(e.id) ?? e));
+    });
     onClose();
   }
 

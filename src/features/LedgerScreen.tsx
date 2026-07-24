@@ -313,6 +313,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
               onPress={setDetailId}
               onLongPress={setMarkId}
               emptyText={searchTerm ? s.noResult : undefined}
+              emptyHint={searchTerm ? s.noResultHint : undefined}
               header={
                 <>
                   {!searchQ && (

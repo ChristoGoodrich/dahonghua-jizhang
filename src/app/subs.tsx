@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, Pressable, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Pressable, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { observer } from '@legendapp/state/react';
 import { store$, addSub, removeSub } from '@/store/ledger';
@@ -86,7 +86,10 @@ export default observer(function SubsScreen() {
                   </Text>
                 </View>
                 <Text style={[styles.amt, { color: t.ink }]}>{fmtShort(sub.amt, lang)}</Text>
-                <Pressable onPress={() => removeSub(sub.id)} hitSlop={10}>
+                <Pressable onPress={() => Alert.alert(s.delConfirmTitle, s.delConfirmMsg, [
+                  { text: s.cancel, style: 'cancel' },
+                  { text: s.delConfirmBtn, style: 'destructive', onPress: () => removeSub(sub.id) },
+                ])} hitSlop={10}>
                   <Text style={[styles.del, { color: t.inkSoft }]}>✕</Text>
                 </Pressable>
               </View>
@@ -186,9 +189,14 @@ export default observer(function SubsScreen() {
                   />
                 </>
               )}
-              <Pressable style={[styles.save, { backgroundColor: t.hibiscus }]} onPress={save}>
-                <Text style={styles.saveText}>{s.subSaveBtn}</Text>
-              </Pressable>
+              <View style={styles.formActions}>
+                <Pressable style={[styles.cancelBtn, { borderColor: t.line }]} onPress={() => { setAdding(false); setName(''); setAmt(''); setPeriods(''); }}>
+                  <Text style={[styles.cancelText, { color: t.inkSoft }]}>{s.cancel}</Text>
+                </Pressable>
+                <Pressable style={[styles.save, { backgroundColor: t.hibiscus }]} onPress={save}>
+                  <Text style={styles.saveText}>{s.subSaveBtn}</Text>
+                </Pressable>
+              </View>
             </View>
           ) : (
             <Pressable style={[styles.add, { borderColor: t.line, backgroundColor: t.paperWarm }]} onPress={() => setAdding(true)}>
@@ -222,6 +230,9 @@ const styles = StyleSheet.create({
   toggleText: { fontSize: 13, fontWeight: '600' },
   dayMonthRow: { flexDirection: 'row', gap: 10 },
   catChip: { borderWidth: 1.5, borderRadius: 18, paddingVertical: 7, paddingHorizontal: 12, marginRight: 7 },
-  save: { borderRadius: 13, padding: 14, alignItems: 'center', marginTop: 6 },
+  formActions: { flexDirection: 'row', gap: 10, marginTop: 6 },
+  cancelBtn: { flex: 1, borderWidth: 1, borderRadius: 13, padding: 14, alignItems: 'center' },
+  cancelText: { fontSize: 15, fontWeight: '600' },
+  save: { flex: 1, borderRadius: 13, padding: 14, alignItems: 'center' },
   saveText: { color: '#fff', fontSize: 15, fontWeight: '700' },
 });

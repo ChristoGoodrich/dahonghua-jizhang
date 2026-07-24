@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, Pressable, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Pressable, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { observer } from '@legendapp/state/react';
@@ -77,7 +77,10 @@ export default observer(function AccountsScreen() {
               <Text style={[styles.act, { color: a.archived ? t.hibiscus : t.inkSoft }]}>{a.archived ? '↩' : '📥'}</Text>
             </Pressable>
             {a.archived && (
-              <Pressable onPress={() => removeAccount(a.id)} hitSlop={8} accessibilityRole="button" accessibilityLabel="✕">
+              <Pressable onPress={() => Alert.alert(s.delConfirmTitle, s.delConfirmMsg, [
+                { text: s.cancel, style: 'cancel' },
+                { text: s.delConfirmBtn, style: 'destructive', onPress: () => removeAccount(a.id) },
+              ])} hitSlop={8} accessibilityRole="button" accessibilityLabel="✕">
                 <Text style={[styles.del, { color: t.inkSoft }]}>✕</Text>
               </Pressable>
             )}
@@ -164,9 +167,14 @@ export default observer(function AccountsScreen() {
                   />
                 </View>
               )}
-              <Pressable style={[styles.save, { backgroundColor: t.hibiscus }]} onPress={save}>
-                <Text style={styles.saveText}>{s.acctSaveBtn}</Text>
-              </Pressable>
+              <View style={styles.formActions}>
+                <Pressable style={[styles.cancelBtn, { borderColor: t.line }]} onPress={() => { setAdding(false); setName(''); setBal(''); setKind('cash'); setStmtDay(''); setDueDay(''); }}>
+                  <Text style={[styles.cancelText, { color: t.inkSoft }]}>{s.cancel}</Text>
+                </Pressable>
+                <Pressable style={[styles.save, { backgroundColor: t.hibiscus }]} onPress={save}>
+                  <Text style={styles.saveText}>{s.acctSaveBtn}</Text>
+                </Pressable>
+              </View>
             </View>
           ) : (
             <Pressable
@@ -208,6 +216,9 @@ const styles = StyleSheet.create({
   field: { borderWidth: 1, borderRadius: 11, padding: 11, fontSize: 14 },
   dayRow: { flexDirection: 'row', gap: 10 },
   dayField: { flex: 1 },
-  save: { borderRadius: 13, padding: 14, alignItems: 'center' },
+  formActions: { flexDirection: 'row', gap: 10 },
+  cancelBtn: { flex: 1, borderWidth: 1, borderRadius: 13, padding: 14, alignItems: 'center' },
+  cancelText: { fontSize: 15, fontWeight: '600' },
+  save: { flex: 1, borderRadius: 13, padding: 14, alignItems: 'center' },
   saveText: { color: '#fff', fontSize: 15, fontWeight: '700' },
 });

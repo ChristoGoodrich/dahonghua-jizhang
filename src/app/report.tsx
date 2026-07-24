@@ -45,11 +45,11 @@ export default observer(function ReportScreen() {
 
   const [generating, setGenerating] = useState(false);
 
-  const anchor = new Date();
+  const anchor = useMemo(() => new Date(), []);
   const { start } = cycleRange(anchor, cycleStart);
   const entries = useMemo(
     () => data.filter((d) => !d.deletedAt && inCycle(d.ts, anchor, cycleStart)),
-    [data, cycleStart],
+    [data, cycleStart, anchor],
   );
 
   const exp = entries.filter((d) => d.io === 'exp').reduce((a, d) => a + d.amt, 0);

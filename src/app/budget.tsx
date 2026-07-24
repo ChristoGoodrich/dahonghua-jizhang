@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { observer } from '@legendapp/state/react';
@@ -38,6 +38,13 @@ export default observer(function BudgetScreen() {
   const cats = allCats('exp', customCats);
   const cb = settings.catBudgets ?? {};
 
+  // Local state for real-time input feedback
+  const [monthlyBudget, setMonthlyBudget] = useState(settings.budget ? String(settings.budget) : '');
+  const [dailyBudget, setDailyBudget] = useState(settings.dailyBudget ? String(settings.dailyBudget) : '');
+  const [catBudgets, setCatBudgets] = useState<Record<string, string>>(
+    Object.fromEntries(Object.entries(cb).map(([k, v]) => [k, v ? String(v) : '']))
+  );
+
   // live spend for the current cycle
   const cycleStart = settings.cycleStart || 1;
   const now = new Date();
@@ -73,8 +80,11 @@ export default observer(function BudgetScreen() {
                 keyboardType="numeric"
                 placeholder={sym + '0'}
                 placeholderTextColor={t.inkSoft}
-                defaultValue={settings.budget ? String(settings.budget) : ''}
-                onEndEditing={(e) => patchSettings({ budget: num(e.nativeEvent.text) })}
+                value={monthlyBudget}
+                onChangeText={(v) => {
+                  setMonthlyBudget(v);
+                  patchSettings({ budget: num(v) });
+                }}
               />
             </View>
             <ProgressBar status={monthly} />
@@ -98,8 +108,11 @@ export default observer(function BudgetScreen() {
                 keyboardType="numeric"
                 placeholder={sym + '0'}
                 placeholderTextColor={t.inkSoft}
-                defaultValue={settings.dailyBudget ? String(settings.dailyBudget) : ''}
-                onEndEditing={(e) => patchSettings({ dailyBudget: num(e.nativeEvent.text) })}
+                value={dailyBudget}
+                onChangeText={(v) => {
+                  setDailyBudget(v);
+                  patchSettings({ dailyBudget: num(v) });
+                }}
               />
             </View>
             <ProgressBar status={daily} />
@@ -128,8 +141,11 @@ export default observer(function BudgetScreen() {
                     keyboardType="numeric"
                     placeholder={s.budgetCatHint}
                     placeholderTextColor={t.inkSoft}
-                    defaultValue={limit ? String(limit) : ''}
-                    onEndEditing={(e) => setCatBudget(c.k, num(e.nativeEvent.text))}
+                    value={catBudgets[c.k] ?? ''}
+                    onChangeText={(v) => {
+                      setCatBudgets((prev) => ({ ...prev, [c.k]: v }));
+                      setCatBudget(c.k, num(v));
+                    }}
                   />
                 </View>
                 {limit > 0 && (

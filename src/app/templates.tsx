@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { observer } from '@legendapp/state/react';
 import { store$, removeTemplate } from '@/store/ledger';
@@ -38,7 +38,10 @@ export default observer(function TemplatesScreen() {
                     </Text>
                   </View>
                   <Text style={[styles.amt, { color: t.ink }]}>{tp.io === 'exp' ? '-' : '+'}{fmtShort(tp.amt, lang)}</Text>
-                  <Pressable onPress={() => removeTemplate(tp.id)} hitSlop={10}>
+                  <Pressable onPress={() => Alert.alert(s.delConfirmTitle, s.delConfirmMsg, [
+                    { text: s.cancel, style: 'cancel' },
+                    { text: s.delConfirmBtn, style: 'destructive', onPress: () => removeTemplate(tp.id) },
+                  ])} hitSlop={10}>
                     <Text style={[styles.del, { color: t.inkSoft }]}>✕</Text>
                   </Pressable>
                 </View>

@@ -21,6 +21,7 @@ interface Props {
   onDelete?: (id: string) => void;
   onEdit?: (id: string) => void;
   emptyText?: string; // overrides the default empty message (e.g. "no results")
+  emptyHint?: string; // secondary hint text below the empty message
   columns?: number; // 1 (default) or 2+ for tablet
   // Scrolls WITH the list (summary card, budget line, filters…) so fixed chrome
   // never squeezes the entries off-screen on small phones.
@@ -55,7 +56,7 @@ function dayLabel(key: string, lang: Lang, s: typeof I18N['zh']): string {
   });
 }
 
-export function EntryList({ entries, customCats, lang, onPress, onLongPress, onDelete, onEdit, emptyText, columns = 1, header }: Props) {
+export function EntryList({ entries, customCats, lang, onPress, onLongPress, onDelete, onEdit, emptyText, emptyHint, columns = 1, header }: Props) {
   const t = useTheme();
   const s = I18N[lang];
   const accounts = store$.accounts.peek();
@@ -245,6 +246,7 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
           <Flower size={56} petal="#E0CDB8" stamen="#D6C3AC" />
         </View>
         <Text style={[styles.emptyText, { color: t.inkSoft }]}>{emptyText ?? s.empty}</Text>
+        {emptyHint && <Text style={[styles.emptyHint, { color: t.inkSoft }]}>{emptyHint}</Text>}
       </View>
     );
     if (!header) return empty;
@@ -311,6 +313,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   emptyText: { fontSize: 13, textAlign: 'center' },
+  emptyHint: { fontSize: 12, textAlign: 'center', marginTop: -8 },
   columnGap: { gap: 8 },
   gridRow: { flexDirection: 'row', gap: 8, marginBottom: 8, marginHorizontal: 22 },
   gridCol: { flex: 1 },

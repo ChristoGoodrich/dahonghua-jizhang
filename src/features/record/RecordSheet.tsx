@@ -91,6 +91,9 @@ export const RecordSheet = observer(function RecordSheet({ visible, editId, init
     return () => clearTimeout(id);
   }, [flash]);
 
+  // Track if the user has attempted to save (for showing validation errors on inputs)
+  const [attempted, setAttempted] = useState(false);
+
   // archived accounts/ledgers drop out of the pickers, but a currently-selected
   // one stays (editing an old entry that lives on an archived account/ledger)
   const visibleAccts = pickerAccounts(accounts, [acct, acctTo]);
@@ -153,6 +156,7 @@ export const RecordSheet = observer(function RecordSheet({ visible, editId, init
       const srcId = editId ?? dupeId ?? null;
       const d = srcId ? store$.data.peek().find((x) => x.id === srcId) : undefined;
       setFlash(null);
+      setAttempted(false);
       if (d) {
         setIO(d.io);
         setCat(d.cat);
@@ -268,6 +272,7 @@ export const RecordSheet = observer(function RecordSheet({ visible, editId, init
     const err = validationError();
     if (err) {
       setFlash({ msg: err, err: true });
+      setAttempted(true);
       return;
     }
     if (writeEntry() === null) return;
@@ -399,7 +404,7 @@ export const RecordSheet = observer(function RecordSheet({ visible, editId, init
             ))}
           </View>
 
-          <View style={styles.amtRow} accessible accessibilityLabel={`${s.amountPh}: ${amt || '0'} ${curSymbol(cur)}`}>
+          <View style={[styles.amtRow, attempted && flash?.err && { borderWidth: 2, borderColor: t.hibiscus, borderRadius: 8, padding: 4 }]} accessible accessibilityLabel={`${s.amountPh}: ${amt || '0'} ${curSymbol(cur)}`}>
             <Text style={[styles.cur, { color: accent }]}>{curSymbol(cur)}</Text>
             <Text
               style={[styles.amtInput, TABULAR, { color: amt ? t.ink : t.line }]}
