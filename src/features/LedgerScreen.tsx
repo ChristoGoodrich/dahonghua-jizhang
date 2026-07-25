@@ -18,6 +18,8 @@ import { todayExpense, monthlyStatus, catBudgetRows } from '@/domain/budget';
 import { fmtShort } from '@/domain/money';
 import { catName, catOf } from '@/domain/cats';
 import { matchesSearch } from '@/domain/search';
+import { matchesFilter, parseSearchQuery, type FilterState } from '@/domain/filter';
+import { SearchFilter } from '@/features/list/SearchFilter';
 import { SummaryCard } from '@/features/summary/SummaryCard';
 import { EntryList } from '@/features/list/EntryList';
 import { RecordSheet } from '@/features/record/RecordSheet';
@@ -132,6 +134,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
   // The input stays instant; the (whole-ledger) filter runs on this trailing
   // value so typing doesn't re-scan every entry on every keystroke.
   const [searchTerm, setSearchTerm] = useState('');
+  const [searchFilter, setSearchFilter] = useState<FilterState>({});
   const [markId, setMarkId] = useState<string | null>(null);
   const [burst, setBurst] = useState<number | null>(null);
   const searchRef = useRef<TextInput>(null);
@@ -148,12 +151,28 @@ export const LedgerScreen = observer(function LedgerScreen() {
     return () => clearTimeout(id);
   }, [searchQ]);
 
+  // Parse search query for embedded filters (date ranges, IO type keywords)
+  const parsedSearch = useMemo(() => parseSearchQuery(searchTerm), [searchTerm]);
+  // Merge parsed filters with explicit filter chips
+  const activeFilter = useMemo<FilterState>(() => ({
+    ...parsedSearch.filter,
+    ...searchFilter,
+    // Explicit filter chips override parsed IO
+    io: searchFilter.io ?? parsedSearch.filter.io,
+  }), [parsedSearch.filter, searchFilter]);
+
+  const hasActiveFilters = searchTerm || searchFilter.io || searchFilter.cat || searchFilter.dateFrom;
+
   const listEntries = useMemo(
     () =>
-      searchTerm
-        ? liveAll.filter((d) => (!curLedger || d.ledger === curLedger) && matchesSearch(d, searchTerm, customCats, lang))
+      hasActiveFilters
+        ? liveAll.filter((d) =>
+            (!curLedger || d.ledger === curLedger) &&
+            matchesFilter(d, activeFilter) &&
+            (!parsedSearch.text || matchesSearch(d, parsedSearch.text, customCats, lang))
+          )
         : cycleEntries,
-    [cycleEntries, liveAll, curLedger, searchTerm, customCats, lang],
+    [cycleEntries, liveAll, curLedger, hasActiveFilters, activeFilter, parsedSearch.text, customCats, lang],
   );
   const exp = useMemo(() => cycleEntries.filter((d) => d.io === 'exp').reduce((a, d) => a + d.amt, 0), [cycleEntries]);
   const inc = useMemo(() => cycleEntries.filter((d) => d.io === 'inc').reduce((a, d) => a + d.amt, 0), [cycleEntries]);
@@ -264,6 +283,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
     setSearchOpen(false);
     setSearchQ('');
     setSearchTerm('');
+    setSearchFilter({});
   }, []);
 
   useWebKeyboard(
@@ -343,6 +363,7 @@ export const LedgerScreen = observer(function LedgerScreen() {
                 </View>
               </Pressable>
             </View>
+            <SearchFilter lang={lang} customCats={customCats} filter={searchFilter} onChange={setSearchFilter} />
           </View>
         )}
 
