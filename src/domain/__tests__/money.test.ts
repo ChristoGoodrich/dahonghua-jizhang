@@ -17,6 +17,19 @@ describe('toBase', () => {
   it('falls back to the raw amount when no rate is known', () => {
     expect(toBase(10, 'EUR', currencies)).toBe(10);
   });
+
+  it('uses override rate when provided (stored rate on entry)', () => {
+    // Entry was recorded at rate 7.5 even though current USD rate is 7.2
+    expect(toBase(10, 'USD', currencies, 7.5)).toBeCloseTo(75);
+  });
+
+  it('ignores override rate for base currency', () => {
+    expect(toBase(100, 'CNY', currencies, 999)).toBe(100);
+  });
+
+  it('treats undefined override rate as no override', () => {
+    expect(toBase(10, 'USD', currencies, undefined)).toBeCloseTo(72);
+  });
 });
 
 describe('curSymbol', () => {

@@ -24,6 +24,7 @@ export interface Entry {
   subcat?: string;
   cur?: string; // original currency code (if not base)
   origAmt?: number; // original amount in `cur`
+  rate?: number; // rate used (1 cur = N base). Undefined = used latest available
   tags?: string[];
   ledger?: string;
   rb?: 'pending' | 'done'; // reimbursement state

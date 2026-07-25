@@ -12,6 +12,7 @@ export interface DbEntry {
   amt: number;
   cur: string | null;
   orig_amt: number | null;
+  rate: number | null;
   note: string | null;
   acct: string | null;
   acct_to: string | null;
@@ -41,6 +42,7 @@ export function entryToRow(e: Entry, userId: string): DbEntry {
     amt: e.amt,
     cur: e.cur ?? null,
     orig_amt: e.origAmt ?? null,
+    rate: e.rate ?? null,
     note: e.note ?? null,
     acct: e.acct ?? null,
     acct_to: e.acctTo ?? null,
@@ -72,6 +74,7 @@ export function rowToEntry(r: DbEntry): Entry {
   if (r.subcat != null) e.subcat = r.subcat;
   if (r.cur != null) e.cur = r.cur;
   if (r.orig_amt != null) e.origAmt = r.orig_amt;
+  if (r.rate != null) e.rate = r.rate;
   if (r.note != null) e.note = r.note;
   if (r.acct != null) e.acct = r.acct;
   if (r.acct_to != null) e.acctTo = r.acct_to;

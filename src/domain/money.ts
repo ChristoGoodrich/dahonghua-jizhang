@@ -21,9 +21,10 @@ export function curSymbol(code: string): string {
  *  as if it were base currency. Callers must not reach here without a rate; the
  *  record sheet blocks the save instead (see validationError). Kept permissive
  *  so pure formatting paths can't throw. */
-export function toBase(amt: number, code: string | undefined, currencies: Currencies): number {
+export function toBase(amt: number, code: string | undefined, currencies: Currencies, overrideRate?: number): number {
   const base = currencies.base || 'CNY';
   if (!code || code === base) return amt;
+  if (overrideRate != null) return amt * overrideRate;
   const r = currencies.rates?.[code];
   return r ? amt * r : amt;
 }
