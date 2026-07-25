@@ -430,7 +430,7 @@ export const RecordSheet = observer(function RecordSheet({ visible, editId, init
         <Animated.View
           style={[
             styles.sheet,
-            { backgroundColor: t.paper, paddingBottom: Math.max(26, insets.bottom + 12) },
+            { backgroundColor: t.paper, paddingBottom: Math.max(26, insets.bottom + 12), zIndex: 10 },
             shadow(t, 'lg'),
             {
               opacity: enter.interpolate({ inputRange: [0, 0.4, 1], outputRange: [0, 1, 1], extrapolate: 'clamp' }),
