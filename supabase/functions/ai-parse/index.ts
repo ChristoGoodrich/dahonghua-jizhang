@@ -20,6 +20,7 @@ const RESULT_SCHEMA = {
     amount: { type: 'number' },
     category: { type: 'string' },
     note: { type: 'string' },
+    date: { type: 'string', description: 'ISO date (YYYY-MM-DD) when user mentions a relative date' },
   },
   required: ['io', 'amount', 'category'],
   additionalProperties: false,
@@ -30,7 +31,10 @@ const SYSTEM =
   'Return only the structured fields. io is "exp" for money spent and "inc" for money received. ' +
   'amount is a positive number in the main currency (no symbol). ' +
   'category MUST be chosen from the provided category list (use the exact label). ' +
-  'note is a short free-text memo (the merchant or what it was for), omit if there is nothing extra.';
+  'note is a short free-text memo (the merchant or what it was for), omit if there is nothing extra. ' +
+  'If the user mentions a relative date (e.g. "昨天", "前天", "上周三", "last Friday", "3天前"), ' +
+  'return date as an ISO date string (YYYY-MM-DD) based on today being {{today}}. ' +
+  'Omit date if no date is mentioned (the entry will use the current time).';
 
 const client = new Anthropic({ apiKey: Deno.env.get('ANTHROPIC_API_KEY') });
 
@@ -48,10 +52,13 @@ Deno.serve(async (req: Request) => {
       `收入分类 / income categories: ${inc}\n\n` +
       `记一笔 / entry: ${text}`;
 
+    const today = new Date().toISOString().slice(0, 10);
+    const system = SYSTEM.replace('{{today}}', today);
+
     const resp = await client.messages.create({
       model: 'claude-opus-4-8',
       max_tokens: 1024,
-      system: SYSTEM,
+      system,
       output_config: { format: { type: 'json_schema', schema: RESULT_SCHEMA } },
       messages: [{ role: 'user', content: prompt }],
     });

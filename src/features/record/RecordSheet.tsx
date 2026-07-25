@@ -155,6 +155,11 @@ export const RecordSheet = observer(function RecordSheet({ visible, editId, init
         setCat(draft.cat);
         setAmt(draft.amt);
         if (draft.note) setNote(draft.note);
+        // Apply parsed date (e.g. "昨天" → yesterday's timestamp at noon)
+        if (draft.date) {
+          const [y, m, d] = draft.date.split('-').map(Number);
+          setTs(new Date(y, m - 1, d, 12).getTime());
+        }
         setAiText('');
       }
     } catch {

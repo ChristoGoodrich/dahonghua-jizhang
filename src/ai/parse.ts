@@ -10,6 +10,7 @@ export interface ParsedEntry {
   amount: number;
   category: string; // a category name or emoji the model chose
   note?: string;
+  date?: string; // ISO date string (YYYY-MM-DD) when user mentions a relative date
 }
 
 /** Sheet-ready draft produced from a ParsedEntry. */
@@ -18,6 +19,7 @@ export interface EntryDraft {
   cat: string; // resolved category key
   amt: string; // expression string for the amount field
   note: string;
+  date?: string; // ISO date string when parsed from natural language
 }
 
 /** The JSON schema the proxy constrains the model to (structured outputs). */
@@ -28,6 +30,7 @@ export const RESULT_SCHEMA = {
     amount: { type: 'number' },
     category: { type: 'string' },
     note: { type: 'string' },
+    date: { type: 'string', description: 'ISO date (YYYY-MM-DD) when user mentions a relative date' },
   },
   required: ['io', 'amount', 'category'],
   additionalProperties: false,
@@ -38,13 +41,18 @@ export const AI_SYSTEM =
   'Return only the structured fields. io is "exp" for money spent and "inc" for money received. ' +
   'amount is a positive number in the main currency (no symbol). ' +
   'category MUST be chosen from the provided category list (use the exact label). ' +
-  'note is a short free-text memo (the merchant or what it was for), omit if there is nothing extra.';
+  'note is a short free-text memo (the merchant or what it was for), omit if there is nothing extra. ' +
+  'If the user mentions a relative date (e.g. "昨天", "前天", "上周三", "last Friday", "3天前"), ' +
+  'return date as an ISO date string (YYYY-MM-DD) based on today being {{today}}. ' +
+  'Omit date if no date is mentioned (the entry will use the current time).';
 
-/** Build the user prompt, embedding the user's own category labels to pick from. */
+/** Build the user prompt, embedding the user's own category labels and today's date. */
 export function buildUserPrompt(text: string, customCats: Record<IO, Category[]>, lang: Lang): string {
   const exp = allCats('exp', customCats).map((c) => catName(c, lang)).join('、');
   const inc = allCats('inc', customCats).map((c) => catName(c, lang)).join('、');
+  const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
   return (
+    `Today: ${today}\n` +
     `支出分类 / expense categories: ${exp}\n` +
     `收入分类 / income categories: ${inc}\n\n` +
     `记一笔 / entry: ${text}`
@@ -91,10 +99,18 @@ export function normalizeParsed(raw: ParsedEntry, customCats: Record<IO, Categor
   // out-of-range resolves to 0, which the caller surfaces as a parse failure —
   // better than silently clamping the user's amount to something they never said
   const amount = Number.isFinite(n) && n <= MAX_AMOUNT ? Math.max(0, Math.round(n * 100) / 100) : 0;
+
+  // Parse date if provided (YYYY-MM-DD → timestamp at noon local time)
+  let date: string | undefined;
+  if (raw.date && /^\d{4}-\d{2}-\d{2}$/.test(raw.date)) {
+    date = raw.date;
+  }
+
   return {
     io,
     cat: resolveCategory(raw.category, io, customCats),
     amt: amount ? String(amount) : '',
     note: (raw.note ?? '').trim().slice(0, 60),
+    date,
   };
 }

@@ -75,8 +75,10 @@ async function callProxy(text: string, customCats: Record<IO, Category[]>, lang:
 }
 
 async function callMiMo(text: string, customCats: Record<IO, Category[]>, lang: Lang): Promise<ParsedEntry> {
+  const today = new Date().toISOString().slice(0, 10);
+  const system = AI_SYSTEM.replace('{{today}}', today);
   const messages = [
-    { role: 'system', content: `${AI_SYSTEM} Respond with ONLY a compact JSON object (no markdown, no explanation) of the form {"io","amount","category","note"}.` },
+    { role: 'system', content: `${system} Respond with ONLY a compact JSON object (no markdown, no explanation) of the form {"io","amount","category","note","date"}. The date field is optional (YYYY-MM-DD format, only when user mentions a relative date).` },
     { role: 'user', content: buildUserPrompt(text, customCats, lang) },
   ];
   let res: Response;
