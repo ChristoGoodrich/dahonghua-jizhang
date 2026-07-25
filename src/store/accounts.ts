@@ -6,13 +6,15 @@ export function addAccount(
   name: string,
   balance = 0,
   kind: Account['kind'] = 'cash',
-  opts?: { statementDay?: number; dueDay?: number },
+  opts?: { statementDay?: number; dueDay?: number; fxCode?: string },
 ): Account {
   const a: Account = { id: newId('a'), name, nameEn: name, balance, kind };
-  // statement/due days only apply to credit cards
   if (kind === 'credit') {
     if (opts?.statementDay) a.statementDay = opts.statementDay;
     if (opts?.dueDay) a.dueDay = opts.dueDay;
+  }
+  if (kind === 'fx') {
+    if (opts?.fxCode) a.fxCode = opts.fxCode.toUpperCase();
   }
   store$.accounts.set([...store$.accounts.peek(), a]);
   return a;

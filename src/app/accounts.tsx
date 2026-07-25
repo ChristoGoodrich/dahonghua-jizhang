@@ -24,21 +24,23 @@ export default observer(function AccountsScreen() {
   const [adding, setAdding] = useState(false);
   const [name, setName] = useState('');
   const [bal, setBal] = useState('');
-  const [kind, setKind] = useState<'cash' | 'credit' | 'prepaid'>('cash');
+  const [kind, setKind] = useState<'cash' | 'credit' | 'prepaid' | 'fx'>('cash');
   const [stmtDay, setStmtDay] = useState('');
   const [dueDay, setDueDay] = useState('');
+  const [fxCode, setFxCode] = useState('');
 
   const clampDay = (v: string) => {
     const n = parseInt(v.replace(/[^\d]/g, ''), 10);
     return Number.isFinite(n) ? Math.max(1, Math.min(28, n)) : undefined;
   };
 
-  const kinds: { k: 'cash' | 'credit' | 'prepaid'; label: string }[] = [
+  const kinds: { k: 'cash' | 'credit' | 'prepaid' | 'fx'; label: string }[] = [
     { k: 'cash', label: s.acctKindCash },
     { k: 'credit', label: s.acctKindCredit },
     { k: 'prepaid', label: s.acctKindPrepaid },
+    { k: 'fx', label: s.acctKindFx },
   ];
-  const acctEmoji = (kd?: string) => (kd === 'credit' ? '💳' : kd === 'prepaid' ? '🎫' : '👛');
+  const acctEmoji = (kd?: string) => (kd === 'credit' ? '💳' : kd === 'prepaid' ? '🎫' : kd === 'fx' ? '💱' : '👛');
 
   const active = accounts.filter((a) => !a.archived);
   const archived = archivedAccounts(accounts);
@@ -58,7 +60,7 @@ export default observer(function AccountsScreen() {
           <View style={{ flex: 1 }}>
             <Text style={[styles.name, { color: t.ink }]}>
               {lang === 'zh' ? a.name : a.nameEn || a.name}
-              {isDef ? ` · ${s.acctDefault}` : a.kind === 'credit' ? ` · ${s.acctKindCredit}` : ''}
+              {isDef ? ` · ${s.acctDefault}` : a.kind === 'credit' ? ` · ${s.acctKindCredit}` : a.kind === 'fx' ? ` · ${a.fxCode ?? ''}` : ''}
             </Text>
             <Text style={[styles.sub, { color: owed ? t.hibiscus : t.inkSoft }]}>
               {owed ? s.acctOwed : s.acctBalance} {hide ? '****' : fmt(owed ? -bal : bal, lang)}
@@ -92,15 +94,18 @@ export default observer(function AccountsScreen() {
 
   function save() {
     if (!name.trim()) return;
+    if (kind === 'fx' && !fxCode.trim()) return;
     addAccount(name.trim(), parseFloat(bal.replace(/[^\d.]/g, '')) || 0, kind, {
       statementDay: clampDay(stmtDay),
       dueDay: clampDay(dueDay),
+      fxCode: fxCode.trim(),
     });
     setName('');
     setBal('');
     setKind('cash');
     setStmtDay('');
     setDueDay('');
+    setFxCode('');
     setAdding(false);
   }
 
@@ -167,8 +172,21 @@ export default observer(function AccountsScreen() {
                   />
                 </View>
               )}
+              {kind === 'fx' && (
+                <>
+                  <Text style={[styles.hint, { color: t.inkSoft }]}>{s.acctFxHint}</Text>
+                  <TextInput
+                    style={[styles.field, { borderColor: t.line, color: t.ink, backgroundColor: t.card }]}
+                    placeholder={s.acctFxCode}
+                    placeholderTextColor={t.inkSoft}
+                    autoCapitalize="characters"
+                    value={fxCode}
+                    onChangeText={setFxCode}
+                  />
+                </>
+              )}
               <View style={styles.formActions}>
-                <Pressable style={[styles.cancelBtn, { borderColor: t.line }]} onPress={() => { setAdding(false); setName(''); setBal(''); setKind('cash'); setStmtDay(''); setDueDay(''); }}>
+                <Pressable style={[styles.cancelBtn, { borderColor: t.line }]} onPress={() => { setAdding(false); setName(''); setBal(''); setKind('cash'); setStmtDay(''); setDueDay(''); setFxCode(''); }}>
                   <Text style={[styles.cancelText, { color: t.inkSoft }]}>{s.cancel}</Text>
                 </Pressable>
                 <Pressable style={[styles.save, { backgroundColor: t.hibiscus }]} onPress={save}>
@@ -214,6 +232,7 @@ const styles = StyleSheet.create({
   toggleBtn: { flex: 1, paddingVertical: 9, borderRadius: 9, alignItems: 'center' },
   toggleText: { fontSize: 13, fontWeight: '600' },
   field: { borderWidth: 1, borderRadius: 11, padding: 11, fontSize: 14 },
+  hint: { fontSize: 12 },
   dayRow: { flexDirection: 'row', gap: 10 },
   dayField: { flex: 1 },
   formActions: { flexDirection: 'row', gap: 10 },

@@ -83,7 +83,8 @@ export interface Strings {
   // accounts
   setAccounts: string; setAccountsD: string; acctAdd: string;
   acctName: string; acctBal: string; acctSaveBtn: string; acctBalance: string; acctDefault: string;
-  acctKind: string; acctKindCash: string; acctKindCredit: string; acctKindPrepaid: string; acctOwed: string;
+  acctKind: string; acctKindCash: string; acctKindCredit: string; acctKindPrepaid: string; acctKindFx: string; acctOwed: string;
+  acctFxCode: string; acctFxHint: string;
   acctTxTitle: string;
   archive: string; unarchive: string; archivedSection: string; archivedHint: string;
   // credit-card statement cycle (信用卡账单周期)
@@ -240,7 +241,8 @@ export const I18N: Record<Lang, Strings> = {
     capAcctNote: '通知里读不到账户和账本，自动记录的这笔会留空，可以在明细里补。',
     setAccounts: '账户', setAccountsD: '现金、信用卡、微信…分开记', acctAdd: '＋ 添加账户',
     acctName: '账户名（如 微信）', acctBal: '初始余额', acctSaveBtn: '保存账户', acctBalance: '余额', acctDefault: '默认',
-    acctKind: '类型', acctKindCash: '现金', acctKindCredit: '信用', acctKindPrepaid: '储值', acctOwed: '欠款',
+    acctKind: '类型', acctKindCash: '现金', acctKindCredit: '信用', acctKindPrepaid: '储值', acctKindFx: '外币', acctOwed: '欠款',
+    acctFxCode: '币种代码（如 USD）', acctFxHint: '换汇后持有外币的账户',
     acctTxTitle: '账户流水',
     archive: '归档', unarchive: '恢复', archivedSection: '已归档', archivedHint: '不出现在记账选择里，历史与余额保留',
     acctStmtDay: '出账日', acctDueDay: '还款日',
@@ -373,7 +375,8 @@ export const I18N: Record<Lang, Strings> = {
     capAcctNote: 'A notification says nothing about the account or ledger, so captured entries leave those blank — fill them in from the list.',
     setAccounts: 'Accounts', setAccountsD: 'Cash, card, wallet… kept apart', acctAdd: '＋ Add account',
     acctName: 'Account name (e.g. Card)', acctBal: 'Starting balance', acctSaveBtn: 'Save account', acctBalance: 'Balance', acctDefault: 'Default',
-    acctKind: 'Type', acctKindCash: 'Cash', acctKindCredit: 'Credit', acctKindPrepaid: 'Prepaid', acctOwed: 'Owed',
+    acctKind: 'Type', acctKindCash: 'Cash', acctKindCredit: 'Credit', acctKindPrepaid: 'Prepaid', acctKindFx: 'FX', acctOwed: 'Owed',
+    acctFxCode: 'Currency code (e.g. USD)', acctFxHint: 'Account holding foreign currency after exchange',
     acctTxTitle: 'Transactions',
     archive: 'Archive', unarchive: 'Restore', archivedSection: 'Archived', archivedHint: 'Hidden from entry pickers; history & balance kept',
     acctStmtDay: 'Statement day', acctDueDay: 'Due day',

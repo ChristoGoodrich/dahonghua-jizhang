@@ -43,9 +43,11 @@ export interface Account {
   name: string;
   nameEn?: string;
   balance: number; // starting balance
-  kind?: 'cash' | 'credit' | 'prepaid'; // default 'cash'; a 'credit' account is a liability
+  kind?: 'cash' | 'credit' | 'prepaid' | 'fx'; // default 'cash'; a 'credit' account is a liability
   statementDay?: number; // credit card: 出账日 (statement closes this day-of-month, 1..28)
   dueDay?: number; // credit card: 还款日 (payment due this day-of-month, 1..28)
+  fxCode?: string; // fx: foreign currency code (e.g. 'USD', 'JPY')
+  fxRate?: number; // fx: weighted average purchase rate (1 fxCode = N base)
   archived?: boolean; // hidden from new-entry pickers; history + balance preserved
 }
 
