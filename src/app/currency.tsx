@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, Pressable, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { observer } from '@legendapp/state/react';
@@ -10,6 +10,20 @@ import { I18N } from '@/i18n';
 
 const ALL_CODES = Object.keys(CUR_NAMES);
 
+/** Individual rate input — uses key-based remount to refresh after bulk updates. */
+function RateInput({ code, initial, onChange }: { code: string; initial: number; onChange: (v: number) => void }) {
+  const t = useTheme();
+  const [val, setVal] = useState(String(initial));
+  return (
+    <TextInput
+      style={[styles.rateInput, { borderColor: t.line, color: t.ink, backgroundColor: t.card }]}
+      keyboardType="numeric"
+      value={val}
+      onChangeText={(v) => { setVal(v); onChange(parseFloat(v.replace(/[^\d.]/g, '')) || 0); }}
+    />
+  );
+}
+
 export default observer(function CurrencyScreen() {
   const t = useTheme();
   const lang = store$.lang.get();
@@ -18,11 +32,14 @@ export default observer(function CurrencyScreen() {
   const base = currencies.base || 'CNY';
   const rates = currencies.rates || {};
   const [status, setStatus] = useState('');
+  // Version counter to force re-sync after updateRates
+  const [rateVersion, setRateVersion] = useState(0);
 
   async function doUpdate() {
     setStatus(s.curUpdating);
     const ok = await updateRates();
     setStatus(ok ? s.curUpdated : s.curUpdateFail);
+    if (ok) setRateVersion((v) => v + 1);
   }
 
   // Switching the base re-denominates the whole ledger, so it needs an explicit
@@ -67,12 +84,11 @@ export default observer(function CurrencyScreen() {
             <View key={c} style={[styles.rateRow, { borderBottomColor: t.line }]}>
               <Text style={[styles.cc, { color: t.ink }]}>{curSymbol(c)}</Text>
               <Text style={[styles.crn, { color: t.inkSoft }]}>{CUR_NAMES[c] || c}</Text>
-              <TextInput
-                key={c}
-                style={[styles.rateInput, { borderColor: t.line, color: t.ink, backgroundColor: t.card }]}
-                keyboardType="numeric"
-                defaultValue={String(rates[c])}
-                onChangeText={(v) => setRate(c, parseFloat(v.replace(/[^\d.]/g, '')) || 0)}
+              <RateInput
+                key={`${c}-${rateVersion}`}
+                code={c}
+                initial={rates[c]}
+                onChange={(v) => setRate(c, v)}
               />
               <Pressable onPress={() => removeRate(c)} hitSlop={8}>
                 <Text style={[styles.del, { color: t.inkSoft }]}>✕</Text>
