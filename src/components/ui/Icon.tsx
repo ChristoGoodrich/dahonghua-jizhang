@@ -9,7 +9,8 @@ export type IconName =
   // hub rows — one stroke voice instead of a wall of mismatched emoji
   | 'sprout' | 'bolt' | 'tag' | 'repeat' | 'download' | 'bell'
   | 'cloud' | 'archive' | 'mail' | 'wallet' | 'card' | 'layers'
-  | 'eye' | 'eyeOff';
+  | 'eye' | 'eyeOff'
+  | 'camera' | 'gallery';
 
 interface Props {
   name: IconName;
@@ -213,6 +214,19 @@ export function Icon({ name, color, size = 20, strokeWidth = 1.8 }: Props) {
           <Path d="M2 12 C5.5 6.5 18.5 6.5 22 12 C18.5 17.5 5.5 17.5 2 12 Z" {...line} />
           <Circle cx={12} cy={12} r={3} {...line} />
           <Line x1={4} y1={4} x2={20} y2={20} {...line} />
+        </>
+      )}
+      {name === 'camera' && (
+        <>
+          <Path d="M3.5 7.5 H6.5 L8.5 5 H15.5 L17.5 7.5 H20.5 A1.5 1.5 0 0 1 22 9 V18 A1.5 1.5 0 0 1 20.5 19.5 H3.5 A1.5 1.5 0 0 1 2 18 V9 A1.5 1.5 0 0 1 3.5 7.5 Z" {...line} />
+          <Circle cx={12} cy={13} r={4} {...line} />
+        </>
+      )}
+      {name === 'gallery' && (
+        <>
+          <Path d="M3.5 4.5 H20.5 A1.5 1.5 0 0 1 22 6 V18 A1.5 1.5 0 0 1 20.5 19.5 H3.5 A1.5 1.5 0 0 1 2 18 V6 A1.5 1.5 0 0 1 3.5 4.5 Z" {...line} />
+          <Path d="M2 16 L7 11 L10 14 L15 9 L22 16" {...line} />
+          <Circle cx={8} cy={9} r={1.5} {...line} />
         </>
       )}
     </Svg>

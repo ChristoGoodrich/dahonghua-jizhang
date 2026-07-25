@@ -29,6 +29,8 @@ import { CategoryPicker } from './CategoryPicker';
 import { TransferForm } from './TransferForm';
 import { DateField } from './DateField';
 import { aiConfigured, parseEntryText } from '@/ai/client';
+import { receiptAiConfigured, parseReceiptImage, ReceiptError } from '@/ai/receipt';
+import { ReceiptScan, ReceiptPreview } from './ReceiptScan';
 
 interface Props {
   visible: boolean;
@@ -87,6 +89,8 @@ export const RecordSheet = observer(function RecordSheet({ visible, editId, init
   const [fetchedRate, setFetchedRate] = useState<number | null>(null);
   const [rateSource, setRateSource] = useState<'api' | 'cached' | null>(null);
   const [curDropdown, setCurDropdown] = useState(false);
+  const [receiptUri, setReceiptUri] = useState<string | null>(null);
+  const [receiptBusy, setReceiptBusy] = useState(false);
 
   // cleared by timer, timer cleared on unmount; errors linger a little longer
   useEffect(() => {
@@ -169,6 +173,32 @@ export const RecordSheet = observer(function RecordSheet({ visible, editId, init
     }
   }
 
+  // Receipt image recognition
+  async function handleReceiptCapture(uri: string) {
+    setReceiptUri(uri);
+    setReceiptBusy(true);
+    setFlash(null);
+    try {
+      const draft = await parseReceiptImage(uri, customCats, lang);
+      if (!draft || !draft.amt) {
+        setFlash({ msg: s.aiFailed, err: true });
+        return;
+      }
+      setIO(draft.io);
+      setCat(draft.cat);
+      setAmt(draft.amt);
+      if (draft.note) setNote(draft.note);
+      if (draft.date) {
+        const [y, m, d] = draft.date.split('-').map(Number);
+        setTs(new Date(y, m - 1, d, 12).getTime());
+      }
+    } catch (e) {
+      setFlash({ msg: e instanceof ReceiptError ? s.aiFailed : s.cameraPermissionDesc, err: true });
+    } finally {
+      setReceiptBusy(false);
+    }
+  }
+
   // Re-initialize the form whenever the sheet opens or switches target entry.
   // Adjusted during render (guarded by initKey) rather than in an effect, so
   // the first visible frame already shows the right values — and creating a
@@ -182,6 +212,8 @@ export const RecordSheet = observer(function RecordSheet({ visible, editId, init
     if (formKey !== null) {
       setAiText('');
       setAiMsg('');
+      setReceiptUri(null);
+      setReceiptBusy(false);
       const baseNow = store$.currencies.base.peek() || 'CNY';
       // edit loads the target; duplicate copies a source entry's fields into a
       // fresh entry (editId stays null → saves via addEntry, dated today)
@@ -526,6 +558,14 @@ export const RecordSheet = observer(function RecordSheet({ visible, editId, init
           <ScrollView style={styles.middle} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
             {io !== 'xfer' && aiConfigured() && (
               <AIQuickEntry value={aiText} busy={aiBusy} msg={aiMsg} onChangeText={setAiText} onSubmit={runAI} lang={lang} />
+            )}
+
+            {/* Receipt scanning */}
+            {io !== 'xfer' && receiptAiConfigured() && (
+              <>
+                {receiptUri && <ReceiptPreview uri={receiptUri} busy={receiptBusy} onRemove={() => setReceiptUri(null)} />}
+                <ReceiptScan lang={lang} onCapture={handleReceiptCapture} busy={receiptBusy || aiBusy} />
+              </>
             )}
 
             {io !== 'xfer' && (
