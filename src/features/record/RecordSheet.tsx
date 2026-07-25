@@ -466,18 +466,13 @@ export const RecordSheet = observer(function RecordSheet({ visible, editId, init
           </View>
 
           <View style={[styles.amtRow, attempted && flash?.err && { borderWidth: 2, borderColor: t.hibiscus, borderRadius: 8, padding: 4 }]} accessible accessibilityLabel={`${s.amountPh}: ${amt || '0'} ${curSymbol(cur)}`}>
-            {/* Currency symbol — tappable when foreign currencies exist */}
+            {/* Currency symbol — subtle background mask when foreign currencies exist */}
             <Pressable
               onPress={() => rateCodes.length > 0 && setCurDropdown((v) => !v)}
               hitSlop={12}
-              style={styles.curWrap}
+              style={[styles.curWrap, rateCodes.length > 0 && { backgroundColor: t.tint, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4 }]}
             >
               <Text style={[styles.cur, { color: accent }]}>{curSymbol(cur)}</Text>
-              {rateCodes.length > 0 && (
-                <View style={[styles.curBadge, { backgroundColor: accent }]}>
-                  <Text style={styles.curBadgeText}>▾</Text>
-                </View>
-              )}
             </Pressable>
             <Text
               style={[styles.amtInput, TABULAR, { color: amt ? t.ink : t.line }]}
@@ -488,7 +483,7 @@ export const RecordSheet = observer(function RecordSheet({ visible, editId, init
             </Text>
           </View>
 
-          {/* Currency dropdown overlay */}
+          {/* Currency dropdown — positioned right below the symbol */}
           {curDropdown && rateCodes.length > 0 && (
             <>
               <Pressable style={styles.curBackdrop} onPress={() => setCurDropdown(false)} />
@@ -650,17 +645,12 @@ const styles = StyleSheet.create({
   // which would park the symbol at the screen edge)
   amtRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7, marginTop: 6, marginBottom: 2, paddingHorizontal: 24 },
   cur: { fontSize: 22, fontWeight: '700' },
-  curWrap: { position: 'relative', paddingRight: 4 },
-  curBadge: {
-    position: 'absolute', top: -2, right: -4,
-    width: 12, height: 12, borderRadius: 6,
-    alignItems: 'center', justifyContent: 'center',
-  },
-  curBadgeText: { color: '#fff', fontSize: 8, lineHeight: 10, fontWeight: '800' },
+  curWrap: {},
   curBackdrop: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 99 },
   curDropdown: {
-    position: 'absolute', top: 60, left: 22, right: 22, zIndex: 100,
+    position: 'absolute', left: 22, zIndex: 100,
     borderWidth: StyleSheet.hairlineWidth, borderRadius: RAD.md, paddingVertical: 4,
+    minWidth: 130,
   },
   curOption: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
