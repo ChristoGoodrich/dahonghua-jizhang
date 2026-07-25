@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, Pressable, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Pressable, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { observer } from '@legendapp/state/react';
 import { store$, setBaseCurrency, setRate, addRate, removeRate, updateRates } from '@/store/ledger';
@@ -44,20 +44,29 @@ export default observer(function CurrencyScreen() {
 
   // Switching the base re-denominates the whole ledger, so it needs an explicit
   // confirmation and a rate to convert with.
+  const [pendingBase, setPendingBase] = useState<string | null>(null);
+
   function pickBase(code: string) {
     if (code === base) return;
     if (!rates[code]) {
       setStatus(s.curBaseNoRate.replace('%s', code));
       return;
     }
-    Alert.alert(s.curBaseSwitch, s.curBaseConfirm.replace('%s', code), [
-      { text: s.cancel, style: 'cancel' },
-      {
-        text: s.curBaseSwitch,
-        style: 'destructive',
-        onPress: () => setStatus(setBaseCurrency(code) === 'ok' ? s.curBaseDone : s.curBaseNoRate.replace('%s', code)),
-      },
-    ]);
+    // Show inline confirmation instead of Alert (Alert doesn't work well on web)
+    setPendingBase(code);
+    setStatus(s.curBaseConfirm.replace('%s', code));
+  }
+
+  function confirmBase() {
+    if (!pendingBase) return;
+    const result = setBaseCurrency(pendingBase);
+    setStatus(result === 'ok' ? s.curBaseDone : s.curBaseNoRate.replace('%s', pendingBase));
+    setPendingBase(null);
+  }
+
+  function cancelBase() {
+    setPendingBase(null);
+    setStatus('');
   }
 
   const addable = ALL_CODES.filter((c) => c !== base && !(c in rates));
@@ -78,6 +87,18 @@ export default observer(function CurrencyScreen() {
               );
             })}
           </ScrollView>
+
+          {/* Inline confirmation for base currency switch */}
+          {pendingBase && (
+            <View style={styles.confirmRow}>
+              <Pressable style={[styles.confirmBtn, { backgroundColor: t.hibiscus }]} onPress={confirmBase}>
+                <Text style={styles.confirmText}>{s.curBaseSwitch}</Text>
+              </Pressable>
+              <Pressable style={[styles.confirmBtn, { borderColor: t.line }]} onPress={cancelBase}>
+                <Text style={[styles.confirmText, { color: t.inkSoft }]}>{s.cancel}</Text>
+              </Pressable>
+            </View>
+          )}
 
           <Text style={[styles.sectionHead, { color: t.inkSoft }]}>{s.curRate}</Text>
           {Object.keys(rates).map((c) => (
@@ -132,4 +153,7 @@ const styles = StyleSheet.create({
   update: { borderRadius: 13, padding: 14, alignItems: 'center', marginTop: 18 },
   updateText: { color: '#fff', fontSize: 15, fontWeight: '700' },
   status: { marginTop: 10, fontSize: 13, fontWeight: '600', textAlign: 'center' },
+  confirmRow: { flexDirection: 'row', gap: 10, marginTop: 10 },
+  confirmBtn: { flex: 1, borderWidth: 1, borderRadius: 12, padding: 12, alignItems: 'center' },
+  confirmText: { color: '#fff', fontSize: 14, fontWeight: '700' },
 });

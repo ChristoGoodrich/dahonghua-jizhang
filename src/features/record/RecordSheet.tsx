@@ -493,9 +493,8 @@ export const RecordSheet = observer(function RecordSheet({ visible, editId, init
 
             {io !== 'xfer' && (
               <>
-                {rateCodes.length > 0 && (
-                  <CurrencyRow cur={cur} codes={[base, ...rateCodes]} onPick={setCur} convertedLabel={converted} />
-                )}
+                {/* Always show currency selector; if no foreign currencies configured, show base only */}
+                <CurrencyRow cur={cur} codes={[base, ...rateCodes]} onPick={setCur} convertedLabel={converted} />
                 <CategoryPicker
                   io={io}
                   cat={cat}
