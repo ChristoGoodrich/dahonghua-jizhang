@@ -86,6 +86,7 @@ export const RecordSheet = observer(function RecordSheet({ visible, editId, init
   const [aiMsg, setAiMsg] = useState('');
   const [fetchedRate, setFetchedRate] = useState<number | null>(null);
   const [rateSource, setRateSource] = useState<'api' | 'cached' | null>(null);
+  const [curDropdown, setCurDropdown] = useState(false);
 
   // cleared by timer, timer cleared on unmount; errors linger a little longer
   useEffect(() => {
@@ -465,7 +466,15 @@ export const RecordSheet = observer(function RecordSheet({ visible, editId, init
           </View>
 
           <View style={[styles.amtRow, attempted && flash?.err && { borderWidth: 2, borderColor: t.hibiscus, borderRadius: 8, padding: 4 }]} accessible accessibilityLabel={`${s.amountPh}: ${amt || '0'} ${curSymbol(cur)}`}>
-            <Text style={[styles.cur, { color: accent }]}>{curSymbol(cur)}</Text>
+            {/* Currency symbol as dropdown trigger */}
+            <Pressable
+              onPress={() => rateCodes.length > 0 && setCurDropdown((v) => !v)}
+              hitSlop={8}
+              style={[styles.curBtn, rateCodes.length > 0 && styles.curBtnActive]}
+            >
+              <Text style={[styles.cur, { color: accent }]}>{curSymbol(cur)}</Text>
+              {rateCodes.length > 0 && <Text style={[styles.curArrow, { color: accent }]}>▾</Text>}
+            </Pressable>
             <Text
               style={[styles.amtInput, TABULAR, { color: amt ? t.ink : t.line }]}
               numberOfLines={1}
@@ -474,6 +483,24 @@ export const RecordSheet = observer(function RecordSheet({ visible, editId, init
               {amt || s.amountPh}
             </Text>
           </View>
+
+          {/* Currency dropdown */}
+          {curDropdown && rateCodes.length > 0 && (
+            <View style={[styles.curDropdown, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'md')]}>
+              {[base, ...rateCodes].map((c) => (
+                <Pressable
+                  key={c}
+                  onPress={() => { setCur(c); setCurDropdown(false); }}
+                  style={[styles.curOption, c === cur && { backgroundColor: t.tint }]}
+                >
+                  <Text style={[styles.curOptionText, { color: c === cur ? t.hibiscus : t.ink }]}>
+                    {curSymbol(c)} {c}
+                  </Text>
+                  {c === cur && <Text style={{ color: t.hibiscus, fontSize: 12 }}>✓</Text>}
+                </Pressable>
+              ))}
+            </View>
+          )}
           {/* fixed-height slot: live "=" preview while typing math, or the 再记
               confirmation — constant height so the layout never jumps mid-entry */}
           <View style={styles.subLine}>
@@ -493,8 +520,6 @@ export const RecordSheet = observer(function RecordSheet({ visible, editId, init
 
             {io !== 'xfer' && (
               <>
-                {/* Always show currency selector; if no foreign currencies configured, show base only */}
-                <CurrencyRow cur={cur} codes={[base, ...rateCodes]} onPick={setCur} convertedLabel={converted} />
                 <CategoryPicker
                   io={io}
                   cat={cat}
@@ -618,6 +643,19 @@ const styles = StyleSheet.create({
   // which would park the symbol at the screen edge)
   amtRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7, marginTop: 6, marginBottom: 2, paddingHorizontal: 24 },
   cur: { fontSize: 22, fontWeight: '700' },
+  curBtn: { flexDirection: 'row', alignItems: 'center', gap: 2 },
+  curBtnActive: { opacity: 0.9 },
+  curArrow: { fontSize: 14, marginTop: 2 },
+  curDropdown: {
+    position: 'absolute', top: '100%', left: 24, zIndex: 100,
+    borderWidth: 1, borderRadius: RAD.sm, paddingVertical: 4, minWidth: 120,
+    marginTop: 4,
+  },
+  curOption: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingVertical: 10, paddingHorizontal: 14,
+  },
+  curOptionText: { fontSize: 14, fontWeight: '600' },
   amtInput: { fontSize: 42, fontWeight: '800', letterSpacing: -0.8, flexShrink: 1, textAlign: 'center', padding: 0 },
   subLine: { minHeight: 18, marginBottom: 4, justifyContent: 'center' },
   subLineText: { fontSize: 11.5, fontWeight: '600', textAlign: 'center' },
