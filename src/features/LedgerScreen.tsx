@@ -43,6 +43,7 @@ import { Icon } from '@/components/ui/Icon';
 import { RAD, shadow } from '@/theme/tokens';
 import { Toast } from '@/components/Toast';
 import { PetalBurst } from '@/components/PetalBurst';
+import { updateBudgetWidget } from '@/util/widget';
 
 type Tab = 'list' | 'stats' | 'assets' | 'me';
 /** The 明细 tab reads the same entries two ways. */
@@ -181,6 +182,13 @@ export const LedgerScreen = observer(function LedgerScreen() {
   const dueInsight = useMemo(() => creditDueInsight(accounts, liveAll, lang), [accounts, liveAll, lang]);
   const streak = useMemo(() => streakDays(liveAll.map((d) => d.ts)), [liveAll]);
 
+  // Update Android widget when budget data changes
+  useEffect(() => {
+    if (settings.budget > 0) {
+      updateBudgetWidget(exp, settings.budget, settings.budgetMode || 'monthly');
+    }
+  }, [exp, settings.budget, settings.budgetMode]);
+
   const monthLabel = useMemo(
     () =>
       cycleRange(anchor, cycleStart).start.toLocaleDateString(
@@ -272,6 +280,13 @@ export const LedgerScreen = observer(function LedgerScreen() {
     celebrate(sd > 1 ? s.toastStreak.replace('%d', String(sd)) : s.toastBloom);
     // Check budget after celebration toast (slight delay so they don't overlap)
     setTimeout(() => checkBudgetWarning(), 2000);
+    // Update Android widget
+    const st = store$.settings.peek();
+    if (st.budget > 0) {
+      const entries = store$.data.peek().filter((d) => !d.deletedAt && inCycle(d.ts, new Date(), st.cycleStart || 1));
+      const spent = entries.filter((d) => d.io === 'exp').reduce((a, d) => a + d.amt, 0);
+      updateBudgetWidget(spent, st.budget, st.budgetMode || 'monthly');
+    }
   }, [celebrate, s.toastStreak, s.toastBloom, checkBudgetWarning]);
   const openSearch = useCallback(() => {
     setTab('list');
