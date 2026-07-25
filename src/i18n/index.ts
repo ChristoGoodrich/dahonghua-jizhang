@@ -120,7 +120,7 @@ export interface Strings {
   tagName: string; tagPick: string; ledgerPick: string; ledgerAll: string;
   // currency
   setCurrency: string; setCurrencyD: string; curMain: string; curRate: string; curAddRate: string;
-  curUpdate: string; curUpdating: string; curUpdated: string; curUpdateFail: string; curConverted: string;
+  curUpdate: string; curUpdating: string; curUpdated: string; curUpdateFail: string; curConverted: string; rateCached: string;
   // subcategories
   subcatAdd: string; subcatName: string; subcatMgr: string; subcatHint: string;
   // review
@@ -267,7 +267,7 @@ export const I18N: Record<Lang, Strings> = {
     setTags: '标签管理', setTagsD: '给账单贴标签，灵活统计', tagAdd: '＋ 新建标签', tagNormal: '普通标签', tagLedger: '账本',
     tagName: '标签名（如 旅行）', tagPick: '标签', ledgerPick: '账本', ledgerAll: '全部账本',
     setCurrency: '多币种', setCurrencyD: '留学/旅行，自动换算汇率', curMain: '主币种', curRate: '汇率（1 外币 = ? 主币）', curAddRate: '＋ 添加币种',
-    curUpdate: '联网更新汇率', curUpdating: '更新中…', curUpdated: '汇率已更新 🌺', curUpdateFail: '更新失败，可手动填', curConverted: '≈ %s',
+    curUpdate: '联网更新汇率', curUpdating: '更新中…', curUpdated: '汇率已更新 🌺', curUpdateFail: '更新失败，可手动填', curConverted: '≈ %s', rateCached: '使用缓存汇率',
     subcatAdd: '＋ 子分类', subcatName: '子分类名（如 早餐）', subcatMgr: '管理子分类', subcatHint: '长按分类管理子分类',
     setReview: '本月回顾', setReviewD: '你的花园小结', reviewSaved: '这个月攒下', reviewActiveDays: '记账天数', reviewShare: '分享战报',
     setLock: '密码锁', setLockD: '打开 App 需验证身份（指纹/面容/设备密码）', lockEnable: '开启', lockDisable: '关闭', lockTitle: '大红花已锁定', lockUnlock: '解锁', lockPrompt: '验证身份解锁大红花记账',
@@ -400,7 +400,7 @@ export const I18N: Record<Lang, Strings> = {
     setTags: 'Tags', setTagsD: 'Tag entries for flexible stats', tagAdd: '＋ New tag', tagNormal: 'Tags', tagLedger: 'Ledgers',
     tagName: 'Tag name (e.g. Travel)', tagPick: 'Tags', ledgerPick: 'Ledger', ledgerAll: 'All ledgers',
     setCurrency: 'Currencies', setCurrencyD: 'Auto-convert for study/travel', curMain: 'Base currency', curRate: 'Rate (1 foreign = ? base)', curAddRate: '＋ Add currency',
-    curUpdate: 'Update rates online', curUpdating: 'Updating…', curUpdated: 'Rates updated 🌺', curUpdateFail: 'Update failed — set manually', curConverted: '≈ %s',
+    curUpdate: 'Update rates online', curUpdating: 'Updating…', curUpdated: 'Rates updated 🌺', curUpdateFail: 'Update failed — set manually', curConverted: '≈ %s', rateCached: 'Using cached rate',
     subcatAdd: '＋ Subcategory', subcatName: 'Subcategory (e.g. Breakfast)', subcatMgr: 'Manage subcategories', subcatHint: 'Long-press a category to manage',
     setReview: 'Month in review', setReviewD: 'Your garden recap', reviewSaved: 'Saved this month', reviewActiveDays: 'Active days', reviewShare: 'Share recap',
     setLock: 'App lock', setLockD: 'Require auth to open (biometrics / device passcode)', lockEnable: 'Enable', lockDisable: 'Disable', lockTitle: 'Red Blossom is locked', lockUnlock: 'Unlock', lockPrompt: 'Authenticate to open Red Blossom',

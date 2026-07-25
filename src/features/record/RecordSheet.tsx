@@ -13,6 +13,7 @@ import { Btn } from '@/components/ui/Btn';
 import { RAD, SPRING, TABULAR, shadow } from '@/theme/tokens';
 import { allCats, catName, catOf } from '@/domain/cats';
 import { toBase, curSymbol } from '@/domain/money';
+import { getRateForDate } from '@/domain/rates';
 import { evalExpr, hasOperator, applyKey } from '@/domain/calc';
 import { pickerAccounts, pickerLedgers } from '@/domain/archive';
 import type { Category, IO } from '@/domain/types';
@@ -83,6 +84,8 @@ export const RecordSheet = observer(function RecordSheet({ visible, editId, init
   const [aiText, setAiText] = useState('');
   const [aiBusy, setAiBusy] = useState(false);
   const [aiMsg, setAiMsg] = useState('');
+  const [fetchedRate, setFetchedRate] = useState<number | null>(null);
+  const [rateSource, setRateSource] = useState<'api' | 'cached' | null>(null);
 
   // cleared by timer, timer cleared on unmount; errors linger a little longer
   useEffect(() => {
@@ -90,6 +93,29 @@ export const RecordSheet = observer(function RecordSheet({ visible, editId, init
     const id = setTimeout(() => setFlash(null), flash.err ? 2800 : 1600);
     return () => clearTimeout(id);
   }, [flash]);
+
+  // Proactively fetch historical rate when foreign currency or date changes
+  useEffect(() => {
+    if (cur === base) {
+      setFetchedRate(null);
+      setRateSource(null);
+      return;
+    }
+    let cancelled = false;
+    const dateStr = new Date(ts ?? Date.now()).toISOString().slice(0, 10);
+    getRateForDate(base, cur, dateStr, currencies.rates ?? {}).then((rate) => {
+      if (cancelled) return;
+      if (rate != null) {
+        setFetchedRate(rate);
+        const cached = currencies.rates?.[cur];
+        setRateSource(cached != null && Math.abs(rate - cached) < 0.000001 ? 'cached' : 'api');
+      } else {
+        setFetchedRate(null);
+        setRateSource(null);
+      }
+    });
+    return () => { cancelled = true; };
+  }, [cur, ts, base, currencies.rates]);
 
   // Track if the user has attempted to save (for showing validation errors on inputs)
   const [attempted, setAttempted] = useState(false);
@@ -223,7 +249,7 @@ export const RecordSheet = observer(function RecordSheet({ visible, editId, init
 
   // Write the entry (add or update). Returns the amount as typed (in the
   // entry's own currency) for feedback, or null when the form isn't saveable.
-  function writeEntry(): number | null {
+  function writeEntry(rateOverride?: number): number | null {
     const value = evalExpr(amt);
     if (!value || value <= 0) return null;
     const trimmed = note.trim();
@@ -251,14 +277,16 @@ export const RecordSheet = observer(function RecordSheet({ visible, editId, init
       return value;
     }
 
-    const storeAmt = toBase(value, cur, currencies); // always persist in base currency
     const foreign = cur && cur !== base;
+    const effectiveRate = rateOverride ?? (foreign ? currencies.rates?.[cur] : undefined);
+    const storeAmt = toBase(value, cur, currencies, effectiveRate); // always persist in base currency
     const extra = {
       tags: sheetTags.length ? sheetTags : undefined,
       ledger: ledger || undefined,
       subcat: subcat || undefined,
       cur: foreign ? cur : undefined,
       origAmt: foreign ? value : undefined,
+      rate: foreign ? effectiveRate : undefined,
     };
     if (editId) {
       updateEntry(editId, { io, cat, amt: storeAmt, note: trimmed, acct, ...extra, ...tsPatch });
@@ -268,27 +296,48 @@ export const RecordSheet = observer(function RecordSheet({ visible, editId, init
     return value;
   }
 
-  function save() {
+  async function save() {
     const err = validationError();
     if (err) {
       setFlash({ msg: err, err: true });
       setAttempted(true);
       return;
     }
-    if (writeEntry() === null) return;
+
+    let rate = fetchedRate;
+    // Fetch rate on demand if foreign currency and proactive fetch hasn't run yet
+    if (cur !== base && rate == null) {
+      const dateStr = new Date(ts ?? Date.now()).toISOString().slice(0, 10);
+      rate = await getRateForDate(base, cur, dateStr, currencies.rates ?? {});
+    }
+
+    if (writeEntry(rate ?? undefined) === null) return;
     onSaved(!editId);
     onClose();
   }
 
   // 再记 — save and keep the sheet open for the next entry of the same kind:
   // io/category/account/currency/date/tags/ledger stay, amount+note+subcat clear.
-  function saveNext() {
+  async function saveNext() {
     const err = validationError();
     if (err) {
       setFlash({ msg: err, err: true });
       return;
     }
-    const value = writeEntry();
+
+    let rate = fetchedRate;
+    let source = rateSource;
+    // Fetch rate on demand if foreign currency and proactive fetch hasn't run yet
+    if (cur !== base && rate == null) {
+      const dateStr = new Date(ts ?? Date.now()).toISOString().slice(0, 10);
+      rate = await getRateForDate(base, cur, dateStr, currencies.rates ?? {});
+      if (rate != null) {
+        const cached = currencies.rates?.[cur];
+        source = cached != null && Math.abs(rate - cached) < 0.000001 ? 'cached' : 'api';
+      }
+    }
+
+    const value = writeEntry(rate ?? undefined);
     if (value === null) return;
     onSaved(true, true);
     setAmt('');
@@ -296,7 +345,8 @@ export const RecordSheet = observer(function RecordSheet({ visible, editId, init
     setSubcat('');
     setFee('');
     setDiscount('');
-    setFlash({ msg: s.savedNext.replace('%s', curSymbol(cur) + value.toFixed(2)) });
+    const msg = s.savedNext.replace('%s', curSymbol(cur) + value.toFixed(2));
+    setFlash({ msg: cur !== base && source === 'cached' ? msg + ' · ' + s.rateCached : msg });
   }
 
   function saveAsTemplate() {
@@ -346,7 +396,7 @@ export const RecordSheet = observer(function RecordSheet({ visible, editId, init
   );
   const converted =
     cur !== base && !!evalExpr(amt)
-      ? s.curConverted.replace('%s', curSymbol(base) + toBase(evalExpr(amt), cur, currencies).toFixed(2))
+      ? s.curConverted.replace('%s', curSymbol(base) + toBase(evalExpr(amt), cur, currencies, fetchedRate ?? undefined).toFixed(2))
       : undefined;
 
   if (!visible) return null;
