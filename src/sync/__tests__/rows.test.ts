@@ -5,7 +5,7 @@ describe('entry <-> row mapping', () => {
   it('round-trips a full entry losslessly', () => {
     const e: Entry = {
       id: 'x1', ts: 1717000000000, io: 'exp', cat: 'food', subcat: 'sc1', amt: 48.5,
-      cur: 'USD', origAmt: 6.7, note: '叮咚买菜', acct: 'card', tags: ['旅行'], ledger: '家庭',
+      cur: 'USD', origAmt: 6.7, rate: 7.2388, note: '叮咚买菜', acct: 'card', tags: ['旅行'], ledger: '家庭',
       rb: 'pending', rbAmt: 48.5, refund: 10, refundOf: 'y2', fromSub: true,
       deletedAt: null, updatedAt: 1717000001000,
     };
