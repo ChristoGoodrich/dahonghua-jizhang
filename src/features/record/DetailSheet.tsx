@@ -104,6 +104,12 @@ export const DetailSheet = observer(function DetailSheet({ entryId, lang, custom
           )}
           <Row label={s.dtSubcat} value={subcatName} />
           {d.cur && d.origAmt != null && <Row label={s.dtOrig} value={`${d.origAmt} ${d.cur}`} />}
+          {d.cur && (
+            <Row
+              label={s.dtRate}
+              value={d.rate != null ? `1 ${d.cur} = ${d.rate} ${store$.currencies.base.peek() || 'CNY'}` : s.dtRateUnknown}
+            />
+          )}
           <Row label={s.tagPick} value={(d.tags ?? []).map((x) => `#${x}`).join('  ')} />
           <Row label={s.ledgerPick} value={d.ledger ?? ''} />
           <Row label={s.dtReimburse} value={d.rb === 'pending' ? s.rbPending : d.rb === 'done' ? s.rbDone : ''} />

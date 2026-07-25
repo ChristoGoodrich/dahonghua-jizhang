@@ -112,7 +112,7 @@ export interface Strings {
   refundAmt: string; refundDone: string; refundFull: string;
   // entry detail (read-only view)
   dtTitle: string; dtType: string; dtTime: string; dtAccount: string; dtSubcat: string;
-  dtReimburse: string; dtRefund: string; dtFromSub: string; dtOrig: string; dtDupe: string;
+  dtReimburse: string; dtRefund: string; dtFromSub: string; dtOrig: string; dtRate: string; dtRateUnknown: string; dtDupe: string;
   // templates
   setTemplates: string; setTemplatesD: string; tmplSaveBtn: string; tmplSaved: string; tmplEmpty: string;
   // tags & ledgers
@@ -262,7 +262,7 @@ export const I18N: Record<Lang, Strings> = {
     markMenu: '标记', markRefund: '退款', markEdit: '编辑',
     refundAmt: '退款金额', refundDone: '已退 %s', refundFull: '已全额退款',
     dtTitle: '账单详情', dtType: '类型', dtTime: '时间', dtAccount: '账户', dtSubcat: '子分类',
-    dtReimburse: '报销状态', dtRefund: '退款', dtFromSub: '订阅自动记账', dtOrig: '原始金额', dtDupe: '再记一笔',
+    dtReimburse: '报销状态', dtRefund: '退款', dtFromSub: '订阅自动记账', dtOrig: '原始金额', dtRate: '汇率', dtRateUnknown: '汇率（未记录）', dtDupe: '再记一笔',
     setTemplates: '快捷模板', setTemplatesD: '常记的存成模板，一键贴花', tmplSaveBtn: '存为模板', tmplSaved: '已存为模板 🌺', tmplEmpty: '还没有模板，记一笔后存起来',
     setTags: '标签管理', setTagsD: '给账单贴标签，灵活统计', tagAdd: '＋ 新建标签', tagNormal: '普通标签', tagLedger: '账本',
     tagName: '标签名（如 旅行）', tagPick: '标签', ledgerPick: '账本', ledgerAll: '全部账本',
@@ -395,7 +395,7 @@ export const I18N: Record<Lang, Strings> = {
     markMenu: 'Mark', markRefund: 'Refund', markEdit: 'Edit',
     refundAmt: 'Refund amount', refundDone: '%s refunded', refundFull: 'Fully refunded',
     dtTitle: 'Entry details', dtType: 'Type', dtTime: 'Time', dtAccount: 'Account', dtSubcat: 'Subcategory',
-    dtReimburse: 'Reimbursement', dtRefund: 'Refund', dtFromSub: 'From subscription', dtOrig: 'Original', dtDupe: 'Log again',
+    dtReimburse: 'Reimbursement', dtRefund: 'Refund', dtFromSub: 'From subscription', dtOrig: 'Original', dtRate: 'Rate', dtRateUnknown: 'Rate (not recorded)', dtDupe: 'Log again',
     setTemplates: 'Quick templates', setTemplatesD: 'Save regulars, log in one tap', tmplSaveBtn: 'Template', tmplSaved: 'Saved as template 🌺', tmplEmpty: 'No templates yet — save one after an entry',
     setTags: 'Tags', setTagsD: 'Tag entries for flexible stats', tagAdd: '＋ New tag', tagNormal: 'Tags', tagLedger: 'Ledgers',
     tagName: 'Tag name (e.g. Travel)', tagPick: 'Tags', ledgerPick: 'Ledger', ledgerAll: 'All ledgers',
