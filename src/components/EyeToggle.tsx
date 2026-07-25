@@ -1,9 +1,10 @@
 import React from 'react';
-import { Text, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { observer } from '@legendapp/state/react';
 import { store$, patchSettings } from '@/store/ledger';
 import { useTheme } from '@/theme/ThemeContext';
 import { Tap } from '@/components/ui/Tap';
+import { Icon } from '@/components/ui/Icon';
 import { I18N } from '@/i18n';
 
 /** Header eye that masks balances on the money screens (shoulder-surfing
@@ -22,12 +23,11 @@ export const EyeToggle = observer(function EyeToggle() {
       accessibilityLabel={hide ? s.a11yShowAmts : s.a11yHideAmts}
       style={[styles.pill, { backgroundColor: t.card, borderColor: t.line }]}
     >
-      <Text style={styles.emoji}>{hide ? '🙈' : '👁️'}</Text>
+      <Icon name={hide ? 'eyeOff' : 'eye'} color={t.inkSoft} size={16} />
     </Tap>
   );
 });
 
 const styles = StyleSheet.create({
   pill: { borderWidth: 1, borderRadius: 999, paddingVertical: 6, paddingHorizontal: 10 },
-  emoji: { fontSize: 14 },
 });
