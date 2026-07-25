@@ -466,14 +466,18 @@ export const RecordSheet = observer(function RecordSheet({ visible, editId, init
           </View>
 
           <View style={[styles.amtRow, attempted && flash?.err && { borderWidth: 2, borderColor: t.hibiscus, borderRadius: 8, padding: 4 }]} accessible accessibilityLabel={`${s.amountPh}: ${amt || '0'} ${curSymbol(cur)}`}>
-            {/* Currency symbol as dropdown trigger */}
+            {/* Currency symbol — tappable when foreign currencies exist */}
             <Pressable
               onPress={() => rateCodes.length > 0 && setCurDropdown((v) => !v)}
-              hitSlop={8}
-              style={[styles.curBtn, rateCodes.length > 0 && styles.curBtnActive]}
+              hitSlop={12}
+              style={styles.curWrap}
             >
               <Text style={[styles.cur, { color: accent }]}>{curSymbol(cur)}</Text>
-              {rateCodes.length > 0 && <Text style={[styles.curArrow, { color: accent }]}>▾</Text>}
+              {rateCodes.length > 0 && (
+                <View style={[styles.curBadge, { backgroundColor: accent }]}>
+                  <Text style={styles.curBadgeText}>▾</Text>
+                </View>
+              )}
             </Pressable>
             <Text
               style={[styles.amtInput, TABULAR, { color: amt ? t.ink : t.line }]}
@@ -484,22 +488,25 @@ export const RecordSheet = observer(function RecordSheet({ visible, editId, init
             </Text>
           </View>
 
-          {/* Currency dropdown */}
+          {/* Currency dropdown overlay */}
           {curDropdown && rateCodes.length > 0 && (
-            <View style={[styles.curDropdown, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'md')]}>
-              {[base, ...rateCodes].map((c) => (
-                <Pressable
-                  key={c}
-                  onPress={() => { setCur(c); setCurDropdown(false); }}
-                  style={[styles.curOption, c === cur && { backgroundColor: t.tint }]}
-                >
-                  <Text style={[styles.curOptionText, { color: c === cur ? t.hibiscus : t.ink }]}>
-                    {curSymbol(c)} {c}
-                  </Text>
-                  {c === cur && <Text style={{ color: t.hibiscus, fontSize: 12 }}>✓</Text>}
-                </Pressable>
-              ))}
-            </View>
+            <>
+              <Pressable style={styles.curBackdrop} onPress={() => setCurDropdown(false)} />
+              <View style={[styles.curDropdown, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'md')]}>
+                {[base, ...rateCodes].map((c) => (
+                  <Pressable
+                    key={c}
+                    onPress={() => { setCur(c); setCurDropdown(false); }}
+                    style={[styles.curOption, c === cur && { backgroundColor: t.tint }]}
+                  >
+                    <Text style={[styles.curOptionText, { color: c === cur ? t.hibiscus : t.ink }]}>
+                      {curSymbol(c)} {c}
+                    </Text>
+                    {c === cur && <Text style={{ color: t.hibiscus, fontSize: 13 }}>✓</Text>}
+                  </Pressable>
+                ))}
+              </View>
+            </>
           )}
           {/* fixed-height slot: live "=" preview while typing math, or the 再记
               confirmation — constant height so the layout never jumps mid-entry */}
@@ -643,19 +650,23 @@ const styles = StyleSheet.create({
   // which would park the symbol at the screen edge)
   amtRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7, marginTop: 6, marginBottom: 2, paddingHorizontal: 24 },
   cur: { fontSize: 22, fontWeight: '700' },
-  curBtn: { flexDirection: 'row', alignItems: 'center', gap: 2 },
-  curBtnActive: { opacity: 0.9 },
-  curArrow: { fontSize: 14, marginTop: 2 },
+  curWrap: { position: 'relative', paddingRight: 4 },
+  curBadge: {
+    position: 'absolute', top: -2, right: -4,
+    width: 12, height: 12, borderRadius: 6,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  curBadgeText: { color: '#fff', fontSize: 8, lineHeight: 10, fontWeight: '800' },
+  curBackdrop: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 99 },
   curDropdown: {
-    position: 'absolute', top: '100%', left: 24, zIndex: 100,
-    borderWidth: 1, borderRadius: RAD.sm, paddingVertical: 4, minWidth: 120,
-    marginTop: 4,
+    position: 'absolute', top: 60, left: 22, right: 22, zIndex: 100,
+    borderWidth: StyleSheet.hairlineWidth, borderRadius: RAD.md, paddingVertical: 4,
   },
   curOption: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingVertical: 10, paddingHorizontal: 14,
+    paddingVertical: 11, paddingHorizontal: 16,
   },
-  curOptionText: { fontSize: 14, fontWeight: '600' },
+  curOptionText: { fontSize: 15, fontWeight: '600' },
   amtInput: { fontSize: 42, fontWeight: '800', letterSpacing: -0.8, flexShrink: 1, textAlign: 'center', padding: 0 },
   subLine: { minHeight: 18, marginBottom: 4, justifyContent: 'center' },
   subLineText: { fontSize: 11.5, fontWeight: '600', textAlign: 'center' },
