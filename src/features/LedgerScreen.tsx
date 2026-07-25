@@ -14,7 +14,9 @@ import { cycleRange, inCycle, shiftCycle } from '@/domain/cycle';
 import { sameDay } from '@/domain/dates';
 import { streakDays } from '@/domain/streak';
 import { computeInsight, creditDueInsight } from '@/domain/insight';
-import { todayExpense } from '@/domain/budget';
+import { todayExpense, monthlyStatus, catBudgetRows } from '@/domain/budget';
+import { fmtShort } from '@/domain/money';
+import { catName, catOf } from '@/domain/cats';
 import { matchesSearch } from '@/domain/search';
 import { SummaryCard } from '@/features/summary/SummaryCard';
 import { EntryList } from '@/features/list/EntryList';
@@ -204,13 +206,54 @@ export const LedgerScreen = observer(function LedgerScreen() {
     setToast({ key: Date.now(), msg });
     setBurst(Date.now());
   }, []);
+
+  // Budget warning check — called after a new entry is saved
+  const checkBudgetWarning = useCallback(() => {
+    const st = store$.settings.peek();
+    const data = store$.data.peek().filter((d) => !d.deletedAt);
+    const entries = data.filter((d) => inCycle(d.ts, new Date(), st.cycleStart || 1));
+
+    // Check monthly budget
+    const monthly = monthlyStatus(entries, st);
+    if (monthly.limit > 0) {
+      if (monthly.over) {
+        const over = fmtShort(monthly.used - monthly.limit, lang);
+        setToast({ key: Date.now(), msg: s.budgetWarn100.replace('%s', over) });
+        return;
+      }
+      if (monthly.pct >= 80) {
+        const left = fmtShort(monthly.left, lang);
+        setToast({ key: Date.now(), msg: s.budgetWarn80.replace('%p', String(Math.round(monthly.pct))).replace('%s', left) });
+        return;
+      }
+    }
+
+    // Check per-category budgets
+    const catRows = catBudgetRows(entries, st);
+    for (const row of catRows) {
+      if (row.over) {
+        const c = catOf('exp', row.cat, store$.customCats.peek());
+        const over = fmtShort(row.used - row.limit, lang);
+        setToast({ key: Date.now(), msg: s.budgetWarnCat100.replace('%c', catName(c, lang)).replace('%s', over) });
+        return;
+      }
+      if (row.pct >= 80) {
+        const c = catOf('exp', row.cat, store$.customCats.peek());
+        setToast({ key: Date.now(), msg: s.budgetWarnCat80.replace('%c', catName(c, lang)).replace('%p', String(Math.round(row.pct))) });
+        return;
+      }
+    }
+  }, [lang, s]);
+
   const onSaved = useCallback((isNew: boolean, keepOpen?: boolean) => {
     if (!isNew) return;
     trackEvent(AnalyticsEvents.ENTRY_CREATED);
     if (keepOpen) return; // 再记: sheet still covers the screen — it shows its own inline confirmation
     const sd = streakDays(store$.data.peek().filter((d) => !d.deletedAt).map((d) => d.ts));
     celebrate(sd > 1 ? s.toastStreak.replace('%d', String(sd)) : s.toastBloom);
-  }, [celebrate, s.toastStreak, s.toastBloom]);
+    // Check budget after celebration toast (slight delay so they don't overlap)
+    setTimeout(() => checkBudgetWarning(), 2000);
+  }, [celebrate, s.toastStreak, s.toastBloom, checkBudgetWarning]);
   const openSearch = useCallback(() => {
     setTab('list');
     setSearchOpen(true);

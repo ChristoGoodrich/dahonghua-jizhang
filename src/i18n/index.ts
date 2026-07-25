@@ -35,6 +35,7 @@ export interface Strings {
   // budget + insight
   budgetTitle: string; budgetNone: string; budgetSpentLeft: string; budgetOver: string; // %s
   budgetDailyLabel: string; budgetDailyLeft: string; budgetDailyOver: string; // %s
+  budgetWarn80: string; budgetWarn100: string; budgetWarnCat80: string; budgetWarnCat100: string;
   setBudgetNav: string; setBudgetNavD: string;
   budgetScreenTitle: string; budgetScreenSub: string;
   budgetMonthlySec: string; budgetDailySec: string; budgetCatSec: string; budgetCatSecD: string;
@@ -189,6 +190,8 @@ export const I18N: Record<Lang, Strings> = {
     budgetTitle: '本月预算', budgetNone: '还没设预算，去设置里设一个',
     budgetSpentLeft: '已花 %s，还剩 %s', budgetOver: '超了 %s，下月再争取小红花',
     budgetDailyLabel: '今日预算', budgetDailyLeft: '今天还能花 %s', budgetDailyOver: '今天超了 %s',
+    budgetWarn80: '⚠️ 本月已花 %p%，还剩 %s', budgetWarn100: '🚨 本月预算已超 %s！',
+    budgetWarnCat80: '⚠️ %c 预算已花 %p%', budgetWarnCat100: '🚨 %c 预算已超 %s！',
     setBudgetNav: '预算', setBudgetNavD: '每月 / 每日 / 分类，三档预算',
     budgetScreenTitle: '预算', budgetScreenSub: '给花盆设个水位线',
     budgetMonthlySec: '每月预算', budgetDailySec: '每日预算', budgetCatSec: '分类预算', budgetCatSecD: '给单个分类单独设上限',
@@ -323,6 +326,8 @@ export const I18N: Record<Lang, Strings> = {
     budgetTitle: 'Monthly budget', budgetNone: 'No budget yet — set one in Settings',
     budgetSpentLeft: '%s spent, %s left', budgetOver: '%s over — aim for more flowers next month',
     budgetDailyLabel: 'Today’s budget', budgetDailyLeft: '%s left to spend today', budgetDailyOver: '%s over today',
+    budgetWarn80: '\u26a0\ufe0f %p%% spent this month, %s left', budgetWarn100: '\ud83d\udea8 Monthly budget exceeded by %s!',
+    budgetWarnCat80: '\u26a0\ufe0f %c budget %p%% used', budgetWarnCat100: '\ud83d\udea8 %c budget exceeded by %s\uff01',
     setBudgetNav: 'Budgets', setBudgetNavD: 'Monthly / daily / per-category',
     budgetScreenTitle: 'Budgets', budgetScreenSub: 'Set the water line for your pot',
     budgetMonthlySec: 'Monthly budget', budgetDailySec: 'Daily budget', budgetCatSec: 'Category budgets', budgetCatSecD: 'Cap individual categories',
