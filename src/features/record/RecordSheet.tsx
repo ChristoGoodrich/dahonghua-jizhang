@@ -305,13 +305,23 @@ export const RecordSheet = observer(function RecordSheet({ visible, editId, init
     }
 
     let rate = fetchedRate;
+    let source = rateSource;
     // Fetch rate on demand if foreign currency and proactive fetch hasn't run yet
     if (cur !== base && rate == null) {
       const dateStr = new Date(ts ?? Date.now()).toISOString().slice(0, 10);
       rate = await getRateForDate(base, cur, dateStr, currencies.rates ?? {});
+      if (rate != null) {
+        const cached = currencies.rates?.[cur];
+        source = cached != null && Math.abs(rate - cached) < 0.000001 ? 'cached' : 'api';
+      }
     }
 
     if (writeEntry(rate ?? undefined) === null) return;
+    // Show warning if using cached rate (API failed)
+    if (source === 'cached' && cur !== base) {
+      setFlash({ msg: s.rateCached, err: true });
+      return;
+    }
     onSaved(!editId);
     onClose();
   }
