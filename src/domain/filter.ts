@@ -80,7 +80,7 @@ export function parseDateRange(query: string): { from?: number; to?: number } | 
   }
 
   // Relative: "本月" / "this month"
-  if (q === '本月' || q === 'this month' || q === 'this month') {
+  if (q === '本月' || q === 'this month') {
     const now = new Date();
     const from = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
     const to = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59).getTime();
