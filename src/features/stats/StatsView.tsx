@@ -128,11 +128,11 @@ export function StatsView({ all, anchor, cycleStart, customCats, lang, onEntryPr
       </ScrollView>
 
       <View style={styles.nav}>
-        <Tap onPress={() => setPAnchor((a) => shiftPeriod(a, period, -1, cycleStart))} hitSlop={10} scaleTo={0.85} style={styles.navBtn}>
+        <Tap onPress={() => setPAnchor((a) => shiftPeriod(a, period, -1, cycleStart))} hitSlop={10} scaleTo={0.85} style={styles.navBtn} accessibilityRole="button" accessibilityLabel={s.a11yPeriodPrev}>
           <Text style={[styles.navArrow, { color: t.hibiscus }]}>‹</Text>
         </Tap>
         <Text style={[styles.navLabel, { color: t.ink }]}>{label}</Text>
-        <Tap onPress={() => !isFuture && setPAnchor((a) => shiftPeriod(a, period, 1, cycleStart))} hitSlop={10} scaleTo={0.85} style={styles.navBtn}>
+        <Tap onPress={() => !isFuture && setPAnchor((a) => shiftPeriod(a, period, 1, cycleStart))} hitSlop={10} scaleTo={0.85} style={styles.navBtn} accessibilityRole="button" accessibilityLabel={s.a11yPeriodNext}>
           <Text style={[styles.navArrow, { color: isFuture ? t.line : t.hibiscus }]}>›</Text>
         </Tap>
       </View>
@@ -208,7 +208,7 @@ export function StatsView({ all, anchor, cycleStart, customCats, lang, onEntryPr
               </>
             );
             return onEntryPress ? (
-              <Tap key={d.id} onPress={() => onEntryPress(d.id)} scaleTo={0.98} style={styles.topRow}>{row}</Tap>
+              <Tap key={d.id} onPress={() => onEntryPress(d.id)} scaleTo={0.98} style={styles.topRow} accessibilityLabel={`${note || catName(cat, lang)}, ${fmt(d.amt, lang)}`}>{row}</Tap>
             ) : (
               <View key={d.id} style={styles.topRow}>{row}</View>
             );

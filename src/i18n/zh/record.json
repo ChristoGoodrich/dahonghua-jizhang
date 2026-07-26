@@ -227,5 +227,12 @@
   "cameraGallery": "相册",
   "cameraProcessing": "识别中...",
   "cameraPermission": "需要相机权限",
-  "cameraPermissionDesc": "请在设置中允许访问相机"
+  "cameraPermissionDesc": "请在设置中允许访问相机",
+  "a11yRemoveRate": "移除汇率",
+  "a11yRemoveImage": "移除图片",
+  "a11ySelectCurrency": "选择币种",
+  "a11ySwipeEdit": "编辑",
+  "a11ySwipeDelete": "删除",
+  "a11yPeriodPrev": "上一期",
+  "a11yPeriodNext": "下一期"
 }

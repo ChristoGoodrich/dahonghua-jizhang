@@ -94,7 +94,7 @@ export const RecordSheet = observer(function RecordSheet(props: Props) {
             {/* Receipt scanning */}
             {io !== 'xfer' && receiptAiConfigured() && (
               <>
-                {receiptUri && <ReceiptPreview uri={receiptUri} busy={receiptBusy} onRemove={() => setReceiptUri(null)} />}
+                {receiptUri && <ReceiptPreview uri={receiptUri} busy={receiptBusy} onRemove={() => setReceiptUri(null)} lang={lang} />}
                 <ReceiptScan lang={lang} onCapture={handleReceiptCapture} busy={receiptBusy || aiBusy} />
               </>
             )}

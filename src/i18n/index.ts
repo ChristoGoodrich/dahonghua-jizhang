@@ -148,6 +148,10 @@ export interface Strings {
   // camera
   cameraTitle: string; cameraTake: string; cameraGallery: string; cameraProcessing: string;
   cameraPermission: string; cameraPermissionDesc: string;
+  // additional a11y labels
+  a11yRemoveRate: string; a11yRemoveImage: string; a11ySelectCurrency: string;
+  a11ySwipeEdit: string; a11ySwipeDelete: string;
+  a11yPeriodPrev: string; a11yPeriodNext: string;
   // report
   reportTitle: string; reportGenerate: string; reportGenerating: string; reportShare: string;
   reportTotalExp: string; reportTotalInc: string; reportBalance: string; reportByCategory: string;

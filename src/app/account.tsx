@@ -57,7 +57,7 @@ export default observer(function AccountScreen() {
               <Text style={[styles.signedLabel, { color: t.inkSoft }]}>{s.syncSignedInAs}</Text>
               <Text style={[styles.signedEmail, { color: t.ink }]}>{email}</Text>
               <SyncIndicator />
-              <Pressable style={[styles.btn, { borderColor: t.line, backgroundColor: t.card }]} onPress={signOut}>
+              <Pressable style={[styles.btn, { borderColor: t.line, backgroundColor: t.card }]} onPress={signOut} accessibilityRole="button" accessibilityLabel={s.syncSignOut}>
                 <Text style={[styles.btnOutlineText, { color: t.hibiscus }]}>{s.syncSignOut}</Text>
               </Pressable>
             </>
@@ -74,7 +74,7 @@ export default observer(function AccountScreen() {
                 onChangeText={setEmailInput}
               />
               {!sent ? (
-                <Pressable style={[styles.btn, { backgroundColor: t.hibiscus }]} onPress={onSend} disabled={busy}>
+                <Pressable style={[styles.btn, { backgroundColor: t.hibiscus }]} onPress={onSend} disabled={busy} accessibilityRole="button" accessibilityLabel={s.syncSendCode}>
                   <Text style={styles.btnText}>{s.syncSendCode}</Text>
                 </Pressable>
               ) : (
@@ -88,7 +88,7 @@ export default observer(function AccountScreen() {
                     value={code}
                     onChangeText={setCode}
                   />
-                  <Pressable style={[styles.btn, { backgroundColor: t.hibiscus }]} onPress={onVerify} disabled={busy}>
+                  <Pressable style={[styles.btn, { backgroundColor: t.hibiscus }]} onPress={onVerify} disabled={busy} accessibilityRole="button" accessibilityLabel={s.syncVerify}>
                     <Text style={styles.btnText}>{s.syncVerify}</Text>
                   </Pressable>
                 </>

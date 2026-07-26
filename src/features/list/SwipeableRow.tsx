@@ -3,17 +3,20 @@ import { Animated, StyleSheet, View } from 'react-native';
 import { Swipeable, RectButton } from 'react-native-gesture-handler';
 import { useTheme } from '@/theme/ThemeContext';
 import { Icon } from '@/components/ui/Icon';
+import { I18N, type Lang } from '@/i18n';
 
 interface Props {
   children: React.ReactNode;
   onDelete?: () => void;
   onEdit?: () => void;
+  lang?: Lang;
 }
 
 const ACTION_W = 64;
 
-export function SwipeableRow({ children, onDelete, onEdit }: Props) {
+export function SwipeableRow({ children, onDelete, onEdit, lang = 'zh' }: Props) {
   const t = useTheme();
+  const s = I18N[lang];
   const ref = useRef<Swipeable>(null);
 
   const close = () => ref.current?.close();
@@ -34,6 +37,8 @@ export function SwipeableRow({ children, onDelete, onEdit }: Props) {
           <RectButton
             style={[styles.btn, { backgroundColor: t.hibiscus + '18' }]}
             onPress={() => { close(); onEdit(); }}
+            accessibilityRole="button"
+            accessibilityLabel={s.a11ySwipeEdit}
           >
             <Animated.View style={{ transform: [{ scale }] }}>
               <Icon name="edit" color={t.hibiscus} size={20} />
@@ -44,6 +49,8 @@ export function SwipeableRow({ children, onDelete, onEdit }: Props) {
           <RectButton
             style={[styles.btn, { backgroundColor: '#E53935' + '18' }]}
             onPress={() => { close(); onDelete(); }}
+            accessibilityRole="button"
+            accessibilityLabel={s.a11ySwipeDelete}
           >
             <Animated.View style={{ transform: [{ scale }] }}>
               <Icon name="trash" color="#E53935" size={20} />

@@ -34,6 +34,8 @@ export function RecordAmount({
           <Pressable
             onPress={() => rateCodes.length > 0 && setCurDropdown((v) => !v)}
             hitSlop={12}
+            accessibilityRole="button"
+            accessibilityLabel={s.a11ySelectCurrency}
             style={[styles.curWrap, rateCodes.length > 0 && { backgroundColor: t.tint, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4 }]}
           >
             <Text style={[styles.cur, { color: accent }]}>{curSymbol(cur)}</Text>
@@ -50,12 +52,14 @@ export function RecordAmount({
         {/* Currency dropdown — positioned right below the symbol */}
         {curDropdown && rateCodes.length > 0 && (
           <>
-            <Pressable style={styles.curBackdrop} onPress={() => setCurDropdown(false)} />
+            <Pressable style={styles.curBackdrop} onPress={() => setCurDropdown(false)} accessibilityLabel={s.back} />
             <View style={[styles.curDropdown, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'md')]}>
               {[base, ...rateCodes].map((c) => (
                 <Pressable
                   key={c}
                   onPress={() => { setCur(c); setCurDropdown(false); }}
+                  accessibilityRole="button"
+                  accessibilityLabel={`${curSymbol(c)} ${c}`}
                   style={[styles.curOption, c === cur && { backgroundColor: t.tint }]}
                 >
                   <Text style={[styles.curOptionText, { color: c === cur ? t.hibiscus : t.ink }]}>

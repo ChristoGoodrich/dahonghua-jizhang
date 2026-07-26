@@ -81,7 +81,7 @@ export default observer(function CurrencyScreen() {
             {ALL_CODES.map((c) => {
               const on = c === base;
               return (
-                <Pressable key={c} onPress={() => pickBase(c)} style={[styles.chip, { borderColor: on ? t.hibiscus : t.line, backgroundColor: on ? t.paperWarm : t.card }]}>
+                <Pressable key={c} onPress={() => pickBase(c)} accessibilityRole="button" accessibilityLabel={`${CUR_NAMES[c]} ${c}`} style={[styles.chip, { borderColor: on ? t.hibiscus : t.line, backgroundColor: on ? t.paperWarm : t.card }]}>
                   <Text style={{ fontSize: 12.5, fontWeight: '700', color: on ? t.hibiscus : t.inkSoft }}>{CUR_NAMES[c]}</Text>
                 </Pressable>
               );
@@ -91,10 +91,10 @@ export default observer(function CurrencyScreen() {
           {/* Inline confirmation for base currency switch */}
           {pendingBase && (
             <View style={styles.confirmRow}>
-              <Pressable style={[styles.confirmBtn, { backgroundColor: t.hibiscus }]} onPress={confirmBase}>
+              <Pressable style={[styles.confirmBtn, { backgroundColor: t.hibiscus }]} onPress={confirmBase} accessibilityRole="button" accessibilityLabel={s.curBaseSwitch}>
                 <Text style={styles.confirmText}>{s.curBaseSwitch}</Text>
               </Pressable>
-              <Pressable style={[styles.confirmBtn, { borderColor: t.line }]} onPress={cancelBase}>
+              <Pressable style={[styles.confirmBtn, { borderColor: t.line }]} onPress={cancelBase} accessibilityRole="button" accessibilityLabel={s.cancel}>
                 <Text style={[styles.confirmText, { color: t.inkSoft }]}>{s.cancel}</Text>
               </Pressable>
             </View>
@@ -111,7 +111,7 @@ export default observer(function CurrencyScreen() {
                 initial={rates[c]}
                 onChange={(v) => setRate(c, v)}
               />
-              <Pressable onPress={() => removeRate(c)} hitSlop={8}>
+              <Pressable onPress={() => removeRate(c)} hitSlop={8} accessibilityRole="button" accessibilityLabel={s.a11yRemoveRate}>
                 <Text style={[styles.del, { color: t.inkSoft }]}>✕</Text>
               </Pressable>
             </View>
@@ -120,14 +120,14 @@ export default observer(function CurrencyScreen() {
           {addable.length > 0 && (
             <ScrollView horizontal showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps="handled" style={styles.chipRow}>
               {addable.map((c) => (
-                <Pressable key={c} onPress={() => addRate(c)} style={[styles.addChip, { borderColor: t.line, backgroundColor: t.paperWarm }]}>
+                <Pressable key={c} onPress={() => addRate(c)} accessibilityRole="button" accessibilityLabel={`${s.curAddRate.replace('＋ ', '')} ${curSymbol(c)} ${c}`} style={[styles.addChip, { borderColor: t.line, backgroundColor: t.paperWarm }]}>
                   <Text style={{ fontSize: 12.5, fontWeight: '600', color: t.hibiscus }}>＋ {curSymbol(c)} {c}</Text>
                 </Pressable>
               ))}
             </ScrollView>
           )}
 
-          <Pressable style={[styles.update, { backgroundColor: t.hibiscus }]} onPress={doUpdate}>
+          <Pressable style={[styles.update, { backgroundColor: t.hibiscus }]} onPress={doUpdate} accessibilityRole="button" accessibilityLabel={s.curUpdate}>
             <Text style={styles.updateText}>{s.curUpdate}</Text>
           </Pressable>
           {!!status && <Text style={[styles.status, { color: t.leafDeep }]}>{status}</Text>}

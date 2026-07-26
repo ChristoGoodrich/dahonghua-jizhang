@@ -141,7 +141,7 @@ export function SearchFilter({ lang, customCats, filter, onChange }: Props) {
 
       {/* Clear filters */}
       {hasFilters && (
-        <Pressable onPress={clearFilters} style={styles.clearBtn}>
+        <Pressable onPress={clearFilters} style={styles.clearBtn} accessibilityRole="button" accessibilityLabel={s.clearFilters}>
           <Text style={[styles.clearText, { color: t.hibiscus }]}>{s.clearFilters || '清除筛选'}</Text>
         </Pressable>
       )}

@@ -75,16 +75,18 @@ interface PreviewProps {
   uri: string;
   busy: boolean;
   onRemove: () => void;
+  lang?: Lang;
 }
 
 /** Small image preview with remove button. */
-export function ReceiptPreview({ uri, busy, onRemove }: PreviewProps) {
+export function ReceiptPreview({ uri, busy, onRemove, lang = 'zh' }: PreviewProps) {
   const t = useTheme();
+  const s = I18N[lang];
   return (
     <View style={styles.preview}>
       <Image source={{ uri }} style={styles.previewImg} resizeMode="cover" />
       {!busy && (
-        <Pressable style={[styles.removeBtn, { backgroundColor: t.hibiscus }]} onPress={onRemove} hitSlop={8}>
+        <Pressable style={[styles.removeBtn, { backgroundColor: t.hibiscus }]} onPress={onRemove} hitSlop={8} accessibilityRole="button" accessibilityLabel={s.a11yRemoveImage}>
           <Icon name="close" color="#fff" size={12} />
         </Pressable>
       )}

@@ -82,7 +82,7 @@ export default observer(function AccountsScreen() {
               <Pressable onPress={() => Alert.alert(s.delConfirmTitle, s.delConfirmMsg, [
                 { text: s.cancel, style: 'cancel' },
                 { text: s.delConfirmBtn, style: 'destructive', onPress: () => removeAccount(a.id) },
-              ])} hitSlop={8} accessibilityRole="button" accessibilityLabel="✕">
+              ])} hitSlop={8} accessibilityRole="button" accessibilityLabel={s.del}>
                 <Text style={[styles.del, { color: t.inkSoft }]}>✕</Text>
               </Pressable>
             )}
@@ -132,7 +132,7 @@ export default observer(function AccountsScreen() {
             <View style={[styles.form, { borderColor: t.line }]}>
               <View style={[styles.toggle, { backgroundColor: t.line }]}>
                 {kinds.map(({ k, label }) => (
-                  <Pressable key={k} onPress={() => setKind(k)} style={[styles.toggleBtn, kind === k && { backgroundColor: t.card }]}>
+                  <Pressable key={k} onPress={() => setKind(k)} accessibilityRole="button" accessibilityState={{ selected: kind === k }} accessibilityLabel={label} style={[styles.toggleBtn, kind === k && { backgroundColor: t.card }]}>
                     <Text style={[styles.toggleText, { color: kind === k ? t.ink : t.inkSoft }]}>{label}</Text>
                   </Pressable>
                 ))}
@@ -186,10 +186,10 @@ export default observer(function AccountsScreen() {
                 </>
               )}
               <View style={styles.formActions}>
-                <Pressable style={[styles.cancelBtn, { borderColor: t.line }]} onPress={() => { setAdding(false); setName(''); setBal(''); setKind('cash'); setStmtDay(''); setDueDay(''); setFxCode(''); }}>
+                <Pressable style={[styles.cancelBtn, { borderColor: t.line }]} onPress={() => { setAdding(false); setName(''); setBal(''); setKind('cash'); setStmtDay(''); setDueDay(''); setFxCode(''); }} accessibilityRole="button" accessibilityLabel={s.cancel}>
                   <Text style={[styles.cancelText, { color: t.inkSoft }]}>{s.cancel}</Text>
                 </Pressable>
-                <Pressable style={[styles.save, { backgroundColor: t.hibiscus }]} onPress={save}>
+                <Pressable style={[styles.save, { backgroundColor: t.hibiscus }]} onPress={save} accessibilityRole="button" accessibilityLabel={s.acctSaveBtn}>
                   <Text style={styles.saveText}>{s.acctSaveBtn}</Text>
                 </Pressable>
               </View>
@@ -198,6 +198,8 @@ export default observer(function AccountsScreen() {
             <Pressable
               style={[styles.add, { borderColor: t.line, backgroundColor: t.paperWarm }]}
               onPress={() => setAdding(true)}
+              accessibilityRole="button"
+              accessibilityLabel={s.acctAdd}
             >
               <Text style={[styles.addText, { color: t.hibiscus }]}>{s.acctAdd}</Text>
             </Pressable>

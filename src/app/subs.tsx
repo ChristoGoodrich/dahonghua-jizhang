@@ -89,7 +89,7 @@ export default observer(function SubsScreen() {
                 <Pressable onPress={() => Alert.alert(s.delConfirmTitle, s.delConfirmMsg, [
                   { text: s.cancel, style: 'cancel' },
                   { text: s.delConfirmBtn, style: 'destructive', onPress: () => removeSub(sub.id) },
-                ])} hitSlop={10}>
+                ])} hitSlop={10} accessibilityRole="button" accessibilityLabel={s.del}>
                   <Text style={[styles.del, { color: t.inkSoft }]}>✕</Text>
                 </Pressable>
               </View>
@@ -103,7 +103,7 @@ export default observer(function SubsScreen() {
                   <Text style={[styles.label, { color: t.inkSoft }]}>{s.subKind}</Text>
                   <View style={[styles.toggle, { backgroundColor: t.line }]}>
                     {(['expense', 'transfer'] as const).map((k) => (
-                      <Pressable key={k} onPress={() => setKind(k)} style={[styles.toggleBtn, kind === k && { backgroundColor: t.card }]}>
+                      <Pressable key={k} onPress={() => setKind(k)} accessibilityRole="button" accessibilityState={{ selected: kind === k }} accessibilityLabel={k === 'expense' ? s.subExpense : s.subTransfer} style={[styles.toggleBtn, kind === k && { backgroundColor: t.card }]}>
                         <Text style={[styles.toggleText, { color: kind === k ? t.ink : t.inkSoft }]}>{k === 'expense' ? s.subExpense : s.subTransfer}</Text>
                       </Pressable>
                     ))}
@@ -116,7 +116,7 @@ export default observer(function SubsScreen() {
               <Text style={[styles.label, { color: t.inkSoft }]}>{s.subFreqL}</Text>
               <View style={[styles.toggle, { backgroundColor: t.line }]}>
                 {(['monthly', 'yearly'] as const).map((k) => (
-                  <Pressable key={k} onPress={() => setFreq(k)} style={[styles.toggleBtn, freq === k && { backgroundColor: t.card }]}>
+                  <Pressable key={k} onPress={() => setFreq(k)} accessibilityRole="button" accessibilityState={{ selected: freq === k }} accessibilityLabel={k === 'monthly' ? s.subMonthly : s.subYearly} style={[styles.toggleBtn, freq === k && { backgroundColor: t.card }]}>
                     <Text style={[styles.toggleText, { color: freq === k ? t.ink : t.inkSoft }]}>{k === 'monthly' ? s.subMonthly : s.subYearly}</Text>
                   </Pressable>
                 ))}
@@ -146,6 +146,9 @@ export default observer(function SubsScreen() {
                             setFrom(a.id);
                             if (a.id === to) { const o = accounts.find((x) => x.id !== a.id); setTo(o ? o.id : ''); }
                           }}
+                          accessibilityRole="button"
+                          accessibilityState={{ selected: on }}
+                          accessibilityLabel={acctName(a)}
                           style={[styles.catChip, { borderColor: on ? t.hibiscus : t.line, backgroundColor: on ? t.paperWarm : t.card }]}
                         >
                           <Text style={{ fontSize: 12.5, color: on ? t.hibiscus : t.inkSoft }}>{acctName(a)}</Text>
@@ -158,7 +161,7 @@ export default observer(function SubsScreen() {
                     {accounts.filter((a) => a.id !== from).map((a) => {
                       const on = a.id === to;
                       return (
-                        <Pressable key={a.id} onPress={() => setTo(a.id)} style={[styles.catChip, { borderColor: on ? t.hibiscus : t.line, backgroundColor: on ? t.paperWarm : t.card }]}>
+                        <Pressable key={a.id} onPress={() => setTo(a.id)} accessibilityRole="button" accessibilityState={{ selected: on }} accessibilityLabel={acctName(a)} style={[styles.catChip, { borderColor: on ? t.hibiscus : t.line, backgroundColor: on ? t.paperWarm : t.card }]}>
                           <Text style={{ fontSize: 12.5, color: on ? t.hibiscus : t.inkSoft }}>{acctName(a)}</Text>
                         </Pressable>
                       );
@@ -172,7 +175,7 @@ export default observer(function SubsScreen() {
                     {allCats('exp', customCats).map((c) => {
                       const on = c.k === cat;
                       return (
-                        <Pressable key={c.k} onPress={() => setCat(c.k)} style={[styles.catChip, { borderColor: on ? t.hibiscus : t.line, backgroundColor: on ? t.paperWarm : t.card }]}>
+                        <Pressable key={c.k} onPress={() => setCat(c.k)} accessibilityRole="button" accessibilityState={{ selected: on }} accessibilityLabel={`${c.e} ${lang === 'zh' ? c.zh : c.en}`} style={[styles.catChip, { borderColor: on ? t.hibiscus : t.line, backgroundColor: on ? t.paperWarm : t.card }]}>
                           <Text style={{ fontSize: 12.5, color: on ? t.hibiscus : t.inkSoft }}>{c.e} {lang === 'zh' ? c.zh : c.en}</Text>
                         </Pressable>
                       );
@@ -190,16 +193,16 @@ export default observer(function SubsScreen() {
                 </>
               )}
               <View style={styles.formActions}>
-                <Pressable style={[styles.cancelBtn, { borderColor: t.line }]} onPress={() => { setAdding(false); setName(''); setAmt(''); setPeriods(''); }}>
+                <Pressable style={[styles.cancelBtn, { borderColor: t.line }]} onPress={() => { setAdding(false); setName(''); setAmt(''); setPeriods(''); }} accessibilityRole="button" accessibilityLabel={s.cancel}>
                   <Text style={[styles.cancelText, { color: t.inkSoft }]}>{s.cancel}</Text>
                 </Pressable>
-                <Pressable style={[styles.save, { backgroundColor: t.hibiscus }]} onPress={save}>
+                <Pressable style={[styles.save, { backgroundColor: t.hibiscus }]} onPress={save} accessibilityRole="button" accessibilityLabel={s.subSaveBtn}>
                   <Text style={styles.saveText}>{s.subSaveBtn}</Text>
                 </Pressable>
               </View>
             </View>
           ) : (
-            <Pressable style={[styles.add, { borderColor: t.line, backgroundColor: t.paperWarm }]} onPress={() => setAdding(true)}>
+            <Pressable style={[styles.add, { borderColor: t.line, backgroundColor: t.paperWarm }]} onPress={() => setAdding(true)} accessibilityRole="button" accessibilityLabel={s.subAdd}>
               <Text style={[styles.addText, { color: t.hibiscus }]}>{s.subAdd}</Text>
             </Pressable>
           )}

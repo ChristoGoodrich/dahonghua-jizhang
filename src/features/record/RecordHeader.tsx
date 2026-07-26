@@ -27,6 +27,7 @@ export function RecordHeader({ io, onPickIO, t, s }: Props) {
             ]}
             accessibilityRole="tab"
             accessibilityState={{ selected: io === k }}
+            accessibilityLabel={k === 'exp' ? s.exp : k === 'inc' ? s.inc : s.xfer}
           >
             <Text
               style={[

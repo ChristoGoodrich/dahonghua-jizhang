@@ -149,7 +149,7 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
   const renderSingleEntry = useCallback((d: Entry) => {
     if (d.io === 'xfer') {
       return (
-        <SwipeableRow onDelete={onDelete ? () => onDelete(d.id) : undefined} onEdit={onEdit ? () => onEdit(d.id) : undefined}>
+        <SwipeableRow lang={lang} onDelete={onDelete ? () => onDelete(d.id) : undefined} onEdit={onEdit ? () => onEdit(d.id) : undefined}>
           <Tap
             onPress={() => onPress(d.id)}
             scaleTo={0.98}
@@ -175,7 +175,7 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
     }
     const c = catOf(d.io, d.cat, customCats);
     return (
-      <SwipeableRow onDelete={onDelete ? () => onDelete(d.id) : undefined} onEdit={onEdit ? () => onEdit(d.id) : undefined}>
+      <SwipeableRow lang={lang} onDelete={onDelete ? () => onDelete(d.id) : undefined} onEdit={onEdit ? () => onEdit(d.id) : undefined}>
         <Tap
           onPress={() => onPress(d.id)}
           onLongPress={() => onLongPress?.(d.id)}

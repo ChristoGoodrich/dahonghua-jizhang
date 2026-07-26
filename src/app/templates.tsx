@@ -41,7 +41,7 @@ export default observer(function TemplatesScreen() {
                   <Pressable onPress={() => Alert.alert(s.delConfirmTitle, s.delConfirmMsg, [
                     { text: s.cancel, style: 'cancel' },
                     { text: s.delConfirmBtn, style: 'destructive', onPress: () => removeTemplate(tp.id) },
-                  ])} hitSlop={10}>
+                  ])} hitSlop={10} accessibilityRole="button" accessibilityLabel={s.del}>
                     <Text style={[styles.del, { color: t.inkSoft }]}>✕</Text>
                   </Pressable>
                 </View>

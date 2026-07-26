@@ -227,5 +227,12 @@
   "cameraGallery": "Gallery",
   "cameraProcessing": "Processing...",
   "cameraPermission": "Camera Permission Required",
-  "cameraPermissionDesc": "Please allow camera access in settings"
+  "cameraPermissionDesc": "Please allow camera access in settings",
+  "a11yRemoveRate": "Remove currency rate",
+  "a11yRemoveImage": "Remove image",
+  "a11ySelectCurrency": "Select currency",
+  "a11ySwipeEdit": "Edit",
+  "a11ySwipeDelete": "Delete",
+  "a11yPeriodPrev": "Previous period",
+  "a11yPeriodNext": "Next period"
 }

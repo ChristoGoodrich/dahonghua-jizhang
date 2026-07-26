@@ -120,6 +120,8 @@ export function CalendarView({ all, anchor, cycleStart, customCats, lang, onAddD
                 key={c.key}
                 style={styles.cell}
                 onPress={() => setSelected((p) => (p === c.key ? null : c.key))}
+                accessibilityRole="button"
+                accessibilityLabel={`${c.day}${c.n > 0 ? `, ${c.n}${lang === 'zh' ? '笔' : ' entries'}` : ''}${c.exp > 0 ? `, ${s.exp} ${Math.round(c.exp)}` : ''}`}
                 // empty past days stay tappable when 补记这天 is available —
                 // backfilling matters most on days with nothing recorded
                 disabled={c.n === 0 && !c.isToday && (!onAddDay || c.future)}

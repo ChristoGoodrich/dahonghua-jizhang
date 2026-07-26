@@ -49,7 +49,7 @@ export default observer(function TagsScreen() {
                 <Pressable onPress={() => Alert.alert(s.delConfirmTitle, s.delConfirmMsg, [
                   { text: s.cancel, style: 'cancel' },
                   { text: s.delConfirmBtn, style: 'destructive', onPress: () => removeTag(kind, g) },
-                ])} hitSlop={8}>
+                ])} hitSlop={8} accessibilityRole="button" accessibilityLabel={s.del}>
                   <Text style={{ fontSize: 13, color: t.inkSoft, opacity: 0.6 }}>✕</Text>
                 </Pressable>
               )}
@@ -99,23 +99,23 @@ export default observer(function TagsScreen() {
             <View style={[styles.form, { borderColor: t.line }]}>
               <View style={[styles.toggle, { backgroundColor: t.line }]}>
                 {(['normal', 'ledger'] as (keyof Tags)[]).map((k) => (
-                  <Pressable key={k} onPress={() => setType(k)} style={[styles.toggleBtn, type === k && { backgroundColor: t.card }]}>
+                  <Pressable key={k} onPress={() => setType(k)} accessibilityRole="button" accessibilityState={{ selected: type === k }} accessibilityLabel={k === 'normal' ? s.tagNormal : s.tagLedger} style={[styles.toggleBtn, type === k && { backgroundColor: t.card }]}>
                     <Text style={[styles.toggleText, { color: type === k ? t.ink : t.inkSoft }]}>{k === 'normal' ? s.tagNormal : s.tagLedger}</Text>
                   </Pressable>
                 ))}
               </View>
               <TextInput style={[styles.field, { borderColor: t.line, color: t.ink, backgroundColor: t.card }]} placeholder={s.tagName} placeholderTextColor={t.inkSoft} value={name} onChangeText={setName} />
               <View style={styles.formActions}>
-                <Pressable style={[styles.cancelBtn, { borderColor: t.line }]} onPress={() => { setAdding(false); setName(''); setType('normal'); }}>
+                <Pressable style={[styles.cancelBtn, { borderColor: t.line }]} onPress={() => { setAdding(false); setName(''); setType('normal'); }} accessibilityRole="button" accessibilityLabel={s.cancel}>
                   <Text style={[styles.cancelText, { color: t.inkSoft }]}>{s.cancel}</Text>
                 </Pressable>
-                <Pressable style={[styles.save, { backgroundColor: t.hibiscus }]} onPress={save}>
+                <Pressable style={[styles.save, { backgroundColor: t.hibiscus }]} onPress={save} accessibilityRole="button" accessibilityLabel={s.tagAdd.replace('＋ ', '')}>
                   <Text style={styles.saveText}>{s.tagAdd.replace('＋ ', '')}</Text>
                 </Pressable>
               </View>
             </View>
           ) : (
-            <Pressable style={[styles.add, { borderColor: t.line, backgroundColor: t.paperWarm }]} onPress={() => setAdding(true)}>
+            <Pressable style={[styles.add, { borderColor: t.line, backgroundColor: t.paperWarm }]} onPress={() => setAdding(true)} accessibilityRole="button" accessibilityLabel={s.tagAdd}>
               <Text style={[styles.addText, { color: t.hibiscus }]}>{s.tagAdd}</Text>
             </Pressable>
           )}
