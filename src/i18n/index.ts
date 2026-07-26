@@ -180,6 +180,8 @@ export interface Strings {
   insightsTitle: string; insightsSub: string;
   // themes
   themeOcean: string; themeForest: string; themeSunset: string;
+  // error boundary
+  errorTitle: string; errorMessage: string; errorRestart: string;
 }
 
 export const I18N: Record<Lang, Strings> = {

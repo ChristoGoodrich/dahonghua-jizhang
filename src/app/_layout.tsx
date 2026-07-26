@@ -7,6 +7,7 @@ import { observer } from '@legendapp/state/react';
 import { store$, hydrateCurrentMonth, hydrateFull } from '@/store/ledger';
 import { ThemeProvider } from '@/theme/ThemeContext';
 import { LockGate } from '@/components/LockGate';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { initAuth } from '@/sync/auth';
 import { initSync } from '@/sync/engine';
 import { hydrateInbox, startInboxDrain } from '@/store/inbox';
@@ -38,15 +39,17 @@ export default observer(function RootLayout() {
   if (!ready) return null;
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
-        <ThemeProvider themeKey={themeKey} dark={dark}>
-          <StatusBar style={dark ? 'light' : 'dark'} />
-          <LockGate>
-            <Stack screenOptions={{ headerShown: false }} />
-          </LockGate>
-        </ThemeProvider>
-      </SafeAreaProvider>
-    </GestureHandlerRootView>
+    <ErrorBoundary>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <SafeAreaProvider>
+          <ThemeProvider themeKey={themeKey} dark={dark}>
+            <StatusBar style={dark ? 'light' : 'dark'} />
+            <LockGate>
+              <Stack screenOptions={{ headerShown: false }} />
+            </LockGate>
+          </ThemeProvider>
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
+    </ErrorBoundary>
   );
 });

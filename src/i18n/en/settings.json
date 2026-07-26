@@ -84,5 +84,8 @@
   "insightsSub": "Expense forecast based on history",
   "themeOcean": "Ocean",
   "themeForest": "Forest",
-  "themeSunset": "Sunset"
+  "themeSunset": "Sunset",
+  "errorTitle": "Something went wrong",
+  "errorMessage": "An unexpected error occurred. You can try restarting the app.",
+  "errorRestart": "Restart"
 }
