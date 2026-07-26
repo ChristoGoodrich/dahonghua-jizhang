@@ -5,10 +5,10 @@ import { observer } from '@legendapp/state/react';
 import { store$ } from '@/store/ledger';
 import { isSyncConfigured } from '@/sync/supabase';
 import { auth$, sendOtp, verifyOtp, signOut } from '@/sync/auth';
-import { sync$ } from '@/sync/engine';
 import { useTheme } from '@/theme/ThemeContext';
 import { Flower } from '@/components/Flower';
 import { ScreenHeader } from '@/components/ScreenHeader';
+import { SyncIndicator } from '@/components/SyncIndicator';
 import { I18N } from '@/i18n';
 
 export default observer(function AccountScreen() {
@@ -56,11 +56,7 @@ export default observer(function AccountScreen() {
             <>
               <Text style={[styles.signedLabel, { color: t.inkSoft }]}>{s.syncSignedInAs}</Text>
               <Text style={[styles.signedEmail, { color: t.ink }]}>{email}</Text>
-              {(() => {
-                const st = sync$.status.get();
-                const label = st === 'synced' ? s.syncSynced : st === 'syncing' ? s.syncSyncing : st === 'error' ? s.syncError : '';
-                return label ? <Text style={[styles.syncStatus, { color: st === 'error' ? t.hibiscus : t.leafDeep }]}>{label}</Text> : null;
-              })()}
+              <SyncIndicator />
               <Pressable style={[styles.btn, { borderColor: t.line, backgroundColor: t.card }]} onPress={signOut}>
                 <Text style={[styles.btnOutlineText, { color: t.hibiscus }]}>{s.syncSignOut}</Text>
               </Pressable>
@@ -119,6 +115,5 @@ const styles = StyleSheet.create({
   btnOutlineText: { fontSize: 15, fontWeight: '700' },
   signedLabel: { fontSize: 12, textAlign: 'center' },
   signedEmail: { fontSize: 16, fontWeight: '700', textAlign: 'center', marginTop: 2 },
-  syncStatus: { fontSize: 12.5, fontWeight: '600', textAlign: 'center', marginTop: 8 },
   status: { marginTop: 12, fontSize: 13, fontWeight: '600', textAlign: 'center' },
 });

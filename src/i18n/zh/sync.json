@@ -12,5 +12,6 @@
   "syncFailed": "出错了，请重试",
   "syncSynced": "已同步 🌺",
   "syncSyncing": "同步中…",
-  "syncError": "同步出错，稍后自动重试"
+  "syncError": "同步出错，稍后自动重试",
+  "syncOff": "未同步"
 }
