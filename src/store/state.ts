@@ -11,7 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Account, Asset, Category, Currencies, Entry, IO, Loan, Settings, Sub, Tags, Template } from '@/domain/types';
 import { curSymbol, setDisplaySymbol } from '@/domain/money';
 import type { Lang } from '@/i18n';
-import { buildMonthIndex, buildAccountIndex } from './indexes';
+import { buildMonthIndex, buildAccountIndex, monthKey } from './indexes';
 
 export interface AppState {
   lang: Lang;
@@ -110,6 +110,62 @@ export function startAutosave(): void {
     if (configTimer) clearTimeout(configTimer);
     configTimer = setTimeout(saveConfig, 400);
   });
+}
+
+/** Current YYYY-MM key for filtering the fast hydration pass. */
+function currentMonthKey(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+}
+
+/** Read config + current-month entries only — gives the UI something to render
+ *  immediately while the full dataset loads in the background. */
+export async function loadPersistedCurrentMonth(): Promise<void> {
+  try {
+    const [entriesRaw, configRaw] = await Promise.all([
+      AsyncStorage.getItem(ENTRIES_KEY),
+      AsyncStorage.getItem(CONFIG_KEY),
+    ]);
+    if (entriesRaw != null || configRaw != null) {
+      if (configRaw) store$.assign(JSON.parse(configRaw) as Partial<AppState>);
+      if (entriesRaw) {
+        const mk = currentMonthKey();
+        const all = JSON.parse(entriesRaw) as AppState['data'];
+        store$.data.set(all.filter((e) => monthKey(e.ts) === mk));
+      }
+      return;
+    }
+    // migrate the old single-blob key forward, then drop it
+    const legacy = await AsyncStorage.getItem(LEGACY_KEY);
+    if (legacy) {
+      store$.assign(JSON.parse(legacy) as Partial<AppState>);
+      const mk = currentMonthKey();
+      store$.data.set(store$.data.peek().filter((e) => monthKey(e.ts) === mk));
+      await saveAll();
+      await AsyncStorage.removeItem(LEGACY_KEY).catch(() => {});
+    }
+  } catch {
+    // corrupt/missing storage -> fall back to defaults
+  }
+}
+
+/** Load the full entry list, replacing the month-only subset from the fast
+ *  hydration pass. No-op when storage is empty. */
+export async function loadPersistedFull(): Promise<void> {
+  try {
+    const entriesRaw = await AsyncStorage.getItem(ENTRIES_KEY);
+    if (entriesRaw) {
+      store$.data.set(JSON.parse(entriesRaw) as AppState['data']);
+      return;
+    }
+    const legacy = await AsyncStorage.getItem(LEGACY_KEY);
+    if (legacy) {
+      const parsed = JSON.parse(legacy) as Partial<AppState>;
+      if (parsed.data) store$.data.set(parsed.data);
+    }
+  } catch {
+    // corrupt/missing storage -> keep whatever the fast pass loaded
+  }
 }
 
 /** Read persisted state into the store. Call once at boot (see ledger.hydrate). */

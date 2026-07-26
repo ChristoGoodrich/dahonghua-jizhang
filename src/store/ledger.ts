@@ -4,7 +4,7 @@
 // subscriptions, templates, tags, currency, reimburse) to keep each file
 // cohesive; this module re-exports them all so callers keep one import
 // (`@/store/ledger`) and acts as the boot composition root (`hydrate`).
-import { store$, startAutosave, loadPersisted, wireDisplaySymbol } from './state';
+import { store$, startAutosave, loadPersisted, loadPersistedCurrentMonth, loadPersistedFull, wireDisplaySymbol } from './state';
 import { runSubscriptions } from './subscriptions';
 import { loadAnalytics } from '@/util/analytics';
 import { runAutoBackup } from '@/util/backup';
@@ -33,4 +33,22 @@ export async function hydrate(): Promise<void> {
   const st = store$.settings.peek();
   runAutoBackup({ enabled: st.autoBackup, frequency: st.backupFrequency, maxBackups: st.maxBackups }).catch(() => {});
   runSubscriptions(); // catch up any subscription charges missed while away
+}
+
+/** Fast hydration: load config + current month entries only. The UI can render
+ *  immediately with a small dataset while the full load follows. */
+export async function hydrateCurrentMonth(): Promise<void> {
+  await loadPersistedCurrentMonth();
+  store$.hydrated.set(true);
+  wireDisplaySymbol();
+  startAutosave();
+  await loadAnalytics().catch(() => {});
+  const st = store$.settings.peek();
+  runAutoBackup({ enabled: st.autoBackup, frequency: st.backupFrequency, maxBackups: st.maxBackups }).catch(() => {});
+  runSubscriptions();
+}
+
+/** Background hydration: swap in the full entry list after the fast pass. */
+export async function hydrateFull(): Promise<void> {
+  await loadPersistedFull();
 }

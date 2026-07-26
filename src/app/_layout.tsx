@@ -4,7 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { observer } from '@legendapp/state/react';
-import { store$, hydrate } from '@/store/ledger';
+import { store$, hydrateCurrentMonth, hydrateFull } from '@/store/ledger';
 import { ThemeProvider } from '@/theme/ThemeContext';
 import { LockGate } from '@/components/LockGate';
 import { initAuth } from '@/sync/auth';
@@ -14,7 +14,12 @@ import { hydrateInbox, startInboxDrain } from '@/store/inbox';
 export default observer(function RootLayout() {
   const [ready, setReady] = useState(false);
   useEffect(() => {
-    hydrate().finally(() => setReady(true));
+    hydrateCurrentMonth().finally(() => setReady(true));
+    // Full dataset loads after the UI is interactive — InteractionManager waits
+    // for animations/transitions to finish, so the main thread is clear.
+    import('react-native').then(({ InteractionManager }) => {
+      InteractionManager.runAfterInteractions(() => { void hydrateFull(); });
+    });
     initAuth().finally(initSync); // restore session, then bind cloud sync (no-op when unconfigured)
   }, []);
 
