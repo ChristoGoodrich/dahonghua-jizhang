@@ -80,14 +80,16 @@ export function useRecordForm({ visible, editId, initialTs, dupeId, lang, custom
 
   // Proactively fetch historical rate when foreign currency or date changes
   useEffect(() => {
-    if (cur === base) {
-      setFetchedRate(null);
-      setRateSource(null);
-      return;
-    }
     let cancelled = false;
-    const dateStr = new Date(ts ?? Date.now()).toISOString().slice(0, 10);
-    getRateForDate(base, cur, dateStr, currencies.rates ?? {}).then((rate) => {
+
+    const ratePromise = cur === base
+      ? Promise.resolve(null)
+      : (() => {
+          const dateStr = new Date(ts ?? Date.now()).toISOString().slice(0, 10);
+          return getRateForDate(base, cur, dateStr, currencies.rates ?? {});
+        })();
+
+    ratePromise.then((rate) => {
       if (cancelled) return;
       if (rate != null) {
         setFetchedRate(rate);
@@ -98,6 +100,7 @@ export function useRecordForm({ visible, editId, initialTs, dupeId, lang, custom
         setRateSource(null);
       }
     });
+
     return () => { cancelled = true; };
   }, [cur, ts, base, currencies.rates]);
 
