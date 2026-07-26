@@ -13,5 +13,6 @@
   "syncSynced": "已同步 🌺",
   "syncSyncing": "同步中…",
   "syncError": "同步出错，稍后自动重试",
-  "syncOff": "未同步"
+  "syncOff": "未同步",
+  "retrySync": "重新同步"
 }

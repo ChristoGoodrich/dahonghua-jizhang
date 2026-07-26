@@ -13,5 +13,6 @@
   "syncSynced": "Synced 🌺",
   "syncSyncing": "Syncing\u2026",
   "syncError": "Sync error — retrying",
-  "syncOff": "Not synced"
+  "syncOff": "Not synced",
+  "retrySync": "Retry Sync"
 }

@@ -134,7 +134,7 @@ export interface Strings {
   // cloud sync / account
   setSync: string; setSyncD: string; syncNotConfigured: string; syncEmail: string; syncSendCode: string;
   syncCode: string; syncVerify: string; syncSignedInAs: string; syncSignOut: string; syncCodeSent: string; syncFailed: string;
-  syncSynced: string; syncSyncing: string; syncError: string; syncOff: string;
+  syncSynced: string; syncSyncing: string; syncError: string; syncOff: string; retrySync: string;
   // export + reminder
   exportCsv: string; exportBackup: string; exportDone: string;
   // backup

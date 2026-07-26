@@ -21,6 +21,7 @@ import { RAD } from '@/theme/tokens';
 import { I18N } from '@/i18n';
 import { ThemePicker } from '@/features/settings/ThemePicker';
 import { SyncIndicator } from '@/components/SyncIndicator';
+import { sync$, retrySync } from '@/sync/engine';
 
 async function readFileText(uri: string): Promise<string> {
   if (Platform.OS === 'web') {
@@ -211,6 +212,9 @@ export default observer(function SettingsScreen() {
 
           <Group title={s.setGroupData}>
             <ValueRow title={s.setSync} desc={s.setSyncD} right={<SyncIndicator />} />
+            {sync$.status.get() === 'error' && (
+              <Btn label={s.retrySync} variant="ghost" onPress={retrySync} style={styles.retrySyncBtn} />
+            )}
             <StackRow title={s.dataTitle} desc={s.dataDesc} last>
               <View style={styles.exportRow}>
                 <Btn label={s.exportCsv} variant="ghost" onPress={exportCSV} style={styles.exportBtn} />
@@ -246,4 +250,5 @@ const styles = StyleSheet.create({
   status: { marginTop: 10, fontSize: 13, fontWeight: '600', textAlign: 'center' },
   reminderWrap: { alignItems: 'flex-end' },
   reminderError: { fontSize: 10, marginTop: 2 },
+  retrySyncBtn: { alignSelf: 'flex-end', marginTop: 4 },
 });
