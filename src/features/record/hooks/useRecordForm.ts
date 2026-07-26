@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Animated } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAnimatedValue } from '@/hooks/useAnimatedValue';
@@ -15,8 +15,8 @@ import { store$, addEntry, addTransfer, updateEntry, removeEntry, addTemplate } 
 import { noteSuggestions } from '@/domain/notes';
 import { NO_ANIM } from '@/util/boot';
 import { SPRING } from '@/theme/tokens';
-import { parseEntryText } from '@/ai/client';
-import { parseReceiptImage, ReceiptError } from '@/ai/receipt';
+import { useFormState } from './useFormState';
+import { useAIEntry } from './useAIEntry';
 
 export interface RecordFormProps {
   visible: boolean;
@@ -44,32 +44,24 @@ export function useRecordForm({ visible, editId, initialTs, dupeId, lang, custom
   const subcats = store$.subcats.get();
   const base = currencies.base || 'CNY';
   const rateCodes = Object.keys(currencies.rates || {});
-  const [io, setIO] = useState<IO>('exp');
-  const [cat, setCat] = useState('food');
-  const [amt, setAmt] = useState('');
-  const [note, setNote] = useState('');
-  const [acct, setAcct] = useState('default');
-  const [acctTo, setAcctTo] = useState('');
-  const [fee, setFee] = useState('');
-  const [discount, setDiscount] = useState('');
-  const [sheetTags, setSheetTags] = useState<string[]>([]);
-  const [ledger, setLedger] = useState('');
-  const [cur, setCur] = useState(base);
-  const [subcat, setSubcat] = useState('');
-  // null = "now" — materialized at save time so the entry carries the moment it
-  // was saved, and render stays pure (no Date.now() during render)
-  const [ts, setTs] = useState<number | null>(null);
-  // transient line under the amount: the 再记 confirmation, or the reason a save
-  // was rejected (the button used to just do nothing)
-  const [flash, setFlash] = useState<{ msg: string; err?: boolean } | null>(null);
-  const [aiText, setAiText] = useState('');
-  const [aiBusy, setAiBusy] = useState(false);
-  const [aiMsg, setAiMsg] = useState('');
-  const [fetchedRate, setFetchedRate] = useState<number | null>(null);
-  const [rateSource, setRateSource] = useState<'api' | 'cached' | null>(null);
-  const [curDropdown, setCurDropdown] = useState(false);
-  const [receiptUri, setReceiptUri] = useState<string | null>(null);
-  const [receiptBusy, setReceiptBusy] = useState(false);
+
+  const state = useFormState(base);
+  const {
+    io, cat, amt, note, acct, acctTo, fee, discount, sheetTags, ledger, cur, subcat,
+    ts, flash, aiText, aiBusy, aiMsg, fetchedRate, rateSource, curDropdown,
+    receiptUri, receiptBusy, attempted, initKey,
+    setIO, setCat, setAmt, setNote, setAcct, setAcctTo, setFee, setDiscount,
+    setSheetTags, setLedger, setCur, setSubcat, setTs, setFlash, setAiText,
+    setAiBusy, setAiMsg, setFetchedRate, setRateSource, setCurDropdown,
+    setReceiptUri, setReceiptBusy, setAttempted, setInitKey,
+  } = state;
+
+  const { runAI, handleReceiptCapture } = useAIEntry({
+    aiText, setAiText, setAiBusy, setAiMsg,
+    setIO, setCat, setAmt, setNote, setTs,
+    setFlash, setReceiptUri, setReceiptBusy,
+    customCats, lang, s,
+  });
 
   // cleared by timer, timer cleared on unmount; errors linger a little longer
   useEffect(() => {
@@ -104,9 +96,6 @@ export function useRecordForm({ visible, editId, initialTs, dupeId, lang, custom
     return () => { cancelled = true; };
   }, [cur, ts, base, currencies.rates]);
 
-  // Track if the user has attempted to save (for showing validation errors on inputs)
-  const [attempted, setAttempted] = useState(false);
-
   // archived accounts/ledgers drop out of the pickers, but a currently-selected
   // one stays (editing an old entry that lives on an archived account/ledger)
   const visibleAccts = pickerAccounts(accounts, [acct, acctTo]);
@@ -120,67 +109,10 @@ export function useRecordForm({ visible, editId, initialTs, dupeId, lang, custom
     Animated.spring(enter, { toValue: 1, useNativeDriver: true, ...SPRING.soft }).start();
   }, [visible, enter]);
 
-  async function runAI() {
-    const text = aiText.trim();
-    if (!text || aiBusy) return;
-    setAiBusy(true);
-    setAiMsg('');
-    try {
-      const shareCats = store$.settings.aiShareCategories.peek() !== false; // default on
-      const draft = await parseEntryText(text, customCats, lang, shareCats);
-      if (!draft) {
-        setAiMsg(s.aiUnconfigured);
-      } else if (!draft.amt) {
-        setAiMsg(s.aiFailed);
-      } else {
-        setIO(draft.io);
-        setCat(draft.cat);
-        setAmt(draft.amt);
-        if (draft.note) setNote(draft.note);
-        if (draft.date) {
-          const [y, m, d] = draft.date.split('-').map(Number);
-          setTs(new Date(y, m - 1, d, 12).getTime());
-        }
-        setAiText('');
-      }
-    } catch {
-      setAiMsg(s.aiFailed);
-    } finally {
-      setAiBusy(false);
-    }
-  }
-
-  // Receipt image recognition
-  async function handleReceiptCapture(uri: string) {
-    setReceiptUri(uri);
-    setReceiptBusy(true);
-    setFlash(null);
-    try {
-      const draft = await parseReceiptImage(uri, customCats, lang);
-      if (!draft || !draft.amt) {
-        setFlash({ msg: s.aiFailed, err: true });
-        return;
-      }
-      setIO(draft.io);
-      setCat(draft.cat);
-      setAmt(draft.amt);
-      if (draft.note) setNote(draft.note);
-      if (draft.date) {
-        const [y, m, d] = draft.date.split('-').map(Number);
-        setTs(new Date(y, m - 1, d, 12).getTime());
-      }
-    } catch (e) {
-      setFlash({ msg: e instanceof ReceiptError ? s.aiFailed : s.cameraPermissionDesc, err: true });
-    } finally {
-      setReceiptBusy(false);
-    }
-  }
-
   // Re-initialize the form whenever the sheet opens or switches target entry.
   // Adjusted during render (guarded by initKey) rather than in an effect, so
   // the first visible frame already shows the right values — and creating a
   // category mid-entry no longer wipes the half-typed form.
-  const [initKey, setInitKey] = useState<string | null>(null);
   // dupeId encodes into the key so opening a duplicate re-inits even though it's
   // a NEW entry (editId null); a plain new-entry open uses ''.
   const formKey = visible ? (editId ?? (dupeId ? 'd' + dupeId : '')) : null;
