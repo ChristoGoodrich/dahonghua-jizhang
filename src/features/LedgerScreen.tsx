@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { View, StyleSheet, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { observer } from '@legendapp/state/react';
@@ -13,13 +13,24 @@ import { PetalBurst } from '@/components/PetalBurst';
 import { useLedgerState } from '@/features/hooks/useLedgerState';
 import { LedgerHeader } from '@/features/LedgerHeader';
 import { LedgerContent } from '@/features/LedgerContent';
+import { markStart, markEnd } from '@/util/perf';
 
 export const LedgerScreen = observer(function LedgerScreen() {
   const t = useTheme();
+  const renderMarked = useRef(false);
+  if (!renderMarked.current) {
+    markStart('LedgerScreen');
+    renderMarked.current = true;
+  }
   const navPad = useNavBottomPad();
   const responsive = useResponsive();
   const state = useLedgerState();
   const { toast } = state;
+
+  React.useEffect(() => {
+    const ms = markEnd('LedgerScreen');
+    if (__DEV__ && ms > 0) console.log(`[perf] LedgerScreen render: ${ms.toFixed(1)}ms`);
+  }, []);
 
   return (
     <View style={[styles.root, { backgroundColor: t.paper }, Platform.OS === 'web' && styles.rootWeb]}>

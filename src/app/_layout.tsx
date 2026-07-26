@@ -12,13 +12,19 @@ import { initAuth } from '@/sync/auth';
 import { initSync } from '@/sync/engine';
 import { hydrateInbox, startInboxDrain } from '@/store/inbox';
 import { initSentry } from '@/util/sentry';
+import { markStart, markEnd, getStartupTime } from '@/util/perf';
 
 initSentry();
+markStart('startup');
 
 export default observer(function RootLayout() {
   const [ready, setReady] = useState(false);
   useEffect(() => {
-    hydrateCurrentMonth().finally(() => setReady(true));
+    hydrateCurrentMonth().finally(() => {
+      markEnd('startup');
+      if (__DEV__) console.log(`[perf] startup: ${getStartupTime().toFixed(1)}ms`);
+      setReady(true);
+    });
     // Full dataset loads after the UI is interactive — InteractionManager waits
     // for animations/transitions to finish, so the main thread is clear.
     import('react-native').then(({ InteractionManager }) => {
