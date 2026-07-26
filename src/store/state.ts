@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Account, Asset, Category, Currencies, Entry, IO, Loan, Settings, Sub, Tags, Template } from '@/domain/types';
 import { curSymbol, setDisplaySymbol } from '@/domain/money';
 import type { Lang } from '@/i18n';
+import { buildMonthIndex, buildAccountIndex } from './indexes';
 
 export interface AppState {
   lang: Lang;
@@ -50,6 +51,17 @@ const DEFAULTS: AppState = {
 
 export const store$ = observable<AppState>(structuredClone(DEFAULTS));
 
+// Derived indexes rebuilt on every data change — used by month views and
+// per-account balance calculations to avoid O(n) scans over the full list.
+export const entriesByMonth$ = observable<Map<string, Entry[]>>(new Map());
+export const entriesByAccount$ = observable<Map<string, Entry[]>>(new Map());
+
+function rebuildIndexes(): void {
+  const data = store$.data.peek();
+  entriesByMonth$.set(buildMonthIndex(data));
+  entriesByAccount$.set(buildAccountIndex(data));
+}
+
 // Entries and config are persisted under separate keys so a config-only change
 // (a settings toggle, a theme switch…) never re-serializes the whole entries
 // array — which can grow to thousands of rows. The old single-blob key is
@@ -85,7 +97,10 @@ async function saveAll(): Promise<void> {
 /** Start debounced autosave. Entry edits only rewrite the entries key; config
  *  changes only rewrite the (small) config key. Call once after loadPersisted. */
 export function startAutosave(): void {
+  // Build indexes on first run (after hydration) and keep them current.
+  rebuildIndexes();
   store$.data.onChange(() => {
+    rebuildIndexes();
     if (entriesTimer) clearTimeout(entriesTimer);
     entriesTimer = setTimeout(saveEntries, 400);
   });

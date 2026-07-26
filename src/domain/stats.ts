@@ -1,6 +1,7 @@
 // Aggregations for the stats tab — ported from v7's renderStats / renderComparison.
 import type { Entry, IO } from './types';
 import { cycleRange } from './cycle';
+import { monthKey } from '@/store/indexes';
 
 export interface CatTotal {
   cat: string;
@@ -142,16 +143,43 @@ export function statTotals(cycleEntries: Entry[], anchor: Date, cycleStart: numb
   };
 }
 
-/** Expense totals for the 6 cycles ending at `anchor`'s cycle (oldest first). */
-export function sixMonthTrend(all: Entry[], anchor: Date, cycleStart: number): { label: Date; total: number }[] {
+/** Return entries for a time range, using the month index when available to
+ *  avoid a full scan. A cycle range can span two calendar months so we check
+ *  both the start-month and end-month keys. */
+function entriesInRange(
+  all: Entry[],
+  rangeStart: number,
+  rangeEnd: number,
+  monthIndex?: Map<string, Entry[]>,
+): Entry[] {
+  if (!monthIndex) return all.filter((x) => x.ts >= rangeStart && x.ts < rangeEnd);
+  const keys = new Set<string>();
+  keys.add(monthKey(rangeStart));
+  keys.add(monthKey(rangeEnd - 1)); // inclusive end for month lookup
+  const candidates: Entry[] = [];
+  for (const k of keys) {
+    const arr = monthIndex.get(k);
+    if (arr) candidates.push(...arr);
+  }
+  return candidates.filter((x) => x.ts >= rangeStart && x.ts < rangeEnd);
+}
+
+/** Expense totals for the 6 cycles ending at `anchor`'s cycle (oldest first).
+ *  Pass a `monthIndex` to skip the full-entry scan on large datasets. */
+export function sixMonthTrend(
+  all: Entry[],
+  anchor: Date,
+  cycleStart: number,
+  monthIndex?: Map<string, Entry[]>,
+): { label: Date; total: number }[] {
   const out: { label: Date; total: number }[] = [];
   const { start } = cycleRange(anchor, cycleStart);
   for (let i = 5; i >= 0; i--) {
     const d = new Date(start);
     d.setMonth(d.getMonth() - i);
     const r = cycleRange(d, cycleStart);
-    const total = all
-      .filter((x) => x.io === 'exp' && x.ts >= r.start.getTime() && x.ts < r.end.getTime())
+    const total = entriesInRange(all, r.start.getTime(), r.end.getTime(), monthIndex)
+      .filter((x) => x.io === 'exp')
       .reduce((s, x) => s + x.amt, 0);
     out.push({ label: r.start, total });
   }
