@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
 import { useTheme } from '@/theme/ThemeContext';
 import { Icon } from '@/components/ui/Icon';
-import { RAD, shadow } from '@/theme/tokens';
+import { RAD } from '@/theme/tokens';
 import type { Lang } from '@/i18n';
 import { I18N } from '@/i18n';
 

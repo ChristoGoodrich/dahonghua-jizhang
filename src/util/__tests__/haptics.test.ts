@@ -1,11 +1,12 @@
+import * as Haptics from 'expo-haptics';
+import { Platform } from 'react-native';
+import { tapHaptic } from '../haptics';
+
 jest.mock('expo-haptics', () => ({
   selectionAsync: jest.fn(),
   impactAsync: jest.fn(),
   notificationAsync: jest.fn(),
 }));
-
-import * as Haptics from 'expo-haptics';
-import { tapHaptic } from '../haptics';
 
 describe('tapHaptic', () => {
   beforeEach(() => {
@@ -13,22 +14,19 @@ describe('tapHaptic', () => {
   });
 
   it('calls selectionAsync on native platforms', () => {
-    const { Platform } = require('react-native');
-    Platform.OS = 'ios';
+    Platform.OS = 'ios' as any;
     tapHaptic();
     expect(Haptics.selectionAsync).toHaveBeenCalledTimes(1);
   });
 
   it('is a no-op on web', () => {
-    const { Platform } = require('react-native');
-    Platform.OS = 'web';
+    Platform.OS = 'web' as any;
     tapHaptic();
     expect(Haptics.selectionAsync).not.toHaveBeenCalled();
   });
 
   it('does not throw if expo-haptics is unavailable', () => {
-    const { Platform } = require('react-native');
-    Platform.OS = 'android';
+    Platform.OS = 'android' as any;
     jest.spyOn(Haptics, 'selectionAsync').mockImplementation(() => {
       throw new Error('unavailable');
     });

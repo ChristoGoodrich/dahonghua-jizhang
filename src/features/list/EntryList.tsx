@@ -144,7 +144,7 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
     const item = flatData[index];
     const length = item.type === 'header' ? HEADER_HEIGHT : ROW_HEIGHT;
     return { length, offset, index };
-  }, [flatData, columns]);
+  }, [flatData]);
 
   const renderSingleEntry = useCallback((d: Entry) => {
     if (d.io === 'xfer') {

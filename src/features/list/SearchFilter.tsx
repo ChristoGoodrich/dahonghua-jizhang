@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { useTheme } from '@/theme/ThemeContext';
 import { Chip } from '@/components/ui/Chip';

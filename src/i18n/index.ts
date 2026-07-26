@@ -1,4 +1,18 @@
 // i18n — ported subset of v7's I18N, growing per phase.
+import zhRecord from './zh/record.json';
+import zhBudget from './zh/budget.json';
+import zhStats from './zh/stats.json';
+import zhSettings from './zh/settings.json';
+import zhAccounts from './zh/accounts.json';
+import zhSync from './zh/sync.json';
+
+import enRecord from './en/record.json';
+import enBudget from './en/budget.json';
+import enStats from './en/stats.json';
+import enSettings from './en/settings.json';
+import enAccounts from './en/accounts.json';
+import enSync from './en/sync.json';
+
 export type Lang = 'zh' | 'en';
 
 export interface Strings {
@@ -167,21 +181,6 @@ export interface Strings {
   // themes
   themeOcean: string; themeForest: string; themeSunset: string;
 }
-
-// Domain-specific translation modules
-import zhRecord from './zh/record.json';
-import zhBudget from './zh/budget.json';
-import zhStats from './zh/stats.json';
-import zhSettings from './zh/settings.json';
-import zhAccounts from './zh/accounts.json';
-import zhSync from './zh/sync.json';
-
-import enRecord from './en/record.json';
-import enBudget from './en/budget.json';
-import enStats from './en/stats.json';
-import enSettings from './en/settings.json';
-import enAccounts from './en/accounts.json';
-import enSync from './en/sync.json';
 
 export const I18N: Record<Lang, Strings> = {
   zh: { ...zhRecord, ...zhBudget, ...zhStats, ...zhSettings, ...zhAccounts, ...zhSync } as Strings,

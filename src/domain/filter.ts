@@ -1,8 +1,6 @@
 // Advanced entry filtering — date range, IO type, category, account.
 // Works alongside the existing text search in search.ts.
-import type { Category, Entry, IO } from './types';
-import { catOf, catName } from './cats';
-import type { Lang } from '@/i18n';
+import type { Entry, IO } from './types';
 
 export interface FilterState {
   io?: IO;              // filter by expense/income/transfer
