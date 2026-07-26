@@ -58,6 +58,7 @@ export function LedgerHeader(props: {
           </Tap>
           {props.tab === 'list' && (
             <Tap
+              testID="nav-cal"
               style={[
                 s.iconBtn,
                 { borderColor: props.listMode === 'cal' ? t.hibiscus : t.line, backgroundColor: props.listMode === 'cal' ? t.tint : t.card },

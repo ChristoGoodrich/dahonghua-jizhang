@@ -28,7 +28,7 @@ export const MeView = observer(function MeView({ lang, count, streak }: Props) {
   const glyph = (name: IconName) => <Icon name={name} color={t.hibiscus} size={19} strokeWidth={1.7} />;
 
   return (
-    <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+    <ScrollView testID="garden-view" style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
       {/* the habit signal, one line — the flower wall it replaces just restated
           what the calendar view already shows, day by day */}
       <View style={styles.head}>
@@ -61,7 +61,7 @@ export const MeView = observer(function MeView({ lang, count, streak }: Props) {
       {/* 洞察 / 报表 / 月度回顾 live under the 统计 tab, next to the numbers they
           explain — repeating them here would just make this list longer. */}
       <Group title={s.meGroupMore}>
-        <NavRow lead={glyph('sliders')} title={s.setTitle} desc={s.setSub} onPress={() => router.push('/settings')} />
+        <NavRow testID="btn-settings" lead={glyph('sliders')} title={s.setTitle} desc={s.setSub} onPress={() => router.push('/settings')} />
         <NavRow
           lead={glyph('mail')}
           title={lang === 'zh' ? '意见反馈' : 'Feedback'}

@@ -50,9 +50,10 @@ export const RecordSheet = observer(function RecordSheet(props: Props) {
   if (!visible) return null;
 
   return (
-    <View style={styles.overlay}>
+    <View testID="record-sheet" style={styles.overlay}>
       <Animated.View style={[StyleSheet.absoluteFill, { opacity: enter }]}>
         <Pressable
+          testID="record-sheet-close"
           style={[styles.mask, { backgroundColor: t.overlay }]}
           onPress={onClose}
           accessibilityRole="button"

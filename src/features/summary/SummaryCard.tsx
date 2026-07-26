@@ -50,7 +50,7 @@ export const SummaryCard = observer(function SummaryCard({ exp, inc, monthLabel,
   );
 
   return (
-    <View style={styles.wrap}>
+    <View testID="summary-card" style={styles.wrap}>
       <View style={styles.monthRow}>
         <Text style={[styles.month, { color: t.ink }]}>{monthLabel}</Text>
         <View style={styles.nav}>

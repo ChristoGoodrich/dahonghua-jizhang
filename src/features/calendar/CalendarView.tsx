@@ -102,7 +102,7 @@ export function CalendarView({ all, anchor, cycleStart, customCats, lang, onAddD
   const dows = lang === 'zh' ? ['日', '一', '二', '三', '四', '五', '六'] : ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
   return (
-    <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+    <ScrollView testID="calendar-view" style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
       <View style={[styles.wrap, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'sm')]}>
         <View style={styles.head}>
           {dows.map((d, i) => (

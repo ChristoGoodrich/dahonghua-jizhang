@@ -120,7 +120,7 @@ export function StatsView({ all, anchor, cycleStart, customCats, lang, onEntryPr
   );
 
   return (
-    <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+    <ScrollView testID="stats-view" style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipRow} contentContainerStyle={styles.chipRowInner}>
         {PERIODS.map((p) => (
           <Chip key={p} label={periodLabels[p]} on={p === period} size="md" onPress={() => setPeriod(p)} />

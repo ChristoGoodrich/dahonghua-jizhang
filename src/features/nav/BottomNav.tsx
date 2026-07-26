@@ -19,6 +19,13 @@ export type NavKey = 'list' | 'stats' | 'assets' | 'me';
 
 const ORDER: NavKey[] = ['list', 'stats', 'assets', 'me'];
 
+const NAV_TEST_ID: Record<NavKey, string> = {
+  list: 'nav-list',
+  stats: 'nav-stats',
+  assets: 'nav-assets',
+  me: 'nav-wall',
+};
+
 const PILL_W = 46;
 const MARGIN = 16; // outer gutter
 const MAX_W = 448; // bar + button, combined
@@ -59,6 +66,7 @@ function NavItem({ k, active, label, onPress }: ItemProps) {
 
   return (
     <Pressable
+      testID={NAV_TEST_ID[k]}
       style={styles.item}
       onPress={onPress}
       accessibilityRole="tab"
@@ -180,6 +188,7 @@ export function BottomNav({ active, onChange, onAdd, lang }: Props) {
         {/* Same material as the bar — glass edge, top sheen, matching height —
             but filled with the accent so it still reads as the one primary act. */}
         <Tap
+          testID="fab-add"
           onPress={onAdd}
           haptic
           feedback="both"

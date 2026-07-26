@@ -27,6 +27,7 @@ interface RowProps {
   /** Trailing node — a value, a toggle. Omitted rows that navigate get a chevron. */
   right?: React.ReactNode;
   last?: boolean;
+  testID?: string;
   onPress?: () => void;
 }
 
@@ -50,6 +51,7 @@ export function NavRow(p: RowProps) {
   const t = useTheme();
   return (
     <Tap
+      testID={p.testID}
       onPress={p.onPress}
       accessibilityRole="button"
       accessibilityLabel={p.title}

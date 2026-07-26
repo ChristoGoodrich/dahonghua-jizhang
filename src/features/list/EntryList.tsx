@@ -251,7 +251,7 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
     );
     if (!header) return empty;
     return (
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView testID="entry-list" style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {header}
         {empty}
       </ScrollView>
@@ -260,6 +260,7 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
 
   return (
     <FlatList
+      testID="entry-list"
       data={flatData}
       renderItem={renderItem}
       keyExtractor={(item) => item.key}
