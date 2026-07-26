@@ -7,7 +7,7 @@ const SRC = path.join(__dirname, '..', '..');
 const HUBS = [
   path.join(SRC, 'features', 'assets', 'AssetsView.tsx'),
   path.join(SRC, 'features', 'me', 'MeView.tsx'),
-  path.join(SRC, 'features', 'LedgerScreen.tsx'),
+  path.join(SRC, 'features', 'LedgerContent.tsx'),
 ];
 
 function routesIn(file: string): string[] {
