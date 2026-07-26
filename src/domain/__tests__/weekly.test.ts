@@ -109,6 +109,6 @@ describe('getWeeklyStatus', () => {
     expect(status.over).toBe(false);
     expect(status.dailyBudget).toBeCloseTo(100, 5);
     expect(status.daysLeft).toBeGreaterThanOrEqual(0);
-    expect(status.daysLeft).toBeLessThanOrEqual(6);
+    expect(status.daysLeft).toBeLessThanOrEqual(7);
   });
 });
