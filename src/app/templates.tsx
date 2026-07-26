@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', gap: 11, borderRadius: 13, padding: 12, marginBottom: 8 },
   emo: { width: 36, height: 36, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
   emoText: { fontSize: 17 },
-  name: { fontSize: 14, fontWeight: '650' as any },
+  name: { fontSize: 14, fontWeight: '600' },
   sub: { fontSize: 11, marginTop: 1 },
   amt: { fontWeight: '700', fontSize: 14 },
   del: { fontSize: 17, paddingHorizontal: 2, marginLeft: 4 },

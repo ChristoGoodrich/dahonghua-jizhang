@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 13, padding: 12, marginBottom: 8 },
   emo: { width: 38, height: 38, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },
   emoText: { fontSize: 19 },
-  name: { fontSize: 14, fontWeight: '650' as any },
+  name: { fontSize: 14, fontWeight: '600' },
   amt: { fontWeight: '700', fontSize: 14 },
   del: { fontSize: 17, paddingHorizontal: 2, marginLeft: 4 },
   add: { borderWidth: 1, borderStyle: 'dashed', borderRadius: 12, padding: 12, alignItems: 'center', marginTop: 2 },

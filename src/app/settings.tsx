@@ -28,7 +28,7 @@ async function readFileText(uri: string): Promise<string> {
     const res = await fetch(uri);
     return res.text();
   }
-  const FS: any = await import('expo-file-system');
+  const FS = await import('expo-file-system');
   return new FS.File(uri).text();
 }
 

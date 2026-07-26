@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
   chev: { fontSize: 20, fontWeight: '700', paddingHorizontal: 2 },
   emo: { width: 38, height: 38, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },
   emoText: { fontSize: 19 },
-  name: { fontSize: 14, fontWeight: '650' as any },
+  name: { fontSize: 14, fontWeight: '600' },
   sub: { fontSize: 11.5, marginTop: 2 },
   del: { fontSize: 18, paddingHorizontal: 4 },
   add: { borderWidth: 1, borderStyle: 'dashed', borderRadius: 12, padding: 12, alignItems: 'center', marginTop: 2 },

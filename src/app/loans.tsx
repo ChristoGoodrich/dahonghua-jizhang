@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
   loanHead: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   emo: { width: 34, height: 34, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
   emoText: { fontSize: 17 },
-  name: { fontSize: 14, fontWeight: '650' as any },
+  name: { fontSize: 14, fontWeight: '600' },
   sub: { fontSize: 11, marginTop: 1 },
   amt: { fontWeight: '700' },
   track: { height: 6, borderRadius: 6, overflow: 'hidden', marginVertical: 9 },

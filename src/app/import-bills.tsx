@@ -20,7 +20,7 @@ async function readFileText(uri: string): Promise<string> {
     const res = await fetch(uri);
     return decodeBillText(new Uint8Array(await res.arrayBuffer()));
   }
-  const FS: any = await import('expo-file-system');
+  const FS = await import('expo-file-system');
   const file = new FS.File(uri);
   if (typeof file.bytes === 'function') return decodeBillText(await file.bytes());
   return file.text(); // older API: UTF-8 only

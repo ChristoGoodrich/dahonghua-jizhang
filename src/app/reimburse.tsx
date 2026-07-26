@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   emo: { width: 38, height: 38, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },
   emoText: { fontSize: 19 },
   nameRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  name: { fontSize: 14, fontWeight: '650' as any },
+  name: { fontSize: 14, fontWeight: '600' },
   badge: { borderRadius: 8, paddingHorizontal: 7, paddingVertical: 2 },
   badgeText: { fontSize: 10, fontWeight: '700' },
   date: { fontSize: 11, marginTop: 2 },

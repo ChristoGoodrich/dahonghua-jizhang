@@ -14,8 +14,8 @@ export async function shareTextFile(filename: string, content: string, mimeType:
     return;
   }
   // expo-file-system (SDK 54+ File/Paths API) + expo-sharing, loaded lazily so web never pulls them in
-  const FS: any = await import('expo-file-system');
-  const Sharing: any = await import('expo-sharing');
+  const FS = await import('expo-file-system');
+  const Sharing = await import('expo-sharing');
   const file = new FS.File(FS.Paths.cache, filename);
   try { file.create({ overwrite: true }); } catch {}
   file.write(content);
@@ -36,8 +36,8 @@ export async function shareBinaryFile(filename: string, data: ArrayBuffer, mimeT
     return;
   }
   // expo-file-system (SDK 54+ File/Paths API) + expo-sharing
-  const FS: any = await import('expo-file-system');
-  const Sharing: any = await import('expo-sharing');
+  const FS = await import('expo-file-system');
+  const Sharing = await import('expo-sharing');
   const file = new FS.File(FS.Paths.cache, filename);
   try { file.create({ overwrite: true }); } catch {}
   // Write binary data as base64-encoded string
