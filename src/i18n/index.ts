@@ -147,6 +147,8 @@ export interface Strings {
   backupPasswordConfirm: string; backupPasswordMismatch: string;
   backupPasswordRequired: string; backupEncryptedTag: string;
   remindTitle: string; remindDesc: string; remindOff: string; remindBody: string;
+  weeklyReportTitle: string; weeklyReportDesc: string;
+  monthlyReportTitle: string; monthlyReportDesc: string;
   // voice
   voiceTitle: string; voiceListening: string; voiceHint: string;
   // camera

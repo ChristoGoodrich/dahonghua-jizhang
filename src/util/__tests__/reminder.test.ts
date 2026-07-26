@@ -1,4 +1,4 @@
-import { isValidTime, scheduleBudgetWarning, scheduleCustomReminder } from '../reminder';
+import { isValidTime, scheduleBudgetWarning, scheduleCustomReminder, scheduleWeeklyReport, scheduleMonthlyReport } from '../reminder';
 import { Platform } from 'react-native';
 
 const mockSchedule = jest.fn();
@@ -11,7 +11,7 @@ jest.mock('expo-notifications', () => ({
   requestPermissionsAsync: (...a: any[]) => mockRequestPerms(...a),
   scheduleNotificationAsync: (...a: any[]) => mockSchedule(...a),
   cancelAllScheduledNotificationsAsync: (...a: any[]) => mockCancel(...a),
-  SchedulableTriggerInputType: { DAILY: 'DAILY' },
+  SchedulableTriggerInputType: { DAILY: 'DAILY', WEEKLY: 'WEEKLY', DATE: 'DATE' },
 }));
 
 beforeEach(() => {
@@ -110,6 +110,82 @@ describe('scheduleCustomReminder', () => {
     mockGetPerms.mockResolvedValueOnce({ granted: false });
     mockRequestPerms.mockResolvedValueOnce({ granted: false });
     expect(await scheduleCustomReminder(9, 0)).toBe(false);
+    expect(mockSchedule).not.toHaveBeenCalled();
+  });
+});
+
+describe('scheduleWeeklyReport', () => {
+  it('schedules a weekly Sunday 20:00 notification with zh text', async () => {
+    const result = await scheduleWeeklyReport('zh');
+    expect(result).toBe(true);
+    expect(mockSchedule).toHaveBeenCalledTimes(1);
+    const arg = mockSchedule.mock.calls[0][0];
+    expect(arg.trigger).toEqual({ type: 'WEEKLY', weekday: 1, hour: 20, minute: 0 });
+    expect(arg.content.title).toBe('每周消费报告');
+  });
+
+  it('schedules with en text', async () => {
+    await scheduleWeeklyReport('en');
+    const arg = mockSchedule.mock.calls[0][0];
+    expect(arg.content.title).toBe('Weekly Spending Report');
+  });
+
+  it('defaults to zh when lang omitted', async () => {
+    await scheduleWeeklyReport();
+    const arg = mockSchedule.mock.calls[0][0];
+    expect(arg.content.title).toBe('每周消费报告');
+  });
+
+  it('is a no-op on web', async () => {
+    (Platform as any).OS = 'web';
+    expect(await scheduleWeeklyReport('zh')).toBe(false);
+    expect(mockSchedule).not.toHaveBeenCalled();
+  });
+
+  it('returns false when permission denied', async () => {
+    mockGetPerms.mockResolvedValueOnce({ granted: false });
+    mockRequestPerms.mockResolvedValueOnce({ granted: false });
+    expect(await scheduleWeeklyReport('zh')).toBe(false);
+    expect(mockSchedule).not.toHaveBeenCalled();
+  });
+});
+
+describe('scheduleMonthlyReport', () => {
+  it('schedules a monthly notification on the 1st at 09:00 with zh text', async () => {
+    const result = await scheduleMonthlyReport('zh');
+    expect(result).toBe(true);
+    expect(mockSchedule).toHaveBeenCalledTimes(1);
+    const arg = mockSchedule.mock.calls[0][0];
+    expect(arg.trigger.type).toBe('DATE');
+    expect(arg.trigger.date).toBeInstanceOf(Date);
+    expect(arg.trigger.date.getHours()).toBe(9);
+    expect(arg.trigger.date.getMinutes()).toBe(0);
+    expect(arg.trigger.date.getDate()).toBe(1);
+    expect(arg.content.title).toBe('每月消费报告');
+  });
+
+  it('schedules with en text', async () => {
+    await scheduleMonthlyReport('en');
+    const arg = mockSchedule.mock.calls[0][0];
+    expect(arg.content.title).toBe('Monthly Spending Report');
+  });
+
+  it('defaults to zh when lang omitted', async () => {
+    await scheduleMonthlyReport();
+    const arg = mockSchedule.mock.calls[0][0];
+    expect(arg.content.title).toBe('每月消费报告');
+  });
+
+  it('is a no-op on web', async () => {
+    (Platform as any).OS = 'web';
+    expect(await scheduleMonthlyReport('zh')).toBe(false);
+    expect(mockSchedule).not.toHaveBeenCalled();
+  });
+
+  it('returns false when permission denied', async () => {
+    mockGetPerms.mockResolvedValueOnce({ granted: false });
+    mockRequestPerms.mockResolvedValueOnce({ granted: false });
+    expect(await scheduleMonthlyReport('zh')).toBe(false);
     expect(mockSchedule).not.toHaveBeenCalled();
   });
 });

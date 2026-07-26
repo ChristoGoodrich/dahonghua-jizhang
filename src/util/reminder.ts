@@ -77,3 +77,38 @@ export async function scheduleCustomReminder(hour: number, minute: number, lang:
   });
   return true;
 }
+
+/** Schedule a weekly spending summary every Sunday at 20:00. */
+export async function scheduleWeeklyReport(lang: 'zh' | 'en' = 'zh'): Promise<boolean> {
+  const Notifications = await loadNotifications();
+  if (!Notifications) return false;
+  const perm = await Notifications.getPermissionsAsync();
+  const granted = perm.granted || (await Notifications.requestPermissionsAsync()).granted;
+  if (!granted) return false;
+  const title = lang === 'zh' ? '每周消费报告' : 'Weekly Spending Report';
+  const body = lang === 'zh' ? '你的本周消费汇总已出炉，快来看看吧 🌺' : 'Your weekly spending summary is ready — take a look 🌺';
+  await Notifications.scheduleNotificationAsync({
+    content: { title, body },
+    trigger: { type: Notifications.SchedulableTriggerInputType.WEEKLY, weekday: 1, hour: 20, minute: 0 },
+  });
+  return true;
+}
+
+/** Schedule a monthly spending summary on the 1st of each month at 09:00. */
+export async function scheduleMonthlyReport(lang: 'zh' | 'en' = 'zh'): Promise<boolean> {
+  const Notifications = await loadNotifications();
+  if (!Notifications) return false;
+  const perm = await Notifications.getPermissionsAsync();
+  const granted = perm.granted || (await Notifications.requestPermissionsAsync()).granted;
+  if (!granted) return false;
+  const title = lang === 'zh' ? '每月消费报告' : 'Monthly Spending Report';
+  const body = lang === 'zh' ? '上月消费汇总已生成，回顾一下吧 🌺' : 'Your monthly spending summary is ready — review it 🌺';
+  // Compute next 1st at 09:00
+  const now = new Date();
+  const next = new Date(now.getFullYear(), now.getMonth() + 1, 1, 9, 0, 0);
+  await Notifications.scheduleNotificationAsync({
+    content: { title, body },
+    trigger: { type: Notifications.SchedulableTriggerInputType.DATE, date: next },
+  });
+  return true;
+}

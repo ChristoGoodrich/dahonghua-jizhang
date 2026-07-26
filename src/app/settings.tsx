@@ -9,7 +9,7 @@ import { importV7 } from '@/migrate/importV7';
 import { entriesToCSV, entriesToXLSX } from '@/domain/export';
 import { shareTextFile, shareBinaryFile } from '@/util/share';
 import { createBackup } from '@/util/backup';
-import { scheduleDailyReminder, cancelReminder, isValidTime } from '@/util/reminder';
+import { scheduleDailyReminder, cancelReminder, isValidTime, scheduleWeeklyReport, scheduleMonthlyReport } from '@/util/reminder';
 import { aiConfigured } from '@/ai/client';
 import { useTheme } from '@/theme/ThemeContext';
 import { ScreenHeader } from '@/components/ScreenHeader';
@@ -171,6 +171,33 @@ export default observer(function SettingsScreen() {
                   {!!reminderError && <Text style={[styles.reminderError, { color: t.hibiscus }]}>{reminderError}</Text>}
                 </View>
               }
+            />
+            <ValueRow
+              title={s.weeklyReportTitle}
+              desc={s.weeklyReportDesc}
+              right={toggle(
+                settings.weeklyReport ? '✓' : '✗',
+                async () => {
+                  const next = !settings.weeklyReport;
+                  patchSettings({ weeklyReport: next });
+                  if (next) await scheduleWeeklyReport(lang);
+                },
+                s.weeklyReportTitle,
+              )}
+            />
+            <ValueRow
+              title={s.monthlyReportTitle}
+              desc={s.monthlyReportDesc}
+              last
+              right={toggle(
+                settings.monthlyReport ? '✓' : '✗',
+                async () => {
+                  const next = !settings.monthlyReport;
+                  patchSettings({ monthlyReport: next });
+                  if (next) await scheduleMonthlyReport(lang);
+                },
+                s.monthlyReportTitle,
+              )}
             />
           </Group>
 

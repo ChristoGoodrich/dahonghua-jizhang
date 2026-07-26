@@ -68,6 +68,8 @@ export interface Settings {
   maxBackups?: number;
   hideAmounts?: boolean; // mask balances on the asset/account screens (shoulder-surfing privacy)
   archivedLedgers?: string[]; // ledgers hidden from the filter/picker; entries keep the tag
+  weeklyReport?: boolean; // Sunday evening spending summary
+  monthlyReport?: boolean; // 1st-of-month spending summary
 }
 
 export type ThemeKey = 'default' | 'sakura' | 'daisy' | 'jasmine' | 'ocean' | 'forest' | 'sunset';
