@@ -193,6 +193,8 @@
   "biImported": "已导入",
   "biNothing": "没有可导入的新账单",
   "biMore": "等",
+  "biErrors": "已跳过的行",
+  "biErrorRow": "第 %d 行",
   "capNav": "自动记账",
   "capNavD": "读取支付通知，自动记一笔",
   "capTitle": "自动记账",

@@ -242,6 +242,49 @@ describe('dedup against notification-captured entries', () => {
   });
 });
 
+describe('per-row error reporting', () => {
+  it('collects errors with 1-indexed CSV row numbers and specific reasons', () => {
+    const res = parseBills(ALIPAY);
+    // ALIPAY has 5 preamble rows + header at row 6; data rows are 7,8,9,10.
+    // The closed 京东 row is the 4th data row → CSV row 10, but parseCSV
+    // counts from the first parsed row, so row = r+1 within parsed rows.
+    expect(res.errors).toHaveLength(1);
+    expect(res.errors[0].reason).toContain('交易状态');
+  });
+  it('reports 不计收支 rows as errors', () => {
+    const res = parseBills(WECHAT);
+    // The "/" row is 不计收支
+    expect(res.errors).toHaveLength(1);
+    expect(res.errors[0].reason).toContain('不计收支');
+  });
+  it('reports unparseable date and invalid amount rows', () => {
+    const csv = `交易时间,交易分类,交易对方,商品说明,收/支,金额,收/付款方式,交易状态
+not-a-date,,某公司,测试,支出,10.00,,交易成功
+2026-06-01 10:00:00,,某公司,测试,支出,abc,,交易成功
+2026-06-01 10:00:00,,某公司,测试,支出,0,,交易成功`;
+    const res = parseBills(csv);
+    expect(res.errors).toHaveLength(3);
+    expect(res.errors[0].row).toBe(2);
+    expect(res.errors[0].reason).toContain('交易时间');
+    expect(res.errors[1].row).toBe(3);
+    expect(res.errors[1].reason).toContain('金额');
+    expect(res.errors[2].row).toBe(4);
+    expect(res.errors[2].reason).toContain('金额');
+  });
+  it('returns empty errors when all rows parse successfully', () => {
+    const csv = `交易时间,交易分类,交易对方,商品说明,收/支,金额,收/付款方式,交易状态
+2026-06-01 10:00:00,餐饮,瑞幸,咖啡,支出,15.00,,交易成功`;
+    const res = parseBills(csv);
+    expect(res.errors).toHaveLength(0);
+    expect(res.bills).toHaveLength(1);
+  });
+  it('passes errors through prepareImport', () => {
+    const prev = prepareImport(ALIPAY, [], custom);
+    expect(prev.errors).toHaveLength(1);
+    expect(prev.errors[0].reason).toContain('交易状态');
+  });
+});
+
 describe('prepareImport', () => {
   it('summarizes fresh income/expense totals and dup/skip counts', () => {
     const prev = prepareImport(ALIPAY, [], custom);

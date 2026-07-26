@@ -72,6 +72,7 @@ export interface Strings {
   biSourceLabel: string; biAlipay: string; biWechat: string; biGeneric: string;
   biPreview: string; biFresh: string; biDup: string; biSkip: string; // %d
   biConfirm: string; biImported: string; biNothing: string; biMore: string; // %d
+  biErrors: string; biErrorRow: string; // %d = row number
   // auto capture (Android payment notifications → entries)
   capNav: string; capNavD: string; capTitle: string; capSub: string;
   capUnsupported: string; capIntro: string;

@@ -36,6 +36,11 @@ export interface ColumnMap {
   status: number;
 }
 
+export interface RowError {
+  row: number; // 1-indexed line number in the original CSV text
+  reason: string;
+}
+
 export interface ParseResult {
   source: BillSource;
   headerRow: number; // index into the raw rows, -1 if no header found
@@ -43,6 +48,7 @@ export interface ParseResult {
   bills: RawBill[];
   dataRows: number; // data rows seen below the header
   skipped: number; // data rows that were unusable (不计收支 / closed / unparseable)
+  errors: RowError[];
 }
 
 /** An import-ready candidate: an Entry-shaped payload plus preview metadata. */
@@ -298,13 +304,14 @@ export function parseBills(text: string): ParseResult {
   const source = detectSource(rows);
   const headerRow = findHeaderRow(rows);
   if (headerRow < 0) {
-    return { source, headerRow: -1, columns: null, bills: [], dataRows: 0, skipped: 0 };
+    return { source, headerRow: -1, columns: null, bills: [], dataRows: 0, skipped: 0, errors: [] };
   }
   const columns = autoMap(rows[headerRow]);
   if (!columns) {
-    return { source, headerRow, columns: null, bills: [], dataRows: 0, skipped: 0 };
+    return { source, headerRow, columns: null, bills: [], dataRows: 0, skipped: 0, errors: [] };
   }
   const bills: RawBill[] = [];
+  const errors: RowError[] = [];
   let dataRows = 0;
   let skipped = 0;
   const at = (row: string[], i: number) => (i >= 0 && i < row.length ? row[i] : undefined);
@@ -318,6 +325,12 @@ export function parseBills(text: string): ParseResult {
     const status = at(row, columns.status);
     if (!io || amt == null || amt <= 0 || ts == null || (status && DEAD_STATUS.test(status))) {
       skipped++;
+      let reason: string;
+      if (status && DEAD_STATUS.test(status)) reason = `交易状态: ${status.trim()}`;
+      else if (!io) reason = '不计收支或收/支字段为空';
+      else if (ts == null) reason = '无法解析交易时间';
+      else reason = '金额无效或为零';
+      errors.push({ row: r + 1, reason }); // r is 0-indexed CSV row; +1 for human line number
       continue;
     }
     bills.push({
@@ -329,7 +342,7 @@ export function parseBills(text: string): ParseResult {
       status: status?.trim() || undefined,
     });
   }
-  return { source, headerRow, columns, bills, dataRows, skipped };
+  return { source, headerRow, columns, bills, dataRows, skipped, errors };
 }
 
 function ymd(ts: number): string {
@@ -399,6 +412,7 @@ export interface ImportPreview {
   fresh: Candidate[]; // candidates not already in the store
   dupCount: number;
   skipped: number;
+  errors: RowError[];
   expCount: number;
   incCount: number;
   expSum: number;
@@ -423,6 +437,7 @@ export function prepareImport(
     fresh,
     dupCount: candidates.length - fresh.length,
     skipped: parsed.skipped,
+    errors: parsed.errors,
     expCount: fresh.filter((c) => c.io === 'exp').length,
     incCount: fresh.filter((c) => c.io === 'inc').length,
     expSum: Math.round(expSum * 100) / 100,

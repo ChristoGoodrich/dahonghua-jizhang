@@ -193,6 +193,8 @@
   "biImported": "Imported",
   "biNothing": "No new bills to import",
   "biMore": "and more",
+  "biErrors": "Skipped rows",
+  "biErrorRow": "Row %d",
   "capNav": "Auto capture",
   "capNavD": "Log payments from notifications",
   "capTitle": "Auto capture",

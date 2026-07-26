@@ -115,6 +115,21 @@ export default observer(function ImportBillsScreen() {
                     {preview.skipped > 0 ? `${s.biSkip} ${preview.skipped}` : ''}
                   </Text>
                 )}
+                {preview.errors.length > 0 && (
+                  <View style={styles.errorSection}>
+                    <Text style={[styles.errorHead, { color: t.hibiscusDeep }]}>{s.biErrors}</Text>
+                    {preview.errors.slice(0, 10).map((e, i) => (
+                      <Text key={i} style={[styles.errorLine, { color: t.inkSoft }]}>
+                        {s.biErrorRow.replace('%d', String(e.row))}: {e.reason}
+                      </Text>
+                    ))}
+                    {preview.errors.length > 10 && (
+                      <Text style={[styles.errorLine, { color: t.inkSoft }]}>
+                        +{preview.errors.length - 10} {s.biMore}
+                      </Text>
+                    )}
+                  </View>
+                )}
               </View>
 
               {preview.fresh.length > 0 ? (
@@ -181,6 +196,9 @@ const styles = StyleSheet.create({
   statLabel: { fontSize: 11.5 },
   statSum: { fontSize: 13, fontWeight: '700', fontVariant: ['tabular-nums'] },
   meta: { fontSize: 11.5, textAlign: 'center', marginTop: 12 },
+  errorSection: { marginTop: 12, paddingTop: 10, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: 'rgba(0,0,0,0.08)' },
+  errorHead: { fontSize: 12, fontWeight: '700', marginBottom: 4 },
+  errorLine: { fontSize: 11.5, lineHeight: 18 },
   previewHead: { fontSize: 12, fontWeight: '600', marginTop: 22, marginBottom: 8 },
   rowCard: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: RAD.sm, padding: 10, marginBottom: 7, gap: 10 },
   emojiWrap: { width: 36, height: 36, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
