@@ -28,11 +28,13 @@ afterAll(() => { (Date.now as jest.Mock).mockRestore?.(); });
 
 describe('AccountDetailScreen statement card', () => {
   it('shows billed-due, unbilled and the due date for a credit card', async () => {
-    store$.accounts.set([{ id: 'default', name: '现金', balance: 0 }, card]);
-    store$.data.set([
-      { id: 'a', ts: new Date(2026, 0, 2).getTime(), io: 'exp', cat: 'shop', amt: 1000, acct: 'cardX' } as Entry,
-      { id: 'b', ts: new Date(2026, 0, 10).getTime(), io: 'exp', cat: 'food', amt: 200, acct: 'cardX' } as Entry,
-    ]);
+    act(() => {
+      store$.accounts.set([{ id: 'default', name: '现金', balance: 0 }, card]);
+      store$.data.set([
+        { id: 'a', ts: new Date(2026, 0, 2).getTime(), io: 'exp', cat: 'shop', amt: 1000, acct: 'cardX' } as Entry,
+        { id: 'b', ts: new Date(2026, 0, 10).getTime(), io: 'exp', cat: 'food', amt: 200, acct: 'cardX' } as Entry,
+      ]);
+    });
 
     let r!: TestRenderer.ReactTestRenderer;
     await act(async () => { r = TestRenderer.create(<AccountDetailScreen />); });
@@ -47,8 +49,10 @@ describe('AccountDetailScreen statement card', () => {
   });
 
   it('shows no statement card for a plain cash account', async () => {
-    store$.accounts.set([{ id: 'cardX', name: '钱包', balance: 100, kind: 'cash' }]);
-    store$.data.set([]);
+    act(() => {
+      store$.accounts.set([{ id: 'cardX', name: '钱包', balance: 100, kind: 'cash' }]);
+      store$.data.set([]);
+    });
     let r!: TestRenderer.ReactTestRenderer;
     await act(async () => { r = TestRenderer.create(<AccountDetailScreen />); });
     expect(textOf(r.toJSON())).not.toContain(s.stmtBilledDue);
