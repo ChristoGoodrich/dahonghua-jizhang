@@ -1,0 +1,16 @@
+{
+  "setSync": "云同步 / 账号",
+  "setSyncD": "登录后多设备实时同步",
+  "syncNotConfigured": "未配置云后端。按 SYNC_SETUP.md 创建 Supabase 项目并填入密钥后即可启用。",
+  "syncEmail": "邮箱",
+  "syncSendCode": "发送验证码",
+  "syncCode": "验证码（查收邮箱）",
+  "syncVerify": "登录",
+  "syncSignedInAs": "已登录",
+  "syncSignOut": "退出登录",
+  "syncCodeSent": "验证码已发送 🌺",
+  "syncFailed": "出错了，请重试",
+  "syncSynced": "已同步 🌺",
+  "syncSyncing": "同步中…",
+  "syncError": "同步出错，稍后自动重试"
+}
