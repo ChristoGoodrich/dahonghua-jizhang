@@ -1,4 +1,4 @@
-import { periodRange, shiftPeriod, entriesInPeriod, periodTrend, periodLabel } from '../period';
+import { periodRange, shiftPeriod, entriesInPeriod, periodTrend, periodLabel, bucketLabel, PERIODS } from '../period';
 import type { Entry } from '../types';
 
 const E = (over: Partial<Entry>): Entry => ({ id: Math.random().toString(36), ts: Date.now(), io: 'exp', cat: 'food', amt: 0, ...over });
@@ -79,5 +79,68 @@ describe('periodLabel', () => {
   });
   it('labels years', () => {
     expect(periodLabel(new Date(2026, 5, 1), 'year', 'en')).toBe('2026');
+  });
+  it('labels days', () => {
+    const label = periodLabel(new Date(2026, 5, 10), 'day', 'zh');
+    expect(label).toBeTruthy();
+  });
+  it('labels weeks with a range', () => {
+    const label = periodLabel(new Date(2026, 5, 10), 'week', 'en');
+    expect(label).toContain('–');
+  });
+  it('labels months', () => {
+    const label = periodLabel(new Date(2026, 5, 10), 'month', 'zh');
+    expect(label).toContain('2026');
+  });
+  it('labels years in zh', () => {
+    expect(periodLabel(new Date(2026, 0, 1), 'year', 'zh')).toContain('2026');
+  });
+  it('labels H1 half-year in en', () => {
+    expect(periodLabel(new Date(2026, 2, 1), 'halfyear', 'en')).toContain('H1');
+  });
+});
+
+describe('bucketLabel', () => {
+  it('labels day buckets', () => {
+    const label = bucketLabel(new Date(2026, 5, 10), 'day', 'zh');
+    expect(label).toBeTruthy();
+  });
+  it('labels week buckets', () => {
+    const label = bucketLabel(new Date(2026, 5, 8), 'week', 'en');
+    expect(label).toBeTruthy();
+  });
+  it('labels month buckets', () => {
+    const label = bucketLabel(new Date(2026, 5, 1), 'month', 'zh');
+    expect(label).toBeTruthy();
+  });
+  it('labels halfyear buckets in zh', () => {
+    const h1 = bucketLabel(new Date(2026, 0, 1), 'halfyear', 'zh');
+    expect(h1).toContain('上');
+    const h2 = bucketLabel(new Date(2026, 6, 1), 'halfyear', 'zh');
+    expect(h2).toContain('下');
+  });
+  it('labels halfyear buckets in en', () => {
+    const h1 = bucketLabel(new Date(2026, 0, 1), 'halfyear', 'en');
+    expect(h1).toContain('H1');
+    const h2 = bucketLabel(new Date(2026, 6, 1), 'halfyear', 'en');
+    expect(h2).toContain('H2');
+  });
+  it('labels year buckets', () => {
+    expect(bucketLabel(new Date(2026, 0, 1), 'year', 'en')).toBe('2026');
+  });
+});
+
+describe('PERIODS constant', () => {
+  it('contains all five period types', () => {
+    expect(PERIODS).toEqual(['day', 'week', 'month', 'halfyear', 'year']);
+  });
+});
+
+describe('shiftPeriod — additional branches', () => {
+  it('shifts month forward and backward', () => {
+    const fwd = shiftPeriod(new Date(2026, 5, 10), 'month', 1);
+    expect(fwd.getMonth()).toBe(6);
+    const bwd = shiftPeriod(new Date(2026, 5, 10), 'month', -1);
+    expect(bwd.getMonth()).toBe(4);
   });
 });

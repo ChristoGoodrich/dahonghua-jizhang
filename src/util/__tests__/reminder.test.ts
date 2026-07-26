@@ -1,4 +1,4 @@
-import { isValidTime, scheduleBudgetWarning, scheduleCustomReminder, scheduleWeeklyReport, scheduleMonthlyReport } from '../reminder';
+import { isValidTime, scheduleBudgetWarning, scheduleCustomReminder, scheduleWeeklyReport, scheduleMonthlyReport, scheduleDailyReminder, cancelReminder } from '../reminder';
 import { Platform } from 'react-native';
 
 const mockSchedule = jest.fn();
@@ -187,5 +187,49 @@ describe('scheduleMonthlyReport', () => {
     mockRequestPerms.mockResolvedValueOnce({ granted: false });
     expect(await scheduleMonthlyReport('zh')).toBe(false);
     expect(mockSchedule).not.toHaveBeenCalled();
+  });
+});
+
+describe('scheduleDailyReminder', () => {
+  it('schedules a daily notification at valid time', async () => {
+    const result = await scheduleDailyReminder('09:30', '提醒', '别忘了记账');
+    expect(result).toBe(true);
+    expect(mockCancel).toHaveBeenCalled();
+    expect(mockSchedule).toHaveBeenCalledTimes(1);
+    const arg = mockSchedule.mock.calls[0][0];
+    expect(arg.trigger).toEqual({ type: 'DAILY', hour: 9, minute: 30 });
+    expect(arg.content.title).toBe('提醒');
+    expect(arg.content.body).toBe('别忘了记账');
+  });
+
+  it('returns false for invalid time format', async () => {
+    expect(await scheduleDailyReminder('25:00', 't', 'b')).toBe(false);
+    expect(mockSchedule).not.toHaveBeenCalled();
+  });
+
+  it('returns false on web', async () => {
+    (Platform as any).OS = 'web';
+    expect(await scheduleDailyReminder('09:00', 't', 'b')).toBe(false);
+    expect(mockSchedule).not.toHaveBeenCalled();
+  });
+
+  it('returns false when permission denied', async () => {
+    mockGetPerms.mockResolvedValueOnce({ granted: false });
+    mockRequestPerms.mockResolvedValueOnce({ granted: false });
+    expect(await scheduleDailyReminder('09:00', 't', 'b')).toBe(false);
+    expect(mockSchedule).not.toHaveBeenCalled();
+  });
+});
+
+describe('cancelReminder', () => {
+  it('cancels all scheduled notifications', async () => {
+    await cancelReminder();
+    expect(mockCancel).toHaveBeenCalledTimes(1);
+  });
+
+  it('is a no-op on web', async () => {
+    (Platform as any).OS = 'web';
+    await cancelReminder();
+    expect(mockCancel).not.toHaveBeenCalled();
   });
 });
