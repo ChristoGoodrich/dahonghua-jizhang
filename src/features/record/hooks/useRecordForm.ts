@@ -425,7 +425,7 @@ export function useRecordForm({ visible, editId, initialTs, dupeId, lang, custom
     // theme / i18n / layout
     t, insets, s,
     // store reads
-    accounts, entries, tags, currencies, subcats, base, rateCodes,
+    tags, subcats, base, rateCodes,
     // form state
     io, cat, amt, note, acct, acctTo, fee, discount, sheetTags, ledger, cur, subcat, ts,
     flash, aiText, aiBusy, aiMsg, curDropdown, receiptUri, receiptBusy, attempted,
@@ -434,9 +434,8 @@ export function useRecordForm({ visible, editId, initialTs, dupeId, lang, custom
     // derived
     accent, noteSugg, converted, visibleAccts, visibleLedgers,
     // setters (needed by sub-components for inline handlers)
-    setIO, setCat, setAmt, setNote, setAcct, setAcctTo, setFee, setDiscount,
-    setSheetTags, setLedger, setCur, setSubcat, setTs, setFlash, setAiText,
-    setAiMsg, setCurDropdown, setReceiptUri,
+    setCat, setNote, setAcct, setAcctTo, setFee, setDiscount,
+    setLedger, setCur, setSubcat, setTs, setAiText, setCurDropdown, setReceiptUri,
     // handlers
     runAI, handleReceiptCapture, pickIO, onKey, save, saveNext, saveAsTemplate, toggleTag, del,
   };

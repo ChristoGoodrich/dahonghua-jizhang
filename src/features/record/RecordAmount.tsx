@@ -77,6 +77,8 @@ export function RecordAmount({
           </Text>
         ) : flash ? (
           <Text style={[styles.subLineText, { color: flash.err ? t.hibiscus : t.leafDeep }]}>{flash.msg}</Text>
+        ) : converted ? (
+          <Text style={[styles.subLineText, { color: t.inkSoft }]}>{converted}</Text>
         ) : null}
       </View>
     </>
