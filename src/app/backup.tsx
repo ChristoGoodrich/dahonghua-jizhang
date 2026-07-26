@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Alert, ActivityIndicator, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { observer } from '@legendapp/state/react';
 import { store$, patchSettings } from '@/store/ledger';
 import { importV7 } from '@/migrate/importV7';
-import { createBackup, listBackups, restoreBackup, type BackupData } from '@/util/backup';
+import { createBackup, listBackups, restoreBackup, type BackupData, type BackupInfo } from '@/util/backup';
 import { useTheme } from '@/theme/ThemeContext';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { Tap } from '@/components/ui/Tap';
@@ -27,9 +27,12 @@ export default observer(function BackupScreen() {
   const lang = store$.lang.get();
   const s = I18N[lang];
   const settings = store$.settings.get();
-  const [backups, setBackups] = useState<{ name: string; path: string; time: number }[]>([]);
+  const [backups, setBackups] = useState<BackupInfo[]>([]);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState('');
+  const [encryptEnabled, setEncryptEnabled] = useState(false);
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   const load = useCallback(async () => {
     const list = await listBackups();
@@ -39,28 +42,68 @@ export default observer(function BackupScreen() {
   useEffect(() => { load(); }, [load]);
 
   async function onCreate() {
+    if (encryptEnabled) {
+      if (!password) {
+        setStatus(s.backupPasswordRequired);
+        return;
+      }
+      if (password !== confirmPassword) {
+        setStatus(s.backupPasswordMismatch);
+        return;
+      }
+    }
     setLoading(true);
     try {
-      await createBackup();
+      await createBackup(MAX_BACKUPS, encryptEnabled ? password : undefined);
       setStatus(s.backupCreated);
+      setPassword('');
+      setConfirmPassword('');
       await load();
     } finally {
       setLoading(false);
     }
   }
 
-  async function onRestore(path: string) {
+  function promptPasswordAndRestore(path: string) {
+    Alert.prompt(
+      s.backupPassword,
+      s.backupPasswordPh,
+      [
+        { text: s.cancel, style: 'cancel' },
+        {
+          text: s.backupRestore,
+          style: 'destructive',
+          onPress: async (pw?: string) => {
+            if (!pw) return;
+            try {
+              const bd = await restoreBackup(path, pw);
+              await createBackup().catch(() => {});
+              importV7(adaptForImport(bd));
+              setStatus(s.backupRestoreDone);
+              await load();
+            } catch {
+              setStatus(s.importFail);
+            }
+          },
+        },
+      ],
+      'secure-text',
+    );
+  }
+
+  async function onRestore(b: BackupInfo) {
+    if (b.encrypted) {
+      promptPasswordAndRestore(b.path);
+      return;
+    }
     Alert.alert(s.backupRestore, s.backupRestoreConfirm, [
-      // was `s.del` ("删除这笔" / "Delete entry") — a destructive-sounding label on
-      // the button that actually cancels
       { text: s.cancel, style: 'cancel' },
       {
         text: s.backupRestore,
         style: 'destructive',
         onPress: async () => {
           try {
-            const bd = await restoreBackup(path);
-            // snapshot the current ledger before it is replaced
+            const bd = await restoreBackup(b.path);
             await createBackup().catch(() => {});
             importV7(adaptForImport(bd));
             setStatus(s.backupRestoreDone);
@@ -122,6 +165,48 @@ export default observer(function BackupScreen() {
             )}
           </View>
 
+          {/* Encryption toggle */}
+          <View style={[styles.card, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'xs')]}>
+            <View style={styles.row}>
+              <View style={styles.rowMid}>
+                <Text style={[styles.rowTitle, { color: t.ink }]}>{s.backupEncrypt}</Text>
+                <Text style={[styles.rowDesc, { color: t.inkSoft }]}>{s.backupEncryptD}</Text>
+              </View>
+              <Tap
+                onPress={() => setEncryptEnabled(!encryptEnabled)}
+                scaleTo={0.9}
+                accessibilityRole="button"
+                accessibilityLabel={s.backupEncrypt}
+                style={[styles.toggleBtn, { borderColor: t.hibiscus, backgroundColor: encryptEnabled ? t.tint : 'transparent' }]}
+              >
+                <Text style={[styles.toggleText, { color: t.hibiscus }]}>
+                  {encryptEnabled ? s.lockDisable : s.lockEnable}
+                </Text>
+              </Tap>
+            </View>
+
+            {encryptEnabled && (
+              <View style={styles.passwordSection}>
+                <TextInput
+                  style={[styles.input, { color: t.ink, borderColor: t.line, backgroundColor: t.paper }]}
+                  placeholder={s.backupPasswordPh}
+                  placeholderTextColor={t.inkSoft}
+                  secureTextEntry
+                  value={password}
+                  onChangeText={setPassword}
+                />
+                <TextInput
+                  style={[styles.input, { color: t.ink, borderColor: t.line, backgroundColor: t.paper }]}
+                  placeholder={s.backupPasswordConfirm}
+                  placeholderTextColor={t.inkSoft}
+                  secureTextEntry
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                />
+              </View>
+            )}
+          </View>
+
           <Btn
             label={loading ? s.backupCreating : s.backupCreate}
             onPress={onCreate}
@@ -140,13 +225,21 @@ export default observer(function BackupScreen() {
             backups.map((b) => (
               <View key={b.name} style={[styles.backupCard, { backgroundColor: t.card, borderColor: t.line }]}>
                 <View style={styles.backupInfo}>
-                  <Text style={[styles.backupDate, { color: t.ink }]}>{fmtTime(b.time)}</Text>
+                  <View style={styles.backupDateRow}>
+                    <Text style={[styles.backupDate, { color: t.ink }]}>{fmtTime(b.time)}</Text>
+                    {b.encrypted && (
+                      <View style={[styles.encryptedBadge, { backgroundColor: t.tint, borderColor: t.hibiscus }]}>
+                        <Icon name="lock" color={t.hibiscus} size={10} />
+                        <Text style={[styles.encryptedBadgeText, { color: t.hibiscus }]}>{s.backupEncryptedTag}</Text>
+                      </View>
+                    )}
+                  </View>
                   <Text style={[styles.backupTime, { color: t.inkSoft }]}>
                     {new Date(b.time).toLocaleTimeString()}
                   </Text>
                 </View>
                 <Tap
-                  onPress={() => onRestore(b.path)}
+                  onPress={() => onRestore(b)}
                   scaleTo={0.9}
                   accessibilityRole="button"
                   accessibilityLabel={s.backupRestore}
@@ -164,6 +257,8 @@ export default observer(function BackupScreen() {
   );
 });
 
+const MAX_BACKUPS = 10;
+
 const styles = StyleSheet.create({
   root: { flex: 1 },
   safe: { flex: 1, maxWidth: 480, width: '100%', alignSelf: 'center' },
@@ -180,14 +275,19 @@ const styles = StyleSheet.create({
   freqBtns: { flexDirection: 'row', gap: 8 },
   freqBtn: { borderWidth: 1, borderRadius: 999, paddingVertical: 6, paddingHorizontal: 14 },
   freqBtnText: { fontSize: 13, fontWeight: '600' },
+  passwordSection: { marginTop: 12, gap: 8 },
+  input: { borderWidth: 1, borderRadius: RAD.sm, paddingHorizontal: 12, paddingVertical: 10, fontSize: 14 },
   createBtn: { marginTop: 16 },
   status: { marginTop: 10, fontSize: 13, fontWeight: '600', textAlign: 'center' },
   sectionHead: { fontSize: 12, fontWeight: '600', marginTop: 22, marginBottom: 8 },
   empty: { fontSize: 13, textAlign: 'center', marginTop: 20 },
   backupCard: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: RAD.sm, padding: 12, marginBottom: 8, gap: 10 },
   backupInfo: { flex: 1 },
+  backupDateRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   backupDate: { fontSize: 14, fontWeight: '600' },
   backupTime: { fontSize: 11, marginTop: 2 },
+  encryptedBadge: { flexDirection: 'row', alignItems: 'center', gap: 3, borderWidth: 1, borderRadius: 999, paddingVertical: 2, paddingHorizontal: 6 },
+  encryptedBadgeText: { fontSize: 10, fontWeight: '600' },
   restoreBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, borderWidth: 1, borderRadius: 999, paddingVertical: 6, paddingHorizontal: 12 },
   restoreBtnText: { fontSize: 12, fontWeight: '700' },
 });

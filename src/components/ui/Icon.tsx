@@ -1,5 +1,5 @@
 import React from 'react';
-import Svg, { Circle, Line, Path } from 'react-native-svg';
+import Svg, { Circle, Line, Path, Rect } from 'react-native-svg';
 
 export type IconName =
   | 'search' | 'close' | 'sliders' | 'globe'
@@ -10,7 +10,8 @@ export type IconName =
   | 'sprout' | 'bolt' | 'tag' | 'repeat' | 'download' | 'bell'
   | 'cloud' | 'archive' | 'mail' | 'wallet' | 'card' | 'layers'
   | 'eye' | 'eyeOff'
-  | 'camera' | 'gallery';
+  | 'camera' | 'gallery'
+  | 'lock';
 
 interface Props {
   name: IconName;
@@ -227,6 +228,13 @@ export function Icon({ name, color, size = 20, strokeWidth = 1.8 }: Props) {
           <Path d="M3.5 4.5 H20.5 A1.5 1.5 0 0 1 22 6 V18 A1.5 1.5 0 0 1 20.5 19.5 H3.5 A1.5 1.5 0 0 1 2 18 V6 A1.5 1.5 0 0 1 3.5 4.5 Z" {...line} />
           <Path d="M2 16 L7 11 L10 14 L15 9 L22 16" {...line} />
           <Circle cx={8} cy={9} r={1.5} {...line} />
+        </>
+      )}
+      {name === 'lock' && (
+        <>
+          <Rect x={6} y={11} width={12} height={9} rx={1.5} {...line} />
+          <Path d="M8 11 V7 A4 4 0 0 1 16 7 V11" {...line} />
+          <Circle cx={12} cy={15} r={1.2} fill={color} stroke="none" />
         </>
       )}
     </Svg>

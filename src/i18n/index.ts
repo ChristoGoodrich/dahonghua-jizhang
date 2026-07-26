@@ -142,6 +142,10 @@ export interface Strings {
   backupRestoreConfirm: string; backupRestoreDone: string; backupList: string; backupEmpty: string;
   backupAuto: string; backupAutoD: string; backupFreq: string; backupFreqDaily: string;
   backupFreqWeekly: string; backupMax: string; backupMaxD: string;
+  backupEncrypt: string; backupEncryptD: string;
+  backupPassword: string; backupPasswordPh: string;
+  backupPasswordConfirm: string; backupPasswordMismatch: string;
+  backupPasswordRequired: string; backupEncryptedTag: string;
   remindTitle: string; remindDesc: string; remindOff: string; remindBody: string;
   // voice
   voiceTitle: string; voiceListening: string; voiceHint: string;
