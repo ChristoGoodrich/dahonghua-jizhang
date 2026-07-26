@@ -33,6 +33,21 @@ jobs:
       - name: Test with coverage
         run: npm test -- --coverage
 
+      - name: Check coverage threshold
+        run: |
+          SUMMARY=coverage/coverage-summary.json
+          if [ ! -f "$SUMMARY" ]; then
+            echo "::error::coverage-summary.json not found. Ensure tests ran with --coverage."
+            exit 1
+          fi
+          LINE_PCT=$(node -e "const s=require('./$SUMMARY'); console.log(s.total.lines.pct)")
+          echo "Line coverage: ${LINE_PCT}%"
+          if [ "$(node -e "console.log(${LINE_PCT} < 70 ? 'fail' : 'pass')")" = "fail" ]; then
+            echo "::error::Line coverage ${LINE_PCT}% is below the 70% threshold."
+            exit 1
+          fi
+          echo "Coverage threshold met (${LINE_PCT}% >= 70%)."
+
       - name: Upload coverage to Codecov
         if: always()
         uses: codecov/codecov-action@v5
