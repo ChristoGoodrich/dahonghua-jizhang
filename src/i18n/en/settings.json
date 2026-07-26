@@ -27,6 +27,7 @@
   "importBtn": "Choose backup file",
   "back": "Back",
   "exportCsv": "Export CSV",
+  "exportXlsx": "Export Excel",
   "exportBackup": "Export backup (JSON)",
   "exportDone": "Exported 🌺",
   "backupCreate": "Create backup",

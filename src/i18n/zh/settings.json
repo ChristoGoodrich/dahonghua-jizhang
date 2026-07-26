@@ -27,6 +27,7 @@
   "importBtn": "选择备份文件",
   "back": "返回",
   "exportCsv": "导出 CSV",
+  "exportXlsx": "导出 Excel",
   "exportBackup": "导出备份 (JSON)",
   "exportDone": "已导出 🌺",
   "backupCreate": "创建备份",

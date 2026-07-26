@@ -136,7 +136,7 @@ export interface Strings {
   syncCode: string; syncVerify: string; syncSignedInAs: string; syncSignOut: string; syncCodeSent: string; syncFailed: string;
   syncSynced: string; syncSyncing: string; syncError: string; syncOff: string; retrySync: string;
   // export + reminder
-  exportCsv: string; exportBackup: string; exportDone: string;
+  exportCsv: string; exportXlsx: string; exportBackup: string; exportDone: string;
   // backup
   backupCreate: string; backupCreating: string; backupCreated: string; backupRestore: string;
   backupRestoreConfirm: string; backupRestoreDone: string; backupList: string; backupEmpty: string;

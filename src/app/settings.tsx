@@ -6,8 +6,8 @@ import * as LocalAuthentication from 'expo-local-authentication';
 import { observer } from '@legendapp/state/react';
 import { store$, patchSettings, setLang, buildBackup } from '@/store/ledger';
 import { importV7 } from '@/migrate/importV7';
-import { entriesToCSV } from '@/domain/export';
-import { shareTextFile } from '@/util/share';
+import { entriesToCSV, entriesToXLSX } from '@/domain/export';
+import { shareTextFile, shareBinaryFile } from '@/util/share';
 import { createBackup } from '@/util/backup';
 import { scheduleDailyReminder, cancelReminder, isValidTime } from '@/util/reminder';
 import { aiConfigured } from '@/ai/client';
@@ -76,6 +76,12 @@ export default observer(function SettingsScreen() {
   async function exportCSV() {
     const csv = entriesToCSV(store$.data.peek(), store$.accounts.peek(), store$.customCats.peek());
     await shareTextFile('大红花记账.csv', csv, 'text/csv');
+    setStatus(s.exportDone);
+  }
+
+  async function exportXLSX() {
+    const xlsx = entriesToXLSX(store$.data.peek(), store$.accounts.peek(), store$.customCats.peek());
+    await shareBinaryFile('大红花记账.xlsx', xlsx, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     setStatus(s.exportDone);
   }
 
@@ -218,6 +224,7 @@ export default observer(function SettingsScreen() {
             <StackRow title={s.dataTitle} desc={s.dataDesc} last>
               <View style={styles.exportRow}>
                 <Btn label={s.exportCsv} variant="ghost" onPress={exportCSV} style={styles.exportBtn} />
+                <Btn label={s.exportXlsx} variant="ghost" onPress={exportXLSX} style={styles.exportBtn} />
                 <Btn label={s.exportBackup} variant="ghost" onPress={exportBackup} style={styles.exportBtn} />
               </View>
               <Btn label={s.importBtn} onPress={pickAndImport} style={styles.importBtn} />
