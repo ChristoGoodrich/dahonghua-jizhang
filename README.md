@@ -188,9 +188,9 @@ suite can run in a plain Node environment.
 
 ## Testing and quality
 
-**663 tests across 69 suites, all green**, alongside a clean `tsc --noEmit` and zero
-ESLint errors. CI runs lint, typecheck and tests with coverage on every push and pull
-request, and **fails the build under 70 % line coverage**.
+**663 tests across 69 suites**, alongside a clean `tsc --noEmit` and zero ESLint errors.
+CI runs lint, typecheck and tests with coverage on every push and pull request, and
+**fails the build under 70 % line coverage**.
 
 ```bash
 npm test -- --coverage

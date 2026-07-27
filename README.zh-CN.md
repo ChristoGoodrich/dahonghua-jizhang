@@ -183,7 +183,7 @@ docs/           设计规格与阶段计划
 
 ## 测试与质量
 
-**69 个测试套件、663 个测试全部通过**，同时 `tsc --noEmit` 无报错、ESLint 零 error。
+**69 个测试套件、663 个测试**，同时 `tsc --noEmit` 无报错、ESLint 零 error。
 每次 push 与 PR，CI 都会跑 lint、typecheck 和带覆盖率的测试，**行覆盖率低于 70% 直接判失败**。
 
 ```bash
