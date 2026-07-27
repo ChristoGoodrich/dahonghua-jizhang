@@ -34,6 +34,12 @@ export function LedgerHeader(props: {
   onClearSearch: () => void;
   searchRef: React.RefObject<TextInput | null>;
 }) {
+  const {
+    title, sub, a11ySearch, a11yClearSearch, a11yListToggle, a11yCalToggle,
+    searchPh, lang, customCats, tab, listMode, setListMode,
+    searchOpen, searchQ, setSearchQ, searchFilter, setSearchFilter,
+    onSearchToggle, onClearSearch, searchRef,
+  } = props;
   const t = useTheme();
   const responsive = useResponsive();
 
@@ -43,58 +49,58 @@ export function LedgerHeader(props: {
         <View style={s.brand}>
           <Flower size={34} center="yen" petal={t.hibiscus} stroke={t.hibiscusDeep} />
           <View>
-            <Text style={[s.title, { color: t.ink, fontSize: responsive.fontSize.title }]}>{props.title}</Text>
-            {!!props.sub && <Text style={[s.sub, { color: t.hibiscus }]}>{props.sub}</Text>}
+            <Text style={[s.title, { color: t.ink, fontSize: responsive.fontSize.title }]}>{title}</Text>
+            {!!sub && <Text style={[s.sub, { color: t.hibiscus }]}>{sub}</Text>}
           </View>
         </View>
         <View style={s.topBtns}>
           <Tap
             style={[s.iconBtn, { borderColor: t.line, backgroundColor: t.card }]}
-            onPress={props.onSearchToggle}
+            onPress={onSearchToggle}
             accessibilityRole="button"
-            accessibilityLabel={props.a11ySearch}
+            accessibilityLabel={a11ySearch}
           >
-            <Icon name="search" color={props.searchOpen ? t.hibiscus : t.inkSoft} size={17} />
+            <Icon name="search" color={searchOpen ? t.hibiscus : t.inkSoft} size={17} />
           </Tap>
-          {props.tab === 'list' && (
+          {tab === 'list' && (
             <Tap
               testID="nav-cal"
               style={[
                 s.iconBtn,
-                { borderColor: props.listMode === 'cal' ? t.hibiscus : t.line, backgroundColor: props.listMode === 'cal' ? t.tint : t.card },
+                { borderColor: listMode === 'cal' ? t.hibiscus : t.line, backgroundColor: listMode === 'cal' ? t.tint : t.card },
               ]}
-              onPress={() => props.setListMode((m) => (m === 'cal' ? 'list' : 'cal'))}
+              onPress={() => setListMode((m) => (m === 'cal' ? 'list' : 'cal'))}
               accessibilityRole="button"
-              accessibilityState={{ selected: props.listMode === 'cal' }}
-              accessibilityLabel={props.listMode === 'cal' ? props.a11yListToggle : props.a11yCalToggle}
+              accessibilityState={{ selected: listMode === 'cal' }}
+              accessibilityLabel={listMode === 'cal' ? a11yListToggle : a11yCalToggle}
             >
-              <NavIcon name={props.listMode === 'cal' ? 'list' : 'cal'} color={props.listMode === 'cal' ? t.hibiscus : t.inkSoft} size={18} />
+              <NavIcon name={listMode === 'cal' ? 'list' : 'cal'} color={listMode === 'cal' ? t.hibiscus : t.inkSoft} size={18} />
             </Tap>
           )}
         </View>
       </View>
 
-      {props.searchOpen && props.tab === 'list' && props.listMode === 'list' && (
+      {searchOpen && tab === 'list' && listMode === 'list' && (
         <View style={s.searchWrap}>
           <View style={[s.searchBar, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'xs')]}>
             <Icon name="search" color={t.inkSoft} size={17} />
             <TextInput
-              ref={props.searchRef}
+              ref={searchRef}
               style={[s.searchInput, { color: t.ink }]}
-              value={props.searchQ}
-              onChangeText={props.setSearchQ}
-              placeholder={props.searchPh}
+              value={searchQ}
+              onChangeText={setSearchQ}
+              placeholder={searchPh}
               placeholderTextColor={t.inkSoft}
               autoFocus
-              accessibilityLabel={props.a11ySearch}
+              accessibilityLabel={a11ySearch}
             />
-            <Pressable onPress={props.searchQ ? () => props.setSearchQ('') : props.onClearSearch} hitSlop={8} accessibilityRole="button" accessibilityLabel={props.a11yClearSearch}>
+            <Pressable onPress={searchQ ? () => setSearchQ('') : onClearSearch} hitSlop={8} accessibilityRole="button" accessibilityLabel={a11yClearSearch}>
               <View style={[s.searchClear, { backgroundColor: t.line }]}>
                 <Icon name="close" color={t.inkSoft} size={11} strokeWidth={2.4} />
               </View>
             </Pressable>
           </View>
-          <SearchFilter lang={props.lang} customCats={props.customCats} filter={props.searchFilter} onChange={props.setSearchFilter} />
+          <SearchFilter lang={lang} customCats={customCats} filter={searchFilter} onChange={setSearchFilter} />
         </View>
       )}
     </>
