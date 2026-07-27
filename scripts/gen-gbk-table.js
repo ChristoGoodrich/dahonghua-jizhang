@@ -8,6 +8,12 @@
 //
 // Run with any Node built with full ICU (default on official builds):
 //   node scripts/gen-gbk-table.js
+//
+// The cells ICU has no Unicode assignment for land in the private use area,
+// and a few graduate out of it between ICU versions (0xa2e3 → U+E76C on older
+// builds, € on newer ones), so the table's PUA cells depend on the Node that
+// generated it. encoding.test.ts excludes that area from its ICU comparison
+// for exactly this reason.
 const fs = require('fs');
 const path = require('path');
 
