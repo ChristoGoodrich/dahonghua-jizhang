@@ -13,7 +13,7 @@ import {
   parseNotification, toEntryDraft, isDuplicate, fullText, DUP_WINDOW_MS,
   type NotifEntryDraft, type NotifSource, type PaymentKey,
 } from '@/domain/notifParse';
-import { store$, addEntry } from './state';
+import { store$, addEntry, isDataReady, whenDataReady } from './state';
 
 /** A parsed payment that wasn't confident enough to post unattended. */
 export interface PendingItem {
@@ -168,13 +168,24 @@ export async function drainInbox(): Promise<DrainResult> {
  * JS side is guaranteed to be alive. Returns a disposer — call it on unmount so
  * the listener and its pending promise can't outlive the tree (an AppState
  * subscription firing after teardown is a classic jest open-handle).
+ *
+ * Draining waits for the full ledger (whenDataReady): the dedup scan reads
+ * `store$.data`, and a posted entry would be dropped by the full-load merge's
+ * disk copy being absent — while the native queue was already acknowledged, so
+ * the payment would be gone for good.
  */
 export function startInboxDrain(): () => void {
-  void drainInbox().catch(() => {});
-  const sub = AppState.addEventListener('change', (s: AppStateStatus) => {
-    if (s === 'active') void drainInbox().catch(() => {});
+  let disposed = false;
+  void whenDataReady().then(() => {
+    if (!disposed) return drainInbox().catch(() => {});
   });
-  return () => sub.remove();
+  const sub = AppState.addEventListener('change', (s: AppStateStatus) => {
+    if (s === 'active' && isDataReady()) void drainInbox().catch(() => {});
+  });
+  return () => {
+    disposed = true;
+    sub.remove();
+  };
 }
 
 // ---------- inbox actions ----------

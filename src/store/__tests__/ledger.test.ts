@@ -1,4 +1,4 @@
-import { store$, addEntry, addTransfer, updateEntry, removeEntry, runSubscriptions, buildBackup } from '../ledger';
+import { store$, addEntry, addTransfer, updateEntry, removeEntry, unremoveEntry, runSubscriptions, buildBackup } from '../ledger';
 import { importV7, migrateBackup, CURRENT_BACKUP_VERSION } from '@/migrate/importV7';
 import type { Entry } from '@/domain/types';
 
@@ -88,6 +88,41 @@ describe('ledger actions', () => {
     const live = store$.data.peek().filter((d) => !d.deletedAt);
     expect(live).toHaveLength(0); // both hidden from the UI
     expect(store$.data.peek()).toHaveLength(2); // but both kept as tombstones
+  });
+
+  it('removeEntry returns undefined for an unknown id', () => {
+    expect(removeEntry('nope')).toBeUndefined();
+  });
+
+  it('unremoveEntry restores a deleted refund income as a fresh stamped write', () => {
+    store$.data.set([
+      { id: 'orig', ts: 1, io: 'exp', cat: 'food', amt: 100, refund: 30, updatedAt: 5 },
+      { id: 'ref', ts: 2, io: 'inc', cat: 'other', amt: 30, refundOf: 'orig', updatedAt: 5 },
+    ]);
+    const undo = removeEntry('ref')!;
+    unremoveEntry(undo);
+
+    const byId = new Map(store$.data.peek().map((d) => [d.id, d] as const));
+    const ref = byId.get('ref')!;
+    expect(ref.deletedAt).toBeUndefined(); // resurrected
+    // the undo is a NEW write: stamped clear + fresh updatedAt, so it crosses
+    // the push watermark and beats the already-pushed tombstone in the merge
+    expect(ref.fieldTs!.deletedAt).toBeGreaterThan(0);
+    expect(ref.updatedAt!).toBeGreaterThan(5);
+    expect(byId.get('orig')!.refund).toBe(30); // counter restored exactly
+  });
+
+  it('unremoveEntry restores an original together with its refund children', () => {
+    store$.data.set([
+      { id: 'o2', ts: 1, io: 'exp', cat: 'food', amt: 50, refund: 10 },
+      { id: 'r2', ts: 2, io: 'inc', cat: 'other', amt: 10, refundOf: 'o2' },
+    ]);
+    const undo = removeEntry('o2')!;
+    unremoveEntry(undo);
+
+    const live = store$.data.peek().filter((d) => !d.deletedAt);
+    expect(live.map((d) => d.id).sort()).toEqual(['o2', 'r2']);
+    expect(live.find((d) => d.id === 'o2')!.refund).toBe(10); // untouched by this path
   });
 });
 

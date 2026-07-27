@@ -9,7 +9,7 @@ import { SheetShell } from '@/components/ui/SheetShell';
 import { RAD, TABULAR, shadow } from '@/theme/tokens';
 import { catOf, catName } from '@/domain/cats';
 import { fmt, fmtShort } from '@/domain/money';
-import { store$, removeEntry } from '@/store/ledger';
+import { store$, removeEntry, unremoveEntry } from '@/store/ledger';
 import type { Category, IO } from '@/domain/types';
 import { I18N, type Lang } from '@/i18n';
 
@@ -54,20 +54,10 @@ export const DetailSheet = observer(function DetailSheet({ entryId, lang, custom
   });
 
   function del() {
-    // Snapshot only the rows removeEntry actually rewrites (the entry, its
-    // refund incomes, and the original it refunds) so undo restores those by
-    // id. Replaying a whole-array snapshot would also roll back anything
-    // added or synced in from another device during the undo window.
-    const before = store$.data.peek();
-    const target = before.find((x) => x.id === entryId);
-    const touched = before.filter(
-      (x) => x.id === entryId || x.refundOf === entryId || (!!target?.refundOf && x.id === target.refundOf),
-    );
-    removeEntry(entryId!);
-    onDeleted?.(() => {
-      const byId = new Map(touched.map((e) => [e.id, e] as const));
-      store$.data.set(store$.data.peek().map((e) => byId.get(e.id) ?? e));
-    });
+    // undo goes through unremoveEntry — a fresh stamped write, not a replay of
+    // the old rows, so the restore survives a sync round-trip (see state.ts)
+    const undo = removeEntry(entryId!);
+    if (undo) onDeleted?.(() => unremoveEntry(undo));
     onClose();
   }
 

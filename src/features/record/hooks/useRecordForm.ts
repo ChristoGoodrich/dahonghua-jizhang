@@ -11,7 +11,7 @@ import { pickerAccounts, pickerLedgers } from '@/domain/archive';
 import type { Category, IO } from '@/domain/types';
 import type { Lang } from '@/i18n';
 import { I18N } from '@/i18n';
-import { store$, addEntry, addTransfer, updateEntry, removeEntry, addTemplate } from '@/store/ledger';
+import { store$, addEntry, addTransfer, updateEntry, removeEntry, unremoveEntry, addTemplate } from '@/store/ledger';
 import { noteSuggestions } from '@/domain/notes';
 import { NO_ANIM } from '@/util/boot';
 import { SPRING } from '@/theme/tokens';
@@ -325,20 +325,10 @@ export function useRecordForm({ visible, editId, initialTs, dupeId, lang, custom
 
   function del() {
     if (editId) {
-      // Snapshot only the rows removeEntry actually rewrites (the entry, its
-      // refund incomes, and the original it refunds) so undo restores those by
-      // id. Replaying a whole-array snapshot would also roll back anything
-      // added or synced in from another device during the undo window.
-      const before = store$.data.peek();
-      const target = before.find((x) => x.id === editId);
-      const touched = before.filter(
-        (x) => x.id === editId || x.refundOf === editId || (!!target?.refundOf && x.id === target.refundOf),
-      );
-      removeEntry(editId);
-      onDeleted?.(() => {
-        const byId = new Map(touched.map((e) => [e.id, e] as const));
-        store$.data.set(store$.data.peek().map((e) => byId.get(e.id) ?? e));
-      });
+      // undo goes through unremoveEntry — a fresh stamped write, not a replay
+      // of the old rows, so the restore survives a sync round-trip (state.ts)
+      const undo = removeEntry(editId);
+      if (undo) onDeleted?.(() => unremoveEntry(undo));
     }
     onClose();
   }

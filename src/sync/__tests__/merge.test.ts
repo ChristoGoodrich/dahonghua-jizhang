@@ -99,9 +99,35 @@ describe('field-level merge', () => {
     const a = f({ note: 'A', updatedAt: 300, fieldTs: { note: 300 }, deletedAt: null });
     const b = f({ amt: 5, updatedAt: 200, fieldTs: { amt: 200 }, deletedAt: 200 });
     const m = mergeById([a], [b]).merged[0];
-    expect(m.deletedAt).toBe(200); // tombstone precedence
+    expect(m.deletedAt).toBe(200); // tombstone precedence (no stamped clear anywhere)
     expect(m.note).toBe('A'); // fields still merged into the tombstone
     expect(liveRows([m])).toHaveLength(0);
+  });
+
+  it('a NEWER stamped clear resurrects the row (delete-undo survives sync)', () => {
+    // device A deleted at t=200 (stamped); device B undid the delete at t=300
+    // with a stamped clear — the undo must win, or every undo would be
+    // silently re-deleted by the next pull
+    const a = f({ amt: 5, updatedAt: 300, fieldTs: { amt: 100, deletedAt: 300 } }); // cleared
+    const b = f({ amt: 5, updatedAt: 200, fieldTs: { amt: 100, deletedAt: 200 }, deletedAt: 200 });
+    const m = mergeById([a], [b]).merged[0];
+    expect(m.deletedAt).toBeUndefined();
+    expect(liveRows([m])).toHaveLength(1);
+  });
+
+  it('an OLDER stamped clear still loses to a newer tombstone', () => {
+    // undo at t=200, then deleted again at t=300 elsewhere → stays deleted
+    const a = f({ amt: 5, updatedAt: 200, fieldTs: { deletedAt: 200 } });
+    const b = f({ amt: 5, updatedAt: 300, fieldTs: { deletedAt: 300 }, deletedAt: 300 });
+    const m = mergeById([a], [b]).merged[0];
+    expect(m.deletedAt).toBe(300);
+  });
+
+  it('two stamped tombstones keep the latest delete time', () => {
+    const a = f({ amt: 5, updatedAt: 300, fieldTs: { deletedAt: 250 }, deletedAt: 250 });
+    const b = f({ amt: 5, updatedAt: 300, fieldTs: { deletedAt: 250 }, deletedAt: 400 });
+    // equal stamps, both present → deterministic max so devices converge
+    expect(mergeById([a], [b]).merged[0].deletedAt).toBe(400);
   });
 });
 

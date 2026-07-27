@@ -107,7 +107,8 @@ function boot(configure?: (s: MockState) => void) {
   configure?.(state);
   mockBox.client = makeClient(state);
 
-  const { store$ } = require('@/store/ledger');
+  const { store$, markDataReady } = require('@/store/ledger');
+  markDataReady(); // the engine waits for the full local dataset before pulling
   const { auth$ } = require('../auth');
   const engine = require('../engine');
   return { state, store$, auth$, engine };
@@ -280,6 +281,73 @@ describe('applyingRemote guard', () => {
 
     expect(ctx.store$.settings.lock.peek()).toBe(true);
     expect(ctx.store$.settings.budget.peek()).toBe(500);
+  });
+});
+
+// Whole-blob LWW clobbered concurrent edits to DIFFERENT sections: A adds an
+// account, B renames a tag, last push erased the other's change. Each section
+// now carries a timestamp; a remote section is adopted only when newer.
+describe('per-section config merge', () => {
+  const fireConfig = (ctx: ReturnType<typeof boot>, config: unknown) => {
+    const ch = ctx.state.channels.find((c) => c.name === 'config-sync')!;
+    ch.handlers.forEach((h) => h.handler({ new: { config } }));
+  };
+
+  it('a stale remote section does not clobber a locally-newer edit', async () => {
+    const ctx = boot();
+    ctx.store$.hydrated.set(true); // stamps only track post-hydration edits
+    await signIn(ctx);
+    ctx.store$.accounts.set([{ id: 'mine', name: '本地', balance: 0 }]); // stamped now
+    await settle();
+
+    fireConfig(ctx, { accounts: [{ id: 'stale', name: '远端旧', balance: 0 }], configTs: { accounts: 1 } });
+    await settle();
+
+    expect(ctx.store$.accounts.peek()[0].id).toBe('mine');
+  });
+
+  it('adopts remotely-newer sections while keeping locally-newer ones', async () => {
+    const ctx = boot();
+    ctx.store$.hydrated.set(true);
+    await signIn(ctx);
+    ctx.store$.accounts.set([{ id: 'mine', name: '本地', balance: 0 }]);
+    await settle();
+
+    fireConfig(ctx, {
+      accounts: [{ id: 'stale', name: '远端旧', balance: 0 }],
+      tags: { normal: ['远端'], ledger: [] },
+      configTs: { accounts: 1, tags: Date.now() + 60_000 },
+    });
+    await settle();
+
+    expect(ctx.store$.accounts.peek()[0].id).toBe('mine'); // local newer → kept
+    expect(ctx.store$.tags.peek().normal).toEqual(['远端']); // remote newer → adopted
+  });
+
+  it('pushes back when the remote blob lags local edits', async () => {
+    const ctx = boot();
+    ctx.store$.hydrated.set(true);
+    await signIn(ctx);
+    ctx.store$.accounts.set([{ id: 'mine', name: '本地', balance: 0 }]);
+    await settle();
+    const before = profileUpserts(ctx.state).length;
+
+    fireConfig(ctx, { accounts: [{ id: 'stale', name: '远端旧', balance: 0 }], configTs: { accounts: 1 } });
+    await settle();
+
+    // ours is newer → keep it AND re-push so the server converges on it
+    expect(profileUpserts(ctx.state).length).toBeGreaterThan(before);
+  });
+
+  it('uploads the section stamps with the config blob', async () => {
+    const ctx = boot();
+    ctx.store$.hydrated.set(true);
+    await signIn(ctx);
+    ctx.store$.accounts.set([{ id: 'a9', name: 'X', balance: 0 }]);
+    await settle();
+
+    const cfg = profileUpserts(ctx.state).at(-1)!.payload.config;
+    expect(cfg.configTs.accounts).toBeGreaterThan(0);
   });
 });
 

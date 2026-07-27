@@ -46,6 +46,34 @@ describe('currency actions', () => {
     expect(e.origAmt).toBeUndefined();
   });
 
+  it('stamps every rewritten entry so the re-denomination reaches sync', () => {
+    // unstamped, the rewrite never crosses the push watermark and the
+    // equal-timestamp merge tiebreak mixes old- and new-base amounts per row
+    store$.currencies.set({ base: 'CNY', rates: { USD: 7.2 } });
+    store$.data.set([
+      { id: 'e1', ts: 1, io: 'exp', cat: 'food', amt: 720, updatedAt: 5, fieldTs: { amt: 5 } },
+      { id: 'e2', ts: 2, io: 'exp', cat: 'food', amt: 72, fee: 7.2, updatedAt: 5 },
+    ]);
+
+    expect(setBaseCurrency('USD')).toBe('ok');
+    const [e1, e2] = store$.data.peek();
+    expect(e1.updatedAt!).toBeGreaterThan(5);
+    expect(e1.fieldTs!.amt).toBe(e1.updatedAt); // fresh field stamp, not the old 5
+    expect(e2.fieldTs!.amt).toBe(e2.updatedAt);
+    expect(e2.fieldTs!.fee).toBe(e2.updatedAt);
+    expect(e2.fee).toBe(1);
+  });
+
+  it('stamps the cur/origAmt clear when the foreign entry becomes base', () => {
+    store$.currencies.set({ base: 'CNY', rates: { USD: 7.2 } });
+    store$.data.set([{ id: 'e1', ts: 1, io: 'exp', cat: 'food', amt: 71.99, cur: 'USD', origAmt: 9.99 }]);
+
+    expect(setBaseCurrency('USD')).toBe('ok');
+    const e = store$.data.peek()[0];
+    expect(e.fieldTs!.cur).toBe(e.updatedAt); // the clear must win over stale devices
+    expect(e.fieldTs!.origAmt).toBe(e.updatedAt);
+  });
+
   it('reports a no-op switch to the current base', () => {
     expect(setBaseCurrency('CNY')).toBe('same');
   });

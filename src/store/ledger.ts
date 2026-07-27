@@ -4,7 +4,7 @@
 // subscriptions, templates, tags, currency, reimburse) to keep each file
 // cohesive; this module re-exports them all so callers keep one import
 // (`@/store/ledger`) and acts as the boot composition root (`hydrate`).
-import { store$, startAutosave, loadPersisted, loadPersistedCurrentMonth, loadPersistedFull, wireDisplaySymbol } from './state';
+import { store$, startAutosave, loadPersisted, loadPersistedCurrentMonth, loadPersistedFull, wireDisplaySymbol, markDataReady, whenDataReady } from './state';
 import { runSubscriptions } from './subscriptions';
 import { loadAnalytics } from '@/util/analytics';
 import { runAutoBackup } from '@/util/backup';
@@ -22,6 +22,7 @@ export * from './reimburse';
 /** Load persisted state, then start auto-saving on every change. Call once at boot. */
 export async function hydrate(): Promise<void> {
   await loadPersisted();
+  markDataReady(); // the full dataset is in memory — writers may proceed
   store$.hydrated.set(true);
   wireDisplaySymbol();
   startAutosave();
@@ -36,19 +37,31 @@ export async function hydrate(): Promise<void> {
 }
 
 /** Fast hydration: load config + current month entries only. The UI can render
- *  immediately with a small dataset while the full load follows. */
+ *  immediately with a small dataset while the full load follows (hydrateFull).
+ *
+ *  Everything that treats `store$.data` as the complete ledger — subscription
+ *  catch-up, the notification drain, the sync pull, autosave's entry writes —
+ *  waits on whenDataReady() until hydrateFull opens the gate. Running any of
+ *  them against the month-only subset corrupts data (see state.ts). */
 export async function hydrateCurrentMonth(): Promise<void> {
   await loadPersistedCurrentMonth();
   store$.hydrated.set(true);
   wireDisplaySymbol();
   startAutosave();
   await loadAnalytics().catch(() => {});
+  // auto-backup reads AsyncStorage directly (not the store), so the month-only
+  // window can't truncate it — safe to snapshot now
   const st = store$.settings.peek();
   runAutoBackup({ enabled: st.autoBackup, frequency: st.backupFrequency, maxBackups: st.maxBackups }).catch(() => {});
-  runSubscriptions();
+  // catch up subscription charges only once the full ledger is here: the charge
+  // dedup scans existing entries, and the advanced lastCharged cursor persists
+  // even if the posted entry were lost to the full-load swap
+  void whenDataReady().then(() => runSubscriptions());
 }
 
-/** Background hydration: swap in the full entry list after the fast pass. */
+/** Background hydration: merge in the full entry list after the fast pass and
+ *  open the gate for everything that needs the complete ledger. */
 export async function hydrateFull(): Promise<void> {
   await loadPersistedFull();
+  markDataReady();
 }

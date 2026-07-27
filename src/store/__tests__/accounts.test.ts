@@ -84,6 +84,34 @@ describe('removeAccount', () => {
     removeAccount(a.id);
     expect(store$.data.peek().find((d) => d.id === 'e2')!.acct).toBe(b.id);
   });
+
+  it('stamps migrated entries so the change reaches sync', () => {
+    // an unstamped rewrite sits below the push watermark and is never uploaded
+    const a = addAccount('A');
+    store$.data.set([{ id: 'e1', ts: 1, io: 'exp', cat: 'food', amt: 10, acct: a.id, updatedAt: 1 }]);
+    removeAccount(a.id);
+    const e = store$.data.peek()[0];
+    expect(e.updatedAt).toBeGreaterThan(1);
+    expect(e.fieldTs!.acct).toBe(e.updatedAt);
+  });
+
+  it('migrates transfers that TARGET the removed account (acctTo)', () => {
+    const a = addAccount('A');
+    store$.data.set([
+      { id: 'x1', ts: 1, io: 'xfer', cat: 'transfer', amt: 50, acct: 'default', acctTo: a.id },
+    ]);
+    removeAccount(a.id);
+    const e = store$.data.peek()[0];
+    expect(e.acctTo).toBe('default');
+    expect(e.fieldTs!.acctTo).toBe(e.updatedAt);
+  });
+
+  it('leaves untouched entries unstamped', () => {
+    const a = addAccount('A');
+    store$.data.set([{ id: 'e1', ts: 1, io: 'exp', cat: 'food', amt: 10, acct: 'default', updatedAt: 1 }]);
+    removeAccount(a.id);
+    expect(store$.data.peek()[0].updatedAt).toBe(1);
+  });
 });
 
 describe('archiveAccount', () => {

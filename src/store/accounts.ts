@@ -1,6 +1,6 @@
 // Account actions — create/delete money containers.
-import type { Account } from '@/domain/types';
-import { store$, newId } from './state';
+import type { Account, Entry } from '@/domain/types';
+import { store$, newId, stampEntry } from './state';
 
 export function addAccount(
   name: string,
@@ -20,10 +20,22 @@ export function addAccount(
   return a;
 }
 
-/** Delete an account, migrating its transactions to default (ported from v7). */
+/** Delete an account, migrating its transactions to default (ported from v7).
+ *  The migration goes through stampEntry — an unstamped rewrite is invisible to
+ *  the push watermark and loses the field-level merge, so other devices would
+ *  keep pointing entries at the deleted account. Transfers TARGETING the
+ *  account (acctTo) migrate too; v7 left them dangling. */
 export function removeAccount(id: string): void {
   if (id === 'default') return;
-  store$.data.set(store$.data.peek().map((d) => (d.acct === id ? { ...d, acct: 'default' } : d)));
+  const now = Date.now();
+  store$.data.set(
+    store$.data.peek().map((d) => {
+      const patch: Partial<Entry> = {};
+      if (d.acct === id) patch.acct = 'default';
+      if (d.acctTo === id) patch.acctTo = 'default';
+      return Object.keys(patch).length ? stampEntry(d, patch, now) : d;
+    }),
+  );
   store$.accounts.set(store$.accounts.peek().filter((a) => a.id !== id));
   if (store$.curAccount.peek() === id) store$.curAccount.set('default');
 }

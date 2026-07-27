@@ -1,5 +1,6 @@
 // Multi-currency actions — base currency, per-code rates, and rate refresh.
-import { store$ } from './state';
+import type { Entry } from '@/domain/types';
+import { store$, stampEntry } from './state';
 
 /** Round money to cents, killing the float drift a divide introduces. */
 function money(n: number): number {
@@ -30,21 +31,28 @@ export function setBaseCurrency(code: string): BaseSwitch {
 
   const conv = (n: number) => money(n / rate);
 
+  // Every rewritten entry is stamped (stampEntry): the rewrite changes real
+  // money fields, so it must raise updatedAt above the push watermark and carry
+  // fresh fieldTs. Unstamped, none of it would ever be uploaded, and on the
+  // next pull the equal-timestamp tiebreak would mix old-base and new-base
+  // amounts row by row — corrupting every synced device's ledger.
+  const now = Date.now();
   store$.data.set(
     store$.data.peek().map((d) => {
       // an entry originally typed in the incoming currency round-trips exactly
       const amt = d.cur === code && d.origAmt != null ? d.origAmt : conv(d.amt);
-      const next = { ...d, amt };
-      if (d.fee != null) next.fee = conv(d.fee);
-      if (d.discount != null) next.discount = conv(d.discount);
-      if (d.rbAmt != null) next.rbAmt = conv(d.rbAmt);
-      if (d.refund != null) next.refund = conv(d.refund);
-      // it is no longer "foreign" once its own currency became the base
+      const patch: Partial<Entry> = { amt };
+      if (d.fee != null) patch.fee = conv(d.fee);
+      if (d.discount != null) patch.discount = conv(d.discount);
+      if (d.rbAmt != null) patch.rbAmt = conv(d.rbAmt);
+      if (d.refund != null) patch.refund = conv(d.refund);
+      // it is no longer "foreign" once its own currency became the base;
+      // undefined clears the field AND stamps the clear (see stampEntry)
       if (d.cur === code) {
-        delete next.cur;
-        delete next.origAmt;
+        patch.cur = undefined;
+        patch.origAmt = undefined;
       }
-      return next;
+      return stampEntry(d, patch, now);
     }),
   );
 

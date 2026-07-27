@@ -11,7 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Account, Asset, Category, Currencies, Entry, IO, Loan, Settings, Sub, Tags, Template } from '@/domain/types';
 import { curSymbol, setDisplaySymbol } from '@/domain/money';
 import type { Lang } from '@/i18n';
-import { buildMonthIndex, buildAccountIndex, monthKey } from './indexes';
+import { monthKey } from './indexes';
 
 export interface AppState {
   lang: Lang;
@@ -51,15 +51,45 @@ const DEFAULTS: AppState = {
 
 export const store$ = observable<AppState>(structuredClone(DEFAULTS));
 
-// Derived indexes rebuilt on every data change — used by month views and
-// per-account balance calculations to avoid O(n) scans over the full list.
-export const entriesByMonth$ = observable<Map<string, Entry[]>>(new Map());
-export const entriesByAccount$ = observable<Map<string, Entry[]>>(new Map());
+// ---------- full-dataset gate ----------
+//
+// The fast hydration pass loads only the current month, so between it and the
+// full load `store$.data` is a SUBSET of what's on disk. Anything that treats
+// the in-memory list as complete during that window corrupts data:
+//   - autosave would persist the subset, wiping history from disk;
+//   - the sync pull would merge against the subset and advance its watermark
+//     past history that was never pushed;
+//   - subscription catch-up and the notification drain would post entries that
+//     the full load then replaces.
+// All of those now wait on this gate; hydrateFull()/hydrate() open it.
+let dataReadyFlag = false;
+let resolveDataReady: () => void;
+const dataReadyPromise = new Promise<void>((r) => { resolveDataReady = r; });
+// entry writes that happened while the gate was closed still need persisting
+let entriesDirtyBeforeReady = false;
+// suppresses the dirty flag while a loader swaps persisted data into the store
+let applyingLoad = false;
 
-function rebuildIndexes(): void {
-  const data = store$.data.peek();
-  entriesByMonth$.set(buildMonthIndex(data));
-  entriesByAccount$.set(buildAccountIndex(data));
+/** True once the full entry list is in memory. */
+export function isDataReady(): boolean {
+  return dataReadyFlag;
+}
+
+/** Resolves once the full entry list is in memory (immediately if it already is). */
+export function whenDataReady(): Promise<void> {
+  return dataReadyPromise;
+}
+
+/** Open the gate. Called by the hydrate paths once the full dataset is loaded;
+ *  flushes any entry write that was deferred while the gate was closed. */
+export function markDataReady(): void {
+  if (dataReadyFlag) return;
+  dataReadyFlag = true;
+  resolveDataReady();
+  if (entriesDirtyBeforeReady) {
+    entriesDirtyBeforeReady = false;
+    scheduleEntriesSave();
+  }
 }
 
 // Entries and config are persisted under separate keys so a config-only change
@@ -89,20 +119,32 @@ function saveConfig(): Promise<void> {
   return AsyncStorage.setItem(CONFIG_KEY, JSON.stringify(configSnapshot())).catch(() => {});
 }
 
+function scheduleEntriesSave(): void {
+  if (entriesTimer) clearTimeout(entriesTimer);
+  entriesTimer = setTimeout(saveEntries, 400);
+}
+
 /** Persist entries + config now (used by the one-time legacy migration). */
 async function saveAll(): Promise<void> {
   await Promise.all([saveEntries(), saveConfig()]);
 }
 
 /** Start debounced autosave. Entry edits only rewrite the entries key; config
- *  changes only rewrite the (small) config key. Call once after loadPersisted. */
+ *  changes only rewrite the (small) config key. Call once after loadPersisted.
+ *
+ *  Entry saves are gated on the full dataset being in memory: after the fast
+ *  (current-month) hydration pass, persisting `store$.data` would overwrite the
+ *  full history on disk with the subset. Writes made while the gate is closed
+ *  are flushed by markDataReady(). Config is loaded in full by the fast pass,
+ *  so config saves are never deferred. */
 export function startAutosave(): void {
-  // Build indexes on first run (after hydration) and keep them current.
-  rebuildIndexes();
   store$.data.onChange(() => {
-    rebuildIndexes();
-    if (entriesTimer) clearTimeout(entriesTimer);
-    entriesTimer = setTimeout(saveEntries, 400);
+    if (applyingLoad) return; // a loader swapping persisted data in — not an edit
+    if (!dataReadyFlag) {
+      entriesDirtyBeforeReady = true;
+      return;
+    }
+    scheduleEntriesSave();
   });
   // any change (incl. data) re-saves config; it's tiny, so re-serializing it on
   // an entry edit is negligible — the expensive entries write is gated above.
@@ -127,43 +169,75 @@ export async function loadPersistedCurrentMonth(): Promise<void> {
       AsyncStorage.getItem(CONFIG_KEY),
     ]);
     if (entriesRaw != null || configRaw != null) {
-      if (configRaw) store$.assign(JSON.parse(configRaw) as Partial<AppState>);
-      if (entriesRaw) {
-        const mk = currentMonthKey();
-        const all = JSON.parse(entriesRaw) as AppState['data'];
-        store$.data.set(all.filter((e) => monthKey(e.ts) === mk));
+      applyingLoad = true;
+      try {
+        if (configRaw) store$.assign(JSON.parse(configRaw) as Partial<AppState>);
+        if (entriesRaw) {
+          const mk = currentMonthKey();
+          const all = JSON.parse(entriesRaw) as AppState['data'];
+          store$.data.set(all.filter((e) => monthKey(e.ts) === mk));
+        }
+      } finally {
+        applyingLoad = false;
       }
       return;
     }
     // migrate the old single-blob key forward, then drop it
     const legacy = await AsyncStorage.getItem(LEGACY_KEY);
     if (legacy) {
-      store$.assign(JSON.parse(legacy) as Partial<AppState>);
-      const mk = currentMonthKey();
-      store$.data.set(store$.data.peek().filter((e) => monthKey(e.ts) === mk));
+      applyingLoad = true;
+      try {
+        store$.assign(JSON.parse(legacy) as Partial<AppState>);
+        const mk = currentMonthKey();
+        store$.data.set(store$.data.peek().filter((e) => monthKey(e.ts) === mk));
+      } finally {
+        applyingLoad = false;
+      }
       await saveAll();
       await AsyncStorage.removeItem(LEGACY_KEY).catch(() => {});
     }
   } catch {
+    applyingLoad = false;
     // corrupt/missing storage -> fall back to defaults
   }
 }
 
-/** Load the full entry list, replacing the month-only subset from the fast
- *  hydration pass. No-op when storage is empty. */
+/** Merge the full persisted list with whatever is in memory. The in-memory list
+ *  after the fast pass is a subset of disk PLUS anything written since (a quick
+ *  manual entry, a subscription charge, a drained notification, a sync pull) —
+ *  a wholesale replace would silently drop those writes, and their side effects
+ *  (advanced subscription cursors, consumed notification queues, bumped sync
+ *  watermarks) make them unrecoverable. Newer updatedAt wins per id. */
+function mergePersistedFull(disk: Entry[]): void {
+  const byId = new Map(disk.map((e) => [e.id, e] as const));
+  for (const m of store$.data.peek()) {
+    const d = byId.get(m.id);
+    if (!d || (m.updatedAt ?? 0) > (d.updatedAt ?? 0)) byId.set(m.id, m);
+  }
+  applyingLoad = true;
+  try {
+    store$.data.set([...byId.values()]);
+  } finally {
+    applyingLoad = false;
+  }
+}
+
+/** Load the full entry list, merging it with the month-only subset from the
+ *  fast hydration pass. No-op when storage is empty. */
 export async function loadPersistedFull(): Promise<void> {
   try {
     const entriesRaw = await AsyncStorage.getItem(ENTRIES_KEY);
     if (entriesRaw) {
-      store$.data.set(JSON.parse(entriesRaw) as AppState['data']);
+      mergePersistedFull(JSON.parse(entriesRaw) as AppState['data']);
       return;
     }
     const legacy = await AsyncStorage.getItem(LEGACY_KEY);
     if (legacy) {
       const parsed = JSON.parse(legacy) as Partial<AppState>;
-      if (parsed.data) store$.data.set(parsed.data);
+      if (parsed.data) mergePersistedFull(parsed.data);
     }
   } catch {
+    applyingLoad = false;
     // corrupt/missing storage -> keep whatever the fast pass loaded
   }
 }
@@ -286,27 +360,62 @@ export function updateEntry(id: string, patch: Partial<Entry>): void {
   store$.data.set(store$.data.peek().map((d) => (d.id === id ? stampEntry(d, patch, now) : d)));
 }
 
+/** Everything unremoveEntry needs to reverse one removeEntry as fresh stamped
+ *  writes. Deliberately NOT a snapshot of the old row objects: replaying stale
+ *  objects (old updatedAt/fieldTs) is invisible to the push watermark, and once
+ *  the tombstone has been pushed, the next pull would re-delete the entry. */
+export interface RemoveUndo {
+  id: string;
+  childIds: string[]; // refund incomes tombstoned along with the entry
+  refundedId?: string; // the original whose refund counter was reduced
+  prevRefund?: number; // that counter's value before the delete
+}
+
 /** Soft-delete an entry (tombstone for sync), keeping refund bookkeeping
  *  consistent. The tombstone stays in `data`; all display/calc reads filter
- *  `!deletedAt`. Deleting an original also tombstones its refund incomes. */
-export function removeEntry(id: string): void {
+ *  `!deletedAt`. Deleting an original also tombstones its refund incomes.
+ *  Returns an undo token for unremoveEntry (undefined when the id is unknown). */
+export function removeEntry(id: string): RemoveUndo | undefined {
   const now = Date.now();
   const list = store$.data.peek();
   const d = list.find((x) => x.id === id);
-  if (!d) return;
+  if (!d) return undefined;
+  const undo: RemoveUndo = { id, childIds: [] };
   const next = list.map((x) => {
     // give the refunded amount back to the original when deleting a refund income
     if (d.refundOf && x.id === d.refundOf && x.refund) {
+      undo.refundedId = x.id;
+      undo.prevRefund = x.refund;
       const refund = Math.max(0, x.refund - d.amt);
       return stampEntry(x, { refund: refund || undefined }, now);
     }
     // tombstone the entry itself and any refund incomes pointing at it
     if (x.id === id || x.refundOf === id) {
+      if (x.id !== id) undo.childIds.push(x.id);
       return stampEntry(x, { deletedAt: now }, now);
     }
     return x;
   });
   store$.data.set(next);
+  return undo;
+}
+
+/** Undo a removeEntry as NEW stamped writes: clear the tombstones and restore
+ *  the refund counter with fresh field timestamps, so the restore wins over the
+ *  already-pushed delete on every device instead of being silently re-deleted
+ *  by the next sync merge. */
+export function unremoveEntry(undo: RemoveUndo): void {
+  const now = Date.now();
+  const ids = new Set([undo.id, ...undo.childIds]);
+  store$.data.set(
+    store$.data.peek().map((x) => {
+      if (ids.has(x.id)) return stampEntry(x, { deletedAt: undefined }, now);
+      if (undo.refundedId && x.id === undo.refundedId) {
+        return stampEntry(x, { refund: undo.prevRefund }, now);
+      }
+      return x;
+    }),
+  );
 }
 
 export function setLang(lang: Lang): void {

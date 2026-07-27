@@ -12,7 +12,11 @@
 //   2. Whole-row LWW otherwise (legacy rows without fieldTs) — newest `updatedAt`
 //      wins, with a deterministic content tiebreaker on equal timestamps so all
 //      devices converge instead of diverging forever.
-// Deletion always takes precedence (a tombstone anywhere keeps the row deleted).
+// Deletion is a field like any other: a tombstone wins against a side that
+// never stamped `deletedAt`, but a NEWER stamped clear (the delete-undo writes
+// one) resurrects the row. Under the old always-wins rule an undo could never
+// survive a sync round-trip — the pushed tombstone re-deleted the entry on the
+// next pull, silently and unreproducibly.
 
 export interface SyncRow {
   id: string;
@@ -67,9 +71,20 @@ function mergeRow<T extends SyncRow>(a: T, b: T): T {
   const out: Record<string, unknown> = {};
   for (const k of keys) out[k] = pickField(a, b, k);
 
-  // tombstone precedence — once deleted anywhere, stays deleted (latest wins)
-  const dels = [a.deletedAt, b.deletedAt].filter((x): x is number => x != null);
-  if (dels.length) out.deletedAt = Math.max(...dels);
+  // deletedAt: LWW by its field stamp so a newer stamped CLEAR (undo) can
+  // resurrect the row. With no stamps (legacy rows) the old precedence holds:
+  // a tombstone beats absence, and two tombstones keep the latest. `null`
+  // counts as absent — rowToEntry never emits it, but legacy local rows can.
+  const ta = a.fieldTs?.deletedAt ?? 0;
+  const tb = b.fieldTs?.deletedAt ?? 0;
+  const da = a.deletedAt ?? undefined;
+  const db = b.deletedAt ?? undefined;
+  let del: number | undefined;
+  if (ta !== tb) del = ta > tb ? da : db;
+  else if (da == null) del = db;
+  else if (db == null) del = da;
+  else del = Math.max(da, db);
+  if (del != null) out.deletedAt = del;
 
   const ft: Record<string, number> = { ...(a.fieldTs ?? {}) };
   for (const [k, v] of Object.entries(b.fieldTs ?? {})) ft[k] = Math.max(ft[k] ?? 0, v);
