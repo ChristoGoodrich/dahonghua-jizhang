@@ -10,51 +10,7 @@ import { forecastMonthlyExpense, type Trend } from '@/ai/forecast';
 import { catOf, catName } from '@/domain/cats';
 import { fmt, fmtShort } from '@/domain/money';
 import { RAD, shadow } from '@/theme/tokens';
-import type { Lang } from '@/i18n';
-
-const LABELS: Record<Lang, {
-  title: string; sub: string;
-  forecastTitle: string; forecastSub: string;
-  trendLabel: string; confidenceLabel: string;
-  breakdownTitle: string;
-  tipsTitle: string;
-  trendInc: string; trendDec: string; trendStable: string;
-  noData: string;
-  tipInc1: string; tipInc2: string;
-  tipDec1: string; tipDec2: string;
-  tipStable1: string; tipStable2: string;
-}> = {
-  zh: {
-    title: 'AI 智能洞察', sub: '基于历史数据的支出预测',
-    forecastTitle: '下月预测支出', forecastSub: '根据近 3 个周期的花销趋势',
-    trendLabel: '趋势', confidenceLabel: '置信度',
-    breakdownTitle: '分类预测',
-    tipsTitle: '智能建议',
-    trendInc: '上升 ↑', trendDec: '下降 ↓', trendStable: '持平 →',
-    noData: '还没有足够的历史数据，多记几笔吧 🌱',
-    tipInc1: '支出有上升趋势，建议检查大额分类是否有压缩空间',
-    tipInc2: '试试设置分类预算，控制重点分类的花销',
-    tipDec1: '支出在下降，继续保持好习惯 🌺',
-    tipDec2: '可以把省下来的部分存入储蓄目标',
-    tipStable1: '花销保持稳定，适合设定固定预算',
-    tipStable2: '回顾分类明细，看看有没有可以优化的地方',
-  },
-  en: {
-    title: 'AI Insights', sub: 'Expense forecast based on history',
-    forecastTitle: 'Next Month Forecast', forecastSub: 'Based on last 3 billing cycles',
-    trendLabel: 'Trend', confidenceLabel: 'Confidence',
-    breakdownTitle: 'Category Forecast',
-    tipsTitle: 'Smart Tips',
-    trendInc: 'Increasing ↑', trendDec: 'Decreasing ↓', trendStable: 'Stable →',
-    noData: 'Not enough history yet — keep logging 🌱',
-    tipInc1: 'Expenses are trending up — review large categories for savings',
-    tipInc2: 'Try setting per-category budgets to cap key areas',
-    tipDec1: 'Expenses are decreasing — keep up the good habits 🌺',
-    tipDec2: 'Consider putting savings toward a goal',
-    tipStable1: 'Spending is stable — great time for a fixed budget',
-    tipStable2: 'Review category details for optimization opportunities',
-  },
-};
+import { I18N, type Strings } from '@/i18n';
 
 const TREND_ICON: Record<Trend, string> = { increasing: '↑', decreasing: '↓', stable: '→' };
 const TREND_COLOR_KEY: Record<Trend, 'hibiscus' | 'leaf' | 'inkSoft'> = {
@@ -63,16 +19,16 @@ const TREND_COLOR_KEY: Record<Trend, 'hibiscus' | 'leaf' | 'inkSoft'> = {
   stable: 'inkSoft',
 };
 
-function trendLabel(s: typeof LABELS['zh'], trend: Trend): string {
-  if (trend === 'increasing') return s.trendInc;
-  if (trend === 'decreasing') return s.trendDec;
-  return s.trendStable;
+function trendLabel(s: Strings, trend: Trend): string {
+  if (trend === 'increasing') return s.insTrendInc;
+  if (trend === 'decreasing') return s.insTrendDec;
+  return s.insTrendStable;
 }
 
 export default observer(function InsightsScreen() {
   const t = useTheme();
   const lang = store$.lang.get();
-  const s = LABELS[lang];
+  const s = I18N[lang];
   const data = store$.data.get();
   const customCats = store$.customCats.get();
   const cycleStart = store$.settings.cycleStart.get() || 1;
@@ -84,9 +40,9 @@ export default observer(function InsightsScreen() {
 
   const tips = useMemo(() => {
     const arr: string[] = [];
-    if (forecast.trend === 'increasing') { arr.push(s.tipInc1, s.tipInc2); }
-    else if (forecast.trend === 'decreasing') { arr.push(s.tipDec1, s.tipDec2); }
-    else { arr.push(s.tipStable1, s.tipStable2); }
+    if (forecast.trend === 'increasing') { arr.push(s.insTipInc1, s.insTipInc2); }
+    else if (forecast.trend === 'decreasing') { arr.push(s.insTipDec1, s.insTipDec2); }
+    else { arr.push(s.insTipStable1, s.insTipStable2); }
     return arr;
   }, [forecast.trend, s]);
 
@@ -106,29 +62,29 @@ export default observer(function InsightsScreen() {
   return (
     <View style={[styles.root, { backgroundColor: t.paper }]}>
       <SafeAreaView edges={['top']} style={styles.safe}>
-        <ScreenHeader title={s.title} subtitle={s.sub} />
+        <ScreenHeader title={s.insightsTitle} subtitle={s.insightsSub} />
         <ScrollView contentContainerStyle={styles.body} showsVerticalScrollIndicator={false}>
           {!hasData ? (
             <View style={[styles.emptyCard, { backgroundColor: t.paperWarm }]}>
-              <Text style={[styles.emptyText, { color: t.inkSoft }]}>{s.noData}</Text>
+              <Text style={[styles.emptyText, { color: t.inkSoft }]}>{s.insNoData}</Text>
             </View>
           ) : (
             <>
               {/* Forecast card */}
               <View style={[styles.forecastCard, { backgroundColor: t.paperWarm }, shadow(t, 'sm')]}>
-                <Text style={[styles.forecastLabel, { color: t.inkSoft }]}>{s.forecastTitle}</Text>
+                <Text style={[styles.forecastLabel, { color: t.inkSoft }]}>{s.insForecastTitle}</Text>
                 <Text style={[styles.forecastAmount, { color: t.hibiscus }]}>
                   {fmt(forecast.predicted, lang)}
                 </Text>
-                <Text style={[styles.forecastSub, { color: t.inkSoft }]}>{s.forecastSub}</Text>
+                <Text style={[styles.forecastSub, { color: t.inkSoft }]}>{s.insForecastSub}</Text>
 
                 <View style={styles.metaRow}>
                   <View style={styles.metaItem}>
-                    <Text style={[styles.metaLabel, { color: t.inkSoft }]}>{s.trendLabel}</Text>
+                    <Text style={[styles.metaLabel, { color: t.inkSoft }]}>{s.insTrendLabel}</Text>
                     <TrendBadge />
                   </View>
                   <View style={styles.metaItem}>
-                    <Text style={[styles.metaLabel, { color: t.inkSoft }]}>{s.confidenceLabel}</Text>
+                    <Text style={[styles.metaLabel, { color: t.inkSoft }]}>{s.insConfidence}</Text>
                     <View style={[styles.confBar, { backgroundColor: t.line }]}>
                       <View
                         style={[
@@ -147,7 +103,7 @@ export default observer(function InsightsScreen() {
               {/* Category breakdown */}
               {forecast.breakdown.length > 0 && (
                 <>
-                  <Text style={[styles.sectionTitle, { color: t.hibiscus }]}>{s.breakdownTitle}</Text>
+                  <Text style={[styles.sectionTitle, { color: t.hibiscus }]}>{s.insBreakdown}</Text>
                   <View style={[styles.section, shadow(t, 'xs')]}>
                     {forecast.breakdown.map((b, i) => {
                       const cat = catOf('exp', b.cat, customCats);
@@ -172,7 +128,7 @@ export default observer(function InsightsScreen() {
               )}
 
               {/* Smart tips */}
-              <Text style={[styles.sectionTitle, { color: t.hibiscus }]}>{s.tipsTitle}</Text>
+              <Text style={[styles.sectionTitle, { color: t.hibiscus }]}>{s.insTips}</Text>
               <View style={[styles.tipsCard, { backgroundColor: t.paperWarm }, shadow(t, 'xs')]}>
                 {tips.map((tip, i) => (
                   <View key={i} style={styles.tipRow}>

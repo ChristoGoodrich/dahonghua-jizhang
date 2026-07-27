@@ -176,8 +176,15 @@ export interface Strings {
   reportTitle: string; reportGenerate: string; reportGenerating: string; reportShare: string;
   reportTotalExp: string; reportTotalInc: string; reportBalance: string; reportByCategory: string;
   reportTransactions: string;
+  reportSub: string; reportSummary: string; reportRecording: string;
+  reportEntriesTotal: string; reportExpCount: string; reportIncCount: string;
   // insights
   insightsTitle: string; insightsSub: string;
+  insForecastTitle: string; insForecastSub: string; insTrendLabel: string; insConfidence: string;
+  insBreakdown: string; insTips: string;
+  insTrendInc: string; insTrendDec: string; insTrendStable: string; insNoData: string;
+  insTipInc1: string; insTipInc2: string; insTipDec1: string; insTipDec2: string;
+  insTipStable1: string; insTipStable2: string;
   // themes
   themeOcean: string; themeForest: string; themeSunset: string;
   // error boundary
