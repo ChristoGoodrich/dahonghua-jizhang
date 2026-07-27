@@ -44,3 +44,11 @@ example
 # generated native folders
 /ios
 /android
+modules/*/android/build/
+
+# IDE
+.idea/
+
+# local browser-automation debug scripts + their screenshots
+/test-*.py
+/test-screenshots/
