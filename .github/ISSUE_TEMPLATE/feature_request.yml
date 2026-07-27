@@ -1,0 +1,72 @@
+name: 🌱 Feature request · 功能建议
+description: Suggest an improvement or a new capability · 提出改进或新功能
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The most persuasive requests start from a problem, not a solution.
+        最有说服力的建议，是从「遇到的问题」而非「想要的做法」开始的。
+
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Before requesting · 提交前确认
+      options:
+        - label: I searched existing issues and this is not a duplicate · 我已搜索过现有 issue，这不是重复建议
+          required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve? · 它解决什么问题？
+      description: What are you trying to do today, and where does the app get in the way? · 你现在想完成什么？应用在哪一步挡住了你？
+      placeholder: |
+        I split rent with a flatmate every month and have to record the same
+        two entries by hand …
+        我每月和室友分摊房租，得手动记两笔一样的账……
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you like to see? · 你希望怎么做？
+      description: Describe the behaviour you have in mind. Sketches and screenshots welcome. · 描述你设想的行为，欢迎附草图或截图。
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area · 涉及范围
+      multiple: true
+      options:
+        - Recording entries · 记账
+        - Accounts, assets and loans · 账户 / 资产 / 借贷
+        - Budget and subscriptions · 预算 / 订阅
+        - Statistics, insights and reports · 统计 / 洞察 / 报表
+        - Import and auto-capture · 导入 / 自动记账
+        - Cloud sync and backup · 云同步 / 备份
+        - AI quick entry · AI 记账
+        - Appearance, themes and widgets · 外观 / 主题 / 小组件
+        - Translations · 翻译
+        - Other · 其他
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you have considered · 你考虑过的替代方案
+      description: Including "I currently work around it by …". · 也可以写「我现在是这样绕开的……」。
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: contribute
+    attributes:
+      label: Would you like to implement it? · 你愿意自己实现吗？
+      options:
+        - label: I'd be willing to open a pull request for this · 我愿意为此提交 PR

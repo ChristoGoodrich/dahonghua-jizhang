@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🔒 Report a security vulnerability · 报告安全漏洞
+    url: https://github.com/ChristoGoodrich/dahonghua-jizhang/security/advisories/new
+    about: Report it privately here, never as a public issue. · 请在此私下报告，不要开公开 issue。
+  - name: ☁️ Cloud sync setup · 云同步配置
+    url: https://github.com/ChristoGoodrich/dahonghua-jizhang/blob/main/SYNC_SETUP.md
+    about: Supabase schema, migrations, keys and email sign-in. · Supabase 表结构、迁移、密钥与邮箱登录。
+  - name: ✨ AI quick entry setup · AI 记账配置
+    url: https://github.com/ChristoGoodrich/dahonghua-jizhang/blob/main/AI_SETUP.md
+    about: Deploying the proxy, and the direct-key alternative. · 部署代理服务，以及直连密钥的替代方案。
+  - name: 📦 Building and releasing · 构建与发布
+    url: https://github.com/ChristoGoodrich/dahonghua-jizhang/blob/main/RELEASE.md
+    about: EAS builds, store submission and OTA updates. · EAS 构建、商店提交与 OTA 更新。

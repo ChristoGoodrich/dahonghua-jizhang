@@ -1,0 +1,99 @@
+name: 🐞 Bug report · 问题反馈
+description: Something is broken or behaves unexpectedly · 功能异常或行为不符合预期
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file this. Please fill in as much as you can —
+        **steps to reproduce are the most useful part.**
+        感谢你花时间反馈。请尽量填写完整 —— **可复现的步骤是最有价值的部分。**
+
+        🔒 Found a security vulnerability? Do **not** file it here — see [SECURITY.md](https://github.com/ChristoGoodrich/dahonghua-jizhang/blob/main/SECURITY.md).
+        🔒 发现安全漏洞？请**不要**在这里提交 —— 见 [SECURITY.md](https://github.com/ChristoGoodrich/dahonghua-jizhang/blob/main/SECURITY.md)。
+
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Before reporting · 提交前确认
+      options:
+        - label: I searched existing issues and this is not a duplicate · 我已搜索过现有 issue，这不是重复问题
+          required: true
+        - label: I am on the latest version · 我使用的是最新版本
+          required: false
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened? · 发生了什么？
+      description: Describe the bug, and what you expected instead. · 描述问题本身，以及你原本期待的结果。
+      placeholder: |
+        Tapping "save" on a transfer does nothing and no error appears.
+        Expected: the transfer is recorded.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce · 复现步骤
+      description: Numbered steps, starting from a fresh launch if possible. · 请按序号写清步骤，尽量从冷启动开始。
+      placeholder: |
+        1. Open the app · 打开应用
+        2. Tap the bloom button · 点击花朵按钮
+        3. Switch to 转账 / Transfer
+        4. …
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform · 平台
+      multiple: true
+      options:
+        - iOS
+        - Android
+        - Web · 网页
+        - Expo Go
+        - Development build · 开发版构建
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: App version · 应用版本
+      description: Settings → About Red Blossom · 设置 → 关于大红花
+      placeholder: "1.0.0"
+    validations:
+      required: false
+
+  - type: input
+    id: device
+    attributes:
+      label: Device and OS · 设备与系统
+      placeholder: "iPhone 15 Pro / iOS 26.1 · Pixel 8 / Android 16"
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: features
+    attributes:
+      label: Which optional features are configured? · 启用了哪些可选功能？
+      description: Unconfigured features are hidden, so this narrows things down fast. · 未配置的功能会被隐藏，这能快速缩小排查范围。
+      options:
+        - label: Cloud sync (Supabase) · 云同步
+        - label: AI quick entry · AI 记账
+        - label: Auto-capture from notifications (Android) · 通知自动记账（Android）
+        - label: None of the above — fully local · 都没有，纯本地使用
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs, screenshots or a recording · 日志、截图或录屏
+      description: Paste any console output or attach media. **Redact real amounts, emails and keys.** · 粘贴控制台输出或附上截图/录屏。**请打码真实金额、邮箱与密钥。**
+      render: shell
+    validations:
+      required: false

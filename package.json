@@ -2,6 +2,27 @@
   "name": "dahonghua-app",
   "main": "expo-router/entry",
   "version": "1.0.0",
+  "description": "大红花记账 · Red Blossom — an offline-first, bilingual personal ledger for iOS, Android and the web.",
+  "keywords": [
+    "expo",
+    "react-native",
+    "ledger",
+    "budget",
+    "personal-finance",
+    "offline-first",
+    "supabase",
+    "i18n"
+  ],
+  "homepage": "https://github.com/ChristoGoodrich/dahonghua-jizhang#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChristoGoodrich/dahonghua-jizhang.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ChristoGoodrich/dahonghua-jizhang/issues"
+  },
+  "license": "MIT",
+  "author": "ChristoGoodrich",
   "dependencies": {
     "@expo/metro-runtime": "~56.0.18",
     "@legendapp/state": "^2.1.15",

@@ -1,0 +1,42 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      dev-dependencies:
+        dependency-type: development
+        update-types:
+          - minor
+          - patch
+      production-patches:
+        dependency-type: production
+        update-types:
+          - patch
+    ignore:
+      # The Expo SDK pins these as a set. Bump them with `npx expo install --fix`
+      # when moving to a new SDK, never one package at a time.
+      - dependency-name: expo
+      - dependency-name: expo-*
+      - dependency-name: "@expo/*"
+      - dependency-name: react
+      - dependency-name: react-dom
+      - dependency-name: react-native
+      - dependency-name: react-native-*
+      - dependency-name: "@react-native-async-storage/async-storage"
+      - dependency-name: jest-expo
+      - dependency-name: eslint-config-expo
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: ci
