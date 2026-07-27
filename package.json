@@ -71,7 +71,7 @@
     "jest-expo": "^56.0.5",
     "react-dom": "19.2.3",
     "storybook": "^8.6.18",
-    "typescript": "~6.0.3"
+    "typescript": "~7.0.2"
   },
   "scripts": {
     "start": "expo start",
