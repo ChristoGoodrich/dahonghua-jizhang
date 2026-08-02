@@ -205,7 +205,7 @@ eas build -p android --profile preview
 仓库里已经配好两个 GitHub 工作流：
 
 - **[build-apk.yml](.github/workflows/build-apk.yml)** —— 每次推送到 `main` 时构建可直接安装的 arm64 APK 并作为 artifact 上传。
-- **[release.yml](.github/workflows/release.yml)** —— 打 `v*` 标签时，通过 EAS 构建并提交双平台（需要 `EXPO_TOKEN` secret）。
+- **[release.yml](.github/workflows/release.yml)** —— 打 `v*` 标签时，构建同一个 APK 并发布成 GitHub Release。上架商店是同一个工作流手动运行、勾选 `submit_to_stores`，需要 `EXPO_TOKEN` secret 和开发者账号。
 
 ## 技术栈
 

@@ -3,6 +3,24 @@
 The app is built with **Expo**, so iOS builds happen **in the cloud (EAS)** — you
 do **not** need a Mac. You do need developer accounts to publish to the stores.
 
+## Releasing it to yourself (no accounts, no EAS)
+
+Tag a commit and GitHub builds an installable arm64 APK and attaches it to a
+Release:
+
+```bash
+git tag v1.0.0 && git push origin v1.0.0
+```
+
+Every push to `main` also leaves an APK as a workflow artifact, so a tag is only
+needed when you want a permanent, downloadable version.
+
+The APK is signed with the standard Android **debug** key. That is fine for your
+own phone and for testers — and because the key is the same in every build, a new
+one installs straight over the old one without wiping the ledger. It is *not*
+acceptable to Google Play, which needs the `production` profile below and a real
+upload key.
+
 ## Accounts you'll need
 - **Expo account** — free, <https://expo.dev>
 - **Apple Developer Program** — US$99/yr, for the App Store

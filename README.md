@@ -213,7 +213,7 @@ eas build -p android --profile preview
 Two GitHub workflows are wired up already:
 
 - **[build-apk.yml](.github/workflows/build-apk.yml)** — builds an installable arm64 APK on every push to `main` and uploads it as an artifact.
-- **[release.yml](.github/workflows/release.yml)** — on a `v*` tag, builds and submits both platforms via EAS (needs the `EXPO_TOKEN` secret).
+- **[release.yml](.github/workflows/release.yml)** — on a `v*` tag, builds that same APK and publishes it as a GitHub Release. Store submission through EAS is the same workflow run by hand with `submit_to_stores` ticked, and needs an `EXPO_TOKEN` secret plus developer accounts.
 
 ## Tech stack
 
