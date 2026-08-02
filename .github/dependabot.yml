@@ -32,6 +32,25 @@ updates:
       - dependency-name: "@react-native-async-storage/async-storage"
       - dependency-name: jest-expo
       - dependency-name: eslint-config-expo
+      # Major bumps of the test/lint/build toolchain are migrations, not
+      # upgrades, and some of them are coupled to the SDK anyway — jest-expo@56
+      # expects jest 29, so a lone jest 30 PR only turns the suite red. Minor
+      # and patch still come through; majors are done by hand, usually next to
+      # an SDK bump.
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
+      - dependency-name: jest
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/jest"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: eslint
+        update-types: ["version-update:semver-major"]
+      - dependency-name: storybook
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@storybook/*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: detox
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: /
