@@ -80,7 +80,7 @@ reporting are all opt-in — leave them unconfigured and the app never touches t
 
 ### Getting data in
 
-- **Bill import** — Alipay and WeChat CSV/Excel exports, including their GBK encoding (decoded by a generated pure-JS table, so it works in Expo Go without a native module), with duplicate detection against what you already have.
+- **Bill import** — Alipay and WeChat CSV exports, including their GBK encoding (decoded by a generated pure-JS table, so it works in Expo Go without a native module), with duplicate detection against what you already have.
 - **Auto-capture (Android)** — an optional notification listener reads payment notifications, parses them, and queues anything it isn't sure about for you to confirm or dismiss.
 - **Restore** — reads this app's backups and the previous app's v7 backup JSON.
 
