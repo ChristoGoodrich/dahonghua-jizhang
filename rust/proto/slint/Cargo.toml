@@ -1,0 +1,36 @@
+[workspace]
+
+[package]
+name = "proto-slint"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+# cargo-apk builds a cdylib and wraps it in an APK; the bin target is for
+# running the same UI on the desktop while iterating.
+[lib]
+crate-type = ["cdylib", "lib"]
+path = "src/lib.rs"
+
+[dependencies]
+slint = "1"
+
+[target.'cfg(target_os = "android")'.dependencies]
+slint = { version = "1", features = ["backend-android-activity-06"] }
+
+[build-dependencies]
+slint-build = "1"
+
+# cargo-apk packaging. API 26 is Slint's Android floor.
+[package.metadata.android]
+package = "com.dahonghua.proto.slint"
+build_targets = ["x86_64-linux-android"]
+apk_name = "proto-slint"
+
+[package.metadata.android.sdk]
+min_sdk_version = 26
+target_sdk_version = 34
+
+[[package.metadata.android.uses_feature]]
+name = "android.hardware.vulkan.level"
+required = false

@@ -1,6 +1,10 @@
 [workspace]
 resolver = "2"
 members = ["core"]
+# The Phase 3 UI probes are throwaway and drag in heavy GUI dependencies;
+# keeping them out of the workspace keeps `cargo test`/`clippy` on the core
+# fast and unaffected by them.
+exclude = ["proto/slint", "proto/dioxus"]
 
 [workspace.package]
 version = "0.1.0"
