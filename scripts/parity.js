@@ -40,6 +40,13 @@ const MODULES = [
     // them, and the Rust side counts civil days and never sees them at all.
     tz: 'Asia/Shanghai',
   },
+  {
+    name: 'period',
+    corpus: 'rust/parity/period-corpus.tsv',
+    ts: 'scripts/period-parity.ts',
+    example: 'dump_period',
+    tz: 'Asia/Shanghai',
+  },
 ];
 
 function run(cmd, args, input, env) {

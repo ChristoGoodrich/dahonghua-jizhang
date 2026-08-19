@@ -12,8 +12,10 @@ pub mod civil;
 pub mod cycle;
 pub mod money;
 pub mod num;
+pub mod period;
 
 pub use calc::{apply_key, eval_expr, has_operator};
 pub use civil::{days_in_month, month_grid, Civil};
 pub use cycle::{cycle_days, cycle_range, in_cycle, shift_cycle, CycleRange};
 pub use money::{cur_name, cur_symbol, fmt, fmt_num, fmt_short, to_base, Currencies};
+pub use period::{period_range, shift_period, Period};

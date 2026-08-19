@@ -48,7 +48,7 @@ Adding a module to the harness:
 | `domain/civil` (new) | — | **Added** — calendar arithmetic, the pure half of `dates.ts` |
 | `domain/cycle` | 37 | **Ported**, 14,185-case parity, zero divergences |
 | `domain/dates` | 33 | Split: `monthGrid` ported; `onDay`/`sameDay`/`daysAgo` are platform-boundary (see below) |
-| `domain/period` | 130 | Next |
+| `domain/period` | 130 | Windows **ported**, 12,108-case parity; entry filtering and labels deferred (below) |
 | `domain/budget`, `stats`, `trends`, `insight`, `recap`, `weekly`, `streak` | ~900 | Queued |
 | `domain/billParse`, `billDedup`, `encoding`, `gbkTable` | ~700 | Queued |
 | `domain/export` + `xlsxWrite` | ~230 | Queued — `rust_xlsxwriter` replaces the hand-rolled writer |
@@ -99,6 +99,23 @@ TypeScript first because there is no faithful port of non-determinism:
 The harness compares strings, so it has to stringify the way JavaScript does or
 it manufactures divergences that are not real — `String(-0)` is `"0"` in JS and
 `"-0"` in Rust. See `js_string` in `dump_money.rs`.
+
+### Does the harness actually have teeth?
+
+Two modules in a row passed with zero divergences, which is either good news or
+a corpus that is not looking anywhere. So it was checked: two plausible bugs
+were injected into `period.rs` and the suites re-run.
+
+| Injected change | Rust unit tests | Parity harness |
+| --- | --- | --- |
+| half-year split `< 6` → `<= 6` | caught | caught, 182 cases |
+| `shift_cycle(anchor, …)` → `shift_cycle(start, …)` | passed | passed |
+
+The second one is not a bug. `shift_cycle` re-derives the window from whatever
+it is given, and the window start always lies inside the anchor's own window, so
+both spellings derive the same window — across all 12,108 cases, overflowing
+cycle starts included. The source comment now says that, having previously
+warned about a trap that does not exist.
 
 ### Where local time stops being pure
 
