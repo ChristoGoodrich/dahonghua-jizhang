@@ -14,6 +14,10 @@ use dahonghua_core::entry::{Entry, Io, Patch};
 use dahonghua_core::ledger::{Ledger, RemoveUndo};
 use dahonghua_core::model::{Asset, AssetKind, Budgets, Loan, LoanKind, Sub, SubFreq, Template};
 use dahonghua_core::money::Currencies;
+use dahonghua_core::networth::{add_asset, add_loan, remove_asset, remove_loan, repay_loan};
+use dahonghua_core::reimburse::{
+    confirm_reimburse, refund_entry, toggle_reimburse, unmark_reimburse,
+};
 use dahonghua_core::store::Store;
 use std::io::{self, Read};
 
@@ -153,7 +157,7 @@ fn render(l: &Ledger) -> String {
             };
             // column order must match FIELDS in scripts/ledger-parity.harness.ts
             format!(
-                "{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}",
+                "{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}",
                 e.id,
                 e.ts,
                 e.io.map_or("_".to_string(), |i| i.as_str().to_string()),
@@ -167,6 +171,7 @@ fn render(l: &Ledger) -> String {
                 e.orig_amt.map_or("_".to_string(), cell_f64),
                 e.fee.map_or("_".to_string(), cell_f64),
                 e.discount.map_or("_".to_string(), cell_f64),
+                e.rb.map_or("_".to_string(), |r| r.as_str().to_string()),
                 e.rb_amt.map_or("_".to_string(), cell_f64),
                 opt(e.deleted_at),
                 opt(e.updated_at),
@@ -183,6 +188,7 @@ fn run(script: &str) -> String {
     let mut seq = 0usize;
     let mut undos: Vec<Option<RemoveUndo>> = Vec::new();
     let mut base_results: Vec<&str> = Vec::new();
+    let mut refunds: Vec<String> = Vec::new();
     let mut acct_seq = 0usize;
     let mut assets: Vec<Asset> = Vec::new();
     let mut loans: Vec<Loan> = Vec::new();
@@ -199,6 +205,10 @@ fn run(script: &str) -> String {
     let mut custom_cats: Vec<Category> = Vec::new();
     let mut subcats = Subcats::new();
     let mut tpl_seq = 0usize;
+    // monotonic, not list length: a removal must not let the next id reuse a
+    // name the corpus already spent
+    let mut asset_seq = 0usize;
+    let mut loan_seq = 0usize;
     let mut sc_seq = 0usize;
 
     for step in script.split('|') {
@@ -376,6 +386,70 @@ fn run(script: &str) -> String {
                     m
                 });
             }
+            // --- net worth ---
+            "asset2" => {
+                let id = format!("as{asset_seq}");
+                asset_seq += 1;
+                add_asset(
+                    &mut assets,
+                    id,
+                    "x".into(),
+                    if args[0] == "liab" {
+                        AssetKind::Liab
+                    } else {
+                        AssetKind::Asset
+                    },
+                    args[1].parse().unwrap(),
+                );
+            }
+            "rmasset" => remove_asset(&mut assets, args[0]),
+            "loan2" => {
+                let id = format!("l{loan_seq}");
+                loan_seq += 1;
+                add_loan(
+                    &mut loans,
+                    id,
+                    "x".into(),
+                    if args[0] == "borrow" {
+                        LoanKind::Borrow
+                    } else {
+                        LoanKind::Lend
+                    },
+                    args[1].parse().unwrap(),
+                    clock,
+                );
+            }
+            "repay" => repay_loan(&mut loans, args[0], args[1].parse().unwrap()),
+            "rmloan" => remove_loan(&mut loans, args[0]),
+
+            // --- reimbursement ---
+            "rbtog" => {
+                toggle_reimburse(&mut st.ledger, args[0], clock);
+            }
+            "rbdone" => {
+                confirm_reimburse(&mut st.ledger, args[0], clock);
+            }
+            "rbclear" => {
+                unmark_reimburse(&mut st.ledger, args[0], clock);
+            }
+            "refund" => {
+                let id = format!("e{seq}");
+                let got = refund_entry(
+                    &mut st.ledger,
+                    args[0],
+                    args[1].parse().unwrap(),
+                    args.get(2).copied().unwrap_or("zh") == "zh",
+                    &custom_cats,
+                    &st.current_account,
+                    id,
+                    clock,
+                );
+                if got > 0.0 {
+                    seq += 1;
+                }
+                refunds.push(cell_f64(got));
+            }
+
             // --- catalogue ---
             "tag" => add_tag(
                 &mut tags,
@@ -447,6 +521,7 @@ fn run(script: &str) -> String {
             other => panic!("unknown verb {other}"),
         }
     }
+    let results = format!("{}/{}", base_results.join(","), refunds.join(","));
     format!(
         "{}  ||  {}  ||  {}  ||  {}  ||  {}",
         render(&st.ledger),
@@ -460,7 +535,7 @@ fn run(script: &str) -> String {
             &subcats,
             &templates
         ),
-        base_results.join(",")
+        results
     )
 }
 

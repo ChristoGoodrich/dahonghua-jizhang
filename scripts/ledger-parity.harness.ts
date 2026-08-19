@@ -28,7 +28,7 @@ const OUT = process.env.PARITY_OUT as string;
 /** Fields compared, in a fixed order. Anything absent renders as `_`. */
 const FIELDS = [
   'ts', 'io', 'cat', 'amt', 'refund', 'refundOf', 'acct', 'acctTo',
-  'cur', 'origAmt', 'fee', 'discount', 'rbAmt', 'deletedAt', 'updatedAt',
+  'cur', 'origAmt', 'fee', 'discount', 'rb', 'rbAmt', 'deletedAt', 'updatedAt',
 ] as const;
 
 function render(entries: Entry[], idOf: Map<string, string>, acctNames: Map<string, string>): string {
@@ -135,6 +135,13 @@ function runScenario(script: string): string {
     budget: 0, dailyBudget: undefined, weeklyBudget: undefined, catBudgets: undefined,
   });
   const baseResults: string[] = [];
+  const refunds: string[] = [];
+  // assets and loans get real generated ids here; the corpus addresses them by
+  // insertion order, exactly as entries, accounts and templates already do
+  const assetByName = new Map<string, string>();
+  const loanByName = new Map<string, string>();
+  let assetSeq = 0;
+  let loanSeq = 0;
   const tplName = new Map<string, string>();
   const tplByName = new Map<string, string>();
   let tplSeq = 0;
@@ -195,6 +202,51 @@ function runScenario(script: string): string {
       case 'sel':
         store.store$.curAccount.set(acctByName.get(args[0]) ?? args[0]);
         break;
+
+      // --- net worth ---
+      case 'asset2': {
+        const a = store.addAsset('x', args[0] as 'asset' | 'liab', Number(args[1]));
+        assetByName.set(`as${assetSeq++}`, a.id);
+        break;
+      }
+      case 'rmasset':
+        store.removeAsset(assetByName.get(args[0]) ?? args[0]);
+        break;
+      case 'loan2': {
+        const l = store.addLoan('x', args[0] as 'lend' | 'borrow', Number(args[1]));
+        loanByName.set(`l${loanSeq++}`, l.id);
+        break;
+      }
+      case 'repay':
+        store.repayLoan(loanByName.get(args[0]) ?? args[0], Number(args[1]));
+        break;
+      case 'rmloan':
+        store.removeLoan(loanByName.get(args[0]) ?? args[0]);
+        break;
+
+      // --- reimbursement ---
+      case 'rbtog':
+        store.toggleReimburse(byName.get(args[0]) ?? args[0]);
+        break;
+      case 'rbdone':
+        store.confirmReimburse(byName.get(args[0]) ?? args[0]);
+        break;
+      case 'rbclear':
+        store.unmarkReimburse(byName.get(args[0]) ?? args[0]);
+        break;
+      case 'refund': {
+        const before = store.store$.data.peek().length;
+        const got = store.refundEntry(
+          byName.get(args[0]) ?? args[0],
+          Number(args[1]),
+          (args[2] ?? 'zh') as 'zh' | 'en',
+        );
+        // the linked income is appended; give it the next stable name
+        const after = store.store$.data.peek();
+        if (after.length > before) name(after[after.length - 1].id);
+        refunds.push(String(got));
+        break;
+      }
 
       // --- catalogue ---
       case 'tag':
@@ -330,7 +382,7 @@ function runScenario(script: string): string {
     '  ||  ' +
     renderCatalog(store, tplName) +
     '  ||  ' +
-    baseResults.join(',');
+    `${baseResults.join(',')}/${refunds.join(',')}`;
   nowSpy.mockRestore();
   return out;
 }

@@ -115,6 +115,17 @@ impl Ledger {
         self.entries.last().expect("just pushed")
     }
 
+    /// Append a row exactly as given — no id assignment, no stamping.
+    ///
+    /// `refundEntry` builds its linked income inline and pushes it onto the
+    /// array rather than going through `addEntry`, so the row carries
+    /// `updated_at` but no `field_ts`, and the current account does not move.
+    /// Routing it through [`Ledger::add`] would be tidier and would change
+    /// behaviour on both counts, so the seam is kept explicit instead.
+    pub fn push_raw(&mut self, entry: Entry) {
+        self.entries.push(entry);
+    }
+
     /// Patch one entry. Unknown ids are ignored, matching the TypeScript's
     /// `map` — a no-op rather than an error, because the caller is a UI that
     /// may be acting on a row sync has since removed.

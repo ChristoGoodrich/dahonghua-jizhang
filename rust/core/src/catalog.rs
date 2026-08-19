@@ -32,6 +32,99 @@ pub struct Category {
     pub custom: Option<bool>,
 }
 
+/// The built-in categories, in picker order.
+///
+/// `xfer` is deliberately empty: transfers have no real category. It is kept so
+/// the lookup stays total over every `Io`.
+pub fn base_cats(
+    io: Io,
+) -> &'static [(
+    &'static str,
+    &'static str,
+    &'static str,
+    &'static str,
+    &'static str,
+)] {
+    match io {
+        Io::Exp => &[
+            ("food", "🍜", "餐饮", "Food", "#E89B6C"),
+            ("shop", "🛍️", "购物", "Shopping", "#D08496"),
+            ("trans", "🚇", "交通", "Transit", "#7FA8C9"),
+            ("home", "🏠", "居家", "Home", "#9B8FC9"),
+            ("fun", "🎮", "娱乐", "Fun", "#6FB59A"),
+            ("health", "💊", "医疗", "Health", "#D88AA0"),
+            ("study", "📚", "学习", "Study", "#C9A35C"),
+            ("gift", "🎁", "人情", "Gifts", "#D08C6C"),
+            ("travel", "✈️", "旅行", "Travel", "#6FA8B5"),
+            ("other", "📦", "其他", "Other", "#A89E92"),
+        ],
+        Io::Inc => &[
+            ("salary", "💰", "工资", "Salary", "#6FA88F"),
+            ("bonus", "🧧", "奖金", "Bonus", "#D94E5C"),
+            ("invest", "📈", "理财", "Invest", "#6FA88F"),
+            ("parttime", "💼", "兼职", "Side job", "#7C9C8F"),
+            ("other", "✨", "其他", "Other", "#E8A838"),
+        ],
+        Io::Xfer => &[],
+    }
+}
+
+fn to_category(t: &(&str, &str, &str, &str, &str)) -> Category {
+    Category {
+        k: t.0.to_string(),
+        e: t.1.to_string(),
+        zh: t.2.to_string(),
+        en: t.3.to_string(),
+        c: t.4.to_string(),
+        custom: None,
+    }
+}
+
+/// Shown for transfers, and the guard that keeps [`cat_of`] total when a
+/// direction has no categories at all.
+pub fn transfer_cat() -> Category {
+    Category {
+        k: "transfer".into(),
+        e: "🔄".into(),
+        zh: "转账".into(),
+        en: "Transfer".into(),
+        c: "#A89E92".into(),
+        custom: None,
+    }
+}
+
+/// Built-in categories for a direction, then the user's own.
+pub fn all_cats(io: Io, custom: &[Category]) -> Vec<Category> {
+    base_cats(io)
+        .iter()
+        .map(to_category)
+        .chain(custom.iter().cloned())
+        .collect()
+}
+
+/// Look up a category, falling back to the **last** one rather than to a
+/// generic "other" — inherited from v7, and load-bearing: a custom category
+/// added last becomes the fallback for that direction.
+pub fn cat_of(io: Io, k: &str, custom: &[Category]) -> Category {
+    let list = all_cats(io, custom);
+    list.iter()
+        .find(|c| c.k == k)
+        .cloned()
+        .or_else(|| list.last().cloned())
+        .unwrap_or_else(transfer_cat)
+}
+
+/// The name in the caller's language, falling back to the other one when a
+/// custom category only filled in one.
+pub fn cat_name(c: &Category, zh: bool) -> String {
+    let (first, second) = if zh { (&c.zh, &c.en) } else { (&c.en, &c.zh) };
+    if first.is_empty() {
+        second.clone()
+    } else {
+        first.clone()
+    }
+}
+
 /* --------------------------------------------------------------- templates */
 
 pub fn add_template(templates: &mut Vec<Template>, mut t: Template, id: String) -> Template {

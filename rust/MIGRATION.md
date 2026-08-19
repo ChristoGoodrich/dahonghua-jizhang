@@ -56,7 +56,10 @@ Adding a module to the harness:
 | `store/accounts` | 53 | **Ported**, folded into the same 1,338-scenario corpus |
 | `store/currency` + `model` | 138 | **Ported** (bar the HTTP refresh), folded into the same corpus |
 | `store/templates` + `tags` + `categories` → `catalog` | 83 | **Ported**, in the same corpus |
-| rest of `store/*` | ~790 | Next — subs, reimburse, assets, inbox |
+| `store/assets` → `networth` | 34 | **Ported**, in the same corpus |
+| `store/reimburse` | 64 | **Ported**, in the same corpus |
+| `domain/cats` | 47 | **Ported** into `catalog` |
+| rest of `store/*` | ~645 | Next — subscriptions, inbox, backup/import |
 | `sync/*` | 778 | After store — `reqwest` + the Supabase REST API |
 | UI (21 routes, 72 components) | 9,209 | Last |
 
