@@ -68,7 +68,7 @@ export function useRecordForm({ visible, editId, initialTs, dupeId, lang, custom
     if (!flash) return;
     const id = setTimeout(() => setFlash(null), flash.err ? 2800 : 1600);
     return () => clearTimeout(id);
-  }, [flash]);
+  }, [flash, setFlash]);
 
   // Proactively fetch historical rate when foreign currency or date changes
   useEffect(() => {
@@ -94,7 +94,7 @@ export function useRecordForm({ visible, editId, initialTs, dupeId, lang, custom
     });
 
     return () => { cancelled = true; };
-  }, [cur, ts, base, currencies.rates]);
+  }, [cur, ts, base, currencies.rates, setFetchedRate, setRateSource]);
 
   // archived accounts/ledgers drop out of the pickers, but a currently-selected
   // one stays (editing an old entry that lives on an archived account/ledger)

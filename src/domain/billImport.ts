@@ -4,6 +4,10 @@
 // This module re-exports their public API so existing importers
 // (`import { ... } from './billImport'`) keep working unchanged.
 import type { Category, Entry, IO } from './types';
+import type { BillSource, RowError } from './billParse';
+import { parseBills } from './billParse';
+import type { Candidate } from './billDedup';
+import { toCandidates } from './billDedup';
 
 export type { BillSource, RawBill, ColumnMap, RowError, ParseResult } from './billParse';
 export {
@@ -15,11 +19,6 @@ export {
 
 export type { Candidate } from './billDedup';
 export { mapCategory, composeNote, toCandidates } from './billDedup';
-
-import type { BillSource, RowError } from './billParse';
-import { parseBills } from './billParse';
-import type { Candidate } from './billDedup';
-import { toCandidates } from './billDedup';
 
 export interface ImportPreview {
   source: BillSource;

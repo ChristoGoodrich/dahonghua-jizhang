@@ -10,10 +10,10 @@ const KEY = 'dhh_analytics';
 // instance and every read would come back empty.
 function load() {
   jest.resetModules();
-  /* eslint-disable @typescript-eslint/no-require-imports */
+   
   const mod = require('@react-native-async-storage/async-storage');
   const analytics = require('../analytics');
-  /* eslint-enable @typescript-eslint/no-require-imports */
+   
   return { ...analytics, storage: mod.default ?? mod }; // CJS mock has no .default
 }
 

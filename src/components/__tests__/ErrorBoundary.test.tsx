@@ -1,6 +1,6 @@
 import React from 'react';
 import TestRenderer, { act } from 'react-test-renderer';
-import { Text, Pressable } from 'react-native';
+import { Text } from 'react-native';
 import { ErrorBoundary } from '../ErrorBoundary';
 import { I18N } from '@/i18n';
 

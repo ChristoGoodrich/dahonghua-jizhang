@@ -11,7 +11,7 @@ const ORIGINAL_ENV = { ...process.env };
 function loadClient(env: Record<string, string | undefined>) {
   jest.resetModules();
   process.env = { ...ORIGINAL_ENV, ...env };
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
+   
   return require('../client');
 }
 
