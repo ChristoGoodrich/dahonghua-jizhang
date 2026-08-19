@@ -12,6 +12,7 @@
 const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
+const os = require('node:os');
 
 const ROOT = path.join(__dirname, '..');
 const MODULES = [
@@ -47,6 +48,16 @@ const MODULES = [
     example: 'dump_period',
     tz: 'Asia/Shanghai',
   },
+  {
+    name: 'ledger',
+    corpus: 'rust/parity/ledger-corpus.tsv',
+    // Stateful: a ledger has no single answer, it has a history. Each corpus
+    // line is a command sequence, and what gets compared is the ledger left
+    // behind. The TypeScript half runs under jest because state.ts imports
+    // AsyncStorage — see jest.parity.config.js.
+    harness: 'scripts/ledger-parity.harness.ts',
+    example: 'dump_ledger',
+  },
 ];
 
 function run(cmd, args, input, env) {
@@ -79,8 +90,27 @@ for (const m of MODULES) {
     process.platform === 'win32' ? `${m.example}.exe` : m.example,
   );
 
-  const rustOut = run(exe, [], corpus).split('\n').map((l) => l.replace(/\r$/, ''));
-  const tsOut = run('npx', ['tsx', m.ts], corpus).split('\n').map((l) => l.replace(/\r$/, ''));
+  const env = m.tz ? { TZ: m.tz } : {};
+  const rustOut = run(exe, [], corpus, env).split('\n').map((l) => l.replace(/\r$/, ''));
+
+  let tsOut;
+  if (m.harness) {
+    // jest cannot take the corpus on stdin, so the two sides hand it over
+    // through files instead
+    const outPath = path.join(os.tmpdir(), `parity-${m.name}-${process.pid}.tsv`);
+    // jest writes its own summary to stderr; swallow it so the parity report
+    // stays one line per module
+    execFileSync('npx', ['jest', '--config', 'jest.parity.config.js', '--silent', m.harness], {
+      cwd: ROOT,
+      stdio: ['ignore', 'ignore', 'pipe'],
+      shell: process.platform === 'win32',
+      env: { ...process.env, ...env, PARITY_IN: corpusPath, PARITY_OUT: outPath },
+    });
+    tsOut = fs.readFileSync(outPath, 'utf8').split('\n').map((l) => l.replace(/\r$/, ''));
+    fs.unlinkSync(outPath);
+  } else {
+    tsOut = run('npx', ['tsx', m.ts], corpus, env).split('\n').map((l) => l.replace(/\r$/, ''));
+  }
 
   const n = Math.max(rustOut.length, tsOut.length);
   const diffs = [];

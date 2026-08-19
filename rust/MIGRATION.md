@@ -52,7 +52,8 @@ Adding a module to the harness:
 | `domain/budget`, `stats`, `trends`, `insight`, `recap`, `weekly`, `streak` | ~900 | Queued |
 | `domain/billParse`, `billDedup`, `encoding`, `gbkTable` | ~700 | Queued |
 | `domain/export` + `xlsxWrite` | ~230 | Queued — `rust_xlsxwriter` replaces the hand-rolled writer |
-| `store/*` | 1,180 | After domain — needs a state model decision |
+| `entry` + `ledger` (new) | ~120 of `store/state.ts` | **Ported** — owned state, 919-scenario stateful parity |
+| rest of `store/*` | ~1,060 | Next — accounts, subs, currency, templates, tags |
 | `sync/*` | 778 | After store — `reqwest` + the Supabase REST API |
 | UI (21 routes, 72 components) | 9,209 | Last |
 
@@ -146,10 +147,49 @@ millisecond division absorbs them and the Rust side counts civil days instead.
 
 ## Phase 2 — state and sync
 
-The store is Legend-State observables today. The Rust equivalent is a plain
-owned model plus a change-notification channel; reactive-signal libraries in
-Rust are tied to their UI framework, so keeping the model framework-agnostic
-here avoids being married to the Phase 3 choice.
+**Decided: the Rust core owns the ledger.** The alternative — keeping Rust a
+pure function library and leaving the data in TypeScript — would have been
+faster now and a cliff later. The FFI boundary currently carries a handful of
+calls and is nearly free to reshape; once the UI is Rust too, reshaping it is
+surgery.
+
+`ledger.rs` is the first module that owns anything, and it changed what the
+harness has to be.
+
+### Injecting time and identity
+
+`addEntry`/`updateEntry`/`removeEntry` each reach for `Date.now()` inside, and
+`newId()` mixes a clock, a counter and `Math.random()`. Replay such a sequence
+twice and you get different stamps and different ids — there is nothing to
+compare.
+
+So the Rust commands take `now` and `id` as arguments. That is not a style
+preference; it is the precondition for holding stateful code to the same bar as
+the pure modules. Id *generation* stays outside the crate for the same reason
+epoch-to-local conversion does: it reads a clock and a random source.
+
+The harness pins the TypeScript to match — `Date.now` is mocked, and ids are
+normalised to insertion order (`e0`, `e1`, …) on both sides, references
+included, so what gets compared is ledger semantics rather than id formats.
+
+### A stateful corpus
+
+A pure module's corpus maps one input to one answer. A ledger has no single
+answer, it has a history, so each corpus line is a **command sequence** and what
+is compared is the ledger left behind — every row, its stamps, and its whole
+`field_ts` map.
+
+The TypeScript half runs under jest rather than tsx, because `state.ts` imports
+AsyncStorage and needs the module mocks. `jest.parity.config.js` exists only for
+that; those files are kept out of `npm test`'s `testMatch` so they neither run
+nor count there.
+
+**Corpus density is not a detail.** The first cut was 519 scenarios, and
+injecting a real bug — storing a zeroed refund counter as `0` instead of
+clearing it, which is the `refund || undefined` subtlety in the TypeScript —
+was caught in only 6 of them. Biasing the corpus toward the refund path took the
+same injection to 99 of 919. A corpus that technically catches a bug and a
+corpus that catches it loudly are different tools.
 
 Sync talks to Supabase over plain REST + a realtime websocket. `reqwest` and
 `tokio-tungstenite` cover it; there is no official Supabase Rust client, and
