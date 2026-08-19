@@ -20,6 +20,10 @@ interface Props {
   /** The colour this surface sits over. The wash blends toward it so the
    *  material picks up the room instead of frosting neutrally over it. */
   under?: string;
+  /** The material's own colour, before it picks up the room. Defaults to the
+   *  card colour; dark chrome (the toast pill) passes `t.ink` so it stays dark
+   *  glass instead of becoming a light panel white text falls off. */
+  surface?: string;
   /** How busy the content behind is, 0–1. Higher pushes the wash more opaque
    *  so labels on the glass keep resolving. Default 0.35 suits a typical
    *  ledger screen; pass 0 over empty paper, 1 over dense text. */
@@ -59,6 +63,7 @@ interface Props {
 export function Glass({
   level = 'chrome',
   under,
+  surface,
   density = 0.35,
   tier: tierProp,
   edge = true,
@@ -74,8 +79,8 @@ export function Glass({
   const spec = glassSpec(t, level);
 
   const wash = useMemo(
-    () => washColor(t, level, under, readabilityAlpha(t, level, density, tier)),
-    [t, level, under, density, tier],
+    () => washColor(t, level, under, readabilityAlpha(t, level, density, tier), surface),
+    [t, level, under, density, tier, surface],
   );
 
   const border = edge ? { borderWidth: spec.edgeWidth, borderColor: spec.edge } : null;

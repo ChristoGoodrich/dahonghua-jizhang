@@ -122,22 +122,56 @@ export function mix(a: string, b: string, amount: number): [number, number, numb
   ];
 }
 
+/** Relative luminance, WCAG 2.1. Used to decide how far a surface may travel
+ *  toward the room before it stops being itself. */
+export function luminance(hex: string): number {
+  const [r, g, b] = parseHex(hex);
+  const f = (c: number) => {
+    const v = c / 255;
+    return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+  };
+  return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+}
+
 /** 感知环境颜色 — the wash a glass surface should paint, given the colour it
  *  sits over.
  *
- *  The surface never renders as neutral frost: it carries `t.card` pulled a
- *  little toward whatever is beneath, so a bar over the warm paper reads warm
- *  and the same bar over an accent header picks the accent up. `AMBIENT_PULL`
- *  is deliberately gentle — past roughly a third the surface stops reading as
- *  its own object and starts looking like a stain on the background.
+ *  The surface never renders as neutral frost: it carries its own colour pulled
+ *  a little toward whatever is beneath, so a bar over the warm paper reads warm
+ *  and the same bar over an accent header picks the accent up.
  *
- *  @param under  the colour behind this surface; defaults to the page paper
- *  @param alpha  overrides the level's wash alpha (see `readabilityAlpha`) */
+ *  How far it travels depends on how far apart the two are. A light card over
+ *  light paper can take the full pull and still look like itself. The dark
+ *  toast pill cannot: pulled 28% toward near-white paper, its text contrast
+ *  fell from 14:1 to 4.9:1 — technically AA, and a real regression on a
+ *  component that has to be readable over anything. Scaling the pull by
+ *  luminance distance keeps light-on-light exactly where it was and stops dark
+ *  chrome from being washed out.
+ *
+ *  @param under    the colour behind this surface; defaults to the page paper
+ *  @param alpha    overrides the level's wash alpha (see `readabilityAlpha`)
+ *  @param surface  the material's own colour before the pull; defaults to the
+ *                  card colour. Dark chrome passes `t.ink`. */
 const AMBIENT_PULL = 0.28;
+/** How much of the pull the luminance distance is allowed to take away. */
+const DISTANCE_DAMPING = 0.75;
 
-export function washColor(t: Theme, level: GlassLevel, under?: string, alpha?: number): string {
+export function ambientPull(surface: string, under: string): number {
+  const distance = Math.abs(luminance(surface) - luminance(under));
+  return AMBIENT_PULL * (1 - DISTANCE_DAMPING * distance);
+}
+
+export function washColor(
+  t: Theme,
+  level: GlassLevel,
+  under?: string,
+  alpha?: number,
+  surface?: string,
+): string {
   const spec = glassSpec(t, level);
-  const [r, g, b] = mix(t.card, under ?? t.paper, AMBIENT_PULL);
+  const base = surface ?? t.card;
+  const room = under ?? t.paper;
+  const [r, g, b] = mix(base, room, ambientPull(base, room));
   return `rgba(${r}, ${g}, ${b}, ${alpha ?? spec.washAlpha})`;
 }
 

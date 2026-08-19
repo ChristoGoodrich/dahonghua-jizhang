@@ -105,6 +105,13 @@ describe('the material', () => {
       .not.toBe(overAccent.find((c) => c.startsWith('rgba')));
   });
 
+  it('honours a surface colour override', () => {
+    const card = fills(render(<Glass tier="wash" />)).find((c) => c.startsWith('rgba'))!;
+    const ink = fills(render(<Glass tier="wash" surface={theme.ink} />)).find((c) => c.startsWith('rgba'))!;
+    const channel = (s: string) => Number(s.match(/rgba\((\d+)/)![1]);
+    expect(channel(ink)).toBeLessThan(channel(card));
+  });
+
   it('renders its children', () => {
     const r = render(<Glass tier="wash"><View testID="inside" /></Glass>);
     expect(r.root.findAll((n) => n.props?.testID === 'inside').length).toBeGreaterThan(0);

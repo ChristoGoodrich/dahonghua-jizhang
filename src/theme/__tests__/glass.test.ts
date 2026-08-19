@@ -5,7 +5,9 @@
 
 import { makeTheme } from '../tokens';
 import {
+  ambientPull,
   glassSpec,
+  luminance,
   mix,
   readabilityAlpha,
   resolveTier,
@@ -83,12 +85,64 @@ describe('感知环境颜色 — washColor', () => {
     expect(rgba(washColor(light, 'chrome', undefined, 0.5)).a).toBe(0.5);
   });
 
+  it('takes a surface colour, so dark chrome stays dark', () => {
+    // the toast pill passes t.ink; a light wash there would drop white text
+    // onto a light panel
+    const onCard = rgba(washColor(light, 'chrome', light.paper));
+    const onInk = rgba(washColor(light, 'chrome', light.paper, undefined, light.ink));
+    expect(onInk.r).toBeLessThan(onCard.r);
+    expect(onInk.g).toBeLessThan(onCard.g);
+    expect(onInk.b).toBeLessThan(onCard.b);
+    // still lifted off pure ink by the ambient pull toward the paper
+    expect(onInk.r).toBeGreaterThan(rgba(`rgba(0, 0, 0, 1)`).r);
+  });
+
   it('follows the flower theme, not a fixed grey', () => {
     const ocean = makeTheme('ocean', false);
     const sunset = makeTheme('sunset', false);
     const a = rgba(washColor(ocean, 'chrome', ocean.paper));
     const b = rgba(washColor(sunset, 'chrome', sunset.paper));
     expect(a).not.toEqual(b);
+  });
+});
+
+describe('contrast — the reason the pull is damped', () => {
+  /** Composite a wash over a backdrop and return the WCAG ratio against text. */
+  function contrastOverPaper(wash: string, textHex: string, t: ReturnType<typeof makeTheme>) {
+    const { r, g, b, a } = rgba(wash);
+    const [pr, pg, pb] = mix(t.paper, t.paper, 0); // the paper itself
+    const over = (f: number, back: number) => f * a + back * (1 - a);
+    const composited =
+      '#' +
+      [over(r, pr), over(g, pg), over(b, pb)]
+        .map((c) => Math.round(c).toString(16).padStart(2, '0'))
+        .join('');
+    const l1 = luminance(composited);
+    const l2 = luminance(textHex);
+    const [hi, lo] = l1 > l2 ? [l1, l2] : [l2, l1];
+    return (hi + 0.05) / (lo + 0.05);
+  }
+
+  it('keeps the dark toast pill readable — its text is near-white', () => {
+    // An undamped 28% pull toward near-white paper took this from 14:1 to
+    // 4.9:1. WCAG AA for normal text is 4.5:1; a toast that can appear over
+    // anything should not be sitting on the line.
+    const wash = washColor(light, 'chrome', light.paper, readabilityAlpha(light, 'chrome', 0.7, 'wash'), light.ink);
+    expect(contrastOverPaper(wash, light.paper, light)).toBeGreaterThan(7);
+  });
+
+  it('damps the pull only when the surface and the room are far apart', () => {
+    const near = ambientPull(light.card, light.paper); // white over paper
+    const far = ambientPull(light.ink, light.paper); // ink over paper
+    expect(near).toBeGreaterThan(0.26); // effectively the full pull
+    expect(far).toBeLessThan(0.12);
+    expect(far).toBeGreaterThan(0); // still picks the room up a little
+  });
+
+  it('leaves the light surfaces exactly where they were', () => {
+    // the nav bar and sheets were verified in the browser at these values;
+    // damping must not have moved them
+    expect(rgba(washColor(light, 'chrome', light.paper, 0.91))).toEqual({ r: 254, g: 253, b: 251, a: 0.91 });
   });
 });
 

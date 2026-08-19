@@ -4,6 +4,7 @@ import { shadow, RAD, TABULAR } from '@/theme/tokens';
 import type { Theme } from '@/theme/tokens';
 import { evalExpr, hasOperator } from '@/domain/calc';
 import { curSymbol, fmtNum } from '@/domain/money';
+import { Glass } from '@/components/ui/Glass';
 import type { Strings } from '@/i18n';
 
 interface Props {
@@ -53,7 +54,11 @@ export function RecordAmount({
         {curDropdown && rateCodes.length > 0 && (
           <>
             <Pressable style={styles.curBackdrop} onPress={() => setCurDropdown(false)} accessibilityLabel={s.back} />
-            <View style={[styles.curDropdown, { backgroundColor: t.card, borderColor: t.line }, shadow(t, 'md')]}>
+            {/* 柔光玻璃, card level: a menu floating over the record sheet, so
+                the amount underneath still reads through it. The shadow stays
+                on a wrapper — Glass clips its own layers. */}
+            <View style={[styles.curDropdownShadow, shadow(t, 'md')]}>
+            <Glass level="card" under={t.paper} density={0.5} style={styles.curDropdown}>
               {[base, ...rateCodes].map((c) => (
                 <Pressable
                   key={c}
@@ -68,6 +73,7 @@ export function RecordAmount({
                   {c === cur && <Text style={{ color: t.hibiscus, fontSize: 13 }}>✓</Text>}
                 </Pressable>
               ))}
+            </Glass>
             </View>
           </>
         )}
@@ -95,10 +101,14 @@ const styles = StyleSheet.create({
   cur: { fontSize: 22, fontWeight: '700' },
   curWrap: {},
   curBackdrop: { position: 'absolute', top: 0, left: -100, right: -100, bottom: -200, zIndex: 99 },
-  curDropdown: {
+  // the shadow rides on a plain wrapper; Glass has overflow:hidden and would
+  // clip a shadow drawn on itself
+  curDropdownShadow: {
     position: 'absolute', top: '100%', left: 0, zIndex: 100,
-    borderWidth: StyleSheet.hairlineWidth, borderRadius: RAD.md, paddingVertical: 4,
-    minWidth: 130, marginTop: 4,
+    borderRadius: RAD.md, minWidth: 130, marginTop: 4,
+  },
+  curDropdown: {
+    borderRadius: RAD.md, paddingVertical: 4, minWidth: 130,
   },
   curOption: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
