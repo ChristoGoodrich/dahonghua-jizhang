@@ -2,8 +2,7 @@ import { store$ } from '@/store/ledger';
 import { parseEntryText } from '@/ai/client';
 import { parseReceiptImage, ReceiptError } from '@/ai/receipt';
 import type { Category, IO } from '@/domain/types';
-import type { Lang } from '@/i18n';
-import type { I18N } from '@/i18n';
+import type { I18N, Lang } from '@/i18n';
 
 interface UseAIEntryDeps {
   aiText: string;

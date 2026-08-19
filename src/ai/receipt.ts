@@ -35,10 +35,14 @@ export class ReceiptError extends Error {}
 /** Convert image URI to base64 string. */
 async function imageToBase64(uri: string): Promise<string> {
   try {
-    // React Native / Expo: read file as base64
-    const FS = await import('expo-file-system');
-    const base64 = await FS.readAsStringAsync(uri, { encoding: FS.EncodingType.Base64 });
-    return base64;
+    // React Native / Expo: read file as base64.
+    //
+    // `require`, not `await import`: dynamic import throws outright under Jest
+    // ("invoked without --experimental-vm-modules"), which silently pushed every
+    // test down the web fallback below and left this path unexercised.
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const FS = require('expo-file-system') as typeof import('expo-file-system');
+    return await FS.readAsStringAsync(uri, { encoding: FS.EncodingType.Base64 });
   } catch {
     // Web fallback: fetch and convert
     const res = await fetch(uri);

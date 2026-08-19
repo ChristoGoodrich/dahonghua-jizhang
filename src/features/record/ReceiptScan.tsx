@@ -22,7 +22,10 @@ export function ReceiptScan({ lang, onCapture, busy }: Props) {
     if (busy) return;
     setError('');
     try {
-      const ImagePicker = await import('expo-image-picker');
+      // `require`, not `await import`: dynamic import throws under Jest, which
+      // forced every test down the catch below. Same call shape either way.
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const ImagePicker = require('expo-image-picker') as typeof import('expo-image-picker');
       let result;
       if (useCamera) {
         const perm = await ImagePicker.requestCameraPermissionsAsync();
