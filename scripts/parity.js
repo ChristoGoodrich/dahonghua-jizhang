@@ -27,15 +27,29 @@ const MODULES = [
     ts: 'scripts/money-parity.ts',
     example: 'dump_money',
   },
+  {
+    name: 'cycle',
+    corpus: 'rust/parity/cycle-corpus.tsv',
+    ts: 'scripts/cycle-parity.ts',
+    example: 'dump_cycle',
+    // The TypeScript does this maths on local-time Date objects, so the run is
+    // pinned to a known zone rather than the runner's. Belt and braces, not a
+    // fix: the corpus was also run under America/New_York, where `cycleDays`
+    // sees 23- and 25-hour days across a DST transition, and it still agrees
+    // to the case — the `Math.round` in that millisecond division absorbs
+    // them, and the Rust side counts civil days and never sees them at all.
+    tz: 'Asia/Shanghai',
+  },
 ];
 
-function run(cmd, args, input) {
+function run(cmd, args, input, env) {
   return execFileSync(cmd, args, {
     input,
     cwd: ROOT,
     encoding: 'utf8',
     maxBuffer: 64 * 1024 * 1024,
     shell: process.platform === 'win32',
+    env: { ...process.env, ...env },
   });
 }
 

@@ -45,7 +45,10 @@ Adding a module to the harness:
 | `domain/calc` | 82 | **Ported**, 1,262-case parity |
 | `domain/num` (new) | — | **Added** — JS-compatible rounding all money paths must use |
 | `domain/money` | 120 | **Ported**, 1,545-case parity |
-| `domain/dates`, `period`, `cycle` | ~250 | Queued |
+| `domain/civil` (new) | — | **Added** — calendar arithmetic, the pure half of `dates.ts` |
+| `domain/cycle` | 37 | **Ported**, 14,185-case parity, zero divergences |
+| `domain/dates` | 33 | Split: `monthGrid` ported; `onDay`/`sameDay`/`daysAgo` are platform-boundary (see below) |
+| `domain/period` | 130 | Next |
 | `domain/budget`, `stats`, `trends`, `insight`, `recap`, `weekly`, `streak` | ~900 | Queued |
 | `domain/billParse`, `billDedup`, `encoding`, `gbkTable` | ~700 | Queued |
 | `domain/export` + `xlsxWrite` | ~230 | Queued — `rust_xlsxwriter` replaces the hand-rolled writer |
@@ -96,6 +99,33 @@ TypeScript first because there is no faithful port of non-determinism:
 The harness compares strings, so it has to stringify the way JavaScript does or
 it manufactures divergences that are not real — `String(-0)` is `"0"` in JS and
 `"-0"` in Rust. See `js_string` in `dump_money.rs`.
+
+### Where local time stops being pure
+
+`dates.ts` and `cycle.ts` do their maths on JavaScript `Date` objects in **local
+time**: `new Date(y, m, d)` builds a local midnight, `getMonth()` reads a local
+month. "Local time" is a question only the device can answer, and it answers
+differently in October than in June wherever daylight saving applies. A crate
+that compiles for both Android and wasm cannot own that.
+
+So the port splits along that line. `civil.rs` holds calendar arithmetic on
+plain y/m/d triples — leap years, month lengths, day numbers, weekday, the month
+grid, and all of `cycle.ts`, which turned out to touch nothing but y/m/d.
+Converting an epoch timestamp to and from local components stays outside the
+crate, where the platform can answer it.
+
+Two behaviours had to be inherited rather than designed, both load-bearing:
+a cycle start of 0 means 1 (`cycleStart || 1`, and an unset setting arrives as
+0), and a start day past the end of a month **overflows** rather than clamping,
+because `new Date(y, 1, 31)` is 3 March. A cycle starting on the 31st runs from
+1 March in a non-leap year, not from 28 February.
+
+This is the first module to port with **zero divergences** across its corpus —
+14,185 cases covering component overflow, leap years, century boundaries, every
+start day 0–31, and both sides of every window edge. The corpus was additionally
+run under `America/New_York`, where `cycleDays` sees 23- and 25-hour days across
+a DST transition; it agrees there too, because the `Math.round` in that
+millisecond division absorbs them and the Rust side counts civil days instead.
 
 ## Phase 2 — state and sync
 
