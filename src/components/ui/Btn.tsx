@@ -18,16 +18,19 @@ interface Props {
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
   accessibilityLabel?: string;
+  /** Handle for Detox; every Btn is otherwise indistinguishable to E2E. */
+  testID?: string;
 }
 
 /** The app's one button. Primary carries the accent gradient + glow. */
-export function Btn({ label, onPress, variant = 'primary', tone, gradient, leading, disabled, style, accessibilityLabel }: Props) {
+export function Btn({ label, onPress, variant = 'primary', tone, gradient, leading, disabled, style, accessibilityLabel, testID }: Props) {
   const t = useTheme();
   const primary = variant === 'primary';
   const color = primary ? '#fff' : tone ?? t.hibiscus;
   const [gFrom, gTo] = gradient ?? [t.gradFrom, t.gradTo];
   return (
     <Tap
+      testID={testID}
       onPress={onPress}
       disabled={disabled}
       scaleTo={0.97}

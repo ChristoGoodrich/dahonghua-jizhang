@@ -151,6 +151,7 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
       return (
         <SwipeableRow lang={lang} onDelete={onDelete ? () => onDelete(d.id) : undefined} onEdit={onEdit ? () => onEdit(d.id) : undefined}>
           <Tap
+            testID={`entry-${d.id}`}
             onPress={() => onPress(d.id)}
             scaleTo={0.98}
             style={rowStyle}
@@ -177,6 +178,7 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
     return (
       <SwipeableRow lang={lang} onDelete={onDelete ? () => onDelete(d.id) : undefined} onEdit={onEdit ? () => onEdit(d.id) : undefined}>
         <Tap
+          testID={`entry-${d.id}`}
           onPress={() => onPress(d.id)}
           onLongPress={() => onLongPress?.(d.id)}
           delayLongPress={400}

@@ -48,7 +48,7 @@ export function Toast({ message, actionLabel, onAction, bottom = 104 }: Props) {
       <Flower size={18} petal="#fff" stamen="#fff" />
       <Text style={[styles.text, { color: t.paper }]}>{message}</Text>
       {interactive && (
-        <Pressable onPress={onAction} hitSlop={10} accessibilityRole="button" accessibilityLabel={actionLabel}>
+        <Pressable testID="toast-action" onPress={onAction} hitSlop={10} accessibilityRole="button" accessibilityLabel={actionLabel}>
           <Text style={[styles.action, { color: t.hibiscusSoft }]}>{actionLabel}</Text>
         </Pressable>
       )}

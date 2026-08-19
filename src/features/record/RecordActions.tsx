@@ -24,12 +24,13 @@ export function RecordActions({ editId, io, onSaveAsTemplate, onSaveNext, onDele
         <Btn label={s.tmplSaveBtn} onPress={onSaveAsTemplate} variant="ghost" style={styles.secondaryBtn} />
       )}
       {!editId && (
-        <Btn label={s.saveNext} onPress={onSaveNext} variant="ghost" style={styles.secondaryBtn} />
+        <Btn testID="record-save-next" label={s.saveNext} onPress={onSaveNext} variant="ghost" style={styles.secondaryBtn} />
       )}
       {!!editId && (
-        <Btn label={s.del} onPress={onDelete} variant="ghost" tone={t.hibiscusDeep} style={styles.secondaryBtn} />
+        <Btn testID="record-delete" label={s.del} onPress={onDelete} variant="ghost" tone={t.hibiscusDeep} style={styles.secondaryBtn} />
       )}
       <Btn
+        testID="record-save"
         label={s.save}
         onPress={onSave}
         gradient={io === 'inc' ? [t.leaf, t.leafDeep] : [t.gradFrom, t.gradTo]}

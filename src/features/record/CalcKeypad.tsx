@@ -60,6 +60,7 @@ export function CalcKeypad({ onKey, lang }: Props) {
             const fg = key.kind === 'eq' ? '#fff' : key.kind === 'op' ? t.hibiscus : t.ink;
             return (
               <Tap
+                testID={`key-${key.k}`}
                 key={key.k}
                 onPress={() => onKey(key.k)}
                 scaleTo={0.92}
