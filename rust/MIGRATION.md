@@ -44,7 +44,7 @@ Adding a module to the harness:
 | --- | --- | --- |
 | `domain/calc` | 82 | **Ported**, 1,262-case parity |
 | `domain/num` (new) | — | **Added** — JS-compatible rounding all money paths must use |
-| `domain/money` | 120 | Next |
+| `domain/money` | 120 | **Ported**, 1,545-case parity |
 | `domain/dates`, `period`, `cycle` | ~250 | Queued |
 | `domain/budget`, `stats`, `trends`, `insight`, `recap`, `weekly`, `streak` | ~900 | Queued |
 | `domain/billParse`, `billDedup`, `encoding`, `gbkTable` | ~700 | Queued |
@@ -62,6 +62,40 @@ Android, `wasm32-unknown-unknown` through `wasm-bindgen` on web.
 Port order follows the dependency graph: `num` → `money` → `dates` → everything
 that builds on them. Each module lands with its ported tests **and** a parity
 corpus in the same commit.
+
+### What the harness has caught so far
+
+Four divergences, none of which either side's own unit tests could have found:
+
+1. **Tie-breaking, calculator.** `Math.round` breaks ties toward +∞; Rust's
+   `f64::round` breaks them away from zero. `9-396-29.82÷12.0` → `-389.48` vs
+   `-389.49`.
+2. **Tie-breaking, formatter.** `Intl.NumberFormat` breaks ties *away from
+   zero* — the opposite of `Math.round`. Both modes live in the same codebase,
+   and `fmtShort` uses both in one expression: `Math.round` collapses to an
+   integer, then `Intl` formats it. Port the raw value straight to the
+   formatter and `-1234.5` renders `-1,235` where the app shows `-1,234`.
+3. **What gets rounded.** `Intl` rounds the *decimal* representation, not the
+   binary one: `2.605` is `2.60499…` as an f64 yet formats as `2.61`. Scaling by
+   100 and rounding — the obvious port — gives `2.60`. `format_fixed` works on
+   the shortest-round-trip digit string instead.
+4. **Negative zero.** `-0.001` at two decimals rounds to nothing but kept its
+   sign, so a `-0.3` balance rendered `￥-0`. Fixed in the TypeScript rather
+   than ported forward, and both sides now strip the sign after rounding.
+
+Two prerequisites also came out of porting `money`, both fixed in the
+TypeScript first because there is no faithful port of non-determinism:
+
+- `fmtNum`/`fmtShort` formatted with `toLocaleString(undefined, …)`, i.e. the
+  *device's* locale. A German handset rendered `￥1.234.567,50` and an en-IN one
+  `￥12,34,567.50`, whatever language the user had picked in a zh/en app. Now
+  pinned to en-US grouping, which zh-CN matches.
+- Three date call sites leaked the device locale the same way, while the rest of
+  the codebase already passed `lang === 'zh' ? 'zh-CN' : 'en-US'`.
+
+The harness compares strings, so it has to stringify the way JavaScript does or
+it manufactures divergences that are not real — `String(-0)` is `"0"` in JS and
+`"-0"` in Rust. See `js_string` in `dump_money.rs`.
 
 ## Phase 2 — state and sync
 

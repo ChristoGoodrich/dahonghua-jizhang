@@ -21,6 +21,12 @@ const MODULES = [
     ts: 'scripts/calc-parity.ts',
     example: 'dump_calc',
   },
+  {
+    name: 'money',
+    corpus: 'rust/parity/money-corpus.tsv',
+    ts: 'scripts/money-parity.ts',
+    example: 'dump_money',
+  },
 ];
 
 function run(cmd, args, input) {

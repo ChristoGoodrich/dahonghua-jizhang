@@ -8,6 +8,8 @@
 //! Migration status is tracked in `rust/MIGRATION.md`.
 
 pub mod calc;
+pub mod money;
 pub mod num;
 
 pub use calc::{apply_key, eval_expr, has_operator};
+pub use money::{cur_name, cur_symbol, fmt, fmt_num, fmt_short, to_base, Currencies};
