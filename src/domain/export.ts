@@ -2,7 +2,35 @@
 // formatting is unit-testable. The file-writing/sharing lives in src/util/share.ts.
 import type { Account, Category, Entry, IO } from './types';
 import { catOf } from './cats';
-import * as XLSX from 'xlsx';
+import { writeXlsx, type Cell } from './xlsxWrite';
+
+/** The one row shape both exports share: header + one line per live entry,
+ *  oldest first. Tombstones are dropped — an export is a statement of what the
+ *  ledger holds, not of what it has ever held. */
+function toRows(
+  entries: Entry[],
+  accounts: Account[],
+  customCats: Record<IO, Category[]>,
+): Cell[][] {
+  const nameOf = (id?: string) => accounts.find((x) => x.id === id)?.name ?? '';
+  const rows: Cell[][] = [['date', 'type', 'category', 'account', 'amount', 'note']];
+  entries
+    .filter((d) => !d.deletedAt)
+    .slice()
+    .sort((a, b) => a.ts - b.ts)
+    .forEach((d) => {
+      const c = catOf(d.io, d.cat, customCats);
+      rows.push([
+        new Date(d.ts).toISOString().slice(0, 10),
+        d.io,
+        c.zh || c.en || '',
+        d.io === 'xfer' ? `${nameOf(d.acct)}→${nameOf(d.acctTo)}` : nameOf(d.acct),
+        d.amt,
+        d.note || '',
+      ]);
+    });
+  return rows;
+}
 
 function csvCell(v: string | number): string {
   const s = String(v);
@@ -16,24 +44,7 @@ export function entriesToCSV(
   accounts: Account[],
   customCats: Record<IO, Category[]>,
 ): string {
-  const rows: (string | number)[][] = [['date', 'type', 'category', 'account', 'amount', 'note']];
-  entries
-    .filter((d) => !d.deletedAt)
-    .slice()
-    .sort((a, b) => a.ts - b.ts)
-    .forEach((d) => {
-      const c = catOf(d.io, d.cat, customCats);
-      const nameOf = (id?: string) => accounts.find((x) => x.id === id)?.name ?? '';
-      const acctCell = d.io === 'xfer' ? `${nameOf(d.acct)}→${nameOf(d.acctTo)}` : nameOf(d.acct);
-      rows.push([
-        new Date(d.ts).toISOString().slice(0, 10),
-        d.io,
-        c.zh || c.en || '',
-        acctCell,
-        d.amt,
-        d.note || '',
-      ]);
-    });
+  const rows = toRows(entries, accounts, customCats);
   return '﻿' + rows.map((r) => r.map(csvCell).join(',')).join('\n');
 }
 
@@ -43,26 +54,6 @@ export function entriesToXLSX(
   accounts: Account[],
   customCats: Record<IO, Category[]>,
 ): ArrayBuffer {
-  const rows: (string | number)[][] = [['date', 'type', 'category', 'account', 'amount', 'note']];
-  entries
-    .filter((d) => !d.deletedAt)
-    .slice()
-    .sort((a, b) => a.ts - b.ts)
-    .forEach((d) => {
-      const c = catOf(d.io, d.cat, customCats);
-      const nameOf = (id?: string) => accounts.find((x) => x.id === id)?.name ?? '';
-      const acctCell = d.io === 'xfer' ? `${nameOf(d.acct)}→${nameOf(d.acctTo)}` : nameOf(d.acct);
-      rows.push([
-        new Date(d.ts).toISOString().slice(0, 10),
-        d.io,
-        c.zh || c.en || '',
-        acctCell,
-        d.amt,
-        d.note || '',
-      ]);
-    });
-  const wb = XLSX.utils.book_new();
-  const ws = XLSX.utils.aoa_to_sheet(rows);
-  XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-  return XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
+  const rows = toRows(entries, accounts, customCats);
+  return writeXlsx(rows);
 }

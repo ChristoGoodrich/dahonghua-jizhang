@@ -1,5 +1,5 @@
 import { entriesToCSV, entriesToXLSX } from '../export';
-import * as XLSX from 'xlsx';
+import { readXlsx } from './helpers/readXlsx';
 import type { Account, Category, Entry, IO } from '../types';
 
 const accounts: Account[] = [{ id: 'default', name: '现金', balance: 0 }];
@@ -47,11 +47,10 @@ describe('entriesToXLSX', () => {
     expect(xlsx).toBeInstanceOf(ArrayBuffer);
     expect(xlsx.byteLength).toBeGreaterThan(0);
 
-    // Parse the generated XLSX and verify content
-    const wb = XLSX.read(new Uint8Array(xlsx), { type: 'array' });
-    expect(wb.SheetNames).toHaveLength(1);
-    const ws = wb.Sheets[wb.SheetNames[0]];
-    const data = XLSX.utils.sheet_to_json<(string | number)[]>(ws, { header: 1 }) as (string | number)[][];
+    // Unpack the generated workbook and verify content
+    const wb = readXlsx(xlsx);
+    expect(wb.sheetNames).toHaveLength(1);
+    const data = wb.rows;
     expect(data[0]).toEqual(['date', 'type', 'category', 'account', 'amount', 'note']);
     expect(data[1]).toEqual(['2026-06-01', 'exp', '餐饮', '现金', 40, '午饭']);
     expect(data[2]).toEqual(['2026-06-02', 'inc', '工资', '现金', 100, '']);
@@ -62,9 +61,7 @@ describe('entriesToXLSX', () => {
       { id: '1', ts: 1, io: 'exp', cat: 'food', amt: 5, deletedAt: 2 },
     ];
     const xlsx = entriesToXLSX(entries, accounts, custom);
-    const wb = XLSX.read(new Uint8Array(xlsx), { type: 'array' });
-    const ws = wb.Sheets[wb.SheetNames[0]];
-    const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
+    const data = readXlsx(xlsx).rows;
     expect(data).toHaveLength(1); // header only
   });
 });
