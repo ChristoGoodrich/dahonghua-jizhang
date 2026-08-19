@@ -55,7 +55,8 @@ Adding a module to the harness:
 | `entry` + `ledger` + `store` (new) | ~120 of `store/state.ts` | **Ported** — owned state, stateful parity |
 | `store/accounts` | 53 | **Ported**, folded into the same 1,338-scenario corpus |
 | `store/currency` + `model` | 138 | **Ported** (bar the HTTP refresh), folded into the same corpus |
-| rest of `store/*` | ~870 | Next — subs, reimburse, templates, tags, categories, assets |
+| `store/templates` + `tags` + `categories` → `catalog` | 83 | **Ported**, in the same corpus |
+| rest of `store/*` | ~790 | Next — subs, reimburse, assets, inbox |
 | `sync/*` | 778 | After store — `reqwest` + the Supabase REST API |
 | UI (21 routes, 72 components) | 9,209 | Last |
 

@@ -3,6 +3,10 @@
 //! scripts/ledger-parity.harness.ts.
 
 use dahonghua_core::accounts::{Account, AccountKind, NewAccountOpts};
+use dahonghua_core::catalog::{
+    add_custom_cat, add_subcat, add_tag, add_template, archive_ledger, remove_subcat, remove_tag,
+    remove_template, template_draft, Category, Subcats, TagKind, Tags,
+};
 use dahonghua_core::currency::{
     add_rate, remove_rate, set_base_currency, set_rate, BaseSwitch, Denominated,
 };
@@ -24,6 +28,50 @@ fn cell_f64(v: f64) -> String {
 
 fn opt<T: ToString>(v: Option<T>) -> String {
     v.map_or("_".to_string(), |x| x.to_string())
+}
+
+fn render_catalog(
+    tags: &Tags,
+    archived: &Option<Vec<String>>,
+    current_ledger: &str,
+    cats: &[Category],
+    subcats: &Subcats,
+    templates: &[Template],
+) -> String {
+    format!(
+        "tg[{}|{}] arch[{}] led={} ct[{}] sc[{}] tpl[{}]",
+        tags.normal.join(","),
+        tags.ledger.join(","),
+        archived.as_ref().map_or("_".to_string(), |v| v.join(",")),
+        if current_ledger.is_empty() {
+            "_"
+        } else {
+            current_ledger
+        },
+        cats.iter()
+            .map(|c| format!("{}:{}:{}", c.k, c.e, c.c))
+            .collect::<Vec<_>>()
+            .join(","),
+        subcats
+            .iter()
+            // by position, not by id: the TypeScript generates subcat ids and
+            // this side numbers them, so only the order is comparable
+            .map(|(k, v)| {
+                let items: Vec<String> = v
+                    .iter()
+                    .enumerate()
+                    .map(|(i, s)| format!("sc{i}:{}", s.name))
+                    .collect();
+                format!("{k}={}", items.join("+"))
+            })
+            .collect::<Vec<_>>()
+            .join(";"),
+        templates
+            .iter()
+            .map(|t| format!("{}:{}", t.id, cell_f64(t.amt)))
+            .collect::<Vec<_>>()
+            .join(","),
+    )
 }
 
 fn render_money(
@@ -145,6 +193,13 @@ fn run(script: &str) -> String {
         base: "CNY".into(),
         rates: Default::default(),
     };
+    let mut tags = Tags::default();
+    let mut archived_ledgers: Option<Vec<String>> = None;
+    let mut current_ledger = String::new();
+    let mut custom_cats: Vec<Category> = Vec::new();
+    let mut subcats = Subcats::new();
+    let mut tpl_seq = 0usize;
+    let mut sc_seq = 0usize;
 
     for step in script.split('|') {
         let (verb, raw) = step.split_once(':').unwrap_or((step, ""));
@@ -321,14 +376,90 @@ fn run(script: &str) -> String {
                     m
                 });
             }
+            // --- catalogue ---
+            "tag" => add_tag(
+                &mut tags,
+                if args[0] == "ledger" {
+                    TagKind::Ledger
+                } else {
+                    TagKind::Normal
+                },
+                args[1],
+            ),
+            "rmtag" => remove_tag(
+                &mut tags,
+                if args[0] == "ledger" {
+                    TagKind::Ledger
+                } else {
+                    TagKind::Normal
+                },
+                args[1],
+                &mut current_ledger,
+            ),
+            // `curled:` with nothing after it is setCurLedger('') — clear the filter
+            "curled" => current_ledger = args.first().copied().unwrap_or("").to_string(),
+            "archled" => archive_ledger(
+                &mut archived_ledgers,
+                args[0],
+                args[1] == "1",
+                &mut current_ledger,
+            ),
+            "addtpl" => {
+                let t = Template {
+                    id: String::new(),
+                    io: Io::parse(args[0]).unwrap_or(Io::Exp),
+                    cat: args[1].to_string(),
+                    amt: args[2].parse().unwrap(),
+                    note: args.get(3).filter(|s| !s.is_empty()).map(|s| s.to_string()),
+                    name: "x".into(),
+                };
+                let id = format!("t{tpl_seq}");
+                tpl_seq += 1;
+                add_template(&mut templates, t, id);
+            }
+            "rmtpl" => remove_template(&mut templates, args[0]),
+            "logtpl" => {
+                if let Some(d) =
+                    template_draft(&templates, args[0], &st.current_account, &current_ledger)
+                {
+                    let e = Entry {
+                        io: Some(d.io),
+                        cat: d.cat,
+                        amt: d.amt,
+                        note: Some(d.note),
+                        acct: Some(d.acct),
+                        ledger: d.ledger,
+                        ..Default::default()
+                    };
+                    let id = format!("e{seq}");
+                    seq += 1;
+                    st.add_entry(e, id, None, clock);
+                }
+            }
+            "cat" => {
+                add_custom_cat(&mut custom_cats, format!("c{clock}"), args[0], args[1]);
+            }
+            "addsc" => {
+                add_subcat(&mut subcats, args[0], format!("sc{sc_seq}"), args[1]);
+                sc_seq += 1;
+            }
+            "rmsc" => remove_subcat(&mut subcats, args[0], args[1]),
             other => panic!("unknown verb {other}"),
         }
     }
     format!(
-        "{}  ||  {}  ||  {}  ||  {}",
+        "{}  ||  {}  ||  {}  ||  {}  ||  {}",
         render(&st.ledger),
         render_accounts(&st.accounts, &st.current_account),
         render_money(&assets, &loans, &subs, &templates, &budgets, &currencies),
+        render_catalog(
+            &tags,
+            &archived_ledgers,
+            &current_ledger,
+            &custom_cats,
+            &subcats,
+            &templates
+        ),
         base_results.join(",")
     )
 }

@@ -59,6 +59,29 @@ function renderAccounts(accounts: Account[], current: string, acctName: Map<stri
 
 const n2 = (v: number | undefined) => (v === undefined || v === null ? '_' : String(v));
 
+function renderCatalog(store: typeof import('@/store/ledger'), tplName: Map<string, string>): string {
+  const st = store.store$.settings.peek();
+  const tags = store.store$.tags.peek();
+  const subcats = store.store$.subcats.peek();
+  const cats = store.store$.customCats.peek();
+  const all = [...(cats.exp ?? []), ...(cats.inc ?? []), ...(cats.xfer ?? [])];
+  return (
+    `tg[${(tags.normal ?? []).join(',')}|${(tags.ledger ?? []).join(',')}] ` +
+    `arch[${st.archivedLedgers ? st.archivedLedgers.join(',') : '_'}] ` +
+    `led=${store.store$.curLedger.peek() || '_'} ` +
+    `ct[${all.map((c) => `${c.k}:${c.e}:${c.c}`).join(',')}] ` +
+    // Sorted, because the Rust side keys subcats by a BTreeMap while a JS
+    // object preserves insertion order. Nothing reads these across categories —
+    // they are a lookup keyed by category — so the ordering is representation,
+    // not behaviour, and normalising it keeps the comparison about content.
+    `sc[${Object.entries(subcats)
+      .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+      .map(([k, v]) => `${k}=${(v as { k: string; name: string }[]).map((x, i) => `sc${i}:${x.name}`).join('+')}`)
+      .join(';')}] ` +
+    `tpl[${store.store$.templates.peek().map((t: Template) => `${tplName.get(t.id) ?? t.id}:${t.amt}`).join(',')}]`
+  );
+}
+
 function renderMoney(store: typeof import('@/store/ledger')): string {
   const st = store.store$.settings.peek();
   const c = store.store$.currencies.peek();
@@ -112,6 +135,14 @@ function runScenario(script: string): string {
     budget: 0, dailyBudget: undefined, weeklyBudget: undefined, catBudgets: undefined,
   });
   const baseResults: string[] = [];
+  const tplName = new Map<string, string>();
+  const tplByName = new Map<string, string>();
+  let tplSeq = 0;
+  store.store$.tags.set({ normal: [], ledger: [] });
+  store.store$.curLedger.set('');
+  store.store$.customCats.set({ exp: [], inc: [], xfer: [] });
+  store.store$.subcats.set({});
+  store.store$.settings.assign({ archivedLedgers: undefined });
 
   const name = (realId: string) => {
     const n = `e${seq++}`;
@@ -164,6 +195,57 @@ function runScenario(script: string): string {
       case 'sel':
         store.store$.curAccount.set(acctByName.get(args[0]) ?? args[0]);
         break;
+
+      // --- catalogue ---
+      case 'tag':
+        store.addTag(args[0] as 'normal' | 'ledger', args[1]);
+        break;
+      case 'rmtag':
+        store.removeTag(args[0] as 'normal' | 'ledger', args[1]);
+        break;
+      case 'curled':
+        store.setCurLedger(args[0]);
+        break;
+      case 'archled':
+        store.archiveLedger(args[0], args[1] === '1');
+        break;
+      case 'addtpl': {
+        const t = store.addTemplate({
+          io: args[0] as Entry['io'] as never,
+          cat: args[1],
+          amt: Number(args[2]),
+          ...(args[3] ? { note: args[3] } : {}),
+          name: 'x',
+        });
+        const n = `t${tplSeq++}`;
+        tplName.set(t.id, n);
+        tplByName.set(n, t.id);
+        break;
+      }
+      case 'rmtpl':
+        store.removeTemplate(tplByName.get(args[0]) ?? args[0]);
+        break;
+      case 'logtpl': {
+        const e = store.logTemplate(tplByName.get(args[0]) ?? args[0]);
+        if (e) name(e.id);
+        break;
+      }
+      case 'cat':
+        store.addCustomCat('exp', args[0], args[1]);
+        break;
+      case 'addsc':
+        store.addSubcat(args[0], args[1]);
+        break;
+      case 'rmsc': {
+        // Subcat ids are generated, so the corpus addresses them by position.
+        // removeSubcat is called even when the position is empty — the real one
+        // writes the filtered list back unconditionally, creating the key, and
+        // guarding here would have tested the guard rather than the code.
+        const list = (store.store$.subcats.peek()[args[0]] ?? []) as { k: string }[];
+        const target = list[Number(args[1].replace('sc', ''))];
+        store.removeSubcat(args[0], target?.k ?? '__absent__');
+        break;
+      }
 
       // --- currency ---
       case 'rate':
@@ -245,6 +327,8 @@ function runScenario(script: string): string {
     renderAccounts(store.store$.accounts.peek(), store.store$.curAccount.peek(), acctName) +
     '  ||  ' +
     renderMoney(store) +
+    '  ||  ' +
+    renderCatalog(store, tplName) +
     '  ||  ' +
     baseResults.join(',');
   nowSpy.mockRestore();

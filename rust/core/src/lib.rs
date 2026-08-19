@@ -9,6 +9,7 @@
 
 pub mod accounts;
 pub mod calc;
+pub mod catalog;
 pub mod civil;
 pub mod currency;
 pub mod cycle;
@@ -22,6 +23,7 @@ pub mod store;
 
 pub use accounts::{Account, AccountKind};
 pub use calc::{apply_key, eval_expr, has_operator};
+pub use catalog::{Category, Subcats, TagKind, Tags};
 pub use civil::{days_in_month, month_grid, Civil};
 pub use currency::{set_base_currency, BaseSwitch, Denominated};
 pub use cycle::{cycle_days, cycle_range, in_cycle, shift_cycle, CycleRange};
