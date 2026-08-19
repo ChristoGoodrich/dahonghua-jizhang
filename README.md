@@ -96,7 +96,7 @@ reporting are all opt-in — leave them unconfigured and the app never touches t
 
 - **中文 / English** throughout, switchable at runtime.
 - **Light and dark**, plus flower themes (default, ocean, forest, sunset).
-- **Home-screen widgets** — a WidgetKit budget widget on iOS, an app-widget provider on Android.
+- **Home-screen widget** — a budget app-widget provider on Android.
 - **Reminders** — a daily nudge, plus weekly (Sunday 20:00) and monthly (1st, 09:00) report notifications.
 - Haptics, glass navigation bar, petal-burst animation on save.
 
@@ -163,10 +163,10 @@ src/
   util/         backup, crypto, pdf, share, haptics, analytics, sentry, widgets
 modules/        notif-capture — Android notification-listener native module
 plugins/        android-widget config plugin (Kotlin provider + layouts)
-WidgetExtension/ iOS WidgetKit budget widget (Swift)
+WidgetExtension/ iOS WidgetKit budget widget (Swift) — not wired into a build yet
 supabase/       SQL migrations, RLS audit, the ai-parse edge function
 e2e/            Detox end-to-end tests
-docs/           design specs and phase plans
+docs/           archive/ — historical specs and phase plans (see docs/archive/README.md)
 ```
 
 `domain/` is deliberately free of React and platform APIs, which is why most of the test

@@ -94,7 +94,7 @@
 
 - **中文 / English** 全应用双语，运行时可切换。
 - **浅色与深色**，另有花朵主题（默认、海洋、森林、日落）。
-- **桌面小组件** —— iOS 端 WidgetKit 预算小组件，Android 端 App Widget。
+- **桌面小组件** —— Android 端预算 App Widget。
 - **提醒** —— 每日记账提醒，以及周报（周日 20:00）与月报（每月 1 日 09:00）通知。
 - 触感反馈、毛玻璃底栏、保存时的花瓣绽放动画。
 
@@ -159,10 +159,10 @@ src/
   util/         备份、加密、PDF、分享、触感、统计、Sentry、小组件
 modules/        notif-capture —— Android 通知监听原生模块
 plugins/        android-widget 配置插件（Kotlin provider 与布局）
-WidgetExtension/ iOS WidgetKit 预算小组件（Swift）
+WidgetExtension/ iOS WidgetKit 预算小组件（Swift）—— 尚未接入任何构建
 supabase/       SQL 迁移、RLS 审计、ai-parse 边缘函数
 e2e/            Detox 端到端测试
-docs/           设计规格与阶段计划
+docs/           archive/ —— 历史规格与阶段计划（见 docs/archive/README.md）
 ```
 
 `domain/` 刻意不依赖 React 与平台 API，这也是绝大多数测试能在纯 Node 环境下跑的原因。
