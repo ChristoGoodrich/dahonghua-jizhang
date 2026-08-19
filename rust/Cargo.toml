@@ -1,0 +1,16 @@
+[workspace]
+resolver = "2"
+members = ["core"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/ChristoGoodrich/dahonghua-jizhang"
+
+[profile.release]
+opt-level = "z"   # the wasm bundle ships to phones on Chinese mobile data
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

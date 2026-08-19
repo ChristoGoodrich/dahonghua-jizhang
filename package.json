@@ -54,8 +54,7 @@
     "react-native-svg": "15.15.4",
     "react-native-url-polyfill": "^3.0.0",
     "react-native-web": "^0.21.2",
-    "react-native-worklets": "0.8.3",
-    "xlsx": "^0.18.5"
+    "react-native-worklets": "0.8.3"
   },
   "devDependencies": {
     "@storybook/addon-essentials": "^8.6.18",
@@ -71,6 +70,7 @@
     "jest-expo": "^56.0.5",
     "react-dom": "19.2.3",
     "storybook": "^8.6.18",
+    "tsx": "^4.23.12",
     "typescript": "~6.0.3"
   },
   "scripts": {
@@ -86,7 +86,11 @@
     "e2e:build:android": "detox build --configuration android.emu.debug",
     "e2e:test:android": "detox test --configuration android.emu.debug",
     "storybook": "storybook dev -p 6006",
-    "storybook:build": "storybook build"
+    "storybook:build": "storybook build",
+    "rust:test": "cargo test --manifest-path rust/Cargo.toml",
+    "rust:fmt": "cargo fmt --manifest-path rust/Cargo.toml --check",
+    "rust:clippy": "cargo clippy --manifest-path rust/Cargo.toml --all-targets -- -D warnings",
+    "parity": "node scripts/parity.js"
   },
   "private": true
 }

@@ -52,3 +52,6 @@ modules/*/android/build/
 # local browser-automation debug scripts + their screenshots
 /test-*.py
 /test-screenshots/
+
+# Rust
+rust/target/

@@ -48,6 +48,35 @@ jobs:
           fi
           echo "Coverage threshold met (${LINE_PCT}% >= 70%)."
 
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            rust/target
+          key: cargo-${{ hashFiles('rust/**/Cargo.toml', 'rust/**/Cargo.lock') }}
+          restore-keys: cargo-
+
+      - name: Rust format
+        run: npm run rust:fmt
+
+      - name: Rust lint
+        run: npm run rust:clippy
+
+      - name: Rust tests
+        run: npm run rust:test
+
+      # The migration's real gate: the Rust port must answer identically to the
+      # TypeScript still shipping to users, case for case.
+      - name: TypeScript ↔ Rust parity
+        run: npm run parity
+
       - name: Upload coverage to Codecov
         if: always()
         uses: codecov/codecov-action@v5
