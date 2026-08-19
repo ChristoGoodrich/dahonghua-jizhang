@@ -52,8 +52,9 @@ Adding a module to the harness:
 | `domain/budget`, `stats`, `trends`, `insight`, `recap`, `weekly`, `streak` | ~900 | Queued |
 | `domain/billParse`, `billDedup`, `encoding`, `gbkTable` | ~700 | Queued |
 | `domain/export` + `xlsxWrite` | ~230 | Queued — `rust_xlsxwriter` replaces the hand-rolled writer |
-| `entry` + `ledger` (new) | ~120 of `store/state.ts` | **Ported** — owned state, 919-scenario stateful parity |
-| rest of `store/*` | ~1,060 | Next — accounts, subs, currency, templates, tags |
+| `entry` + `ledger` + `store` (new) | ~120 of `store/state.ts` | **Ported** — owned state, stateful parity |
+| `store/accounts` | 53 | **Ported**, folded into the same 1,338-scenario corpus |
+| rest of `store/*` | ~1,010 | Next — subs, currency, templates, tags, categories, assets |
 | `sync/*` | 778 | After store — `reqwest` + the Supabase REST API |
 | UI (21 routes, 72 components) | 9,209 | Last |
 
@@ -190,6 +191,27 @@ clearing it, which is the `refund || undefined` subtlety in the TypeScript —
 was caught in only 6 of them. Biasing the corpus toward the refund path took the
 same injection to 99 of 919. A corpus that technically catches a bug and a
 corpus that catches it loudly are different tools.
+
+### What the stateful harness has caught
+
+Extending the corpus to accounts immediately found two things that reading the
+TypeScript had not:
+
+1. **`addEntry` sets the current account.** Recording an entry against an
+   account makes it the default for the next one, so the record sheet opens
+   where you last spent. That behaviour belongs to neither `ledger.rs` (which
+   owns entries) nor `accounts.rs` (which owns accounts), which is what
+   `store.rs` exists for. Putting it in the replay harness instead would have
+   hidden real behaviour in test code.
+
+2. **`0` is a timestamp, not an absence.** `Ledger::add` used `ts == 0` as the
+   sentinel for "stamp it now", but the TypeScript writes `e.ts ?? now`, and
+   `??` falls back only on null or undefined. An entry dated at the epoch was
+   silently re-dated. `ts` is now an explicit `Option<i64>` and the sentinel is
+   gone.
+
+Neither is exotic. Both are the kind of thing a hand-written test suite misses
+because the author who wrote the code also writes the cases.
 
 Sync talks to Supabase over plain REST + a realtime websocket. `reqwest` and
 `tokio-tungstenite` cover it; there is no official Supabase Rust client, and

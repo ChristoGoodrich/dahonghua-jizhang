@@ -20,21 +20,24 @@
 // nothing itself. `npm run parity` diffs its output against the Rust dump.
 
 import * as fs from 'fs';
-import type { Entry } from '@/domain/types';
+import type { Account, Entry } from '@/domain/types';
 
 const IN = process.env.PARITY_IN as string;
 const OUT = process.env.PARITY_OUT as string;
 
 /** Fields compared, in a fixed order. Anything absent renders as `_`. */
-const FIELDS = ['ts', 'io', 'cat', 'amt', 'refund', 'refundOf', 'deletedAt', 'updatedAt'] as const;
+const FIELDS = [
+  'ts', 'io', 'cat', 'amt', 'refund', 'refundOf', 'acct', 'acctTo', 'deletedAt', 'updatedAt',
+] as const;
 
-function render(entries: Entry[], idOf: Map<string, string>): string {
+function render(entries: Entry[], idOf: Map<string, string>, acctNames: Map<string, string>): string {
   return entries
     .map((e) => {
       const cells = FIELDS.map((f) => {
         const v = e[f as keyof Entry];
         if (v === undefined || v === null) return '_';
         if (f === 'refundOf') return idOf.get(String(v)) ?? String(v);
+      if (f === 'acct' || f === 'acctTo') return acctNames.get(String(v)) ?? String(v);
         return String(v);
       });
       const ft = Object.keys(e.fieldTs ?? {})
@@ -46,11 +49,20 @@ function render(entries: Entry[], idOf: Map<string, string>): string {
     .join(' | ');
 }
 
+function renderAccounts(accounts: Account[], current: string, acctName: Map<string, string>): string {
+  const list = accounts
+    .map((a) => `${acctName.get(a.id) ?? a.id}:${a.kind ?? '_'}:${a.archived ?? '_'}`)
+    .join(' ');
+  return `[${list}] cur=${acctName.get(current) ?? current}`;
+}
+
 /** One `verb:args` step. */
 function runScenario(script: string): string {
   jest.resetModules();
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const store = require('@/store/state') as typeof import('@/store/state');
+  // ledger.ts re-exports state.ts plus every per-domain action module, so one
+  // require keeps them all on the same store instance after resetModules()
+  const store = require('@/store/ledger') as typeof import('@/store/ledger');
   store.store$.data.set([]);
 
   let clock = 1_000_000;
@@ -61,6 +73,13 @@ function runScenario(script: string): string {
   const byName = new Map<string, string>();
   let seq = 0;
   const undos: ReturnType<typeof store.removeEntry>[] = [];
+  // accounts get the same insertion-order naming as entries; 'default' is the
+  // seed both sides start from
+  const acctName = new Map<string, string>([['default', 'default']]);
+  const acctByName = new Map<string, string>([['default', 'default']]);
+  let acctSeq = 0;
+  store.store$.accounts.set([{ id: 'default', name: '默认', nameEn: 'Default', balance: 0 }]);
+  store.store$.curAccount.set('default');
 
   const name = (realId: string) => {
     const n = `e${seq++}`;
@@ -76,7 +95,7 @@ function runScenario(script: string): string {
 
     switch (verb) {
       case 'add': {
-        const [ts, io, cat, amt, refundOf, refund] = args;
+        const [ts, io, cat, amt, refundOf, refund, acct, acctTo] = args;
         const e = store.addEntry({
           ts: Number(ts),
           io: io as Entry['io'],
@@ -84,10 +103,33 @@ function runScenario(script: string): string {
           amt: Number(amt),
           ...(refundOf ? { refundOf: byName.get(refundOf) ?? refundOf } : {}),
           ...(refund ? { refund: Number(refund) } : {}),
+          ...(acct ? { acct: acctByName.get(acct) ?? acct } : {}),
+          ...(acctTo ? { acctTo: acctByName.get(acctTo) ?? acctTo } : {}),
         });
         name(e.id);
         break;
       }
+      case 'acct': {
+        const [kind, statementDay, dueDay, fxCode] = args;
+        const a = store.addAccount(`户${acctSeq + 1}`, 0, kind as Account['kind'], {
+          ...(statementDay ? { statementDay: Number(statementDay) } : {}),
+          ...(dueDay ? { dueDay: Number(dueDay) } : {}),
+          ...(fxCode ? { fxCode } : {}),
+        });
+        const n = `a${acctSeq++}`;
+        acctName.set(a.id, n);
+        acctByName.set(n, a.id);
+        break;
+      }
+      case 'rmacct':
+        store.removeAccount(acctByName.get(args[0]) ?? args[0]);
+        break;
+      case 'arch':
+        store.archiveAccount(acctByName.get(args[0]) ?? args[0], args[1] === '1');
+        break;
+      case 'sel':
+        store.store$.curAccount.set(acctByName.get(args[0]) ?? args[0]);
+        break;
       case 'upd': {
         const [target, field, value] = args;
         const patch: Record<string, unknown> = {};
@@ -108,7 +150,10 @@ function runScenario(script: string): string {
     }
   }
 
-  const out = render(store.store$.data.peek(), idOf);
+  const out =
+    render(store.store$.data.peek(), idOf, acctName) +
+    '  ||  ' +
+    renderAccounts(store.store$.accounts.peek(), store.store$.curAccount.peek(), acctName);
   nowSpy.mockRestore();
   return out;
 }

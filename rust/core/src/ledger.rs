@@ -99,14 +99,17 @@ impl Ledger {
         self.entries.is_empty()
     }
 
-    /// Append a new entry. `id` and `now` come from the caller; `ts` defaults to
-    /// `now` when the entry does not carry one of its own (a backdated entry
-    /// does).
-    pub fn add(&mut self, mut entry: Entry, id: String, now: i64) -> &Entry {
+    /// Append a new entry. `id` and `now` come from the caller, and `ts` is
+    /// `None` for "stamp it now" — a backdated entry passes its own.
+    ///
+    /// `ts` is an explicit `Option` rather than a sentinel value because the
+    /// TypeScript writes `e.ts ?? now`, and `??` falls back only on null or
+    /// undefined. Treating `0` as "absent" — which an earlier version of this
+    /// did — quietly rewrites an entry dated at the epoch. Absurd as a real
+    /// date, ordinary as a bug, and the parity harness found it.
+    pub fn add(&mut self, mut entry: Entry, id: String, ts: Option<i64>, now: i64) -> &Entry {
         entry.id = id;
-        if entry.ts == 0 {
-            entry.ts = now;
-        }
+        entry.ts = ts.unwrap_or(now);
         entry.updated_at = Some(now);
         self.entries.push(entry);
         self.entries.last().expect("just pushed")
@@ -250,8 +253,8 @@ mod tests {
     #[test]
     fn adding_stamps_the_write_and_keeps_insertion_order() {
         let mut l = Ledger::new();
-        l.add(expense("", 35.0), "e1".into(), 7_000);
-        l.add(expense("", 12.0), "e2".into(), 7_001);
+        l.add(expense("", 35.0), "e1".into(), Some(1_000), 7_000);
+        l.add(expense("", 12.0), "e2".into(), Some(1_000), 7_001);
         assert_eq!(
             l.all().iter().map(|e| e.id.as_str()).collect::<Vec<_>>(),
             ["e1", "e2"]
@@ -262,16 +265,22 @@ mod tests {
     #[test]
     fn adding_without_a_timestamp_uses_now() {
         let mut l = Ledger::new();
-        let mut e = expense("", 35.0);
-        e.ts = 0;
-        l.add(e, "e1".into(), 7_000);
+        l.add(expense("", 35.0), "e1".into(), None, 7_000);
         assert_eq!(l.get("e1").unwrap().ts, 7_000);
+    }
+
+    #[test]
+    fn an_entry_dated_at_the_epoch_keeps_that_date() {
+        // 0 is a timestamp, not an absence
+        let mut l = Ledger::new();
+        l.add(expense("", 35.0), "e1".into(), Some(0), 7_000);
+        assert_eq!(l.get("e1").unwrap().ts, 0);
     }
 
     #[test]
     fn a_backdated_entry_keeps_its_own_timestamp() {
         let mut l = Ledger::new();
-        l.add(expense("", 35.0), "e1".into(), 7_000);
+        l.add(expense("", 35.0), "e1".into(), Some(1_000), 7_000);
         assert_eq!(l.get("e1").unwrap().ts, 1_000);
     }
 
