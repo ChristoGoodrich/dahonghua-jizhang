@@ -147,7 +147,7 @@ export default observer(function ImportBillsScreen() {
                             {c.note || catName(cat, lang)}
                           </Text>
                           <Text style={[styles.rowSub, { color: t.inkSoft }]}>
-                            {catName(cat, lang)} · {new Date(c.ts).toLocaleDateString()}
+                            {catName(cat, lang)} · {new Date(c.ts).toLocaleDateString(lang === 'zh' ? 'zh-CN' : 'en-US')}
                           </Text>
                         </View>
                         <Text style={[styles.rowAmt, { color: c.io === 'inc' ? t.leafDeep : t.ink }]}>

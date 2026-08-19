@@ -3,7 +3,7 @@ import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { shadow, RAD, TABULAR } from '@/theme/tokens';
 import type { Theme } from '@/theme/tokens';
 import { evalExpr, hasOperator } from '@/domain/calc';
-import { curSymbol } from '@/domain/money';
+import { curSymbol, fmtNum } from '@/domain/money';
 import type { Strings } from '@/i18n';
 
 interface Props {
@@ -77,7 +77,7 @@ export function RecordAmount({
       <View style={styles.subLine}>
         {hasOperator(amt) ? (
           <Text style={[styles.subLineText, TABULAR, { color: t.inkSoft }]}>
-            = {curSymbol(cur)}{evalExpr(amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            = {curSymbol(cur)}{fmtNum(evalExpr(amt))}
           </Text>
         ) : flash ? (
           <Text style={[styles.subLineText, { color: flash.err ? t.hibiscus : t.leafDeep }]}>{flash.msg}</Text>

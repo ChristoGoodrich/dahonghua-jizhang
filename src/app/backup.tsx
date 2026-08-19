@@ -116,7 +116,8 @@ export default observer(function BackupScreen() {
     ]);
   }
 
-  const fmtTime = (ts: number) => new Date(ts).toLocaleDateString();
+  const locale = lang === 'zh' ? 'zh-CN' : 'en-US';
+  const fmtTime = (ts: number) => new Date(ts).toLocaleDateString(locale);
 
   return (
     <View style={[styles.root, { backgroundColor: t.paper }]}>
@@ -235,7 +236,7 @@ export default observer(function BackupScreen() {
                     )}
                   </View>
                   <Text style={[styles.backupTime, { color: t.inkSoft }]}>
-                    {new Date(b.time).toLocaleTimeString()}
+                    {new Date(b.time).toLocaleTimeString(locale)}
                   </Text>
                 </View>
                 <Tap

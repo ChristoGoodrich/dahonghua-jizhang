@@ -46,9 +46,29 @@ export function curOf(lang: 'zh' | 'en'): string {
   return displaySymbol ?? (lang === 'zh' ? '￥' : '$');
 }
 
+// Grouping is pinned, not left to the device.
+//
+// `toLocaleString(undefined, …)` follows whatever locale the *phone* is set to,
+// which for a zh/en app is somebody else's setting: a German handset rendered
+// ￥1.234.567,50 and an en-IN one ￥12,34,567.50 (lakh grouping), regardless of
+// the language the user picked in the app. zh-CN and en-US agree on grouping,
+// so one pin covers both languages the app actually speaks.
+const NUM_LOCALE = 'en-US';
+
+/** Strip a sign that survives rounding to nothing.
+ *
+ *  JavaScript renders -0 as "-0", and so does any small negative that rounds
+ *  to zero at the precision being shown: -0.001 to two decimals came out
+ *  "-0.00", and a -0.3 balance in the compact summary read "￥-0". The test has
+ *  to be applied *after* rounding, which is why it takes the precision. */
+const noNegZero = (n: number, decimals: number): number => {
+  const scale = 10 ** decimals;
+  return Math.round(n * scale) === 0 ? 0 : n;
+};
+
 /** Number-only formatting (no currency symbol) — for rows that render their own sign. */
 export function fmtNum(n: number): string {
-  return Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return noNegZero(Number(n), 2).toLocaleString(NUM_LOCALE, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 export function fmt(n: number, lang: 'zh' | 'en' = 'zh'): string {
@@ -56,5 +76,5 @@ export function fmt(n: number, lang: 'zh' | 'en' = 'zh'): string {
 }
 
 export function fmtShort(n: number, lang: 'zh' | 'en' = 'zh'): string {
-  return curOf(lang) + Math.round(n).toLocaleString();
+  return curOf(lang) + Math.round(noNegZero(n, 0)).toLocaleString(NUM_LOCALE);
 }

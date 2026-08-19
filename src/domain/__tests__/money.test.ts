@@ -67,4 +67,44 @@ describe('fmtNum', () => {
   it('formats with two decimals and no currency symbol', () => {
     expect(fmtNum(1234.5)).toBe('1,234.50');
   });
+
+  // These two guard the *pin*, not the runner. Asserting a literal only proves
+  // the machine running the suite agrees; comparing against both locales proves
+  // the formatter stopped asking the device. Before this was pinned, a German
+  // handset rendered ￥1.234.567,50 and an en-IN one ￥12,34,567.50, whatever
+  // language the user had chosen in the app.
+  it('groups the way zh-CN and en-US do, on any device', () => {
+    const opts = { minimumFractionDigits: 2, maximumFractionDigits: 2 };
+    expect(fmtNum(1234567.5)).toBe((1234567.5).toLocaleString('en-US', opts));
+    expect(fmtNum(1234567.5)).toBe((1234567.5).toLocaleString('zh-CN', opts));
+  });
+
+  it('does not follow a device locale that groups differently', () => {
+    const opts = { minimumFractionDigits: 2, maximumFractionDigits: 2 };
+    expect(fmtNum(1234567.5)).not.toBe((1234567.5).toLocaleString('de-DE', opts));
+    expect(fmtNum(1234567.5)).not.toBe((1234567.5).toLocaleString('en-IN', opts));
+  });
+});
+
+describe('negative zero', () => {
+  // An amount of -0.3 rounds to -0, and JS renders that as "-0" — so the
+  // compact summary read "￥-0". Caught by the TS/Rust parity harness.
+  it('never renders a minus sign on a zero', () => {
+    expect(fmtNum(-0)).toBe('0.00');
+    expect(fmtNum(-0.001)).toBe('0.00');
+    expect(fmtShort(-0.3, 'zh')).toBe('￥0');
+    expect(fmt(-0, 'en')).toBe('$0.00');
+  });
+
+  it('still signs a real negative', () => {
+    expect(fmtNum(-1)).toBe('-1.00');
+    expect(fmtShort(-1.4, 'zh')).toBe('￥-1');
+  });
+});
+
+describe('fmtShort', () => {
+  it('is pinned the same way as fmtNum', () => {
+    expect(fmtShort(1234567, 'en')).toBe('$' + (1234567).toLocaleString('en-US'));
+    expect(fmtShort(1234567, 'en')).not.toBe('$' + (1234567).toLocaleString('de-DE'));
+  });
 });
