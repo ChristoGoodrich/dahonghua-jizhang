@@ -31,7 +31,7 @@
   "exportBackup": "Export backup (JSON)",
   "exportDone": "Exported 🌺",
   "backupCreate": "Create backup",
-  "backupCreating": "Backing up\u2026",
+  "backupCreating": "Backing up…",
   "backupCreated": "Backup created 🌺",
   "backupRestore": "Restore backup",
   "backupRestoreConfirm": "This will overwrite current data. Continue?",

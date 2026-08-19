@@ -54,5 +54,10 @@
   "loanCleared": "已结清 🌺",
   "loanRepay": "记一笔还款",
   "repayAmt": "还款金额",
-  "loanProgress": "还款进度"
+  "loanProgress": "还款进度",
+  "a11yAssetDelete": "删除资产 %s",
+  "a11yAssetType": "资产类型 %s",
+  "a11yLoanExpand": "展开 %s 的还款操作",
+  "a11yLoanDelete": "删除借贷 %s",
+  "a11yLoanType": "借贷类型 %s"
 }

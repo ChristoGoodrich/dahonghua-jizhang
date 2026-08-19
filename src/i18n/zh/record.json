@@ -234,5 +234,7 @@
   "a11ySwipeEdit": "编辑",
   "a11ySwipeDelete": "删除",
   "a11yPeriodPrev": "上一期",
-  "a11yPeriodNext": "下一期"
+  "a11yPeriodNext": "下一期",
+  "a11yReimburseUnmark": "取消 %s 的报销标记",
+  "a11yTemplateLog": "记一笔模板 %s"
 }

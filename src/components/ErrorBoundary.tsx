@@ -48,7 +48,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
         {!!this.state.error?.message && (
           <Text style={styles.detail}>{this.state.error.message}</Text>
         )}
-        <Pressable style={styles.button} onPress={this.handleReset}>
+        <Pressable style={styles.button} onPress={this.handleReset} accessibilityRole="button">
           <Text style={styles.buttonText}>{s.errorRestart}</Text>
         </Pressable>
       </View>

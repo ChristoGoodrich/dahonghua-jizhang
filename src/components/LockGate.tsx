@@ -119,7 +119,7 @@ export const LockGate = observer(function LockGate({ children }: { children: Rea
           <Flower size={64} center="yen" petal={t.hibiscus} stroke={t.hibiscusDeep} />
           <Text style={[styles.title, { color: t.ink }]}>{s.lockTitle}</Text>
           {!!failed && <Text style={[styles.failed, { color: t.hibiscusDeep }]}>{failed}</Text>}
-          <Pressable style={[styles.btn, { backgroundColor: t.hibiscus }]} onPress={() => runAuth(true)}>
+          <Pressable style={[styles.btn, { backgroundColor: t.hibiscus }]} onPress={() => runAuth(true)} accessibilityRole="button">
             <Text style={styles.btnText}>{failed ? s.lockRetry : s.lockUnlock}</Text>
           </Pressable>
         </View>

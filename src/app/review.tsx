@@ -68,7 +68,7 @@ export default observer(function ReviewScreen() {
           <Line k={s.reviewActiveDays} v={String(r.activeDays)} />
           {topCat && <Line k={s.byCat} v={`${topCat.e} ${catName(topCat, lang)} ${fmt(r.topCatAmt, lang)}`} />}
 
-          <Pressable style={[styles.share, { backgroundColor: t.hibiscus }]} onPress={share}>
+          <Pressable style={[styles.share, { backgroundColor: t.hibiscus }]} onPress={share} accessibilityRole="button">
             <Flower size={18} petal="#fff" stamen="#fff" />
             <Text style={styles.shareText}>{s.reviewShare}</Text>
           </Pressable>

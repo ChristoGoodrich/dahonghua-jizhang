@@ -23,6 +23,7 @@ const STRINGS = {
     thanksSub: '我们会认真阅读每一条建议 🌺',
     prevFeedback: '你之前的反馈',
     noComment: '无备注',
+    a11yRateStars: '评 %d 星',
   },
   en: {
     title: 'Feedback',
@@ -34,6 +35,7 @@ const STRINGS = {
     thanksSub: 'We read every suggestion 🌺',
     prevFeedback: 'Your previous feedback',
     noComment: 'No comment',
+    a11yRateStars: 'Rate %d stars',
   },
 };
 
@@ -99,7 +101,15 @@ export default observer(function FeedbackScreen() {
           <Text style={[styles.label, { color: t.inkSoft }]}>{s.ratingLabel}</Text>
           <View style={styles.stars}>
             {[1, 2, 3, 4, 5].map((i) => (
-              <Tap key={i} onPress={() => setRating(i)} scaleTo={0.8} hitSlop={6}>
+              <Tap
+                key={i}
+                onPress={() => setRating(i)}
+                scaleTo={0.8}
+                hitSlop={6}
+                accessibilityRole="radio"
+                accessibilityState={{ selected: i === rating }}
+                accessibilityLabel={s.a11yRateStars.replace('%d', String(i))}
+              >
                 <Text style={[styles.star, { color: i <= rating ? t.stamen : t.line }]}>★</Text>
               </Tap>
             ))}

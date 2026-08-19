@@ -7,11 +7,12 @@ import { fmtShort } from '@/domain/money';
 import { useTheme } from '@/theme/ThemeContext';
 import { Tap } from '@/components/ui/Tap';
 import { RAD, TABULAR } from '@/theme/tokens';
-import type { Lang } from '@/i18n';
+import { I18N, type Lang } from '@/i18n';
 
 /** Horizontal one-tap quick-log chips for saved templates (home, list tab). */
 export const TemplateChips = observer(function TemplateChips({ lang, onLogged }: { lang: Lang; onLogged: () => void }) {
   const t = useTheme();
+  const s = I18N[lang];
   const templates = store$.templates.get();
   const customCats = store$.customCats.get();
   if (!templates.length) return null;
@@ -27,6 +28,8 @@ export const TemplateChips = observer(function TemplateChips({ lang, onLogged }:
             scaleTo={0.93}
             onPress={() => { logTemplate(tp.id); onLogged(); }}
             style={[styles.chip, { backgroundColor: t.card, borderColor: t.line }]}
+            accessibilityRole="button"
+            accessibilityLabel={s.a11yTemplateLog.replace('%s', tp.name || catName(c, lang))}
           >
             <View style={[styles.emo, { backgroundColor: c.c + (t.isDark ? '30' : '1F') }]}>
               <Text style={styles.emoText}>{c.e}</Text>

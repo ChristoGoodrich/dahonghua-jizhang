@@ -54,5 +54,10 @@
   "loanCleared": "Settled 🌺",
   "loanRepay": "Log a repayment",
   "repayAmt": "Repayment amount",
-  "loanProgress": "Repayment"
+  "loanProgress": "Repayment",
+  "a11yAssetDelete": "Delete asset %s",
+  "a11yAssetType": "Asset type %s",
+  "a11yLoanExpand": "Show repayment options for %s",
+  "a11yLoanDelete": "Delete loan %s",
+  "a11yLoanType": "Loan type %s"
 }

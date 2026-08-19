@@ -189,6 +189,10 @@ export interface Strings {
   themeOcean: string; themeForest: string; themeSunset: string;
   // error boundary
   errorTitle: string; errorMessage: string; errorRestart: string;
+  // a11y labels for icon-only controls (assets / loans / reimburse / templates / feedback)
+  a11yAssetDelete: string; a11yAssetType: string;
+  a11yLoanExpand: string; a11yLoanDelete: string; a11yLoanType: string;
+  a11yReimburseUnmark: string; a11yTemplateLog: string;
 }
 
 export const I18N: Record<Lang, Strings> = {

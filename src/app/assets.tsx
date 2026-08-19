@@ -91,7 +91,12 @@ export default observer(function AssetsScreen() {
                 {a.type === 'liab' && !hide ? '-' : ''}
                 {m(a.val)}
               </Text>
-              <Pressable onPress={() => removeAsset(a.id)} hitSlop={10}>
+              <Pressable
+                onPress={() => removeAsset(a.id)}
+                hitSlop={10}
+                accessibilityRole="button"
+                accessibilityLabel={s.a11yAssetDelete.replace('%s', a.name)}
+              >
                 <Text style={[styles.del, { color: t.inkSoft }]}>✕</Text>
               </Pressable>
             </View>
@@ -101,7 +106,14 @@ export default observer(function AssetsScreen() {
             <View style={[styles.form, { borderColor: t.line }]}>
               <View style={[styles.toggle, { backgroundColor: t.line }]}>
                 {(['asset', 'liab'] as const).map((k) => (
-                  <Pressable key={k} onPress={() => setType(k)} style={[styles.toggleBtn, type === k && { backgroundColor: t.card }]}>
+                  <Pressable
+                    key={k}
+                    onPress={() => setType(k)}
+                    style={[styles.toggleBtn, type === k && { backgroundColor: t.card }]}
+                    accessibilityRole="radio"
+                    accessibilityState={{ selected: type === k }}
+                    accessibilityLabel={s.a11yAssetType.replace('%s', k === 'asset' ? s.assetAsset : s.assetLiab)}
+                  >
                     <Text style={[styles.toggleText, { color: type === k ? t.ink : t.inkSoft }]}>
                       {k === 'asset' ? s.assetAsset : s.assetLiab}
                     </Text>
@@ -110,12 +122,12 @@ export default observer(function AssetsScreen() {
               </View>
               <TextInput style={[styles.field, { borderColor: t.line, color: t.ink, backgroundColor: t.card }]} placeholder={s.assetName} placeholderTextColor={t.inkSoft} value={name} onChangeText={setName} />
               <TextInput style={[styles.field, { borderColor: t.line, color: t.ink, backgroundColor: t.card }]} placeholder={s.assetVal} placeholderTextColor={t.inkSoft} keyboardType="numeric" value={val} onChangeText={setVal} />
-              <Pressable style={[styles.save, { backgroundColor: t.hibiscus }]} onPress={save}>
+              <Pressable style={[styles.save, { backgroundColor: t.hibiscus }]} onPress={save} accessibilityRole="button">
                 <Text style={styles.saveText}>{s.assetSave}</Text>
               </Pressable>
             </View>
           ) : (
-            <Pressable style={[styles.add, { borderColor: t.line, backgroundColor: t.paperWarm }]} onPress={() => setAdding(true)}>
+            <Pressable style={[styles.add, { borderColor: t.line, backgroundColor: t.paperWarm }]} onPress={() => setAdding(true)} accessibilityRole="button">
               <Text style={[styles.addText, { color: t.hibiscus }]}>{s.assetAdd}</Text>
             </Pressable>
           )}

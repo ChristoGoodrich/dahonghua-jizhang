@@ -69,7 +69,12 @@ export default observer(function LoansScreen() {
             const done = rem <= 0;
             return (
               <View key={l.id} style={[styles.loanRow, { backgroundColor: t.card }]}>
-                <Pressable onPress={() => { setRepayId(repayId === l.id ? null : l.id); setRepayAmt(''); }}>
+                <Pressable
+                  onPress={() => { setRepayId(repayId === l.id ? null : l.id); setRepayAmt(''); }}
+                  accessibilityRole="button"
+                  accessibilityState={{ expanded: repayId === l.id }}
+                  accessibilityLabel={s.a11yLoanExpand.replace('%s', l.who)}
+                >
                   <View style={styles.loanHead}>
                     <View style={[styles.emo, { backgroundColor: t.paper }]}>
                       <Text style={styles.emoText}>{l.type === 'lend' ? '💸' : '🪙'}</Text>
@@ -101,13 +106,18 @@ export default observer(function LoansScreen() {
                       value={repayAmt}
                       onChangeText={setRepayAmt}
                     />
-                    <Pressable style={[styles.repayBtn, { backgroundColor: t.leaf }]} onPress={() => confirmRepay(l.id)}>
+                    <Pressable style={[styles.repayBtn, { backgroundColor: t.leaf }]} onPress={() => confirmRepay(l.id)} accessibilityRole="button">
                       <Text style={styles.repayBtnText}>{s.loanRepay}</Text>
                     </Pressable>
                   </View>
                 )}
                 {repayId === l.id && done && (
-                  <Pressable style={styles.repayRow} onPress={() => removeLoan(l.id)}>
+                  <Pressable
+                    style={styles.repayRow}
+                    onPress={() => removeLoan(l.id)}
+                    accessibilityRole="button"
+                    accessibilityLabel={s.a11yLoanDelete.replace('%s', l.who)}
+                  >
                     <Text style={[styles.subSmall, { color: t.hibiscus }]}>✕ {s.del}</Text>
                   </Pressable>
                 )}
@@ -119,19 +129,26 @@ export default observer(function LoansScreen() {
             <View style={[styles.form, { borderColor: t.line }]}>
               <View style={[styles.toggle, { backgroundColor: t.line }]}>
                 {(['lend', 'borrow'] as const).map((k) => (
-                  <Pressable key={k} onPress={() => setType(k)} style={[styles.toggleBtn, type === k && { backgroundColor: t.card }]}>
+                  <Pressable
+                    key={k}
+                    onPress={() => setType(k)}
+                    style={[styles.toggleBtn, type === k && { backgroundColor: t.card }]}
+                    accessibilityRole="radio"
+                    accessibilityState={{ selected: type === k }}
+                    accessibilityLabel={s.a11yLoanType.replace('%s', k === 'lend' ? s.loanLend : s.loanBorrow)}
+                  >
                     <Text style={[styles.toggleText, { color: type === k ? t.ink : t.inkSoft }]}>{k === 'lend' ? s.loanLend : s.loanBorrow}</Text>
                   </Pressable>
                 ))}
               </View>
               <TextInput style={[styles.field, { borderColor: t.line, color: t.ink, backgroundColor: t.card }]} placeholder={s.loanWho} placeholderTextColor={t.inkSoft} value={who} onChangeText={setWho} />
               <TextInput style={[styles.field, { borderColor: t.line, color: t.ink, backgroundColor: t.card }]} placeholder={s.loanAmt} placeholderTextColor={t.inkSoft} keyboardType="numeric" value={amt} onChangeText={setAmt} />
-              <Pressable style={[styles.save, { backgroundColor: t.hibiscus }]} onPress={saveLoan}>
+              <Pressable style={[styles.save, { backgroundColor: t.hibiscus }]} onPress={saveLoan} accessibilityRole="button">
                 <Text style={styles.saveText}>{s.loanSave}</Text>
               </Pressable>
             </View>
           ) : (
-            <Pressable style={[styles.add, { borderColor: t.line, backgroundColor: t.paperWarm }]} onPress={() => setAdding(true)}>
+            <Pressable style={[styles.add, { borderColor: t.line, backgroundColor: t.paperWarm }]} onPress={() => setAdding(true)} accessibilityRole="button">
               <Text style={[styles.addText, { color: t.hibiscus }]}>{s.loanAdd}</Text>
             </Pressable>
           )}

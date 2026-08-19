@@ -63,11 +63,16 @@ export default observer(function ReimburseScreen() {
                   </View>
                   <Text style={[styles.amt, { color: t.ink }]}>{fmt(d.amt, lang)}</Text>
                   {isP ? (
-                    <Pressable onPress={() => confirmReimburse(d.id)} style={[styles.confirm, { borderColor: t.leaf }]}>
+                    <Pressable onPress={() => confirmReimburse(d.id)} style={[styles.confirm, { borderColor: t.leaf }]} accessibilityRole="button">
                       <Text style={[styles.confirmText, { color: t.leafDeep }]}>{s.rbConfirm}</Text>
                     </Pressable>
                   ) : (
-                    <Pressable onPress={() => unmarkReimburse(d.id)} hitSlop={10}>
+                    <Pressable
+                      onPress={() => unmarkReimburse(d.id)}
+                      hitSlop={10}
+                      accessibilityRole="button"
+                      accessibilityLabel={s.a11yReimburseUnmark.replace('%s', d.note || fmt(d.amt, lang))}
+                    >
                       <Text style={[styles.del, { color: t.inkSoft }]}>✕</Text>
                     </Pressable>
                   )}

@@ -39,6 +39,8 @@ export function Tap({
   onPressIn,
   onPressOut,
   children,
+  // every Tap is a control; callers that are a tab/radio/link override it
+  accessibilityRole = 'button',
   ...rest
 }: Props) {
   const t = useTheme();
@@ -77,6 +79,7 @@ export function Tap({
   return (
     <AnimatedPressable
       {...rest}
+      accessibilityRole={accessibilityRole}
       onPress={(e) => {
         if (haptic) tapHaptic();
         onPress?.(e);
