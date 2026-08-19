@@ -19,6 +19,19 @@
 // It is written as a jest test purely to get those module mocks; it asserts
 // nothing itself. `npm run parity` diffs its output against the Rust dump.
 
+// No timezone pinning, and none needed.
+//
+// Every Date here is constructed from local components and read back as local
+// components, so the zone cancels out. That was worth establishing rather than
+// assuming: `export TZ=...` never reaches process.env on this shell at all, and
+// assigning `process.env.TZ` inside the file is too late — imports hoist above
+// it and ICU is already initialised. Passing TZ through execFileSync's `env`
+// does work, but only without `shell: true`, which Windows needs for npx.
+//
+// Comparing civil components rather than epoch values sidesteps the whole
+// question, and matches where `civil.rs` draws the line: the core owns which
+// dates, the platform owns what they map to.
+
 import * as fs from 'fs';
 import type { Account, Asset, Entry, Loan, Sub, Template } from '@/domain/types';
 
@@ -34,7 +47,17 @@ const FIELDS = [
 function render(entries: Entry[], idOf: Map<string, string>, acctNames: Map<string, string>): string {
   return entries
     .map((e) => {
+      // A subscription charge is rendered by the civil date it was derived
+      // from rather than by its epoch value: the core decides which dates, the
+      // platform decides what they map to, so comparing the epoch would be
+      // comparing the harness's own conversion.
+      const subPrefix = e.id.startsWith('sub_');
+      const d = new Date(e.ts);
+      const date = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+      const subId = subPrefix ? e.id.slice(4, e.id.lastIndexOf('_')) : '';
+
       const cells = FIELDS.map((f) => {
+        if (f === 'ts' && subPrefix) return date;
         const v = e[f as keyof Entry];
         if (v === undefined || v === null) return '_';
         if (f === 'refundOf') return idOf.get(String(v)) ?? String(v);
@@ -45,7 +68,8 @@ function render(entries: Entry[], idOf: Map<string, string>, acctNames: Map<stri
         .sort()
         .map((k) => `${k}=${e.fieldTs![k]}`)
         .join(';');
-      return [idOf.get(e.id) ?? e.id, ...cells, ft || '_'].join(',');
+      const id = subPrefix ? `sub_${subId}_${date}` : (idOf.get(e.id) ?? e.id);
+      return [id, ...cells, ft || '_'].join(',');
     })
     .join(' | ');
 }
@@ -95,7 +119,10 @@ function renderMoney(store: typeof import('@/store/ledger')): string {
   return (
     `as[${store.store$.assets.peek().map((a: Asset) => a.val).join(',')}] ` +
     `ln[${store.store$.loans.peek().map((l: Loan) => `${l.amt}/${n2(l.repaid)}`).join(',')}] ` +
-    `sb[${store.store$.subs.peek().map((s: Sub) => s.amt).join(',')}] ` +
+    `sb[${store.store$.subs
+      .peek()
+      .map((s: Sub) => `${s.amt}/${s.lastCharged || '_'}/${s.charged ?? '_'}/${s.periods ?? '_'}`)
+      .join(',')}] ` +
     `tp[${store.store$.templates.peek().map((t: Template) => t.amt).join(',')}] ` +
     `bg[${st.budget},${n2(st.dailyBudget)},${n2(st.weeklyBudget)},${cat}] ` +
     `cur[${c.base} ${rates}]`
@@ -136,6 +163,8 @@ function runScenario(script: string): string {
   });
   const baseResults: string[] = [];
   const refunds: string[] = [];
+  const sweeps: string[] = [];
+  let subSeq = 0;
   // assets and loans get real generated ids here; the corpus addresses them by
   // insertion order, exactly as entries, accounts and templates already do
   const assetByName = new Map<string, string>();
@@ -245,6 +274,75 @@ function runScenario(script: string): string {
         const after = store.store$.data.peek();
         if (after.length > before) name(after[after.length - 1].id);
         refunds.push(String(got));
+        break;
+      }
+
+      // --- subscriptions ---
+      case 'sub2': {
+        const [freq, day, amt, month, cat, periods, charged, lastCharged, from, to] = args;
+        store.store$.subs.set([
+          ...store.store$.subs.peek(),
+          {
+            id: `s${subSeq++}`,
+            name: '订阅',
+            emoji: '🎵',
+            amt: Number(amt),
+            freq: (freq === 'yearly' ? 'yearly' : 'monthly') as Sub['freq'],
+            day: Number(day),
+            ...(month ? { month: Number(month) } : {}),
+            cat: cat ?? 'fun',
+            created: 0,
+            ...(lastCharged ? { lastCharged } : {}),
+            ...(from && to ? { kind: 'transfer' as const, from, to } : {}),
+            ...(periods ? { periods: Number(periods) } : {}),
+            ...(charged ? { charged: Number(charged) } : {}),
+          },
+        ]);
+        break;
+      }
+      case 'setlc': {
+        // Rewind a subscription's cursor — how a second device arrives at a
+        // sweep it has already been billed for, and the only way to exercise
+        // the dedup on the derived charge id.
+        const idx = Number(args[0]);
+        store.store$.subs.set(
+          store.store$.subs.peek().map((s: Sub, i: number) =>
+            i === idx
+              ? {
+                  ...s,
+                  lastCharged: args[1] || undefined,
+                  charged: args[2] ? Number(args[2]) : undefined,
+                }
+              : s,
+          ),
+        );
+        break;
+      }
+      case 'run': {
+        const today = new Date(Number(args[0]), Number(args[1]), Number(args[2]));
+        const createdMs = new Date(Number(args[3]), Number(args[4]), Number(args[5])).getTime();
+        // the corpus supplies `created` as a date; give every sub the same one
+        store.store$.subs.set(
+          store.store$.subs.peek().map((s: Sub) => ({ ...s, created: createdMs })),
+        );
+        const before = store.store$.data.peek().length;
+        const fired = store.runSubscriptions(today);
+        const after = store.store$.data.peek();
+        // Subscription charges keep their real ids: the id is *derived* from
+        // (subscription, charge instant) precisely so two devices collapse into
+        // one row, so normalising it away would hide the thing under test.
+        for (let i = before; i < after.length; i++) {
+          if (!after[i].id.startsWith('sub_')) name(after[i].id);
+        }
+        // Only the returned names are compared. `changed` and `cursorMoved`
+        // are internal flags of the TypeScript sweep — both set unconditionally
+        // once anything is due, whether or not a row is actually written — and
+        // reconstructing them from outside compares the reconstruction rather
+        // than the code. What they exist to protect is already compared
+        // directly: every row that was written, and every subscription's
+        // lastCharged.
+        void before;
+        sweeps.push(String(fired.length));
         break;
       }
 
@@ -382,7 +480,7 @@ function runScenario(script: string): string {
     '  ||  ' +
     renderCatalog(store, tplName) +
     '  ||  ' +
-    `${baseResults.join(',')}/${refunds.join(',')}`;
+    `${baseResults.join(',')}/${refunds.join(',')}/${sweeps.join(',')}`;
   nowSpy.mockRestore();
   return out;
 }

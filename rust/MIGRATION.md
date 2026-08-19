@@ -59,7 +59,8 @@ Adding a module to the harness:
 | `store/assets` → `networth` | 34 | **Ported**, in the same corpus |
 | `store/reimburse` | 64 | **Ported**, in the same corpus |
 | `domain/cats` | 47 | **Ported** into `catalog` |
-| rest of `store/*` | ~645 | Next — subscriptions, inbox, backup/import |
+| `domain/subscriptions` + `store/subscriptions` → `subs` | 109 | **Ported**, in the same corpus |
+| rest of `store/*` | ~536 | Next — inbox, backup/import |
 | `sync/*` | 778 | After store — `reqwest` + the Supabase REST API |
 | UI (21 routes, 72 components) | 9,209 | Last |
 
@@ -123,6 +124,31 @@ it is given, and the window start always lies inside the anchor's own window, so
 both spellings derive the same window — across all 12,108 cases, overflowing
 cycle starts included. The source comment now says that, having previously
 warned about a trap that does not exist.
+
+### Timezones, and a mechanism that was doing nothing
+
+The harness carried a `tz` option for the date-dependent modules. It was inert,
+in two separate ways, and both only surfaced when subscriptions needed real
+epoch values:
+
+* `execFileSync` was given the TZ through its `env` option, which does work —
+  but not with `shell: true`, which Windows needs to resolve `npx`. So the
+  child never saw it.
+* Setting `process.env.TZ` inside the harness file does not help either:
+  imports hoist above the assignment and ICU is initialised by then.
+
+The option has been removed rather than repaired, because the comparison never
+depended on it. Every date-dependent module renders **civil components** on
+both sides — dates are constructed from local parts and read back as local
+parts, so the zone cancels. Subscription charges are compared by the date they
+were derived from rather than by their epoch value, which is the same line
+`civil.rs` draws: the core owns which dates, the platform owns what they map to.
+
+Removing it changed nothing, which is the evidence that it was never doing
+anything. (An earlier note here claimed the cycle corpus had been verified
+under `America/New_York`; that run inherited the machine's own zone —
+Australia/Sydney, which also observes daylight saving, so the substance held,
+but the claim as written was wrong.)
 
 ### Where local time stops being pure
 

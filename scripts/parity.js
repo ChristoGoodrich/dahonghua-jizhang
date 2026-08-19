@@ -33,20 +33,12 @@ const MODULES = [
     corpus: 'rust/parity/cycle-corpus.tsv',
     ts: 'scripts/cycle-parity.ts',
     example: 'dump_cycle',
-    // The TypeScript does this maths on local-time Date objects, so the run is
-    // pinned to a known zone rather than the runner's. Belt and braces, not a
-    // fix: the corpus was also run under America/New_York, where `cycleDays`
-    // sees 23- and 25-hour days across a DST transition, and it still agrees
-    // to the case — the `Math.round` in that millisecond division absorbs
-    // them, and the Rust side counts civil days and never sees them at all.
-    tz: 'Asia/Shanghai',
   },
   {
     name: 'period',
     corpus: 'rust/parity/period-corpus.tsv',
     ts: 'scripts/period-parity.ts',
     example: 'dump_period',
-    tz: 'Asia/Shanghai',
   },
   {
     name: 'ledger',
@@ -90,7 +82,12 @@ for (const m of MODULES) {
     process.platform === 'win32' ? `${m.example}.exe` : m.example,
   );
 
-  const env = m.tz ? { TZ: m.tz } : {};
+  // No TZ is injected: every date-dependent comparison renders civil
+  // components on both sides, so the runner's zone cancels out. An earlier
+  // `tz` option here was silently inert — `shell: true`, which Windows needs
+  // for npx, drops the env — and removing it changed nothing, which is the
+  // evidence that the comparison never depended on it.
+  const env = {};
   const rustOut = run(exe, [], corpus, env).split('\n').map((l) => l.replace(/\r$/, ''));
 
   let tsOut;

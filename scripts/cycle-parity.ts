@@ -9,6 +9,19 @@
 // wobble — a difference in mechanism that produces identical answers, which is
 // exactly what a corpus is for.
 
+// No timezone pinning, and none needed.
+//
+// Every Date here is constructed from local components and read back as local
+// components, so the zone cancels out. That was worth establishing rather than
+// assuming: `export TZ=...` never reaches process.env on this shell at all, and
+// assigning `process.env.TZ` inside the file is too late — imports hoist above
+// it and ICU is already initialised. Passing TZ through execFileSync's `env`
+// does work, but only without `shell: true`, which Windows needs for npx.
+//
+// Comparing civil components rather than epoch values sidesteps the whole
+// question, and matches where `civil.rs` draws the line: the core owns which
+// dates, the platform owns what they map to.
+
 import { monthGrid } from '../src/domain/dates';
 import { cycleDays, cycleRange, inCycle, shiftCycle } from '../src/domain/cycle';
 

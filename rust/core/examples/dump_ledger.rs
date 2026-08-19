@@ -7,6 +7,7 @@ use dahonghua_core::catalog::{
     add_custom_cat, add_subcat, add_tag, add_template, archive_ledger, remove_subcat, remove_tag,
     remove_template, template_draft, Category, Subcats, TagKind, Tags,
 };
+use dahonghua_core::civil::Civil;
 use dahonghua_core::currency::{
     add_rate, remove_rate, set_base_currency, set_rate, BaseSwitch, Denominated,
 };
@@ -19,6 +20,7 @@ use dahonghua_core::reimburse::{
     confirm_reimburse, refund_entry, toggle_reimburse, unmark_reimburse,
 };
 use dahonghua_core::store::Store;
+use dahonghua_core::subs::{decode, run_subscriptions};
 use std::io::{self, Read};
 
 fn cell_f64(v: f64) -> String {
@@ -109,7 +111,15 @@ fn render_money(
             .collect::<Vec<_>>()
             .join(","),
         subs.iter()
-            .map(|s| cell_f64(s.amt))
+            .map(|s| {
+                format!(
+                    "{}/{}/{}/{}",
+                    cell_f64(s.amt),
+                    s.last_charged.clone().unwrap_or_else(|| "_".into()),
+                    s.charged.map_or("_".to_string(), |c| c.to_string()),
+                    s.periods.map_or("_".to_string(), |p| p.to_string()),
+                )
+            })
             .collect::<Vec<_>>()
             .join(","),
         templates
@@ -156,10 +166,22 @@ fn render(l: &Ledger) -> String {
                 ft.join(";")
             };
             // column order must match FIELDS in scripts/ledger-parity.harness.ts
+            // A subscription charge is rendered by the civil date it was
+            // derived from rather than by its epoch value: the core decides
+            // which dates, the platform decides what they map to, so comparing
+            // the epoch would be comparing the harness's own conversion.
+            let (ts_cell, id_cell) = if let Some(rest) = e.id.strip_prefix("sub_") {
+                let day = Civil::from_day_number(e.ts.div_euclid(86_400_000));
+                let date = format!("{}-{}-{}", day.y, day.m, day.d);
+                let sub_id = rest.rsplit_once('_').map_or(rest, |(a, _)| a);
+                (date.clone(), format!("sub_{sub_id}_{date}"))
+            } else {
+                (e.ts.to_string(), e.id.clone())
+            };
             format!(
                 "{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}",
-                e.id,
-                e.ts,
+                id_cell,
+                ts_cell,
                 e.io.map_or("_".to_string(), |i| i.as_str().to_string()),
                 e.cat,
                 cell_f64(e.amt),
@@ -189,6 +211,8 @@ fn run(script: &str) -> String {
     let mut undos: Vec<Option<RemoveUndo>> = Vec::new();
     let mut base_results: Vec<&str> = Vec::new();
     let mut refunds: Vec<String> = Vec::new();
+    let mut sweeps: Vec<String> = Vec::new();
+    let mut sub_seq = 0usize;
     let mut acct_seq = 0usize;
     let mut assets: Vec<Asset> = Vec::new();
     let mut loans: Vec<Loan> = Vec::new();
@@ -450,6 +474,91 @@ fn run(script: &str) -> String {
                 refunds.push(cell_f64(got));
             }
 
+            // --- subscriptions ---
+            // sub2:<freq>,<day>,<amt>[,month][,cat][,periods][,charged][,lastCharged][,from,to]
+            "sub2" => {
+                let id = format!("s{sub_seq}");
+                sub_seq += 1;
+                let from = args.get(8).filter(|s| !s.is_empty()).map(|s| s.to_string());
+                let to = args.get(9).filter(|s| !s.is_empty()).map(|s| s.to_string());
+                subs.push(Sub {
+                    id,
+                    name: "订阅".into(),
+                    emoji: "🎵".into(),
+                    amt: args[2].parse().unwrap(),
+                    freq: if args[0] == "yearly" {
+                        SubFreq::Yearly
+                    } else {
+                        SubFreq::Monthly
+                    },
+                    day: args[1].parse().unwrap(),
+                    month: args
+                        .get(3)
+                        .filter(|s| !s.is_empty())
+                        .map(|s| s.parse().unwrap()),
+                    cat: args.get(4).map_or("fun".to_string(), |s| s.to_string()),
+                    // the corpus supplies `created` as a civil date, encoded
+                    created: 0,
+                    last_charged: args.get(7).filter(|s| !s.is_empty()).map(|s| s.to_string()),
+                    is_transfer: (from.is_some() && to.is_some()).then_some(true),
+                    from,
+                    to,
+                    periods: args
+                        .get(5)
+                        .filter(|s| !s.is_empty())
+                        .map(|s| s.parse().unwrap()),
+                    charged: args
+                        .get(6)
+                        .filter(|s| !s.is_empty())
+                        .map(|s| s.parse().unwrap()),
+                });
+            }
+            // Rewind a subscription's cursor, which is how a second device
+            // arrives at a sweep it has already been billed for. Without this
+            // the dedup on the derived charge id is never exercised.
+            "setlc" => {
+                let idx: usize = args[0].parse().unwrap();
+                if let Some(sub) = subs.get_mut(idx) {
+                    sub.last_charged = args.get(1).filter(|s| !s.is_empty()).map(|s| s.to_string());
+                    sub.charged = args
+                        .get(2)
+                        .filter(|s| !s.is_empty())
+                        .map(|s| s.parse().unwrap());
+                }
+            }
+            // run:<y>,<m>,<d>,<createdY>,<createdM>,<createdD>
+            "run" => {
+                let today = Civil::new(
+                    args[0].parse().unwrap(),
+                    args[1].parse().unwrap(),
+                    args[2].parse().unwrap(),
+                );
+                let created = Civil::new(
+                    args[3].parse().unwrap(),
+                    args[4].parse().unwrap(),
+                    args[5].parse().unwrap(),
+                );
+                let r = run_subscriptions(
+                    &mut subs,
+                    &mut st.ledger,
+                    |s| {
+                        s.last_charged
+                            .as_deref()
+                            .filter(|c| !c.is_empty())
+                            .and_then(decode)
+                            .unwrap_or(created)
+                    },
+                    today,
+                    // the harness pins itself to UTC in-process, so local
+                    // midnight is the day number outright
+                    |d| d.day_number() * 86_400_000,
+                    clock,
+                );
+                // only the fired names are compared — see the note in
+                // scripts/ledger-parity.harness.ts
+                sweeps.push(r.fired.len().to_string());
+            }
+
             // --- catalogue ---
             "tag" => add_tag(
                 &mut tags,
@@ -521,7 +630,12 @@ fn run(script: &str) -> String {
             other => panic!("unknown verb {other}"),
         }
     }
-    let results = format!("{}/{}", base_results.join(","), refunds.join(","));
+    let results = format!(
+        "{}/{}/{}",
+        base_results.join(","),
+        refunds.join(","),
+        sweeps.join(",")
+    );
     format!(
         "{}  ||  {}  ||  {}  ||  {}  ||  {}",
         render(&st.ledger),

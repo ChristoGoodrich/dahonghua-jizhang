@@ -96,6 +96,25 @@ impl Civil {
         era as i64 * 146097 + doe - 719468
     }
 
+    /// The inverse of [`Civil::day_number`].
+    pub fn from_day_number(z: i64) -> Civil {
+        // Howard Hinnant's civil_from_days
+        let z = z + 719_468;
+        let era = if z >= 0 { z } else { z - 146_096 } / 146_097;
+        let doe = z - era * 146_097;
+        let yoe = (doe - doe / 1460 + doe / 36_524 - doe / 146_096) / 365;
+        let y = yoe + era * 400;
+        let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+        let mp = (5 * doy + 2) / 153;
+        let d = (doy - (153 * mp + 2) / 5 + 1) as i32;
+        let m = if mp < 10 { mp + 3 } else { mp - 9 } as i32;
+        Civil {
+            y: (y + i64::from(m <= 2)) as i32,
+            m: m - 1, // back to 0-based
+            d,
+        }
+    }
+
     /// Whole days from `self` to `other`, positive when `other` is later.
     pub fn days_until(self, other: Civil) -> i64 {
         other.day_number() - self.day_number()
@@ -223,6 +242,19 @@ mod tests {
                 d: 1
             }
         );
+    }
+
+    #[test]
+    fn day_numbers_round_trip() {
+        for d in [
+            Civil::new(1970, 0, 1),
+            Civil::new(2026, 7, 19),
+            Civil::new(1969, 11, 31),
+            Civil::new(2024, 1, 29),
+            Civil::new(2100, 11, 31),
+        ] {
+            assert_eq!(Civil::from_day_number(d.day_number()), d, "{d:?}");
+        }
     }
 
     #[test]
