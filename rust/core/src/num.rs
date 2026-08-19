@@ -19,6 +19,26 @@ pub fn round2(x: f64) -> f64 {
     js_round(x * 100.0) / 100.0
 }
 
+/// `+(x).toFixed(digits)` from JavaScript.
+///
+/// A third rounding rule, distinct from the two already here. `Math.round`
+/// breaks ties toward +∞ and `Intl` breaks them away from zero, but both of
+/// those are about *ties*; `toFixed` differs in what it rounds. It works on the
+/// exact binary value of the number, where `Intl` works on its shortest
+/// round-trip decimal digits — which is why `(1.005).toFixed(2)` is `"1.00"`
+/// while `Intl` gives `1.01`: the f64 nearest 1.005 is slightly below it.
+///
+/// Used where the TypeScript writes `+(x).toFixed(6)`, which is how the rate
+/// table keeps its precision bounded.
+#[inline]
+pub fn to_fixed(x: f64, digits: u32) -> f64 {
+    if !x.is_finite() {
+        return x;
+    }
+    let scale = 10_f64.powi(digits as i32);
+    js_round(x * scale) / scale
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -37,6 +57,20 @@ mod tests {
         assert_eq!(js_round(2.6), 3.0);
         assert_eq!(js_round(-2.4), -2.0);
         assert_eq!(js_round(-2.6), -3.0);
+    }
+
+    #[test]
+    fn to_fixed_bounds_precision() {
+        assert_eq!(to_fixed(1.0 / 7.2, 6), 0.138889);
+        assert_eq!(to_fixed(7.2, 6), 7.2);
+        assert_eq!(to_fixed(0.0, 6), 0.0);
+        assert_eq!(to_fixed(-1.0 / 3.0, 6), -0.333333);
+    }
+
+    #[test]
+    fn to_fixed_leaves_non_finite_alone() {
+        assert!(to_fixed(f64::NAN, 2).is_nan());
+        assert_eq!(to_fixed(f64::INFINITY, 2), f64::INFINITY);
     }
 
     #[test]

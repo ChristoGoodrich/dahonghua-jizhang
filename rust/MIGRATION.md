@@ -54,7 +54,8 @@ Adding a module to the harness:
 | `domain/export` + `xlsxWrite` | ~230 | Queued — `rust_xlsxwriter` replaces the hand-rolled writer |
 | `entry` + `ledger` + `store` (new) | ~120 of `store/state.ts` | **Ported** — owned state, stateful parity |
 | `store/accounts` | 53 | **Ported**, folded into the same 1,338-scenario corpus |
-| rest of `store/*` | ~1,010 | Next — subs, currency, templates, tags, categories, assets |
+| `store/currency` + `model` | 138 | **Ported** (bar the HTTP refresh), folded into the same corpus |
+| rest of `store/*` | ~870 | Next — subs, reimburse, templates, tags, categories, assets |
 | `sync/*` | 778 | After store — `reqwest` + the Supabase REST API |
 | UI (21 routes, 72 components) | 9,209 | Last |
 
@@ -212,6 +213,29 @@ TypeScript had not:
 
 Neither is exotic. Both are the kind of thing a hand-written test suite misses
 because the author who wrote the code also writes the cases.
+
+### A corpus can pass for the wrong reason
+
+`set_base_currency` is the most dangerous operation in the app — it rewrites
+every entry, balance, asset, loan, subscription, template and budget, or refuses
+— so after it passed clean, three plausible bugs were injected to check the
+corpus was actually looking:
+
+| Injected | Caught |
+| --- | --- |
+| loan `repaid` left unconverted | 20 cases |
+| the new base left in the rate table | 20 cases |
+| **native-currency entries not round-tripping through `origAmt`** | **0 cases** |
+
+The third is the subtlest rule in the module: an entry originally typed in the
+incoming currency must come back as exactly what the user typed, not as its
+converted amount divided back through a rate. It went uncaught because no
+scenario in the corpus had an entry carrying `cur`/`origAmt` at all — the `add`
+verb did not even have columns for them.
+
+With those columns added and scenarios written around them, the same injection
+is caught in 62 of 2,162 cases. A green corpus is evidence about the corpus
+before it is evidence about the code.
 
 Sync talks to Supabase over plain REST + a realtime websocket. `reqwest` and
 `tokio-tungstenite` cover it; there is no official Supabase Rust client, and
