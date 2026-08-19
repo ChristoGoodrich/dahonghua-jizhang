@@ -5,11 +5,17 @@ import { Platform } from 'react-native';
 
 const HHMM = /^([01]?\d|2[0-3]):([0-5]\d)$/;
 
-/** Lazy-load expo-notifications. Returns null on web. */
-async function loadNotifications(): Promise<any | null> {
+/** Lazy-load expo-notifications. Returns null on web.
+ *
+ *  Deliberately `require` rather than `await import`: the dynamic-import interop
+ *  wraps the module namespace differently under Metro and Jest, and this module
+ *  must stay a plain namespace. The cast is what gives us real types here — an
+ *  untyped `any` previously hid a wrong enum name for four call sites. */
+async function loadNotifications(): Promise<typeof import('expo-notifications') | null> {
   if (Platform.OS === 'web') return null;
   try {
-    return require('expo-notifications');
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    return require('expo-notifications') as typeof import('expo-notifications');
   } catch {
     return null;
   }
@@ -32,7 +38,7 @@ export async function scheduleDailyReminder(time: string, title: string, body: s
   const [h, m] = time.trim().split(':').map(Number);
   await Notifications.scheduleNotificationAsync({
     content: { title, body },
-    trigger: { type: Notifications.SchedulableTriggerInputType.DAILY, hour: h, minute: m },
+    trigger: { type: Notifications.SchedulableTriggerInputTypes.DAILY, hour: h, minute: m },
   });
   return true;
 }
@@ -73,7 +79,7 @@ export async function scheduleCustomReminder(hour: number, minute: number, lang:
   const body = lang === 'zh' ? '别忘了记一笔哦 🌺' : "Don't forget to log an entry 🌺";
   await Notifications.scheduleNotificationAsync({
     content: { title, body },
-    trigger: { type: Notifications.SchedulableTriggerInputType.DAILY, hour, minute },
+    trigger: { type: Notifications.SchedulableTriggerInputTypes.DAILY, hour, minute },
   });
   return true;
 }
@@ -89,7 +95,7 @@ export async function scheduleWeeklyReport(lang: 'zh' | 'en' = 'zh'): Promise<bo
   const body = lang === 'zh' ? '你的本周消费汇总已出炉，快来看看吧 🌺' : 'Your weekly spending summary is ready — take a look 🌺';
   await Notifications.scheduleNotificationAsync({
     content: { title, body },
-    trigger: { type: Notifications.SchedulableTriggerInputType.WEEKLY, weekday: 1, hour: 20, minute: 0 },
+    trigger: { type: Notifications.SchedulableTriggerInputTypes.WEEKLY, weekday: 1, hour: 20, minute: 0 },
   });
   return true;
 }
@@ -108,7 +114,7 @@ export async function scheduleMonthlyReport(lang: 'zh' | 'en' = 'zh'): Promise<b
   const next = new Date(now.getFullYear(), now.getMonth() + 1, 1, 9, 0, 0);
   await Notifications.scheduleNotificationAsync({
     content: { title, body },
-    trigger: { type: Notifications.SchedulableTriggerInputType.DATE, date: next },
+    trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: next },
   });
   return true;
 }

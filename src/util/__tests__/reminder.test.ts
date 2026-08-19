@@ -11,7 +11,7 @@ jest.mock('expo-notifications', () => ({
   requestPermissionsAsync: (...a: any[]) => mockRequestPerms(...a),
   scheduleNotificationAsync: (...a: any[]) => mockSchedule(...a),
   cancelAllScheduledNotificationsAsync: (...a: any[]) => mockCancel(...a),
-  SchedulableTriggerInputType: { DAILY: 'DAILY', WEEKLY: 'WEEKLY', DATE: 'DATE' },
+  SchedulableTriggerInputTypes: { DAILY: 'daily', WEEKLY: 'weekly', DATE: 'date' },
 }));
 
 beforeEach(() => {
@@ -78,7 +78,7 @@ describe('scheduleCustomReminder', () => {
     expect(mockCancel).toHaveBeenCalledTimes(1);
     expect(mockSchedule).toHaveBeenCalledTimes(1);
     const arg = mockSchedule.mock.calls[0][0];
-    expect(arg.trigger).toEqual({ type: 'DAILY', hour: 9, minute: 30 });
+    expect(arg.trigger).toEqual({ type: 'daily', hour: 9, minute: 30 });
     expect(arg.content.title).toBe('记账提醒');
     expect(arg.content.body).toContain('🌺');
   });
@@ -120,7 +120,7 @@ describe('scheduleWeeklyReport', () => {
     expect(result).toBe(true);
     expect(mockSchedule).toHaveBeenCalledTimes(1);
     const arg = mockSchedule.mock.calls[0][0];
-    expect(arg.trigger).toEqual({ type: 'WEEKLY', weekday: 1, hour: 20, minute: 0 });
+    expect(arg.trigger).toEqual({ type: 'weekly', weekday: 1, hour: 20, minute: 0 });
     expect(arg.content.title).toBe('每周消费报告');
   });
 
@@ -156,7 +156,7 @@ describe('scheduleMonthlyReport', () => {
     expect(result).toBe(true);
     expect(mockSchedule).toHaveBeenCalledTimes(1);
     const arg = mockSchedule.mock.calls[0][0];
-    expect(arg.trigger.type).toBe('DATE');
+    expect(arg.trigger.type).toBe('date');
     expect(arg.trigger.date).toBeInstanceOf(Date);
     expect(arg.trigger.date.getHours()).toBe(9);
     expect(arg.trigger.date.getMinutes()).toBe(0);
@@ -197,7 +197,7 @@ describe('scheduleDailyReminder', () => {
     expect(mockCancel).toHaveBeenCalled();
     expect(mockSchedule).toHaveBeenCalledTimes(1);
     const arg = mockSchedule.mock.calls[0][0];
-    expect(arg.trigger).toEqual({ type: 'DAILY', hour: 9, minute: 30 });
+    expect(arg.trigger).toEqual({ type: 'daily', hour: 9, minute: 30 });
     expect(arg.content.title).toBe('提醒');
     expect(arg.content.body).toBe('别忘了记账');
   });
