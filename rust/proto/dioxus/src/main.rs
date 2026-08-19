@@ -125,7 +125,7 @@ fn App() -> Element {
                     button {
                         key: "{k}",
                         class: "key",
-                        "aria-label": { if k == "back" { "退格" } else { k } },
+                        "aria-label": if k == "back" { "退格" } else { k },
                         onclick: move |_| {
                             let mut v = amount();
                             if k == "back" { v.pop(); } else { v.push_str(k); }

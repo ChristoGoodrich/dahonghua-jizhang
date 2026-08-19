@@ -4,8 +4,28 @@
     {
       "name": "dahonghua-web",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["node_modules/expo/bin/cli", "start", "--web", "--port", "8081"],
+      "runtimeArgs": [
+        "node_modules/expo/bin/cli",
+        "start",
+        "--web",
+        "--port",
+        "8081"
+      ],
       "port": 8081
+    },
+    {
+      "name": "proto-dioxus",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "--yes",
+        "http-server",
+        "rust/proto/dioxus/target/dx/proto-dioxus/debug/web/public",
+        "-p",
+        "8099",
+        "-c-1",
+        "--silent"
+      ],
+      "port": 8099
     }
   ]
 }
