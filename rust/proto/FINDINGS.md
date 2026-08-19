@@ -113,6 +113,21 @@ Android build tools directly and never starts Gradle. Dioxus needs Gradle
 because its Android app is a real Activity hosting a WebView, with Kotlin
 sources to compile.
 
+**This is an environment wall, not a configuration problem**, and that was
+established rather than assumed. Forcing IPv4 in the daemon's own `jvmargs` and
+switching to the Android Studio JBR both failed identically. A ten-line probe
+isolates it:
+
+```
+plain loopback TCP:            OK      ← which is why adb works at all
+NIO Selector.open (PipeImpl):  FAILED  ← exactly what Gradle needs
+```
+
+Ordinary loopback sockets connect fine; the JVM's NIO `SocketChannel` pair does
+not. `PipeImpl` uses the latter. No Gradle or JDK setting reaches that, so the
+Dioxus APK has to be assembled somewhere else — nothing in this repository
+needs changing for it.
+
 So Dioxus was measured on the **web** target instead — same renderer family as
 the Android WebView, which answers two of the three questions directly and
 leaves the third genuinely open.
