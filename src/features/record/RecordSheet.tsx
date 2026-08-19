@@ -18,6 +18,7 @@ import { useRecordForm, type RecordFormProps } from './hooks/useRecordForm';
 import { RecordHeader } from './RecordHeader';
 import { RecordAmount } from './RecordAmount';
 import { RecordActions } from './RecordActions';
+import { Glass } from '@/components/ui/Glass';
 
 // Re-export Props so external callers can import from this module
 export type Props = RecordFormProps;
@@ -67,8 +68,8 @@ export const RecordSheet = observer(function RecordSheet(props: Props) {
       >
         <Animated.View
           style={[
-            styles.sheet,
-            { backgroundColor: t.paper, paddingBottom: Math.max(26, insets.bottom + 12), zIndex: 10 },
+            styles.sheetShadow,
+            { zIndex: 10 },
             shadow(t, 'lg'),
             {
               opacity: enter.interpolate({ inputRange: [0, 0.4, 1], outputRange: [0, 1, 1], extrapolate: 'clamp' }),
@@ -76,6 +77,14 @@ export const RecordSheet = observer(function RecordSheet(props: Props) {
               transform: [{ translateY: enter.interpolate({ inputRange: [0, 1], outputRange: [56, 0], extrapolate: 'clamp' }) }],
             },
           ]}
+        >
+        {/* 柔光玻璃, sheet level — same material as SheetShell; this screen keeps
+            its own chrome only because it has to sit inside KeyboardAvoidingView. */}
+        <Glass
+          level="sheet"
+          under={t.paper}
+          density={0.6}
+          style={[styles.sheet, { paddingBottom: Math.max(26, insets.bottom + 12) }]}
         >
           <RecordHeader io={io} onPickIO={pickIO} t={t} s={s} />
 
@@ -181,6 +190,7 @@ export const RecordSheet = observer(function RecordSheet(props: Props) {
             onSaveAsTemplate={saveAsTemplate} onSaveNext={saveNext}
             onDelete={del} onSave={save} t={t} s={s}
           />
+        </Glass>
         </Animated.View>
       </KeyboardAvoidingView>
     </View>
@@ -191,11 +201,18 @@ const styles = StyleSheet.create({
   overlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 50, elevation: 50 },
   mask: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 },
   sheetWrap: { flex: 1, justifyContent: 'flex-end' },
-  sheet: {
+  // shadow + column sizing on a plain wrapper: a shadow on the glass surface
+  // itself would be clipped by its own overflow:hidden
+  sheetShadow: {
     borderTopLeftRadius: RAD.xl, borderTopRightRadius: RAD.xl,
-    padding: 22, paddingTop: 12, paddingBottom: 26, maxHeight: '94%',
+    maxHeight: '94%',
     // match the app column on wide screens (DetailSheet/MarkSheet do the same)
     maxWidth: 480, width: '100%', alignSelf: 'center',
+  },
+  sheet: {
+    borderTopLeftRadius: RAD.xl, borderTopRightRadius: RAD.xl,
+    padding: 22, paddingTop: 12, paddingBottom: 26,
+    width: '100%',
   },
   middle: { flexShrink: 1, marginTop: 4, marginBottom: 6 },
   pickLabel: { fontSize: 11, fontWeight: '700', letterSpacing: 0.8, marginBottom: 7 },
