@@ -8,6 +8,7 @@
 //! Migration status is tracked in `rust/MIGRATION.md`.
 
 pub mod accounts;
+pub mod bills;
 pub mod calc;
 pub mod catalog;
 pub mod civil;

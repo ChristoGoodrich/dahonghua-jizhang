@@ -47,6 +47,12 @@ const MODULES = [
     example: 'dump_subs',
   },
   {
+    name: 'bills',
+    corpus: 'rust/parity/bills-corpus.tsv',
+    ts: 'scripts/bills-parity.ts',
+    example: 'dump_bills',
+  },
+  {
     name: 'notif',
     corpus: 'rust/parity/notif-corpus.tsv',
     ts: 'scripts/notif-parity.ts',

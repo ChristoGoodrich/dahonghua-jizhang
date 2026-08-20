@@ -50,7 +50,9 @@ Adding a module to the harness:
 | `domain/dates` | 33 | Split: `monthGrid` ported; `onDay`/`sameDay`/`daysAgo` are platform-boundary (see below) |
 | `domain/period` | 130 | Windows **ported**, 12,108-case parity; entry filtering and labels deferred (below) |
 | `domain/budget`, `stats`, `trends`, `insight`, `recap`, `weekly`, `streak` | ~900 | Queued |
-| `domain/billParse`, `billDedup`, `encoding`, `gbkTable` | ~700 | Queued |
+| `domain/billParse` → `bills` | 272 | **Ported**, 4,400-case parity — bar `decodeBillText` |
+| `domain/encoding` + `gbkTable` | 65 + 24k cells | Deferred by choice — `encoding_rs`, not a hand-copied table (below) |
+| `domain/billDedup` | 138 | Next |
 | `domain/export` + `xlsxWrite` | ~230 | Queued — `rust_xlsxwriter` replaces the hand-rolled writer |
 | `entry` + `ledger` + `store` (new) | ~120 of `store/state.ts` | **Ported** — owned state, stateful parity |
 | `store/accounts` | 53 | **Ported**, folded into the same 1,338-scenario corpus |
@@ -224,6 +226,57 @@ way and is kept for symmetry.
 Re-injecting the bug was caught in 1 of 1,429 cases — a DST transition is two
 days a year. Walking every charge day around ten real Sydney transitions, with
 cursors on, before and a month behind each, took it to 11 of 1,789.
+
+### Two more pieces of `new Date` that had to be reproduced
+
+`billParse` was the first module to build a `Date` from *components* rather than
+from a millisecond count, and the constructor turns out to carry two behaviours
+that reading the TypeScript would not suggest.
+
+**Years 0 through 99 mean 1900 through 1999.** `MakeFullYear` is still in the
+spec, so `new Date(1, 0, 5)` is January 1901. The pattern demands a four-digit
+year, which does not put this out of reach: `0099` is four digits, and
+`10000-1-5` backtracks into `0000`. A corrupt row dated `0001-01-05` imports as
+1901 in the app today. That is not a bug to fix — it is what users' data already
+went through — so the port reproduces it.
+
+**Time components carry into the date rather than clamping.** `MakeTime`
+multiplies, so hour 24 is the next day at midnight and second 99 is a minute and
+39 seconds later. The pattern's ceiling is 99 of each, about four days.
+
+Both were found by the corpus, in 392 and 64 cases respectively, on the first
+run. Neither had a failing Rust test beforehand, because both sides of that test
+would have been written by the same person holding the same wrong belief.
+
+The carry is wall-clock arithmetic, which is where this crate's boundary already
+sits: if the resulting wall time does not exist — a zone that springs forward at
+midnight — the platform resolves it when converting to an instant, as it does
+for every other date the crate hands over.
+
+### A corpus that missed one bug entirely
+
+Twelve plausible bugs were injected into the bill parser. Ten were caught. Two
+were not, and both were corpus defects rather than luck:
+
+| Injected | Before | After |
+| --- | --- | --- |
+| a header row no longer needs an amount column | **0 cases** | 168 |
+| income tested before expense | 2 cases | 162 |
+| a doubled quote re-opens the field | 19 cases | 399 |
+
+The zero is the instructive one. Every file in the corpus had either a real
+header or no header at all, so a *loosened* header test had nothing to latch
+onto — the corpus could not distinguish "requires three columns" from "requires
+two". The fix was near-headers: rows carrying exactly two of the three required
+columns, placed alone, above the real header, and below it. The lowest detection
+count across all twelve is now 41.
+
+Encoding is deliberately not ported. `decodeBillText` falls back to a 72 KB GBK
+table that `scripts/gen-gbk-table.js` generates from the platform's own
+`TextDecoder`, precisely so the fallback matches it. Hand-copying that table into
+Rust would be the one way to get it wrong; the Rust answer is `encoding_rs`, or
+the same generator emitting a Rust table. The TypeScript already splits at this
+seam — bytes in one side, text out — and `parse_bills` starts from text.
 
 ## Phase 2 — state and sync
 
