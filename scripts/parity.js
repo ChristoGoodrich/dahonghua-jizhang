@@ -53,6 +53,12 @@ const MODULES = [
     example: 'dump_bills',
   },
   {
+    name: 'dedup',
+    corpus: 'rust/parity/dedup-corpus.tsv',
+    ts: 'scripts/dedup-parity.ts',
+    example: 'dump_dedup',
+  },
+  {
     name: 'notif',
     corpus: 'rust/parity/notif-corpus.tsv',
     ts: 'scripts/notif-parity.ts',

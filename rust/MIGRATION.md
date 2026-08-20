@@ -52,7 +52,7 @@ Adding a module to the harness:
 | `domain/budget`, `stats`, `trends`, `insight`, `recap`, `weekly`, `streak` | ~900 | Queued |
 | `domain/billParse` → `bills` | 272 | **Ported**, 4,400-case parity — bar `decodeBillText` |
 | `domain/encoding` + `gbkTable` | 65 + 24k cells | Deferred by choice — `encoding_rs`, not a hand-copied table (below) |
-| `domain/billDedup` | 138 | Next |
+| `domain/billDedup` → `dedup` | 138 | **Ported**, 3,838-case parity |
 | `domain/export` + `xlsxWrite` | ~230 | Queued — `rust_xlsxwriter` replaces the hand-rolled writer |
 | `entry` + `ledger` + `store` (new) | ~120 of `store/state.ts` | **Ported** — owned state, stateful parity |
 | `store/accounts` | 53 | **Ported**, folded into the same 1,338-scenario corpus |
@@ -277,6 +277,53 @@ table that `scripts/gen-gbk-table.js` generates from the platform's own
 Rust would be the one way to get it wrong; the Rust answer is `encoding_rs`, or
 the same generator emitting a Rust table. The TypeScript already splits at this
 seam — bytes in one side, text out — and `parse_bills` starts from text.
+
+### A second bug in the app: half a character
+
+`composeNote` capped the note with `slice(0, 80)`. `slice` counts UTF-16 code
+units, so when the 80th unit is the *first* half of a surrogate pair the cut
+keeps it and drops the second. What is left is a lone surrogate — not a
+character. It renders as tofu, and Postgres refuses it outright, so a merchant
+name with an emoji straddling that boundary produced a note that would not sync.
+
+Found the same way as the daylight-saving bug: the port would not agree with the
+TypeScript, in 115 of 2,486 cases, and the TypeScript was the one that was
+wrong. It now backs off a unit rather than splitting the pair, and carries a
+test that fails against the old slice.
+
+### Two things the harness said about itself
+
+Rendering, first. Fourteen further divergences turned out to be the *harness*:
+Rust's `{}` is always fixed-point and JavaScript switches to exponential at
+1e21, so an amount of 1e21 read as a disagreement when the two sides held the
+same number. Deleting the case would have hidden the question; both dump
+examples now carry a `jnum` that formats the way `String(n)` does.
+
+Then a bug of mine that the corpus nearly missed. The bucket key is
+`amt.toFixed(2)`, and the port rounded before taking the sign off. `toFixed`
+does the opposite, which matters twice: `(-0.001).toFixed(2)` is `"-0.00"`, a
+signed zero string that rounding-first throws away, and ties round away from
+zero on the *magnitude*, so `(-0.005).toFixed(2)` is `"-0.01"` where `js_round`
+takes -0.5 up to -0. The corpus had no negative amounts at all, so it said
+nothing; adding them caught the injection 36 times.
+
+### Three injections that were right to catch nothing
+
+Nineteen bugs were injected into the dedup. Sixteen were caught, between 27 and
+893 cases each. The other three change no behaviour, and checking that was the
+point rather than a way of excusing the zero:
+
+* **A keyword hit for a key missing from the category set.** The guard cannot
+  fire: every key in `EXP_KEYWORDS` is a base expense category and every key in
+  `INC_KEYWORDS` is a base income one, and `allCats` always includes the base
+  set. Dead code in the shipping TypeScript.
+* **Transfers absorbing an imported row.** A transfer keys to `xfer|…` and every
+  candidate is an expense or an income, so the bucket is never looked up. The
+  guard is defensive, not load-bearing.
+* **Negative zero in the key.** `js_round` is `(x + 0.5).floor()`, which turns
+  -0 into +0 on the way through, so the special case that had been written for
+  it could never run. Removed rather than left with a comment describing a
+  situation that cannot arise.
 
 ## Phase 2 — state and sync
 

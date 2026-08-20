@@ -14,6 +14,7 @@ pub mod catalog;
 pub mod civil;
 pub mod currency;
 pub mod cycle;
+pub mod dedup;
 pub mod entry;
 pub mod keywords;
 pub mod ledger;

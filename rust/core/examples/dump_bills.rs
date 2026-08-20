@@ -37,6 +37,29 @@ fn jstr(s: &str) -> String {
     out
 }
 
+/// `String(n)` from JavaScript.
+///
+/// Rust's `{}` is always fixed-point and `{:e}` always exponential; JavaScript
+/// switches between them at 1e21 and 1e-7. Only the harness needs this, but it
+/// needs it — otherwise a formatting difference reads as a port divergence.
+fn jnum(x: f64) -> String {
+    if !x.is_finite() {
+        return "null".to_string(); // JSON.stringify(NaN) and (Infinity)
+    }
+    if x == 0.0 {
+        return "0".to_string(); // including negative zero
+    }
+    let e = format!("{x:e}");
+    let (mant, exp) = e.split_once('e').expect("{:e} always emits an exponent");
+    let exp: i32 = exp.parse().expect("exponent is an integer");
+    if exp >= 21 || exp <= -7 {
+        let sign = if exp < 0 { "-" } else { "+" };
+        format!("{mant}e{sign}{}", exp.abs())
+    } else {
+        format!("{x}")
+    }
+}
+
 fn jopt(s: Option<&String>) -> String {
     s.map_or_else(|| "null".to_string(), |v| jstr(v))
 }
@@ -63,7 +86,7 @@ fn jresult(r: &ParseResult) -> String {
                 b.at.mi,
                 b.at.s,
                 jstr(b.io.as_str()),
-                b.amt,
+                jnum(b.amt),
                 jopt(b.src_cat.as_ref()),
                 jopt(b.party.as_ref()),
                 jopt(b.desc.as_ref()),
@@ -164,7 +187,7 @@ fn main() {
                     t.date.y, t.date.m, t.date.d, t.h, t.mi, t.s
                 ),
             },
-            "amt" => parse_amount(Some(&arg)).map_or("null".to_string(), |n| format!("{n}")),
+            "amt" => parse_amount(Some(&arg)).map_or("null".to_string(), jnum),
             "io" => parse_io(Some(&arg)).map_or("null".to_string(), |io| jstr(io.as_str())),
             "bills" => jresult(&parse_bills(&arg)),
             other => panic!("unknown corpus kind {other}"),
