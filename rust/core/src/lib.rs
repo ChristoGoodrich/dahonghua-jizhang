@@ -25,6 +25,7 @@ pub mod period;
 pub mod reimburse;
 pub mod store;
 pub mod subs;
+pub mod subscriptions;
 
 pub use accounts::{Account, AccountKind};
 pub use calc::{apply_key, eval_expr, has_operator};

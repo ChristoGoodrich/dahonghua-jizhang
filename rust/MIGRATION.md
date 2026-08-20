@@ -203,6 +203,28 @@ That injection was caught in 2 of 1,075 cases at first — thin for a character
 this common in the target language. Walking every whitespace variant through
 every merchant pattern took it to 46 of 1,284.
 
+### The port found a bug in the app, not just in the port
+
+`computeDueCharges` advanced its cursor with `cursor.getTime() + 864e5` — twenty
+four hours, not a calendar day. Those differ on a daylight-saving day, and on a
+spring-forward transition the result lands at 01:00 rather than midnight.
+`nextDueDate` then reads the following day as already begun, so a subscription
+due the day *after* the transition loses the comparison against its own due date
+and is pushed a whole month.
+
+A subscription due on the 5th, in Sydney, skipped its October 2026 charge
+outright. Silently — the cursor advances, nothing errors, the entry simply never
+appears.
+
+The TypeScript was fixed first, because there is nothing to port against
+otherwise, and carries a regression test that fails against the old arithmetic.
+Only the spring-forward case was ever broken; the fall-back test passes either
+way and is kept for symmetry.
+
+Re-injecting the bug was caught in 1 of 1,429 cases — a DST transition is two
+days a year. Walking every charge day around ten real Sydney transitions, with
+cursors on, before and a month behind each, took it to 11 of 1,789.
+
 ## Phase 2 — state and sync
 
 **Decided: the Rust core owns the ledger.** The alternative — keeping Rust a

@@ -41,6 +41,12 @@ const MODULES = [
     example: 'dump_period',
   },
   {
+    name: 'subs',
+    corpus: 'rust/parity/subs-corpus.tsv',
+    ts: 'scripts/subs-parity.ts',
+    example: 'dump_subs',
+  },
+  {
     name: 'notif',
     corpus: 'rust/parity/notif-corpus.tsv',
     ts: 'scripts/notif-parity.ts',
@@ -88,11 +94,16 @@ for (const m of MODULES) {
     process.platform === 'win32' ? `${m.example}.exe` : m.example,
   );
 
-  // No TZ is injected: every date-dependent comparison renders civil
-  // components on both sides, so the runner's zone cancels out. An earlier
-  // `tz` option here was silently inert — `shell: true`, which Windows needs
-  // for npx, drops the env — and removing it changed nothing, which is the
-  // evidence that the comparison never depended on it.
+  // No TZ is injected, and an earlier `tz` option here was inert for a blunter
+  // reason than it looked: **Node on this machine ignores the TZ environment
+  // variable entirely** — `TZ=America/New_York node -e …` still reports
+  // Australia/Sydney, with or without a shell in between.
+  //
+  // That is fine, and was checked rather than assumed. Every date-dependent
+  // comparison renders civil y/m/d on both sides, so the runner's zone cancels
+  // out. And the runner's zone is Australia/Sydney, which *does* observe
+  // daylight saving — so these corpora have been running against DST
+  // transitions all along, just not the ones the removed option named.
   const env = {};
   const rustOut = run(exe, [], corpus, env).split('\n').map((l) => l.replace(/\r$/, ''));
 
