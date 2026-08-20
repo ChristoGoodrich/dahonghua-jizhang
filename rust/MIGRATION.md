@@ -65,7 +65,7 @@ Adding a module to the harness:
 | `domain/subscriptions` + `store/subscriptions` → `subs` | 109 | **Ported**, in the same corpus |
 | rest of `store/*` | ~536 | Next — inbox, backup/import |
 | `sync/*` | 778 | After store — `reqwest` + the Supabase REST API |
-| UI (21 routes, 72 components) | 11,049 | Last — **Dioxus decided**, both prototypes measured on device |
+| UI (21 routes, 72 components) | 11,049 | Last — **Flutter decided**; Rust UI frameworks measured and set aside |
 
 ## Phase 1 — the domain crate (in progress)
 
@@ -471,9 +471,15 @@ Sync talks to Supabase over plain REST + a realtime websocket. `reqwest` and
 
 ## Phase 3 — the UI
 
-**Decided: Dioxus.** Both prototypes have now been measured on the same Android
-emulator, and `rust/proto/FINDINGS.md` carries the readings. On the three risks
-that were meant to settle this:
+**Decided: Flutter for the UI, Rust for everything under it.** This is the shape
+Xiaomi shipped: HyperOS 3.1 removed the MIUI SDK from Weather and Gallery and
+rebuilt them on Flutter with the logic underneath in Rust, and HyperOS 4 is
+described as a full-stack Rust + Flutter toolchain. The decision here is to
+match that rather than to be more Rust than Xiaomi is.
+
+It reverses the previous entry, and the reversal is worth stating plainly. Two
+Rust UI frameworks were prototyped and measured on the same Android emulator,
+and the readings in `rust/proto/FINDINGS.md` still stand:
 
 | | Slint | Dioxus |
 | --- | --- | --- |
@@ -481,63 +487,82 @@ that were meant to settle this:
 | 柔光玻璃 `full` tier | **no blur at all** | renders |
 | Accessibility on Android | **0 of 8 nodes labelled** | 20 of 31, with real roles |
 
-Slint fails two, and both are floors rather than polish: this same branch
-labelled 42 files of icon-only controls, and a toolkit where those labels reach
-nothing throws that away; the blur is the app's most visible surface. Dioxus's
-component and signal model also maps close to line-for-line onto the React being
-replaced, which matters when 11,049 lines move by hand.
+Dioxus won that comparison and would have been a workable answer. What it could
+not offer is native rendering: on mobile it draws into a WebView, so the pixels
+come from a web engine whose version, on Chinese devices without Play Store, is
+not something the app controls. Slint renders natively and fails the other two
+requirements outright. Flutter renders on its own engine and clears all three —
+`BackdropFilter` with `ImageFilter.blur` for the material, `Semantics` for
+accessibility, and a `TextField` with the composition support every Chinese
+Flutter app already relies on.
 
-**The cost, stated plainly:** Dioxus on Android renders into a WebView. The UI
-is authored in Rust — `rsx!` and Rust event handlers, no HTML or TypeScript —
-but the pixels come from a web engine. If the point of the rewrite is one Rust
-codebase, that is delivered. If the point was to leave web rendering behind, it
-is not, and Slint is the only candidate here that would — at the price of the
-two requirements above. That trade is a product decision, and it is the one
-thing here still worth re-confirming deliberately rather than by default.
+**The cost, stated plainly:** the UI is Dart, not Rust. "Rust rewrite" now means
+what it means at Xiaomi — the logic, the money, the calendar, the ledger, the
+sync and the material's arithmetic are Rust; the widget tree is not. Anyone
+expecting a single-language codebase should read that sentence twice, because
+it is the whole trade.
 
-A second, narrower cost: `color-mix` needs Chrome 111+, and Android WebView
-updates through Play Store, which many devices in China do not have.
-`glass.ts` already computes the ambient pull itself, so the resolved value gets
-passed in rather than delegated to CSS. `backdrop-filter` has shipped since
-Chrome 76 and needs no such care.
+**Nothing built so far is affected.** The 23 modules and 45,228 parity cases are
+the Rust half of exactly this architecture. The boundary changes from a direct
+call to an FFI call and nothing else — which is why the material's arithmetic
+was moved into `glass.rs` before this decision was taken rather than after.
 
-Alternatives, and why not:
+### What changes
 
-- **Slint** — genuinely native rendering (Skia). Measured, and rejected on the
-  table above rather than on taste.
-- **egui** — immediate-mode. Excellent for tools, wrong for a consumer app with
-  this much bespoke styling and animation.
-- **Tauri v2** — Rust backend, but the UI stays HTML/TypeScript, which is not a
-  Rust rewrite.
+| | Before | Now |
+| --- | --- | --- |
+| UI | `rsx!` in Rust | Dart widgets |
+| Rendering | WebView | Impeller / Skia |
+| Core boundary | direct call | `flutter_rust_bridge` over `dart:ffi` |
+| Android build | `dx build` | `flutter build` + `cargo-ndk` |
+| Web target | one component tree | Flutter web, or dropped |
+
+`rust/proto/` stays as the record of how the Rust-UI question was settled. It is
+not deleted: the measurements are what justify not revisiting it.
 
 ### Building for Android here
 
-The Dioxus APK needs `TEMP` pointed somewhere AF_UNIX sockets can be created;
-`%LOCALAPPDATA%\Temp` silently cannot on this machine, and that is what the JDK
-uses for the internal NIO pipe Gradle depends on. FINDINGS.md has the diagnosis.
+Whatever drives it, the Android build needs `TEMP` pointed somewhere AF_UNIX
+sockets can be created — `%LOCALAPPDATA%\Temp` silently cannot on this machine,
+and that is where the JDK puts the internal NIO pipe Gradle depends on.
+FINDINGS.md carries the diagnosis. Flutter's Gradle build needs it too.
 
 ```bash
-cd rust/proto/dioxus && TEMP='C:\Temp\dahonghua-build' TMP='C:\Temp\dahonghua-build' dx build --platform android --features mobile
+export TEMP='C:\Temp\dahonghua-build' TMP='C:\Temp\dahonghua-build'
 ```
 
 ## Phase 4 — the platform edges
 
-These have no Rust equivalent and must be written by hand against the Android
-SDK through `jni` / `ndk-context`, and stubbed or reimplemented for web:
+The Flutter decision changes this section more than it changes any other. The
+previous plan was to write roughly ten JNI bridges by hand against the Android
+SDK, because a Rust UI framework brings no platform layer with it. Flutter does,
+and most of these stop being work at all:
 
-| Today | Android replacement |
-| --- | --- |
-| `expo-local-authentication` | `BiometricPrompt` via JNI |
-| `expo-notifications` | `NotificationManager` + `AlarmManager` |
-| `modules/notif-capture` | already Kotlin — keep as-is, rebind |
-| `plugins/android-widget` | already Kotlin — keep as-is, rebind |
-| `expo-document-picker` / `expo-image-picker` | `Intent.ACTION_GET_CONTENT` |
-| `expo-print` (PDF) | `PdfDocument`, or `printpdf` in Rust |
-| `expo-sharing` | `Intent.ACTION_SEND` |
-| `expo-file-system` | `std::fs` + scoped-storage paths |
-| `AsyncStorage` | `rusqlite` or a flat file |
-| `expo-haptics` | `Vibrator` |
-| `expo-router` | Dioxus Router |
+| Today | Under Flutter | Note |
+| --- | --- | --- |
+| `expo-local-authentication` | `local_auth` | |
+| `expo-notifications` | `flutter_local_notifications` | schedules and channels both |
+| `modules/notif-capture` | keep the Kotlin, rebind | `MethodChannel` instead of a Turbo Module |
+| `plugins/android-widget` | keep the Kotlin, rebind | `home_widget` for the data hand-off |
+| `expo-document-picker` / `expo-image-picker` | `file_picker` / `image_picker` | |
+| `expo-print` (PDF) | `printing` + `pdf` | or keep it in Rust with `printpdf` |
+| `expo-sharing` | `share_plus` | |
+| `expo-file-system` | `path_provider` + `dart:io` | paths in Dart, contents in Rust |
+| `AsyncStorage` | **`rusqlite`, Rust side** | the core owns the ledger, so it owns persistence |
+| `expo-haptics` | `HapticFeedback`, in the SDK | no plugin needed |
+| `expo-router` | `go_router` | |
+
+Two of these are worth calling out rather than reading past.
+
+**Persistence belongs to Rust, not to a Flutter plugin.** The core already owns
+the ledger — that was Phase 2's decision — so it should own the bytes too.
+`sqflite` would put the store back on the Dart side of the boundary and undo
+that. `path_provider` supplies the directory; `rusqlite` does the rest.
+
+**The two Kotlin modules survive the rewrite untouched.** `notif-capture` is a
+`NotificationListenerService` and the widget is a `RemoteViews` provider; both
+are Android components rather than React Native ones, and only their binding to
+the app changes.
 
 ## Rules while both trees exist
 
