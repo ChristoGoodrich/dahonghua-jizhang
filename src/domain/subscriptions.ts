@@ -45,7 +45,14 @@ export function computeDueCharges(sub: Sub, today: Date): DueResult {
   let lastCharged = sub.lastCharged ?? encode(cursor);
   let guard = 0;
   while (guard++ < 120) {
-    const due = nextDueDate(sub, new Date(cursor.getTime() + 864e5)); // strictly after cursor
+    // The next calendar day, not the next 24 hours. `cursor.getTime() + 864e5`
+    // lands at 01:00 on a spring-forward day, and nextDueDate then reads that
+    // day as already begun: a subscription due the day after the transition
+    // had its candidate compared against 01:00 of its own due date, lost, and
+    // was pushed a whole month. In Sydney 2026 a sub due on the 5th skipped
+    // October entirely.
+    const day = new Date(cursor.getFullYear(), cursor.getMonth(), cursor.getDate() + 1);
+    const due = nextDueDate(sub, day); // strictly after cursor
     due.setHours(0, 0, 0, 0);
     if (due > day0) break;
     charges.push(due.getTime());

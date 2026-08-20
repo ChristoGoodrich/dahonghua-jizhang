@@ -44,3 +44,35 @@ describe('computeDueCharges', () => {
     expect(new Date(charges[0]).getDate()).toBe(15);
   });
 });
+
+describe('daylight saving', () => {
+  // The cursor used to advance by 864e5 milliseconds rather than by a calendar
+  // day. On a spring-forward day that lands at 01:00, and a subscription due
+  // the following day lost the comparison against its own due date and was
+  // pushed a whole month — one charge silently never recorded.
+  //
+  // These dates are Sydney's 2026 transitions, which is the zone this suite
+  // runs in. In a zone without daylight saving the assertions hold trivially,
+  // which is the point: the fix removed the dependency rather than papering
+  // over one zone's version of it.
+  const monthly = (day: number, lastCharged: string) => ({
+    id: 's0', name: 'x', emoji: 'x', amt: 10, freq: 'monthly' as const,
+    day, cat: 'fun', created: 0, lastCharged,
+  });
+
+  it('charges the day after a spring-forward transition', () => {
+    // DST starts Sun 4 Oct 2026; cursor sits on the transition day
+    const { charges } = computeDueCharges(monthly(5, '2026-9-4'), new Date(2026, 9, 20));
+    expect(charges).toHaveLength(1);
+    const d = new Date(charges[0]);
+    expect([d.getFullYear(), d.getMonth(), d.getDate()]).toEqual([2026, 9, 5]);
+  });
+
+  it('charges the day after a fall-back transition', () => {
+    // DST ends Sun 5 Apr 2026
+    const { charges } = computeDueCharges(monthly(6, '2026-3-5'), new Date(2026, 3, 20));
+    expect(charges).toHaveLength(1);
+    const d = new Date(charges[0]);
+    expect([d.getFullYear(), d.getMonth(), d.getDate()]).toEqual([2026, 3, 6]);
+  });
+});
