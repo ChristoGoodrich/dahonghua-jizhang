@@ -10,5 +10,15 @@ repository.workspace = true
 crate-type = ["lib", "cdylib"]   # lib for the Rust UI, cdylib for the JNI/wasm bridges
 
 [dependencies]
+# The first dependency this crate has taken, and chosen small on purpose: the
+# wasm bundle ships over Chinese mobile data, which is why the release profile
+# is already opt-level="z". regex-lite drops the Unicode tables and the SIMD
+# search that make `regex` fast on large haystacks — neither of which matters
+# for one notification's worth of text — for a fraction of the size.
+#
+# The patterns are written with explicit classes ([0-9], not \d) so JavaScript's
+# ASCII-only semantics are matched exactly rather than inherited from whichever
+# crate is underneath.
+regex-lite = "0.1"
 
 [dev-dependencies]

@@ -177,6 +177,32 @@ run under `America/New_York`, where `cycleDays` sees 23- and 25-hour days across
 a DST transition; it agrees there too, because the `Math.round` in that
 millisecond division absorbs them and the Rust side counts civil days instead.
 
+### The one dependency, and what it cost
+
+`notif` is the only module that needed a crate: its whole job is pattern
+matching over Chinese text. `regex-lite` was chosen over `regex` for size — the
+wasm bundle ships over Chinese mobile data, which is why the release profile is
+already `opt-level = "z"` — and it drops the Unicode tables and SIMD search that
+matter for large haystacks, not for one notification.
+
+Dropping those tables is exactly where the two engines part company, **in both
+directions**:
+
+* `\d` in JavaScript without the `u` flag is ASCII `[0-9]`. A Unicode-aware
+  engine also matches full-width ０-９, which appear in real pushes — so
+  inheriting the engine's opinion would parse amounts the app does not.
+* `\s` runs the *other* way. JavaScript's includes U+00A0 and **U+3000, the
+  ideographic space**, which is everywhere in Chinese text; `regex-lite`'s is
+  ASCII-only.
+
+Only the first was predicted. The second was found by the corpus, on a merchant
+name that came back as `35元 返现` from the port and `35元` from the app. `JS_WS`
+now spells out the ECMAScript definition and every pattern uses it.
+
+That injection was caught in 2 of 1,075 cases at first — thin for a character
+this common in the target language. Walking every whitespace variant through
+every merchant pattern took it to 46 of 1,284.
+
 ## Phase 2 — state and sync
 
 **Decided: the Rust core owns the ledger.** The alternative — keeping Rust a

@@ -41,6 +41,12 @@ const MODULES = [
     example: 'dump_period',
   },
   {
+    name: 'notif',
+    corpus: 'rust/parity/notif-corpus.tsv',
+    ts: 'scripts/notif-parity.ts',
+    example: 'dump_notif',
+  },
+  {
     name: 'ledger',
     corpus: 'rust/parity/ledger-corpus.tsv',
     // Stateful: a ledger has no single answer, it has a history. Each corpus
