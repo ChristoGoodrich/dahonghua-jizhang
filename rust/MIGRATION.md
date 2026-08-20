@@ -64,7 +64,7 @@ Adding a module to the harness:
 | `domain/subscriptions` + `store/subscriptions` → `subs` | 109 | **Ported**, in the same corpus |
 | rest of `store/*` | ~536 | Next — inbox, backup/import |
 | `sync/*` | 778 | After store — `reqwest` + the Supabase REST API |
-| UI (21 routes, 72 components) | 9,209 | Last |
+| UI (21 routes, 72 components) | 11,049 | Last — **Dioxus decided**, both prototypes measured on device |
 
 ## Phase 1 — the domain crate (in progress)
 
@@ -421,29 +421,54 @@ Sync talks to Supabase over plain REST + a realtime websocket. `reqwest` and
 
 ## Phase 3 — the UI
 
-**Recommendation: Dioxus.** It is the only mature option that compiles one
-component tree to both a WASM web app and an Android app, and its
-component/signal model maps almost line-for-line onto the React code being
-replaced, which matters when 9,209 lines have to be moved by hand.
+**Decided: Dioxus.** Both prototypes have now been measured on the same Android
+emulator, and `rust/proto/FINDINGS.md` carries the readings. On the three risks
+that were meant to settle this:
+
+| | Slint | Dioxus |
+| --- | --- | --- |
+| Chinese IME, with composition | works | works, and the composing text reaches app state |
+| 柔光玻璃 `full` tier | **no blur at all** | renders |
+| Accessibility on Android | **0 of 8 nodes labelled** | 20 of 31, with real roles |
+
+Slint fails two, and both are floors rather than polish: this same branch
+labelled 42 files of icon-only controls, and a toolkit where those labels reach
+nothing throws that away; the blur is the app's most visible surface. Dioxus's
+component and signal model also maps close to line-for-line onto the React being
+replaced, which matters when 11,049 lines move by hand.
 
 **The cost, stated plainly:** Dioxus on Android renders into a WebView. The UI
 is authored in Rust — `rsx!` and Rust event handlers, no HTML or TypeScript —
-but the pixels come from a web engine, not native widgets. For this app that is
-survivable: the design is already custom-drawn rather than platform-native.
+but the pixels come from a web engine. If the point of the rewrite is one Rust
+codebase, that is delivered. If the point was to leave web rendering behind, it
+is not, and Slint is the only candidate here that would — at the price of the
+two requirements above. That trade is a product decision, and it is the one
+thing here still worth re-confirming deliberately rather than by default.
+
+A second, narrower cost: `color-mix` needs Chrome 111+, and Android WebView
+updates through Play Store, which many devices in China do not have.
+`glass.ts` already computes the ambient pull itself, so the resolved value gets
+passed in rather than delegated to CSS. `backdrop-filter` has shipped since
+Chrome 76 and needs no such care.
 
 Alternatives, and why not:
 
-- **Slint** — genuinely native rendering (Skia), Android and WASM both
-  supported. Rejected for now because its `.slint` DSL is a poor fit for this
-  app's heavily custom visuals (gradients, blur, the animated flower burst), and
-  its Android story is younger than Dioxus's.
+- **Slint** — genuinely native rendering (Skia). Measured, and rejected on the
+  table above rather than on taste.
 - **egui** — immediate-mode. Excellent for tools, wrong for a consumer app with
   this much bespoke styling and animation.
 - **Tauri v2** — Rust backend, but the UI stays HTML/TypeScript, which is not a
   Rust rewrite.
 
-If native-widget rendering is a hard requirement, the choice flips to Slint and
-Phase 3 gets substantially more expensive. Worth settling before Phase 2 ends.
+### Building for Android here
+
+The Dioxus APK needs `TEMP` pointed somewhere AF_UNIX sockets can be created;
+`%LOCALAPPDATA%\Temp` silently cannot on this machine, and that is what the JDK
+uses for the internal NIO pipe Gradle depends on. FINDINGS.md has the diagnosis.
+
+```bash
+cd rust/proto/dioxus && TEMP='C:\Temp\dahonghua-build' TMP='C:\Temp\dahonghua-build' dx build --platform android --features mobile
+```
 
 ## Phase 4 — the platform edges
 
