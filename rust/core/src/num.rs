@@ -39,6 +39,34 @@ pub fn to_fixed(x: f64, digits: u32) -> f64 {
     js_round(x * scale) / scale
 }
 
+/// `String(n)` from JavaScript.
+///
+/// Rust's `{}` is always fixed-point and `{:e}` always exponential; JavaScript
+/// switches between them at 1e21 and 1e-7. That difference is invisible until
+/// a number has to be *spelled* the same on both sides — which is exactly what
+/// `glass.rs` does when it builds an `rgba(...)` string, and what every parity
+/// dump does when it renders an answer.
+pub fn js_num(x: f64) -> String {
+    if x.is_nan() {
+        return "NaN".to_string();
+    }
+    if x.is_infinite() {
+        return if x > 0.0 { "Infinity" } else { "-Infinity" }.to_string();
+    }
+    if x == 0.0 {
+        return "0".to_string(); // including negative zero
+    }
+    let e = format!("{x:e}");
+    let (mant, exp) = e.split_once('e').expect("{:e} always emits an exponent");
+    let exp: i32 = exp.parse().expect("exponent is an integer");
+    if exp >= 21 || exp <= -7 {
+        let sign = if exp < 0 { "-" } else { "+" };
+        format!("{mant}e{sign}{}", exp.abs())
+    } else {
+        format!("{x}")
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -59,6 +59,14 @@ const MODULES = [
     example: 'dump_dedup',
   },
   {
+    name: 'glass',
+    corpus: 'rust/parity/glass-corpus.tsv',
+    // Runs under jest, like the ledger: src/theme/glass.ts imports Platform
+    // and StyleSheet from react-native, which esbuild will not transform.
+    harness: 'scripts/glass-parity.harness.ts',
+    example: 'dump_glass',
+  },
+  {
     name: 'notif',
     corpus: 'rust/parity/notif-corpus.tsv',
     ts: 'scripts/notif-parity.ts',

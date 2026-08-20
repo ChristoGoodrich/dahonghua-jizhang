@@ -1,0 +1,523 @@
+//! 柔光玻璃 — the soft-light glass material's arithmetic.
+//!
+//! Ported from `src/theme/glass.ts`. What moves here is everything that is a
+//! calculation rather than a rendering decision: the sRGB mix, WCAG luminance,
+//! the ambient pull, the readability curve, and the level tables they read.
+//!
+//! Moving it is not tidiness. The material's whole point is that a surface
+//! carries its own colour pulled toward whatever it sits over, and the pull is
+//! damped by luminance distance so dark chrome is not washed out. That is a
+//! computation, and a computation the UI layer should be *handed*, not asked to
+//! perform — the Dioxus prototype expressed it as CSS `color-mix`, which needs
+//! Chrome 111+, and Android's WebView updates through a store many devices in
+//! China do not have. With the mix resolved here the stylesheet receives a
+//! plain `rgba(...)` and the only CSS left is `backdrop-filter`, which has
+//! shipped since Chrome 76.
+//!
+//! The same applies whatever renders the UI. A Flutter or native front end
+//! cannot evaluate `color-mix` either; it can accept four numbers.
+
+use crate::num::{js_num, js_round};
+
+/// How much of the material a device can actually render.
+///
+/// Mirrors the way HyperOS gates the effect on the SoC: every tier below
+/// `Full` is a complete design, not a broken one.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum GlassTier {
+    /// Real backdrop blur behind a translucent wash.
+    Full,
+    /// No blur, but still translucent: content shows through as colour.
+    Wash,
+    /// Opaque, for when the user has asked for less transparency.
+    Solid,
+}
+
+impl GlassTier {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            GlassTier::Full => "full",
+            GlassTier::Wash => "wash",
+            GlassTier::Solid => "solid",
+        }
+    }
+}
+
+/// Where a glass surface sits in the stack. Depth, not decoration: `Chrome`
+/// floats over scrolling content, `Sheet` covers it, `Card` rests in it.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum GlassLevel {
+    Chrome,
+    Sheet,
+    Card,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct GlassSpec {
+    /// Blur intensity, 0–100. Ignored below the `Full` tier.
+    pub intensity: f64,
+    /// Alpha applied to the wash colour.
+    pub wash_alpha: f64,
+    /// Wash alpha when the tier cannot blur — more body is needed to hold
+    /// contrast without the blur flattening what is underneath.
+    pub wash_alpha_flat: f64,
+    pub sheen: f64,
+    /// How far the highlight falls before fading. A band, not a hairline: a
+    /// 1px line reads as a stroke, a band reads as light catching the curve.
+    pub sheen_height: f64,
+    pub edge: &'static str,
+    pub edge_width: f64,
+}
+
+/// `StyleSheet.hairlineWidth` is a platform value; the caller substitutes its
+/// own. Kept as a sentinel so the tables stay declarative.
+pub const HAIRLINE: f64 = -1.0;
+
+const LIGHT: [GlassSpec; 3] = [
+    GlassSpec {
+        sheen_height: 26.0,
+        intensity: 62.0,
+        wash_alpha: 0.54,
+        wash_alpha_flat: 0.86,
+        sheen: 0.5,
+        edge: "rgba(255,255,255,0.65)",
+        edge_width: 1.0,
+    },
+    GlassSpec {
+        sheen_height: 22.0,
+        intensity: 48.0,
+        wash_alpha: 0.82,
+        wash_alpha_flat: 0.95,
+        sheen: 0.38,
+        edge: "rgba(255,255,255,0.55)",
+        edge_width: 1.0,
+    },
+    GlassSpec {
+        sheen_height: 14.0,
+        intensity: 30.0,
+        wash_alpha: 0.9,
+        wash_alpha_flat: 1.0,
+        sheen: 0.22,
+        edge: "rgba(255,255,255,0.42)",
+        edge_width: HAIRLINE,
+    },
+];
+
+const DARK: [GlassSpec; 3] = [
+    GlassSpec {
+        sheen_height: 26.0,
+        intensity: 70.0,
+        wash_alpha: 0.62,
+        wash_alpha_flat: 0.9,
+        sheen: 0.14,
+        edge: "rgba(255,255,255,0.14)",
+        edge_width: 1.0,
+    },
+    GlassSpec {
+        sheen_height: 22.0,
+        intensity: 54.0,
+        wash_alpha: 0.85,
+        wash_alpha_flat: 0.96,
+        sheen: 0.1,
+        edge: "rgba(255,255,255,0.12)",
+        edge_width: 1.0,
+    },
+    GlassSpec {
+        sheen_height: 14.0,
+        intensity: 34.0,
+        wash_alpha: 0.92,
+        wash_alpha_flat: 1.0,
+        sheen: 0.07,
+        edge: "rgba(255,255,255,0.09)",
+        edge_width: HAIRLINE,
+    },
+];
+
+/// The three theme values the material reads. The full palette stays in the UI
+/// layer; glass only ever needs to know the room it is standing in.
+#[derive(Debug, Clone, PartialEq)]
+pub struct GlassTheme {
+    pub is_dark: bool,
+    pub card: String,
+    pub paper: String,
+}
+
+pub fn glass_spec(t: &GlassTheme, level: GlassLevel) -> GlassSpec {
+    let table = if t.is_dark { &DARK } else { &LIGHT };
+    table[level as usize]
+}
+
+/// Which tier to render.
+///
+/// `is_web` is the platform's answer, not this crate's: react-native-web maps
+/// the blur onto `backdrop-filter`, which costs a compositing layer per
+/// surface, and over our own flat backgrounds the wash tier looks nearly
+/// identical.
+pub fn resolve_tier(reduce_transparency: bool, is_web: bool) -> GlassTier {
+    if reduce_transparency {
+        GlassTier::Solid
+    } else if is_web {
+        GlassTier::Wash
+    } else {
+        GlassTier::Full
+    }
+}
+
+/* ------------------------------------------------------------------ colour */
+
+/// `#RGB` / `#RRGGBB` / `#RRGGBBAA` → `[r, g, b]`.
+///
+/// Anything unparseable is black, which is what `parseInt(…, 16)` returning
+/// `NaN` produces on the TypeScript side.
+fn parse_hex(hex: &str) -> [i64; 3] {
+    // `hex.replace('#', '')` — JavaScript's string-pattern replace takes the
+    // **first** occurrence only, where Rust's `str::replace` takes all of them.
+    // `##FFFFFF` therefore keeps a `#` and goes on to fail parsing, which is
+    // the difference between black and white. Found by the corpus.
+    let stripped = hex.replacen('#', "", 1);
+    // `h.replace(/./g, c => c + c)` — every character doubled, not just digits
+    let h: String = if stripped.chars().count() == 3 {
+        stripped.chars().flat_map(|c| [c, c]).collect()
+    } else {
+        stripped
+    };
+    let six: String = h.chars().take(6).collect();
+    match js_parse_int_16(&six) {
+        Some(n) => [(n >> 16) & 255, (n >> 8) & 255, n & 255],
+        None => [0, 0, 0],
+    }
+}
+
+/// `parseInt(s, 16)`.
+///
+/// Not `from_str_radix`: JavaScript reads the longest *prefix* that parses and
+/// ignores the rest, so `FFzzzz` is 255 where Rust would reject the string
+/// outright. It also allows leading whitespace, a sign, and an `0x` prefix.
+/// `None` stands for `NaN`.
+///
+/// Six characters is the most this is ever handed, so the values stay inside
+/// the range where JavaScript's int32 bitwise coercion and an `i64` shift
+/// agree, and no `ToInt32` step is needed.
+fn js_parse_int_16(s: &str) -> Option<i64> {
+    let t = s.trim_start();
+    let (neg, t) = match t.strip_prefix('-') {
+        Some(rest) => (true, rest),
+        None => (false, t.strip_prefix('+').unwrap_or(t)),
+    };
+    let t = t
+        .strip_prefix("0x")
+        .or_else(|| t.strip_prefix("0X"))
+        .unwrap_or(t);
+    let digits: String = t.chars().take_while(|c| c.is_ascii_hexdigit()).collect();
+    if digits.is_empty() {
+        return None;
+    }
+    let n = i64::from_str_radix(&digits, 16).ok()?;
+    Some(if neg { -n } else { n })
+}
+
+/// Mix two colours in sRGB. `amount` is how much of `b` ends up in the result.
+///
+/// [`js_round`] here is faithfulness rather than necessity, and that was
+/// checked rather than assumed: it differs from `f64::round` only on ties below
+/// zero, and this result cannot go below zero. Each channel is bounded to
+/// `[0, 255]` by the `& 255` in [`parse_hex`], `k` is clamped to `[0, 1]`, and a
+/// convex combination of two values in a range stays in that range. Swapping in
+/// `f64::round` changes no answer in the corpus, correctly.
+pub fn mix(a: &str, b: &str, amount: f64) -> [i64; 3] {
+    let [ar, ag, ab] = parse_hex(a);
+    let [br, bg, bb] = parse_hex(b);
+    let k = amount.clamp(0.0, 1.0);
+    [
+        js_round(ar as f64 + (br - ar) as f64 * k) as i64,
+        js_round(ag as f64 + (bg - ag) as f64 * k) as i64,
+        js_round(ab as f64 + (bb - ab) as f64 * k) as i64,
+    ]
+}
+
+/// Relative luminance, WCAG 2.1. Used to decide how far a surface may travel
+/// toward the room before it stops being itself.
+pub fn luminance(hex: &str) -> f64 {
+    let [r, g, b] = parse_hex(hex);
+    let f = |c: i64| {
+        let v = c as f64 / 255.0;
+        if v <= 0.03928 {
+            v / 12.92
+        } else {
+            ((v + 0.055) / 1.055).powf(2.4)
+        }
+    };
+    0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b)
+}
+
+const AMBIENT_PULL: f64 = 0.28;
+/// How much of the pull the luminance distance is allowed to take away.
+const DISTANCE_DAMPING: f64 = 0.75;
+
+/// How far a surface travels toward the colour beneath it.
+///
+/// Scaled by luminance distance, and that scaling is load-bearing rather than
+/// decorative. A light card over light paper can take the full pull and still
+/// look like itself; the dark toast pill cannot — pulled 28% toward near-white
+/// paper its text contrast fell from 14:1 to 4.9:1, technically AA and a real
+/// regression on a component that has to be readable over anything.
+pub fn ambient_pull(surface: &str, under: &str) -> f64 {
+    let distance = (luminance(surface) - luminance(under)).abs();
+    AMBIENT_PULL * (1.0 - DISTANCE_DAMPING * distance)
+}
+
+/// 感知环境颜色 — the wash a glass surface should paint, given what it sits over.
+///
+/// Returns the finished CSS colour. The number formatting is JavaScript's, not
+/// Rust's, so the string is byte-identical to what the TypeScript emits — see
+/// [`js_num`].
+pub fn wash_color(
+    t: &GlassTheme,
+    level: GlassLevel,
+    under: Option<&str>,
+    alpha: Option<f64>,
+    surface: Option<&str>,
+) -> String {
+    let spec = glass_spec(t, level);
+    let base = surface.unwrap_or(&t.card);
+    let room = under.unwrap_or(&t.paper);
+    let [r, g, b] = mix(base, room, ambient_pull(base, room));
+    let a = alpha.unwrap_or(spec.wash_alpha);
+    format!("rgba({r}, {g}, {b}, {})", js_num(a))
+}
+
+/// 根据内容属性自动调整通透度 — how opaque the wash has to be for what is
+/// underneath.
+///
+/// `density` is the caller's read of the content behind the surface, 0 for
+/// empty paper to 1 for dense text. Glass over an empty ledger can be nearly
+/// clear; over a full month of entries it has to carry more body or the labels
+/// on top stop resolving. Readability wins: the ceiling rises with density and
+/// never falls below the level's resting value.
+pub fn readability_alpha(t: &GlassTheme, level: GlassLevel, density: f64, tier: GlassTier) -> f64 {
+    // `solid` is not "a bit less transparent" — it is the tier a user lands on
+    // by asking for less transparency, so it has to actually be opaque.
+    if tier == GlassTier::Solid {
+        return 1.0;
+    }
+    let spec = glass_spec(t, level);
+    let base = if tier == GlassTier::Full {
+        spec.wash_alpha
+    } else {
+        spec.wash_alpha_flat
+    };
+    let d = density.clamp(0.0, 1.0);
+    (base + (1.0 - base) * d * 0.75).min(1.0)
+}
+
+/// 感知交互行为 — the specular bloom that answers a touch.
+///
+/// Warm white in light mode, plain white in dark, so the bloom belongs to the
+/// palette rather than punching a hole in it.
+pub fn touch_light_color(t: &GlassTheme) -> &'static str {
+    if t.is_dark {
+        "rgba(255,255,255,0.16)"
+    } else {
+        "rgba(255,252,247,0.72)"
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn light() -> GlassTheme {
+        GlassTheme {
+            is_dark: false,
+            card: "#FFFFFF".into(),
+            paper: "#FBF7F0".into(),
+        }
+    }
+
+    fn dark() -> GlassTheme {
+        GlassTheme {
+            is_dark: true,
+            card: "#241F1B".into(),
+            paper: "#171310".into(),
+        }
+    }
+
+    #[test]
+    fn hex_parsing_accepts_the_three_lengths_the_palette_uses() {
+        assert_eq!(mix("#FFFFFF", "#FFFFFF", 0.0), [255, 255, 255]);
+        assert_eq!(mix("#FFF", "#FFF", 0.0), [255, 255, 255]);
+        assert_eq!(mix("#FFFFFFAA", "#000000", 0.0), [255, 255, 255]);
+        assert_eq!(mix("#000", "#000", 0.0), [0, 0, 0]);
+    }
+
+    #[test]
+    fn only_the_first_hash_is_stripped() {
+        // JavaScript's replace('#', '') takes the first occurrence only, so
+        // `##FFFFFF` still carries a `#` into parseInt and comes out black
+        assert_eq!(mix("##FFFFFF", "#000000", 0.0), [0, 0, 0]);
+        assert_eq!(mix("#FFFFFF", "#000000", 0.0), [255, 255, 255]);
+        // and a trailing hash survives into the six characters taken
+        assert_eq!(mix("#FF#FFF", "#000000", 0.0), [0, 0, 255]);
+    }
+
+    #[test]
+    fn a_hex_value_is_read_as_a_prefix_the_way_parseint_reads_it() {
+        // parseInt stops at the first non-digit instead of rejecting
+        assert_eq!(mix("#FFzzzz", "#000000", 0.0), [0, 0, 255]);
+        assert_eq!(mix("#12qq", "#000000", 0.0), [0, 0, 18]);
+        // nothing parseable at all is NaN, which the caller reads as black
+        assert_eq!(mix("#zz", "#000000", 0.0), [0, 0, 0]);
+    }
+
+    #[test]
+    fn an_unparseable_colour_is_black_rather_than_an_error() {
+        assert_eq!(mix("nonsense", "#000000", 0.0), [0, 0, 0]);
+        assert_eq!(mix("", "#000000", 0.0), [0, 0, 0]);
+    }
+
+    #[test]
+    fn a_mix_travels_the_requested_fraction() {
+        assert_eq!(mix("#000000", "#FFFFFF", 0.5), [128, 128, 128]);
+        assert_eq!(mix("#000000", "#FFFFFF", 1.0), [255, 255, 255]);
+        assert_eq!(mix("#000000", "#FFFFFF", 0.0), [0, 0, 0]);
+    }
+
+    #[test]
+    fn a_mix_amount_outside_zero_to_one_is_clamped() {
+        assert_eq!(mix("#000000", "#FFFFFF", 5.0), [255, 255, 255]);
+        assert_eq!(mix("#000000", "#FFFFFF", -5.0), [0, 0, 0]);
+    }
+
+    #[test]
+    fn luminance_matches_the_wcag_endpoints() {
+        assert!((luminance("#FFFFFF") - 1.0).abs() < 1e-12);
+        assert!(luminance("#000000").abs() < 1e-12);
+        assert!(luminance("#FBF7F0") > 0.9);
+        assert!(luminance("#2B2622") < 0.05);
+    }
+
+    #[test]
+    fn the_pull_shrinks_as_the_two_colours_move_apart() {
+        // light over light: nearly the full pull
+        let near = ambient_pull("#FFFFFF", "#FBF7F0");
+        // dark over light: heavily damped, which is what keeps toast readable
+        let far = ambient_pull("#2B2622", "#FBF7F0");
+        // white over the warm paper is a short hop: ~0.266 of the 0.28 ceiling
+        assert!((near - 0.2660).abs() < 1e-3, "{near}");
+        // ink over that same paper is damped to about a third of it
+        assert!((far - 0.0883).abs() < 1e-3, "{far}");
+        assert!(near <= AMBIENT_PULL && near > far);
+    }
+
+    #[test]
+    fn the_pull_is_symmetric() {
+        let a = ambient_pull("#2B2622", "#FBF7F0");
+        let b = ambient_pull("#FBF7F0", "#2B2622");
+        assert!((a - b).abs() < 1e-12);
+    }
+
+    #[test]
+    fn a_wash_is_a_finished_css_colour() {
+        let w = wash_color(&light(), GlassLevel::Chrome, None, None, None);
+        assert!(w.starts_with("rgba("), "{w}");
+        assert!(w.ends_with(", 0.54)"), "{w}");
+    }
+
+    #[test]
+    fn the_wash_alpha_is_spelled_the_way_javascript_spells_it() {
+        // 0.8650000000000001 is what the readability curve actually produces;
+        // Rust's own formatting would agree here, but the contract is JS's
+        let w = wash_color(
+            &light(),
+            GlassLevel::Card,
+            None,
+            Some(0.8650000000000001),
+            None,
+        );
+        assert!(w.ends_with(", 0.8650000000000001)"), "{w}");
+        let w = wash_color(&light(), GlassLevel::Card, None, Some(1.0), None);
+        assert!(w.ends_with(", 1)"), "{w}");
+    }
+
+    #[test]
+    fn a_dark_surface_over_light_paper_keeps_its_own_colour() {
+        // the toast pill: passes t.ink as the surface
+        let w = wash_color(
+            &light(),
+            GlassLevel::Card,
+            None,
+            Some(0.91),
+            Some("#2B2622"),
+        );
+        let nums: Vec<i64> = w
+            .trim_start_matches("rgba(")
+            .split(',')
+            .take(3)
+            .map(|s| s.trim().parse().unwrap())
+            .collect();
+        // #2B2622 is [43, 38, 34]; a 0.091 pull toward near-white paper moves
+        // red by 19, not by the 58 an undamped 0.28 would have taken
+        assert_eq!(nums, vec![61, 56, 52], "{w}");
+    }
+
+    #[test]
+    fn density_raises_the_alpha_and_never_lowers_it() {
+        let t = light();
+        let empty = readability_alpha(&t, GlassLevel::Chrome, 0.0, GlassTier::Full);
+        let dense = readability_alpha(&t, GlassLevel::Chrome, 1.0, GlassTier::Full);
+        assert_eq!(empty, glass_spec(&t, GlassLevel::Chrome).wash_alpha);
+        assert!(dense > empty);
+        assert!(dense <= 1.0);
+    }
+
+    #[test]
+    fn a_flat_tier_starts_from_the_heavier_resting_alpha() {
+        let t = light();
+        let full = readability_alpha(&t, GlassLevel::Chrome, 0.0, GlassTier::Full);
+        let wash = readability_alpha(&t, GlassLevel::Chrome, 0.0, GlassTier::Wash);
+        assert!(wash > full);
+    }
+
+    #[test]
+    fn the_solid_tier_is_actually_opaque() {
+        let t = light();
+        assert_eq!(
+            readability_alpha(&t, GlassLevel::Card, 0.0, GlassTier::Solid),
+            1.0
+        );
+        assert_eq!(
+            readability_alpha(&t, GlassLevel::Chrome, 0.0, GlassTier::Solid),
+            1.0
+        );
+    }
+
+    #[test]
+    fn density_outside_zero_to_one_is_clamped() {
+        let t = light();
+        let over = readability_alpha(&t, GlassLevel::Card, 9.0, GlassTier::Full);
+        let under = readability_alpha(&t, GlassLevel::Card, -9.0, GlassTier::Full);
+        assert_eq!(
+            over,
+            readability_alpha(&t, GlassLevel::Card, 1.0, GlassTier::Full)
+        );
+        assert_eq!(
+            under,
+            readability_alpha(&t, GlassLevel::Card, 0.0, GlassTier::Full)
+        );
+    }
+
+    #[test]
+    fn the_tier_answers_the_platform_and_the_user() {
+        assert_eq!(resolve_tier(false, false), GlassTier::Full);
+        assert_eq!(resolve_tier(false, true), GlassTier::Wash);
+        // asking for less transparency outranks the platform
+        assert_eq!(resolve_tier(true, true), GlassTier::Solid);
+        assert_eq!(resolve_tier(true, false), GlassTier::Solid);
+    }
+
+    #[test]
+    fn the_touch_bloom_is_warm_in_light_and_plain_in_dark() {
+        assert!(touch_light_color(&light()).starts_with("rgba(255,252,247"));
+        assert!(touch_light_color(&dark()).starts_with("rgba(255,255,255"));
+    }
+}

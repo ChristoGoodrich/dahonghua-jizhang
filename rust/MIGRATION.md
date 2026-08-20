@@ -53,6 +53,7 @@ Adding a module to the harness:
 | `domain/billParse` → `bills` | 272 | **Ported**, 4,400-case parity — bar `decodeBillText` |
 | `domain/encoding` + `gbkTable` | 65 + 24k cells | Deferred by choice — `encoding_rs`, not a hand-copied table (below) |
 | `domain/billDedup` → `dedup` | 138 | **Ported**, 3,838-case parity |
+| `theme/glass` | 204 | **Ported**, 1,281-case parity — the material's arithmetic, not its rendering |
 | `domain/export` + `xlsxWrite` | ~230 | Queued — `rust_xlsxwriter` replaces the hand-rolled writer |
 | `entry` + `ledger` + `store` (new) | ~120 of `store/state.ts` | **Ported** — owned state, stateful parity |
 | `store/accounts` | 53 | **Ported**, folded into the same 1,338-scenario corpus |
@@ -324,6 +325,55 @@ point rather than a way of excusing the zero:
   -0 into +0 on the way through, so the special case that had been written for
   it could never run. Removed rather than left with a comment describing a
   situation that cannot arise.
+
+### 柔光玻璃, and why the material's arithmetic is core rather than UI
+
+`src/theme/glass.ts` was ported next, out of the queue order, because of a
+question the Dioxus probe raised: that prototype expressed the ambient pull as
+CSS `color-mix`, which needs Chrome 111+, and Android's WebView updates through
+a store many devices in China do not have.
+
+The answer turned out not to be a fallback but a misplacement. The shipping
+TypeScript never used `color-mix` — `mix`, `luminance` and `ambientPull` are
+hand-written there and produce a finished `rgba(...)`. The prototype's CSS was a
+shortcut I wrote, and the real fix is to put that arithmetic where every front
+end can be handed the answer instead of asked to compute it. A Flutter or native
+UI cannot evaluate `color-mix` either; all three can accept four numbers. With
+the mix resolved in Rust the only CSS left is `backdrop-filter`, which has
+shipped since Chrome 76.
+
+`js_num` moved into `num.rs` for this. The wash is a *string* — `rgba(r, g, b,
+a)` — so the alpha has to be spelled the way JavaScript spells it, and Rust's
+`{}` never uses exponential notation while JavaScript switches at 1e-7.
+
+### Two stdlib calls that do not mean the same thing
+
+**`String.replace` with a string pattern replaces the first occurrence;
+`str::replace` replaces all.** `parseHex` opens with `hex.replace('#', '')`, so
+`##FFFFFF` keeps a hash in TypeScript, fails to parse, and comes out black —
+while the Rust port stripped both and came out white. One corpus line, and the
+same shape as the `Math.round` divergence that started this whole harness.
+
+**`parseInt` reads a prefix; `from_str_radix` demands the whole string.**
+`FFzzzz` is 255 in JavaScript and an error in Rust. That one the corpus did
+*not* catch, because it had no such colours — it was found by reading the fix
+for the first bug. The cases were added, and the injection now lands 26 times.
+
+### An injection that is right to catch nothing
+
+Twenty bugs were injected. Nineteen were caught, between 20 and 476 cases. Two
+of those nineteen land on exactly one case each, and that is not thinness:
+`resolveTier` has a four-combination domain and `touchLightColor` a
+two-combination one, both fully enumerated, and the injections can only change
+one case apiece.
+
+The twentieth — swapping `js_round` for `f64::round` inside `mix` — changes
+nothing, and that was checked rather than excused. The two rules differ only on
+ties below zero, and `mix` cannot go below zero: `& 255` bounds each channel to
+`[0, 255]`, the amount is clamped to `[0, 1]`, and a convex combination of two
+values in a range stays in it. A sweep of every ten-thousandth over `[0, 255]`
+finds zero disagreements. `js_round` stays for faithfulness, with the reasoning
+written next to it.
 
 ## Phase 2 — state and sync
 
