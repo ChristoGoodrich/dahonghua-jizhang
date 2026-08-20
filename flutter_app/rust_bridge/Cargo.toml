@@ -1,0 +1,16 @@
+[package]
+name = "dahonghua_bridge"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "staticlib"]
+
+[dependencies]
+flutter_rust_bridge = "=2.12.0"
+# The domain crate. The bridge owns the FFI-shaped types; the core stays pure
+# and keeps answering to the parity harness rather than to Dart.
+dahonghua-core = { path = "../../rust/core" }
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }

@@ -215,35 +215,111 @@ not arrive at all.
 Worth noting against the earlier Slint finding: `退格` renders as text here,
 where Slint's `⌫` glyph came out as tofu.
 
+## Flutter 3.44.1 — measured to the same three standards
+
+Added after the decision rather than before it, which is the wrong order and
+worth admitting. The decision was taken on Xiaomi's precedent; these are the
+readings that confirm it, on the same Pixel 7 / API 34 emulator as the other
+two, driving the same soft keyboard through the same Gboard English path.
+
+**IME — works, including composition, and the composing text reaches the app.**
+
+```
+mInputShown=true
+mCurrentEditorInfo:
+  inputType=0x8001 imeOptions=0x2000006
+  packageName=com.dahonghua.flutter_app
+mServedView=io.flutter.embedding.android.FlutterView{d87eebb …}
+```
+
+`hel` rendered underlined in the field with a `hel | hello | help` candidate
+strip, and the readback line — rendered from Dart state, from a value Rust
+returned — read `读回：「hel」 长度 3` *during* composition rather than after
+commit.
+
+*(The same trap as last time: other windows report `inputType=0x0` in the same
+dump. Only the app's own `mCurrentEditorInfo` counts.)*
+
+**柔光玻璃 — the full tier renders, natively.** `BackdropFilter` with
+`ImageFilter.blur` over a gradient carrying four ledger rows: the content behind
+is visibly blurred through the card, not merely tinted. No browser is involved,
+so no `backdrop-filter` support question and no WebView version to worry about.
+
+**Accessibility — reaches Android.** 36 nodes, 21 labelled:
+
+```
+android.widget.Button    desc='退格⏎⌫'    ← the Semantics label, then the glyph
+android.widget.Button    desc='7⏎7' … desc='0⏎0'
+android.widget.EditText
+android.view.View        desc='备注（在这里用中文输入法打字）'
+android.view.View        desc='金额⏎0'
+```
+
+Flutter routes `Semantics` through `contentDescription` where the Dioxus WebView
+used `text`; TalkBack reads either. Against Slint's eight nodes with zero
+labels, the same gap as before.
+
+**And the fourth question, which is the one this architecture introduces.** The
+line at the bottom of the screen is `tier=full intensity=30.0
+alpha=0.9450000000000001` over `rgba(254, 253, 251, 0.9450000000000001)` — every
+number computed in `dahonghua-core` and carried across FFI. The float is spelled
+the way JavaScript spells it because `js_num` produced the string, which is the
+same contract the parity corpus enforces. Fourteen integration tests run on the
+device against the real cross-compiled `libdahonghua_bridge.so`, covering
+strings, floats, enums in both directions, `Option`, and a struct.
+
+**⌫ renders.** Slint's came out as tofu.
+
+### Two things the scaffold needed before it would build
+
+Neither is a Flutter problem; both are cargokit not having caught up, and both
+are patched in the vendored copy rather than worked around.
+
+* **`Project.exec()` was removed in Gradle 9.** `cargokit/gradle/plugin.gradle`
+  still called it. Replaced with an injected `ExecOperations`, which is the
+  supported replacement and exists from Gradle 6, so the patch works on both.
+* **The cargokit Android module pinned `compileSdkVersion 33`**, which AGP
+  rejects against an app compiling at 36. It now follows the app rather than a
+  hardcoded number.
+
+The `TEMP` redirect from the Dioxus section is needed here too, and confirming
+that was worth the build: Flutter's Gradle hits the same AF_UNIX wall, and the
+same one-variable fix carries it through.
+
 ## Where this leaves the decision
 
-On the three risks this document was written to settle, both measured on the
-same emulator:
+All three measured on the same emulator, by the same method:
 
-| | Slint | Dioxus |
-| --- | --- | --- |
-| Chinese IME, with composition | works | works, and the composing text reaches app state |
-| 柔光玻璃 `full` tier | **no blur at all** | renders |
-| Accessibility on Android | **0 of 8 nodes labelled** | 20 of 31, with real roles |
+| | Slint | Dioxus | Flutter |
+| --- | --- | --- | --- |
+| Chinese IME, with composition | works | works, composing text reaches app state | works, composing text reaches app state |
+| 柔光玻璃 `full` tier | **no blur at all** | renders, in a WebView | renders, natively |
+| Accessibility on Android | **0 of 8 labelled** | 20 of 31 | 21 of 36 |
+| Rendering | Skia, native | web engine | Impeller / Skia, native |
+| UI language | Rust | Rust | **Dart** |
 
-**Dioxus.** Slint fails two of three, and both failures are floors rather than
-polish items: a branch that labelled 42 files of icon-only controls cannot ship
-on a toolkit where those labels reach nothing, and the blur is the app's most
-visible surface. Dioxus's component model also means the UI moves by translation
-rather than by redesign.
+**Flutter**, with the Rust core underneath — the shape Xiaomi shipped for Weather
+and Gallery.
+
+Slint fails two of three, and both failures are floors rather than polish items:
+a branch that labelled 42 files of icon-only controls cannot ship on a toolkit
+where those labels reach nothing, and the blur is the app's most visible surface.
+
+Dioxus clears all three and would have been a workable answer. It loses on the
+row that has no column of its own above: it draws into a WebView, so the engine
+rendering this app is one the app does not ship and cannot pin, on a market where
+many devices have no Play Store to update it.
 
 Two things to be clear-eyed about before treating this as settled.
 
-**Dioxus on mobile renders in a WebView.** The UI is still HTML and CSS,
-authored from Rust. If the goal of the rewrite is one Rust codebase, this
-delivers it. If the goal was to leave web rendering behind, it does not — Slint
-is the only candidate here that actually does, and it is the one that fails the
-other two requirements. That trade is a product decision rather than a technical
-one, and it should be made deliberately.
+**The UI is Dart.** "Rust rewrite" now means what it means at Xiaomi: the logic,
+the money, the calendar, the ledger, the sync and the material's arithmetic are
+Rust; the widget tree is not. Anyone expecting a single-language codebase should
+read that twice, because it is the whole trade.
 
-**One device, one WebView version.** Everything above is Chrome 113 on an x86_64
-emulator. WebView fragmentation is the standing risk for a China-market app, and
-`color-mix` is the first thing that would break on an older one.
+**One device.** Everything above is one x86_64 emulator, API 34. Flutter's own
+engine ships inside the APK, which removes the fragmentation question that the
+WebView answer carried — but it does not make one device into a fleet.
 
 ### Reproducing
 
@@ -251,6 +327,13 @@ emulator. WebView fragmentation is the standing risk for a China-market app, and
 # Slint
 cd rust/proto/slint && cargo apk build --lib
 adb install -r -t target/debug/apk/proto-slint.apk
+```
+
+```bash
+# Flutter — the one that ships. TEMP as below; see the AF_UNIX section.
+cd flutter_app
+TEMP='C:\Temp\dahonghua-build' TMP='C:\Temp\dahonghua-build' flutter build apk --debug --target-platform android-x64
+flutter test integration_test/bridge_test.dart -d emulator-5554
 ```
 
 ```bash
