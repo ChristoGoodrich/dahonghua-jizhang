@@ -132,6 +132,25 @@ describe('composeNote', () => {
     expect(composeNote({ ts: 0, io: 'exp', amt: 1, party: '瑞幸', desc: '美式' })).toBe('瑞幸 · 美式');
     expect(composeNote({ ts: 0, io: 'exp', amt: 1, party: '肯德基', desc: '肯德基' })).toBe('肯德基');
   });
+
+  it('caps the note at 80 characters', () => {
+    expect(composeNote({ ts: 0, io: 'exp', amt: 1, party: '字'.repeat(100) })).toHaveLength(80);
+  });
+
+  it('never leaves half a surrogate pair at the cut', () => {
+    // 79 BMP chars then emoji: a plain slice(0, 80) keeps the high surrogate of
+    // the 80th character and drops its low half. That is not text — it renders
+    // as tofu, and Postgres rejects it, so the note would fail to sync.
+    const note = composeNote({ ts: 0, io: 'exp', amt: 1, party: '字'.repeat(79) + '🍜🍜' });
+    expect(note).toBe('字'.repeat(79));
+    // nothing in the range reserved for surrogates survives the cut
+    expect(note.charCodeAt(note.length - 1)).toBeLessThan(0xd800);
+
+    // an emoji that ends exactly on the boundary is kept whole
+    const even = composeNote({ ts: 0, io: 'exp', amt: 1, party: '字'.repeat(78) + '🍜🍜' });
+    expect(even).toHaveLength(80);
+    expect(even.endsWith('🍜')).toBe(true);
+  });
 });
 
 describe('parseBills (pipeline)', () => {

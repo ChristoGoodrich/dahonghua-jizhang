@@ -67,12 +67,22 @@ export function mapCategory(
   return 'other';
 }
 
-/** Compose a human note from the counterparty + product description. */
+/** Compose a human note from the counterparty + product description, capped at
+ *  80 characters.
+ *
+ *  `slice` counts UTF-16 code units, so a cut at 80 can land between the two
+ *  halves of a surrogate pair and leave half a character behind. A lone
+ *  surrogate is not text: it renders as tofu, and Postgres rejects it outright,
+ *  so a merchant name with an emoji straddling that boundary produced a note
+ *  that would not sync. Back off one unit rather than split the pair. */
 export function composeNote(bill: RawBill): string {
   const parts = [bill.party?.trim(), bill.desc?.trim()].filter((p): p is string => !!p);
   // avoid "X · X" when party and desc are identical
   const uniq = parts.filter((p, i) => parts.indexOf(p) === i);
-  return uniq.join(' · ').slice(0, 80);
+  const joined = uniq.join(' · ');
+  if (joined.length <= 80) return joined;
+  const last = joined.charCodeAt(79);
+  return joined.slice(0, last >= 0xd800 && last <= 0xdbff ? 79 : 80);
 }
 
 // ---------- dedup ----------
