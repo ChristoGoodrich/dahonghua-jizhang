@@ -65,7 +65,7 @@ Adding a module to the harness:
 | `domain/subscriptions` + `store/subscriptions` → `subs` | 109 | **Ported**, in the same corpus |
 | `store/state` — transfers, bill import, budgets | ~90 | **Ported**, in the 3,678-scenario corpus |
 | `store/state` — `buildBackup`, persistence, ids | ~120 | Deferred by choice / platform (below) |
-| `store/inbox` | 212 | Next |
+| `store/inbox` → `inbox` | 212 | **Ported**, 305-case parity — the deciding half |
 | `sync/*` | 778 | After store — `reqwest` + the Supabase REST API |
 | UI (21 routes, 72 components) | 11,049 | Last — **Flutter decided**; Rust UI frameworks measured and set aside |
 
@@ -513,6 +513,56 @@ the platform side permanently.
 
 `newId`, `loadPersisted*` and `startAutosave` are platform: random identity,
 `AsyncStorage`, and a reactive subscription respectively.
+
+### The capture inbox, and a harness that had to be written twice over
+
+`store/inbox.ts` was the last of the store. What moved is the deciding half —
+`alreadySeen` and the classification loop — while reading the native queue,
+acknowledging it and persisting the result stay on the platform side.
+
+That split is load-bearing rather than tidy. `drainInbox` acknowledges the
+native queue **only after** the results are in the store, so a crash mid-drain
+replays instead of losing a payment. Ordering like that is a property of the
+caller, and pulling the I/O into the core would have buried it.
+
+The TypeScript harness reproduces the classification loop rather than calling
+`drainInbox`, and that is a real cost worth naming: the copy can drift from the
+function it mirrors. It was accepted because the alternative is mocking a native
+module, AsyncStorage and an AppState subscription in order to observe six lines
+of branching — and a mock that elaborate is its own kind of drift, with none of
+the visibility.
+
+### A window that may be too wide but not too narrow
+
+Two of fifteen injections changed nothing, and both are worth stating rather
+than excusing.
+
+`alreadySeen` filters the ledger to a time window around the batch. Removing
+that filter entirely is caught by no case — correctly, because `isDuplicate`
+re-checks the time distance itself. The filter is a **narrowing pass, not a
+rule**: too wide costs only a longer `seen` list, while too narrow hides a row
+the duplicate check would have matched. The three injections that *narrowed* it
+were caught 14, 3 and 32 times.
+
+The transfer guard is defensive in the same shape: `isDuplicate` compares
+direction, and a capture is only ever an expense or an income, so an `xfer` key
+could never match one.
+
+### 102 cases was not enough
+
+The first sweep caught thirteen of fifteen, but with counts of 1 and 2 — a
+corpus that finds a bug on one line is one edit away from finding it on none.
+Crossing every entry attribute against eleven separations, and doing the same
+against the confirm queue and against two-capture batches, took it from 102
+cases to 305 and the floor from 1 to 3.
+
+Two corpus bugs of my own on the way, both worth remembering. `~` was used as
+both the record separator and the sentinel for "empty string", so a cell
+containing one split its record into four; an empty field says "empty" without
+needing a sentinel at all. And a fixture wrote 付款…收款方：星巴克 as a
+"confident expense" — it parses as *income*, because 收款 matches the income
+pattern and income is tested first. The parser was right and the fixture was
+wrong.
 
 ## Phase 3 — the UI
 

@@ -67,6 +67,14 @@ const MODULES = [
     example: 'dump_glass',
   },
   {
+    name: 'inbox',
+    corpus: 'rust/parity/inbox-corpus.tsv',
+    // Under jest: inbox.ts imports AsyncStorage, the native capture module and
+    // AppState, none of which are part of what is compared.
+    harness: 'scripts/inbox-parity.harness.ts',
+    example: 'dump_inbox',
+  },
+  {
     name: 'notif',
     corpus: 'rust/parity/notif-corpus.tsv',
     ts: 'scripts/notif-parity.ts',

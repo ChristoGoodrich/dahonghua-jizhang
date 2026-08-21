@@ -17,6 +17,7 @@ pub mod cycle;
 pub mod dedup;
 pub mod entry;
 pub mod glass;
+pub mod inbox;
 pub mod keywords;
 pub mod ledger;
 pub mod model;
