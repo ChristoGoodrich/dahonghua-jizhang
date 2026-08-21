@@ -58,10 +58,14 @@ export function parseDateRange(query: string): { from?: number; to?: number } | 
   }
 
   // YYYY-MM-DD (entire day)
-  const dayMatch = q.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (dayMatch) {
-    const from = new Date(dayMatch[1] + 'T00:00:00').getTime();
-    const to = new Date(dayMatch[1] + '-' + dayMatch[2] + '-' + dayMatch[3] + 'T23:59:59').getTime();
+  //
+  // `from` used to be built from `dayMatch[1]` alone — the *year* capture — so
+  // `new Date('2024T00:00:00')` gave January 1st and searching one day returned
+  // everything from the start of that year up to it. `q` is the whole matched
+  // string, which is what both ends want.
+  if (/^\d{4}-\d{2}-\d{2}$/.test(q)) {
+    const from = new Date(q + 'T00:00:00').getTime();
+    const to = new Date(q + 'T23:59:59').getTime();
     if (!isNaN(from) && !isNaN(to)) return { from, to };
   }
 

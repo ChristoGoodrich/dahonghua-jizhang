@@ -1,4 +1,4 @@
-import { matchesFilter, parseSearchQuery, type FilterState } from '../filter';
+import { matchesFilter, parseDateRange, parseSearchQuery, type FilterState } from '../filter';
 import type { Entry } from '../types';
 
 const entry = (p: Partial<Entry>): Entry =>
@@ -36,6 +36,45 @@ describe('matchesFilter', () => {
     const e = entry({ io: 'exp', cat: 'food' });
     const f: FilterState = { io: 'exp', cat: 'trans' };
     expect(matchesFilter(e, f)).toBe(false);
+  });
+});
+
+describe('parseDateRange', () => {
+  const civil = (ms: number) => {
+    const d = new Date(ms);
+    return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
+  };
+
+  it('reads a single day as that day, not from the start of its year', () => {
+    // `from` was built from the year capture alone, so searching one day
+    // returned everything since January 1st
+    const r = parseDateRange('2024-01-15')!;
+    expect(civil(r.from!)).toBe('2024-0-15 0:0:0');
+    expect(civil(r.to!)).toBe('2024-0-15 23:59:59');
+  });
+
+  it('reads a month to its real last day', () => {
+    expect(civil(parseDateRange('2024-02')!.to!)).toBe('2024-1-29 23:59:59');
+    expect(civil(parseDateRange('2025-02')!.to!)).toBe('2025-1-28 23:59:59');
+  });
+
+  it('reads an explicit range', () => {
+    const r = parseDateRange('2024-01-01~2024-01-31')!;
+    expect(civil(r.from!)).toBe('2024-0-1 0:0:0');
+    expect(civil(r.to!)).toBe('2024-0-31 23:59:59');
+  });
+
+  it('rejects a day outside the ISO grammar but rolls one inside it', () => {
+    // the date-time string grammar bounds DD to 01-31; anything in range then
+    // rolls, which is why Feb 29 of a common year is March 1 rather than null
+    expect(parseDateRange('2024-01-32')).toBeNull();
+    expect(civil(parseDateRange('2025-02-29')!.to!)).toBe('2025-2-1 23:59:59');
+  });
+
+  it('returns null for anything it does not recognise', () => {
+    for (const q of ['', '肯德基', '2024', '24-01', '2024-1', 'next week']) {
+      expect(parseDateRange(q)).toBeNull();
+    }
   });
 });
 
