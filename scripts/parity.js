@@ -75,6 +75,12 @@ const MODULES = [
     example: 'dump_inbox',
   },
   {
+    name: 'filter',
+    corpus: 'rust/parity/filter-corpus.tsv',
+    ts: 'scripts/filter-parity.ts',
+    example: 'dump_filter',
+  },
+  {
     name: 'notif',
     corpus: 'rust/parity/notif-corpus.tsv',
     ts: 'scripts/notif-parity.ts',

@@ -49,6 +49,7 @@ Adding a module to the harness:
 | `domain/cycle` | 37 | **Ported**, 14,185-case parity, zero divergences |
 | `domain/dates` | 33 | Split: `monthGrid` ported; `onDay`/`sameDay`/`daysAgo` are platform-boundary (see below) |
 | `domain/period` | 130 | Windows **ported**, 12,108-case parity; entry filtering and labels deferred (below) |
+| `domain/filter` | 162 | **Ported**, 2,014-case parity |
 | `domain/budget`, `stats`, `trends`, `insight`, `recap`, `weekly`, `streak` | ~900 | Queued |
 | `domain/billParse` → `bills` | 272 | **Ported**, 4,400-case parity — bar `decodeBillText` |
 | `domain/encoding` + `gbkTable` | 65 + 24k cells | Deferred by choice — `encoding_rs`, not a hand-copied table (below) |
@@ -376,6 +377,59 @@ ties below zero, and `mix` cannot go below zero: `& 255` bounds each channel to
 values in a range stays in it. A sweep of every ten-thousandth over `[0, 255]`
 finds zero disagreements. `js_round` stays for faithfulness, with the reasoning
 written next to it.
+
+### Two more bugs in the app, from one 162-line module
+
+`domain/filter` is the smallest module ported so far and it carried two live
+defects, both in the part users type into.
+
+**The Chinese direction keywords never matched.** `parseSearchQuery` tested
+`/\b(支出|花掉|expense|spent)\b/`. `\b` is defined against `\w`, which is
+`[A-Za-z0-9_]` and holds no CJK character at all, so a boundary can never sit
+beside 支. In a Chinese-language ledger, searching 支出 set no direction filter
+and left the word in the text query, where it also matched nothing. The
+boundaries now stay around the ASCII words, where they stop `expense` matching
+inside `inexpensive`, and are dropped around the Chinese ones.
+
+**Searching one day returned everything since that January.** The `YYYY-MM-DD`
+branch captured the parts separately and built the *start* of its range from
+group 1 alone — the year — so `new Date('2024T00:00:00')` gave January 1st.
+The end was correct, which is why it looked plausible. Searching `2024-01-15`
+returned seven months of entries.
+
+### Two `new Date` parsers that disagree with each other
+
+`filter.ts` uses both forms in one function, and they are not the same parser:
+
+| | `new Date(y, m, d)` | `new Date('YYYY-MM-DD…')` |
+| --- | --- | --- |
+| Year 0–99 | 1900 + y | taken literally |
+| Month 13 | rolls into next year | `Invalid Date` |
+| Day 32 | rolls into next month | `Invalid Date` |
+| Feb 29, common year | rolls to Mar 1 | **rolls to Mar 1** |
+
+The last row is the one worth staring at. The date-time string grammar bounds
+MM to 01–12 and DD to 01–31, so 32 is ungrammatical and rejected — but 29 is
+inside the grammar, so it parses and *then* rolls. Strings validate the shape
+and not the calendar.
+
+The port had to reproduce both, in the same file, per branch: the month branch
+builds from components and carries the two-digit-year rule, while the day and
+range branches parse strings and reject out-of-grammar values.
+
+### An off-by-one caught by a test I had written wrong
+
+`weekday_monday_first` is 0 = Monday … 6 = Sunday. `now.getDay() || 7` is
+1 = Monday … 7 = Sunday. The port used the first where the TypeScript meant the
+second, which moves every week boundary by a day.
+
+Worth noting how it surfaced: two unit tests failed, and my first instinct was
+that the calendar helper was wrong — it is used by `month_grid` and `period`,
+both parity-proven, so that would have been a much larger problem. Checking the
+weekday against JavaScript rather than against my own assumption showed the
+helper was right and my *test expectation* was wrong in exactly the same way the
+code was. Both came from the same wrong belief, which is precisely the failure
+mode unit tests cannot catch and the corpus can.
 
 ## Phase 2 — state and sync
 
