@@ -130,6 +130,24 @@ export function parseDateRange(query: string): { from?: number; to?: number } | 
   return null;
 }
 
+/**
+ * Keywords that set the direction filter, and where a word boundary belongs.
+ *
+ * `\b` is defined against `\w`, which is `[A-Za-z0-9_]` and contains no CJK
+ * character at all — so `\b支出\b` can never match, and the Chinese keywords
+ * here were dead from the day they were written, in a Chinese-language app.
+ * Searching 支出 set no filter and left the word in the text query.
+ *
+ * Boundaries are kept around the ASCII words, where they stop `expense`
+ * matching inside `inexpensive`, and dropped around the Chinese ones, where
+ * they only ever prevented a match. The first list that strips anything wins.
+ */
+const IO_WORDS: [IO, RegExp][] = [
+  ['exp', /\b(?:expense|spent)\b|支出|花掉/gi],
+  ['inc', /\b(?:income|earned)\b|收入|进账/gi],
+  ['xfer', /\b(?:transfer)\b|转账/gi],
+];
+
 /** Build a filter state from a search query string.
  *  Extracts date ranges, IO type keywords, etc. from the query. */
 export function parseSearchQuery(query: string): { text: string; filter: FilterState } {
@@ -145,16 +163,15 @@ export function parseSearchQuery(query: string): { text: string; filter: FilterS
     text = '';
   }
 
-  // Extract IO type keywords
-  if (/\b(支出|花掉|expense|spent)\b/i.test(text)) {
-    filter.io = 'exp';
-    text = text.replace(/\b(支出|花掉|expense|spent)\b/gi, '').trim();
-  } else if (/\b(收入|进账|income|earned)\b/i.test(text)) {
-    filter.io = 'inc';
-    text = text.replace(/\b(收入|进账|income|earned)\b/gi, '').trim();
-  } else if (/\b(转账|transfer)\b/i.test(text)) {
-    filter.io = 'xfer';
-    text = text.replace(/\b(转账|transfer)\b/gi, '').trim();
+  // Extract IO type keywords. Tested by stripping rather than by `.test()`,
+  // which on a /g/ regex carries lastIndex between calls.
+  for (const [io, re] of IO_WORDS) {
+    const stripped = text.replace(re, '').trim();
+    if (stripped !== text) {
+      filter.io = io;
+      text = stripped;
+      break;
+    }
   }
 
   return { text, filter };
