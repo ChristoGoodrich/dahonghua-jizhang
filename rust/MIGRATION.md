@@ -50,8 +50,7 @@ Adding a module to the harness:
 | `domain/dates` | 33 | Split: `monthGrid` ported; `onDay`/`sameDay`/`daysAgo` are platform-boundary (see below) |
 | `domain/period` | 130 | Windows **ported**, 12,108-case parity; entry filtering and labels deferred (below) |
 | `domain/filter` | 162 | **Ported**, 2,014-case parity |
-| `domain/stats` — aggregations | ~100 of 231 | **Ported**, 615-case parity |
-| `domain/stats` — `statTotals`, `sixMonthTrend`, `comparison` | ~130 | Next — cycle plus a clock, and 864e5 day counting |
+| `domain/stats` | 231 | **Ported**, 1,318-case parity |
 | `domain/budget`, `trends`, `insight`, `recap`, `weekly`, `streak` | ~670 | Queued |
 | `domain/billParse` → `bills` | 272 | **Ported**, 4,400-case parity — bar `decodeBillText` |
 | `domain/encoding` + `gbkTable` | 65 + 24k cells | Deferred by choice — `encoding_rs`, not a hand-copied table (below) |
@@ -468,6 +467,49 @@ calling `timeBucketOf` on its own, which the corpus already did.
 
 A corpus can be wrong by asking a question the shipping code has no way of
 being asked. Those cases moved rather than being deleted.
+
+### The third daylight-saving bug, found by looking for it
+
+The three cycle-shaped functions were held back from the previous increment
+because they counted elapsed days as `ceil((min(now, end) - start) / 864e5)`,
+and 864e5 is twenty-four hours rather than a calendar day. That is the shape of
+the subscription bug, so the port started by measuring rather than by writing
+Rust. Sydney's clocks go forward on 2026-10-04 and back on 2026-04-05:
+
+```
+elapsed on Oct 5 00:30   read 4, should be 5    under by one
+elapsed on Apr 6 23:30   read 7, should be 6    over by one
+```
+
+`elapsed` divides the daily average, so one out early in a cycle changes it by
+a third or a half.
+
+The bucketing in `comparison` was worse, and not an edge case. `floor((ts -
+rangeStart) / 864e5)` accumulates the lost hour, so after a spring-forward
+*every* entry in the first hour of a day lands in the previous day's column —
+for the rest of the cycle, not just at the transition. October 5th at 00:30 fell
+in bucket 3 and October 6th at 00:30 in bucket 4.
+
+`daysAgo` in `dates.ts` already had the correct shape — normalise both ends to
+local midnight, then round, so a 23- or 25-hour day does not shift the count.
+The fix exposes it as `daysBetween` and uses it. `cycleDays` had been safe all
+along for the same reason: it rounds.
+
+Three of the four TypeScript tests added with the fix fail against the old
+arithmetic. The fourth is a no-transition control and passes either way.
+
+### An injection caught by a crash rather than a diff
+
+Thirty-three injections now. The one worth recording is `elapsed`'s floor of
+one: removing it does not produce a wrong answer, it **aborts the process**.
+`today` can be before the cycle start, which makes the day difference negative,
+and `comparison` sizes an array with it — a negative `i64` cast to `usize` is a
+capacity overflow.
+
+The sweep reported that as "did not compile" for two rounds, which was wrong
+twice over: it was a runtime panic, and it was a detection rather than a gap.
+The script now retries once and prints the real error, because an infrastructure
+failure that looks like a finding is worse than either.
 
 ## Phase 2 — state and sync
 

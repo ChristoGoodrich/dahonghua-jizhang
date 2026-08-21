@@ -11,6 +11,8 @@
 //! each entry, which an epoch stamp does not yield without a timezone. The
 //! caller projects; [`LocalRow`] is what it projects to.
 
+use crate::civil::Civil;
+use crate::cycle::cycle_range;
 use crate::entry::{Entry, Io};
 
 #[derive(Debug, Clone, PartialEq)]
@@ -241,6 +243,166 @@ pub fn by_time_of_day(rows: &[LocalRow], io: Io) -> Vec<TimeBucket> {
     buckets
 }
 
+/* --------------------------------------------------- cycle-shaped totals -- */
+
+/// One entry, projected onto the calendar day the platform resolved it to.
+///
+/// These three functions compare entries against *cycle boundaries*, which are
+/// calendar dates. Comparing epoch stamps against them was how the day counting
+/// went wrong in the first place — see [`elapsed_days`].
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct DatedRow {
+    pub io: Option<Io>,
+    pub amt: f64,
+    pub day: Civil,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct StatTotals {
+    pub today_exp: f64,
+    /// Spend per elapsed day of the cycle.
+    pub avg: f64,
+    /// The largest single expense.
+    pub top: f64,
+    pub count: usize,
+}
+
+/// How many days of a cycle have elapsed, counted in calendar days.
+///
+/// The TypeScript measured this as `ceil((min(now, end) - start) / 864e5)` until
+/// the port went looking. 864e5 is twenty-four hours, which is not a calendar
+/// day whenever the clocks move: in Sydney it read 4 on the 5th of October and
+/// 7 on the 6th of April. `elapsed` divides the daily average, so being one out
+/// early in a cycle changes it by a third or a half.
+///
+/// Capped at the cycle's own length, because `today` can be past the end — the
+/// TypeScript spelled that as `Math.min(now, end)` before subtracting.
+///
+/// The floor of one is load-bearing rather than defensive. `today` can be
+/// *before* the cycle start, which makes the difference negative, and
+/// [`comparison`] sizes an array with it — removing the floor does not produce
+/// a wrong answer, it aborts the process on a capacity overflow.
+pub fn elapsed_days(start: Civil, end: Civil, today: Civil) -> i64 {
+    let cycle_len = start.days_until(end);
+    (start.days_until(today) + 1).clamp(1, cycle_len.max(1))
+}
+
+/// Today's spend, the cycle's daily average, its largest expense and its size.
+///
+/// `rows` is the cycle's entries — the caller has already narrowed them, which
+/// is what the TypeScript's `cycleEntries` argument means.
+pub fn stat_totals(rows: &[DatedRow], anchor: Civil, cycle_start: i32, today: Civil) -> StatTotals {
+    let exp: Vec<&DatedRow> = rows.iter().filter(|d| d.io == Some(Io::Exp)).collect();
+    let total: f64 = exp.iter().map(|d| d.amt).sum();
+    let today_exp: f64 = exp.iter().filter(|d| d.day == today).map(|d| d.amt).sum();
+    let r = cycle_range(anchor, cycle_start);
+    let elapsed = elapsed_days(r.start, r.end, today);
+    StatTotals {
+        today_exp,
+        avg: total / elapsed as f64,
+        top: max_amt(&exp),
+        count: rows.len(),
+    }
+}
+
+/// `exp.length ? Math.max(...exp.map(d => d.amt)) : 0`.
+///
+/// Two details the obvious `fold(NEG_INFINITY, f64::max)` gets wrong. An empty
+/// list answers zero rather than negative infinity, which is what the length
+/// guard in the TypeScript is for. And `Math.max` propagates `NaN` where
+/// `f64::max` ignores it, so a single unparseable amount poisons the answer in
+/// JavaScript and would not here.
+fn max_amt(exp: &[&DatedRow]) -> f64 {
+    if exp.is_empty() {
+        return 0.0;
+    }
+    exp.iter().map(|d| d.amt).fold(f64::NEG_INFINITY, |a, b| {
+        if a.is_nan() || b.is_nan() {
+            f64::NAN
+        } else {
+            a.max(b)
+        }
+    })
+}
+
+/// Expense totals for the six cycles ending at `anchor`'s, oldest first.
+///
+/// The TypeScript takes an optional month index to avoid scanning every entry.
+/// That is a lookup table the store owns, and narrowing the input is the
+/// caller's job either way — the answer is the same, so it does not cross.
+pub fn six_month_trend(rows: &[DatedRow], anchor: Civil, cycle_start: i32) -> Vec<(Civil, f64)> {
+    let base = cycle_range(anchor, cycle_start).start;
+    (0..6)
+        .rev()
+        .map(|i| {
+            // `d.setMonth(d.getMonth() - i)` on the cycle start, then re-ranged
+            let shifted = Civil::new(base.y, base.m - i, base.d);
+            let r = cycle_range(shifted, cycle_start);
+            let total = rows
+                .iter()
+                .filter(|x| x.io == Some(Io::Exp) && x.day >= r.start && x.day < r.end)
+                .map(|x| x.amt)
+                .sum();
+            (r.start, total)
+        })
+        .collect()
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Comparison {
+    pub this_cum: Vec<f64>,
+    pub last_cum: Vec<f64>,
+    pub this_total: f64,
+    pub last_total: f64,
+    pub elapsed_days: i64,
+}
+
+/// Cumulative daily spend this cycle against the same elapsed days of the last.
+///
+/// The day an entry lands in is a calendar-day difference. Dividing raw epoch
+/// stamps put every entry in the first hour of a day into the *previous* day's
+/// column for the rest of a cycle that contained a spring-forward — not an edge
+/// case at the transition, but a lasting offset.
+pub fn comparison(rows: &[DatedRow], anchor: Civil, cycle_start: i32, today: Civil) -> Comparison {
+    let r = cycle_range(anchor, cycle_start);
+    let elapsed = elapsed_days(r.start, r.end, today);
+
+    let daily = |from: Civil, to: Civil| {
+        let mut arr = vec![0.0; elapsed as usize];
+        for d in rows {
+            if d.io != Some(Io::Exp) || d.day < from || d.day >= to {
+                continue;
+            }
+            let day = from.days_until(d.day);
+            if day >= 0 && day < elapsed {
+                arr[day as usize] += d.amt;
+            }
+        }
+        arr
+    };
+
+    let cum = |a: Vec<f64>| {
+        let mut s = 0.0;
+        a.into_iter()
+            .map(|x| {
+                s += x;
+                s
+            })
+            .collect::<Vec<f64>>()
+    };
+
+    let last = cycle_range(Civil::new(r.start.y, r.start.m - 1, r.start.d), cycle_start);
+    let this_cum = cum(daily(r.start, r.end));
+    let last_cum = cum(daily(last.start, last.end));
+    Comparison {
+        this_total: this_cum.last().copied().unwrap_or(0.0),
+        last_total: last_cum.last().copied().unwrap_or(0.0),
+        this_cum,
+        last_cum,
+        elapsed_days: elapsed,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -440,5 +602,156 @@ mod tests {
     fn empty_input_still_yields_the_full_bucket_set() {
         assert_eq!(by_weekday(&[], Io::Exp).len(), 7);
         assert_eq!(by_time_of_day(&[], Io::Exp).len(), 7);
+    }
+
+    fn c(y: i32, m: i32, d: i32) -> Civil {
+        Civil::new(y, m, d)
+    }
+
+    fn dr(io: Io, amt: f64, day: Civil) -> DatedRow {
+        DatedRow {
+            io: Some(io),
+            amt,
+            day,
+        }
+    }
+
+    #[test]
+    fn the_first_day_of_a_cycle_has_one_day_elapsed() {
+        let r = crate::cycle::cycle_range(c(2026, 5, 1), 1);
+        assert_eq!(elapsed_days(r.start, r.end, c(2026, 5, 1)), 1);
+        assert_eq!(elapsed_days(r.start, r.end, c(2026, 5, 10)), 10);
+        assert_eq!(elapsed_days(r.start, r.end, c(2026, 5, 30)), 30);
+    }
+
+    #[test]
+    fn elapsed_never_exceeds_the_cycle_and_never_falls_below_one() {
+        let r = crate::cycle::cycle_range(c(2026, 5, 1), 1);
+        // June has 30 days
+        assert_eq!(elapsed_days(r.start, r.end, c(2026, 6, 15)), 30);
+        // before the cycle even started
+        assert_eq!(elapsed_days(r.start, r.end, c(2026, 4, 20)), 1);
+    }
+
+    #[test]
+    fn elapsed_follows_a_cycle_that_does_not_start_on_the_first() {
+        // payday on the 25th: the cycle containing June 3rd runs May 25 – Jun 25
+        let r = crate::cycle::cycle_range(c(2026, 5, 3), 25);
+        assert_eq!(r.start, c(2026, 4, 25));
+        assert_eq!(elapsed_days(r.start, r.end, c(2026, 4, 25)), 1);
+        assert_eq!(elapsed_days(r.start, r.end, c(2026, 5, 3)), 10);
+    }
+
+    #[test]
+    fn stat_totals_reports_today_the_average_and_the_largest() {
+        let rows = vec![
+            dr(Io::Exp, 10.0, c(2026, 5, 1)),
+            dr(Io::Exp, 30.0, c(2026, 5, 5)),
+            dr(Io::Exp, 5.0, c(2026, 5, 5)),
+            dr(Io::Inc, 900.0, c(2026, 5, 5)),
+        ];
+        let t = stat_totals(&rows, c(2026, 5, 5), 1, c(2026, 5, 5));
+        assert_eq!(t.today_exp, 35.0);
+        assert_eq!(t.top, 30.0);
+        assert_eq!(t.count, 4); // every row, income included
+        assert_eq!(t.avg, 45.0 / 5.0);
+    }
+
+    #[test]
+    fn an_empty_cycle_has_no_largest_expense_rather_than_negative_infinity() {
+        let t = stat_totals(&[], c(2026, 5, 5), 1, c(2026, 5, 5));
+        assert_eq!(t.top, 0.0);
+        assert_eq!(t.today_exp, 0.0);
+        assert_eq!(t.avg, 0.0);
+        assert_eq!(t.count, 0);
+    }
+
+    #[test]
+    fn the_largest_expense_can_be_negative() {
+        // `Math.max` of all-negative amounts is the least negative, not zero
+        let rows = vec![
+            dr(Io::Exp, -5.0, c(2026, 5, 1)),
+            dr(Io::Exp, -2.0, c(2026, 5, 1)),
+        ];
+        assert_eq!(
+            stat_totals(&rows, c(2026, 5, 1), 1, c(2026, 5, 1)).top,
+            -2.0
+        );
+    }
+
+    #[test]
+    fn one_unparseable_amount_poisons_the_largest_the_way_math_max_does() {
+        let rows = vec![
+            dr(Io::Exp, 10.0, c(2026, 5, 1)),
+            dr(Io::Exp, f64::NAN, c(2026, 5, 1)),
+        ];
+        assert!(stat_totals(&rows, c(2026, 5, 1), 1, c(2026, 5, 1))
+            .top
+            .is_nan());
+    }
+
+    #[test]
+    fn the_six_month_trend_is_oldest_first_and_six_long() {
+        let rows = vec![
+            dr(Io::Exp, 10.0, c(2026, 5, 3)),  // June
+            dr(Io::Exp, 20.0, c(2026, 4, 3)),  // May
+            dr(Io::Exp, 30.0, c(2026, 0, 3)),  // January
+            dr(Io::Inc, 900.0, c(2026, 5, 3)), // ignored
+        ];
+        let out = six_month_trend(&rows, c(2026, 5, 10), 1);
+        assert_eq!(out.len(), 6);
+        assert_eq!(out[0].0, c(2026, 0, 1)); // January, six cycles back
+        assert_eq!(out[5].0, c(2026, 5, 1)); // June, the anchor's own
+        assert_eq!(out[0].1, 30.0);
+        assert_eq!(out[4].1, 20.0);
+        assert_eq!(out[5].1, 10.0);
+        assert_eq!(out[1].1, 0.0);
+    }
+
+    #[test]
+    fn the_trend_crosses_a_year_boundary() {
+        let out = six_month_trend(&[], c(2026, 1, 10), 1);
+        assert_eq!(out[0].0, c(2025, 8, 1)); // September of the previous year
+        assert_eq!(out[5].0, c(2026, 1, 1));
+    }
+
+    #[test]
+    fn comparison_accumulates_day_by_day() {
+        let rows = vec![
+            dr(Io::Exp, 10.0, c(2026, 5, 1)),
+            dr(Io::Exp, 20.0, c(2026, 5, 3)),
+            dr(Io::Exp, 5.0, c(2026, 5, 3)),
+        ];
+        let cmp = comparison(&rows, c(2026, 5, 3), 1, c(2026, 5, 3));
+        assert_eq!(cmp.elapsed_days, 3);
+        assert_eq!(cmp.this_cum, vec![10.0, 10.0, 35.0]);
+        assert_eq!(cmp.this_total, 35.0);
+        assert_eq!(cmp.last_cum, vec![0.0, 0.0, 0.0]);
+        assert_eq!(cmp.last_total, 0.0);
+    }
+
+    #[test]
+    fn comparison_reads_the_previous_cycle_over_the_same_elapsed_days() {
+        let rows = vec![
+            dr(Io::Exp, 7.0, c(2026, 4, 2)),  // May, the previous cycle
+            dr(Io::Exp, 1.0, c(2026, 4, 20)), // past the elapsed window
+            dr(Io::Exp, 3.0, c(2026, 5, 1)),  // June
+        ];
+        let cmp = comparison(&rows, c(2026, 5, 2), 1, c(2026, 5, 2));
+        assert_eq!(cmp.elapsed_days, 2);
+        assert_eq!(cmp.this_cum, vec![3.0, 3.0]);
+        // the May 20th row falls outside the two elapsed days and is dropped
+        assert_eq!(cmp.last_cum, vec![0.0, 7.0]);
+        assert_eq!(cmp.last_total, 7.0);
+    }
+
+    #[test]
+    fn comparison_ignores_everything_that_is_not_an_expense() {
+        let rows = vec![
+            dr(Io::Inc, 900.0, c(2026, 5, 1)),
+            dr(Io::Xfer, 500.0, c(2026, 5, 1)),
+        ];
+        let cmp = comparison(&rows, c(2026, 5, 1), 1, c(2026, 5, 1));
+        assert_eq!(cmp.this_cum, vec![0.0]);
     }
 }

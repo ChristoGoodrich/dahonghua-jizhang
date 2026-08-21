@@ -8,6 +8,9 @@
 
 import {
   byCategory,
+  comparison,
+  sixMonthTrend,
+  statTotals,
   byTimeOfDay,
   byWeekday,
   donutSlices,
@@ -30,14 +33,20 @@ function tsFor(dow: number, hour: number): number {
   return new Date(2026, 7, 23 + dow, hour, 30, 0).getTime();
 }
 
-/** io^cat^amt[^dow^hour] */
+/** io~cat~amt[~dow~hour]  — or io~cat~amt~y~m~d when a real date is meant.
+ *
+ *  The aggregation kinds only care which weekday or hour an entry lands on, so
+ *  they name those directly. The cycle-shaped kinds compare against calendar
+ *  boundaries, so they name a date. Six fields means the second. */
 function parseEntry(rec: string, i: number): Entry {
   const f = rec.split('~');
-  const dow = f[3] === undefined ? 0 : Number(f[3]);
-  const hour = f[4] === undefined ? 12 : Number(f[4]);
+  const ts =
+    f.length >= 6
+      ? new Date(Number(f[3]), Number(f[4]), Number(f[5]), 12, 0, 0).getTime()
+      : tsFor(f[3] === undefined ? 0 : Number(f[3]), f[4] === undefined ? 12 : Number(f[4]));
   return {
     id: `e${i}`,
-    ts: tsFor(dow, hour),
+    ts,
     io: cell(f[0]) as IO,
     cat: f[1] ?? '',
     amt: Number(f[2]),
@@ -103,6 +112,29 @@ for (const line of raw.split('\n')) {
     case 'bucket':
       value = timeBucketOf(Number(arg));
       break;
+    // The cycle-shaped three. `anchor` and `today` cross as civil y/m/d and are
+    // rebuilt into local Dates here; entries carry a civil day of their own.
+    case 'totals': {
+      const [ay, am, ad, cs, ty, tm, td] = extra.split(',').map(Number);
+      const r = statTotals(entries, new Date(ay, am, ad), cs, new Date(ty, tm, td, 12).getTime());
+      value = `today=${n(r.todayExp)} avg=${n(r.avg)} top=${n(r.top)} n=${r.count}`;
+      break;
+    }
+    case 'trend': {
+      const [ay, am, ad, cs] = extra.split(',').map(Number);
+      value = sixMonthTrend(entries, new Date(ay, am, ad), cs)
+        .map((t) => `${t.label.getFullYear()}-${t.label.getMonth()}-${t.label.getDate()}:${n(t.total)}`)
+        .join(',');
+      break;
+    }
+    case 'cmp': {
+      const [ay, am, ad, cs, ty, tm, td] = extra.split(',').map(Number);
+      const r = comparison(entries, new Date(ay, am, ad), cs, new Date(ty, tm, td, 12).getTime());
+      value =
+        `this=[${r.thisCum.map(n).join(',')}] last=[${r.lastCum.map(n).join(',')}] ` +
+        `tt=${n(r.thisTotal)} lt=${n(r.lastTotal)} days=${r.elapsedDays}`;
+      break;
+    }
     default:
       throw new Error(`unknown corpus kind ${kind}`);
   }
