@@ -140,3 +140,47 @@ describe('computeInsight', () => {
     expect(r?.text).toContain('Food');
   });
 });
+
+describe('cycle day counting across a daylight-saving transition', () => {
+  // The runner is Australia/Sydney, whose clocks go forward on the first Sunday
+  // in October and back on the first Sunday in April. Both of these fail
+  // against `ceil((min(now, end) - start) / 864e5)`, which counts twenty-four
+  // hours rather than a calendar day.
+  const e = (ts: number, amt: number): Entry =>
+    ({ id: `x${ts}`, ts, io: 'exp', cat: 'food', amt }) as Entry;
+
+  it('counts the elapsed day correctly after clocks go forward', () => {
+    // Sydney springs forward 2026-10-04; the 5th is the 5th day of the cycle
+    const now = new Date(2026, 9, 5, 0, 30).getTime();
+    const r = statTotals([e(now, 10)], new Date(2026, 9, 5), 1, now);
+    // avg = total / elapsed, so a wrong elapsed shows here
+    expect(r.avg).toBeCloseTo(10 / 5, 10);
+  });
+
+  it('counts the elapsed day correctly after clocks go back', () => {
+    // Sydney falls back 2026-04-05; the 6th is the 6th day of the cycle
+    const now = new Date(2026, 3, 6, 23, 30).getTime();
+    const r = statTotals([e(now, 12)], new Date(2026, 3, 6), 1, now);
+    expect(r.avg).toBeCloseTo(12 / 6, 10);
+  });
+
+  it('files an entry under its own day after clocks go forward', () => {
+    // an entry at 00:30 on each of the three days after the transition
+    const days = [4, 5, 6].map((d) => new Date(2026, 9, d, 0, 30).getTime());
+    const entries = days.map((ts, i) => e(ts, (i + 1) * 10));
+    const now = new Date(2026, 9, 6, 12, 0).getTime();
+    const r = comparison(entries, new Date(2026, 9, 6), 1, now);
+    // cumulative spend: nothing until day 4, then 10, 30, 60
+    expect(r.thisCum[2]).toBe(0);
+    expect(r.thisCum[3]).toBe(10);
+    expect(r.thisCum[4]).toBe(30);
+    expect(r.thisCum[5]).toBe(60);
+    expect(r.elapsedDays).toBe(6);
+  });
+
+  it('is unchanged on a month with no transition', () => {
+    const now = new Date(2026, 5, 10, 12, 0).getTime();
+    const r = statTotals([e(now, 30)], new Date(2026, 5, 10), 1, now);
+    expect(r.avg).toBeCloseTo(30 / 10, 10);
+  });
+});

@@ -1,6 +1,7 @@
 // Aggregations for the stats tab — ported from v7's renderStats / renderComparison.
 import type { Entry, IO } from './types';
 import { cycleRange } from './cycle';
+import { daysBetween } from './dates';
 import { monthKey } from '@/store/indexes';
 
 export interface CatTotal {
@@ -134,13 +135,27 @@ export function statTotals(cycleEntries: Entry[], anchor: Date, cycleStart: numb
   const todayStr = new Date(now).toDateString();
   const todayExp = exp.filter((d) => new Date(d.ts).toDateString() === todayStr).reduce((s, d) => s + d.amt, 0);
   const { start, end } = cycleRange(anchor, cycleStart);
-  const elapsed = Math.max(1, Math.ceil((Math.min(now, end.getTime()) - start.getTime()) / 864e5));
+  const elapsed = elapsedDaysIn(start, end, now);
   return {
     todayExp,
     avg: total / elapsed,
     top: exp.length ? Math.max(...exp.map((d) => d.amt)) : 0,
     count: cycleEntries.length,
   };
+}
+
+/**
+ * How many days of the cycle have elapsed, counted in calendar days.
+ *
+ * This used to be `ceil((min(now, end) - start) / 864e5)`, which is twenty-four
+ * hours rather than a calendar day. Across a daylight-saving transition the two
+ * differ and the answer was wrong in both directions: in Sydney it read 4 on
+ * the 5th of October and 7 on the 6th of April. `elapsed` divides the daily
+ * average, so being one out early in a cycle changes it by a third or a half.
+ */
+function elapsedDaysIn(start: Date, end: Date, now: number): number {
+  const cycleLen = daysBetween(start.getTime(), end.getTime());
+  return Math.max(1, Math.min(daysBetween(start.getTime(), now) + 1, cycleLen));
 }
 
 /** Return entries for a time range, using the month index when available to
@@ -197,13 +212,16 @@ export interface Comparison {
 /** Cumulative daily spend, this cycle vs the same elapsed days last cycle. */
 export function comparison(all: Entry[], anchor: Date, cycleStart: number, now = Date.now()): Comparison {
   const { start, end } = cycleRange(anchor, cycleStart);
-  const elapsedDays = Math.max(1, Math.ceil((Math.min(now, end.getTime()) - start.getTime()) / 864e5));
+  const elapsedDays = elapsedDaysIn(start, end, now);
 
   const daily = (rangeStart: number, rangeEnd: number) => {
     const arr = new Array(elapsedDays).fill(0);
     for (const d of all) {
       if (d.io !== 'exp' || d.ts < rangeStart || d.ts >= rangeEnd) continue;
-      const day = Math.floor((d.ts - rangeStart) / 864e5);
+      // calendar days, not 24-hour chunks: after a spring-forward, dividing
+      // raw timestamps put every entry in the first hour of a day into the
+      // previous day's column for the rest of the cycle
+      const day = daysBetween(rangeStart, d.ts);
       if (day >= 0 && day < elapsedDays) arr[day] += d.amt;
     }
     return arr;

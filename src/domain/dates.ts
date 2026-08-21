@@ -23,6 +23,19 @@ export function daysAgo(ts: number, now = Date.now()): number {
   return Math.round((dayB - dayA) / 86400000);
 }
 
+/**
+ * Whole calendar days from `a` to `b`, negative when `b` is earlier.
+ *
+ * Both ends are normalised to local midnight before subtracting, and the
+ * division is rounded — so a daylight-saving transition, which makes one "day"
+ * 23 or 25 hours long, does not shift the count. Dividing raw timestamps by
+ * 864e5 instead is the bug this exists to avoid: it is twenty-four hours, not a
+ * calendar day.
+ */
+export function daysBetween(a: number, b: number): number {
+  return daysAgo(a, b);
+}
+
 /** Monday-first month grid: leading nulls to align day 1, then 1..lastDay. */
 export function monthGrid(y: number, m: number): (number | null)[] {
   const lead = (new Date(y, m, 1).getDay() + 6) % 7; // Mon=0 … Sun=6
