@@ -42,7 +42,17 @@ const OUT = process.env.PARITY_OUT as string;
 const FIELDS = [
   'ts', 'io', 'cat', 'amt', 'refund', 'refundOf', 'acct', 'acctTo',
   'cur', 'origAmt', 'fee', 'discount', 'rb', 'rbAmt', 'deletedAt', 'updatedAt',
+  // note, src and ledger were absent until transfers and bill import were
+  // ported, and their absence was invisible: three injected bugs that only
+  // touched them went uncaught because nothing compared them.
+  'note', 'src', 'ledger',
 ] as const;
+
+/** A corpus cell: empty means "not supplied", `~` means "supplied as empty". */
+function arg(s: string | undefined): string | undefined {
+  if (s === undefined || s === '') return undefined;
+  return s === '~' ? '' : s;
+}
 
 function render(entries: Entry[], idOf: Map<string, string>, acctNames: Map<string, string>): string {
   return entries
@@ -451,6 +461,48 @@ function runScenario(script: string): string {
           catBudgets: args[3] ? { food: Number(args[3]) } : undefined,
         });
         break;
+      // --- transfers, bill import, per-category budgets ---
+      case 'xfer': {
+        const [from, to, amt, fee, discount, note, led, ts] = args;
+        // `arg` distinguishes "not supplied" from "supplied as empty/zero".
+        // Truthiness could not: it made `fee: 0` and `ledger: ''` unreachable,
+        // which is exactly where the falsy-means-absent rule lives.
+        const e = store.addTransfer({
+          from: acctByName.get(from) ?? from,
+          to: acctByName.get(to) ?? to,
+          amt: Number(amt),
+          ...(arg(fee) !== undefined ? { fee: Number(arg(fee)) } : {}),
+          ...(arg(discount) !== undefined ? { discount: Number(arg(discount)) } : {}),
+          ...(arg(note) !== undefined ? { note: arg(note)! } : {}),
+          ...(arg(led) !== undefined ? { ledger: arg(led)! } : {}),
+          ...(arg(ts) !== undefined ? { ts: Number(arg(ts)) } : {}),
+        });
+        name(e.id);
+        break;
+      }
+      case 'imp': {
+        // count|io|cat|amt|note|ts — `count` rows differing only by amount, so
+        // the per-row updatedAt spacing has something to show
+        const [count, io, cat, amt, note, ts] = args;
+        const n = Number(count);
+        const before = store.store$.data.peek().length;
+        store.importBills(
+          Array.from({ length: n }, (_, i) => ({
+            io: io as 'exp' | 'inc',
+            cat,
+            amt: Number(amt) + i,
+            note: arg(note) ?? '',
+            ts: Number(ts),
+          })),
+        );
+        for (const e of store.store$.data.peek().slice(before)) name(e.id);
+        break;
+      }
+      case 'catb': {
+        const [cat, amt] = args;
+        store.setCatBudget(cat, Number(amt));
+        break;
+      }
       case 'upd': {
         const [target, field, value] = args;
         const patch: Record<string, unknown> = {};

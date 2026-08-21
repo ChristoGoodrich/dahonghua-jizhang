@@ -16,20 +16,32 @@ use dahonghua_core::ledger::{Ledger, RemoveUndo};
 use dahonghua_core::model::{Asset, AssetKind, Budgets, Loan, LoanKind, Sub, SubFreq, Template};
 use dahonghua_core::money::Currencies;
 use dahonghua_core::networth::{add_asset, add_loan, remove_asset, remove_loan, repay_loan};
+use dahonghua_core::num::js_num;
 use dahonghua_core::reimburse::{
     confirm_reimburse, refund_entry, toggle_reimburse, unmark_reimburse,
 };
-use dahonghua_core::store::Store;
+use dahonghua_core::store::{set_cat_budget, ImportedBill, Store, TransferOpts};
 use dahonghua_core::subs::{decode, run_subscriptions};
 use std::io::{self, Read};
 
-fn cell_f64(v: f64) -> String {
-    // JS renders an integral number without a fractional part
-    if v == v.trunc() && v.abs() < 1e21 {
-        format!("{}", v as i64)
-    } else {
-        format!("{v}")
+/// Render a float the way `String(n)` does.
+///
+/// Rust's `{}` already drops a zero fractional part, so the only differences
+/// are the ones [`js_num`] exists for: negative zero prints unsigned, and
+/// JavaScript switches to exponential notation at 1e21 and 1e-7. This dump
+/// used to hand-roll the integral case and miss all three, which read as four
+/// port divergences that were really the harness disagreeing with itself.
+/// A corpus cell: empty means "not supplied", `~` means "supplied as empty".
+fn arg<'a>(v: Option<&&'a str>) -> Option<&'a str> {
+    match v {
+        None | Some(&"") => None,
+        Some(&"~") => Some(""),
+        Some(s) => Some(s),
     }
+}
+
+fn cell_f64(v: f64) -> String {
+    js_num(v)
 }
 
 fn opt<T: ToString>(v: Option<T>) -> String {
@@ -179,7 +191,7 @@ fn render(l: &Ledger) -> String {
                 (e.ts.to_string(), e.id.clone())
             };
             format!(
-                "{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}",
+                "{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}",
                 id_cell,
                 ts_cell,
                 e.io.map_or("_".to_string(), |i| i.as_str().to_string()),
@@ -197,6 +209,9 @@ fn render(l: &Ledger) -> String {
                 e.rb_amt.map_or("_".to_string(), cell_f64),
                 opt(e.deleted_at),
                 opt(e.updated_at),
+                e.note.clone().unwrap_or_else(|| "_".into()),
+                e.src.map_or("_".to_string(), |v| v.as_str().to_string()),
+                e.ledger.clone().unwrap_or_else(|| "_".into()),
                 ft,
             )
         })
@@ -272,6 +287,45 @@ fn run(script: &str) -> String {
                 seq += 1;
                 st.add_entry(e, id, ts, clock);
             }
+            // --- transfers, bill import, per-category budgets ---
+            "xfer" => {
+                let opts = TransferOpts {
+                    from: args[0].to_string(),
+                    to: args[1].to_string(),
+                    amt: args[2].parse().unwrap(),
+                    fee: arg(args.get(3)).map(|s| s.parse().unwrap()),
+                    discount: arg(args.get(4)).map(|s| s.parse().unwrap()),
+                    note: arg(args.get(5)).map(|s| s.to_string()),
+                    ledger: arg(args.get(6)).map(|s| s.to_string()),
+                    ts: arg(args.get(7)).map(|s| s.parse().unwrap()),
+                };
+                let id = format!("e{seq}");
+                seq += 1;
+                st.add_transfer(opts, id, clock);
+            }
+            "imp" => {
+                // count|cat|amt|note|ts — `count` identical rows, so the
+                // per-row updated_at spacing has something to show
+                let count: usize = args[0].parse().unwrap();
+                let bills: Vec<ImportedBill> = (0..count)
+                    .map(|i| ImportedBill {
+                        io: Io::parse(args[1]).unwrap_or(Io::Exp),
+                        cat: args[2].to_string(),
+                        amt: args[3].parse::<f64>().unwrap() + i as f64,
+                        note: arg(args.get(4)).unwrap_or("").to_string(),
+                        ts: args[5].parse().unwrap(),
+                    })
+                    .collect();
+                let ids: Vec<String> = (0..count)
+                    .map(|_| {
+                        let id = format!("e{seq}");
+                        seq += 1;
+                        id
+                    })
+                    .collect();
+                st.import_bills(&bills, &ids, clock);
+            }
+            "catb" => set_cat_budget(&mut budgets, args[0], args[1].parse().unwrap()),
             "upd" => {
                 let (target, field, value) = (args[0], args[1], args[2]);
                 let mut p = Patch::default();

@@ -63,7 +63,9 @@ Adding a module to the harness:
 | `store/reimburse` | 64 | **Ported**, in the same corpus |
 | `domain/cats` | 47 | **Ported** into `catalog` |
 | `domain/subscriptions` + `store/subscriptions` → `subs` | 109 | **Ported**, in the same corpus |
-| rest of `store/*` | ~536 | Next — inbox, backup/import |
+| `store/state` — transfers, bill import, budgets | ~90 | **Ported**, in the 3,678-scenario corpus |
+| `store/state` — `buildBackup`, persistence, ids | ~120 | Deferred by choice / platform (below) |
+| `store/inbox` | 212 | Next |
 | `sync/*` | 778 | After store — `reqwest` + the Supabase REST API |
 | UI (21 routes, 72 components) | 11,049 | Last — **Flutter decided**; Rust UI frameworks measured and set aside |
 
@@ -468,6 +470,49 @@ before it is evidence about the code.
 Sync talks to Supabase over plain REST + a realtime websocket. `reqwest` and
 `tokio-tungstenite` cover it; there is no official Supabase Rust client, and
 `supabase-rs` community crates are thin wrappers not worth the dependency.
+
+### Three fields the corpus was not looking at
+
+Transfers, bill import and per-category budgets went in next — the three parts
+of `state.ts` that are ledger operations rather than platform plumbing.
+
+The first injection sweep came back with four zeros, and three of them had the
+same cause: `note`, `src` and `ledger` were not in the harness's compared field
+list. A bug that only touched them was invisible, and had been for every module
+that wrote them. Adding the three turned "an imported row is not marked as
+coming from a bill" from 0 detections into 29.
+
+The fourth zero was the harness being unable to *express* the input. Its
+conditional spreads were truthiness tests — `...(fee ? { fee: Number(fee) } :
+{})` — so `fee: 0` and `ledger: ''` could not be passed at all, which is
+precisely where the falsy-means-absent rule lives. A cell is now empty for "not
+supplied" and `~` for "supplied as empty", and the two are different inputs.
+
+The floor across fifteen injections is now 3, having been 0.
+
+### The fourth divergence that was the harness again
+
+Four cases failed on `1e-7` and `1e21`. `dump_ledger` hand-rolled its float
+rendering and dropped the integral part correctly while missing all three ways
+JavaScript's `String(n)` actually differs: negative zero prints unsigned, and
+the switch to exponential notation happens at 1e21 and 1e-7. It now calls
+`js_num`, the same function `glass.rs` needs for its `rgba(...)` strings.
+
+That is the third time a formatting difference has read as a port divergence.
+It is the last place it can: every dump now renders floats through one
+function.
+
+### What is deliberately not ported
+
+`buildBackup` shapes the entire application state into a JSON payload, and most
+of that state — language, theme, lock — has no representation in the core and
+no reason to acquire one. Porting it now would mean modelling the whole
+`AppState` in Rust in order to serialise it, which is the tail wagging the dog.
+It waits until the core owns those fields for its own reasons, or it stays on
+the platform side permanently.
+
+`newId`, `loadPersisted*` and `startAutosave` are platform: random identity,
+`AsyncStorage`, and a reactive subscription respectively.
 
 ## Phase 3 — the UI
 
