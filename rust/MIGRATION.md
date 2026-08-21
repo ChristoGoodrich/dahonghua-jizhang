@@ -50,7 +50,9 @@ Adding a module to the harness:
 | `domain/dates` | 33 | Split: `monthGrid` ported; `onDay`/`sameDay`/`daysAgo` are platform-boundary (see below) |
 | `domain/period` | 130 | Windows **ported**, 12,108-case parity; entry filtering and labels deferred (below) |
 | `domain/filter` | 162 | **Ported**, 2,014-case parity |
-| `domain/budget`, `stats`, `trends`, `insight`, `recap`, `weekly`, `streak` | ~900 | Queued |
+| `domain/stats` — aggregations | ~100 of 231 | **Ported**, 615-case parity |
+| `domain/stats` — `statTotals`, `sixMonthTrend`, `comparison` | ~130 | Next — cycle plus a clock, and 864e5 day counting |
+| `domain/budget`, `trends`, `insight`, `recap`, `weekly`, `streak` | ~670 | Queued |
 | `domain/billParse` → `bills` | 272 | **Ported**, 4,400-case parity — bar `decodeBillText` |
 | `domain/encoding` + `gbkTable` | 65 + 24k cells | Deferred by choice — `encoding_rs`, not a hand-copied table (below) |
 | `domain/billDedup` → `dedup` | 138 | **Ported**, 3,838-case parity |
@@ -430,6 +432,42 @@ weekday against JavaScript rather than against my own assumption showed the
 helper was right and my *test expectation* was wrong in exactly the same way the
 code was. Both came from the same wrong belief, which is precisely the failure
 mode unit tests cannot catch and the corpus can.
+
+### Three injections that were right to catch nothing, and one that was wrong
+
+`domain/stats` split three ways. The pure aggregations and the two that need a
+local weekday or hour are ported; `statTotals`, `sixMonthTrend` and `comparison`
+are not, because they count elapsed days by dividing epoch milliseconds by
+864e5 — twenty-four hours rather than a calendar day, which is exactly the shape
+of the subscription bug — and that deserves its own increment rather than being
+rushed in behind the easy half.
+
+Eighteen injections. Three initially caught nothing, and the difference between
+them is the point:
+
+* **Starting `noon` at 10 changes no answer.** The ranges are scanned in order
+  and `morning` (8–11) is tested first, so widening a later range *backwards* is
+  invisible. A real property of the code, now written next to it.
+* **Starting `night` at 20 changes no answer either.** Hour 19 then matches no
+  range and falls through to the default — which is `night`. Also real.
+* **"The category sort is unstable" was a bad injection.** `sort_by_key` is
+  stable too, so it changed nothing about the thing it claimed to test. Replaced
+  with a tie-break by name, which does.
+
+The first two are worth keeping as documentation: an edit to these ranges is
+only observable if it moves a boundary *forward* into the next range, or narrows
+one that is not last.
+
+### A corpus case the real code cannot be asked
+
+Adding out-of-range hours to `byTimeOfDay` produced fourteen divergences, and
+the port was right. `byTimeOfDay` reads `new Date(ts).getHours()`, and building
+a timestamp with hour 24 rolls the *date* forward to 00:30 — so the value that
+reaches the bucketing is 0, never 24. The fallback branch is only reachable by
+calling `timeBucketOf` on its own, which the corpus already did.
+
+A corpus can be wrong by asking a question the shipping code has no way of
+being asked. Those cases moved rather than being deleted.
 
 ## Phase 2 — state and sync
 

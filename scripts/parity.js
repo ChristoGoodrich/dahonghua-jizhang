@@ -81,6 +81,12 @@ const MODULES = [
     example: 'dump_filter',
   },
   {
+    name: 'stats',
+    corpus: 'rust/parity/stats-corpus.tsv',
+    ts: 'scripts/stats-parity.ts',
+    example: 'dump_stats',
+  },
+  {
     name: 'notif',
     corpus: 'rust/parity/notif-corpus.tsv',
     ts: 'scripts/notif-parity.ts',
