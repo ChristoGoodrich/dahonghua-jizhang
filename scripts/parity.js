@@ -117,6 +117,12 @@ const MODULES = [
     example: 'dump_search',
   },
   {
+    name: 'rates',
+    corpus: 'rust/parity/rates-corpus.tsv',
+    ts: 'scripts/rates-parity.ts',
+    example: 'dump_rates',
+  },
+  {
     name: 'stats',
     corpus: 'rust/parity/stats-corpus.tsv',
     ts: 'scripts/stats-parity.ts',

@@ -61,6 +61,8 @@ Adding a module to the harness:
 | `domain/jsobj` (new) | — | **Added** — `Object.keys` ordering, once its third consumer appeared |
 | `domain/jsstr` (new) | — | **Added** — `trim` and `\s`, which Rust spells differently |
 | `domain/search` + `notes` + `archive` | 100 | **Ported**, 4,627-case parity in one corpus |
+| `domain/rates` | 86 | **Ported** — the decisions, 4,496-case parity; the HTTP stays on the platform |
+| `domain/emoji` | 72 | **Not ported by choice** — a UI asset table, which goes to Dart with the picker |
 | `domain/billParse` → `bills` | 272 | **Ported**, 4,400-case parity — bar `decodeBillText` |
 | `domain/encoding` + `gbkTable` | 65 + 24k cells | Deferred by choice — `encoding_rs`, not a hand-copied table (below) |
 | `domain/billDedup` → `dedup` | 138 | **Ported**, 3,838-case parity |
@@ -870,6 +872,69 @@ agree, code point for code point.
 
 That is the same discipline that caught `trim`, applied before rather than
 after. The difference in cost is the whole argument for it.
+
+### A parser that had never been asked a hard question
+
+`rates` needed `new Date('YYYY-MM-DDT00:00:00')`, which `filter` had already
+reproduced, so the function moved to `civil.rs` rather than being written
+twice. Its second caller found a defect in it immediately.
+
+The grammar's digit counts are part of the grammar: V8 reads `2026-06-01` and
+calls `2026-6-1`, `2026-06-1` and `02026-06-01` **Invalid Date** alike. The
+port split on `-` and parsed whatever fell out, so it accepted all of them.
+
+That had been true since the function was written and 2,014 filter cases never
+noticed, because `filter`'s only caller is guarded by a regex that has already
+demanded `[0-9]{4}-[0-9]{2}-[0-9]{2}`. The gap was real but unreachable —
+until a second caller handed it a raw string.
+
+### Three injections a boolean was hiding
+
+Three parser injections — dropping the separator check, the digit check, and
+the month bound — all diverged on **nothing**, and the reason was the corpus
+shape rather than its contents. Every date reached the parser through
+`is_recent`, which collapses the answer to a boolean, and a date that rolls out
+of range (`2026-13-01` becoming January 2027) lands far outside a 48-hour
+window either way. Both halves said `false` for different reasons and agreed.
+
+Adding a `parse` kind that reports the parsed date itself took all three from
+zero to 77. **A corpus that only observes a function through its consumer can
+only see what the consumer did not throw away.**
+
+A fourth injection — removing the length check — crashed instead of answering,
+because `s[0..4]` on an empty string panics. That is a detection, and the same
+shape as `stats`' `elapsed` floor: a guard that looks defensive and is
+load-bearing.
+
+### What `rates` gave back to the TypeScript
+
+The decisions in `rates.ts` were interleaved with `fetch`, so none of them
+could be checked without mocking a network — and the Rust port could not be
+compared against them at all. They are three exported functions now
+(`invertRate`, `isRecent`, `resolveRate`) and the async pair is transport.
+All thirteen existing tests pass unchanged, so nothing shipped moved.
+
+One thing the split made visible: `isRecent` is documented as "today or
+yesterday in local time" and is not. It measures `|now − midnight(date)| < 48h`
+from the current *instant* while dates sit at midnight, so the time of day
+counts against a past date and in favour of a future one. **The day before
+yesterday is never inside it; two days ahead almost always is.** Left as it
+stands — the second source only serves live rates, so a generous window costs
+one wasted request — but the comment now says what the code does.
+
+### One module deliberately not ported
+
+`domain/emoji` is 72 lines of which zero are logic: a table of 420 emoji in 14
+groups for the category picker. Porting it would mean copying the table into
+Rust so that Dart could copy it out again. It goes to the UI, like `gbkTable`
+went to `encoding_rs`.
+
+What it got instead was a look. `ALL_EMOJI`, documented as "a flat list for
+defaults / fallbacks", was imported by nothing but its own test — the picker
+reads `EMOJI_GROUPS`. It is gone, and the data checks it carried moved into the
+test where they were doing the work. Twelve emoji appear in two groups each,
+which is deliberate — a birthday cake belongs in both Food and Gifts — and is
+now pinned by a test so a future deduplication has to argue with it.
 
 ## Phase 2 — state and sync
 

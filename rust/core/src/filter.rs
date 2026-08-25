@@ -9,7 +9,7 @@
 //! an argument here, which makes the whole function reproducible.
 
 use crate::bills::CivilTime;
-use crate::civil::{days_in_month, Civil};
+use crate::civil::{days_in_month, parse_iso_date as ymd, Civil};
 use crate::entry::{Entry, Io};
 use crate::jsstr::{js_trim, JS_SPACE_CLASS};
 use regex_lite::Regex;
@@ -151,29 +151,6 @@ fn day_re() -> &'static Regex {
 fn zh_month_re() -> &'static Regex {
     static R: OnceLock<Regex> = OnceLock::new();
     re(&R, r"^([0-9]{1,2})月$")
-}
-
-/// `new Date('YYYY-MM-DDT…')`, which is a different parser from the component
-/// constructor and disagrees with it twice.
-///
-/// * A datetime string with no offset is parsed as **local** time, not UTC.
-/// * The date-time grammar bounds MM to 01–12 and DD to 01–31, and anything
-///   outside those is `Invalid Date` — `None` here. Anything *inside* them
-///   still rolls, so `2025-02-29` is March 1st rather than a rejection.
-/// * The year is taken literally. `0001-01-15` is year 1, where the component
-///   form would have made it 1901.
-///
-/// The asymmetry is the point: `new Date('2024-01-32')` is invalid while
-/// `new Date(2024, 0, 32)` is quietly February.
-fn ymd(s: &str) -> Option<Civil> {
-    let mut p = s.split('-');
-    let y: i32 = p.next()?.parse().ok()?;
-    let m: i32 = p.next()?.parse().ok()?;
-    let d: i32 = p.next()?.parse().ok()?;
-    if !(1..=12).contains(&m) || !(1..=31).contains(&d) {
-        return None; // outside the grammar, so Invalid Date
-    }
-    Some(Civil::new(y, m - 1, d))
 }
 
 /// Read a date range out of a search query.

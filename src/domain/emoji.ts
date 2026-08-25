@@ -68,5 +68,7 @@ export const EMOJI_GROUPS: EmojiGroup[] = [
   },
 ];
 
-/** Flat list of every emoji, for defaults / fallbacks. */
-export const ALL_EMOJI: string[] = EMOJI_GROUPS.flatMap((g) => g.emojis);
+// There was an `ALL_EMOJI` flat list here, documented as being "for defaults /
+// fallbacks". Nothing ever fell back to it — the picker reads EMOJI_GROUPS and
+// no other module imported it — so it is gone. The data checks it carried moved
+// into the test, which is where they were doing the work.

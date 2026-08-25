@@ -139,9 +139,91 @@ pub fn month_grid(y: i32, m: i32) -> Vec<Option<i32>> {
     cells
 }
 
+/// `new Date('YYYY-MM-DDT…')`, which is a different parser from the component
+/// constructor and disagrees with it twice.
+///
+/// * A datetime string with no offset is parsed as **local** time, not UTC.
+/// * The date-time grammar bounds MM to 01–12 and DD to 01–31, and anything
+///   outside those is `Invalid Date` — `None` here. Anything *inside* them
+///   still rolls, so `2025-02-29` is March 1st rather than a rejection.
+/// * The year is taken literally. `0001-01-15` is year 1, where the component
+///   form would have made it 1901.
+///
+/// Two callers need it: the search box's date ranges, and the exchange-rate
+/// cache deciding whether a stored date is recent.
+///
+/// The asymmetry is the point: `new Date('2024-01-32')` is invalid while
+/// `new Date(2024, 0, 32)` is quietly February.
+pub fn parse_iso_date(s: &str) -> Option<Civil> {
+    // The grammar is `YYYY-MM-DD` and the digit counts are part of it: V8 reads
+    // `2026-06-01` and calls `2026-6-1`, `2026-06-1` and `02026-06-01` Invalid
+    // Date alike. Splitting on `-` and parsing whatever falls out accepts all
+    // of them — a gap that stayed hidden while the only caller was a search box
+    // whose regex had already required `[0-9]{4}-[0-9]{2}-[0-9]{2}`.
+    let b = s.as_bytes();
+    if b.len() != 10 || b[4] != b'-' || b[7] != b'-' {
+        return None;
+    }
+    if !b
+        .iter()
+        .enumerate()
+        .all(|(i, c)| i == 4 || i == 7 || c.is_ascii_digit())
+    {
+        return None;
+    }
+    let y: i32 = s[0..4].parse().ok()?;
+    let m: i32 = s[5..7].parse().ok()?;
+    let d: i32 = s[8..10].parse().ok()?;
+    if !(1..=12).contains(&m) || !(1..=31).contains(&d) {
+        return None; // outside the grammar, so Invalid Date
+    }
+    Some(Civil::new(y, m - 1, d))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn the_iso_parser_demands_exactly_four_two_two_digits() {
+        assert!(parse_iso_date("2026-06-01").is_some());
+        // V8 calls every one of these Invalid Date
+        for s in [
+            "2026-6-1",
+            "2026-06-1",
+            "2026-6-01",
+            "226-06-01",
+            "02026-06-01",
+            "2026-06-01 ",
+            " 2026-06-01",
+            "2026/06/01",
+            "2026-06",
+            "2026-06-01-02",
+            "20260601",
+            "",
+            "nonsense",
+            "abcd-ef-gh",
+        ] {
+            assert!(parse_iso_date(s).is_none(), "{s}");
+        }
+    }
+
+    #[test]
+    fn the_iso_parser_bounds_the_month_and_day_then_lets_them_roll() {
+        assert!(parse_iso_date("2026-00-10").is_none());
+        assert!(parse_iso_date("2026-13-01").is_none());
+        assert!(parse_iso_date("2026-06-00").is_none());
+        assert!(parse_iso_date("2026-01-32").is_none());
+        // inside the grammar but not a real day: rolls rather than rejecting
+        assert_eq!(parse_iso_date("2025-02-29"), Some(Civil::new(2025, 2, 1)));
+    }
+
+    #[test]
+    fn the_iso_parser_takes_the_year_literally() {
+        // the component constructor would make this 1901; the string form does
+        // not remap two-digit years
+        assert_eq!(parse_iso_date("0001-01-15"), Some(Civil::new(1, 0, 15)));
+    }
 
     #[test]
     fn leap_years_follow_the_gregorian_rule() {
