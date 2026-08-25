@@ -30,9 +30,32 @@ export interface MergeResult<T> {
   toPush: T[]; // local rows the server hasn't seen the latest of
 }
 
-/** Stable serialization for the equal-timestamp tiebreak (key order independent). */
-function stable(r: SyncRow): string {
-  return JSON.stringify(r, Object.keys(r).sort());
+/** Stable serialization for the equal-timestamp tiebreak (key order independent).
+ *
+ *  This used to be `JSON.stringify(r, Object.keys(r).sort())`, which looks like
+ *  "serialize with sorted keys" and is not. The second argument to
+ *  `JSON.stringify` is a *replacer*, and an array replacer is a key allowlist
+ *  applied at **every** level — so `fieldTs` came out filtered by the row's own
+ *  top-level key names, and any per-field stamp whose field was absent from the
+ *  row vanished from the comparison.
+ *
+ *  An entry that once carried a note and no longer does is exactly that shape,
+ *  and two devices holding different stamps for it would each keep their own
+ *  copy and neither would push: the tiebreak that exists so "all devices
+ *  converge instead of diverging forever" could not see the difference to break.
+ *
+ *  Sorting at every level instead. Note the string this produces is only ever
+ *  compared locally and never transmitted, so a device running the old code and
+ *  one running this can still sync — they can disagree about which row wins an
+ *  exact `updatedAt` tie, which is a case the old code did not converge on
+ *  anyway. */
+function stable(v: unknown): string {
+  if (v === null || typeof v !== 'object') return JSON.stringify(v) ?? 'null';
+  if (Array.isArray(v)) return `[${v.map(stable).join(',')}]`;
+  const o = v as Record<string, unknown>;
+  // `JSON.stringify` omits undefined-valued keys; so does this
+  const keys = Object.keys(o).filter((k) => o[k] !== undefined).sort();
+  return `{${keys.map((k) => `${JSON.stringify(k)}:${stable(o[k])}`).join(',')}}`;
 }
 
 /**

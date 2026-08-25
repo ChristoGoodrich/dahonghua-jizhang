@@ -137,3 +137,46 @@ describe('liveRows', () => {
     expect(liveRows(rows).map((r) => r.id)).toEqual(['a']);
   });
 });
+
+describe('a difference the tiebreaker cannot see', () => {
+  // `stable()` was `JSON.stringify(r, Object.keys(r).sort())`. The second
+  // argument to JSON.stringify is a *replacer*, and an array replacer is a key
+  // allowlist applied at EVERY level — so `fieldTs` was serialised with the
+  // row's own top-level key names, and any per-field stamp whose field is not
+  // present on the row vanished from the comparison entirely.
+  //
+  // An entry that once had a note and no longer does is exactly that shape.
+  type Row = { id: string; updatedAt: number; amt: number; fieldTs: Record<string, number> };
+  const A: Row = { id: 'e1', updatedAt: 1000, amt: 10, fieldTs: { amt: 1000, note: 5 } };
+  const B: Row = { id: 'e1', updatedAt: 1000, amt: 10, fieldTs: { amt: 1000, note: 9 } };
+
+  it('sees a stamp for a field the row does not carry', () => {
+    // A merges B's newer stamp in — the two rows are genuinely different and a
+    // comparison that cannot see the difference would not have learned it
+    const a = mergeById<Row>([A], [B]);
+    expect(a.merged[0].fieldTs.note).toBe(9);
+    // and nothing to send back, because the server already holds that stamp
+    expect(a.toPush.length).toBe(0);
+    // the same two rows, with the newer stamp on the local side, must push
+    expect(mergeById<Row>([B], [A]).toPush.length).toBe(1);
+  });
+
+  it('lets two devices converge instead of diverging forever', () => {
+    // the server holds A's copy; each device pulls it and merges
+    const onA = mergeById<Row>([A], [A]).merged[0];
+    const onB = mergeById<Row>([B], [A]).merged[0];
+    expect(onB.fieldTs.note).toBe(9);
+    // B has the newer stamp and must push it, or A can never learn it
+    expect(mergeById<Row>([B], [A]).toPush.length).toBe(1);
+    // after B pushes, A pulls and both hold the same row
+    const afterA = mergeById<Row>([onA], [onB]).merged[0];
+    expect(afterA.fieldTs.note).toBe(9);
+  });
+
+  it('is key-order independent, which is what stable() is for', () => {
+    const x = { id: 'e1', updatedAt: 1, amt: 2, fieldTs: { a: 1, b: 2 } };
+    const y = { id: 'e1', amt: 2, updatedAt: 1, fieldTs: { b: 2, a: 1 } };
+    // same content, different key order: nothing to push either way
+    expect(mergeById([x], [y]).toPush.length).toBe(0);
+  });
+});
