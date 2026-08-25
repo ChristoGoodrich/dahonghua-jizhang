@@ -80,7 +80,9 @@ Adding a module to the harness:
 | `store/state` — transfers, bill import, budgets | ~90 | **Ported**, in the 3,678-scenario corpus |
 | `store/state` — `buildBackup`, persistence, ids | ~120 | Deferred by choice / platform (below) |
 | `store/inbox` → `inbox` | 212 | **Ported**, 305-case parity — the deciding half |
-| `sync/*` | 778 | After store — `reqwest` + the Supabase REST API |
+| `sync/merge` | 150 | **Ported**, 4,423-case parity — the heart of sync, and already pure |
+| `domain/jsval` (new) | — | **Added** — a JSON value and `JSON.stringify`, because the serialisation *is* the comparison |
+| `sync/*` (the rest) | 620 | After this — `reqwest` + the Supabase REST API |
 | UI (21 routes, 72 components) | 11,049 | Last — **Flutter decided**; Rust UI frameworks measured and set aside |
 
 ## Phase 1 — the domain crate (in progress)
@@ -1005,6 +1007,77 @@ any of them — the columns and their contents are `toRows`, which is ported and
 checked. `rust_xlsxwriter` is the answer if the Rust side ever writes the file
 itself, and until then this is the same call as `rates` leaving its HTTP behind
 and `emoji` leaving its table with the UI.
+
+### The tiebreak could not see the difference it was breaking
+
+`merge.ts` resolves an exact `updatedAt` tie by comparing serialised rows, "so
+all devices converge instead of diverging forever". The serialisation was
+`JSON.stringify(r, Object.keys(r).sort())`, which reads as "stringify with
+sorted keys" and is not: the second argument is a **replacer**, and an array
+replacer is a key *allowlist applied at every level*.
+
+```
+{ id, updatedAt, amt: 10, fieldTs: { amt: 7, note: 9 } }
+  serialised to  {"amt":10,"fieldTs":{"amt":7},"id":…}
+```
+
+`fieldTs` came out filtered by the row's own top-level names, so a per-field
+stamp for a field the row does not carry vanished from the comparison. An entry
+that once had a note and no longer does is exactly that shape, and clearing an
+optional field is an ordinary thing to do.
+
+The consequence is not a wrong answer, it is **no answer**: two devices holding
+different stamps each kept their own row and neither pushed, because the same
+blind comparison decides both. The test added with the fix shows them diverging
+forever. Sorting at every level instead; the string is only ever compared
+locally and never transmitted, so a device on the old build and one on the new
+still sync.
+
+The corpus catches the old version on 33 of 4,423 cases.
+
+### A JSON value, hand-written, because the serialisation is the comparison
+
+`merge` compares whole rows by serialising them, so every escape and every
+omission decides an outcome. `jsval.rs` is sixty lines of exactly what
+`JSON.stringify` does — `NaN` and both infinities as `null`, `undefined`
+omitted from an object but `null` inside an array, the five two-character
+escapes and `\u00XX` for every other control, nothing escaped that JavaScript
+does not escape.
+
+`serde_json` would have been the reflex. The crate has one dependency, chosen
+for size because the wasm bundle ships over mobile data, and what was needed
+here was not a parser but a specific set of behaviours.
+
+### JavaScript compares strings by UTF-16 code unit
+
+Rust compares by code point, and the two disagree for **every** character
+outside the BMP — a surrogate is `0xD800..=0xDFFF`, so JavaScript sorts an emoji
+*below* `U+E000` where Rust sorts `U+1F600` above it. Three of five probe pairs
+disagreed.
+
+It only matters where a comparison decides an outcome rather than a display
+order, and the tiebreak is exactly that. A note with an emoji in it is an
+ordinary row. `js_str_cmp` in `jsstr.rs`, and an injection replacing it with
+Rust's own ordering diverges on 13 cases.
+
+### Six zeros, and why four of them cannot be otherwise
+
+Twenty-nine injections. Six caught nothing, and for once most of them are
+neither a gap nor a no-op:
+
+* **Four are structural.** `NaN` and `Infinity` have no JSON syntax, so a
+  corpus written as JSON cannot express a `NaN` tombstone or a `NaN` amount at
+  all. The injections that only matter for those values therefore cannot be
+  reached — and the same fact makes them unreachable in the app, whose sync path
+  is also JSON. **They are untestable for exactly the reason they are
+  unreachable**, which is a better answer than a gap.
+* Two are no-ops by construction: rows are merged *by id*, so taking the id
+  from either side is the same id; and a `NaN` `updatedAt` difference answers
+  "not greater" whether it short-circuits or not, which is all the caller asks.
+
+One injection reported "anchor not found" and was fixed rather than accepted —
+an anchor containing a Rust `\"` escape, mangled on its way through a heredoc.
+The lesson from last increment, arriving on schedule.
 
 ## Phase 2 — state and sync
 

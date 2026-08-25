@@ -129,6 +129,12 @@ const MODULES = [
     example: 'dump_export',
   },
   {
+    name: 'merge',
+    corpus: 'rust/parity/merge-corpus.tsv',
+    ts: 'scripts/merge-parity.ts',
+    example: 'dump_merge',
+  },
+  {
     name: 'stats',
     corpus: 'rust/parity/stats-corpus.tsv',
     ts: 'scripts/stats-parity.ts',

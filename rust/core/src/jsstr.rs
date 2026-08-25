@@ -54,9 +54,51 @@ pub fn is_js_space(c: char) -> bool {
 /// `\s` in any pattern ported from JavaScript — `[…]*` rather than `\s*`.
 pub const JS_SPACE_CLASS: &str = r"[\t\n\x0B\x0C\r \u{a0}\u{1680}\u{2000}-\u{200a}\u{2028}\u{2029}\u{202f}\u{205f}\u{3000}\u{feff}]";
 
+/// `a < b` as JavaScript compares strings: **by UTF-16 code unit**.
+///
+/// Rust's own `str` ordering is by code point, and the two disagree for every
+/// non-BMP character. A surrogate is `0xD800..=0xDFFF`, so JavaScript sorts an
+/// emoji *below* `U+E000`, where Rust sorts `U+1F600` above it:
+///
+/// ```text
+///            "\u{1F600}" < "\u{E000}"
+///   JS       true
+///   Rust     false
+/// ```
+///
+/// It matters wherever a comparison decides an outcome rather than just a
+/// display order — [`crate::merge`]'s equal-timestamp tiebreak compares
+/// serialised rows, and a note with an emoji in it is an ordinary row.
+pub fn js_str_cmp(a: &str, b: &str) -> std::cmp::Ordering {
+    a.encode_utf16().cmp(b.encode_utf16())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn strings_compare_by_utf16_code_unit() {
+        use std::cmp::Ordering::*;
+        // the three pairs where code-unit and code-point ordering part company
+        assert_eq!(js_str_cmp("\u{1F600}", "\u{E000}"), Less);
+        assert_eq!(js_str_cmp("\u{1F600}", "\u{FFFD}"), Less);
+        assert_eq!(js_str_cmp("\u{10000}", "\u{FFFF}"), Less);
+        // …and Rust's own ordering says the opposite on all three
+        assert!("\u{1F600}" > "\u{E000}");
+        assert!("\u{1F600}" > "\u{FFFD}");
+        assert!("\u{10000}" > "\u{FFFF}");
+    }
+
+    #[test]
+    fn everything_inside_the_bmp_agrees() {
+        use std::cmp::Ordering::*;
+        assert_eq!(js_str_cmp("a", "b"), Less);
+        assert_eq!(js_str_cmp("\u{4E2D}", "\u{1F600}"), Less);
+        assert_eq!(js_str_cmp("", "a"), Less);
+        assert_eq!(js_str_cmp("abc", "abc"), Equal);
+        assert_eq!(js_str_cmp("ab", "abc"), Less);
+    }
 
     #[test]
     fn the_two_characters_rust_gets_wrong() {
