@@ -6,6 +6,7 @@ import { Tap } from '@/components/ui/Tap';
 import { RAD, TABULAR } from '@/theme/tokens';
 import { catOf, catName } from '@/domain/cats';
 import { fmt, fmtNum } from '@/domain/money';
+import { daysAgo } from '@/domain/dates';
 import { store$ } from '@/store/ledger';
 import { SwipeableRow } from '@/features/list/SwipeableRow';
 import type { Entry, Category, IO } from '@/domain/types';
@@ -45,11 +46,14 @@ const HEADER_HEIGHT = 30;
 const ROW_HEIGHT = 67;
 
 function dayLabel(key: string, lang: Lang, s: typeof I18N['zh']): string {
-  const today = new Date().toDateString();
-  const yest = new Date(Date.now() - 864e5).toDateString();
-  if (key === today) return s.today;
-  if (key === yest) return s.yesterday;
-  return new Date(key).toLocaleDateString(lang === 'zh' ? 'zh-CN' : 'en-US', {
+  const d = new Date(key);
+  // `Date.now() - 864e5` is twenty-four hours ago, which is the day before
+  // yesterday on the morning after the clocks go forward — so "yesterday"
+  // labelled the wrong group. `daysAgo` normalises both ends to midnight.
+  const ago = daysAgo(d.getTime());
+  if (ago === 0) return s.today;
+  if (ago === 1) return s.yesterday;
+  return d.toLocaleDateString(lang === 'zh' ? 'zh-CN' : 'en-US', {
     month: 'short',
     day: 'numeric',
     weekday: 'short',

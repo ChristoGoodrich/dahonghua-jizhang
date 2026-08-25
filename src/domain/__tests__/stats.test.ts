@@ -1,6 +1,7 @@
 import { byCategory, statTotals, sixMonthTrend, comparison, donutSlices, topEntries, byWeekday, byTimeOfDay, timeBucketOf } from '../stats';
 import { computeInsight } from '../insight';
 import type { Entry } from '../types';
+import { describeDst } from './helpers/dst';
 
 const E = (over: Partial<Entry>): Entry => ({ id: Math.random().toString(36), ts: Date.now(), io: 'exp', cat: 'food', amt: 0, ...over });
 const noCustom = { exp: [], inc: [] };
@@ -141,46 +142,57 @@ describe('computeInsight', () => {
   });
 });
 
-describe('cycle day counting across a daylight-saving transition', () => {
-  // The runner is Australia/Sydney, whose clocks go forward on the first Sunday
-  // in October and back on the first Sunday in April. Both of these fail
-  // against `ceil((min(now, end) - start) / 864e5)`, which counts twenty-four
-  // hours rather than a calendar day.
-  const e = (ts: number, amt: number): Entry =>
-    ({ id: `x${ts}`, ts, io: 'exp', cat: 'food', amt }) as Entry;
+describeDst('cycle day counting across a daylight-saving transition', 2026, ({ forward, back }) => {
+  // `forward` is the local day that is 23 hours long, `back` the one that is 25.
+  // Both defeat `ceil((min(now, end) - start) / 864e5)`, which counts twenty-four
+  // hours rather than a calendar day. The dates come from the running timezone
+  // rather than from Sydney's calendar, so this means the same thing wherever it
+  // runs — and skips, loudly, in a zone with no transition at all.
+  const e = (ts: number, amt: number): Entry => ({ id: `x${ts}`, ts, io: 'exp', cat: 'food', amt }) as Entry;
+  const plus = (d: Date, n: number) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+  const at = (d: Date, h: number, mi: number) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), h, mi).getTime();
 
   it('counts the elapsed day correctly after clocks go forward', () => {
-    // Sydney springs forward 2026-10-04; the 5th is the 5th day of the cycle
-    const now = new Date(2026, 9, 5, 0, 30).getTime();
-    const r = statTotals([e(now, 10)], new Date(2026, 9, 5), 1, now);
+    // the day after the transition is the Nth day of a cycle starting on the 1st
+    const day = plus(forward, 1);
+    const now = at(day, 0, 30);
+    const r = statTotals([e(now, 10)], day, 1, now);
     // avg = total / elapsed, so a wrong elapsed shows here
-    expect(r.avg).toBeCloseTo(10 / 5, 10);
+    expect(r.avg).toBeCloseTo(10 / day.getDate(), 10);
   });
 
   it('counts the elapsed day correctly after clocks go back', () => {
-    // Sydney falls back 2026-04-05; the 6th is the 6th day of the cycle
-    const now = new Date(2026, 3, 6, 23, 30).getTime();
-    const r = statTotals([e(now, 12)], new Date(2026, 3, 6), 1, now);
-    expect(r.avg).toBeCloseTo(12 / 6, 10);
+    const day = plus(back, 1);
+    const now = at(day, 23, 30);
+    const r = statTotals([e(now, 12)], day, 1, now);
+    expect(r.avg).toBeCloseTo(12 / day.getDate(), 10);
   });
 
   it('files an entry under its own day after clocks go forward', () => {
-    // an entry at 00:30 on each of the three days after the transition
-    const days = [4, 5, 6].map((d) => new Date(2026, 9, d, 0, 30).getTime());
-    const entries = days.map((ts, i) => e(ts, (i + 1) * 10));
-    const now = new Date(2026, 9, 6, 12, 0).getTime();
-    const r = comparison(entries, new Date(2026, 9, 6), 1, now);
-    // cumulative spend: nothing until day 4, then 10, 30, 60
-    expect(r.thisCum[2]).toBe(0);
-    expect(r.thisCum[3]).toBe(10);
-    expect(r.thisCum[4]).toBe(30);
-    expect(r.thisCum[5]).toBe(60);
-    expect(r.elapsedDays).toBe(6);
+    // an entry at 00:30 on the transition day and each of the two days after it
+    const days = [0, 1, 2].map((n) => plus(forward, n));
+    if (days[2].getMonth() !== forward.getMonth() || forward.getDate() < 2) return; // needs room in the cycle
+    const entries = days.map((d, i) => e(at(d, 0, 30), (i + 1) * 10));
+    const now = at(days[2], 12, 0);
+    const r = comparison(entries, days[2], 1, now);
+    const i0 = forward.getDate() - 1; // day index within a cycle starting on the 1st
+    // cumulative spend: nothing until the transition day, then 10, 30, 60
+    expect(r.thisCum[i0 - 1]).toBe(0);
+    expect(r.thisCum[i0]).toBe(10);
+    expect(r.thisCum[i0 + 1]).toBe(30);
+    expect(r.thisCum[i0 + 2]).toBe(60);
+    expect(r.elapsedDays).toBe(forward.getDate() + 2);
   });
 
   it('is unchanged on a month with no transition', () => {
-    const now = new Date(2026, 5, 10, 12, 0).getTime();
-    const r = statTotals([e(now, 30)], new Date(2026, 5, 10), 1, now);
+    // the control: a cycle whose every day is twenty-four hours long, where the
+    // old arithmetic and the new one must agree
+    const m = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].find(
+      (mm) => mm !== forward.getMonth() && mm !== back.getMonth(),
+    )!;
+    const day = new Date(2026, m, 10, 12, 0);
+    const now = day.getTime();
+    const r = statTotals([e(now, 30)], day, 1, now);
     expect(r.avg).toBeCloseTo(30 / 10, 10);
   });
 });

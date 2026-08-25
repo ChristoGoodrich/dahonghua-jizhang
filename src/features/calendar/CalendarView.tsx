@@ -5,6 +5,7 @@ import { useTheme } from '@/theme/ThemeContext';
 import { RAD, TABULAR, shadow } from '@/theme/tokens';
 import { Flower } from '@/components/Flower';
 import { cycleRange } from '@/domain/cycle';
+import { daysBetween } from '@/domain/dates';
 import { catOf, catName } from '@/domain/cats';
 import { fmt, fmtNum } from '@/domain/money';
 import type { Category, Entry, IO } from '@/domain/types';
@@ -56,7 +57,7 @@ export function CalendarView({ all, anchor, cycleStart, customCats, lang, onAddD
 
   const { leading, cells } = useMemo(() => {
     const { start, end } = cycleRange(anchor, cycleStart);
-    const totalDays = Math.round((end.getTime() - start.getTime()) / 864e5);
+    const totalDays = daysBetween(start.getTime(), end.getTime());
     const map = new Map<string, { n: number; exp: number }>();
     for (const d of all) {
       if (d.ts < start.getTime() || d.ts >= end.getTime() || d.deletedAt) continue;

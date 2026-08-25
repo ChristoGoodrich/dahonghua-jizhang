@@ -1,6 +1,7 @@
 // Weekly budget math — get week range (Sun–Sat), calculate daily equivalent,
 // and compute weekly spending status.
 import type { Entry } from './types';
+import { daysBetween } from './dates';
 
 export interface WeekRange {
   start: Date;
@@ -46,7 +47,7 @@ export function getWeeklyStatus(entries: Entry[], weeklyBudget: number, now = Da
 
   // daysLeft: days remaining in the week from today (including today)
   const today = new Date(anchor.getFullYear(), anchor.getMonth(), anchor.getDate());
-  const daysLeft = Math.max(0, Math.round((endMs - today.getTime()) / 864e5));
+  const daysLeft = Math.max(0, daysBetween(today.getTime(), endMs));
 
   return { spent, remaining, over, daysLeft, dailyBudget };
 }

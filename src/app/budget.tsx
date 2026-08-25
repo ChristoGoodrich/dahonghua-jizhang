@@ -7,7 +7,7 @@ import { allCats, catName } from '@/domain/cats';
 import { curSymbol, fmtShort } from '@/domain/money';
 import { inCycle, cycleRange, cycleDays } from '@/domain/cycle';
 import { monthlyStatus, dailyStatus, type TierStatus } from '@/domain/budget';
-import { byCategory } from '@/domain/stats';
+import { byCategory, elapsedDaysIn } from '@/domain/stats';
 import { useTheme } from '@/theme/ThemeContext';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { BudgetForecast } from '@/features/budget/BudgetForecast';
@@ -52,7 +52,11 @@ export default observer(function BudgetScreen() {
   const monthly = monthlyStatus(cycleEntries, settings);
   const daily = dailyStatus(cycleEntries, settings);
   const daysInCycle = cycleDays(now, cycleStart);
-  const daysElapsed = Math.max(1, Math.round((now.getTime() - cycleRange(now, cycleStart).start.getTime()) / 864e5));
+  // Not `round((now - start) / 864e5)`: `now` carries a time of day, so that
+  // rounded up from midday and the daily average jumped by a third every
+  // afternoon — and 864e5 is twenty-four hours rather than a calendar day.
+  const { start: cycleFrom, end: cycleTo } = cycleRange(now, cycleStart);
+  const daysElapsed = elapsedDaysIn(cycleFrom, cycleTo, now.getTime());
   const byCat = byCategory(cycleEntries, 'exp');
   const spentOf = (k: string) => byCat.find((x) => x.cat === k)?.amt ?? 0;
 

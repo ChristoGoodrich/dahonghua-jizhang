@@ -153,7 +153,7 @@ export function statTotals(cycleEntries: Entry[], anchor: Date, cycleStart: numb
  * the 5th of October and 7 on the 6th of April. `elapsed` divides the daily
  * average, so being one out early in a cycle changes it by a third or a half.
  */
-function elapsedDaysIn(start: Date, end: Date, now: number): number {
+export function elapsedDaysIn(start: Date, end: Date, now: number): number {
   const cycleLen = daysBetween(start.getTime(), end.getTime());
   return Math.max(1, Math.min(daysBetween(start.getTime(), now) + 1, cycleLen));
 }

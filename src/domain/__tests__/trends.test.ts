@@ -1,5 +1,6 @@
 import { dailyTrend, weeklyTrend, categoryTrend } from '../trends';
 import type { Entry } from '../types';
+import { describeDst } from './helpers/dst';
 
 const E = (over: Partial<Entry>): Entry => ({
   id: Math.random().toString(36),
@@ -138,6 +139,56 @@ describe('categoryTrend', () => {
     expect(result).toHaveLength(3);
     for (const point of result) {
       expect(point.amt).toBe(0);
+    }
+  });
+});
+
+describeDst('bucketing across a daylight-saving transition', 2026, ({ forward, back }) => {
+  // `today - i * 864e5` steps back twenty-four hours, which is not a calendar
+  // day on either side of a transition. Three different symptoms fall out of
+  // the one mistake, so there are three different assertions here.
+  const plus = (d: Date, n: number) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+  const str = (d: Date) =>
+    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const noon = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12).getTime();
+  const firstHour = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 30).getTime();
+
+  it('labels seven consecutive calendar days across a spring-forward', () => {
+    // the 23-hour day is stepped straight over: the axis reads … 03, 05, 06 …
+    // and the missing day is simply not on the chart
+    const end = plus(forward, 4);
+    const got = dailyTrend([], 7, noon(end)).map((p) => p.date);
+    expect(got).toEqual([6, 5, 4, 3, 2, 1, 0].map((i) => str(plus(end, -i))));
+  });
+
+  it('files a first-hour entry under its own day across a spring-forward', () => {
+    const entries = [E({ ts: firstHour(forward), io: 'exp', amt: 42 })];
+    const got = dailyTrend(entries, 7, noon(plus(forward, 4)));
+    expect(got.find((p) => p.date === str(forward))?.exp).toBe(42);
+  });
+
+  it('files a first-hour entry under its own day across a fall-back', () => {
+    // here the labels stay right and the contents do not: every bucket before
+    // the transition runs 01:00 to 01:00, so the first hour of each day lands
+    // in the day before it
+    const entries = [E({ ts: firstHour(back), io: 'exp', amt: 42 })];
+    const got = dailyTrend(entries, 7, noon(plus(back, 4)));
+    expect(got.find((p) => p.date === str(back))?.exp).toBe(42);
+    expect(got.find((p) => p.date === str(plus(back, -1)))?.exp).toBe(0);
+  });
+
+  it('tracks a category on the right day across a spring-forward', () => {
+    const entries = [E({ ts: firstHour(forward), cat: 'food', amt: 7 })];
+    const got = categoryTrend(entries, 'food', 7, noon(plus(forward, 4)));
+    expect(got.find((p) => p.date === str(forward))?.amt).toBe(7);
+  });
+
+  it('starts every weekly bucket on a Monday', () => {
+    // a week is not 7 × 864e5 either: after a transition every historical week
+    // starts at 23:00 on the Sunday, so the label names the wrong weekday
+    const got = weeklyTrend([], 8, noon(plus(forward, 10))).map((p) => p.date);
+    for (const d of got) {
+      expect(new Date(`${d}T00:00:00`).getDay()).toBe(1);
     }
   });
 });

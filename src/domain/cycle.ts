@@ -2,6 +2,8 @@
 // cycleRange / cycleRangeFrom / inCycle. A "cycle" is a month-long window that
 // can start on any day 1..28 (e.g. payday on the 25th).
 
+import { daysBetween } from './dates';
+
 export interface CycleRange {
   start: Date;
   end: Date;
@@ -33,5 +35,5 @@ export function shiftCycle(anchor: Date, dir: number, cycleStart = 1): Date {
 /** Number of whole days in the cycle (28..31). */
 export function cycleDays(anchor: Date, cycleStart = 1): number {
   const { start, end } = cycleRange(anchor, cycleStart);
-  return Math.round((end.getTime() - start.getTime()) / 864e5);
+  return daysBetween(start.getTime(), end.getTime());
 }
