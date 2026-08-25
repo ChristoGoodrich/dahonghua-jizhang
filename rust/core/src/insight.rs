@@ -13,10 +13,11 @@
 //! Category *names* are a different thing and do live in [`crate::catalog`]:
 //! they are data the ledger is keyed by, not phrasing.
 
-use crate::budget::{daily_status, js_object_keys, DayRow};
+use crate::budget::{daily_status, DayRow};
 use crate::catalog::{cat_name, cat_of, Category};
 use crate::civil::Civil;
 use crate::entry::{Entry, Io};
+use crate::jsobj::object_keys;
 use crate::money::fmt_short;
 use crate::num::{desc_by_amt, js_round};
 use crate::statement::{due_soon, DatedEntry};
@@ -230,7 +231,7 @@ pub fn compute_insight(
 
     // the *first* category over its cap, and first means first in `Object.keys`
     // order — which is not insertion order when a key looks like an integer
-    for (k, cap) in js_object_keys(cat_budgets) {
+    for (k, cap) in object_keys(cat_budgets) {
         let spent = by_cat
             .iter()
             .find(|(c, _)| c == k)

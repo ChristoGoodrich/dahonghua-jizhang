@@ -105,6 +105,12 @@ const MODULES = [
     example: 'dump_insight',
   },
   {
+    name: 'weekly',
+    corpus: 'rust/parity/weekly-corpus.tsv',
+    ts: 'scripts/weekly-parity.ts',
+    example: 'dump_weekly',
+  },
+  {
     name: 'stats',
     corpus: 'rust/parity/stats-corpus.tsv',
     ts: 'scripts/stats-parity.ts',

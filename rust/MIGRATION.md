@@ -57,7 +57,8 @@ Adding a module to the harness:
 | `domain/statement` | 149 | **Ported**, 5,229-case parity |
 | `domain/insight` | 98 | **Ported**, 4,618-case parity — copy stays in the UI |
 | `domain/order` (new) | — | **Added** — the amount comparator, as a total order |
-| `domain/recap`, `weekly`, `streak` | ~260 | Queued |
+| `domain/recap` + `weekly` + `streak` | 101 | **Ported**, 4,829-case parity in one corpus |
+| `domain/jsobj` (new) | — | **Added** — `Object.keys` ordering, once its third consumer appeared |
 | `domain/billParse` → `bills` | 272 | **Ported**, 4,400-case parity — bar `decodeBillText` |
 | `domain/encoding` + `gbkTable` | 65 + 24k cells | Deferred by choice — `encoding_rs`, not a hand-copied table (below) |
 | `domain/billDedup` → `dedup` | 138 | **Ported**, 3,838-case parity |
@@ -781,6 +782,52 @@ English account name could not be expressed (both parsers collapsed `""` to
 absent, so the `nameEn || name` fallback was unreachable — now 47 cases), a
 value containing a marker was never generated, and the `>= 100%` and `>= 80%`
 thresholds were never landed on exactly.
+
+### A guard that provably cannot fire
+
+`weekly.ts` floors its days-left count with `Math.max(0, …)`. Removing that
+floor in the Rust diverges on **nothing**, and after the last two increments the
+reflex is to hunt for the corpus gap. There isn't one.
+
+`end` is `start + 7` and `start` is `today` less its own weekday, so the
+difference is always 1 through 7. The floor is unreachable by construction. It
+stays — the TypeScript has the same guard and removing it on one side only would
+be a difference for no reason — but it now carries a comment saying so, and a
+Rust test that walks four whole weeks to prove it rather than spot-checking
+three days.
+
+Compare `elapsed`'s floor in `stats`, which looks identical and is load-bearing:
+removing *that* one aborts the process on a capacity overflow. Two guards, same
+shape, opposite answers, and only the sweep tells them apart.
+
+### Two injections that were no-ops, again
+
+Two of the three zeros in this sweep were the injection changing nothing:
+`let mut n = 0` → `let mut n: usize = 0` is a type annotation, and
+`n += 0; n += 1;` is `n += 1`. Both reported a clean zero that looked exactly
+like a corpus gap.
+
+That is now four separate occasions. The pattern is always the same shape — an
+edit that *looks* like it alters behaviour but is a no-op under the language's
+rules (a stable sort ignoring `Greater`, a comparison whose branches return the
+same value, a type annotation). Writing an injection is writing a test, and a
+test that cannot fail is worse than no test, because it is counted.
+
+A third injection failed to compile rather than running:
+`n.saturating_sub(1)` is `E0689`, because method resolution happens before the
+return type pins `n`. The sweep printed the real error instead of silently
+scoring it, which is the fix made two increments ago earning its keep.
+
+### `Object.keys` ordering earned its own module
+
+Three consumers now walk a user's per-category budget map and care which key
+comes first: `catBudgetRows` because its sort is stable and a fresh cycle is all
+ties, `insight` because it reports the *first* category over its cap, and
+`recap` because it names the biggest spend. Three was the threshold set when the
+rule was first written into `budget.rs`, so it moved to `jsobj.rs`.
+
+`recap` also carried the same inconsistent comparator `insight` did —
+`byCat[b] - byCat[a]` — and now uses `descByAmt` with it.
 
 ## Phase 2 — state and sync
 

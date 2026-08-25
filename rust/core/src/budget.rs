@@ -13,6 +13,7 @@
 
 use crate::civil::Civil;
 use crate::entry::{Entry, Io};
+use crate::jsobj::object_keys;
 use crate::num::desc_by_amt;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -89,47 +90,9 @@ pub struct CatBudgetRow {
     pub status: TierStatus,
 }
 
-/// True when `k` is what JavaScript calls an *array index*: the canonical
-/// decimal spelling of an integer in `0 ..= 2^32 - 2`.
-///
-/// The distinction is not academic here. `Object.keys` returns array-index keys
-/// **first, in ascending numeric order**, ahead of every other key and
-/// regardless of when they were inserted; only the remainder come out in
-/// insertion order. A ledger whose categories are named `1`, `2`, `10` — which
-/// a custom category set can absolutely produce — therefore lists them before
-/// `food`, and `10` after `2` rather than before it.
-///
-/// Canonical is the whole test: `01` is not an index, because `String(1)` is
-/// `"1"`. Neither is `-1`, `1.5`, `1e2` or the empty string.
-pub fn is_array_index(k: &str) -> bool {
-    if k.is_empty() || (k.len() > 1 && k.starts_with('0')) {
-        return false;
-    }
-    if !k.bytes().all(|b| b.is_ascii_digit()) {
-        return false;
-    }
-    // 2^32 - 1 is a length, not an index
-    matches!(k.parse::<u32>(), Ok(n) if n != u32::MAX)
-}
-
-/// `Object.keys` order over an insertion-ordered list of entries.
-///
-/// The caller holds a map's entries in insertion order; duplicates cannot
-/// occur, because the source is an object.
-///
-/// Public because [`crate::insight`] walks the same cap map looking for the
-/// first breach, and "first" means first in this order. If a third consumer
-/// appears this and [`is_array_index`] should move somewhere neutral.
-pub fn js_object_keys(caps: &[(String, f64)]) -> Vec<&(String, f64)> {
-    let mut out: Vec<&(String, f64)> = caps.iter().filter(|(k, _)| is_array_index(k)).collect();
-    out.sort_by_key(|(k, _)| k.parse::<u32>().expect("is_array_index checked this"));
-    out.extend(caps.iter().filter(|(k, _)| !is_array_index(k)));
-    out
-}
-
 /// One row per category that has a cap set, closest to its cap first.
 ///
-/// `caps` is a map's entries **in insertion order**; [`js_object_keys`] applies
+/// `caps` is a map's entries **in insertion order**; [`object_keys`] applies
 /// the one reordering JavaScript does to that. Caps of zero or less are dropped rather
 /// than shown at zero percent — the filter is `cb[k] > 0`, so a `NaN` cap is
 /// dropped too.
@@ -145,7 +108,7 @@ pub fn cat_budget_rows(cycle_entries: &[Entry], caps: &[(String, f64)]) -> Vec<C
             None => spent.push((&d.cat, d.amt)),
         }
     }
-    let mut rows: Vec<CatBudgetRow> = js_object_keys(caps)
+    let mut rows: Vec<CatBudgetRow> = object_keys(caps)
         .into_iter()
         .filter(|(_, cap)| *cap > 0.0)
         .map(|(k, cap)| {
@@ -298,22 +261,6 @@ mod tests {
         let rows = cat_budget_rows(&[], &caps);
         let order: Vec<&str> = rows.iter().map(|r| r.cat.as_str()).collect();
         assert_eq!(order, vec!["2", "10", "b", "a"]);
-    }
-
-    #[test]
-    fn a_key_is_an_index_only_in_its_canonical_spelling() {
-        assert!(is_array_index("0"));
-        assert!(is_array_index("1"));
-        assert!(is_array_index("4294967294"));
-        // `String(1)` is "1", so "01" is an ordinary string key
-        assert!(!is_array_index("01"));
-        assert!(!is_array_index(""));
-        assert!(!is_array_index("-1"));
-        assert!(!is_array_index("1.5"));
-        assert!(!is_array_index("1e2"));
-        // 2^32 - 1 is a length rather than an index
-        assert!(!is_array_index("4294967295"));
-        assert!(!is_array_index("4294967296"));
     }
 
     #[test]
