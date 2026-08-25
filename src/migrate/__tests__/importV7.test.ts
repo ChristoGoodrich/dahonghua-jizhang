@@ -66,6 +66,19 @@ describe('importV7 sync stamping', () => {
     expect(store$.data.peek()[0].fieldTs).toBeUndefined();
   });
 
+  it('collapses a repeated id, keeping the last copy', () => {
+    // a backup is a file and can say anything. Two rows sharing an id make the
+    // sync merge incoherent — it indexes by id, resolves the pair to one row,
+    // and leaves the other in the list disagreeing with it.
+    importV7({
+      version: 8,
+      data: [entry({ id: 'a', amt: 10 }), entry({ id: 'a', amt: 99 }), entry({ id: 'b' })],
+    });
+    const rows = store$.data.peek();
+    expect(rows.map((e) => e.id)).toEqual(['a', 'b']);
+    expect(rows[0].amt).toBe(99); // the last copy, which is what mergeById's Map keeps
+  });
+
   it('keeps updatedAt distinct so ordering is stable', () => {
     importV7({ version: 8, data: [entry({ id: 'a' }), entry({ id: 'b' }), entry({ id: 'c' })] });
     const stamps = store$.data.peek().map((e) => e.updatedAt);

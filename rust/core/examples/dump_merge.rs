@@ -10,7 +10,7 @@
 //! core code — the crate still has one dependency.
 
 use dahonghua_core::jsval::{stable, Value};
-use dahonghua_core::merge::{live_rows, merge_by_id, Resolution};
+use dahonghua_core::merge::{live_rows, merge_by_id, merge_one, Conflict, Resolution};
 use std::io::{self, Read};
 
 struct P<'a> {
@@ -160,6 +160,27 @@ fn utf8_len(b: u8) -> usize {
     }
 }
 
+/// One conflict per comma, the same way scripts/merge-parity.ts renders them.
+fn show(conflicts: &[Conflict]) -> String {
+    conflicts
+        .iter()
+        .map(|x| {
+            format!(
+                "{}:{}:{}:{}",
+                x.entry_id,
+                dahonghua_core::num::js_num(x.local_updated_at),
+                dahonghua_core::num::js_num(x.remote_updated_at),
+                match x.resolution {
+                    Resolution::Local => "local",
+                    Resolution::Remote => "remote",
+                    Resolution::Merged => "merged",
+                }
+            )
+        })
+        .collect::<Vec<_>>()
+        .join(",")
+}
+
 fn parse(s: &str) -> Vec<Value> {
     let mut p = P {
         b: s.as_bytes(),
@@ -191,28 +212,22 @@ fn main() {
                 let r = merge_by_id(&local, &remote);
                 let m: Vec<String> = r.merged.iter().map(stable).collect();
                 let p: Vec<String> = r.to_push.iter().map(stable).collect();
-                let c: Vec<String> = r
-                    .conflicts
-                    .iter()
-                    .map(|x| {
-                        format!(
-                            "{}:{}:{}:{}",
-                            x.entry_id,
-                            dahonghua_core::num::js_num(x.local_updated_at),
-                            dahonghua_core::num::js_num(x.remote_updated_at),
-                            match x.resolution {
-                                Resolution::Local => "local",
-                                Resolution::Remote => "remote",
-                                Resolution::Merged => "merged",
-                            }
-                        )
-                    })
-                    .collect();
                 format!(
                     "merged=[{}] push=[{}] conflicts=[{}]",
                     m.join(","),
                     p.join(","),
-                    c.join(",")
+                    show(&r.conflicts)
+                )
+            }
+            "mergeone" => {
+                // the realtime path: one incoming row, folded into the local set
+                let r = merge_one(&local, &remote[0]);
+                let rows: Vec<String> = r.rows.iter().map(stable).collect();
+                format!(
+                    "rows=[{}] push={} conflicts=[{}]",
+                    rows.join(","),
+                    r.push.as_ref().map(stable).unwrap_or("none".to_string()),
+                    show(&r.conflicts)
                 )
             }
             "live" => {

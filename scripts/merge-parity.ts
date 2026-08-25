@@ -8,7 +8,7 @@
 // the comparison does not depend on the key order either implementation
 // happens to build — which is the same property the merge itself needs.
 
-import { mergeById, liveRows, type SyncRow, type ConflictInfo } from '../src/sync/merge';
+import { mergeById, mergeOne, liveRows, type SyncRow, type ConflictInfo } from '../src/sync/merge';
 
 const raw = require('fs').readFileSync(0, 'utf8') as string;
 
@@ -44,6 +44,18 @@ for (const line of raw.split('\n')) {
       value =
         `merged=[${r.merged.map(stable).join(',')}]` +
         ` push=[${r.toPush.map(stable).join(',')}]` +
+        ` conflicts=[${conflicts
+          .map((c) => `${c.entryId}:${n(c.localUpdatedAt)}:${n(c.remoteUpdatedAt)}:${c.resolution}`)
+          .join(',')}]`;
+      break;
+    }
+    case 'mergeone': {
+      // the realtime path: one incoming row, folded into the local set
+      const conflicts: ConflictInfo[] = [];
+      const r = mergeOne(local, remote[0], (c) => conflicts.push(c));
+      value =
+        `rows=[${r.rows.map(stable).join(',')}]` +
+        ` push=${r.push ? stable(r.push) : 'none'}` +
         ` conflicts=[${conflicts
           .map((c) => `${c.entryId}:${n(c.localUpdatedAt)}:${n(c.remoteUpdatedAt)}:${c.resolution}`)
           .join(',')}]`;

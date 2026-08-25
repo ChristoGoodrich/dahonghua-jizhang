@@ -202,6 +202,42 @@ pub fn merge_row(a: &Value, b: &Value) -> Value {
     Value::Obj(out)
 }
 
+/// Resolve the two versions of one id, recording a conflict if they differ.
+///
+/// Shared by [`merge_by_id`] (the pull) and [`merge_one`] (a realtime message)
+/// so the two paths cannot answer differently. They did: the realtime handler
+/// compared `updatedAt` and took the whole newer row, which discarded exactly
+/// the concurrent field edit `fieldTs` exists to preserve — and discarded the
+/// stamp with it, so no later pull could tell anything had gone.
+fn resolve(lv: &Value, rv: &Value, conflicts: &mut Vec<Conflict>) -> Value {
+    let differ = stable(lv) != stable(rv);
+    let mut report = |resolution| {
+        if differ {
+            conflicts.push(Conflict {
+                entry_id: id_of(lv),
+                local_updated_at: updated_at(lv),
+                remote_updated_at: updated_at(rv),
+                resolution,
+            });
+        }
+    };
+    if has_field_ts(lv) && has_field_ts(rv) {
+        report(Resolution::Merged);
+        return merge_row(lv, rv);
+    }
+    let remote_wins = compare_rows(rv, lv) == Ordering::Greater;
+    report(if remote_wins {
+        Resolution::Remote
+    } else {
+        Resolution::Local
+    });
+    if remote_wins {
+        rv.clone()
+    } else {
+        lv.clone()
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Resolution {
     Local,
@@ -241,7 +277,12 @@ pub fn merge_by_id(local: &[Value], remote: &[Value]) -> MergeResult {
             ids.push(id);
         }
     }
-    let find = |rows: &[Value], id: &str| rows.iter().find(|r| id_of(r) == id).cloned();
+    // `new Map(rows.map(r => [r.id, r]))` on the other side, and a Map keeps the
+    // LAST entry written for a key — so a set holding one id twice resolves to
+    // its last copy, not its first. `.find()` took the first and answered
+    // differently; the corpus had never contained a duplicate id, and an
+    // importV7 restore reads whatever ids are in the user's backup file.
+    let find = |rows: &[Value], id: &str| rows.iter().rev().find(|r| id_of(r) == id).cloned();
 
     let mut merged = Vec::new();
     let mut to_push = Vec::new();
@@ -250,39 +291,7 @@ pub fn merge_by_id(local: &[Value], remote: &[Value]) -> MergeResult {
         let l = find(local, id);
         let r = find(remote, id);
         let win = match (&l, &r) {
-            (Some(lv), Some(rv)) => {
-                let differ = stable(lv) != stable(rv);
-                if has_field_ts(lv) && has_field_ts(rv) {
-                    if differ {
-                        conflicts.push(Conflict {
-                            entry_id: id.clone(),
-                            local_updated_at: updated_at(lv),
-                            remote_updated_at: updated_at(rv),
-                            resolution: Resolution::Merged,
-                        });
-                    }
-                    merge_row(lv, rv)
-                } else {
-                    let remote_wins = compare_rows(rv, lv) == Ordering::Greater;
-                    if differ {
-                        conflicts.push(Conflict {
-                            entry_id: id.clone(),
-                            local_updated_at: updated_at(lv),
-                            remote_updated_at: updated_at(rv),
-                            resolution: if remote_wins {
-                                Resolution::Remote
-                            } else {
-                                Resolution::Local
-                            },
-                        });
-                    }
-                    if remote_wins {
-                        rv.clone()
-                    } else {
-                        lv.clone()
-                    }
-                }
-            }
+            (Some(lv), Some(rv)) => resolve(lv, rv, &mut conflicts),
             (Some(lv), None) => lv.clone(),
             (None, Some(rv)) => rv.clone(),
             (None, None) => continue,
@@ -299,6 +308,50 @@ pub fn merge_by_id(local: &[Value], remote: &[Value]) -> MergeResult {
     MergeResult {
         merged,
         to_push,
+        conflicts,
+    }
+}
+
+/// The result of folding one incoming remote row into the local set.
+#[derive(Debug, Clone, PartialEq)]
+pub struct MergeOneResult {
+    /// The local set with the incoming row resolved into it.
+    pub rows: Vec<Value>,
+    /// The resolved row, when the server's copy is not it.
+    pub push: Option<Value>,
+    pub conflicts: Vec<Conflict>,
+}
+
+/// Merge ONE incoming remote row into the local set — the realtime path.
+///
+/// Not `merge_by_id(local, &[remote])`: that treats every row the message did
+/// not mention as missing from the server and would re-upload the whole ledger
+/// on every echo. This resolves the one id and reports whether the result still
+/// needs pushing, which it does whenever the local side contributed anything —
+/// a field the message had not seen, or a whole row that simply won.
+pub fn merge_one(local: &[Value], remote: &Value) -> MergeOneResult {
+    let id = id_of(remote);
+    let mut conflicts = Vec::new();
+    let Some(idx) = local.iter().position(|x| id_of(x) == id) else {
+        let mut rows = local.to_vec();
+        rows.push(remote.clone());
+        return MergeOneResult {
+            rows,
+            push: None,
+            conflicts,
+        };
+    };
+    let win = resolve(&local[idx], remote, &mut conflicts);
+    let push = if stable(&win) != stable(remote) {
+        Some(win.clone())
+    } else {
+        None
+    };
+    let mut rows = local.to_vec();
+    rows[idx] = win;
+    MergeOneResult {
+        rows,
+        push,
         conflicts,
     }
 }
@@ -366,7 +419,8 @@ mod tests {
     fn an_exact_tie_is_broken_the_same_way_on_every_device() {
         let l = row("a", 1.0, 10.0);
         let r = row("a", 1.0, 20.0);
-        let from_l = merge_by_id(std::slice::from_ref(&l), std::slice::from_ref(&r)).merged[0].clone();
+        let from_l =
+            merge_by_id(std::slice::from_ref(&l), std::slice::from_ref(&r)).merged[0].clone();
         let from_r = merge_by_id(&[r], &[l]).merged[0].clone();
         assert_eq!(stable(&from_l), stable(&from_r));
     }
@@ -564,5 +618,124 @@ mod tests {
         ]);
         // remote is the larger serialisation under UTF-16, so remote wins
         assert_eq!(compare_rows(&r, &l), Ordering::Greater);
+    }
+
+    // ---------- merge_one: the realtime path ----------
+
+    fn stamped(id: &str, updated: f64, fields: &[(&str, Value)], ts: &[(&str, f64)]) -> Value {
+        let mut pairs: Vec<(String, Value)> = vec![
+            ("id".to_string(), s(id)),
+            ("updatedAt".to_string(), n(updated)),
+        ];
+        for (k, v) in fields {
+            pairs.push((k.to_string(), v.clone()));
+        }
+        pairs.push((
+            "fieldTs".to_string(),
+            Value::Obj(ts.iter().map(|(k, t)| (k.to_string(), n(*t))).collect()),
+        ));
+        Value::Obj(pairs)
+    }
+
+    #[test]
+    fn one_row_keeps_a_concurrent_field_edit_the_way_the_pull_would() {
+        // the note was edited here at 1000, the amount elsewhere at 2000
+        let local = stamped(
+            "e1",
+            1000.0,
+            &[("amt", n(10.0)), ("note", s("mine"))],
+            &[("note", 1000.0), ("amt", 500.0)],
+        );
+        let remote = stamped(
+            "e1",
+            2000.0,
+            &[("amt", n(99.0))],
+            &[("amt", 2000.0), ("note", 500.0)],
+        );
+
+        let out = merge_one(std::slice::from_ref(&local), &remote);
+
+        assert_eq!(out.rows[0].num("amt"), Some(99.0));
+        assert_eq!(out.rows[0].get("note"), Some(&s("mine")));
+        // and it answers what the pull answers, which is the whole point
+        let pulled = merge_by_id(&[local], &[remote]);
+        assert_eq!(stable(&out.rows[0]), stable(&pulled.merged[0]));
+    }
+
+    #[test]
+    fn one_row_asks_for_a_push_when_the_local_side_contributed() {
+        let local = stamped(
+            "e1",
+            1000.0,
+            &[("amt", n(10.0)), ("note", s("mine"))],
+            &[("note", 1000.0), ("amt", 500.0)],
+        );
+        let remote = stamped(
+            "e1",
+            2000.0,
+            &[("amt", n(99.0))],
+            &[("amt", 2000.0), ("note", 500.0)],
+        );
+        assert!(merge_one(&[local], &remote).push.is_some());
+    }
+
+    #[test]
+    fn our_own_echo_asks_for_nothing() {
+        let r = stamped("e1", 1000.0, &[("amt", n(10.0))], &[("amt", 1000.0)]);
+        let out = merge_one(std::slice::from_ref(&r), &r);
+        assert_eq!(out.push, None);
+        assert_eq!(out.rows.len(), 1);
+    }
+
+    #[test]
+    fn an_unseen_row_is_appended_and_not_pushed_back() {
+        let out = merge_one(&[row("a", 100.0, 1.0)], &row("b", 200.0, 2.0));
+        assert_eq!(out.rows.len(), 2);
+        assert_eq!(id_of(&out.rows[1]), "b");
+        assert_eq!(out.push, None);
+    }
+
+    #[test]
+    fn a_stale_message_leaves_the_local_row_and_says_the_server_is_behind() {
+        let out = merge_one(&[row("a", 9999.0, 10.0)], &row("a", 5.0, 1.0));
+        assert_eq!(out.rows[0].num("amt"), Some(10.0));
+        assert_eq!(out.push.as_ref().and_then(|p| p.num("amt")), Some(10.0));
+    }
+
+    #[test]
+    fn one_row_reports_the_conflict_the_way_the_pull_does() {
+        let out = merge_one(&[row("a", 100.0, 10.0)], &row("a", 200.0, 99.0));
+        assert_eq!(
+            out.conflicts,
+            vec![Conflict {
+                entry_id: "a".to_string(),
+                local_updated_at: 100.0,
+                remote_updated_at: 200.0,
+                resolution: Resolution::Remote,
+            }]
+        );
+    }
+
+    #[test]
+    fn an_identical_pair_is_not_a_conflict() {
+        let out = merge_one(&[row("a", 100.0, 10.0)], &row("a", 100.0, 10.0));
+        assert!(out.conflicts.is_empty());
+        assert_eq!(out.push, None);
+    }
+
+    #[test]
+    fn a_repeated_id_resolves_to_its_last_copy() {
+        // `new Map(rows.map(...))` keeps the last entry written for a key, and
+        // a restored backup is a file that can name the same id twice
+        let out = merge_by_id(&[row("a", 1.0, 10.0), row("a", 2.0, 99.0)], &[]);
+        assert_eq!(out.merged.len(), 1);
+        assert_eq!(out.merged[0].num("amt"), Some(99.0));
+    }
+
+    #[test]
+    fn a_repeated_id_on_the_remote_side_resolves_the_same_way() {
+        let out = merge_by_id(&[], &[row("a", 1.0, 10.0), row("a", 2.0, 99.0)]);
+        assert_eq!(out.merged.len(), 1);
+        assert_eq!(out.merged[0].num("amt"), Some(99.0));
     }
 }

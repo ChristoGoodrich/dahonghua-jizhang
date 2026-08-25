@@ -99,8 +99,15 @@ export function importV7(backup: unknown): ImportResult {
   // skipped them forever and the next pull could overwrite them. A restore is an
   // explicit "this wins", so stale fieldTs is dropped too and whole-row LWW with
   // a fresh timestamp makes the backup authoritative.
+  // A backup is a file, and a file can say anything — including the same id
+  // twice. Two rows sharing an id make the sync merge incoherent: it indexes
+  // by id and would resolve the pair to one row while the other stayed in the
+  // list, so the ledger and the thing being merged disagree about what is in
+  // it. Keep the last copy, which is what the merge's own Map would have kept.
+  const unique = [...new Map(valid.map((e) => [e.id, e] as const)).values()];
+
   const now = Date.now();
-  const stamped = valid.map((e, i) => {
+  const stamped = unique.map((e, i) => {
     const { fieldTs, ...rest } = e;
     return { ...rest, updatedAt: now + i };
   });

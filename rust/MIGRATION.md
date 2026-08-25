@@ -80,9 +80,9 @@ Adding a module to the harness:
 | `store/state` — transfers, bill import, budgets | ~90 | **Ported**, in the 3,678-scenario corpus |
 | `store/state` — `buildBackup`, persistence, ids | ~120 | Deferred by choice / platform (below) |
 | `store/inbox` → `inbox` | 212 | **Ported**, 305-case parity — the deciding half |
-| `sync/merge` | 150 | **Ported**, 4,423-case parity — the heart of sync, and already pure |
+| `sync/merge` | 173 | **Ported**, 7,043-case parity — the heart of sync, and already pure |
 | `domain/jsval` (new) | — | **Added** — a JSON value and `JSON.stringify`, because the serialisation *is* the comparison |
-| `sync/*` (the rest) | 620 | After this — `reqwest` + the Supabase REST API |
+| `sync/*` (the rest) | 620 | After this — decisions across, transport left behind |
 | UI (21 routes, 72 components) | 11,049 | Last — **Flutter decided**; Rust UI frameworks measured and set aside |
 
 ## Phase 1 — the domain crate (in progress)
@@ -1078,6 +1078,82 @@ neither a gap nor a no-op:
 One injection reported "anchor not found" and was fixed rather than accepted —
 an anchor containing a Rust `\"` escape, mangled on its way through a heredoc.
 The lesson from last increment, arriving on schedule.
+
+### The realtime path answered a question the pull had already answered
+
+`pullAndMerge` runs `mergeById`, which does field-level merge when both sides
+carry `fieldTs`: two devices editing *different* fields of one entry both keep
+their edit. That is the whole design. The realtime handler in `engine.ts`
+resolved the same conflict a different way — compare `updatedAt`, take the whole
+newer row:
+
+```js
+} else if ((e.updatedAt ?? 0) > (local[idx].updatedAt ?? 0)) {
+  copy[idx] = e;                        // the local note, and its stamp, gone
+```
+
+Edit a note here while offline; another device edits the amount later and
+pushes; the message arrives and the note is gone. Not deferred to the next
+pull — **gone**. The local `fieldTs.note` stamp was overwritten along with the
+value, so the row no longer claims the edit ever happened, and a probe confirmed
+the next pull finds nothing to merge and nothing to push. The two devices agree
+on a row that neither of them wrote.
+
+The fix is not to copy the merge into the handler but to make there be one:
+`resolve()` now holds the two-tier decision and both paths call it. The realtime
+entry point is `mergeOne`, not `mergeById(local, [row])` — the latter treats
+every row the message did not mention as missing from the server and would
+re-upload the whole ledger on every echo. `mergeOne` also reports whether the
+result still needs pushing, and the watermark advances only when it does not:
+a merge that kept something local is left to the scheduler and its backoff,
+where before it was dropped between the two.
+
+Every existing realtime test used legacy rows with no stamps, which is why a
+path that ignored `fieldTs` passed all of them. The two new ones fail against
+the old handler; the corpus catches it 1,779 times.
+
+### The same id twice
+
+A `merge_one` injection — swap `position` for `rposition` — caught nothing. The
+corpus never repeats an id, because the generator draws each one once.
+Investigating the gap turned up something the gap was hiding:
+
+```
+local = [{id:"a",updatedAt:1,amt:10}, {id:"a",updatedAt:2,amt:99}]
+
+TypeScript   merged=[{...amt:99}]      new Map(...) keeps the LAST
+Rust         merged=[{...amt:10}]      .find() takes the FIRST
+```
+
+`mergeById` indexes with `new Map(rows.map(r => [r.id, r]))`. A `Map` keeps the
+last entry written for a key; `.find()` takes the first. Twenty-two corpora and
+89,833 cases had never asked, because no generator had ever thought to repeat an
+id.
+
+It is reachable. `importV7` restores a **file**, and a file can say anything; it
+filtered rows for validity and never checked ids. Two rows sharing an id make
+the merge incoherent in a way neither half is wrong about — it resolves the pair
+to one row and leaves the other in the list, so the ledger and the thing being
+merged disagree about what is in it.
+
+Both halves fixed: the port matches the `Map`, and the restore collapses
+duplicates on the way in, keeping the last copy — which is the copy the merge's
+own `Map` would have kept.
+
+### Six zeros, and three anchors that had gone stale
+
+Thirty-seven injections now. Six caught nothing and all six are accounted for:
+four are the `NaN` family described above — untestable for exactly the reason
+they are unreachable — and two are no-ops by construction (the merged row's id
+comes from either side of a pair matched *by* id; the equal-stamp tie differs
+only for `-0` against `0`, which serialise identically and so cross the wire
+identically).
+
+Three injections reported "anchor not found" — anchors that had gone stale when
+`merge_row` was tidied in an earlier increment. They had been silently unscored
+since. This is the failure mode named last time and it does not announce itself:
+**an injection whose anchor misses reports as nothing, not as a problem.** Two
+of them catch 233 and 225 cases now that they land.
 
 ## Phase 2 — state and sync
 
