@@ -1,4 +1,4 @@
-import { mergeById, liveRows, type SyncRow } from '../merge';
+import { mergeById, mergeOne, liveRows, type SyncRow } from '../merge';
 
 interface Row extends SyncRow {
   amt: number;
@@ -178,5 +178,67 @@ describe('a difference the tiebreaker cannot see', () => {
     const y = { id: 'e1', amt: 2, updatedAt: 1, fieldTs: { b: 2, a: 1 } };
     // same content, different key order: nothing to push either way
     expect(mergeById([x], [y]).toPush.length).toBe(0);
+  });
+});
+
+describe('mergeOne', () => {
+  interface FieldRow extends SyncRow {
+    amt?: number;
+    note?: string;
+  }
+
+  it('keeps a concurrent field edit the way a pull would', () => {
+    // A edited the note while offline; B edited the amount later and pushed.
+    // Both sides carry stamps, so this is the case field-level merge is for.
+    const local: FieldRow[] = [
+      { id: 'e1', amt: 10, note: 'mine', updatedAt: 1000, fieldTs: { note: 1000, amt: 500 } },
+    ];
+    const remote: FieldRow = { id: 'e1', amt: 99, updatedAt: 2000, fieldTs: { amt: 2000, note: 500 } };
+
+    const { rows } = mergeOne(local, remote);
+
+    expect(rows[0].amt).toBe(99);
+    expect(rows[0].note).toBe('mine');
+    // and it agrees with the pull, which is the whole point
+    expect(mergeById(local, [remote]).merged[0]).toEqual(rows[0]);
+  });
+
+  it('asks for a push when the local side contributed something', () => {
+    const local: FieldRow[] = [
+      { id: 'e1', amt: 10, note: 'mine', updatedAt: 1000, fieldTs: { note: 1000, amt: 500 } },
+    ];
+    const remote: FieldRow = { id: 'e1', amt: 99, updatedAt: 2000, fieldTs: { amt: 2000, note: 500 } };
+
+    expect(mergeOne(local, remote).push).not.toBeNull();
+  });
+
+  it('asks for nothing when the message is our own echo', () => {
+    const r: FieldRow = { id: 'e1', amt: 10, updatedAt: 1000, fieldTs: { amt: 1000 } };
+    const { rows, push } = mergeOne([{ ...r }], { ...r });
+    expect(push).toBeNull();
+    expect(rows).toHaveLength(1);
+  });
+
+  it('appends a row it has never seen, and does not push it back', () => {
+    const { rows, push } = mergeOne([row('a', 100, 1)], row('b', 200, 2));
+    expect(rows.map((r) => r.id)).toEqual(['a', 'b']);
+    expect(push).toBeNull();
+  });
+
+  it('tells the server when its copy is the stale one', () => {
+    const local = [row('a', 9999, 10)];
+    const { rows, push } = mergeOne(local, row('a', 5, 1));
+    expect(rows[0].amt).toBe(10);
+    expect(push?.amt).toBe(10); // the server is behind and nothing else would say so
+  });
+
+  it('reports the conflict the same way the pull does', () => {
+    const seen: unknown[] = [];
+    const local = [row('a', 100, 10)];
+    const remote = row('a', 200, 99);
+    mergeOne(local, remote, (i) => seen.push(i));
+    expect(seen).toEqual([
+      { entryId: 'a', localUpdatedAt: 100, remoteUpdatedAt: 200, resolution: 'remote' },
+    ]);
   });
 });

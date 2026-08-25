@@ -118,6 +118,34 @@ function mergeRow<T extends SyncRow>(a: T, b: T): T {
   return out as T;
 }
 
+/** Resolve the two versions of one id.
+ *
+ *  Shared by `mergeById` (the pull) and `mergeOne` (a realtime message) so the
+ *  two paths cannot answer differently. They did: the realtime handler compared
+ *  `updatedAt` and replaced the local row wholesale, which threw away exactly
+ *  the concurrent field edit `fieldTs` exists to preserve — and threw away the
+ *  stamp with it, so a later pull could not recover what had been dropped. */
+function resolve<T extends SyncRow>(l: T, r: T, onConflict?: (info: ConflictInfo) => void): T {
+  const report = (resolution: ConflictInfo['resolution']) => {
+    if (onConflict && stable(l) !== stable(r)) {
+      onConflict({
+        entryId: l.id,
+        localUpdatedAt: l.updatedAt ?? 0,
+        remoteUpdatedAt: r.updatedAt ?? 0,
+        resolution,
+      });
+    }
+  };
+  if (hasFieldTs(l) && hasFieldTs(r)) {
+    const win = mergeRow(l, r);
+    report('merged');
+    return win;
+  }
+  const cmp = compareRows(r, l);
+  report(cmp > 0 ? 'remote' : 'local');
+  return cmp > 0 ? r : l;
+}
+
 export interface ConflictInfo {
   entryId: string;
   localUpdatedAt: number;
@@ -141,30 +169,38 @@ export function mergeById<T extends SyncRow>(
   for (const id of ids) {
     const l = localById.get(id);
     const r = remoteById.get(id);
-    let win: T;
-    if (l && r) {
-      const bothHaveFieldTs = hasFieldTs(l) && hasFieldTs(r);
-      if (bothHaveFieldTs) {
-        win = mergeRow(l, r);
-        if (onConflict && stable(l) !== stable(r)) {
-          onConflict({ entryId: id, localUpdatedAt: l.updatedAt ?? 0, remoteUpdatedAt: r.updatedAt ?? 0, resolution: 'merged' });
-        }
-      } else {
-        const cmp = compareRows(r, l);
-        win = cmp > 0 ? r : l;
-        if (onConflict && stable(l) !== stable(r)) {
-          onConflict({ entryId: id, localUpdatedAt: l.updatedAt ?? 0, remoteUpdatedAt: r.updatedAt ?? 0, resolution: cmp > 0 ? 'remote' : 'local' });
-        }
-      }
-    } else {
-      win = (l ?? r)!;
-    }
+    const win: T = l && r ? resolve(l, r, onConflict) : (l ?? r)!;
     merged.push(win);
     // upload when the server lacks the row or its stored copy differs from the winner
     if (!r || stable(win) !== stable(r)) toPush.push(win);
   }
 
   return { merged, toPush };
+}
+
+export interface MergeOneResult<T> {
+  rows: T[]; // the local set with the incoming row resolved into it
+  push: T | null; // the resolved row, when the server's copy is not it
+}
+
+/** Merge ONE incoming remote row into the local set — the realtime path.
+ *
+ *  Not `mergeById(local, [remote])`: that treats every row the message did not
+ *  mention as missing from the server and would re-upload the whole ledger on
+ *  every echo. This resolves the one id and reports whether the result still
+ *  needs pushing, which it does whenever the local side contributed anything —
+ *  a field the remote had not seen, or a whole row that simply won. */
+export function mergeOne<T extends SyncRow>(
+  local: T[],
+  remote: T,
+  onConflict?: (info: ConflictInfo) => void,
+): MergeOneResult<T> {
+  const idx = local.findIndex((x) => x.id === remote.id);
+  if (idx < 0) return { rows: [...local, remote], push: null };
+  const win = resolve(local[idx], remote, onConflict);
+  const rows = [...local];
+  rows[idx] = win;
+  return { rows, push: stable(win) !== stable(remote) ? win : null };
 }
 
 /** Visible (non-deleted) rows — the UI should render these. */

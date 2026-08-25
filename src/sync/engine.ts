@@ -9,7 +9,7 @@ import { observable } from '@legendapp/state';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from './supabase';
 import { auth$ } from './auth';
-import { mergeById } from './merge';
+import { mergeById, mergeOne } from './merge';
 import { entryToRow, rowToEntry, type DbEntry } from './rows';
 import { createPushScheduler } from './pushScheduler';
 import { loadConflictLog, logConflict } from './conflictLog';
@@ -221,16 +221,22 @@ function subscribeRealtime(userId: string): void {
         const row = payload.new as DbEntry | undefined;
         if (!row || !row.id) return;
         const e = rowToEntry(row);
-        const local = store$.data.peek();
-        const idx = local.findIndex((x) => x.id === e.id);
-        if (idx < 0) {
-          store$.data.set([...local, e]);
-        } else if ((e.updatedAt ?? 0) > (local[idx].updatedAt ?? 0)) {
-          const copy = [...local];
-          copy[idx] = e;
-          store$.data.set(copy);
+        // The same two-tier resolution the pull uses. Comparing `updatedAt` and
+        // taking the whole newer row here lost concurrent field edits that a
+        // pull would have kept, permanently: the local stamp was overwritten
+        // along with the value, so nothing later could tell what had gone.
+        const { rows, push } = mergeOne(store$.data.peek(), e, (info) => {
+          logConflict({ ...info, timestamp: Date.now() });
+        });
+        store$.data.set(rows);
+        if (push) {
+          // the local side contributed something the server does not have, so
+          // the watermark must NOT advance past it — leave it for the
+          // scheduler, which retries with backoff where a bare upsert would not
+          pusher.schedule();
+        } else {
+          pusher.bumpWatermark(e.updatedAt ?? 0);
         }
-        pusher.bumpWatermark(e.updatedAt ?? 0);
       },
     )
     .subscribe();

@@ -386,6 +386,53 @@ describe('entries realtime', () => {
     expect(ctx.store$.data.peek().find((e: any) => e.id === 'r1').amt).toBe(10);
   });
 
+  it('keeps a concurrent field edit instead of taking the whole newer row', async () => {
+    const ctx = boot();
+    // edited the note here while another device edited the amount later
+    ctx.store$.data.set([
+      { id: 'r1', ts: 1000, io: 'exp', cat: 'food', amt: 10, note: 'mine',
+        updatedAt: 1000, fieldTs: { note: 1000, amt: 500 } },
+    ]);
+    await signIn(ctx);
+
+    fireEntry(ctx, row({ id: 'r1', amt: 99, updated_at: 2000, field_ts: { amt: 2000, note: 500 } }));
+
+    const e = ctx.store$.data.peek().find((x: any) => x.id === 'r1');
+    expect(e.amt).toBe(99); // the other device's edit lands
+    expect(e.note).toBe('mine'); // and ours is still here
+  });
+
+  it('pushes back what the message did not know about', async () => {
+    const ctx = boot();
+    ctx.store$.data.set([
+      { id: 'r1', ts: 1000, io: 'exp', cat: 'food', amt: 10, note: 'mine',
+        updatedAt: 1000, fieldTs: { note: 1000, amt: 500 } },
+    ]);
+    await signIn(ctx);
+    const before = entryUpserts(ctx.state).length;
+
+    fireEntry(ctx, row({ id: 'r1', amt: 99, updated_at: 2000, field_ts: { amt: 2000, note: 500 } }));
+    await settle();
+
+    const sent = entryUpserts(ctx.state).slice(before).flatMap((u) => u.payload as any[]);
+    expect(sent.some((r: any) => r.id === 'r1' && r.note === 'mine')).toBe(true);
+  });
+
+  it('does not push its own echo back', async () => {
+    const ctx = boot();
+    ctx.store$.data.set([
+      { id: 'r1', ts: 1000, io: 'exp', cat: 'food', amt: 10, updatedAt: 5000, fieldTs: { amt: 5000 } },
+    ]);
+    await signIn(ctx);
+    const before = entryUpserts(ctx.state).length;
+
+    fireEntry(ctx, row({ id: 'r1', amt: 10, updated_at: 5000, field_ts: { amt: 5000 } }));
+    await settle();
+
+    const sent = entryUpserts(ctx.state).slice(before).flatMap((u) => u.payload as any[]);
+    expect(sent.some((r: any) => r.id === 'r1')).toBe(false);
+  });
+
   it('shrugs off a malformed payload', async () => {
     const ctx = boot();
     await signIn(ctx);
