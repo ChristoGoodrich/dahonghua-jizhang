@@ -1,4 +1,5 @@
 import type { Entry } from './types';
+import { descByAmt } from './order';
 
 /** Most-used note texts for a category, learned from the user's own history —
  *  frequency first, recency as the tiebreaker. Powers the tappable
@@ -19,7 +20,11 @@ export function noteSuggestions(entries: Entry[], io: string, cat: string, limit
     }
   }
   return [...stat.entries()]
-    .sort((a, b) => b[1].n - a[1].n || b[1].ts - a[1].ts)
+    // Not `b.n - a.n || b.ts - a.ts`: a NaN timestamp makes the tie-break
+    // comparator inconsistent and the order implementation-defined. See
+    // order.ts — descByAmt returns -1/0/1, so `||` still falls through on a
+    // genuine tie.
+    .sort((a, b) => descByAmt(a[1].n, b[1].n) || descByAmt(a[1].ts, b[1].ts))
     .slice(0, limit)
     .map(([note]) => note);
 }

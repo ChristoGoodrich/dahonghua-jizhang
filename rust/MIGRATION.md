@@ -59,6 +59,8 @@ Adding a module to the harness:
 | `domain/order` (new) | — | **Added** — the amount comparator, as a total order |
 | `domain/recap` + `weekly` + `streak` | 101 | **Ported**, 4,829-case parity in one corpus |
 | `domain/jsobj` (new) | — | **Added** — `Object.keys` ordering, once its third consumer appeared |
+| `domain/jsstr` (new) | — | **Added** — `trim` and `\s`, which Rust spells differently |
+| `domain/search` + `notes` + `archive` | 100 | **Ported**, 4,627-case parity in one corpus |
 | `domain/billParse` → `bills` | 272 | **Ported**, 4,400-case parity — bar `decodeBillText` |
 | `domain/encoding` + `gbkTable` | 65 + 24k cells | Deferred by choice — `encoding_rs`, not a hand-copied table (below) |
 | `domain/billDedup` → `dedup` | 138 | **Ported**, 3,838-case parity |
@@ -828,6 +830,46 @@ rule was first written into `budget.rs`, so it moved to `jsobj.rs`.
 
 `recap` also carried the same inconsistent comparator `insight` did —
 `byCat[b] - byCat[a]` — and now uses `descByAmt` with it.
+
+### Three impossible inputs in one corpus
+
+`search`, `notes` and `archive` went in together and the corpus diverged on its
+first run — 33 cases, then 6, then none. Every one of them was the *generator*
+producing a shape the app cannot:
+
+* `noteSuggestions` is typed `io: string` in TypeScript, so the corpus offered
+  the `_` sentinel as a direction. Its one caller always passes an `IO`, and the
+  Rust port takes the enum — `_` matched nothing on one side and defaulted to
+  expense on the other.
+* `Entry.io` is a **required** field and `catOf` takes an `IO`, so a search
+  entry always has a direction. The corpus offered entries without one, which
+  measured nothing but which fallback each side happened to pick.
+* The `notes` corpus asked for a direction and category that its entries mostly
+  did not have, so most cases answered with an empty list before reaching any
+  interesting branch.
+
+Worth separating from a real finding: a divergence is only evidence when the
+input is one the app can actually produce. The fix each time was to narrow the
+generator, and the third also lifted four injections off single-digit counts.
+
+There is a pleasant consequence in the second case. `Entry::io` is
+`Option<Io>` in this crate because bill parsing meets rows before they are
+classified — but `matchesSearch` is downstream of that, and the type says so.
+The same is true of `notes`: its recency tie-break needed a total order in
+TypeScript because `ts` is a `number` and can be `NaN`, and needs none here
+because `ts` is an `i64`. **The type rules out the bug the other language needs
+a comparator to rule out.**
+
+### Folding, measured rather than assumed
+
+`matchesSearch` lowercases both sides of its comparison, and `to_lowercase` is
+not obviously `String.prototype.toLowerCase`. Sixteen cases were checked before
+a line was written — `İ` folding to `i` plus a combining dot, the Greek final
+sigma in `ΑΣ` and `ΣΣ`, `ǅ`, `ẞ`, `ĲSSEL`, `A` plus ypogegrammeni. All sixteen
+agree, code point for code point.
+
+That is the same discipline that caught `trim`, applied before rather than
+after. The difference in cost is the whole argument for it.
 
 ## Phase 2 — state and sync
 

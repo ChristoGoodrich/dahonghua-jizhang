@@ -111,6 +111,12 @@ const MODULES = [
     example: 'dump_weekly',
   },
   {
+    name: 'search',
+    corpus: 'rust/parity/search-corpus.tsv',
+    ts: 'scripts/search-parity.ts',
+    example: 'dump_search',
+  },
+  {
     name: 'stats',
     corpus: 'rust/parity/stats-corpus.tsv',
     ts: 'scripts/stats-parity.ts',

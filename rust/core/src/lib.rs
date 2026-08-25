@@ -8,6 +8,7 @@
 //! Migration status is tracked in `rust/MIGRATION.md`.
 
 pub mod accounts;
+pub mod archive;
 pub mod bills;
 pub mod budget;
 pub mod calc;
@@ -28,11 +29,13 @@ pub mod ledger;
 pub mod model;
 pub mod money;
 pub mod networth;
+pub mod notes;
 pub mod notif;
 pub mod num;
 pub mod period;
 pub mod recap;
 pub mod reimburse;
+pub mod search;
 pub mod statement;
 pub mod stats;
 pub mod store;
