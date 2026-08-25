@@ -29,6 +29,7 @@ pub mod notif;
 pub mod num;
 pub mod period;
 pub mod reimburse;
+pub mod statement;
 pub mod stats;
 pub mod store;
 pub mod subs;

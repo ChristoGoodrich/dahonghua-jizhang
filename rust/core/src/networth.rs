@@ -1,12 +1,13 @@
-//! Assets, liabilities and loans — the things that make up net worth but are
-//! not entries.
+//! Net worth: account balances, assets, liabilities and loans.
 //!
-//! Ported from `src/store/assets.ts`. Two details here run against the
+//! Ported from `src/store/assets.ts` and `src/domain/networth.ts`. Two details here run against the
 //! falsy-means-absent habit the rest of the store has, and both are deliberate
 //! in the TypeScript: a new asset is created with `noCount: false` and a new
 //! loan with `repaid: 0`, both stored rather than left out. They are counters
 //! and flags the user will change, not optional metadata.
 
+use crate::accounts::{Account, AccountKind};
+use crate::entry::{Entry, Io};
 use crate::model::{Asset, AssetKind, Loan, LoanKind};
 
 pub fn add_asset(
@@ -74,6 +75,185 @@ pub fn repay_loan(loans: &mut [Loan], id: &str, amount: f64) {
 
 pub fn remove_loan(loans: &mut Vec<Loan>, id: &str) {
     loans.retain(|l| l.id != id);
+}
+
+/* ------------------------------------------------- account balances -- */
+
+/// Every account's running balance in one pass over the ledger.
+///
+/// Returned in the order the accounts were given, which is what a JavaScript
+/// `Map` iterates in. Nothing downstream depends on the order today, but a
+/// `HashMap` here would make that unknowable rather than merely unused.
+///
+/// `as_of` values the balances at an instant. Note it is checked against `None`
+/// rather than for truthiness — `if (asOf != null && d.ts > asOf)` — so a cutoff
+/// of epoch zero really does exclude everything after 1970, where the
+/// falsy-means-absent idiom used elsewhere in this crate would have ignored it.
+pub fn acct_balances(
+    accounts: &[Account],
+    data: &[Entry],
+    as_of: Option<i64>,
+) -> Vec<(String, f64)> {
+    acct_balances_with(accounts, data, |d| as_of.is_none_or(|c| d.ts <= c))
+}
+
+/// [`acct_balances`] with the cutoff expressed as a test rather than an instant.
+///
+/// `statement` needs the balance as of the *end of a calendar day*, and an
+/// end-of-day instant is not something this crate can name — it would need the
+/// platform's timezone. Giving the one implementation a predicate keeps the
+/// epoch and the civil callers on the same code instead of on two copies that
+/// drift.
+pub fn acct_balances_with(
+    accounts: &[Account],
+    data: &[Entry],
+    include: impl Fn(&Entry) -> bool,
+) -> Vec<(String, f64)> {
+    // `a.balance || 0` — falsy means zero, so a NaN opening balance starts at
+    // zero rather than poisoning the account for good
+    let mut bal: Vec<(String, f64)> = accounts
+        .iter()
+        .map(|a| {
+            (
+                a.id.clone(),
+                if a.balance != 0.0 && !a.balance.is_nan() {
+                    a.balance
+                } else {
+                    0.0
+                },
+            )
+        })
+        .collect();
+
+    for d in data {
+        if d.deleted_at.is_some_and(|v| v != 0) {
+            continue;
+        }
+        if !include(d) {
+            continue;
+        }
+        // an entry naming an account that no longer exists is dropped, not
+        // resurrected: `add` only writes keys the map already holds
+        let mut add = |id: &str, delta: f64| {
+            if let Some((_, v)) = bal.iter_mut().find(|(k, _)| k == id) {
+                *v += delta;
+            }
+        };
+        if d.io == Some(Io::Xfer) {
+            // the fee leaves the source, the discount credits the destination
+            if let Some(from) = d.acct.as_deref().filter(|s| !s.is_empty()) {
+                add(from, -(d.amt + d.fee.unwrap_or(0.0)));
+            }
+            if let Some(to) = d.acct_to.as_deref().filter(|s| !s.is_empty()) {
+                add(to, d.amt + d.discount.unwrap_or(0.0));
+            }
+            continue;
+        }
+        // `d.acct || 'default'` — an entry with no account lands on the
+        // default one, which is what v7 did and what the store still seeds
+        let id = d
+            .acct
+            .as_deref()
+            .filter(|s| !s.is_empty())
+            .unwrap_or("default");
+        add(id, if d.io == Some(Io::Inc) { d.amt } else { -d.amt });
+    }
+    bal
+}
+
+/// One account's running balance. Zero for an id that is not an account.
+///
+/// The batch form is the one to reach for when more than one balance is
+/// wanted: this rescans the whole ledger each call, which made the accounts
+/// screen quadratic before `acct_balances` existed.
+pub fn acct_balance(id: &str, accounts: &[Account], data: &[Entry], as_of: Option<i64>) -> f64 {
+    if !accounts.iter().any(|x| x.id == id) {
+        return 0.0;
+    }
+    acct_balances(accounts, data, as_of)
+        .into_iter()
+        .find(|(k, _)| k == id)
+        .map(|(_, v)| v)
+        .unwrap_or(0.0)
+}
+
+/// Every account balance summed.
+pub fn total_account_balance(accounts: &[Account], data: &[Entry]) -> f64 {
+    acct_balances(accounts, data, None)
+        .iter()
+        .map(|(_, v)| v)
+        .sum()
+}
+
+/// What is still owed on a loan, never negative.
+///
+/// `Math.max(0, …)` propagates `NaN` where `f64::max` would swallow it, so an
+/// unparseable amount stays unparseable rather than reading as settled.
+pub fn loan_remaining(l: &Loan) -> f64 {
+    let rem = l.amt - l.repaid.unwrap_or(0.0);
+    if rem.is_nan() {
+        f64::NAN
+    } else {
+        rem.max(0.0)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct NetWorthParts {
+    pub asset: f64,
+    pub liab: f64,
+    pub net: f64,
+}
+
+/// Assets, liabilities, and the difference.
+///
+/// A credit account **in debt** is a liability; every other account — an
+/// overpaid card included — counts as an asset. The split only drives the two
+/// cards on screen: `net` is the sum of the balances either way.
+pub fn net_worth_parts(
+    accounts: &[Account],
+    data: &[Entry],
+    assets: &[Asset],
+    loans: &[Loan],
+) -> NetWorthParts {
+    let mut asset_sum = 0.0;
+    let mut liab_sum = 0.0;
+    let balances = acct_balances(accounts, data, None);
+    for a in accounts {
+        let b = balances
+            .iter()
+            .find(|(k, _)| *k == a.id)
+            .map(|(_, v)| *v)
+            .unwrap_or(0.0);
+        if a.kind == Some(AccountKind::Credit) && b < 0.0 {
+            liab_sum += -b;
+        } else {
+            asset_sum += b;
+        }
+    }
+    for a in assets {
+        if a.no_count == Some(true) {
+            continue;
+        }
+        if a.kind == AssetKind::Liab {
+            liab_sum += a.val;
+        } else {
+            asset_sum += a.val;
+        }
+    }
+    for l in loans {
+        let rem = loan_remaining(l);
+        if l.kind == LoanKind::Lend {
+            asset_sum += rem;
+        } else {
+            liab_sum += rem;
+        }
+    }
+    NetWorthParts {
+        asset: asset_sum,
+        liab: liab_sum,
+        net: asset_sum - liab_sum,
+    }
 }
 
 #[cfg(test)]

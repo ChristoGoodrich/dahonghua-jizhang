@@ -53,7 +53,9 @@ Adding a module to the harness:
 | `domain/stats` | 231 | **Ported**, 1,318-case parity |
 | `domain/trends` | 99 | **Ported**, 5,404-case parity — took a fix first |
 | `domain/budget` | 64 | **Ported**, 4,210-case parity |
-| `domain/insight`, `recap`, `weekly`, `streak` | ~507 | Queued |
+| `domain/networth` | 88 | **Ported**, in the 5,229-case statement corpus |
+| `domain/statement` | 149 | **Ported**, 5,229-case parity |
+| `domain/insight`, `recap`, `weekly`, `streak` | ~358 | Queued |
 | `domain/billParse` → `bills` | 272 | **Ported**, 4,400-case parity — bar `decodeBillText` |
 | `domain/encoding` + `gbkTable` | 65 + 24k cells | Deferred by choice — `encoding_rs`, not a hand-copied table (below) |
 | `domain/billDedup` → `dedup` | 138 | **Ported**, 3,838-case parity |
@@ -647,6 +649,62 @@ A fourth was merely thin — the injection stopping per-category spending from
 accumulating was caught on 13 lines, because entries drawn freely from the
 category pool rarely landed twice in the same *capped* category. Aiming 60% of
 each case's entries at that case's own cap keys took it to 98.
+
+### A cutoff the corpus never once reached
+
+`statementSummary` values a card's balance at the moment its statement closed —
+`23:59:59.999` on the close day, so an entry dated that day is billed. An
+end-of-day *instant* is not something this crate can name without a timezone, so
+the port compares calendar days instead, and `acct_balances` grew a second entry
+point taking the cutoff as a predicate rather than an epoch. One
+implementation, two callers; the alternative was two copies that drift.
+
+Which left the epoch form — `d.ts <= asOf` — with **no corpus coverage at all**.
+The dump only ever called the predicate form, so an injection flipping that `<=`
+to `<` diverged on nothing. Thirty-four other injections were caught and this one
+read as a clean zero, which is exactly what a gap looks like when you are not
+checking.
+
+The fix is not to model the timezone. Entries carry an extra opaque integer and
+the corpus can ask for an integer cutoff, so both halves compare `d.ts <= n` over
+plain numbers with no clock anywhere near it. The injection now diverges on 57
+cases.
+
+Worth stating the rule that fell out: **an injection that returns zero is a
+question, not a result.** Three of the four zeros this migration has produced
+were the injection being a no-op; this one was the code being unreachable.
+
+### The four thin injections, and what made them thin
+
+Thirty-five injections, all caught, but eight of them on fewer than fifteen
+lines out of five thousand. Every one had the same cause — the corpus was
+generating cases that could not tell the difference:
+
+* Accounts were random `kind`s with random statement days, so most `summary`
+  cases answered `none` before reaching any interesting branch. Making them real
+  cards with in-range days 80% of the time fixed most of it.
+* Entry dates were drawn uniformly, so one almost never landed **on** a close
+  day — which is the only date that separates `<= close` from `< close`. Aiming
+  70% of each case's entries within a few days of its own close took that
+  injection from 6 to 22.
+* Every id an entry could name was also an account, so "an entry on a deleted
+  account creates one" was reached twice. Adding two ghost ids that are
+  deliberately not accounts fixed it.
+* `dueSoon`'s window is `<=`, and nothing was ever due in exactly `withinDays`
+  days. Eight deliberate cases at the boundary took it from 4 to 7.
+
+The floor is 4, on a transfer *out of* a card, after the close, carrying a fee,
+on a case that asked for that card's summary — four conditions at once. A
+deliberate case pins it rather than leaving it to the sampler.
+
+### `Math.max` again
+
+Three more places where `Math.max(0, x)` is not `x.max(0.0)`: `billedDue`,
+`inflowBeyondBill` and `unbilled`, plus `loanRemaining` in `networth`.
+JavaScript's `Math.max` **propagates** `NaN`; Rust's `f64::max` answers with the
+other operand. Written correctly first this time — [`crate::stats`] had already
+taught it — and the corpus confirms it would have caught the wrong version, on
+69 cases.
 
 ## Phase 2 — state and sync
 
