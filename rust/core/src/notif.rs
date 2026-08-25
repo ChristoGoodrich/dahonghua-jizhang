@@ -25,6 +25,7 @@
 
 use crate::catalog::Category;
 use crate::entry::Io;
+use crate::jsstr::js_trim;
 use crate::keywords::map_category;
 use regex_lite::Regex;
 use std::sync::OnceLock;
@@ -282,7 +283,7 @@ pub fn parse_merchant(text: &str) -> Option<String> {
         let name = re
             .captures(text)
             .and_then(|c| c.get(1))
-            .map(|m| m.as_str().trim().to_string());
+            .map(|m| js_trim(m.as_str()).to_string());
         if let Some(name) = name {
             if !name.is_empty()
                 && !not_a_merchant().is_match(&name)

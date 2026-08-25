@@ -22,6 +22,7 @@ pub mod glass;
 pub mod inbox;
 pub mod insight;
 pub mod jsobj;
+pub mod jsstr;
 pub mod keywords;
 pub mod ledger;
 pub mod model;

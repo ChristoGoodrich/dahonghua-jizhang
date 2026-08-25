@@ -11,6 +11,7 @@
 use crate::bills::CivilTime;
 use crate::civil::{days_in_month, Civil};
 use crate::entry::{Entry, Io};
+use crate::jsstr::{js_trim, JS_SPACE_CLASS};
 use regex_lite::Regex;
 use std::sync::OnceLock;
 
@@ -126,10 +127,15 @@ fn re(cell: &'static OnceLock<Regex>, pattern: &str) -> &'static Regex {
 
 fn range_re() -> &'static Regex {
     static R: OnceLock<Regex> = OnceLock::new();
-    re(
-        &R,
-        r"^([0-9]{4}-[0-9]{2}-[0-9]{2})\s*[~\-]\s*([0-9]{4}-[0-9]{2}-[0-9]{2})$",
-    )
+    // `\s` here is JavaScript's, not `regex_lite`'s: the latter is the ASCII
+    // six, the former includes NBSP, the ideographic space and the BOM. A
+    // range pasted with a BOM either side of its separator matched in the app
+    // and did not here.
+    let pattern = format!(
+        r"^([0-9]{{4}}-[0-9]{{2}}-[0-9]{{2}}){s}*[~\-]{s}*([0-9]{{4}}-[0-9]{{2}}-[0-9]{{2}})$",
+        s = JS_SPACE_CLASS
+    );
+    re(&R, &pattern)
 }
 
 fn month_re() -> &'static Regex {
@@ -180,7 +186,7 @@ fn ymd(s: &str) -> Option<Civil> {
 /// every relative branch reproducible, which is the only way the parity corpus
 /// can compare them.
 pub fn parse_date_range(query: &str, today: Civil) -> Option<DateRange> {
-    let q = query.trim();
+    let q = js_trim(query);
 
     // explicit range — note the separator alternation includes `-`, so
     // `2024-01-01-2024-01-31` parses too
@@ -276,7 +282,7 @@ pub struct ParsedQuery {
 /// A query that is *entirely* a date clears the text: the whole box was the
 /// range, so there is nothing left to match by name.
 pub fn parse_search_query(query: &str, today: Civil) -> ParsedQuery {
-    let mut text = query.trim().to_string();
+    let mut text = js_trim(query).to_string();
     let mut filter = FilterState::default();
 
     let range = parse_date_range(&text, today);
@@ -285,7 +291,7 @@ pub fn parse_search_query(query: &str, today: Civil) -> ParsedQuery {
     }
 
     for (io, re) in io_words() {
-        let stripped = re.replace_all(&text, "").trim().to_string();
+        let stripped = js_trim(&re.replace_all(&text, "")).to_string();
         if stripped != text {
             filter.io = Some(*io);
             text = stripped;

@@ -31,6 +31,37 @@ fn show(r: &DateRange) -> String {
     format!("{} .. {}", f(&r.from), f(&r.to))
 }
 
+/// Render a string so both halves of the harness spell it the same way.
+///
+/// Rust's `{:?}` escapes a control character; `JSON.stringify` leaves anything
+/// above `U+001F` raw. The two agreed for as long as the corpus held only
+/// ordinary text, and stopped the moment it held a NEL — a difference in the
+/// *harness*, reported as a difference in the code.
+///
+/// So neither formatter decides: anything that is whitespace, a control or a
+/// format character becomes `<U+XXXX>` on both sides.
+fn show_text(s: &str) -> String {
+    let mut out = String::from("\"");
+    for c in s.chars() {
+        let n = c as u32;
+        let odd = n < 0x20
+            || (0x7f..=0xa0).contains(&n)
+            || n == 0x1680
+            || (0x2000..=0x200f).contains(&n)
+            || (0x2028..=0x202f).contains(&n)
+            || (0x205f..=0x2060).contains(&n)
+            || n == 0x3000
+            || n == 0xfeff;
+        if odd {
+            out.push_str(&format!("<U+{n:04X}>"));
+        } else {
+            out.push(c);
+        }
+    }
+    out.push('"');
+    out
+}
+
 fn main() {
     let mut raw = String::new();
     io::stdin().read_to_string(&mut raw).expect("read corpus");
@@ -61,8 +92,8 @@ fn main() {
                 );
                 let r = parse_search_query(f[0], today);
                 format!(
-                    "text={:?} io={} range={}",
-                    r.text,
+                    "text={} io={} range={}",
+                    show_text(&r.text),
                     r.filter.io.map_or("_", |i| i.as_str()),
                     r.range.map_or("null".to_string(), |g| show(&g))
                 )

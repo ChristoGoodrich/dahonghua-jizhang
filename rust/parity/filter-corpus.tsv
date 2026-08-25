@@ -2012,3 +2012,119 @@ match	exp^food^~^999^exp^food^_^999^1001
 match	exp^food^~^1000^exp^food^_^999^1001
 match	exp^food^~^999^exp^food^~^999^1001
 match	exp^food^~^1000^exp^food^~^999^1001
+range	﻿2024-01^2026^7^16
+range	2024-01﻿^2026^7^16
+query	﻿2024-01^2026^7^16
+query	2024-01﻿^2026^7^16
+range	﻿2024-01-15^2026^7^16
+range	2024-01-15﻿^2026^7^16
+query	﻿2024-01-15^2026^7^16
+query	2024-01-15﻿^2026^7^16
+range	﻿本月^2026^7^16
+range	本月﻿^2026^7^16
+query	﻿本月^2026^7^16
+query	本月﻿^2026^7^16
+range	﻿today^2026^7^16
+range	today﻿^2026^7^16
+query	﻿today^2026^7^16
+query	today﻿^2026^7^16
+range	﻿支出^2026^7^16
+range	支出﻿^2026^7^16
+query	﻿支出^2026^7^16
+query	支出﻿^2026^7^16
+range	﻿expense lunch^2026^7^16
+range	expense lunch﻿^2026^7^16
+query	﻿expense lunch^2026^7^16
+query	expense lunch﻿^2026^7^16
+range	﻿^2026^7^16
+range	﻿^2026^7^16
+query	﻿^2026^7^16
+query	﻿^2026^7^16
+range	2024-01-01﻿~﻿2024-01-31^2026^7^16
+range	2024-01^2026^7^16
+range	2024-01^2026^7^16
+query	2024-01^2026^7^16
+query	2024-01^2026^7^16
+range	2024-01-15^2026^7^16
+range	2024-01-15^2026^7^16
+query	2024-01-15^2026^7^16
+query	2024-01-15^2026^7^16
+range	本月^2026^7^16
+range	本月^2026^7^16
+query	本月^2026^7^16
+query	本月^2026^7^16
+range	today^2026^7^16
+range	today^2026^7^16
+query	today^2026^7^16
+query	today^2026^7^16
+range	支出^2026^7^16
+range	支出^2026^7^16
+query	支出^2026^7^16
+query	支出^2026^7^16
+range	expense lunch^2026^7^16
+range	expense lunch^2026^7^16
+query	expense lunch^2026^7^16
+query	expense lunch^2026^7^16
+range	^2026^7^16
+range	^2026^7^16
+query	^2026^7^16
+query	^2026^7^16
+range	2024-01-01~2024-01-31^2026^7^16
+range	 2024-01^2026^7^16
+range	2024-01 ^2026^7^16
+query	 2024-01^2026^7^16
+query	2024-01 ^2026^7^16
+range	 2024-01-15^2026^7^16
+range	2024-01-15 ^2026^7^16
+query	 2024-01-15^2026^7^16
+query	2024-01-15 ^2026^7^16
+range	 本月^2026^7^16
+range	本月 ^2026^7^16
+query	 本月^2026^7^16
+query	本月 ^2026^7^16
+range	 today^2026^7^16
+range	today ^2026^7^16
+query	 today^2026^7^16
+query	today ^2026^7^16
+range	 支出^2026^7^16
+range	支出 ^2026^7^16
+query	 支出^2026^7^16
+query	支出 ^2026^7^16
+range	 expense lunch^2026^7^16
+range	expense lunch ^2026^7^16
+query	 expense lunch^2026^7^16
+query	expense lunch ^2026^7^16
+range	 ^2026^7^16
+range	 ^2026^7^16
+query	 ^2026^7^16
+query	 ^2026^7^16
+range	2024-01-01 ~ 2024-01-31^2026^7^16
+range	　2024-01^2026^7^16
+range	2024-01　^2026^7^16
+query	　2024-01^2026^7^16
+query	2024-01　^2026^7^16
+range	　2024-01-15^2026^7^16
+range	2024-01-15　^2026^7^16
+query	　2024-01-15^2026^7^16
+query	2024-01-15　^2026^7^16
+range	　本月^2026^7^16
+range	本月　^2026^7^16
+query	　本月^2026^7^16
+query	本月　^2026^7^16
+range	　today^2026^7^16
+range	today　^2026^7^16
+query	　today^2026^7^16
+query	today　^2026^7^16
+range	　支出^2026^7^16
+range	支出　^2026^7^16
+query	　支出^2026^7^16
+query	支出　^2026^7^16
+range	　expense lunch^2026^7^16
+range	expense lunch　^2026^7^16
+query	　expense lunch^2026^7^16
+query	expense lunch　^2026^7^16
+range	　^2026^7^16
+range	　^2026^7^16
+query	　^2026^7^16
+query	　^2026^7^16
+range	2024-01-01　~　2024-01-31^2026^7^16

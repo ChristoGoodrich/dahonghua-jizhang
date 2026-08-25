@@ -14,6 +14,7 @@
 
 use crate::civil::Civil;
 use crate::entry::Io;
+use crate::jsstr::js_trim;
 use crate::num::round2;
 use regex_lite::Regex;
 use std::sync::OnceLock;
@@ -169,7 +170,7 @@ const STATUS_KEYS: &[&str] = &["交易状态", "当前状态", "状态"];
 
 fn find_col(header: &[String], keys: &[&str]) -> i32 {
     for k in keys {
-        if let Some(i) = header.iter().position(|h| h.trim().contains(k)) {
+        if let Some(i) = header.iter().position(|h| js_trim(h).contains(k)) {
             return i as i32;
         }
     }
@@ -269,7 +270,7 @@ fn date_re() -> &'static Regex {
 /// spring forward at midnight — the platform resolves that when it converts to
 /// an instant, exactly as it does for every other date this crate hands over.
 pub fn parse_date(s: Option<&str>) -> Option<CivilTime> {
-    let s = s?.trim();
+    let s = js_trim(s?);
     let caps = date_re().captures(s)?;
     let g = |i: usize| caps.get(i).map(|m| m.as_str().parse::<i32>().unwrap_or(0));
     let y = g(1)?;
@@ -402,7 +403,7 @@ pub fn parse_bills(text: &str) -> ParseResult {
     let mut skipped = 0;
 
     for (r, row) in rows.iter().enumerate().skip(header_row as usize + 1) {
-        if row.is_empty() || row.iter().all(|c| c.trim().is_empty()) {
+        if row.is_empty() || row.iter().all(|c| js_trim(c).is_empty()) {
             continue; // blank line
         }
         data_rows += 1;
@@ -416,7 +417,7 @@ pub fn parse_bills(text: &str) -> ParseResult {
         if io.is_none() || amt.is_none_or(|a| a <= 0.0) || at.is_none() || dead {
             skipped += 1;
             let reason = if dead {
-                format!("交易状态: {}", status.unwrap_or("").trim())
+                format!("交易状态: {}", js_trim(status.unwrap_or("")))
             } else if io.is_none() {
                 "不计收支或收/支字段为空".to_string()
             } else if at.is_none() {

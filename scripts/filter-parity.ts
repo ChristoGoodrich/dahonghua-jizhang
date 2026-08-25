@@ -45,6 +45,30 @@ function withToday<T>(y: number, m: number, d: number, f: () => T): T {
   }
 }
 
+// Render a string so both halves of the harness spell it the same way.
+//
+// Rust's `{:?}` escapes a control character; `JSON.stringify` leaves anything
+// above U+001F raw. The two agreed for as long as the corpus held only ordinary
+// text, and stopped the moment it held a NEL — a difference in the *harness*,
+// reported as a difference in the code.
+function showText(s: string): string {
+  let out = '"';
+  for (const c of s) {
+    const n = c.codePointAt(0)!;
+    const odd =
+      n < 0x20 ||
+      (n >= 0x7f && n <= 0xa0) ||
+      n === 0x1680 ||
+      (n >= 0x2000 && n <= 0x200f) ||
+      (n >= 0x2028 && n <= 0x202f) ||
+      (n >= 0x205f && n <= 0x2060) ||
+      n === 0x3000 ||
+      n === 0xfeff;
+    out += odd ? `<U+${n.toString(16).toUpperCase().padStart(4, '0')}>` : c;
+  }
+  return out + '"';
+}
+
 const out: string[] = [];
 for (const line of raw.split('\n')) {
   const trimmed = line.replace(/\r$/, '');
@@ -67,7 +91,7 @@ for (const line of raw.split('\n')) {
       const r = withToday(Number(f[1]), Number(f[2]), Number(f[3]), () => parseSearchQuery(f[0]));
       const range =
         r.filter.dateFrom == null ? 'null' : `${civil(r.filter.dateFrom)} .. ${civil(r.filter.dateTo!)}`;
-      value = `text=${JSON.stringify(r.text)} io=${r.filter.io ?? '_'} range=${range}`;
+      value = `text=${showText(r.text)} io=${r.filter.io ?? '_'} range=${range}`;
       break;
     }
     case 'match': {
