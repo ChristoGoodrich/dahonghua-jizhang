@@ -17,6 +17,7 @@ import { NO_ANIM } from '@/util/boot';
 import { SPRING } from '@/theme/tokens';
 import { useFormState } from './useFormState';
 import { useAIEntry } from './useAIEntry';
+import { localDateStr } from '@/domain/dates';
 
 export interface RecordFormProps {
   visible: boolean;
@@ -77,7 +78,7 @@ export function useRecordForm({ visible, editId, initialTs, dupeId, lang, custom
     const ratePromise = cur === base
       ? Promise.resolve(null)
       : (() => {
-          const dateStr = new Date(ts ?? Date.now()).toISOString().slice(0, 10);
+          const dateStr = localDateStr(ts ?? Date.now());
           return getRateForDate(base, cur, dateStr, currencies.rates ?? {});
         })();
 
@@ -255,7 +256,7 @@ export function useRecordForm({ visible, editId, initialTs, dupeId, lang, custom
     let source = rateSource;
     // Fetch rate on demand if foreign currency and proactive fetch hasn't run yet
     if (cur !== base && rate == null) {
-      const dateStr = new Date(ts ?? Date.now()).toISOString().slice(0, 10);
+      const dateStr = localDateStr(ts ?? Date.now());
       rate = await getRateForDate(base, cur, dateStr, currencies.rates ?? {});
       if (rate != null) {
         const cached = currencies.rates?.[cur];
@@ -286,7 +287,7 @@ export function useRecordForm({ visible, editId, initialTs, dupeId, lang, custom
     let source = rateSource;
     // Fetch rate on demand if foreign currency and proactive fetch hasn't run yet
     if (cur !== base && rate == null) {
-      const dateStr = new Date(ts ?? Date.now()).toISOString().slice(0, 10);
+      const dateStr = localDateStr(ts ?? Date.now());
       rate = await getRateForDate(base, cur, dateStr, currencies.rates ?? {});
       if (rate != null) {
         const cached = currencies.rates?.[cur];

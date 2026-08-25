@@ -4,6 +4,7 @@ import type { Category, IO } from '@/domain/types';
 import type { Lang } from '@/i18n';
 import { allCats, catName } from '@/domain/cats';
 import { normalizeParsed, type EntryDraft, type ParsedEntry } from './parse';
+import { localDateStr } from '@/domain/dates';
 
 const MIMO_KEY = process.env.EXPO_PUBLIC_MIMO_API_KEY;
 const MIMO_URL =
@@ -70,7 +71,7 @@ export async function parseReceiptImage(
   const base64 = await imageToBase64(imageUri);
   if (!base64) throw new ReceiptError('image read failed');
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = localDateStr(Date.now());
   const expCats = allCats('exp', customCats).map((c) => catName(c, lang)).join('、');
   const incCats = allCats('inc', customCats).map((c) => catName(c, lang)).join('、');
 

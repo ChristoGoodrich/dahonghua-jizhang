@@ -123,6 +123,12 @@ const MODULES = [
     example: 'dump_rates',
   },
   {
+    name: 'export',
+    corpus: 'rust/parity/export-corpus.tsv',
+    ts: 'scripts/export-parity.ts',
+    example: 'dump_export',
+  },
+  {
     name: 'stats',
     corpus: 'rust/parity/stats-corpus.tsv',
     ts: 'scripts/stats-parity.ts',

@@ -44,3 +44,26 @@ export function monthGrid(y: number, m: number): (number | null)[] {
   for (let d = 1; d <= days; d++) cells.push(d);
   return cells;
 }
+
+/**
+ * A timestamp as its **local** calendar date, `YYYY-MM-DD`.
+ *
+ * Not `new Date(ts).toISOString().slice(0, 10)`, which is the *UTC* date and
+ * so is a different day for most of every day outside UTC. In Sydney every
+ * entry logged before 10am exported with yesterday's date; in Shanghai before
+ * 8am; in New York it goes the other way and evening entries dated tomorrow.
+ * Seven call sites had it — the CSV and XLSX exports, the date handed to the
+ * AI as "today", and the date the exchange-rate lookup asks about.
+ *
+ * A `NaN` timestamp yields `NaN-NaN-NaN` rather than throwing, which
+ * `toISOString` does — a single corrupt row should not take the whole export
+ * down with it.
+ */
+export function localDateStr(ts: number): string {
+  const d = new Date(ts);
+  const y = d.getFullYear();
+  const m = d.getMonth() + 1;
+  const day = d.getDate();
+  const pad = (n: number) => (Number.isNaN(n) ? 'NaN' : String(n).padStart(2, '0'));
+  return `${Number.isNaN(y) ? 'NaN' : y}-${pad(m)}-${pad(day)}`;
+}

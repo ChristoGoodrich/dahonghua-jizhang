@@ -3,6 +3,7 @@
 import type { Category, IO } from '@/domain/types';
 import { allCats, catName } from '@/domain/cats';
 import type { Lang } from '@/i18n';
+import { localDateStr } from '@/domain/dates';
 
 /** Raw shape the model returns (validated by the proxy's JSON schema). */
 export interface ParsedEntry {
@@ -50,7 +51,7 @@ export const AI_SYSTEM =
 export function buildUserPrompt(text: string, customCats: Record<IO, Category[]>, lang: Lang): string {
   const exp = allCats('exp', customCats).map((c) => catName(c, lang)).join('、');
   const inc = allCats('inc', customCats).map((c) => catName(c, lang)).join('、');
-  const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+  const today = localDateStr(Date.now()); // the user's day, not UTC's
   return (
     `Today: ${today}\n` +
     `支出分类 / expense categories: ${exp}\n` +

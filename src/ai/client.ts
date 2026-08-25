@@ -9,6 +9,7 @@ import type { Category, IO } from '@/domain/types';
 import type { Lang } from '@/i18n';
 import { allCats, catName } from '@/domain/cats';
 import { AI_SYSTEM, buildUserPrompt, normalizeParsed, type EntryDraft, type ParsedEntry } from './parse';
+import { localDateStr } from '@/domain/dates';
 
 const PROXY = process.env.EXPO_PUBLIC_AI_PROXY_URL;
 const MIMO_KEY = process.env.EXPO_PUBLIC_MIMO_API_KEY;
@@ -75,7 +76,7 @@ async function callProxy(text: string, customCats: Record<IO, Category[]>, lang:
 }
 
 async function callMiMo(text: string, customCats: Record<IO, Category[]>, lang: Lang): Promise<ParsedEntry> {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = localDateStr(Date.now());
   const system = AI_SYSTEM.replace('{{today}}', today);
   const messages = [
     { role: 'system', content: `${system} Respond with ONLY a compact JSON object (no markdown, no explanation) of the form {"io","amount","category","note","date"}. The date field is optional (YYYY-MM-DD format, only when user mentions a relative date).` },

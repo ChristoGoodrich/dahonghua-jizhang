@@ -3,6 +3,8 @@
 import type { Account, Category, Entry, IO } from './types';
 import { catOf } from './cats';
 import { writeXlsx, type Cell } from './xlsxWrite';
+import { localDateStr } from './dates';
+import { ascByAmt } from './order';
 
 /** The one row shape both exports share: header + one line per live entry,
  *  oldest first. Tombstones are dropped — an export is a statement of what the
@@ -17,11 +19,13 @@ function toRows(
   entries
     .filter((d) => !d.deletedAt)
     .slice()
-    .sort((a, b) => a.ts - b.ts)
+    // Not `a.ts - b.ts`: a NaN timestamp makes that comparator inconsistent
+    // and the row order implementation-defined. See order.ts.
+    .sort((a, b) => ascByAmt(a.ts, b.ts))
     .forEach((d) => {
       const c = catOf(d.io, d.cat, customCats);
       rows.push([
-        new Date(d.ts).toISOString().slice(0, 10),
+        localDateStr(d.ts),
         d.io,
         c.zh || c.en || '',
         d.io === 'xfer' ? `${nameOf(d.acct)}→${nameOf(d.acctTo)}` : nameOf(d.acct),

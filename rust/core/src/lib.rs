@@ -18,6 +18,7 @@ pub mod currency;
 pub mod cycle;
 pub mod dedup;
 pub mod entry;
+pub mod export;
 pub mod filter;
 pub mod glass;
 pub mod inbox;
