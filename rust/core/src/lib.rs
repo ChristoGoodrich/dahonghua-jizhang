@@ -32,6 +32,7 @@ pub mod stats;
 pub mod store;
 pub mod subs;
 pub mod subscriptions;
+pub mod trends;
 
 pub use accounts::{Account, AccountKind};
 pub use calc::{apply_key, eval_expr, has_operator};

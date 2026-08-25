@@ -51,7 +51,8 @@ Adding a module to the harness:
 | `domain/period` | 130 | Windows **ported**, 12,108-case parity; entry filtering and labels deferred (below) |
 | `domain/filter` | 162 | **Ported**, 2,014-case parity |
 | `domain/stats` | 231 | **Ported**, 1,318-case parity |
-| `domain/budget`, `trends`, `insight`, `recap`, `weekly`, `streak` | ~670 | Queued |
+| `domain/trends` | 99 | **Ported**, 5,404-case parity — took a fix first |
+| `domain/budget`, `insight`, `recap`, `weekly`, `streak` | ~571 | Queued |
 | `domain/billParse` → `bills` | 272 | **Ported**, 4,400-case parity — bar `decodeBillText` |
 | `domain/encoding` + `gbkTable` | 65 + 24k cells | Deferred by choice — `encoding_rs`, not a hand-copied table (below) |
 | `domain/billDedup` → `dedup` | 138 | **Ported**, 3,838-case parity |
@@ -510,6 +511,87 @@ The sweep reported that as "did not compile" for two rounds, which was wrong
 twice over: it was a runtime panic, and it was a detection rather than a gap.
 The script now retries once and prints the real error, because an infrastructure
 failure that looks like a finding is worse than either.
+
+### The fourth, fifth and sixth places 864e5 was called a day
+
+The cycle-day fix came out of one pattern, so the next step was to grep for the
+rest of it rather than wait for the next module to trip over it. Nine call
+sites; three of them wrong.
+
+`trends.ts` was the worst, and it is the one users would have seen. Every
+bucket edge was `today - i * 864e5`, which produces three *different* faults
+around a transition:
+
+* Stepping back over a **23-hour day overshoots its midnight**, so the day is
+  skipped entirely. A seven-day chart ending the 8th of October in Sydney drew
+  the 1st, 2nd, 3rd, 5th, 6th, 7th and 8th — seven buckets covering eight days,
+  with **the 4th missing from the axis**.
+* Stepping back over a **25-hour day lands an hour late**, so every earlier
+  bucket runs 01:00 to 01:00 and each day's first hour is filed under the day
+  before — for the rest of the window, not just the one day.
+* A week is not `7 * 864e5` either, so after a transition **every historical
+  week began at 23:00 on the Sunday** while its label still read Monday.
+
+`budget.tsx` rounded `(now - cycleStart) / 864e5`, and `now` carries a time of
+day — so the daily-average divisor rounded up from midday and the figure jumped
+by a third every afternoon. That one has nothing to do with daylight saving; it
+was wrong every day of the year. It uses `stats`' `elapsedDaysIn` now.
+
+`EntryList`'s "yesterday" was `Date.now() - 864e5`, which on the morning after
+the clocks go forward is the day *before* yesterday — so the label sat on the
+wrong group.
+
+The other six were safe, and safe for one reason: they round, and both their
+ends are already local midnights. They go through `daysBetween` anyway, so the
+shape is gone from the tree and cannot be copied out of it again. `backup.ts`
+and `rates.ts` keep 864e5 — those are throttle intervals, where twenty-four
+hours is the intent rather than an approximation of a day.
+
+### The tests for the previous fix were passing for the wrong reason
+
+The four daylight-saving tests added with the cycle-day fix only meant anything
+because this machine happens to sit in Australia/Sydney. In a zone with no
+transition every day is twenty-four hours, the old arithmetic and the new one
+agree, and all four would have passed **without testing anything** — on CI, on
+a colleague's laptop, anywhere north of the equator in the wrong month.
+
+Pinning `TZ` in the Jest config is the obvious fix and is not a reliable one:
+this repo's Windows Node resolves no IANA zone name except `UTC`, and silently
+falls back to the system zone for every other name. `TZ=Australia/Sydney` would
+be a real guarantee on CI and a no-op on the machine the code is written on,
+which is the worst of both.
+
+So the tests ask the running zone where its own transitions are, and
+`describeDst` skips with the zone named in the title where there are none. Under
+`TZ=UTC` the block now reports `1 skipped` instead of four green assertions.
+
+### A bug the port cannot express
+
+The trends injection sweep has twenty-seven entries and none of them reproduces
+the original bug, because **there is no way to write it**. `day_series` counts
+in day numbers; a day number has no hours in it to be twenty-four of. The
+nearest injections — off-by-one, wrong direction, wrong length — are all caught
+on three thousand-odd lines each.
+
+That is the strongest argument the migration has produced for the civil
+representation so far. The TypeScript fix stops the bug; the port removes the
+vocabulary.
+
+The corpus does have teeth on this: restoring the old arithmetic in `trends.ts`
+diverges on **731 of 5,404 cases**, and the diffs read exactly as described
+above — a missing `2025-10-05`, and weekly labels a day early.
+
+### Densifying a corpus that was agreeing too easily
+
+The first trends sweep caught all twenty-seven injections, but four of them on
+7, 16, 18 and 23 lines. A floor that low is luck, not coverage: it means the
+corpus rarely built a case where the injected code could answer differently.
+
+The cause was that entry days were drawn from the same pool as `today`, so most
+entries fell outside the window being asked for and most buckets were empty.
+Drawing entry days from a span around each case's own `today` — with one in
+eight still drawn far away, to keep the out-of-window path covered — moved the
+floor from 7 to 50 without changing the case count.
 
 ## Phase 2 — state and sync
 
