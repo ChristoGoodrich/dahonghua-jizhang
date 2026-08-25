@@ -9,6 +9,7 @@
 
 pub mod accounts;
 pub mod bills;
+pub mod budget;
 pub mod calc;
 pub mod catalog;
 pub mod civil;

@@ -87,6 +87,12 @@ const MODULES = [
     example: 'dump_trends',
   },
   {
+    name: 'budget',
+    corpus: 'rust/parity/budget-corpus.tsv',
+    ts: 'scripts/budget-parity.ts',
+    example: 'dump_budget',
+  },
+  {
     name: 'stats',
     corpus: 'rust/parity/stats-corpus.tsv',
     ts: 'scripts/stats-parity.ts',

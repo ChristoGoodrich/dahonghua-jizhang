@@ -52,7 +52,8 @@ Adding a module to the harness:
 | `domain/filter` | 162 | **Ported**, 2,014-case parity |
 | `domain/stats` | 231 | **Ported**, 1,318-case parity |
 | `domain/trends` | 99 | **Ported**, 5,404-case parity — took a fix first |
-| `domain/budget`, `insight`, `recap`, `weekly`, `streak` | ~571 | Queued |
+| `domain/budget` | 64 | **Ported**, 4,210-case parity |
+| `domain/insight`, `recap`, `weekly`, `streak` | ~507 | Queued |
 | `domain/billParse` → `bills` | 272 | **Ported**, 4,400-case parity — bar `decodeBillText` |
 | `domain/encoding` + `gbkTable` | 65 + 24k cells | Deferred by choice — `encoding_rs`, not a hand-copied table (below) |
 | `domain/billDedup` → `dedup` | 138 | **Ported**, 3,838-case parity |
@@ -592,6 +593,60 @@ entries fell outside the window being asked for and most buckets were empty.
 Drawing entry days from a span around each case's own `today` — with one in
 eight still drawn far away, to keep the out-of-window path covered — moved the
 floor from 7 to 50 without changing the case count.
+
+### `Object.keys` has an ordering rule, and a `BTreeMap` breaks it
+
+`catBudgetRows` sorts by percentage, and `Array.prototype.sort` is stable, so
+every tie is settled by whatever order `Object.keys` handed the caps over in.
+Ties are not the edge case here — on the first day of a cycle **every** capped
+category sits at exactly zero percent, so key order alone decides what the user
+sees.
+
+`Budgets.per_category` in the Rust store is a `BTreeMap`, which orders keys
+lexicographically. JavaScript orders them by insertion. Those are different
+lists, and the difference is on screen.
+
+Worse, JavaScript's order is not simply insertion order. Keys that are *array
+indices* — the canonical decimal spelling of an integer in `0 ..= 2^32 - 2` —
+come out **first, in ascending numeric order**, ahead of everything and
+regardless of when they went in. A custom category set named `1`, `2`, `10`
+therefore lists before `food`, and `10` after `2` rather than before it. `01` is
+not an index, because `String(1)` is `"1"`; nor is `-1`, `1.5`, or `4294967295`,
+which is a length rather than an index.
+
+The corpus found all of this on the first run: 376 divergences across 4,209
+cases, before a line of it had been reasoned about. `cat_budget_rows` now takes
+its caps as an ordered slice and applies the rule itself.
+
+**Open item:** `store.rs` still holds `per_category` as a `BTreeMap`. Nothing
+calls `cat_budget_rows` from the store yet, so nothing is wrong today — but the
+injection that reorders caps lexicographically, exactly as a `BTreeMap` would,
+diverges on **300 cases**. The map has to become insertion-ordered before those
+two are wired together.
+
+### Two injections that were wrong, in two different ways
+
+Twenty-four injections; three initially caught nothing, and only one of those
+was the corpus's fault.
+
+`limit > 0.0` → `limit >= 0.0` caught nothing because **it changes no value**.
+For a limit of zero both branches yield zero, and the only case that differs at
+all is `-0.0`, which `String()` renders as `"0"` either way. The injection that
+actually moves the threshold is one that discards small positive caps.
+
+`unwrap_or(Equal)` → `unwrap_or(Greater)` on the sort comparator caught nothing
+for a subtler reason: **`sort_by` only ever asks whether one element is less
+than another.** Greater and Equal are the same answer to that question. This is
+the same mistake as the earlier "unstable sort" injection against a stable
+`sort_by_key` — a comparator injection has to return `Less` to move anything.
+
+The third, a category key of `4294967295`, was a genuine corpus gap: no such key
+was ever generated. Adding one to the pool catches it on 55 lines.
+
+A fourth was merely thin — the injection stopping per-category spending from
+accumulating was caught on 13 lines, because entries drawn freely from the
+category pool rarely landed twice in the same *capped* category. Aiming 60% of
+each case's entries at that case's own cap keys took it to 98.
 
 ## Phase 2 — state and sync
 
