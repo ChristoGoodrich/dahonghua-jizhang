@@ -55,7 +55,9 @@ Adding a module to the harness:
 | `domain/budget` | 64 | **Ported**, 4,210-case parity |
 | `domain/networth` | 88 | **Ported**, in the 5,229-case statement corpus |
 | `domain/statement` | 149 | **Ported**, 5,229-case parity |
-| `domain/insight`, `recap`, `weekly`, `streak` | ~358 | Queued |
+| `domain/insight` | 98 | **Ported**, 4,618-case parity — copy stays in the UI |
+| `domain/order` (new) | — | **Added** — the amount comparator, as a total order |
+| `domain/recap`, `weekly`, `streak` | ~260 | Queued |
 | `domain/billParse` → `bills` | 272 | **Ported**, 4,400-case parity — bar `decodeBillText` |
 | `domain/encoding` + `gbkTable` | 65 + 24k cells | Deferred by choice — `encoding_rs`, not a hand-copied table (below) |
 | `domain/billDedup` → `dedup` | 138 | **Ported**, 3,838-case parity |
@@ -705,6 +707,80 @@ JavaScript's `Math.max` **propagates** `NaN`; Rust's `f64::max` answers with the
 other operand. Written correctly first this time — [`crate::stats`] had already
 taught it — and the corpus confirms it would have caught the wrong version, on
 69 cases.
+
+### The harness was measuring the wrong JavaScript engine
+
+`insight` ranks categories with `sort((a, b) => b[1] - a[1])`. That is not a
+consistent comparator: one `NaN` amount makes it return `NaN`, and ECMA-262
+then leaves the sort order **implementation-defined**. Not a footnote —
+
+```
+[10, NaN, 50, 20]  sorted descending in Node  →  10, NaN, 50, 20
+[10, 20, 50, NaN]  sorted descending in Node  →  50, 20, 10, NaN
+```
+
+The first list comes back untouched, *including the pair that had nothing to do
+with the NaN*. Move the NaN and the same comparator sorts properly.
+
+The port diverged on three of 4,618 cases here, and the interesting part is that
+neither answer was wrong. Rust's sort and V8's TimSort both honour a comparator
+that says "NaN equals everything", and they reach different arrangements because
+that claim is not transitive.
+
+Which exposes something about the harness rather than about the port: **this app
+ships on Hermes, and the TypeScript half of the harness runs on Node's V8.**
+Wherever behaviour depends on an unspecified sort order, the corpus has been
+pinning V8's answer — an answer the shipping app never gives. Two thousand green
+cases either side of it say nothing about that.
+
+The fix is not to reproduce V8. It is to stop depending on unspecified
+behaviour: `src/domain/order.ts` holds `descByAmt`, a **total** order with
+unusable amounts last, and `stats.byCategory`, `stats.topEntries`,
+`catBudgetRows` and `insight` all use it. `num.rs` carries the same order on the
+other side. A `NaN` amount is reachable — a malformed import, a conversion with
+no rate, a hand-edited backup — and it should be boringly wrong in a fixed way
+rather than differently wrong per device.
+
+### Copy is not domain logic, and the corpus proves the transcription
+
+`computeInsight` returns a localised sentence, which raised the first real
+question about where the boundary sits. The answer taken: **everything that
+decides which sentence** — the priority order, the thresholds, the rounding,
+which category counts as biggest — is in the core and is parity-checked. The
+words arrive as an `InsightCopy` argument. A table of Chinese and English
+marketing sentences is not domain logic, and putting one in Rust would make
+every copy tweak a Rust change.
+
+Category *names* went the other way and live in `catalog`: they are data the
+ledger is keyed by, not phrasing.
+
+The corpus carries the sentences in two header lines, transcribed from
+`insight.ts` and the phrase table. Duplicated text usually rots; this text
+cannot, because it is what the two halves are compared on. A wrong transcription
+fails the harness on the first case that uses it.
+
+Substitution is one left-to-right pass with each marker consumed once, rather
+than a chain of replacements. A chain would rewrite a value that itself contains
+a marker — a user's own category named `%a` — where the template literal it
+stands in for could not. The corpus now generates exactly that category.
+
+### An injection parity structurally cannot reach
+
+Thirty-one injections, and one stays at zero after the corpus was widened twice:
+removing the "fill each marker once" guard. It cannot be reached, because **no
+sentence in the real copy uses the same marker twice**, so no corpus line can
+tell the two versions apart.
+
+That is not a gap to paper over with a synthetic copy string — the harness's
+whole value is that it compares the code that ships. The guard is covered by a
+Rust unit test instead, and recorded here as the first behaviour deliberately
+left outside the parity contract.
+
+Three others started at zero and were fixed rather than excused: an empty
+English account name could not be expressed (both parsers collapsed `""` to
+absent, so the `nameEn || name` fallback was unreachable — now 47 cases), a
+value containing a marker was never generated, and the `>= 100%` and `>= 80%`
+thresholds were never landed on exactly.
 
 ## Phase 2 — state and sync
 

@@ -5,6 +5,7 @@ import { catOf, catName } from './cats';
 import { dailyStatus } from './budget';
 import { dueSoon } from './statement';
 import { fmtShort } from './money';
+import { descByAmt } from './order';
 import { I18N, type Lang } from '@/i18n';
 
 export interface Insight {
@@ -85,7 +86,7 @@ export function computeInsight(
     }
   }
 
-  const sorted = [...byCat.entries()].sort((a, b) => b[1] - a[1]);
+  const sorted = [...byCat.entries()].sort((a, b) => descByAmt(a[1], b[1]));
   const [topK, topAmt] = sorted[0];
   const total = md.reduce((s, d) => s + d.amt, 0);
   const topName = catName(catOf('exp', topK, customCats), lang);

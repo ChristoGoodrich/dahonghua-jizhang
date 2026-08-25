@@ -14,6 +14,7 @@
 use crate::civil::Civil;
 use crate::cycle::cycle_range;
 use crate::entry::{Entry, Io};
+use crate::num::desc_by_amt;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct CatTotal {
@@ -52,13 +53,6 @@ pub fn donut_slices(cats: &[CatTotal], total: f64) -> Vec<DonutSlice> {
             slice
         })
         .collect()
-}
-
-/// `Array.prototype.sort` treats a comparator returning `NaN` as zero, so a
-/// non-comparable pair keeps its relative order. Both sorts here are stable, so
-/// this reproduces that exactly.
-fn desc_by_amt(a: f64, b: f64) -> std::cmp::Ordering {
-    b.partial_cmp(&a).unwrap_or(std::cmp::Ordering::Equal)
 }
 
 /// Totals per category for one direction, largest first.

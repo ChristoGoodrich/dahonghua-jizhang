@@ -1,6 +1,7 @@
 // Aggregations for the stats tab — ported from v7's renderStats / renderComparison.
 import type { Entry, IO } from './types';
 import { cycleRange } from './cycle';
+import { descByAmt } from './order';
 import { daysBetween } from './dates';
 import { monthKey } from '@/store/indexes';
 
@@ -36,14 +37,14 @@ export function byCategory(entries: Entry[], io: IO = 'exp'): CatTotal[] {
   }
   return [...map.entries()]
     .map(([cat, amt]) => ({ cat, amt }))
-    .sort((a, b) => b.amt - a.amt);
+    .sort((a, b) => descByAmt(a.amt, b.amt));
 }
 
 /** The N largest single entries for the given io (default expense), descending. */
 export function topEntries(entries: Entry[], io: IO = 'exp', n = 5): Entry[] {
   return entries
     .filter((d) => d.io === io)
-    .sort((a, b) => b.amt - a.amt)
+    .sort((a, b) => descByAmt(a.amt, b.amt))
     .slice(0, n);
 }
 

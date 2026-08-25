@@ -373,20 +373,25 @@ mod tests {
     fn a_non_credit_account_has_no_statement() {
         let mut a = card("c1", Some(10), Some(25));
         a.kind = Some(AccountKind::Cash);
-        assert!(statement_summary(&a, std::slice::from_ref(&a), &[], Civil::new(2026, 5, 15)).is_none());
+        assert!(
+            statement_summary(&a, std::slice::from_ref(&a), &[], Civil::new(2026, 5, 15)).is_none()
+        );
     }
 
     #[test]
     fn a_statement_day_of_zero_is_unconfigured() {
         let a = card("c1", Some(0), Some(25));
-        assert!(statement_summary(&a, std::slice::from_ref(&a), &[], Civil::new(2026, 5, 15)).is_none());
+        assert!(
+            statement_summary(&a, std::slice::from_ref(&a), &[], Civil::new(2026, 5, 15)).is_none()
+        );
     }
 
     #[test]
     fn a_charge_on_the_close_day_is_billed() {
         let a = card("c1", Some(10), Some(25));
         let rows = vec![charge("e1", "c1", 100.0, Civil::new(2026, 5, 10))];
-        let s = statement_summary(&a, std::slice::from_ref(&a), &rows, Civil::new(2026, 5, 15)).unwrap();
+        let s = statement_summary(&a, std::slice::from_ref(&a), &rows, Civil::new(2026, 5, 15))
+            .unwrap();
         assert_eq!(s.billed_due, 100.0);
         assert_eq!(s.unbilled, 0.0);
         assert_eq!(s.current_debt, 100.0);
@@ -399,7 +404,8 @@ mod tests {
             charge("e1", "c1", 100.0, Civil::new(2026, 5, 10)),
             charge("e2", "c1", 30.0, Civil::new(2026, 5, 11)),
         ];
-        let s = statement_summary(&a, std::slice::from_ref(&a), &rows, Civil::new(2026, 5, 15)).unwrap();
+        let s = statement_summary(&a, std::slice::from_ref(&a), &rows, Civil::new(2026, 5, 15))
+            .unwrap();
         assert_eq!(s.billed_due, 100.0);
         assert_eq!(s.unbilled, 30.0);
         assert_eq!(s.current_debt, 130.0);
@@ -413,7 +419,8 @@ mod tests {
             charge("e2", "c1", 30.0, Civil::new(2026, 5, 11)),
             payment("e3", "c1", 120.0, Civil::new(2026, 5, 12)),
         ];
-        let s = statement_summary(&a, std::slice::from_ref(&a), &rows, Civil::new(2026, 5, 15)).unwrap();
+        let s = statement_summary(&a, std::slice::from_ref(&a), &rows, Civil::new(2026, 5, 15))
+            .unwrap();
         assert_eq!(s.billed_due, 0.0);
         // 20 of the payment was left over and offsets the 30 charged since
         assert_eq!(s.unbilled, 10.0);
@@ -425,7 +432,8 @@ mod tests {
     fn a_credit_balance_at_the_close_is_an_overpayment() {
         let mut a = card("c1", Some(10), Some(25));
         a.balance = 50.0;
-        let s = statement_summary(&a, std::slice::from_ref(&a), &[], Civil::new(2026, 5, 15)).unwrap();
+        let s =
+            statement_summary(&a, std::slice::from_ref(&a), &[], Civil::new(2026, 5, 15)).unwrap();
         assert_eq!(s.overpay, 50.0);
         assert_eq!(s.billed_due, 0.0);
         assert_eq!(s.current_debt, 0.0);
@@ -435,7 +443,8 @@ mod tests {
     fn days_to_due_goes_negative_once_overdue() {
         let a = card("c1", Some(10), Some(25));
         let rows = vec![charge("e1", "c1", 100.0, Civil::new(2026, 5, 10))];
-        let s = statement_summary(&a, std::slice::from_ref(&a), &rows, Civil::new(2026, 5, 28)).unwrap();
+        let s = statement_summary(&a, std::slice::from_ref(&a), &rows, Civil::new(2026, 5, 28))
+            .unwrap();
         assert_eq!(s.due_date, Some(Civil::new(2026, 5, 25)));
         assert_eq!(s.days_to_due, Some(-3));
     }
@@ -443,7 +452,8 @@ mod tests {
     #[test]
     fn no_due_day_means_no_due_date() {
         let a = card("c1", Some(10), None);
-        let s = statement_summary(&a, std::slice::from_ref(&a), &[], Civil::new(2026, 5, 15)).unwrap();
+        let s =
+            statement_summary(&a, std::slice::from_ref(&a), &[], Civil::new(2026, 5, 15)).unwrap();
         assert_eq!(s.due_date, None);
         assert_eq!(s.days_to_due, None);
     }
@@ -474,6 +484,9 @@ mod tests {
         let a = card("a", Some(10), Some(25));
         let rows = vec![charge("e1", "a", 100.0, Civil::new(2026, 5, 5))];
         assert!(due_soon(std::slice::from_ref(&a), &rows, Civil::new(2026, 5, 14), 7).is_empty());
-        assert_eq!(due_soon(std::slice::from_ref(&a), &rows, Civil::new(2026, 5, 20), 7).len(), 1);
+        assert_eq!(
+            due_soon(std::slice::from_ref(&a), &rows, Civil::new(2026, 5, 20), 7).len(),
+            1
+        );
     }
 }

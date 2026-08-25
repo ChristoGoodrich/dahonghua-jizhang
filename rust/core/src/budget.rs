@@ -13,6 +13,7 @@
 
 use crate::civil::Civil;
 use crate::entry::{Entry, Io};
+use crate::num::desc_by_amt;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct TierStatus {
@@ -100,7 +101,7 @@ pub struct CatBudgetRow {
 ///
 /// Canonical is the whole test: `01` is not an index, because `String(1)` is
 /// `"1"`. Neither is `-1`, `1.5`, `1e2` or the empty string.
-fn is_array_index(k: &str) -> bool {
+pub fn is_array_index(k: &str) -> bool {
     if k.is_empty() || (k.len() > 1 && k.starts_with('0')) {
         return false;
     }
@@ -115,7 +116,11 @@ fn is_array_index(k: &str) -> bool {
 ///
 /// The caller holds a map's entries in insertion order; duplicates cannot
 /// occur, because the source is an object.
-fn js_object_keys(caps: &[(String, f64)]) -> Vec<&(String, f64)> {
+///
+/// Public because [`crate::insight`] walks the same cap map looking for the
+/// first breach, and "first" means first in this order. If a third consumer
+/// appears this and [`is_array_index`] should move somewhere neutral.
+pub fn js_object_keys(caps: &[(String, f64)]) -> Vec<&(String, f64)> {
     let mut out: Vec<&(String, f64)> = caps.iter().filter(|(k, _)| is_array_index(k)).collect();
     out.sort_by_key(|(k, _)| k.parse::<u32>().expect("is_array_index checked this"));
     out.extend(caps.iter().filter(|(k, _)| !is_array_index(k)));
@@ -155,15 +160,10 @@ pub fn cat_budget_rows(cycle_entries: &[Entry], caps: &[(String, f64)]) -> Vec<C
             }
         })
         .collect();
-    // `sort((a, b) => b.pct - a.pct)` — a NaN difference is treated as zero by
-    // `Array.prototype.sort`, which leaves the pair in place. `sort_by` is
-    // stable, so `Equal` does the same thing.
-    rows.sort_by(|a, b| {
-        b.status
-            .pct
-            .partial_cmp(&a.status.pct)
-            .unwrap_or(std::cmp::Ordering::Equal)
-    });
+    // Closest to the cap first, with an unusable percentage last. `sort_by` is
+    // stable, so a genuine tie keeps `Object.keys` order — which is the case
+    // that decides the screen on the first day of a cycle.
+    rows.sort_by(|a, b| desc_by_amt(a.status.pct, b.status.pct));
     rows
 }
 
@@ -317,12 +317,13 @@ mod tests {
     }
 
     #[test]
-    fn a_nan_percentage_leaves_the_pair_where_it_was() {
-        // `b.pct - a.pct` is NaN, which `Array.prototype.sort` reads as zero
+    fn an_unusable_percentage_sorts_last() {
+        // `b.pct - a.pct` used to be the comparator, and a NaN result made the
+        // whole order implementation-defined. Now NaN ranks last, everywhere.
         let entries = vec![exp("a", f64::NAN)];
         let caps = vec![cap("a", 10.0), cap("b", 10.0)];
         let rows = cat_budget_rows(&entries, &caps);
-        assert_eq!(rows[0].cat, "a");
-        assert_eq!(rows[1].cat, "b");
+        assert_eq!(rows[0].cat, "b");
+        assert_eq!(rows[1].cat, "a");
     }
 }

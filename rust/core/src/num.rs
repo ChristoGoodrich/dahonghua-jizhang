@@ -67,9 +67,54 @@ pub fn js_num(x: f64) -> String {
     }
 }
 
+/// Largest first, with `NaN` last — a **total** order.
+///
+/// The TypeScript spelled this `b.amt - a.amt` for a long time, which is not a
+/// total order: a `NaN` amount makes the comparator return `NaN`, and ECMA-262
+/// leaves the sort order implementation-defined from there. In Node,
+/// `[10, NaN, 50, 20]` came back completely untouched while
+/// `[10, 20, 50, NaN]` sorted properly — and the app ships on Hermes, not on
+/// the V8 the harness runs under, so the shipping answer was not even the one
+/// under test.
+///
+/// A `NaN` amount is reachable: a malformed import, a conversion with no rate,
+/// a hand-edited backup. Ranking it last is arbitrary, but it is arbitrary in
+/// the same way everywhere, which is the property that was missing.
+///
+/// See `src/domain/order.ts`, which is the same order on the other side.
+pub fn desc_by_amt(a: f64, b: f64) -> std::cmp::Ordering {
+    use std::cmp::Ordering;
+    match (a.is_nan(), b.is_nan()) {
+        (true, true) => Ordering::Equal,
+        (true, false) => Ordering::Greater,
+        (false, true) => Ordering::Less,
+        _ => b.partial_cmp(&a).unwrap_or(Ordering::Equal),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn desc_by_amt_is_a_total_order() {
+        use std::cmp::Ordering::*;
+        assert_eq!(desc_by_amt(50.0, 10.0), Less); // 50 comes first
+        assert_eq!(desc_by_amt(10.0, 50.0), Greater);
+        assert_eq!(desc_by_amt(10.0, 10.0), Equal);
+        // NaN last, and consistently so — the property `b - a` did not have
+        assert_eq!(desc_by_amt(f64::NAN, 10.0), Greater);
+        assert_eq!(desc_by_amt(10.0, f64::NAN), Less);
+        assert_eq!(desc_by_amt(f64::NAN, f64::NAN), Equal);
+    }
+
+    #[test]
+    fn desc_by_amt_sorts_a_list_with_a_hole_in_it() {
+        let mut v = [10.0, f64::NAN, 50.0, 20.0];
+        v.sort_by(|a, b| desc_by_amt(*a, *b));
+        assert_eq!(&v[..3], &[50.0, 20.0, 10.0]);
+        assert!(v[3].is_nan());
+    }
 
     #[test]
     fn ties_go_toward_positive_infinity_like_javascript() {

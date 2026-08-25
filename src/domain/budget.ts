@@ -1,6 +1,7 @@
 // 3-tier budget status — monthly / daily / per-category (Cookie 记账 parity).
 // Pure functions over the current cycle's entries; UI + insight consume these.
 import type { Entry, Settings } from './types';
+import { descByAmt } from './order';
 
 export interface TierStatus {
   limit: number;
@@ -59,5 +60,5 @@ export function catBudgetRows(cycleEntries: Entry[], settings: Settings): CatBud
   return Object.keys(cb)
     .filter((k) => cb[k] > 0)
     .map((k) => ({ cat: k, ...tierStatus(spent.get(k) ?? 0, cb[k]) }))
-    .sort((a, b) => b.pct - a.pct);
+    .sort((a, b) => descByAmt(a.pct, b.pct));
 }
