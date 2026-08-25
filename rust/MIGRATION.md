@@ -67,7 +67,8 @@ Adding a module to the harness:
 | `domain/encoding` + `gbkTable` | 65 + 24k cells | Deferred by choice — `encoding_rs`, not a hand-copied table (below) |
 | `domain/billDedup` → `dedup` | 138 | **Ported**, 3,838-case parity |
 | `theme/glass` | 204 | **Ported**, 1,281-case parity — the material's arithmetic, not its rendering |
-| `domain/export` + `xlsxWrite` | ~230 | Queued — `rust_xlsxwriter` replaces the hand-rolled writer |
+| `domain/export` | 59 | **Ported**, 4,259-case parity on the CSV |
+| `domain/xlsxWrite` | 210 | **Not ported** — ZIP and XML with no decisions in it; `rust_xlsxwriter` when a file has to be written |
 | `entry` + `ledger` + `store` (new) | ~120 of `store/state.ts` | **Ported** — owned state, stateful parity |
 | `store/accounts` | 53 | **Ported**, folded into the same 1,338-scenario corpus |
 | `store/currency` + `model` | 138 | **Ported** (bar the HTTP refresh), folded into the same corpus |
@@ -935,6 +936,75 @@ reads `EMOJI_GROUPS`. It is gone, and the data checks it carried moved into the
 test where they were doing the work. Twelve emoji appear in two groups each,
 which is deliberate — a birthday cake belongs in both Food and Gifts — and is
 now pinned by a test so a future deduplication has to argue with it.
+
+### The export was dating every morning entry a day early
+
+`toRows` built its date column with `new Date(d.ts).toISOString().slice(0, 10)`,
+which is the **UTC** day. In Sydney every entry logged before ten in the morning
+exported with **yesterday's** date; in Shanghai before eight; in New York it
+goes the other way and evening entries dated tomorrow. Ten of every twenty-four
+hours, on a ledger app where "coffee at 8am" is a normal row.
+
+Grepping for the pattern found six more, all the same mistake:
+
+* the date handed to the AI as `Today:`, in three prompt builders — so a lunch
+  logged this morning got dated yesterday
+* the date the exchange-rate lookup asks about, in three places in the record
+  form — asking Frankfurter for yesterday's rate
+
+One survivor is correct and stays: `exportedAt: new Date().toISOString()` in the
+backup header is a full instant, not a day, and an instant is exactly what UTC
+is for.
+
+`localDateStr` in `dates.ts` replaces all seven. It also does not throw where
+`toISOString` does: a `NaN` timestamp yields `NaN-NaN-NaN` rather than a
+`RangeError` that would take a whole export down with it.
+
+The corpus is emphatic about the size of this. Putting `toISOString` back
+diverges on **2,959 of 4,259 cases**.
+
+This is the third pattern found by grepping for a shape rather than waiting for
+a module to trip over it: `/ 864e5` for a day, an inconsistent `a - b`
+comparator, and now `toISOString().slice(0, 10)` for a local date. All three
+were one-line habits repeated across files that no test disliked.
+
+### A corpus with an invariant, and 33 cases that broke it
+
+Each export row states both an epoch timestamp and the local day it falls on,
+and they have to describe the **same moment** — the epoch is what the shipping
+code sorts by and derives its date from, the day is what the core renders.
+Hand-written cases that set `ts` to `100` while claiming a 2026 date diverged
+on 33 lines, and the corpus was wrong rather than either implementation. The
+deliberate cases are built through one constructor now, which computes both
+from a single wall-clock moment.
+
+A separate 2,225-case divergence was a genuine porting error, and a good one:
+`to_rows` took a single flat slice of custom categories where `catOf` is handed
+a `Record<IO, Category[]>` and picks the list matching the entry. A custom
+*expense* category was answering for transfer rows. The signature takes a
+`CustomCats` now.
+
+### Two more no-op injections, and eight anchors that never landed
+
+Twenty-two injections, all caught, floor 634. Two were written as no-ops first:
+`Cell::Num` to `Cell::Text` renders identically through `as_str`, so it is
+invisible to a CSV — the number/text distinction only exists in the XLSX — and
+dropping `.filter(|n| !n.is_empty())` changes nothing because `Some("")` and
+`None` both render empty. That is five occasions now.
+
+Eight *other* injections silently reported "anchor not found", because the
+anchors contained escape sequences and were written through a shell heredoc.
+Building them with `String.raw` in a file written directly fixed all eight at
+once. Worth naming as its own failure mode: **an injection whose anchor misses
+is not scored at all**, so it looks like nothing rather than like a problem.
+
+### `xlsxWrite` is not ported, deliberately
+
+210 lines of ZIP central directories, CRC-32 and sheet XML, with no decision in
+any of them — the columns and their contents are `toRows`, which is ported and
+checked. `rust_xlsxwriter` is the answer if the Rust side ever writes the file
+itself, and until then this is the same call as `rates` leaving its HTTP behind
+and `emoji` leaving its table with the UI.
 
 ## Phase 2 — state and sync
 
