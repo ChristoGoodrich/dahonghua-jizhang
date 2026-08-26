@@ -141,6 +141,12 @@ const MODULES = [
     example: 'dump_rows',
   },
   {
+    name: 'sync',
+    corpus: 'rust/parity/sync-corpus.tsv',
+    ts: 'scripts/sync-parity.ts',
+    example: 'dump_sync',
+  },
+  {
     name: 'stats',
     corpus: 'rust/parity/stats-corpus.tsv',
     ts: 'scripts/stats-parity.ts',

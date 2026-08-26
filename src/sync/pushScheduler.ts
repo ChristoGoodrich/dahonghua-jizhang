@@ -38,6 +38,41 @@ export interface PushScheduler {
   readonly watermark: number;
 }
 
+// ---------- the watermark rules ----------
+//
+// Exported because they are the whole of what this module decides, and because
+// the dirty filter has to be the SAME rule the scheduler advances past. It used
+// to be written once here and once in the engine's `getDirty`; two spellings of
+// one rule is how the realtime path came to disagree with the pull.
+
+/** Rows the server has not seen: strictly newer than the watermark.
+ *
+ *  Strictly, which is what makes it a watermark — a row whose stamp equals it
+ *  has been pushed. A row stamped in the same millisecond as the newest row of
+ *  a batch already in flight is therefore not picked up by the next flush; the
+ *  pull sends it anyway, since a row the server does not have is uploaded
+ *  regardless of any watermark. */
+export function dirtySince<T>(items: T[], stamp: (t: T) => number, watermark: number): T[] {
+  return items.filter((e) => stamp(e) > watermark);
+}
+
+/** How far the watermark may move once a batch is persisted.
+ *
+ *  Seeded with the current watermark so it never moves backwards, and past
+ *  ONLY what was actually written — a watermark that advanced on intent rather
+ *  than on success would drop every change in a failed batch, silently. */
+export function advanceWatermark<T>(watermark: number, pushed: T[], stamp: (t: T) => number): number {
+  return pushed.reduce((m, e) => Math.max(m, stamp(e)), watermark);
+}
+
+/** The next backoff delay: double, or start at base, capped.
+ *
+ *  A zero means "not currently backing off", so the first failure after a
+ *  success waits `base` rather than nothing. */
+export function nextDelay(current: number, base: number, max: number): number {
+  return Math.min(current ? current * 2 : base, max);
+}
+
 export function createPushScheduler<T>(cfg: PushSchedulerConfig<T>): PushScheduler {
   const debounceMs = cfg.debounceMs ?? 800;
   const retryBaseMs = cfg.retryBaseMs ?? 2000;
@@ -54,7 +89,7 @@ export function createPushScheduler<T>(cfg: PushSchedulerConfig<T>): PushSchedul
       if (dirty.length) {
         await cfg.pushItems(dirty);
         // advance only past what we just persisted
-        watermark = dirty.reduce((m, e) => Math.max(m, cfg.stamp(e)), watermark);
+        watermark = advanceWatermark(watermark, dirty, cfg.stamp);
       }
       await cfg.pushConfig();
       retryDelay = 0;
@@ -68,7 +103,7 @@ export function createPushScheduler<T>(cfg: PushSchedulerConfig<T>): PushSchedul
 
   function scheduleRetry(): void {
     if (retryTimer) return; // a retry is already pending
-    retryDelay = Math.min(retryDelay ? retryDelay * 2 : retryBaseMs, retryMaxMs);
+    retryDelay = nextDelay(retryDelay, retryBaseMs, retryMaxMs);
     retryTimer = setTimeout(() => { retryTimer = null; flush(); }, retryDelay);
   }
 

@@ -22,11 +22,19 @@ export function getConflictLog(): ConflictEntry[] {
   return cachedLog;
 }
 
+/** Newest first, bounded. The cap is applied AFTER the insert, so a full log
+ *  still accepts a new entry and drops its oldest rather than refusing it.
+ *
+ *  Exported so the rule has one definition: `logConflict` awaits AsyncStorage,
+ *  so nothing that wants to check the rule can call it, and a second copy of
+ *  three lines is how two spellings of one rule start. */
+export function capLog(log: ConflictEntry[], entry: ConflictEntry): ConflictEntry[] {
+  const next = [entry, ...log];
+  return next.length > MAX_ENTRIES ? next.slice(0, MAX_ENTRIES) : next;
+}
+
 export async function logConflict(entry: ConflictEntry): Promise<void> {
-  cachedLog.unshift(entry);
-  if (cachedLog.length > MAX_ENTRIES) {
-    cachedLog = cachedLog.slice(0, MAX_ENTRIES);
-  }
+  cachedLog = capLog(cachedLog, entry);
   await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(cachedLog));
 }
 

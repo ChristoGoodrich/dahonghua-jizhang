@@ -11,7 +11,11 @@ import { supabase } from './supabase';
 import { auth$ } from './auth';
 import { mergeById, mergeOne } from './merge';
 import { entryToRow, rowToEntry, type DbEntry } from './rows';
-import { createPushScheduler } from './pushScheduler';
+import { createPushScheduler, dirtySince } from './pushScheduler';
+import {
+  adoptSections, localNewerThan, sectionPresent, CONFIG_SECTIONS,
+  type SectionKey,
+} from './configMerge';
 import { loadConflictLog, logConflict } from './conflictLog';
 import { store$, whenDataReady, type AppState } from '@/store/ledger';
 import type { Entry } from '@/domain/types';
@@ -33,20 +37,10 @@ let activeUser: string | null = null;
 
 // ---------- per-section config stamps ----------
 //
-// The config blob is one row, but it carries independent domains (accounts,
-// tags, subs…). Whole-blob last-write-wins meant two devices editing DIFFERENT
-// sections clobbered each other: A adds an account, B renames a tag, and
-// whichever pushed last erased the other's change — including money-adjacent
-// state like account balances and subscription cursors. Each section now
-// carries its own last-edit timestamp; a remote section is adopted only when
-// its stamp is newer than the local one. Edits within one section still LWW as
-// a unit, which matches how the UI edits them.
-const CONFIG_SECTIONS = [
-  'lang', 'settings', 'customCats', 'accounts', 'assets', 'loans', 'subs',
-  'templates', 'tags', 'curLedger', 'currencies', 'subcats', 'curAccount',
-] as const;
-type SectionKey = (typeof CONFIG_SECTIONS)[number];
-
+// The rule itself lives in configMerge.ts, where it can be read without a faked
+// Supabase client in the way. This half is the wiring: where the stamps are
+// kept, when they are written, and which store node each adopted section goes
+// to.
 const CONFIG_TS_KEY = 'dhh_config_ts_v1';
 let configTs: Record<string, number> = {};
 let configTsLoaded: Promise<void> | null = null;
@@ -85,18 +79,16 @@ function wireConfigStamps(): void {
   }
 }
 
-/** True when any locally-stamped section is newer than the remote blob's stamp
- *  — i.e. the server copy is missing local edits and needs a push. */
-function localNewerThan(remoteTs: Record<string, number> | undefined): boolean {
-  const rts = remoteTs ?? {};
-  return CONFIG_SECTIONS.some((k) => (configTs[k] ?? 0) > (rts[k] ?? 1));
-}
-
 // Debounced push + backoff retry, owning the watermark. Pure/tested in
 // pushScheduler.ts; here we just wire the store + Supabase I/O into it.
+//
+// One spelling of the stamp, used by both the filter and the advance — they
+// have to agree about what a row's watermark value is, and two copies of
+// `e.updatedAt ?? 0` is one copy too many.
+const stampOf = (e: Entry) => e.updatedAt ?? 0;
 const pusher = createPushScheduler<Entry>({
-  getDirty: (wm) => store$.data.peek().filter((e) => (e.updatedAt ?? 0) > wm),
-  stamp: (e) => e.updatedAt ?? 0,
+  getDirty: (wm) => dirtySince(store$.data.peek(), stampOf, wm),
+  stamp: stampOf,
   pushItems: (items) => pushRows(items, activeUser!),
   pushConfig: () => (activeUser ? pushConfig(activeUser) : Promise.resolve()),
   onError: () => sync$.status.set('error'),
@@ -127,33 +119,25 @@ function applyConfig(cfg: ConfigBlob): void {
 }
 
 function applyConfigInner(cfg: ConfigBlob): void {
-  const remoteTs = cfg.configTs ?? {};
-  // Adopt a section only when the remote copy is newer than the last local
-  // edit. Legacy blobs carry no stamps — treat their sections as barely newer
-  // than "never edited" (1 > 0) so a fresh device still adopts them, but any
-  // real local edit wins. Adopting also takes over the remote stamp, keeping
-  // later comparisons stable across devices.
-  const adopt = (k: SectionKey, present: boolean): boolean => {
-    if (!present) return false;
-    const r = remoteTs[k] ?? 1;
-    if (r <= (configTs[k] ?? 0)) return false;
-    configTs[k] = r;
-    return true;
-  };
+  const blob = cfg as Record<string, unknown>;
+  const { take, stamps } = adoptSections(configTs, cfg.configTs, (k) => sectionPresent(blob, k));
+  configTs = stamps;
+  const took = (k: SectionKey) => take.includes(k);
+
   const keepLock = store$.settings.lock.peek();
-  if (adopt('lang', !!cfg.lang)) store$.lang.set(cfg.lang!);
-  if (adopt('settings', !!cfg.settings)) store$.settings.set({ ...cfg.settings, lock: keepLock } as Settings);
-  if (adopt('customCats', !!cfg.customCats)) store$.customCats.set(cfg.customCats!);
-  if (adopt('accounts', !!cfg.accounts)) store$.accounts.set(cfg.accounts!);
-  if (adopt('assets', !!cfg.assets)) store$.assets.set(cfg.assets!);
-  if (adopt('loans', !!cfg.loans)) store$.loans.set(cfg.loans!);
-  if (adopt('subs', !!cfg.subs)) store$.subs.set(cfg.subs!);
-  if (adopt('templates', !!cfg.templates)) store$.templates.set(cfg.templates!);
-  if (adopt('tags', !!cfg.tags)) store$.tags.set(cfg.tags!);
-  if (adopt('curLedger', cfg.curLedger !== undefined)) store$.curLedger.set(cfg.curLedger!);
-  if (adopt('currencies', !!cfg.currencies)) store$.currencies.set(cfg.currencies!);
-  if (adopt('subcats', !!cfg.subcats)) store$.subcats.set(cfg.subcats!);
-  if (adopt('curAccount', !!cfg.curAccount)) store$.curAccount.set(cfg.curAccount!);
+  if (took('lang')) store$.lang.set(cfg.lang!);
+  if (took('settings')) store$.settings.set({ ...cfg.settings, lock: keepLock } as Settings);
+  if (took('customCats')) store$.customCats.set(cfg.customCats!);
+  if (took('accounts')) store$.accounts.set(cfg.accounts!);
+  if (took('assets')) store$.assets.set(cfg.assets!);
+  if (took('loans')) store$.loans.set(cfg.loans!);
+  if (took('subs')) store$.subs.set(cfg.subs!);
+  if (took('templates')) store$.templates.set(cfg.templates!);
+  if (took('tags')) store$.tags.set(cfg.tags!);
+  if (took('curLedger')) store$.curLedger.set(cfg.curLedger!);
+  if (took('currencies')) store$.currencies.set(cfg.currencies!);
+  if (took('subcats')) store$.subcats.set(cfg.subcats!);
+  if (took('curAccount')) store$.curAccount.set(cfg.curAccount!);
   saveConfigTs();
 }
 
@@ -258,7 +242,7 @@ function subscribeConfigRealtime(userId: string): void {
           applyConfig(row.config);
           // the server blob lags local edits (e.g. another device pushed while
           // ours was still debouncing) — push so the server converges
-          if (localNewerThan(row.config.configTs)) pusher.schedule();
+          if (localNewerThan(configTs, row.config.configTs)) pusher.schedule();
         }
       },
     )

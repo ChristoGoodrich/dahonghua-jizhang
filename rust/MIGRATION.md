@@ -84,7 +84,8 @@ Adding a module to the harness:
 | `domain/jsval` (new) | — | **Added** — a JSON value and `JSON.stringify`, because the serialisation *is* the comparison |
 | `sync/rows` | 94 | **Ported**, 4,539-case parity — the wire shape, and the JSON on either side |
 | `domain/jsval::parse` (new) | — | **Added** — the sync boundary is JSON in both directions |
-| `sync/*` (the rest) | 526 | Next — the scheduler, the config sections, the conflict log |
+| `sync/pushScheduler` + `engine` decisions + `conflictLog` → `sync` | 454 | **Ported**, 4,252-case parity — transport left on the platform |
+| `sync/auth`, `sync/supabase` | 72 | **Nothing to port** — SDK calls and one `trim` |
 | UI (21 routes, 72 components) | 11,049 | Last — **Flutter decided**; Rust UI frameworks measured and set aside |
 
 ## Phase 1 — the domain crate (in progress)
@@ -1247,6 +1248,76 @@ existed, and nothing in the output said so.
 The sweep now regenerates its own reference. Worth stating plainly, because it
 is the same shape as the anchor problem: **the failure mode of a verification
 tool is not a wrong answer, it is a plausible one.**
+
+### `sync/` finishes, and two files turn out to be empty
+
+The last 526 lines of `sync/` held perhaps forty lines of judgement between
+them, and each was buried in enough I/O that none could be read on its own. All
+three now sit in `sync.rs`, and — the point of the exercise — in three small
+TypeScript modules that the shipping app itself uses:
+
+| | was | is |
+| --- | --- | --- |
+| per-section config adoption | private to `engine.ts`, reachable only through a faked Supabase client | `sync/configMerge.ts` |
+| the watermark rules | inline in `pushScheduler`, and **again** in the engine's `getDirty` | `dirtySince` / `advanceWatermark` / `nextDelay` |
+| the conflict-log cap | inline in an `async` function that awaits AsyncStorage | `capLog` |
+
+The watermark one is the same defect shape as the realtime merge, one increment
+earlier: `(e.updatedAt ?? 0) > wm` was written once in the scheduler and once in
+the engine, and the scheduler advanced past what *its* spelling considered
+dirty. They agreed, but nothing made them agree. One `stampOf`, one `dirtySince`,
+and the question cannot come up.
+
+`sync/auth.ts` and `sync/supabase.ts` are listed as ported with nothing in them,
+which is accurate rather than glib: strip the SDK calls and what remains is
+`email.trim()`. That is [`jsstr::js_trim`] and not `str::trim`, for the reason
+that module gives — a mail address pasted out of a file very often carries a
+BOM, which JavaScript trims and Rust keeps.
+
+### Two asymmetric defaults, and why they are not a typo
+
+The per-section rule reads oddly and is right:
+
+```ts
+const r = rts[k] ?? 1;                    // the blob has no stamp for it
+if (r <= (stamps[k] ?? 0)) continue;      // this device never edited it
+```
+
+A section this device never edited reads **0**; a section the blob has no stamp
+for reads **1**. The gap between them is the whole legacy-blob story: a config
+written before stamps existed carries none, so every one of its sections reads
+1, which beats "never edited" (1 > 0) on a fresh device and loses to any real
+edit (a `Date.now()` is enormous). Both defaults have a corpus line and both
+have an injection; swapping either is caught 845 and 851 times.
+
+One rule did change. `curLedger` was tested with `!== undefined` while every
+other section used `!!cfg.x` — because `curLedger` is `''` when no ledger filter
+is active, and a truthiness test made that value unadoptable. It was fixed as an
+instance. `lang` and `curAccount` are also strings and were still on the truthy
+test; neither can be empty today, which is the only reason there was one bug
+rather than three. The rule is nullish for all thirteen now, which removes the
+class and still refuses a `null` section from a legacy blob — that would
+otherwise be written into the store as-is.
+
+### A fixture that asserted the thing it was measuring
+
+The sync sweep produced one zero and two injections that could not be scored at
+all, and all three were the harness's fault rather than the corpus's:
+
+* **`bump` had no corpus line.** An injection making the watermark *fall* caught
+  nothing, because no case ever called it. A rule with no corpus line is not a
+  rule the harness checks — it is a rule the harness has an opinion about.
+* **An injection that would not compile.** `CONFIG_SECTIONS` is `[&str; 13]`, so
+  deleting an element is a type error rather than a bug. Replaced with one that
+  names a section twice and omits another: same defect, and it builds.
+* **A `debug_assert!` in `dump_sync.rs`** checking that the conflict log never
+  exceeds its cap. Injecting an off-by-one in the cap made the *fixture* panic,
+  so the injection was reported as a build failure instead of as 2 divergences.
+  The fixture must not assert what it is measuring; the assertion is a test's
+  job, and there was already a test for it.
+
+With those fixed, 31 injections and **no zeros** — the first sweep in this
+migration where every injection lands.
 
 ## Phase 2 — state and sync
 
