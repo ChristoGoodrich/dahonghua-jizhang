@@ -15,6 +15,7 @@ import 'api/money.dart';
 import 'api/record.dart';
 import 'api/stats.dart';
 import 'api/store.dart';
+import 'api/subscriptions.dart';
 import 'api/sync.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -64,6 +65,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   NewEntry dco_decode_box_autoadd_new_entry(dynamic raw);
+
+  @protected
+  NewSub dco_decode_box_autoadd_new_sub(dynamic raw);
 
   @protected
   NewTransfer dco_decode_box_autoadd_new_transfer(dynamic raw);
@@ -168,6 +172,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<SliceView> dco_decode_list_slice_view(dynamic raw);
 
   @protected
+  List<SubView> dco_decode_list_sub_view(dynamic raw);
+
+  @protected
   List<SyncEffect> dco_decode_list_sync_effect(dynamic raw);
 
   @protected
@@ -175,6 +182,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   NewEntry dco_decode_new_entry(dynamic raw);
+
+  @protected
+  NewSub dco_decode_new_sub(dynamic raw);
 
   @protected
   NewTransfer dco_decode_new_transfer(dynamic raw);
@@ -207,6 +217,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   OverviewView dco_decode_overview_view(dynamic raw);
 
   @protected
+  PendingCharges dco_decode_pending_charges(dynamic raw);
+
+  @protected
   (String, double) dco_decode_record_string_f_64(dynamic raw);
 
   @protected
@@ -217,6 +230,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   SliceView dco_decode_slice_view(dynamic raw);
+
+  @protected
+  SubView dco_decode_sub_view(dynamic raw);
 
   @protected
   SyncEffect dco_decode_sync_effect(dynamic raw);
@@ -276,6 +292,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   NewEntry sse_decode_box_autoadd_new_entry(SseDeserializer deserializer);
+
+  @protected
+  NewSub sse_decode_box_autoadd_new_sub(SseDeserializer deserializer);
 
   @protected
   NewTransfer sse_decode_box_autoadd_new_transfer(SseDeserializer deserializer);
@@ -390,6 +409,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<SliceView> sse_decode_list_slice_view(SseDeserializer deserializer);
 
   @protected
+  List<SubView> sse_decode_list_sub_view(SseDeserializer deserializer);
+
+  @protected
   List<SyncEffect> sse_decode_list_sync_effect(SseDeserializer deserializer);
 
   @protected
@@ -399,6 +421,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   NewEntry sse_decode_new_entry(SseDeserializer deserializer);
+
+  @protected
+  NewSub sse_decode_new_sub(SseDeserializer deserializer);
 
   @protected
   NewTransfer sse_decode_new_transfer(SseDeserializer deserializer);
@@ -435,6 +460,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   OverviewView sse_decode_overview_view(SseDeserializer deserializer);
 
   @protected
+  PendingCharges sse_decode_pending_charges(SseDeserializer deserializer);
+
+  @protected
   (String, double) sse_decode_record_string_f_64(SseDeserializer deserializer);
 
   @protected
@@ -445,6 +473,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   SliceView sse_decode_slice_view(SseDeserializer deserializer);
+
+  @protected
+  SubView sse_decode_sub_view(SseDeserializer deserializer);
 
   @protected
   SyncEffect sse_decode_sync_effect(SseDeserializer deserializer);
@@ -523,6 +554,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     NewEntry self,
     SseSerializer serializer,
   );
+
+  @protected
+  void sse_encode_box_autoadd_new_sub(NewSub self, SseSerializer serializer);
 
   @protected
   void sse_encode_box_autoadd_new_transfer(
@@ -675,6 +709,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_list_sub_view(List<SubView> self, SseSerializer serializer);
+
+  @protected
   void sse_encode_list_sync_effect(
     List<SyncEffect> self,
     SseSerializer serializer,
@@ -688,6 +725,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_new_entry(NewEntry self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_new_sub(NewSub self, SseSerializer serializer);
 
   @protected
   void sse_encode_new_transfer(NewTransfer self, SseSerializer serializer);
@@ -729,6 +769,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_overview_view(OverviewView self, SseSerializer serializer);
 
   @protected
+  void sse_encode_pending_charges(
+    PendingCharges self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_record_string_f_64(
     (String, double) self,
     SseSerializer serializer,
@@ -742,6 +788,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_slice_view(SliceView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_sub_view(SubView self, SseSerializer serializer);
 
   @protected
   void sse_encode_sync_effect(SyncEffect self, SseSerializer serializer);

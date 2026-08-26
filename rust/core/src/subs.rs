@@ -108,6 +108,22 @@ pub fn compute_due_charges(sub: &Sub, start: Civil, today: Civil) -> DueResult {
     }
 }
 
+/// The instalment cap: never fire more than `periods` charges in total.
+///
+/// Split out of the sweep because the platform applies it too. Turning a due
+/// date into a timestamp needs a timezone, so on the Flutter side the sweep is
+/// two calls with Dart in the middle — and both halves have to cap the same
+/// way, or a fully-paid instalment fires once more on the way through.
+pub fn apply_cap(sub: &Sub, charges: Vec<Civil>) -> Vec<Civil> {
+    match sub.periods.filter(|p| *p > 0) {
+        Some(periods) => {
+            let remaining = periods.saturating_sub(sub.charged.unwrap_or(0)) as usize;
+            charges.into_iter().take(remaining).collect()
+        }
+        None => charges,
+    }
+}
+
 /// What a sweep did.
 #[derive(Debug, Default, PartialEq)]
 pub struct SweepResult {
@@ -146,14 +162,7 @@ pub fn run_subscriptions(
             continue;
         }
 
-        // instalment cap: never fire more than `periods` charges in total
-        let to_apply: Vec<Civil> = match sub.periods.filter(|p| *p > 0) {
-            Some(periods) => {
-                let remaining = periods.saturating_sub(sub.charged.unwrap_or(0)) as usize;
-                charges.into_iter().take(remaining).collect()
-            }
-            None => charges,
-        };
+        let to_apply = apply_cap(sub, charges);
 
         if to_apply.is_empty() {
             // fully paid, but the cursor still moved

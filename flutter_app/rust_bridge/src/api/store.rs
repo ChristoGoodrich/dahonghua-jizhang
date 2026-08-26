@@ -28,6 +28,7 @@ use dahonghua_core::entry::{Entry, EntrySource, Io, Patch, Reimburse};
 use dahonghua_core::jsval::{parse_checked, stable, Value};
 use dahonghua_core::ledger::Ledger;
 use dahonghua_core::list::{self, DayLabel, FlatItem};
+use dahonghua_core::model::{Sub, SubFreq};
 use dahonghua_core::money::Currencies;
 use dahonghua_core::rows::{entry_from_value, entry_to_value};
 use dahonghua_core::store::{ImportedBill, Store, TransferOpts};
@@ -713,8 +714,57 @@ pub fn snapshot_config() -> String {
         .iter()
         .map(|(k, v)| (k.clone(), Value::Num(*v)))
         .collect();
+    let subs: Vec<Value> = super::subscriptions::subs_of()
+        .iter()
+        .map(|b| {
+            let mut o: Vec<(String, Value)> = vec![
+                ("id".into(), Value::Str(b.id.clone())),
+                ("name".into(), Value::Str(b.name.clone())),
+                ("emoji".into(), Value::Str(b.emoji.clone())),
+                ("amt".into(), Value::Num(b.amt)),
+                (
+                    "freq".into(),
+                    Value::Str(
+                        match b.freq {
+                            SubFreq::Yearly => "yearly",
+                            SubFreq::Monthly => "monthly",
+                        }
+                        .to_string(),
+                    ),
+                ),
+                ("day".into(), Value::Num(b.day as f64)),
+                ("cat".into(), Value::Str(b.cat.clone())),
+                ("created".into(), Value::Num(b.created as f64)),
+            ];
+            if let Some(m) = b.month {
+                o.push(("month".into(), Value::Num(m as f64)));
+            }
+            if let Some(l) = &b.last_charged {
+                o.push(("lastCharged".into(), Value::Str(l.clone())));
+            }
+            // `kind: 'transfer'` is how v7 spells it, and the importer reads
+            // that key rather than a boolean
+            if b.is_transfer == Some(true) {
+                o.push(("kind".into(), Value::Str("transfer".into())));
+            }
+            if let Some(f) = &b.from {
+                o.push(("from".into(), Value::Str(f.clone())));
+            }
+            if let Some(t) = &b.to {
+                o.push(("to".into(), Value::Str(t.clone())));
+            }
+            if let Some(n) = b.periods {
+                o.push(("periods".into(), Value::Num(n as f64)));
+            }
+            if let Some(n) = b.charged {
+                o.push(("charged".into(), Value::Num(n as f64)));
+            }
+            Value::Obj(o)
+        })
+        .collect();
     stable(&Value::Obj(vec![
         ("accounts".into(), Value::Arr(accounts)),
+        ("subs".into(), Value::Arr(subs)),
         (
             "settings".into(),
             Value::Obj(vec![
@@ -773,6 +823,36 @@ pub fn load_config(json: String) -> bool {
     }
     if let Some(Value::Str(id)) = v.get("curAccount") {
         store().current_account = id.clone();
+    }
+    if let Some(Value::Arr(items)) = v.get("subs") {
+        let subs: Vec<Sub> = items
+            .iter()
+            .map(|b| Sub {
+                id: str_of(b.get("id")),
+                name: str_of(b.get("name")),
+                emoji: str_of(b.get("emoji")),
+                amt: b.num("amt").unwrap_or(0.0),
+                freq: match b.get("freq").and_then(as_str).as_deref() {
+                    Some("yearly") => SubFreq::Yearly,
+                    _ => SubFreq::Monthly,
+                },
+                // a day outside 1..=28 would skip the months that have no such
+                // day; the form never offers one, a restored file can say
+                // anything
+                day: b.num("day").map(|n| (n as u32).clamp(1, 28)).unwrap_or(1),
+                month: b.num("month").map(|n| (n as u32).clamp(1, 12)),
+                cat: str_of(b.get("cat")),
+                created: b.num("created").map(|n| n as i64).unwrap_or(0),
+                last_charged: b.get("lastCharged").and_then(as_str),
+                is_transfer: matches!(b.get("kind").and_then(as_str).as_deref(), Some("transfer"))
+                    .then_some(true),
+                from: b.get("from").and_then(as_str),
+                to: b.get("to").and_then(as_str),
+                periods: b.num("periods").map(|n| n as u32),
+                charged: b.num("charged").map(|n| n as u32),
+            })
+            .collect();
+        super::subscriptions::set_subs_inner(subs);
     }
     if let Some(set @ Value::Obj(_)) = v.get("settings") {
         set_settings_inner(BudgetSettings {
@@ -853,4 +933,5 @@ pub fn reset() {
         cycle_start: 1,
         ..Default::default()
     });
+    super::subscriptions::set_subs_inner(Vec::new());
 }

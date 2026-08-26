@@ -17,6 +17,7 @@ import 'package:flutter/services.dart';
 
 import 'accounts_screen.dart';
 import 'budget_screen.dart';
+import 'subs_screen.dart';
 import 'entry_list.dart';
 import 'persistence.dart';
 import 'record_sheet.dart' as sheet;
@@ -36,6 +37,10 @@ Future<void> main() async {
   // while nothing is being saved at all. That is what a screenshot showed and
   // an `ls` of the app directory disproved.
   if (_seedIfEmpty()) await store.flush();
+  // Catch up any subscription charges that came due while the app was closed.
+  // Before the first frame, so the list does not visibly gain rows a moment
+  // after it is drawn.
+  if (runDueCharges().isNotEmpty) await store.flush();
   runApp(App(store: store));
 }
 
@@ -103,7 +108,7 @@ class App extends StatelessWidget {
   );
 }
 
-/// The five screens, until there is a router worth having.
+/// The six screens, until there is a router worth having.
 class Home extends StatefulWidget {
   const Home({super.key, this.store});
 
@@ -184,6 +189,17 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           key: ValueKey(_listVersion),
           onChanged: () => widget.store?.touchConfig(),
         ),
+        // A subscription sweep posts entries, so this screen writes both files
+        // too — and it sweeps on the way in, because the shipping app charges
+        // as soon as a due day arrives rather than at the next launch.
+        SubsScreen(
+          key: ValueKey(_listVersion),
+          onChanged: () {
+            widget.store?.touchConfig();
+            widget.store?.touchEntries();
+            setState(() => _listVersion++);
+          },
+        ),
         // Deleting an account rewrites every entry that pointed at it, so this
         // screen touches both files, not just the config one.
         AccountsScreen(
@@ -238,6 +254,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           icon: Icon(Icons.savings_outlined, color: palette.inkSoft),
           selectedIcon: Icon(Icons.savings, color: palette.hibiscus),
           label: '预算',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.autorenew_outlined, color: palette.inkSoft),
+          selectedIcon: Icon(Icons.autorenew, color: palette.hibiscus),
+          label: '订阅',
         ),
         NavigationDestination(
           icon: Icon(Icons.account_balance_wallet_outlined,

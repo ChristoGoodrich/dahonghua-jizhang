@@ -2221,6 +2221,45 @@ either — which is why its own tests fake the client at the module boundary. Th
 schema and the RLS policies remain unverified by anything here, and creating a
 project is the user's to do, not mine.
 
+### The first function the timezone rule had to cut in half
+
+Every screen so far has taken calendar days as arguments: "the timezone is the
+platform's" has meant Dart computes a day and hands it over. `run_subscriptions`
+is the first port where that is not enough. It walks forward through dates it
+discovers as it goes, and needs each one as an epoch — so the closure the core
+takes for that cannot be supplied from Dart at all, because a `#[frb(sync)]`
+function cannot call back into it.
+
+So the sweep is two calls. `subs_pending` answers with dates, Dart converts each
+to local midnight, `subs_commit` posts. Two things make the split safe rather
+than merely convenient:
+
+* **The cap is one implementation.** `apply_cap` came out of the sweep so both
+  halves use it. Applied in only one of them, a fully-paid instalment fires once
+  more on the way through.
+* **`commit` recomputes the plan** from the same `starts` and `today` rather
+  than trusting anything held between the calls. Two calls that must agree are
+  safer when neither remembers the other, and a date with no epoch supplied is
+  skipped rather than guessed at.
+
+A fixed UTC offset would have avoided all of this and been wrong: the charges
+being caught up may span a daylight-saving boundary, which is exactly why the
+core takes a closure instead of an offset.
+
+### A screen that has to be wrong about February
+
+`next_due_date` overflows rather than clamping, because `new Date(y, m, 31)`
+does. A subscription billed on the 31st charges on **3 March** in a non-leap
+year, not on the 28th of February. The form clamps its input to 1..=28 so the
+picker cannot produce one — but a restored backup can, and the port keeps the
+overflow rather than quietly improving it.
+
+The charge id is the other inherited oddity worth keeping: `sub_{id}_{ts}`,
+derived rather than random. Boot runs the sweep while the first cloud pull is
+still in flight, so a second device charges from its own stale cursor before it
+learns the first already did. With random ids both rows survive the merge and
+the user is billed twice; with a derived id they are the same row.
+
 ### Building for Android here
 
 Whatever drives it, the Android build needs `TEMP` pointed somewhere AF_UNIX
