@@ -28,7 +28,7 @@ use dahonghua_core::entry::{Entry, EntrySource, Io, Patch, Reimburse};
 use dahonghua_core::jsval::{parse_checked, stable, Value};
 use dahonghua_core::ledger::Ledger;
 use dahonghua_core::list::{self, DayLabel, FlatItem};
-use dahonghua_core::model::{Sub, SubFreq};
+use dahonghua_core::model::{Asset, AssetKind, Loan, LoanKind, Sub, SubFreq};
 use dahonghua_core::money::Currencies;
 use dahonghua_core::rows::{entry_from_value, entry_to_value};
 use dahonghua_core::store::{ImportedBill, Store, TransferOpts};
@@ -762,8 +762,56 @@ pub fn snapshot_config() -> String {
             Value::Obj(o)
         })
         .collect();
+    let assets: Vec<Value> = super::networth::assets_of()
+        .iter()
+        .map(|a| {
+            Value::Obj(vec![
+                ("id".into(), Value::Str(a.id.clone())),
+                ("name".into(), Value::Str(a.name.clone())),
+                (
+                    "type".into(),
+                    Value::Str(
+                        match a.kind {
+                            AssetKind::Liab => "liab",
+                            AssetKind::Asset => "asset",
+                        }
+                        .to_string(),
+                    ),
+                ),
+                ("val".into(), Value::Num(a.val)),
+                // written even when false: it is a flag the user changes, not
+                // optional metadata, and absent would read as false on a device
+                // that had never seen it set
+                ("noCount".into(), Value::Bool(a.no_count == Some(true))),
+            ])
+        })
+        .collect();
+    let loans: Vec<Value> = super::networth::loans_of()
+        .iter()
+        .map(|l| {
+            Value::Obj(vec![
+                ("id".into(), Value::Str(l.id.clone())),
+                ("who".into(), Value::Str(l.who.clone())),
+                (
+                    "type".into(),
+                    Value::Str(
+                        match l.kind {
+                            LoanKind::Borrow => "borrow",
+                            LoanKind::Lend => "lend",
+                        }
+                        .to_string(),
+                    ),
+                ),
+                ("amt".into(), Value::Num(l.amt)),
+                ("repaid".into(), Value::Num(l.repaid.unwrap_or(0.0))),
+                ("ts".into(), Value::Num(l.ts as f64)),
+            ])
+        })
+        .collect();
     stable(&Value::Obj(vec![
         ("accounts".into(), Value::Arr(accounts)),
+        ("assets".into(), Value::Arr(assets)),
+        ("loans".into(), Value::Arr(loans)),
         ("subs".into(), Value::Arr(subs)),
         (
             "settings".into(),
@@ -823,6 +871,39 @@ pub fn load_config(json: String) -> bool {
     }
     if let Some(Value::Str(id)) = v.get("curAccount") {
         store().current_account = id.clone();
+    }
+    if let Some(Value::Arr(items)) = v.get("assets") {
+        let assets: Vec<Asset> = items
+            .iter()
+            .map(|a| Asset {
+                id: str_of(a.get("id")),
+                name: str_of(a.get("name")),
+                kind: match a.get("type").and_then(as_str).as_deref() {
+                    Some("liab") => AssetKind::Liab,
+                    _ => AssetKind::Asset,
+                },
+                val: a.num("val").unwrap_or(0.0),
+                no_count: Some(matches!(a.get("noCount"), Some(Value::Bool(true)))),
+            })
+            .collect();
+        super::networth::set_assets_inner(assets);
+    }
+    if let Some(Value::Arr(items)) = v.get("loans") {
+        let loans: Vec<Loan> = items
+            .iter()
+            .map(|l| Loan {
+                id: str_of(l.get("id")),
+                who: str_of(l.get("who")),
+                kind: match l.get("type").and_then(as_str).as_deref() {
+                    Some("borrow") => LoanKind::Borrow,
+                    _ => LoanKind::Lend,
+                },
+                amt: l.num("amt").unwrap_or(0.0),
+                repaid: Some(l.num("repaid").unwrap_or(0.0)),
+                ts: l.num("ts").map(|n| n as i64).unwrap_or(0),
+            })
+            .collect();
+        super::networth::set_loans_inner(loans);
     }
     if let Some(Value::Arr(items)) = v.get("subs") {
         let subs: Vec<Sub> = items
@@ -934,4 +1015,6 @@ pub fn reset() {
         ..Default::default()
     });
     super::subscriptions::set_subs_inner(Vec::new());
+    super::networth::set_assets_inner(Vec::new());
+    super::networth::set_loans_inner(Vec::new());
 }

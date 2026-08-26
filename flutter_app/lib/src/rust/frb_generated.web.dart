@@ -12,6 +12,7 @@ import 'api/calc.dart';
 import 'api/catalog.dart';
 import 'api/glass.dart';
 import 'api/money.dart';
+import 'api/networth.dart';
 import 'api/record.dart';
 import 'api/stats.dart';
 import 'api/store.dart';
@@ -38,6 +39,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   AccountView dco_decode_account_view(dynamic raw);
+
+  @protected
+  AssetView dco_decode_asset_view(dynamic raw);
 
   @protected
   bool dco_decode_bool(dynamic raw);
@@ -136,6 +140,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<AccountView> dco_decode_list_account_view(dynamic raw);
 
   @protected
+  List<AssetView> dco_decode_list_asset_view(dynamic raw);
+
+  @protected
   List<CatBudgetView> dco_decode_list_cat_budget_view(dynamic raw);
 
   @protected
@@ -152,6 +159,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<ListItem> dco_decode_list_list_item(dynamic raw);
+
+  @protected
+  List<LoanView> dco_decode_list_loan_view(dynamic raw);
 
   @protected
   List<double> dco_decode_list_prim_f_64_loose(dynamic raw);
@@ -179,6 +189,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<TrendPointView> dco_decode_list_trend_point_view(dynamic raw);
+
+  @protected
+  LoanView dco_decode_loan_view(dynamic raw);
+
+  @protected
+  NetWorthView dco_decode_net_worth_view(dynamic raw);
 
   @protected
   NewEntry dco_decode_new_entry(dynamic raw);
@@ -263,6 +279,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   AccountView sse_decode_account_view(SseDeserializer deserializer);
+
+  @protected
+  AssetView sse_decode_asset_view(SseDeserializer deserializer);
 
   @protected
   bool sse_decode_bool(SseDeserializer deserializer);
@@ -367,6 +386,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<AccountView> sse_decode_list_account_view(SseDeserializer deserializer);
 
   @protected
+  List<AssetView> sse_decode_list_asset_view(SseDeserializer deserializer);
+
+  @protected
   List<CatBudgetView> sse_decode_list_cat_budget_view(
     SseDeserializer deserializer,
   );
@@ -387,6 +409,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<ListItem> sse_decode_list_list_item(SseDeserializer deserializer);
+
+  @protected
+  List<LoanView> sse_decode_list_loan_view(SseDeserializer deserializer);
 
   @protected
   List<double> sse_decode_list_prim_f_64_loose(SseDeserializer deserializer);
@@ -418,6 +443,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<TrendPointView> sse_decode_list_trend_point_view(
     SseDeserializer deserializer,
   );
+
+  @protected
+  LoanView sse_decode_loan_view(SseDeserializer deserializer);
+
+  @protected
+  NetWorthView sse_decode_net_worth_view(SseDeserializer deserializer);
 
   @protected
   NewEntry sse_decode_new_entry(SseDeserializer deserializer);
@@ -509,6 +540,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_account_view(AccountView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_asset_view(AssetView self, SseSerializer serializer);
 
   @protected
   void sse_encode_bool(bool self, SseSerializer serializer);
@@ -643,6 +677,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_list_asset_view(
+    List<AssetView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_list_cat_budget_view(
     List<CatBudgetView> self,
     SseSerializer serializer,
@@ -671,6 +711,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_list_list_item(List<ListItem> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_loan_view(List<LoanView> self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_prim_f_64_loose(
@@ -722,6 +765,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     List<TrendPointView> self,
     SseSerializer serializer,
   );
+
+  @protected
+  void sse_encode_loan_view(LoanView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_net_worth_view(NetWorthView self, SseSerializer serializer);
 
   @protected
   void sse_encode_new_entry(NewEntry self, SseSerializer serializer);

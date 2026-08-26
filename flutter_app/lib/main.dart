@@ -18,7 +18,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'accounts_screen.dart';
+import 'assets_screen.dart';
 import 'budget_screen.dart';
 import 'entry_list.dart';
 import 'me_screen.dart';
@@ -206,10 +206,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           onChanged: _entriesChanged,
         ),
         StatsScreen(key: ValueKey(_listVersion)),
-        // 资产 is the accounts screen for now. Assets and loans belong on it
-        // too and are not ported yet; putting them anywhere else in the
-        // meantime would only mean moving them later.
-        AccountsScreen(
+        AssetsScreen(
           key: ValueKey(_listVersion),
           onChanged: _bothChanged,
         ),

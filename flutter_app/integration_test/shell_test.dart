@@ -32,6 +32,9 @@ Future<void> shell(WidgetTester tester) async {
   await tester.pumpAndSettle();
 }
 
+String textOf(WidgetTester tester, String key) =>
+    tester.widget<Text>(find.byKey(Key(key))).data!;
+
 Future<void> tapTab(WidgetTester tester, String label) async {
   await tester.tap(find.byKey(Key('tab-$label')));
   await tester.pumpAndSettle();
@@ -57,7 +60,7 @@ void main() {
       expect(find.text('午饭'), findsOneWidget);
 
       await tapTab(tester, '资产');
-      expect(find.text('账户合计'), findsOneWidget);
+      expect(find.byKey(const Key('net-worth')), findsOneWidget);
 
       await tapTab(tester, '我的');
       expect(find.text('记账工具'), findsOneWidget);
@@ -172,10 +175,10 @@ void main() {
       await tester.pageBack();
       await tester.pumpAndSettle();
 
-      // the accounts screen was built before the entry existed, and has to
+      // the net-worth screen was built before the entry existed, and has to
       // have re-read the store rather than kept its own copy
       await tapTab(tester, '资产');
-      expect(find.text('￥-99.00'), findsWidgets);
+      expect(textOf(tester, 'net-worth'), '￥-99.00');
     });
   });
 }
