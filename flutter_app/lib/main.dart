@@ -15,6 +15,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'accounts_screen.dart';
 import 'budget_screen.dart';
 import 'entry_list.dart';
 import 'persistence.dart';
@@ -97,11 +98,12 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) => MaterialApp(
     title: '大红花记账',
     debugShowCheckedModeBanner: false,
+    theme: appTheme(),
     home: Home(store: store),
   );
 }
 
-/// The two screens, until there is a router worth having.
+/// The five screens, until there is a router worth having.
 class Home extends StatefulWidget {
   const Home({super.key, this.store});
 
@@ -182,6 +184,16 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           key: ValueKey(_listVersion),
           onChanged: () => widget.store?.touchConfig(),
         ),
+        // Deleting an account rewrites every entry that pointed at it, so this
+        // screen touches both files, not just the config one.
+        AccountsScreen(
+          key: ValueKey(_listVersion),
+          onChanged: () {
+            widget.store?.touchConfig();
+            widget.store?.touchEntries();
+            setState(() => _listVersion++);
+          },
+        ),
       ],
     ),
     // Material 3's default NavigationBar paints itself lavender, which
@@ -226,6 +238,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           icon: Icon(Icons.savings_outlined, color: palette.inkSoft),
           selectedIcon: Icon(Icons.savings, color: palette.hibiscus),
           label: '预算',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.account_balance_wallet_outlined,
+              color: palette.inkSoft),
+          selectedIcon:
+              Icon(Icons.account_balance_wallet, color: palette.hibiscus),
+          label: '账户',
         ),
       ],
     ),

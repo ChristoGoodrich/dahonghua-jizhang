@@ -22,14 +22,14 @@
 //! rather than propagated — a panic in one command must not brick the ledger
 //! for the rest of the session.
 
+use dahonghua_core::accounts::{Account, AccountKind};
 use dahonghua_core::civil::Civil;
 use dahonghua_core::entry::{Entry, EntrySource, Io, Patch, Reimburse};
 use dahonghua_core::jsval::{parse_checked, stable, Value};
 use dahonghua_core::ledger::Ledger;
-use dahonghua_core::money::Currencies;
 use dahonghua_core::list::{self, DayLabel, FlatItem};
+use dahonghua_core::money::Currencies;
 use dahonghua_core::rows::{entry_from_value, entry_to_value};
-use dahonghua_core::accounts::{Account, AccountKind};
 use dahonghua_core::store::{ImportedBill, Store, TransferOpts};
 use flutter_rust_bridge::frb;
 use std::sync::{Mutex, MutexGuard, OnceLock};
@@ -288,6 +288,25 @@ pub struct AccountView {
     pub archived: bool,
 }
 
+impl From<&Account> for AccountView {
+    fn from(a: &Account) -> Self {
+        AccountView {
+            id: a.id.clone(),
+            name: a.name.clone(),
+            name_en: a.name_en.clone(),
+            balance: a.balance,
+            kind: a.kind.map(|k| k.as_str().to_string()).unwrap_or_default(),
+            statement_day: a.statement_day,
+            due_day: a.due_day,
+            fx_code: a.fx_code.clone(),
+            fx_rate: a.fx_rate,
+            // `archived?: boolean` — absent and false are the same thing to
+            // every reader, so the view flattens it
+            archived: a.archived == Some(true),
+        }
+    }
+}
+
 /// What one undoable delete needs to be reversed.
 ///
 /// Opaque to Dart on purpose: it is a token to hand back, not a thing to
@@ -457,24 +476,7 @@ pub fn get_entry(id: String) -> Option<EntryView> {
 
 #[frb(sync)]
 pub fn accounts() -> Vec<AccountView> {
-    store()
-        .accounts
-        .iter()
-        .map(|a| AccountView {
-            id: a.id.clone(),
-            name: a.name.clone(),
-            name_en: a.name_en.clone(),
-            balance: a.balance,
-            kind: a.kind.map(|k| k.as_str().to_string()).unwrap_or_default(),
-            statement_day: a.statement_day,
-            due_day: a.due_day,
-            fx_code: a.fx_code.clone(),
-            fx_rate: a.fx_rate,
-            // `archived?: boolean` — absent and false are the same
-            // thing to every reader, so the view flattens it
-            archived: a.archived.unwrap_or(false),
-        })
-        .collect()
+    store().accounts.iter().map(AccountView::from).collect()
 }
 
 /// Every live row, newest first. Tombstones are not included.
@@ -722,10 +724,7 @@ pub fn snapshot_config() -> String {
                 ("catBudgets".into(), Value::Obj(caps)),
             ]),
         ),
-        (
-            "curAccount".into(),
-            Value::Str(s.current_account.clone()),
-        ),
+        ("curAccount".into(), Value::Str(s.current_account.clone())),
         (
             "currencies".into(),
             Value::Obj(vec![
@@ -756,7 +755,11 @@ pub fn load_config(json: String) -> bool {
                 name: str_of(a.get("name")),
                 name_en: a.get("nameEn").and_then(as_str),
                 balance: a.num("balance").unwrap_or(0.0),
-                kind: a.get("kind").and_then(as_str).as_deref().and_then(AccountKind::parse),
+                kind: a
+                    .get("kind")
+                    .and_then(as_str)
+                    .as_deref()
+                    .and_then(AccountKind::parse),
                 statement_day: a.num("statementDay").map(|n| n as u32),
                 due_day: a.num("dueDay").map(|n| n as u32),
                 fx_code: a.get("fxCode").and_then(as_str),

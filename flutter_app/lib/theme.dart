@@ -4,7 +4,7 @@
 // pull, the readability curve) is a Rust call, not a Dart one. These are the
 // inputs to that, and the ink the material is read against.
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 /// `rgba(r, g, b, a)` from Rust → a Flutter colour.
 ///
@@ -66,3 +66,39 @@ class Rad {
 /// `fontVariant: ['tabular-nums']`; this is the same feature by its OpenType
 /// name.
 const tabular = [FontFeature.tabularFigures()];
+
+/// The palette as a Material theme.
+///
+/// Material 3 derives its own colour scheme when none is given, and its default
+/// is lavender: the navigation bar came out lavender against warm paper, and so
+/// did a focused field's label and the text-selection handles. Every one of
+/// those was found on a device rather than by a test, because a colour a widget
+/// does not set is not a colour a widget test can see.
+///
+/// The widgets that care still set their own colours explicitly. This is for
+/// the ones with no seam to set — selection handles, ripples, a dialog's
+/// surface — which would otherwise be a different application's chrome.
+ThemeData appTheme() {
+  final scheme = ColorScheme.fromSeed(
+    seedColor: palette.hibiscus,
+    primary: palette.hibiscus,
+    secondary: palette.stamen,
+    surface: palette.card,
+    onSurface: palette.ink,
+  );
+  return ThemeData(
+    colorScheme: scheme,
+    scaffoldBackgroundColor: palette.paper,
+    dialogTheme: DialogThemeData(backgroundColor: palette.card),
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: palette.stamen,
+      selectionColor: palette.stamen.withValues(alpha: 0.28),
+      selectionHandleColor: palette.stamen,
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      labelStyle: TextStyle(color: palette.inkSoft),
+      floatingLabelStyle: TextStyle(color: palette.stamen),
+      hintStyle: TextStyle(color: palette.inkSoft),
+    ),
+  );
+}

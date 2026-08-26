@@ -12,6 +12,7 @@
 
 import 'package:flutter/material.dart';
 
+import 'src/rust/api/accounts.dart' as accounts;
 import 'src/rust/api/calc.dart' as calc;
 import 'src/rust/api/catalog.dart' as catalog;
 import 'src/rust/api/money.dart' as money;
@@ -236,6 +237,8 @@ class _RecordSheetState extends State<RecordSheet> {
                     const SizedBox(height: 14),
                     if (_form.io != 'xfer') _categories(zh, accent),
                     const SizedBox(height: 14),
+                    _accountRow(zh, accent),
+                    const SizedBox(height: 14),
                     _noteField(zh),
                     if (_flash != null) _flashLine(),
                   ],
@@ -359,6 +362,108 @@ class _RecordSheetState extends State<RecordSheet> {
               ),
             ),
           ),
+      ],
+    );
+  }
+
+  /// The account the money leaves, and — for a transfer — the one it lands in.
+  ///
+  /// Without this a transfer cannot be saved at all: `validate` refuses one
+  /// with no destination, and nothing else on the sheet can name one. The list
+  /// is `pickable`, not every account: an archived account stays out of the
+  /// picker but stays *in* it while it is the one selected, so editing an old
+  /// entry does not silently move it somewhere else.
+  Widget _accountRow(bool zh, Color accent) {
+    final xfer = _form.io == 'xfer';
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _acctLine(
+          zh ? (xfer ? '转出' : '账户') : (xfer ? 'From' : 'Account'),
+          'acct',
+          _form.acct,
+          accent,
+          zh,
+          (id) => _form = _form.copyWith(acct: id),
+        ),
+        if (xfer) ...[
+          const SizedBox(height: 10),
+          _acctLine(
+            zh ? '转入' : 'To',
+            'acct-to',
+            _form.acctTo,
+            accent,
+            zh,
+            (id) => _form = _form.copyWith(acctTo: id),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _acctLine(
+    String label,
+    String key,
+    String selected,
+    Color accent,
+    bool zh,
+    void Function(String) pick,
+  ) {
+    final options = accounts.pickable(selected: selected);
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 40,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 7),
+            child: Text(
+              label,
+              style: TextStyle(fontSize: 12.5, color: palette.inkSoft),
+            ),
+          ),
+        ),
+        Expanded(
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final a in options)
+                GestureDetector(
+                  key: Key('$key-${a.id}'),
+                  onTap: () => setState(() {
+                    pick(a.id);
+                    _flash = null;
+                  }),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 11,
+                      vertical: 7,
+                    ),
+                    decoration: BoxDecoration(
+                      color: selected == a.id
+                          ? accent.withValues(alpha: 0.14)
+                          : palette.card,
+                      borderRadius: BorderRadius.circular(Rad.pill),
+                      border: Border.all(
+                        color: selected == a.id ? accent : palette.line,
+                      ),
+                    ),
+                    child: Text(
+                      zh ? a.name : (a.nameEn ?? a.name),
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: selected == a.id
+                            ? FontWeight.w700
+                            : FontWeight.w500,
+                        color: palette.ink,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
       ],
     );
   }

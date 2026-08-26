@@ -6,6 +6,7 @@
 // Static analysis wrongly picks the IO variant, thus ignore this
 // ignore_for_file: argument_type_not_assignable
 
+import 'api/accounts.dart';
 import 'api/budget.dart';
 import 'api/calc.dart';
 import 'api/catalog.dart';
@@ -29,6 +30,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   String dco_decode_String(dynamic raw);
+
+  @protected
+  AccountBalance dco_decode_account_balance(dynamic raw);
 
   @protected
   AccountView dco_decode_account_view(dynamic raw);
@@ -119,6 +123,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<String> dco_decode_list_String(dynamic raw);
+
+  @protected
+  List<AccountBalance> dco_decode_list_account_balance(dynamic raw);
 
   @protected
   List<AccountView> dco_decode_list_account_view(dynamic raw);
@@ -229,6 +236,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String sse_decode_String(SseDeserializer deserializer);
 
   @protected
+  AccountBalance sse_decode_account_balance(SseDeserializer deserializer);
+
+  @protected
   AccountView sse_decode_account_view(SseDeserializer deserializer);
 
   @protected
@@ -321,6 +331,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<String> sse_decode_list_String(SseDeserializer deserializer);
+
+  @protected
+  List<AccountBalance> sse_decode_list_account_balance(
+    SseDeserializer deserializer,
+  );
 
   @protected
   List<AccountView> sse_decode_list_account_view(SseDeserializer deserializer);
@@ -443,6 +458,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_String(String self, SseSerializer serializer);
 
   @protected
+  void sse_encode_account_balance(
+    AccountBalance self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_account_view(AccountView self, SseSerializer serializer);
 
   @protected
@@ -561,6 +582,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_list_String(List<String> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_account_balance(
+    List<AccountBalance> self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_list_account_view(

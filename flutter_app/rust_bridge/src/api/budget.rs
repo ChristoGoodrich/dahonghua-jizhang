@@ -15,7 +15,7 @@ use dahonghua_core::civil::Civil;
 use dahonghua_core::entry::{Entry, Io};
 use flutter_rust_bridge::frb;
 
-use super::store::{settings_of, set_settings_inner, store, BudgetSettings};
+use super::store::{set_settings_inner, settings_of, store, BudgetSettings};
 
 /// The budget settings, as Dart holds them.
 ///
@@ -129,7 +129,9 @@ pub struct CatBudgetView {
 
 fn entries_of(ids: &[String]) -> Vec<Entry> {
     let s = store();
-    ids.iter().filter_map(|id| s.ledger.get(id).cloned()).collect()
+    ids.iter()
+        .filter_map(|id| s.ledger.get(id).cloned())
+        .collect()
 }
 
 /// The cycle's expense against the cycle's cap.
