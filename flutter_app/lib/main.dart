@@ -20,6 +20,7 @@ import 'package:flutter/services.dart';
 
 import 'assets_screen.dart';
 import 'budget_screen.dart';
+import 'currency_screen.dart';
 import 'entry_list.dart';
 import 'library_screen.dart';
 import 'me_screen.dart';
@@ -244,6 +245,16 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           title: '模板',
           desc: '一按就记的常用笔',
           onTap: () => _push(TemplatesScreen(onChanged: _configChanged)),
+        ),
+        MeRow(
+          id: 'currency',
+          icon: Icons.currency_exchange,
+          title: '币种与汇率',
+          desc: '记账单位,和别的币种怎么换',
+          onTap: () => _push(CurrencyScreen(
+            onChanged: ({required ledgerToo}) =>
+                ledgerToo ? _bothChanged() : _configChanged(),
+          )),
         ),
         MeRow(
           id: 'tags',

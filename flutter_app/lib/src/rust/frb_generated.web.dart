@@ -10,6 +10,7 @@ import 'api/accounts.dart';
 import 'api/budget.dart';
 import 'api/calc.dart';
 import 'api/catalog.dart';
+import 'api/currency.dart';
 import 'api/glass.dart';
 import 'api/money.dart';
 import 'api/networth.dart';
@@ -179,6 +180,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
 
   @protected
+  List<RateView> dco_decode_list_rate_view(dynamic raw);
+
+  @protected
   List<(String, double)> dco_decode_list_record_string_f_64(dynamic raw);
 
   @protected
@@ -245,6 +249,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   PendingCharges dco_decode_pending_charges(dynamic raw);
+
+  @protected
+  RateView dco_decode_rate_view(dynamic raw);
 
   @protected
   (String, double) dco_decode_record_string_f_64(dynamic raw);
@@ -448,6 +455,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
 
   @protected
+  List<RateView> sse_decode_list_rate_view(SseDeserializer deserializer);
+
+  @protected
   List<(String, double)> sse_decode_list_record_string_f_64(
     SseDeserializer deserializer,
   );
@@ -524,6 +534,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   PendingCharges sse_decode_pending_charges(SseDeserializer deserializer);
+
+  @protected
+  RateView sse_decode_rate_view(SseDeserializer deserializer);
 
   @protected
   (String, double) sse_decode_record_string_f_64(SseDeserializer deserializer);
@@ -786,6 +799,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_list_rate_view(List<RateView> self, SseSerializer serializer);
+
+  @protected
   void sse_encode_list_record_string_f_64(
     List<(String, double)> self,
     SseSerializer serializer,
@@ -880,6 +896,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     PendingCharges self,
     SseSerializer serializer,
   );
+
+  @protected
+  void sse_encode_rate_view(RateView self, SseSerializer serializer);
 
   @protected
   void sse_encode_record_string_f_64(
