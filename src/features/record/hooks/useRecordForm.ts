@@ -29,7 +29,9 @@ export interface RecordFormProps {
   lang: Lang;
   customCats: Record<IO, Category[]>;
   onClose: () => void;
-  onSaved: (isNew: boolean, keepOpen?: boolean) => void;
+  /** `warn` carries a notice about the entry that was just saved — a stale
+   *  exchange rate — which has to outlive the sheet that is closing. */
+  onSaved: (isNew: boolean, keepOpen?: boolean, warn?: string) => void;
   onTemplateSaved?: () => void;
   onDeleted?: (restore: () => void) => void;
 }
@@ -265,12 +267,14 @@ export function useRecordForm({ visible, editId, initialTs, dupeId, lang, custom
     }
 
     if (writeEntry(rate ?? undefined) === null) return;
-    // Show warning if using cached rate (API failed)
-    if (source === 'cached' && cur !== base) {
-      setFlash({ msg: s.rateCached, err: true });
-      return;
-    }
-    onSaved(!editId);
+    // A stale rate is a warning ABOUT a saved entry, not a failed save. It used
+    // to flash as an error and return — skipping onClose, so the sheet stayed
+    // open over an entry that was already written, and a second press wrote a
+    // second one. The notice goes to the caller instead, which has a toast that
+    // outlives the sheet.
+    const warn = source === 'cached' && cur !== base ? s.rateCached : undefined;
+    if (warn) onSaved(!editId, false, warn);
+    else onSaved(!editId);
     onClose();
   }
 

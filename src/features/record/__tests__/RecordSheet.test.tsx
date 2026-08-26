@@ -34,6 +34,9 @@ function render(el: React.ReactElement): TestRenderer.ReactTestRenderer {
 beforeEach(() => {
   store$.data.set([]);
   store$.curAccount.set('default');
+  // one test records in a foreign currency; without this the next one inherits
+  // its rate table and takes a different branch for no stated reason
+  store$.currencies.set({ base: 'CNY', rates: {} });
 });
 
 afterEach(() => {
@@ -87,6 +90,60 @@ describe('RecordSheet save flow', () => {
     expect(data[0].cat).toBe('food'); // first expense category by default
     expect(onSaved).toHaveBeenCalledWith(true); // isNew
     expect(onClose).toHaveBeenCalled();
+  });
+
+  it('closes after saving on a stale rate, rather than leaving a saved entry on screen', async () => {
+    // A foreign-currency entry whose rate lookup falls back to the cached rate
+    // — offline, or the endpoint down. The entry IS written; the warning is
+    // about the rate being stale, not about the save failing.
+    //
+    // `save()` used to flash that warning and return, skipping onClose. The
+    // sheet stayed open showing what reads as an error over an entry that had
+    // already been saved, so a second press wrote a SECOND one.
+    store$.currencies.set({ base: 'CNY', rates: { USD: 7.2 } });
+    store$.data.set([
+      { id: 'src', ts: Date.now(), io: 'exp', cat: 'food', amt: 72, cur: 'USD', origAmt: 10 },
+    ]);
+    const onSaved = jest.fn();
+    const onClose = jest.fn();
+    const r = render(
+      // dupe copies the source entry's currency into a NEW entry, which is the
+      // only way to reach this path without driving the currency picker
+      <RecordSheet visible editId={null} dupeId="src" lang="zh" customCats={noCustom} onClose={onClose} onSaved={onSaved} />,
+    );
+
+    const keypad = r.root.find((n) => typeof n.props?.onKey === 'function');
+    act(() => keypad.props.onKey('5'));
+    await act(async () => { pressableFor(s.save, r.root).props.onPress(); });
+
+    expect(store$.data.peek()).toHaveLength(2); // the source, plus the new one
+    expect(onClose).toHaveBeenCalled();
+    // and the stale-rate notice reaches the caller rather than a flash that
+    // unmounts with the sheet
+    expect(onSaved).toHaveBeenCalledWith(true, false, s.rateCached);
+  });
+
+  it('writes the entry with the cached rate, which is what the warning is about', async () => {
+    // The other half of the same fix: the notice has to be about a real save,
+    // or closing the sheet on it would lose the entry rather than the message.
+    store$.currencies.set({ base: 'CNY', rates: { USD: 7.2 } });
+    store$.data.set([
+      { id: 'src', ts: Date.now(), io: 'exp', cat: 'food', amt: 72, cur: 'USD', origAmt: 10 },
+    ]);
+    const r = render(
+      <RecordSheet visible editId={null} dupeId="src" lang="zh" customCats={noCustom} onClose={() => {}} onSaved={() => {}} />,
+    );
+
+    const keypad = r.root.find((n) => typeof n.props?.onKey === 'function');
+    // the dupe seeds the field with the source's ORIGINAL amount, so a '5'
+    // appends to '10'
+    act(() => keypad.props.onKey('5'));
+    await act(async () => { pressableFor(s.save, r.root).props.onPress(); });
+
+    const saved = store$.data.peek().find((d) => d.id !== 'src')!;
+    expect(saved.origAmt).toBe(105); // as typed, in USD
+    expect(saved.rate).toBe(7.2); // the cached rate, which is the stale one
+    expect(saved.amt).toBe(756); // and converted to base with it
   });
 
   it('does not save a zero/empty amount', () => {

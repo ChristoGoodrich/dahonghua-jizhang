@@ -181,10 +181,16 @@ export function useLedgerState() {
     }
   }, [lang, s]);
 
-  const onSaved = useCallback((isNew: boolean, keepOpen?: boolean) => {
+  const onSaved = useCallback((isNew: boolean, keepOpen?: boolean, warn?: string) => {
+    // A notice about the entry just saved — a stale exchange rate. Shown here
+    // rather than in the sheet because the sheet is closing, and shown INSTEAD
+    // of the celebration rather than under it: a warning worth reading should
+    // not compete with confetti.
+    if (warn) setToast({ key: Date.now(), msg: warn });
     if (!isNew) return;
     trackEvent(AnalyticsEvents.ENTRY_CREATED);
     if (keepOpen) return;
+    if (warn) return;
     const sd = streakDays(store$.data.peek().filter((d) => !d.deletedAt).map((d) => d.ts));
     celebrate(sd > 1 ? s.toastStreak.replace('%d', String(sd)) : s.toastBloom);
     setTimeout(() => checkBudgetWarning(), 2000);
