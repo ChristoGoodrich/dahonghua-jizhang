@@ -1621,6 +1621,51 @@ was moved into `glass.rs` before this decision was taken rather than after.
 `rust/proto/` stays as the record of how the Rust-UI question was settled. It is
 not deleted: the measurements are what justify not revisiting it.
 
+### The ledger now lives in Rust, across the boundary
+
+The architecture decision taken at the start of Phase 3 — *the Rust core owns
+the state* — was until now a plan. It is running on a device.
+
+`rust_bridge/src/api/store.rs` holds one `Mutex<Store>`. Dart writes through
+commands and reads view models back; **it keeps no copy of the ledger**, so
+there is nothing on that side to drift out of step and no logic there that could
+disagree with the parity corpus. Seventeen integration tests on the emulator say
+so, and they test *state* rather than functions: write through one call, read
+back through another.
+
+```
+add_entry / update_entry / remove_entry / unremove_entry
+add_transfer / import_bills / set_current_account
+get_entry / live_entries / accounts / current_account / entry_count
+list_items                       ← the day-grouped list, ready for a builder
+load_entries / snapshot_entries  ← the platform owns the file, this owns the shape
+```
+
+Three rules the crate already followed are restated at that boundary, because it
+is exactly where a caller is tempted to break them: **identity, the clock and the
+timezone are all the platform's.** Every command that creates a row takes its id
+and its `now` from Dart, and a calendar day arrives already computed. That is
+what makes the ledger replayable, and it is why a 3,678-scenario corpus could
+pin it in the first place.
+
+Two details worth naming:
+
+* **The lock is recovered, not propagated.** A panic inside one command poisons
+  the `Mutex`; taking the value anyway means one bad row does not turn into an
+  unusable ledger for the rest of the session.
+* **A snapshot keeps tombstones.** They are how another device learns of a
+  deletion, so a snapshot that dropped them would resurrect every deleted row on
+  the next restore. There is a test that says exactly that.
+
+The view types mirror `core::Entry` rather than re-exporting it, for the reason
+`glass.rs` gave when it was the only module here: the core answers to the parity
+corpus, and the moment an FFI attribute appears in it, it is answering to two
+masters.
+
+`NewEntry` is deliberately not `EntryView` minus a field. It has no `updatedAt`,
+no tombstone and no id, because those are the store's to set — a caller that
+could set them could write a row the sync merge cannot reason about.
+
 ### Building for Android here
 
 Whatever drives it, the Android build needs `TEMP` pointed somewhere AF_UNIX
