@@ -214,13 +214,19 @@ void main() {
       await tester.pumpAndSettle();
       expect(loop.status.value, 'error');
 
-      // the first backoff is two seconds, and it is not shorter
+      // The first backoff is two seconds. The margins here are deliberately
+      // wide: an earlier spelling pumped 1500 and then 700, which is a 500ms
+      // margin either side of the boundary, and that is a coin flip on a
+      // loaded emulator rather than a test. It failed once in a full run and
+      // passed alone — which is the worst way for a test to behave, because it
+      // teaches you to re-run instead of to read.
       t.failPush = false;
-      await tester.pump(const Duration(milliseconds: 1500));
+      final before = t.log.length;
+      await tester.pump(const Duration(milliseconds: 1000));
       await tester.pumpAndSettle();
-      expect(loop.status.value, 'error');
+      expect(t.log.length, before, reason: 'retried before the backoff elapsed');
 
-      await tester.pump(const Duration(milliseconds: 700));
+      await tester.pump(const Duration(milliseconds: 3000));
       await tester.pumpAndSettle();
       expect(loop.status.value, 'synced');
       expect(t.entries.containsKey('e1'), isTrue);

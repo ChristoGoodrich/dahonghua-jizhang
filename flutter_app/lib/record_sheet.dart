@@ -231,6 +231,7 @@ class _RecordSheetState extends State<RecordSheet> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    _templateRow(zh),
                     _directions(zh),
                     const SizedBox(height: 14),
                     _amount(total, showsTotal, accent),
@@ -240,6 +241,8 @@ class _RecordSheetState extends State<RecordSheet> {
                     _accountRow(zh, accent),
                     const SizedBox(height: 14),
                     _noteField(zh),
+                    _tagRow(zh, accent),
+                    _ledgerRow(zh, accent),
                     if (_flash != null) _flashLine(),
                   ],
                 ),
@@ -468,6 +471,205 @@ class _RecordSheetState extends State<RecordSheet> {
     );
   }
 
+  /// The pinned entries, as one-tap chips.
+  ///
+  /// A template fills the form rather than saving straight away — the amount is
+  /// usually right and the note usually is not, and a chip that wrote a row on
+  /// one tap would be a chip you could not correct.
+  Widget _templateRow(bool zh) {
+    // hidden while editing: a template is a way to start an entry, and the one
+    // being edited has already started
+    if (widget.editId != null) return const SizedBox.shrink();
+    final list = catalog.templates();
+    if (list.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: SizedBox(
+        height: 32,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          itemCount: list.length,
+          separatorBuilder: (_, _) => const SizedBox(width: 8),
+          itemBuilder: (_, i) {
+            final t = list[i];
+            final c = catalog.catOf(io: t.io, key: t.cat, custom: const []);
+            final label =
+                t.name.isEmpty ? catalog.catName(cat: c, zh: zh) : t.name;
+            return GestureDetector(
+              key: Key('tpl-chip-${t.id}'),
+              onTap: () => _applyTemplate(t.id),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 11),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: parseHex(c.c, opacity: 0.13),
+                  borderRadius: BorderRadius.circular(Rad.pill),
+                  border: Border.all(color: parseHex(c.c, opacity: 0.45)),
+                ),
+                child: Text('${c.e} $label',
+                    style: TextStyle(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w600,
+                        color: palette.ink)),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  /// Fill the form from a template.
+  ///
+  /// The draft is the core's: which account and which ledger it lands on, and
+  /// the two fallbacks that point opposite ways — an absent note becomes an
+  /// empty string, an empty ledger becomes absent.
+  void _applyTemplate(String id) {
+    final d = catalog.templateDraft(id: id);
+    if (d == null) return;
+    setState(() {
+      _form = _form.copyWith(
+        io: d.io,
+        cat: d.cat,
+        amt: money.plain(n: d.amt),
+        note: d.note,
+        acct: d.acct,
+        ledger: d.ledger ?? '',
+      );
+      _note.text = d.note;
+      _flash = null;
+    });
+  }
+
+  /// Tags, multi-select. Absent entirely when none have been made.
+  Widget _tagRow(bool zh, Color accent) {
+    final all = catalog.tags();
+    if (all.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          for (final g in all)
+            _pill(
+              key: 'tag-chip-$g',
+              label: g,
+              on: _form.tags.contains(g),
+              accent: accent,
+              onTap: () => setState(() {
+                final next = [..._form.tags];
+                next.contains(g) ? next.remove(g) : next.add(g);
+                _form = _form.copyWith(tags: next);
+                _flash = null;
+              }),
+            ),
+        ],
+      ),
+    );
+  }
+
+  /// Which book this entry is filed under. Single-select, and tapping the
+  /// current one clears it — there is no "no ledger" chip to add.
+  Widget _ledgerRow(bool zh, Color accent) {
+    final all = catalog.pickableLedgers(keep: _form.ledger);
+    if (all.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 40,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 7),
+              child: Text(zh ? '账本' : 'Book',
+                  style: TextStyle(fontSize: 12.5, color: palette.inkSoft)),
+            ),
+          ),
+          Expanded(
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final l in all)
+                  _pill(
+                    key: 'ledger-chip-$l',
+                    label: l,
+                    on: _form.ledger == l,
+                    accent: accent,
+                    onTap: () => setState(() {
+                      _form = _form.copyWith(
+                          ledger: _form.ledger == l ? '' : l);
+                      _flash = null;
+                    }),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _pill({
+    required String key,
+    required String label,
+    required bool on,
+    required Color accent,
+    required VoidCallback onTap,
+  }) =>
+      GestureDetector(
+        key: Key(key),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
+          decoration: BoxDecoration(
+            color: on ? accent.withValues(alpha: 0.14) : palette.card,
+            borderRadius: BorderRadius.circular(Rad.pill),
+            border: Border.all(color: on ? accent : palette.line),
+          ),
+          child: Text(label,
+              style: TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: on ? FontWeight.w700 : FontWeight.w500,
+                  color: palette.ink)),
+        ),
+      );
+
+  /// Pin what is on the sheet as a template.
+  ///
+  /// A long press on the save key, which is where the shipping app puts it and
+  /// which is why the templates screen says so when it is empty.
+  Future<void> _saveAsTemplate() async {
+    final zh = widget.zh;
+    final amt = calc.evalExpr(expr: _form.amt);
+    if (amt <= 0) {
+      setState(() {
+        _flash = zh ? '先输入金额' : 'Enter an amount first';
+        _flashIsError = true;
+      });
+      return;
+    }
+    final name = await showDialog<String>(
+      context: context,
+      builder: (ctx) => _TemplateNameDialog(zh: zh),
+    );
+    if (name == null) return;
+    catalog.addTemplate(
+      id: 'tpl${DateTime.now().millisecondsSinceEpoch}',
+      io: _form.io,
+      cat: _form.cat,
+      amt: amt,
+      note: _note.text.isEmpty ? null : _note.text,
+      name: name,
+    );
+    setState(() {
+      _flash = zh ? '已存为模板' : 'Pinned as a template';
+      _flashIsError = false;
+    });
+  }
+
   Widget _noteField(bool zh) => Semantics(
     label: zh ? '备注' : 'Note',
     textField: true,
@@ -564,6 +766,7 @@ class _RecordSheetState extends State<RecordSheet> {
       child: GestureDetector(
         key: Key('key-$k'),
         onTap: () => isSave ? _save() : _key(k),
+        onLongPress: isSave ? _saveAsTemplate : null,
         child: Container(
           height: 52,
           alignment: Alignment.center,
@@ -582,6 +785,72 @@ class _RecordSheetState extends State<RecordSheet> {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// One field: what to call the template.
+class _TemplateNameDialog extends StatefulWidget {
+  const _TemplateNameDialog({required this.zh});
+
+  final bool zh;
+
+  @override
+  State<_TemplateNameDialog> createState() => _TemplateNameDialogState();
+}
+
+class _TemplateNameDialogState extends State<_TemplateNameDialog> {
+  final _name = TextEditingController();
+
+  @override
+  void dispose() {
+    _name.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    // An empty name is allowed: the templates screen falls back to the category
+    // name, so a nameless template is still a usable one.
+    Navigator.pop(context, _name.text.trim());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final zh = widget.zh;
+    return AlertDialog(
+      key: const Key('tpl-name-dialog'),
+      backgroundColor: palette.card,
+      title: Text(zh ? '存为模板' : 'Pin as template',
+          style: TextStyle(fontSize: 16, color: palette.ink)),
+      content: TextField(
+        key: const Key('tpl-name-field'),
+        controller: _name,
+        autofocus: true,
+        cursorColor: palette.stamen,
+        decoration: InputDecoration(
+          labelText: zh ? '名字(可空)' : 'Name (optional)',
+          labelStyle: TextStyle(color: palette.inkSoft),
+          floatingLabelStyle: TextStyle(color: palette.stamen),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: palette.stamen, width: 2),
+          ),
+        ),
+        onSubmitted: (_) => _submit(),
+      ),
+      actions: [
+        TextButton(
+          key: const Key('tpl-name-cancel'),
+          onPressed: () => Navigator.pop(context),
+          style: TextButton.styleFrom(foregroundColor: palette.inkSoft),
+          child: Text(zh ? '取消' : 'Cancel'),
+        ),
+        TextButton(
+          key: const Key('tpl-name-ok'),
+          onPressed: _submit,
+          style: TextButton.styleFrom(foregroundColor: palette.hibiscus),
+          child: Text(zh ? '存' : 'Pin'),
+        ),
+      ],
     );
   }
 }

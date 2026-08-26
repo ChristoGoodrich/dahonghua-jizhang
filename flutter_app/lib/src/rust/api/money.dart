@@ -30,3 +30,13 @@ String curSymbol({required String code}) =>
 /// magnitude formatted separately.
 String fmtSigned({required double n, required String io}) =>
     RustLib.instance.api.crateApiMoneyFmtSigned(n: n, io: io);
+
+/// `String(n)` from JavaScript — what a number looks like when it is put into
+/// a text field rather than shown as money.
+///
+/// Not `fmt_num`: that groups and pads to two decimals, and a keypad
+/// expression of `35.50` would read back as a different number from the `35.5`
+/// the template holds. JavaScript switches to exponent notation at 1e21 and
+/// 1e-7, and this is where that switch has to be the same on both sides.
+String plain({required double n}) =>
+    RustLib.instance.api.crateApiMoneyPlain(n: n);

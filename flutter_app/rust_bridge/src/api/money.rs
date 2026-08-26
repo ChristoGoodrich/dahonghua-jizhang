@@ -47,3 +47,15 @@ pub fn fmt_signed(n: f64, io: String) -> String {
     let sign = if io == "exp" { '-' } else { '+' };
     format!("{sign}{}", core::fmt_num(n))
 }
+
+/// `String(n)` from JavaScript — what a number looks like when it is put into
+/// a text field rather than shown as money.
+///
+/// Not `fmt_num`: that groups and pads to two decimals, and a keypad
+/// expression of `35.50` would read back as a different number from the `35.5`
+/// the template holds. JavaScript switches to exponent notation at 1e21 and
+/// 1e-7, and this is where that switch has to be the same on both sides.
+#[frb(sync)]
+pub fn plain(n: f64) -> String {
+    dahonghua_core::num::js_num(n)
+}
