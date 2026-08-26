@@ -5,6 +5,7 @@ import { useTheme } from '@/theme/ThemeContext';
 import type { TrendPoint } from '@/domain/trends';
 import type { Lang } from '@/i18n';
 import { RAD, TABULAR, shadow } from '@/theme/tokens';
+import { chartMax, polyline, xOf, yOf, CHART_W, CHART_H } from './geometry';
 
 interface Props {
   data: TrendPoint[];
@@ -15,9 +16,11 @@ interface Props {
 // Hand-rolled dual polyline in the app's own chart voice (same pattern as the
 // month-comparison chart): viewBox + width:100% keeps it responsive with no
 // Dimensions/onLayout measuring, and no chart library.
-const W = 300;
-const H = 96;
-const PAD = 7;
+//
+// The arithmetic under it lives in geometry.ts, so the Flutter build draws the
+// same shape rather than a second approximation of it.
+const W = CHART_W;
+const H = CHART_H;
 
 export function TrendChart({ data, lang, type = 'both' }: Props) {
   const t = useTheme();
@@ -28,11 +31,13 @@ export function TrendChart({ data, lang, type = 'both' }: Props) {
   const showInc = type === 'inc' || type === 'both';
   const exp = data.map((p) => p.exp);
   const inc = data.map((p) => p.inc);
-  const max = Math.max(...(showExp ? exp : []), ...(showInc ? inc : []), 1);
+  const max = chartMax(exp, inc, type);
 
-  const xOf = (i: number) => PAD + (i / Math.max(1, data.length - 1)) * (W - 2 * PAD);
-  const yOf = (v: number) => H - PAD - (v / max) * (H - 2 * PAD);
-  const pts = (arr: number[]) => arr.map((v, i) => `${xOf(i).toFixed(1)},${yOf(v).toFixed(1)}`).join(' ');
+  const n = data.length;
+  const xAt = (i: number) => xOf(i, n);
+  const yAt = (v: number) => yOf(v, max);
+  const pts = (arr: number[]) =>
+    polyline(arr, max, n).map((p) => `${p.x},${p.y}`).join(' ');
 
   const labels = data.map((p) => {
     const d = new Date(p.date);
@@ -44,8 +49,8 @@ export function TrendChart({ data, lang, type = 'both' }: Props) {
       <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height={H} preserveAspectRatio="none">
         {showInc && <Polyline points={pts(inc)} fill="none" stroke={t.leafDeep} strokeWidth={2.2} strokeLinejoin="round" />}
         {showExp && <Polyline points={pts(exp)} fill="none" stroke={t.hibiscus} strokeWidth={2.2} strokeLinejoin="round" />}
-        {showInc && inc.map((v, i) => <Circle key={`i${i}`} cx={xOf(i)} cy={yOf(v)} r={2.6} fill={t.leafDeep} />)}
-        {showExp && exp.map((v, i) => <Circle key={`e${i}`} cx={xOf(i)} cy={yOf(v)} r={2.6} fill={t.hibiscus} />)}
+        {showInc && inc.map((v, i) => <Circle key={`i${i}`} cx={xAt(i)} cy={yAt(v)} r={2.6} fill={t.leafDeep} />)}
+        {showExp && exp.map((v, i) => <Circle key={`e${i}`} cx={xAt(i)} cy={yAt(v)} r={2.6} fill={t.hibiscus} />)}
       </Svg>
       <View style={styles.labels}>
         {labels.map((l, i) => (

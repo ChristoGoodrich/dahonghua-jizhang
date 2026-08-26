@@ -88,6 +88,7 @@ Adding a module to the harness:
 | `sync/auth`, `sync/supabase` | 72 | **Nothing to port** — SDK calls and one `trim` |
 | `features/list` grouping → `list` | 60 | **Ported**, 2,819-case parity — the first UI logic across |
 | `features/record` form → `record` | 230 | **Ported**, 3,987-case parity — the record sheet's judgement |
+| `features/stats` geometry → `chart` | 40 | **Ported**, 2,940-case parity — where a chart's points go |
 | UI (21 routes, 72 components) | ~11,000 | **Flutter decided**; the decisions come out screen by screen, as above |
 
 ## Phase 1 — the domain crate (in progress)
@@ -1831,6 +1832,52 @@ better than a timer for a screen that does not close.
 
 Both are the same lesson from the entry list's nav bar, restated: a test asks
 the question you thought to ask. Looking at the screen asks the others.
+
+### Fifteen lines of chart arithmetic, and a rounding bug in my own port
+
+`TrendChart.tsx` says of itself that it is a "hand-rolled dual polyline in the
+app's own chart voice… and no chart library". That was a deliberate choice and
+it stays one — which means the mapping from values to coordinates is the app's
+code rather than a dependency's, and answers to the corpus like everything else.
+
+Forty lines, three guards, and every guard is one a rewrite drops:
+
+* **`Math.max()` of nothing is `-Infinity`**, not zero. Filter a series out,
+  ask for its maximum, and every point goes off the top of the box.
+* **A single point has no span to divide by**, so `n - 1` is zero.
+* **An all-zero series** would divide by a zero maximum.
+
+Then the port's own bug. `polyline` rounds with `Number(x.toFixed(1))` and I
+wrote `format!("{x:.1}")`, which is not the same function: **Rust's formatter
+breaks an exact tie to even and `toFixed` breaks it away from zero.** `0.25` is
+`0.2` there and `0.3` here. A unit test caught it — nine of ten passed — and
+`money.rs` already had the rule, because `fmt_num` had solved it two hundred
+lines earlier. It is `to_fixed_num` now, one definition, used by both.
+
+### A corpus that could not see the bug the module exists to avoid
+
+The sweep's first run: 24 injections, three zeros, and one of them was
+**"rounding uses the Rust formatter"** — the exact defect I had just fixed.
+
+The two rules agree on everything that is not an exact tie in binary, and no
+generated coordinate happened to be one. So the corpus was passing for the same
+reason the bug was easy to write. Searched for rather than guessed: with
+`y = 89 − (v/max)·82`, `v=3, max=8` is exactly `58.25`. Ten such pairs now sit
+in the corpus and the injection catches four cases.
+
+The second zero was a **NaN in a drawn series**, and it is worth separating from
+the NaN family the sync corpora meet. There, a NaN was unreachable *because* the
+sync transport is itself JSON — the fact about the corpus was a fact about the
+code. Here a chart series is summed from ledger amounts and can hold one
+perfectly well; the corpus being JSON is an accident of the harness. So the
+harness closed it: `"nan"` in an array is a NaN, on both sides. `Math.max`
+propagates one and `f64::max` swallows it, which would have drawn a plausible
+line over data the chart could not read.
+
+The third is a genuine no-op. `toFixed` gives up at `1e21` and returns
+`String(x)`; lowering that threshold changes nothing, because above `1e15` the
+f64 spacing is at least 0.125 and a one-decimal round always lands back on the
+same representable value. Checked rather than argued.
 
 ### Building for Android here
 

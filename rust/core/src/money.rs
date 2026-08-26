@@ -186,6 +186,68 @@ fn round_digits(digits: &str, keep: usize) -> (String, bool) {
 ///     Well outside the ledger's 1e12 ceiling, but a port with a known
 ///     divergence is a port nobody can trust.
 fn format_fixed(n: f64, decimals: u32) -> String {
+    let (neg_input, int_str, frac_str) = fixed_parts(n, decimals);
+
+    let int_str = if int_str.is_empty() {
+        "0".to_string()
+    } else {
+        int_str
+    };
+
+    // the sign is decided after rounding: -0.001 at two decimals rounds to
+    // nothing, and a minus on a zero ("-0.00", "￥-0") was a wart the
+    // TypeScript carried until this port surfaced it
+    let all_zero = int_str.chars().all(|c| c == '0') && frac_str.chars().all(|c| c == '0');
+    let mut out = String::new();
+    if neg_input && !all_zero {
+        out.push('-');
+    }
+    out.push_str(&group(&int_str));
+    if decimals > 0 {
+        out.push('.');
+        out.push_str(&frac_str);
+    }
+    out
+}
+
+/// `Number(n.toFixed(decimals))` — the **numeric** value, not the string.
+///
+/// Exposed because the chart geometry rounds its coordinates with it, and one
+/// definition of a rounding rule is the whole point of this crate. `toFixed`
+/// is not `format!("{:.1}")`: Rust's formatter breaks an exact tie to **even**
+/// and `toFixed` breaks it **away from zero**, so `0.25` is `0.2` there and
+/// `0.3` here. Measured, not assumed — they agree on everything that is not an
+/// exact tie in binary, which is why it is easy to miss.
+///
+/// Two behaviours that only matter numerically:
+///
+/// * a value that rounds to zero keeps its sign (`-0.001` → `-0.0` → `-0`),
+///   unlike [`fmt_num`], which drops it because a displayed `￥-0.00` is a wart;
+/// * at `1e21` and above `toFixed` gives up and returns `String(x)`, whose
+///   numeric value is `x` — so this returns `x` unchanged there.
+pub fn to_fixed_num(n: f64, decimals: u32) -> f64 {
+    if !n.is_finite() || n.abs() >= 1e21 {
+        return n;
+    }
+    let (neg, int_str, frac_str) = fixed_parts(n, decimals);
+    let mut out = String::new();
+    if neg {
+        out.push('-');
+    }
+    out.push_str(if int_str.is_empty() { "0" } else { &int_str });
+    if decimals > 0 {
+        out.push('.');
+        out.push_str(&frac_str);
+    }
+    out.parse().unwrap_or(n)
+}
+
+/// The sign, the integer digits and the fraction digits of `n.toFixed(decimals)`.
+///
+/// Split out so [`to_fixed_num`] can reuse the rounding without inheriting
+/// the grouping and the sign-dropping that belong to money *display* rather
+/// than to `toFixed` itself.
+fn fixed_parts(n: f64, decimals: u32) -> (bool, String, String) {
     let neg_input = n < 0.0;
     let mag = n.abs();
 
@@ -215,26 +277,7 @@ fn format_fixed(n: f64, decimals: u32) -> String {
         (int_part.trim_start_matches('0').to_string(), frac_part)
     };
 
-    let int_str = if int_str.is_empty() {
-        "0".to_string()
-    } else {
-        int_str
-    };
-
-    // the sign is decided after rounding: -0.001 at two decimals rounds to
-    // nothing, and a minus on a zero ("-0.00", "￥-0") was a wart the
-    // TypeScript carried until this port surfaced it
-    let all_zero = int_str.chars().all(|c| c == '0') && frac_str.chars().all(|c| c == '0');
-    let mut out = String::new();
-    if neg_input && !all_zero {
-        out.push('-');
-    }
-    out.push_str(&group(&int_str));
-    if decimals > 0 {
-        out.push('.');
-        out.push_str(&frac_str);
-    }
-    out
+    (neg_input, int_str, frac_str)
 }
 
 /// Number-only formatting, two decimals, no symbol — for rows that render

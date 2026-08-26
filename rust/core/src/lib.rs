@@ -13,6 +13,7 @@ pub mod bills;
 pub mod budget;
 pub mod calc;
 pub mod catalog;
+pub mod chart;
 pub mod civil;
 pub mod currency;
 pub mod cycle;
