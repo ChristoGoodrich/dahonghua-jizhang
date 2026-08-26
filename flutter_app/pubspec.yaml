@@ -37,6 +37,9 @@ dependencies:
   dahonghua_bridge:
     path: rust_builder
   flutter_rust_bridge: 2.12.0
+  # The one plugin persistence needs: Dart alone cannot find the Android
+  # app-private directory, and a hardcoded path is not one.
+  path_provider: ^2.1.5
 
 dev_dependencies:
   flutter_test:

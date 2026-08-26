@@ -24,11 +24,12 @@
 
 use dahonghua_core::civil::Civil;
 use dahonghua_core::entry::{Entry, EntrySource, Io, Patch, Reimburse};
-use dahonghua_core::jsval::{parse, stable, Value};
+use dahonghua_core::jsval::{parse_checked, stable, Value};
 use dahonghua_core::ledger::Ledger;
 use dahonghua_core::money::Currencies;
 use dahonghua_core::list::{self, DayLabel, FlatItem};
 use dahonghua_core::rows::{entry_from_value, entry_to_value};
+use dahonghua_core::accounts::{Account, AccountKind};
 use dahonghua_core::store::{ImportedBill, Store, TransferOpts};
 use flutter_rust_bridge::frb;
 use std::sync::{Mutex, MutexGuard, OnceLock};
@@ -566,16 +567,35 @@ fn show_day(d: Civil) -> String {
 
 /// Replace the whole ledger from a JSON array of entries.
 ///
-/// The shape is the app's own on-disk format, so a Flutter build reads what a
-/// React Native build wrote. Returns how many rows landed.
+/// The shape is the app's own on-disk format — the same array the React Native
+/// build writes under `dhh_entries_v1`. That makes a backup exported from one
+/// importable into the other; it does **not** mean this build can read that
+/// one's storage, because AsyncStorage on Android is a SQLite database rather
+/// than a file. Moving an existing install across is Phase 4 platform work and
+/// is not what this is.
+///
+/// Returns how many rows landed, or **-1** when the document could not be read.
+///
+/// The difference matters more than it looks. `parse` is lenient by design —
+/// everything the sync path hands it has been through `JSON.stringify` once —
+/// but a file is where that assumption fails. A write interrupted by a full
+/// disk leaves a truncated array, and reading it leniently recovers whichever
+/// rows happen to be complete. Loading 1 of 5,000 entries is not a partial
+/// success; it is the first half of losing 4,999, because the next save writes
+/// the 1 back.
+///
+/// So this refuses, leaves the ledger alone, and says so. The caller's job is
+/// then to not overwrite the file it could not read.
 #[frb(sync)]
-pub fn load_entries(json: String) -> u32 {
-    let parsed = parse(&json);
-    let entries: Vec<Entry> = match &parsed {
-        Value::Arr(items) => items.iter().map(entry_from_value).collect(),
-        _ => vec![],
+pub fn load_entries(json: String) -> i32 {
+    let Some(parsed) = parse_checked(&json) else {
+        return -1;
     };
-    let n = entries.len() as u32;
+    let Value::Arr(items) = &parsed else {
+        return -1;
+    };
+    let entries: Vec<Entry> = items.iter().map(entry_from_value).collect();
+    let n = entries.len() as i32;
     store().ledger = Ledger::from_entries(entries);
     n
 }
@@ -595,6 +615,152 @@ pub fn snapshot_entries() -> String {
         .map(|e| stable(&entry_to_value(e)))
         .collect();
     format!("[{}]", parts.join(","))
+}
+
+/// The config as JSON: accounts, the current account, the currency table.
+///
+/// Separate from the ledger deliberately, and the React Native build splits it
+/// the same way (`dhh_entries_v1` and `dhh_config_v1`). Renaming an account
+/// should not rewrite ten thousand entries, and a write that fails halfway
+/// should not be able to take both with it.
+#[frb(sync)]
+pub fn snapshot_config() -> String {
+    let s = store();
+    let c = currencies_of();
+    let accounts: Vec<Value> = s
+        .accounts
+        .iter()
+        .map(|a| {
+            let mut o: Vec<(String, Value)> = vec![
+                ("id".into(), Value::Str(a.id.clone())),
+                ("name".into(), Value::Str(a.name.clone())),
+                ("balance".into(), Value::Num(a.balance)),
+            ];
+            if let Some(n) = &a.name_en {
+                o.push(("nameEn".into(), Value::Str(n.clone())));
+            }
+            if let Some(k) = a.kind {
+                o.push(("kind".into(), Value::Str(k.as_str().to_string())));
+            }
+            if let Some(d) = a.statement_day {
+                o.push(("statementDay".into(), Value::Num(d as f64)));
+            }
+            if let Some(d) = a.due_day {
+                o.push(("dueDay".into(), Value::Num(d as f64)));
+            }
+            if let Some(c) = &a.fx_code {
+                o.push(("fxCode".into(), Value::Str(c.clone())));
+            }
+            if let Some(r) = a.fx_rate {
+                o.push(("fxRate".into(), Value::Num(r)));
+            }
+            if let Some(true) = a.archived {
+                o.push(("archived".into(), Value::Bool(true)));
+            }
+            Value::Obj(o)
+        })
+        .collect();
+    let rates: Vec<(String, Value)> = {
+        let mut v: Vec<(String, Value)> = c
+            .rates
+            .iter()
+            .map(|(k, r)| (k.clone(), Value::Num(*r)))
+            .collect();
+        // a HashMap has no order and the file should, or a config that did not
+        // change would still write a different byte string every time
+        v.sort_by(|a, b| a.0.cmp(&b.0));
+        v
+    };
+    stable(&Value::Obj(vec![
+        ("accounts".into(), Value::Arr(accounts)),
+        (
+            "curAccount".into(),
+            Value::Str(s.current_account.clone()),
+        ),
+        (
+            "currencies".into(),
+            Value::Obj(vec![
+                ("base".into(), Value::Str(c.base.clone())),
+                ("rates".into(), Value::Obj(rates)),
+            ]),
+        ),
+    ]))
+}
+
+/// Restore the config. Anything the blob does not carry is left alone.
+///
+/// Left alone rather than defaulted: a config file written by an older build
+/// will not mention a section a newer one added, and defaulting it would wipe
+/// what the user had every time they upgraded.
+/// Returns false when the document could not be read, for the same reason
+/// [`load_entries`] does.
+#[frb(sync)]
+pub fn load_config(json: String) -> bool {
+    let Some(v) = parse_checked(&json) else {
+        return false;
+    };
+    if let Some(Value::Arr(items)) = v.get("accounts") {
+        let accounts: Vec<Account> = items
+            .iter()
+            .map(|a| Account {
+                id: str_of(a.get("id")),
+                name: str_of(a.get("name")),
+                name_en: a.get("nameEn").and_then(as_str),
+                balance: a.num("balance").unwrap_or(0.0),
+                kind: a.get("kind").and_then(as_str).as_deref().and_then(AccountKind::parse),
+                statement_day: a.num("statementDay").map(|n| n as u32),
+                due_day: a.num("dueDay").map(|n| n as u32),
+                fx_code: a.get("fxCode").and_then(as_str),
+                fx_rate: a.num("fxRate"),
+                archived: matches!(a.get("archived"), Some(Value::Bool(true))).then_some(true),
+            })
+            .collect();
+        if !accounts.is_empty() {
+            store().accounts = accounts;
+        }
+    }
+    if let Some(Value::Str(id)) = v.get("curAccount") {
+        store().current_account = id.clone();
+    }
+    if let Some(c @ Value::Obj(_)) = v.get("currencies") {
+        let base = match c.get("base") {
+            Some(Value::Str(b)) if !b.is_empty() => b.clone(),
+            _ => "CNY".to_string(),
+        };
+        let rates = match c.get("rates") {
+            Some(Value::Obj(entries)) => entries
+                .iter()
+                .filter_map(|(k, val)| match val {
+                    Value::Num(n) => Some((k.clone(), *n)),
+                    _ => None,
+                })
+                .collect(),
+            _ => Default::default(),
+        };
+        set_currencies_inner(Currencies { base, rates });
+    }
+    true
+}
+
+fn str_of(v: Option<&Value>) -> String {
+    as_str(v.unwrap_or(&Value::Undefined)).unwrap_or_default()
+}
+
+fn as_str(v: &Value) -> Option<String> {
+    match v {
+        Value::Str(s) => Some(s.clone()),
+        _ => None,
+    }
+}
+
+/// How long a write waits for the next change, in milliseconds.
+///
+/// The React Native build debounces its two saves by this much. It is here
+/// rather than in the Dart so both builds agree about how much work a crash
+/// can lose — which is what a save debounce actually decides.
+#[frb(sync)]
+pub fn persist_debounce_ms() -> i64 {
+    400
 }
 
 /// Empty the store. For tests and for sign-out.

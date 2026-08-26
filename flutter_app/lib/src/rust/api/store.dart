@@ -6,7 +6,7 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `currencies_lock`, `currencies_of`, `parse_day`, `set_currencies_inner`, `show_day`, `store`
+// These functions are ignored because they are not marked as `pub`: `as_str`, `currencies_lock`, `currencies_of`, `parse_day`, `set_currencies_inner`, `show_day`, `store`, `str_of`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`
 
 /// Record an entry. Returns its id.
@@ -126,8 +126,25 @@ List<ListItem> listItems({
 
 /// Replace the whole ledger from a JSON array of entries.
 ///
-/// The shape is the app's own on-disk format, so a Flutter build reads what a
-/// React Native build wrote. Returns how many rows landed.
+/// The shape is the app's own on-disk format — the same array the React Native
+/// build writes under `dhh_entries_v1`. That makes a backup exported from one
+/// importable into the other; it does **not** mean this build can read that
+/// one's storage, because AsyncStorage on Android is a SQLite database rather
+/// than a file. Moving an existing install across is Phase 4 platform work and
+/// is not what this is.
+///
+/// Returns how many rows landed, or **-1** when the document could not be read.
+///
+/// The difference matters more than it looks. `parse` is lenient by design —
+/// everything the sync path hands it has been through `JSON.stringify` once —
+/// but a file is where that assumption fails. A write interrupted by a full
+/// disk leaves a truncated array, and reading it leniently recovers whichever
+/// rows happen to be complete. Loading 1 of 5,000 entries is not a partial
+/// success; it is the first half of losing 4,999, because the next save writes
+/// the 1 back.
+///
+/// So this refuses, leaves the ledger alone, and says so. The caller's job is
+/// then to not overwrite the file it could not read.
 int loadEntries({required String json}) =>
     RustLib.instance.api.crateApiStoreLoadEntries(json: json);
 
@@ -137,6 +154,32 @@ int loadEntries({required String json}) =>
 /// deletion, and a snapshot that dropped them would resurrect every deleted
 /// row on the next restore.
 String snapshotEntries() => RustLib.instance.api.crateApiStoreSnapshotEntries();
+
+/// The config as JSON: accounts, the current account, the currency table.
+///
+/// Separate from the ledger deliberately, and the React Native build splits it
+/// the same way (`dhh_entries_v1` and `dhh_config_v1`). Renaming an account
+/// should not rewrite ten thousand entries, and a write that fails halfway
+/// should not be able to take both with it.
+String snapshotConfig() => RustLib.instance.api.crateApiStoreSnapshotConfig();
+
+/// Restore the config. Anything the blob does not carry is left alone.
+///
+/// Left alone rather than defaulted: a config file written by an older build
+/// will not mention a section a newer one added, and defaulting it would wipe
+/// what the user had every time they upgraded.
+/// Returns false when the document could not be read, for the same reason
+/// [`load_entries`] does.
+bool loadConfig({required String json}) =>
+    RustLib.instance.api.crateApiStoreLoadConfig(json: json);
+
+/// How long a write waits for the next change, in milliseconds.
+///
+/// The React Native build debounces its two saves by this much. It is here
+/// rather than in the Dart so both builds agree about how much work a crash
+/// can lose — which is what a save debounce actually decides.
+PlatformInt64 persistDebounceMs() =>
+    RustLib.instance.api.crateApiStorePersistDebounceMs();
 
 /// Empty the store. For tests and for sign-out.
 void reset() => RustLib.instance.api.crateApiStoreReset();

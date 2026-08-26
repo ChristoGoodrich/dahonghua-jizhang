@@ -219,8 +219,17 @@ void main() {
       expect(store.liveEntries(), isEmpty);
     });
 
-    test('junk does not take the ledger with it', () {
-      expect(store.loadEntries(json: 'not json at all'), 0);
+    test('junk is refused rather than read as an empty ledger', () {
+      store.addEntry(entry: expense(10), id: 'keep', now: t0);
+      // -1, not 0: a document that could not be read is not the same answer as
+      // one that says there are no entries, and the caller needs to tell them
+      // apart before it writes anything back over the file
+      expect(store.loadEntries(json: 'not json at all'), -1);
+      expect(store.loadEntries(json: '[{"id":"e1"'), -1); // truncated
+      expect(store.loadEntries(json: ''), -1);
+      expect(store.entryCount(), 1); // the ledger is left alone
+
+      // and a genuinely empty one still is one
       expect(store.loadEntries(json: '[]'), 0);
       expect(store.entryCount(), 0);
     });

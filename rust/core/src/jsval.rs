@@ -174,13 +174,44 @@ pub fn parse(s: &str) -> Value {
     let mut p = Parser {
         b: s.as_bytes(),
         i: 0,
+        broken: false,
     };
     p.value()
+}
+
+/// `parse`, but `None` when the document is not well-formed.
+///
+/// The leniency above is right for input that has already been through
+/// `JSON.stringify` — which is every shape the sync path and the corpora hand
+/// it. A **file on disk** is the case where that assumption fails: a write
+/// interrupted by a full disk leaves a truncated array, and reading it
+/// leniently recovers the rows that happen to be complete. Loading 1 of 5,000
+/// entries is not a partial success. It is the first half of losing 4,999,
+/// because the next save writes the 1 back.
+///
+/// So a caller that reads a file uses this, and refuses what it cannot read
+/// rather than acting on a fragment of it.
+pub fn parse_checked(s: &str) -> Option<Value> {
+    let mut p = Parser {
+        b: s.as_bytes(),
+        i: 0,
+        broken: false,
+    };
+    let v = p.value();
+    p.ws();
+    // unread trailing content is as wrong as a missing bracket: it means the
+    // scan stopped somewhere the document did not end
+    if p.broken || p.i < p.b.len() {
+        return None;
+    }
+    Some(v)
 }
 
 struct Parser<'a> {
     b: &'a [u8],
     i: usize,
+    /// Set when a token the grammar required was not there.
+    broken: bool,
 }
 
 impl Parser<'_> {
@@ -220,6 +251,7 @@ impl Parser<'_> {
 
     fn string(&mut self) -> String {
         if !self.eat(b'"') {
+            self.broken = true;
             return String::new();
         }
         let mut out = String::new();
@@ -253,6 +285,8 @@ impl Parser<'_> {
                 }
             }
         }
+        // ran off the end without a closing quote
+        self.broken = true;
         out
     }
 
@@ -279,6 +313,7 @@ impl Parser<'_> {
     fn value(&mut self) -> Value {
         self.ws();
         let Some(&c) = self.b.get(self.i) else {
+            self.broken = true;
             return Value::Undefined;
         };
         match c {
@@ -291,7 +326,9 @@ impl Parser<'_> {
                 loop {
                     self.ws();
                     let k = self.string();
-                    self.eat(b':');
+                    if !self.eat(b':') {
+                        self.broken = true;
+                    }
                     let v = self.value();
                     // a repeated key takes the later value at the earlier
                     // position, which is where `JSON.parse` leaves it
@@ -300,7 +337,9 @@ impl Parser<'_> {
                         None => entries.push((k, v)),
                     }
                     if !self.eat(b',') {
-                        self.eat(b'}');
+                        if !self.eat(b'}') {
+                            self.broken = true;
+                        }
                         return Value::Obj(entries);
                     }
                 }
@@ -314,7 +353,9 @@ impl Parser<'_> {
                 loop {
                     items.push(self.value());
                     if !self.eat(b',') {
-                        self.eat(b']');
+                        if !self.eat(b']') {
+                            self.broken = true;
+                        }
                         return Value::Arr(items);
                     }
                 }
@@ -337,6 +378,10 @@ impl Parser<'_> {
                     .is_some_and(|c| matches!(c, b'-' | b'+' | b'.' | b'e' | b'E' | b'0'..=b'9'))
                 {
                     self.i += 1;
+                }
+                if start == self.i {
+                    // nothing here is a value at all
+                    self.broken = true;
                 }
                 match std::str::from_utf8(&self.b[start..self.i]) {
                     Ok(t) => Value::Num(t.parse().unwrap_or(f64::NAN)),
@@ -505,5 +550,53 @@ mod tests {
     fn nothing_at_all_is_undefined_rather_than_a_panic() {
         assert_eq!(parse(""), Value::Undefined);
         assert_eq!(parse("   "), Value::Undefined);
+    }
+
+    #[test]
+    fn a_well_formed_document_parses_checked() {
+        for src in [
+            "{}",
+            "[]",
+            "1",
+            "null",
+            "\"a\"",
+            "{\"a\":[1,2,{\"b\":null}]}",
+            "  { \"a\" : 1 }  ",
+        ] {
+            assert!(parse_checked(src).is_some(), "{src}");
+        }
+    }
+
+    #[test]
+    fn a_truncated_document_is_refused_rather_than_recovered() {
+        // the case this exists for: a write interrupted by a full disk. Reading
+        // it leniently recovers the rows that happen to be complete, and
+        // writing those back loses the rest.
+        for src in [
+            "[{\"id\":\"e1\",\"ts\":1",
+            "[{\"id\":\"e1\"},",
+            "{\"a\":",
+            "{\"a\"",
+            "[1,2",
+            "\"unterminated",
+            "",
+            "   ",
+        ] {
+            assert!(parse_checked(src).is_none(), "{src}");
+        }
+    }
+
+    #[test]
+    fn trailing_content_is_refused_too() {
+        // it means the scan stopped somewhere the document did not end
+        assert!(parse_checked("{} junk").is_none());
+        assert!(parse_checked("[1] [2]").is_none());
+    }
+
+    #[test]
+    fn the_lenient_parse_still_recovers_what_it_can() {
+        // unchanged, because the sync path and the corpora rely on it
+        assert_eq!(parse("[1,2").keys().len(), 0);
+        assert!(matches!(parse("[1,2"), Value::Arr(ref v) if v.len() == 2));
     }
 }

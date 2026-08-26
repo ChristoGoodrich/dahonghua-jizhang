@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'entry_list.dart';
+import 'persistence.dart';
 import 'record_sheet.dart' as sheet;
 import 'stats_screen.dart';
 import 'theme.dart';
@@ -25,16 +26,27 @@ import 'src/rust/api/store.dart' as store;
 import 'src/rust/frb_generated.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await RustLib.init();
-  _seedIfEmpty();
-  runApp(const App());
+  final store = await Persistence.open();
+  // Seeding writes rows, and rows that are never written to disk are seeded
+  // again on the next launch — which looks exactly like persistence working
+  // while nothing is being saved at all. That is what a screenshot showed and
+  // an `ls` of the app directory disproved.
+  if (_seedIfEmpty()) await store.flush();
+  runApp(App(store: store));
 }
 
-/// A few rows so the list is not empty on first launch, until persistence is
-/// wired to a file. Written through the ordinary commands — there is no back
-/// door into the store, and this is not one.
-void _seedIfEmpty() {
-  if (store.entryCount() > 0) return;
+/// A few rows on a genuinely empty ledger, so a fresh install has something to
+/// look at. Written through the ordinary commands — there is no back door into
+/// the store, and this is not one.
+///
+/// It runs after the load, so it can tell "nothing saved yet" from "saved, and
+/// empty" — a user who deleted their last entry does not get it handed back.
+/// True when it actually seeded, so the caller knows there is something to
+/// write.
+bool _seedIfEmpty() {
+  if (store.entryCount() > 0) return false;
   final now = DateTime.now().millisecondsSinceEpoch;
   const day = 86400000;
   final rows = <(String, String, double, String?, int)>[
@@ -52,6 +64,7 @@ void _seedIfEmpty() {
       now: now + i,
     );
   }
+  return true;
 }
 
 /// `rgba(r, g, b, a)` from Rust → a Flutter colour.
@@ -71,27 +84,56 @@ const card = '#FFFFFF';
 const ink = '#2B2622';
 
 class App extends StatelessWidget {
-  const App({super.key});
+  const App({super.key, this.store});
+
+  final Persistence? store;
 
   @override
-  Widget build(BuildContext context) => const MaterialApp(
+  Widget build(BuildContext context) => MaterialApp(
         title: '大红花记账',
         debugShowCheckedModeBanner: false,
-        home: Home(),
+        home: Home(store: store),
       );
 }
 
 /// The two screens, until there is a router worth having.
 class Home extends StatefulWidget {
-  const Home({super.key});
+  const Home({super.key, this.store});
+
+  final Persistence? store;
 
   @override
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with WidgetsBindingObserver {
   int _tab = 0;
   int _listVersion = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  /// Write everything out before the process can be killed.
+  ///
+  /// `paused` is the last moment Android promises to give an app. A debounce
+  /// still counting when the process is reclaimed loses exactly the work it was
+  /// holding, so this is where the trade stops being worth making.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      widget.store?.flush();
+    }
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -102,6 +144,7 @@ class _HomeState extends State<Home> {
             // ledger a save just added to
             EntryListScreen(key: ValueKey(_listVersion)),
             sheet.RecordSheet(onSaved: ({required staleRate}) {
+              widget.store?.touchEntries();
               setState(() => _listVersion++);
             }),
             StatsScreen(key: ValueKey(_listVersion)),

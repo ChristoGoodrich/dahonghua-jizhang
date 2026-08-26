@@ -1905,6 +1905,51 @@ nothing rather than a line. `Math.max` propagates a NaN by design — that is th
 behaviour `chart_max` reproduces — and what should reach the screen when it does
 is an absence, not a plausible shape.
 
+### Persistence, and a screenshot that proved nothing
+
+Rust owns the state and knows its shape; `persistence.dart` owns the file and
+nothing else. Two files rather than one, matching the React Native build's two
+AsyncStorage keys: renaming an account should not rewrite ten thousand entries,
+and a write that fails halfway should not be able to take both with it.
+
+Worth stating plainly, because a comment in the bridge overclaimed it and has
+been corrected: the **shape** is shared, the **storage** is not. AsyncStorage on
+Android is a SQLite database rather than a file, so a backup exported from one
+build imports into the other, and neither can open the other's install. Moving
+an existing one across is Phase 4 platform work that has not been done.
+
+Then the part worth recording. The screen showed five entries after a
+force-stop and a relaunch, which looked exactly like persistence working. It
+was not: `_seedIfEmpty` runs on an empty ledger, so a launch that failed to
+load its file **re-seeded the same five rows**. `ls` on the app directory
+settled it — there were no files at all. A seed that is never written is
+indistinguishable from a save that never happens, and only the second thing was
+being tested.
+
+The proof that replaced it: record 78 through the keypad, `am force-stop` with
+no graceful shutdown, and read the file. `"amt":78` under a non-seed id.
+
+### A lenient parser is the wrong parser for a file
+
+`jsval::parse` is lenient by design — everything the sync path and the corpora
+hand it has been through `JSON.stringify` once. A file is where that assumption
+fails, and a test caught it: a truncated `entries.json` loaded as **one** entry
+rather than none.
+
+That is not a partial success. It is the first half of losing the rest, because
+the next save writes the one back. So `parse_checked` refuses a document that is
+not well-formed — a missing bracket, an unterminated string, trailing content —
+and `load_entries` answers **-1** rather than a count.
+
+The caller then does the thing that actually matters: **a file it could not read
+is not written over.** Saving over it is the step that turns "unreadable" into
+"gone", and while the flag is set the save is refused, so a user who backs the
+file up or an update that can read it still can.
+
+Writes go through a temporary file and a rename, which is atomic where a write
+is not — otherwise the failure mode above would be one this build creates for
+itself.
+
 ### Building for Android here
 
 Whatever drives it, the Android build needs `TEMP` pointed somewhere AF_UNIX
