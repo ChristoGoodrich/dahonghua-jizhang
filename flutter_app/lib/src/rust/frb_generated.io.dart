@@ -13,6 +13,7 @@ import 'api/money.dart';
 import 'api/networth.dart';
 import 'api/record.dart';
 import 'api/reimburse.dart';
+import 'api/report.dart';
 import 'api/stats.dart';
 import 'api/store.dart';
 import 'api/subscriptions.dart';
@@ -66,6 +67,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   PlatformInt64 dco_decode_box_autoadd_i_64(dynamic raw);
+
+  @protected
+  InsightCopyView dco_decode_box_autoadd_insight_copy_view(dynamic raw);
+
+  @protected
+  InsightView dco_decode_box_autoadd_insight_view(dynamic raw);
 
   @protected
   NewEntry dco_decode_box_autoadd_new_entry(dynamic raw);
@@ -141,6 +148,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   PlatformInt64 dco_decode_i_64(dynamic raw);
+
+  @protected
+  InsightCopyView dco_decode_insight_copy_view(dynamic raw);
+
+  @protected
+  InsightView dco_decode_insight_view(dynamic raw);
 
   @protected
   List<String> dco_decode_list_String(dynamic raw);
@@ -242,6 +255,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   PlatformInt64? dco_decode_opt_box_autoadd_i_64(dynamic raw);
 
   @protected
+  InsightView? dco_decode_opt_box_autoadd_insight_view(dynamic raw);
+
+  @protected
   RefundState? dco_decode_opt_box_autoadd_refund_state(dynamic raw);
 
   @protected
@@ -266,6 +282,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   RateView dco_decode_rate_view(dynamic raw);
+
+  @protected
+  RecapView dco_decode_recap_view(dynamic raw);
 
   @protected
   (String, double) dco_decode_record_string_f_64(dynamic raw);
@@ -313,6 +332,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void dco_decode_unit(dynamic raw);
 
   @protected
+  WeeklyView dco_decode_weekly_view(dynamic raw);
+
+  @protected
   String sse_decode_String(SseDeserializer deserializer);
 
   @protected
@@ -349,6 +371,14 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   PlatformInt64 sse_decode_box_autoadd_i_64(SseDeserializer deserializer);
+
+  @protected
+  InsightCopyView sse_decode_box_autoadd_insight_copy_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  InsightView sse_decode_box_autoadd_insight_view(SseDeserializer deserializer);
 
   @protected
   NewEntry sse_decode_box_autoadd_new_entry(SseDeserializer deserializer);
@@ -428,6 +458,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   PlatformInt64 sse_decode_i_64(SseDeserializer deserializer);
+
+  @protected
+  InsightCopyView sse_decode_insight_copy_view(SseDeserializer deserializer);
+
+  @protected
+  InsightView sse_decode_insight_view(SseDeserializer deserializer);
 
   @protected
   List<String> sse_decode_list_String(SseDeserializer deserializer);
@@ -543,6 +579,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   PlatformInt64? sse_decode_opt_box_autoadd_i_64(SseDeserializer deserializer);
 
   @protected
+  InsightView? sse_decode_opt_box_autoadd_insight_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   RefundState? sse_decode_opt_box_autoadd_refund_state(
     SseDeserializer deserializer,
   );
@@ -571,6 +612,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   RateView sse_decode_rate_view(SseDeserializer deserializer);
+
+  @protected
+  RecapView sse_decode_recap_view(SseDeserializer deserializer);
 
   @protected
   (String, double) sse_decode_record_string_f_64(SseDeserializer deserializer);
@@ -618,6 +662,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_decode_unit(SseDeserializer deserializer);
+
+  @protected
+  WeeklyView sse_decode_weekly_view(SseDeserializer deserializer);
 
   @protected
   void sse_encode_String(String self, SseSerializer serializer);
@@ -670,6 +717,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_box_autoadd_i_64(
     PlatformInt64 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_insight_copy_view(
+    InsightCopyView self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_insight_view(
+    InsightView self,
     SseSerializer serializer,
   );
 
@@ -768,6 +827,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_i_64(PlatformInt64 self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_insight_copy_view(
+    InsightCopyView self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_insight_view(InsightView self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_String(List<String> self, SseSerializer serializer);
@@ -926,6 +994,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_opt_box_autoadd_insight_view(
+    InsightView? self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_opt_box_autoadd_refund_state(
     RefundState? self,
     SseSerializer serializer,
@@ -960,6 +1034,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_rate_view(RateView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_recap_view(RecapView self, SseSerializer serializer);
 
   @protected
   void sse_encode_record_string_f_64(
@@ -1014,6 +1091,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_unit(void self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_weekly_view(WeeklyView self, SseSerializer serializer);
 }
 
 // Section: wire_class

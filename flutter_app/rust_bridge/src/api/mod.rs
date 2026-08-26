@@ -16,6 +16,7 @@ pub mod money;
 pub mod networth;
 pub mod record;
 pub mod reimburse;
+pub mod report;
 pub mod stats;
 pub mod store;
 pub mod subscriptions;

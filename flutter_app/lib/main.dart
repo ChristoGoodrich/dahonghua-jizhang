@@ -27,6 +27,7 @@ import 'me_screen.dart';
 import 'persistence.dart';
 import 'record_sheet.dart' as sheet;
 import 'reimburse_screen.dart';
+import 'report_screen.dart';
 import 'stats_screen.dart';
 import 'subs_screen.dart';
 import 'theme.dart';
@@ -246,6 +247,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           title: '模板',
           desc: '一按就记的常用笔',
           onTap: () => _push(TemplatesScreen(onChanged: _configChanged)),
+        ),
+        MeRow(
+          id: 'report',
+          icon: Icons.insights_outlined,
+          title: '回顾',
+          desc: '这个周期和这一周,过得怎么样',
+          onTap: () => _push(const ReportScreen()),
         ),
         MeRow(
           id: 'reimburse',
