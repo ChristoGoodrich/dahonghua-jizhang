@@ -6,8 +6,10 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `custom_of`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `eq`, `eq`, `fmt`, `fmt`, `from`, `from`
+// These functions are ignored because they are not marked as `pub`: `custom_of`, `kind_of`, `library_of`, `library`, `set_library_inner`
+// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `Library`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`
+// These functions are ignored (category: IgnoreBecauseOwnerTyShouldIgnore): `default`
 
 /// Every category for one direction, in picker order: built-ins then custom.
 List<CategoryView> allCats({
@@ -38,6 +40,68 @@ CatLabel catLabel({
   zh: zh,
   custom: custom,
 );
+
+/// The ordinary tags.
+List<String> tags() => RustLib.instance.api.crateApiCatalogTags();
+
+/// Every ledger, archived ones included.
+List<String> ledgers() => RustLib.instance.api.crateApiCatalogLedgers();
+
+/// The ledgers a picker should offer: everything unarchived, plus `keep` even
+/// when it is archived.
+///
+/// The exception is the point — an entry already on an archived ledger must not
+/// silently move off it.
+List<String> pickableLedgers({required String keep}) =>
+    RustLib.instance.api.crateApiCatalogPickableLedgers(keep: keep);
+
+List<String> archivedLedgers() =>
+    RustLib.instance.api.crateApiCatalogArchivedLedgers();
+
+/// `normal` or `ledger`. A duplicate is ignored rather than refused.
+void addTag({required String kind, required String name}) =>
+    RustLib.instance.api.crateApiCatalogAddTag(kind: kind, name: name);
+
+/// Remove a tag. Removing the **active** ledger clears the filter too.
+void removeTag({required String kind, required String name}) =>
+    RustLib.instance.api.crateApiCatalogRemoveTag(kind: kind, name: name);
+
+/// Archive or unarchive a ledger. Entries already tagged with it keep the tag;
+/// archiving the active one clears the filter.
+void archiveLedger({required String name, required bool archive}) => RustLib
+    .instance
+    .api
+    .crateApiCatalogArchiveLedger(name: name, archive: archive);
+
+String currentLedger() => RustLib.instance.api.crateApiCatalogCurrentLedger();
+
+void setCurrentLedger({required String name}) =>
+    RustLib.instance.api.crateApiCatalogSetCurrentLedger(name: name);
+
+List<TemplateView> templates() =>
+    RustLib.instance.api.crateApiCatalogTemplates();
+
+String addTemplate({
+  required String id,
+  required String io,
+  required String cat,
+  required double amt,
+  String? note,
+  required String name,
+}) => RustLib.instance.api.crateApiCatalogAddTemplate(
+  id: id,
+  io: io,
+  cat: cat,
+  amt: amt,
+  note: note,
+  name: name,
+);
+
+void removeTemplate({required String id}) =>
+    RustLib.instance.api.crateApiCatalogRemoveTemplate(id: id);
+
+TemplateDraftView? templateDraft({required String id}) =>
+    RustLib.instance.api.crateApiCatalogTemplateDraft(id: id);
 
 /// The lookup and the naming in one call, which is what a list row wants.
 ///
@@ -111,4 +175,91 @@ class CategoryView {
           en == other.en &&
           c == other.c &&
           custom == other.custom;
+}
+
+/// What logging a template would produce, before the ledger stamps it.
+///
+/// The note falls back to an empty string while the ledger falls back to
+/// **absent**: `tpl.note ?? ''` against `curLedger || undefined`, which treats
+/// the empty string as nothing. Two fallbacks, two different answers, and the
+/// difference is the sort a second implementation flattens.
+class TemplateDraftView {
+  final String io;
+  final String cat;
+  final double amt;
+  final String note;
+  final String acct;
+  final String? ledger;
+
+  const TemplateDraftView({
+    required this.io,
+    required this.cat,
+    required this.amt,
+    required this.note,
+    required this.acct,
+    this.ledger,
+  });
+
+  @override
+  int get hashCode =>
+      io.hashCode ^
+      cat.hashCode ^
+      amt.hashCode ^
+      note.hashCode ^
+      acct.hashCode ^
+      ledger.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TemplateDraftView &&
+          runtimeType == other.runtimeType &&
+          io == other.io &&
+          cat == other.cat &&
+          amt == other.amt &&
+          note == other.note &&
+          acct == other.acct &&
+          ledger == other.ledger;
+}
+
+/// A pinned entry the record sheet offers as a one-tap chip.
+class TemplateView {
+  final String id;
+
+  /// `exp` | `inc` | `xfer`.
+  final String io;
+  final String cat;
+  final double amt;
+  final String? note;
+  final String name;
+
+  const TemplateView({
+    required this.id,
+    required this.io,
+    required this.cat,
+    required this.amt,
+    this.note,
+    required this.name,
+  });
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      io.hashCode ^
+      cat.hashCode ^
+      amt.hashCode ^
+      note.hashCode ^
+      name.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TemplateView &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          io == other.io &&
+          cat == other.cat &&
+          amt == other.amt &&
+          note == other.note &&
+          name == other.name;
 }

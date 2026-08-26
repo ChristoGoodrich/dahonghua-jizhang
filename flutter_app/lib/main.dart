@@ -21,6 +21,7 @@ import 'package:flutter/services.dart';
 import 'assets_screen.dart';
 import 'budget_screen.dart';
 import 'entry_list.dart';
+import 'library_screen.dart';
 import 'me_screen.dart';
 import 'persistence.dart';
 import 'record_sheet.dart' as sheet;
@@ -236,6 +237,20 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           title: '订阅',
           desc: '到期自动记一笔',
           onTap: () => _push(SubsScreen(onChanged: _bothChanged)),
+        ),
+        MeRow(
+          id: 'templates',
+          icon: Icons.bolt_outlined,
+          title: '模板',
+          desc: '一按就记的常用笔',
+          onTap: () => _push(TemplatesScreen(onChanged: _configChanged)),
+        ),
+        MeRow(
+          id: 'tags',
+          icon: Icons.label_outline,
+          title: '标签与账本',
+          desc: '给记录分组,或者分成几本账',
+          onTap: () => _push(TagsScreen(onChanged: _configChanged)),
         ),
       ],
     ),

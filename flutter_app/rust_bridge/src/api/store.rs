@@ -28,7 +28,7 @@ use dahonghua_core::entry::{Entry, EntrySource, Io, Patch, Reimburse};
 use dahonghua_core::jsval::{parse_checked, stable, Value};
 use dahonghua_core::ledger::Ledger;
 use dahonghua_core::list::{self, DayLabel, FlatItem};
-use dahonghua_core::model::{Asset, AssetKind, Loan, LoanKind, Sub, SubFreq};
+use dahonghua_core::model::{Asset, AssetKind, Loan, LoanKind, Sub, SubFreq, Template};
 use dahonghua_core::money::Currencies;
 use dahonghua_core::rows::{entry_from_value, entry_to_value};
 use dahonghua_core::store::{ImportedBill, Store, TransferOpts};
@@ -808,19 +808,55 @@ pub fn snapshot_config() -> String {
             ])
         })
         .collect();
+    let lib = super::catalog::library_of();
+    let templates: Vec<Value> = lib
+        .templates
+        .iter()
+        .map(|t| {
+            let mut o: Vec<(String, Value)> = vec![
+                ("id".into(), Value::Str(t.id.clone())),
+                ("io".into(), Value::Str(t.io.as_str().to_string())),
+                ("cat".into(), Value::Str(t.cat.clone())),
+                ("amt".into(), Value::Num(t.amt)),
+                ("name".into(), Value::Str(t.name.clone())),
+            ];
+            if let Some(n) = &t.note {
+                o.push(("note".into(), Value::Str(n.clone())));
+            }
+            Value::Obj(o)
+        })
+        .collect();
+    let strs = |v: &[String]| Value::Arr(v.iter().map(|x| Value::Str(x.clone())).collect());
+    let mut settings_obj: Vec<(String, Value)> = Vec::new();
     stable(&Value::Obj(vec![
         ("accounts".into(), Value::Arr(accounts)),
+        (
+            "tags".into(),
+            Value::Obj(vec![
+                ("normal".into(), strs(&lib.tags.normal)),
+                ("ledger".into(), strs(&lib.tags.ledger)),
+            ]),
+        ),
+        ("templates".into(), Value::Arr(templates)),
+        ("curLedger".into(), Value::Str(lib.current_ledger.clone())),
         ("assets".into(), Value::Arr(assets)),
         ("loans".into(), Value::Arr(loans)),
         ("subs".into(), Value::Arr(subs)),
         (
             "settings".into(),
-            Value::Obj(vec![
-                ("budget".into(), Value::Num(set.budget)),
-                ("dailyBudget".into(), Value::Num(set.daily_budget)),
-                ("cycleStart".into(), Value::Num(set.cycle_start as f64)),
-                ("catBudgets".into(), Value::Obj(caps)),
-            ]),
+            Value::Obj({
+                settings_obj.push(("budget".into(), Value::Num(set.budget)));
+                settings_obj.push(("dailyBudget".into(), Value::Num(set.daily_budget)));
+                settings_obj.push(("cycleStart".into(), Value::Num(set.cycle_start as f64)));
+                settings_obj.push(("catBudgets".into(), Value::Obj(caps)));
+                // absent rather than an empty array when nothing is archived,
+                // or a sync round-trip would carry it back as a field that is
+                // set — the same falsy-means-absent rule as everywhere else
+                if let Some(a) = &lib.archived {
+                    settings_obj.push(("archivedLedgers".into(), strs(a)));
+                }
+                settings_obj
+            }),
         ),
         ("curAccount".into(), Value::Str(s.current_account.clone())),
         (
@@ -871,6 +907,52 @@ pub fn load_config(json: String) -> bool {
     }
     if let Some(Value::Str(id)) = v.get("curAccount") {
         store().current_account = id.clone();
+    }
+    {
+        let mut lib = super::catalog::library_of();
+        let mut touched = false;
+        if let Some(t @ Value::Obj(_)) = v.get("tags") {
+            let list = |k: &str| match t.get(k) {
+                Some(Value::Arr(items)) => items.iter().filter_map(as_str).collect(),
+                _ => Vec::new(),
+            };
+            lib.tags.normal = list("normal");
+            lib.tags.ledger = list("ledger");
+            touched = true;
+        }
+        if let Some(Value::Arr(items)) = v.get("templates") {
+            lib.templates = items
+                .iter()
+                .map(|t| Template {
+                    id: str_of(t.get("id")),
+                    io: t
+                        .get("io")
+                        .and_then(as_str)
+                        .as_deref()
+                        .and_then(Io::parse)
+                        .unwrap_or(Io::Exp),
+                    cat: str_of(t.get("cat")),
+                    amt: t.num("amt").unwrap_or(0.0),
+                    note: t.get("note").and_then(as_str),
+                    name: str_of(t.get("name")),
+                })
+                .collect();
+            touched = true;
+        }
+        if let Some(Value::Str(l)) = v.get("curLedger") {
+            lib.current_ledger = l.clone();
+            touched = true;
+        }
+        if let Some(set @ Value::Obj(_)) = v.get("settings") {
+            if let Some(Value::Arr(items)) = set.get("archivedLedgers") {
+                let list: Vec<String> = items.iter().filter_map(as_str).collect();
+                lib.archived = (!list.is_empty()).then_some(list);
+                touched = true;
+            }
+        }
+        if touched {
+            super::catalog::set_library_inner(lib);
+        }
     }
     if let Some(Value::Arr(items)) = v.get("assets") {
         let assets: Vec<Asset> = items
@@ -1017,4 +1099,5 @@ pub fn reset() {
     super::subscriptions::set_subs_inner(Vec::new());
     super::networth::set_assets_inner(Vec::new());
     super::networth::set_loans_inner(Vec::new());
+    super::catalog::set_library_inner(Default::default());
 }

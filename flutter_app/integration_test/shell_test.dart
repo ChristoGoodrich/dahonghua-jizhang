@@ -150,14 +150,33 @@ void main() {
     });
 
     testWidgets('lists nothing that goes nowhere', (tester) async {
-      // a hub that lists screens which do not exist teaches the reader to stop
-      // trusting it, so unbuilt ones are simply absent
+      // A hub that lists screens which do not exist teaches the reader to stop
+      // trusting it. The check is that EVERY row reaches something and comes
+      // back — not a count of rows, which was the first spelling and which
+      // broke the moment the hub grew by two. A test that has to be edited to
+      // add a screen is a test that will eventually be edited without being
+      // read.
       await shell(tester);
       await tapTab(tester, '我的');
-      final rows = find.byType(InkWell).evaluate().length;
-      // two rows plus the four tabs, and nothing else claiming to be a
-      // destination
-      expect(rows, 6);
+
+      final keys = tester
+          .widgetList<InkWell>(find.byType(InkWell))
+          .map((w) => w.key)
+          .whereType<ValueKey<String>>()
+          .map((k) => k.value)
+          .where((k) => k.startsWith('me-'))
+          .toList();
+      expect(keys, isNotEmpty);
+
+      for (final k in keys) {
+        await tester.tap(find.byKey(Key(k)));
+        await tester.pumpAndSettle();
+        // something was pushed — the hub is no longer the top route
+        expect(find.text('记账工具'), findsNothing, reason: '$k went nowhere');
+        await tester.pageBack();
+        await tester.pumpAndSettle();
+        expect(find.text('记账工具'), findsOneWidget);
+      }
     });
   });
 

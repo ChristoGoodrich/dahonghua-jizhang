@@ -80,6 +80,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   SettingsView dco_decode_box_autoadd_settings_view(dynamic raw);
 
   @protected
+  TemplateDraftView dco_decode_box_autoadd_template_draft_view(dynamic raw);
+
+  @protected
   int dco_decode_box_autoadd_u_32(dynamic raw);
 
   @protected
@@ -188,6 +191,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<SyncEffect> dco_decode_list_sync_effect(dynamic raw);
 
   @protected
+  List<TemplateView> dco_decode_list_template_view(dynamic raw);
+
+  @protected
   List<TrendPointView> dco_decode_list_trend_point_view(dynamic raw);
 
   @protected
@@ -221,6 +227,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   PlatformInt64? dco_decode_opt_box_autoadd_i_64(dynamic raw);
 
   @protected
+  TemplateDraftView? dco_decode_opt_box_autoadd_template_draft_view(
+    dynamic raw,
+  );
+
+  @protected
   int? dco_decode_opt_box_autoadd_u_32(dynamic raw);
 
   @protected
@@ -252,6 +263,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   SyncEffect dco_decode_sync_effect(dynamic raw);
+
+  @protected
+  TemplateDraftView dco_decode_template_draft_view(dynamic raw);
+
+  @protected
+  TemplateView dco_decode_template_view(dynamic raw);
 
   @protected
   TierView dco_decode_tier_view(dynamic raw);
@@ -320,6 +337,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   SettingsView sse_decode_box_autoadd_settings_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  TemplateDraftView sse_decode_box_autoadd_template_draft_view(
     SseDeserializer deserializer,
   );
 
@@ -440,6 +462,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<SyncEffect> sse_decode_list_sync_effect(SseDeserializer deserializer);
 
   @protected
+  List<TemplateView> sse_decode_list_template_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   List<TrendPointView> sse_decode_list_trend_point_view(
     SseDeserializer deserializer,
   );
@@ -477,6 +504,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   PlatformInt64? sse_decode_opt_box_autoadd_i_64(SseDeserializer deserializer);
 
   @protected
+  TemplateDraftView? sse_decode_opt_box_autoadd_template_draft_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   int? sse_decode_opt_box_autoadd_u_32(SseDeserializer deserializer);
 
   @protected
@@ -510,6 +542,14 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   SyncEffect sse_decode_sync_effect(SseDeserializer deserializer);
+
+  @protected
+  TemplateDraftView sse_decode_template_draft_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  TemplateView sse_decode_template_view(SseDeserializer deserializer);
 
   @protected
   TierView sse_decode_tier_view(SseDeserializer deserializer);
@@ -601,6 +641,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_box_autoadd_settings_view(
     SettingsView self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_template_draft_view(
+    TemplateDraftView self,
     SseSerializer serializer,
   );
 
@@ -761,6 +807,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_list_template_view(
+    List<TemplateView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_list_trend_point_view(
     List<TrendPointView> self,
     SseSerializer serializer,
@@ -799,6 +851,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_opt_box_autoadd_i_64(
     PlatformInt64? self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_opt_box_autoadd_template_draft_view(
+    TemplateDraftView? self,
     SseSerializer serializer,
   );
 
@@ -843,6 +901,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_sync_effect(SyncEffect self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_template_draft_view(
+    TemplateDraftView self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_template_view(TemplateView self, SseSerializer serializer);
 
   @protected
   void sse_encode_tier_view(TierView self, SseSerializer serializer);
