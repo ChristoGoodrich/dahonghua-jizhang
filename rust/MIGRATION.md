@@ -1996,6 +1996,46 @@ survived its own force-stop.
 Worth writing down because it is the second time in two increments that the
 measurement disturbed the thing measured, in a way that looked like a result.
 
+### Budgets, where the edges are the screen
+
+The fourth screen, and the last one whose judgement was already in Rust waiting.
+Its whole substance is three edges of one comparison, and each is the kind a
+rewrite would smooth over:
+
+* **A cap of zero is unset**, not "nothing allowed". Those want different
+  screens — "未设上限 · 已花 ￥2,065.90", not a bar pinned at 100%.
+* **A percentage over 100 is not clamped**, because being 138% of the way
+  through a budget is the number worth saying. The *bar* is clamped, and that
+  clamp lives in the drawing where it belongs; the arithmetic never sees it.
+* **A cap that cannot be parsed reads as unset** rather than poisoning the tier
+  — `limit > 0` is a comparison, and every comparison against `NaN` is false.
+
+The settings had to come across with it, because `tier_status` is what decides
+what a zero means and a second copy of those numbers in Dart is a second chance
+to disagree. They persist in `config.json` alongside the accounts, and a
+`cycleStart` outside 1..28 is clamped on the way in — the settings screen never
+offers one, and a restored file can say anything.
+
+### Thirteen tests, and the first tap crashed
+
+The screen passed thirteen tests and then crashed on the device the moment
+someone opened the cap dialog:
+
+```
+'_dependents.isEmpty': is not true
+```
+
+The `TextEditingController` was disposed at the `showDialog` call site, which
+runs while the route is still animating out and the `TextField` still depends on
+it. **Not one of the thirteen opened the dialog.** It is a widget of its own
+now, owning and disposing its controller in `dispose()` where Flutter expects,
+and four tests drive it — including the one that pumps all the way through the
+exit animation, which is where the assert fired.
+
+Third time in three increments that the device found what the tests did not,
+and the pattern is consistent enough to name: **tests cover the paths you
+thought of, and a screen has paths you only find by touching it.**
+
 ### Building for Android here
 
 Whatever drives it, the Android build needs `TEMP` pointed somewhere AF_UNIX

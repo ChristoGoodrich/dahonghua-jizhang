@@ -15,6 +15,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'budget_screen.dart';
 import 'entry_list.dart';
 import 'persistence.dart';
 import 'record_sheet.dart' as sheet;
@@ -177,6 +178,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           },
         ),
         StatsScreen(key: ValueKey(_listVersion)),
+        BudgetScreen(
+          key: ValueKey(_listVersion),
+          onChanged: () => widget.store?.touchConfig(),
+        ),
       ],
     ),
     // Material 3's default NavigationBar paints itself lavender, which
@@ -216,6 +221,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           icon: Icon(Icons.pie_chart_outline, color: palette.inkSoft),
           selectedIcon: Icon(Icons.pie_chart, color: palette.hibiscus),
           label: '统计',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.savings_outlined, color: palette.inkSoft),
+          selectedIcon: Icon(Icons.savings, color: palette.hibiscus),
+          label: '预算',
         ),
       ],
     ),

@@ -59,6 +59,40 @@ fn currencies_lock() -> MutexGuard<'static, Currencies> {
     m.lock().unwrap_or_else(|e| e.into_inner())
 }
 
+/// The budget settings, which the budget screen's comparisons read.
+///
+/// Alongside `currencies` and for the same reason: these are config the Rust
+/// store owns until the config sections themselves come across, and a second
+/// copy in Dart is a second chance to disagree about what a cap of zero means.
+#[derive(Debug, Clone, Default)]
+pub struct BudgetSettings {
+    pub budget: f64,
+    pub daily_budget: f64,
+    pub cycle_start: i32,
+    /// Insertion-ordered, because `cat_budget_rows` applies JavaScript's own
+    /// key ordering to it and a `HashMap` has none to apply it to.
+    pub caps: Vec<(String, f64)>,
+}
+
+fn settings_lock() -> MutexGuard<'static, BudgetSettings> {
+    static SET: OnceLock<Mutex<BudgetSettings>> = OnceLock::new();
+    let m = SET.get_or_init(|| {
+        Mutex::new(BudgetSettings {
+            cycle_start: 1,
+            ..Default::default()
+        })
+    });
+    m.lock().unwrap_or_else(|e| e.into_inner())
+}
+
+pub(crate) fn settings_of() -> BudgetSettings {
+    settings_lock().clone()
+}
+
+pub(crate) fn set_settings_inner(s: BudgetSettings) {
+    *settings_lock() = s;
+}
+
 pub(crate) fn currencies_of() -> Currencies {
     currencies_lock().clone()
 }
@@ -671,8 +705,23 @@ pub fn snapshot_config() -> String {
         v.sort_by(|a, b| a.0.cmp(&b.0));
         v
     };
+    let set = settings_of();
+    let caps: Vec<(String, Value)> = set
+        .caps
+        .iter()
+        .map(|(k, v)| (k.clone(), Value::Num(*v)))
+        .collect();
     stable(&Value::Obj(vec![
         ("accounts".into(), Value::Arr(accounts)),
+        (
+            "settings".into(),
+            Value::Obj(vec![
+                ("budget".into(), Value::Num(set.budget)),
+                ("dailyBudget".into(), Value::Num(set.daily_budget)),
+                ("cycleStart".into(), Value::Num(set.cycle_start as f64)),
+                ("catBudgets".into(), Value::Obj(caps)),
+            ]),
+        ),
         (
             "curAccount".into(),
             Value::Str(s.current_account.clone()),
@@ -721,6 +770,29 @@ pub fn load_config(json: String) -> bool {
     }
     if let Some(Value::Str(id)) = v.get("curAccount") {
         store().current_account = id.clone();
+    }
+    if let Some(set @ Value::Obj(_)) = v.get("settings") {
+        set_settings_inner(BudgetSettings {
+            budget: set.num("budget").unwrap_or(0.0),
+            daily_budget: set.num("dailyBudget").unwrap_or(0.0),
+            // a cycle start outside 1..28 would skip the months that have no
+            // such day; the settings screen never offers one, and a restored
+            // file can say anything
+            cycle_start: set
+                .num("cycleStart")
+                .map(|n| (n as i32).clamp(1, 28))
+                .unwrap_or(1),
+            caps: match set.get("catBudgets") {
+                Some(Value::Obj(entries)) => entries
+                    .iter()
+                    .filter_map(|(k, val)| match val {
+                        Value::Num(n) => Some((k.clone(), *n)),
+                        _ => None,
+                    })
+                    .collect(),
+                _ => vec![],
+            },
+        });
     }
     if let Some(c @ Value::Obj(_)) = v.get("currencies") {
         let base = match c.get("base") {
@@ -772,6 +844,10 @@ pub fn reset() {
     // which is the fixture gap the TypeScript suite had
     set_currencies_inner(Currencies {
         base: "CNY".to_string(),
+        ..Default::default()
+    });
+    set_settings_inner(BudgetSettings {
+        cycle_start: 1,
         ..Default::default()
     });
 }

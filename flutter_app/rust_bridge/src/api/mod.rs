@@ -5,6 +5,7 @@
 //! core never gains an FFI attribute — it goes on answering to the parity
 //! corpus, which is what makes it trustworthy in the first place.
 
+pub mod budget;
 pub mod calc;
 pub mod catalog;
 pub mod glass;

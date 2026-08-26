@@ -6,8 +6,8 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `as_str`, `currencies_lock`, `currencies_of`, `parse_day`, `set_currencies_inner`, `show_day`, `store`, `str_of`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`
+// These functions are ignored because they are not marked as `pub`: `as_str`, `currencies_lock`, `currencies_of`, `parse_day`, `set_currencies_inner`, `set_settings_inner`, `settings_lock`, `settings_of`, `show_day`, `store`, `str_of`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`
 
 /// Record an entry. Returns its id.
 ///
@@ -240,6 +240,48 @@ class AccountView {
           fxCode == other.fxCode &&
           fxRate == other.fxRate &&
           archived == other.archived;
+}
+
+/// The budget settings, which the budget screen's comparisons read.
+///
+/// Alongside `currencies` and for the same reason: these are config the Rust
+/// store owns until the config sections themselves come across, and a second
+/// copy in Dart is a second chance to disagree about what a cap of zero means.
+class BudgetSettings {
+  final double budget;
+  final double dailyBudget;
+  final int cycleStart;
+
+  /// Insertion-ordered, because `cat_budget_rows` applies JavaScript's own
+  /// key ordering to it and a `HashMap` has none to apply it to.
+  final List<(String, double)> caps;
+
+  const BudgetSettings({
+    required this.budget,
+    required this.dailyBudget,
+    required this.cycleStart,
+    required this.caps,
+  });
+
+  static Future<BudgetSettings> default_() =>
+      RustLib.instance.api.crateApiStoreBudgetSettingsDefault();
+
+  @override
+  int get hashCode =>
+      budget.hashCode ^
+      dailyBudget.hashCode ^
+      cycleStart.hashCode ^
+      caps.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BudgetSettings &&
+          runtimeType == other.runtimeType &&
+          budget == other.budget &&
+          dailyBudget == other.dailyBudget &&
+          cycleStart == other.cycleStart &&
+          caps == other.caps;
 }
 
 /// A partial edit. Every field is "leave alone" when absent.

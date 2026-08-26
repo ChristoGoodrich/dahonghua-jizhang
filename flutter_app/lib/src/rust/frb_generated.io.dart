@@ -3,6 +3,7 @@
 
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
+import 'api/budget.dart';
 import 'api/calc.dart';
 import 'api/catalog.dart';
 import 'api/glass.dart';
@@ -61,10 +62,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   NewTransfer dco_decode_box_autoadd_new_transfer(dynamic raw);
 
   @protected
+  SettingsView dco_decode_box_autoadd_settings_view(dynamic raw);
+
+  @protected
   int dco_decode_box_autoadd_u_32(dynamic raw);
 
   @protected
   UndoToken dco_decode_box_autoadd_undo_token(dynamic raw);
+
+  @protected
+  BudgetSettings dco_decode_budget_settings(dynamic raw);
+
+  @protected
+  CatBudgetView dco_decode_cat_budget_view(dynamic raw);
 
   @protected
   CatLabel dco_decode_cat_label(dynamic raw);
@@ -112,6 +122,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<AccountView> dco_decode_list_account_view(dynamic raw);
 
   @protected
+  List<CatBudgetView> dco_decode_list_cat_budget_view(dynamic raw);
+
+  @protected
   List<CategoryView> dco_decode_list_category_view(dynamic raw);
 
   @protected
@@ -137,6 +150,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
+
+  @protected
+  List<(String, double)> dco_decode_list_record_string_f_64(dynamic raw);
 
   @protected
   List<SliceView> dco_decode_list_slice_view(dynamic raw);
@@ -178,10 +194,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   OverviewView dco_decode_overview_view(dynamic raw);
 
   @protected
+  (String, double) dco_decode_record_string_f_64(dynamic raw);
+
+  @protected
   SaveResult dco_decode_save_result(dynamic raw);
 
   @protected
+  SettingsView dco_decode_settings_view(dynamic raw);
+
+  @protected
   SliceView dco_decode_slice_view(dynamic raw);
+
+  @protected
+  TierView dco_decode_tier_view(dynamic raw);
 
   @protected
   TrendPointView dco_decode_trend_point_view(dynamic raw);
@@ -237,10 +262,21 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   NewTransfer sse_decode_box_autoadd_new_transfer(SseDeserializer deserializer);
 
   @protected
+  SettingsView sse_decode_box_autoadd_settings_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   int sse_decode_box_autoadd_u_32(SseDeserializer deserializer);
 
   @protected
   UndoToken sse_decode_box_autoadd_undo_token(SseDeserializer deserializer);
+
+  @protected
+  BudgetSettings sse_decode_budget_settings(SseDeserializer deserializer);
+
+  @protected
+  CatBudgetView sse_decode_cat_budget_view(SseDeserializer deserializer);
 
   @protected
   CatLabel sse_decode_cat_label(SseDeserializer deserializer);
@@ -288,6 +324,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<AccountView> sse_decode_list_account_view(SseDeserializer deserializer);
 
   @protected
+  List<CatBudgetView> sse_decode_list_cat_budget_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   List<CategoryView> sse_decode_list_category_view(
     SseDeserializer deserializer,
   );
@@ -315,6 +356,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
+
+  @protected
+  List<(String, double)> sse_decode_list_record_string_f_64(
+    SseDeserializer deserializer,
+  );
 
   @protected
   List<SliceView> sse_decode_list_slice_view(SseDeserializer deserializer);
@@ -362,10 +408,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   OverviewView sse_decode_overview_view(SseDeserializer deserializer);
 
   @protected
+  (String, double) sse_decode_record_string_f_64(SseDeserializer deserializer);
+
+  @protected
   SaveResult sse_decode_save_result(SseDeserializer deserializer);
 
   @protected
+  SettingsView sse_decode_settings_view(SseDeserializer deserializer);
+
+  @protected
   SliceView sse_decode_slice_view(SseDeserializer deserializer);
+
+  @protected
+  TierView sse_decode_tier_view(SseDeserializer deserializer);
 
   @protected
   TrendPointView sse_decode_trend_point_view(SseDeserializer deserializer);
@@ -440,6 +495,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_box_autoadd_settings_view(
+    SettingsView self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_box_autoadd_u_32(int self, SseSerializer serializer);
 
   @protected
@@ -447,6 +508,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     UndoToken self,
     SseSerializer serializer,
   );
+
+  @protected
+  void sse_encode_budget_settings(
+    BudgetSettings self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_cat_budget_view(CatBudgetView self, SseSerializer serializer);
 
   @protected
   void sse_encode_cat_label(CatLabel self, SseSerializer serializer);
@@ -497,6 +567,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_list_cat_budget_view(
+    List<CatBudgetView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_list_category_view(
     List<CategoryView> self,
     SseSerializer serializer,
@@ -541,6 +617,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_prim_u_8_strict(
     Uint8List self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_record_string_f_64(
+    List<(String, double)> self,
     SseSerializer serializer,
   );
 
@@ -599,10 +681,22 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_overview_view(OverviewView self, SseSerializer serializer);
 
   @protected
+  void sse_encode_record_string_f_64(
+    (String, double) self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_save_result(SaveResult self, SseSerializer serializer);
 
   @protected
+  void sse_encode_settings_view(SettingsView self, SseSerializer serializer);
+
+  @protected
   void sse_encode_slice_view(SliceView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_tier_view(TierView self, SseSerializer serializer);
 
   @protected
   void sse_encode_trend_point_view(
