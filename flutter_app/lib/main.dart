@@ -72,11 +72,15 @@ bool _seedIfEmpty() {
 /// The mix, the ambient pull and the readability curve all happened on the
 /// other side of the boundary; this only parses the answer.
 Color parseRgba(String s) {
-  final n = RegExp(r'[-0-9.eE+]+')
-      .allMatches(s)
-      .map((m) => double.parse(m.group(0)!))
-      .toList();
-  return Color.fromRGBO(n[0].toInt(), n[1].toInt(), n[2].toInt(), n.length > 3 ? n[3] : 1);
+  final n = RegExp(
+    r'[-0-9.eE+]+',
+  ).allMatches(s).map((m) => double.parse(m.group(0)!)).toList();
+  return Color.fromRGBO(
+    n[0].toInt(),
+    n[1].toInt(),
+    n[2].toInt(),
+    n.length > 3 ? n[3] : 1,
+  );
 }
 
 const paper = '#FBF7F0';
@@ -90,10 +94,10 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MaterialApp(
-        title: '大红花记账',
-        debugShowCheckedModeBanner: false,
-        home: Home(store: store),
-      );
+    title: '大红花记账',
+    debugShowCheckedModeBanner: false,
+    home: Home(store: store),
+  );
 }
 
 /// The two screens, until there is a router worth having.
@@ -109,6 +113,12 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with WidgetsBindingObserver {
   int _tab = 0;
   int _listVersion = 0;
+  String? _editId;
+
+  void _edit(String id) => setState(() {
+    _editId = id;
+    _tab = 1;
+  });
 
   @override
   void initState() {
@@ -137,51 +147,79 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        body: IndexedStack(
-          index: _tab,
-          children: [
-            // rebuilt by key when the tab changes, so the list re-reads the
-            // ledger a save just added to
-            EntryListScreen(key: ValueKey(_listVersion)),
-            sheet.RecordSheet(onSaved: ({required staleRate}) {
-              widget.store?.touchEntries();
-              setState(() => _listVersion++);
-            }),
-            StatsScreen(key: ValueKey(_listVersion)),
-          ],
+    body: IndexedStack(
+      index: _tab,
+      children: [
+        // rebuilt by key when the tab changes, so the list re-reads the
+        // ledger a save just added to
+        EntryListScreen(
+          key: ValueKey(_listVersion),
+          onEdit: _edit,
+          onChanged: () {
+            widget.store?.touchEntries();
+            setState(() => _listVersion++);
+          },
         ),
-        // Material 3's default NavigationBar paints itself lavender, which
-        // against this palette's warm paper reads as a different application's
-        // chrome. The colours are the theme's, not the framework's.
-        bottomNavigationBar: NavigationBar(
-          selectedIndex: _tab,
-          onDestinationSelected: (i) => setState(() => _tab = i),
-          backgroundColor: palette.card,
-          surfaceTintColor: Colors.transparent,
-          indicatorColor: palette.stamen.withValues(alpha: 0.18),
-          height: 64,
-          labelTextStyle: WidgetStatePropertyAll(
-            TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: palette.inkSoft),
-          ),
-          destinations: [
-            NavigationDestination(
-              icon: Icon(Icons.receipt_long, color: palette.inkSoft),
-              selectedIcon: Icon(Icons.receipt_long, color: palette.hibiscus),
-              label: '账目',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.add_circle_outline, color: palette.inkSoft),
-              selectedIcon: Icon(Icons.add_circle, color: palette.hibiscus),
-              label: '记一笔',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.pie_chart_outline, color: palette.inkSoft),
-              selectedIcon: Icon(Icons.pie_chart, color: palette.hibiscus),
-              label: '统计',
-            ),
-          ],
+        sheet.RecordSheet(
+          editId: _editId,
+          onSaved: ({required staleRate}) {
+            widget.store?.touchEntries();
+            setState(() {
+              _listVersion++;
+              // an edit is done when it is saved; the sheet goes back to
+              // being a blank one rather than staying pointed at a row the
+              // user has finished with
+              if (_editId != null) {
+                _editId = null;
+                _tab = 0;
+              }
+            });
+          },
         ),
-      );
+        StatsScreen(key: ValueKey(_listVersion)),
+      ],
+    ),
+    // Material 3's default NavigationBar paints itself lavender, which
+    // against this palette's warm paper reads as a different application's
+    // chrome. The colours are the theme's, not the framework's.
+    bottomNavigationBar: NavigationBar(
+      selectedIndex: _tab,
+      onDestinationSelected: (i) => setState(() {
+        _tab = i;
+        // leaving the sheet by hand abandons the edit; coming back to it
+        // later should be a new entry, not the one someone walked away from
+        if (i != 1) _editId = null;
+      }),
+      backgroundColor: palette.card,
+      surfaceTintColor: Colors.transparent,
+      indicatorColor: palette.stamen.withValues(alpha: 0.18),
+      height: 64,
+      labelTextStyle: WidgetStatePropertyAll(
+        TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: palette.inkSoft,
+        ),
+      ),
+      destinations: [
+        NavigationDestination(
+          icon: Icon(Icons.receipt_long, color: palette.inkSoft),
+          selectedIcon: Icon(Icons.receipt_long, color: palette.hibiscus),
+          label: '账目',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.add_circle_outline, color: palette.inkSoft),
+          selectedIcon: Icon(Icons.add_circle, color: palette.hibiscus),
+          label: '记一笔',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.pie_chart_outline, color: palette.inkSoft),
+          selectedIcon: Icon(Icons.pie_chart, color: palette.hibiscus),
+          label: '统计',
+        ),
+      ],
+    ),
+  );
 }
 
 /// The throwaway prototype, kept.
@@ -215,7 +253,8 @@ class _MaterialProbeState extends State<MaterialProbe> {
     super.dispose();
   }
 
-  void _key(String k) => setState(() => _expr = calc.applyKey(expr: _expr, key: k));
+  void _key(String k) =>
+      setState(() => _expr = calc.applyKey(expr: _expr, key: k));
 
   @override
   Widget build(BuildContext context) {
@@ -240,21 +279,29 @@ class _MaterialProbeState extends State<MaterialProbe> {
     final showsTotal = calc.hasOperator(expr: _expr);
 
     return Scaffold(
-      backgroundColor: parseRgba(glass.washColor(
-        isDark: false,
-        card: paper,
-        paper: paper,
-        level: glass.GlassLevel.card,
-        alpha: 1,
-      )),
+      backgroundColor: parseRgba(
+        glass.washColor(
+          isDark: false,
+          card: paper,
+          paper: paper,
+          level: glass.GlassLevel.card,
+          alpha: 1,
+        ),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text('记一笔',
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700, color: Color(0xFF2B2622))),
+              const Text(
+                '记一笔',
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF2B2622),
+                ),
+              ),
               const SizedBox(height: 16),
               // Detailed content *behind* the glass, so a real backdrop blur is
               // distinguishable from a flat translucent slab.
@@ -264,8 +311,10 @@ class _MaterialProbeState extends State<MaterialProbe> {
                 offset: const Offset(0, -46),
                 child: _glassCard(spec, wash, showsTotal ? total : null),
               ),
-              const Text('备注（在这里用中文输入法打字）',
-                  style: TextStyle(fontSize: 14, color: Color(0xFF8A8178))),
+              const Text(
+                '备注（在这里用中文输入法打字）',
+                style: TextStyle(fontSize: 14, color: Color(0xFF8A8178)),
+              ),
               const SizedBox(height: 8),
               Semantics(
                 label: '备注',
@@ -282,19 +331,26 @@ class _MaterialProbeState extends State<MaterialProbe> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: Color(0xFFE0A93C), width: 2),
+                      borderSide: const BorderSide(
+                        color: Color(0xFFE0A93C),
+                        width: 2,
+                      ),
                     ),
                   ),
                 ),
               ),
               const SizedBox(height: 8),
-              Text('读回：「${_note.text}」 长度 ${_note.text.length}',
-                  style: const TextStyle(fontSize: 14, color: Color(0xFFB83A48))),
+              Text(
+                '读回：「${_note.text}」 长度 ${_note.text.length}',
+                style: const TextStyle(fontSize: 14, color: Color(0xFFB83A48)),
+              ),
               const SizedBox(height: 16),
               _keypad(),
               const SizedBox(height: 10),
-              Text('tier=${tier.name}  intensity=${spec.intensity}  alpha=$alpha\n$wash',
-                  style: const TextStyle(fontSize: 12, color: Color(0xFF8A8178))),
+              Text(
+                'tier=${tier.name}  intensity=${spec.intensity}  alpha=$alpha\n$wash',
+                style: const TextStyle(fontSize: 12, color: Color(0xFF8A8178)),
+              ),
             ],
           ),
         ),
@@ -304,31 +360,45 @@ class _MaterialProbeState extends State<MaterialProbe> {
 
   /// Busy content the glass sits over, so the blur has something to blur.
   Widget _behind() => Container(
-        height: 150,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          gradient: const LinearGradient(
-            colors: [Color(0xFFE8AB80), Color(0xFF8DC0E0), Color(0xFF94C494)],
-          ),
+    height: 150,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(20),
+      gradient: const LinearGradient(
+        colors: [Color(0xFFE8AB80), Color(0xFF8DC0E0), Color(0xFF94C494)],
+      ),
+    ),
+    padding: const EdgeInsets.all(14),
+    child: const Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '餐饮 · 现金 · -35.00',
+          style: TextStyle(color: Colors.white, fontSize: 17),
         ),
-        padding: const EdgeInsets.all(14),
-        child: const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('餐饮 · 现金 · -35.00', style: TextStyle(color: Colors.white, fontSize: 17)),
-            Text('交通 · 支付宝 · -12.00', style: TextStyle(color: Colors.white, fontSize: 17)),
-            Text('工资 · 招行 · +9,000.00', style: TextStyle(color: Colors.white, fontSize: 17)),
-            Text('购物 · 微信 · -218.40', style: TextStyle(color: Colors.white, fontSize: 17)),
-          ],
+        Text(
+          '交通 · 支付宝 · -12.00',
+          style: TextStyle(color: Colors.white, fontSize: 17),
         ),
-      );
+        Text(
+          '工资 · 招行 · +9,000.00',
+          style: TextStyle(color: Colors.white, fontSize: 17),
+        ),
+        Text(
+          '购物 · 微信 · -218.40',
+          style: TextStyle(color: Colors.white, fontSize: 17),
+        ),
+      ],
+    ),
+  );
 
   /// The material itself: a real backdrop blur behind a wash Rust computed.
   Widget _glassCard(glass.GlassSpec spec, String wash, double? total) {
     // `intensity` is an expo-blur 0–100; Flutter's sigma is a radius in
     // logical pixels. The shipping tuning treats them as the same curve.
     final sigma = spec.intensity / 3.5;
-    final hairline = spec.edgeWidth < 0 ? 1 / MediaQuery.devicePixelRatioOf(context) : spec.edgeWidth;
+    final hairline = spec.edgeWidth < 0
+        ? 1 / MediaQuery.devicePixelRatioOf(context)
+        : spec.edgeWidth;
     return ClipRRect(
       borderRadius: BorderRadius.circular(26),
       child: BackdropFilter(
@@ -344,9 +414,14 @@ class _MaterialProbeState extends State<MaterialProbe> {
           child: Semantics(
             label: '金额',
             child: Text(
-              total != null ? total.toStringAsFixed(2) : (_expr.isEmpty ? '0' : _expr),
+              total != null
+                  ? total.toStringAsFixed(2)
+                  : (_expr.isEmpty ? '0' : _expr),
               style: const TextStyle(
-                  fontSize: 44, fontWeight: FontWeight.w700, color: Color(0xFF2B2622)),
+                fontSize: 44,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF2B2622),
+              ),
             ),
           ),
         ),
@@ -378,7 +453,13 @@ class _MaterialProbeState extends State<MaterialProbe> {
                   _key(k == '⌫' ? 'back' : k);
                 },
                 child: Center(
-                  child: Text(k, style: const TextStyle(fontSize: 24, color: Color(0xFF2B2622))),
+                  child: Text(
+                    k,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      color: Color(0xFF2B2622),
+                    ),
+                  ),
                 ),
               ),
             ),

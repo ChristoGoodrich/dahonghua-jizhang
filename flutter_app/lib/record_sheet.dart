@@ -61,29 +61,34 @@ extension FormEdit on record.FormView {
     String? ledger,
     String? cur,
     String? subcat,
-  }) =>
-      record.FormView(
-        io: io ?? this.io,
-        cat: cat ?? this.cat,
-        amt: amt ?? this.amt,
-        note: note ?? this.note,
-        acct: acct ?? this.acct,
-        acctTo: acctTo ?? this.acctTo,
-        fee: fee ?? this.fee,
-        discount: discount ?? this.discount,
-        tags: tags ?? this.tags,
-        ledger: ledger ?? this.ledger,
-        cur: cur ?? this.cur,
-        subcat: subcat ?? this.subcat,
-        ts: ts,
-      );
+  }) => record.FormView(
+    io: io ?? this.io,
+    cat: cat ?? this.cat,
+    amt: amt ?? this.amt,
+    note: note ?? this.note,
+    acct: acct ?? this.acct,
+    acctTo: acctTo ?? this.acctTo,
+    fee: fee ?? this.fee,
+    discount: discount ?? this.discount,
+    tags: tags ?? this.tags,
+    ledger: ledger ?? this.ledger,
+    cur: cur ?? this.cur,
+    subcat: subcat ?? this.subcat,
+    ts: ts,
+  );
 }
 
 class RecordSheet extends StatefulWidget {
-  const RecordSheet({super.key, this.zh = true, this.onSaved});
+  const RecordSheet({super.key, this.zh = true, this.onSaved, this.editId});
 
   final bool zh;
   final void Function({required bool staleRate})? onSaved;
+
+  /// The entry being edited, or null for a new one.
+  ///
+  /// Editing loads the source whole, date included — which is what separates it
+  /// from 再记一笔, where the same fields land on a new row dated today.
+  final String? editId;
 
   @override
   State<RecordSheet> createState() => _RecordSheetState();
@@ -98,7 +103,26 @@ class _RecordSheetState extends State<RecordSheet> {
   @override
   void initState() {
     super.initState();
-    _form = record.initialForm(sourceId: '', editing: false, ledger: '');
+    _loadForm();
+  }
+
+  @override
+  void didUpdateWidget(RecordSheet old) {
+    super.didUpdateWidget(old);
+    // the shell reuses one sheet for every target, so switching which entry is
+    // being edited has to reload the fields rather than keep the last one's
+    if (old.editId != widget.editId) _loadForm();
+  }
+
+  void _loadForm() {
+    final id = widget.editId ?? '';
+    _form = record.initialForm(
+      sourceId: id,
+      editing: id.isNotEmpty,
+      ledger: '',
+    );
+    _note.text = _form.note;
+    _flash = null;
   }
 
   @override
@@ -113,7 +137,9 @@ class _RecordSheetState extends State<RecordSheet> {
   /// twice.
   void _key(String k) {
     setState(() {
-      _form = _form.copyWith(amt: calc.applyKey(expr: _form.amt, key: k));
+      _form = _form.copyWith(
+        amt: calc.applyKey(expr: _form.amt, key: k),
+      );
       // A refusal about the amount stops being true the moment the amount
       // changes. The React Native sheet clears it on a timer because it is a
       // modal that comes and goes; this is a tab that stays, and a complaint
@@ -137,7 +163,7 @@ class _RecordSheetState extends State<RecordSheet> {
     final cached = record.cachedRate(code: _form.cur);
     final r = record.saveForm(
       form: _form.copyWith(note: _note.text),
-      editId: '',
+      editId: widget.editId ?? '',
       id: 'e${now}x${_form.amt.hashCode}',
       now: now,
       rateOverride: cached,
@@ -156,6 +182,12 @@ class _RecordSheetState extends State<RecordSheet> {
     // pretend otherwise — the TypeScript treated the two the same and wrote the
     // row twice when a user pressed save again.
     widget.onSaved?.call(staleRate: r.staleRate);
+    if (widget.editId != null) {
+      // an edit is finished when it is saved; there is no next one of the same
+      // kind to type
+      setState(() => _flash = widget.zh ? '已保存' : 'Saved');
+      return;
+    }
     setState(() {
       _form = record.clearForNext(form: _form);
       _note.clear();
@@ -179,9 +211,14 @@ class _RecordSheetState extends State<RecordSheet> {
         backgroundColor: palette.paper,
         surfaceTintColor: Colors.transparent,
         title: Text(
-          zh ? '记一笔' : 'Record',
+          widget.editId != null
+              ? (zh ? '编辑' : 'Edit')
+              : (zh ? '记一笔' : 'Record'),
           style: TextStyle(
-              color: palette.ink, fontSize: 20, fontWeight: FontWeight.w700),
+            color: palette.ink,
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+          ),
         ),
       ),
       body: SafeArea(
@@ -241,8 +278,9 @@ class _RecordSheetState extends State<RecordSheet> {
                     labels[io]!,
                     style: TextStyle(
                       fontSize: 14,
-                      fontWeight:
-                          _form.io == io ? FontWeight.w700 : FontWeight.w500,
+                      fontWeight: _form.io == io
+                          ? FontWeight.w700
+                          : FontWeight.w500,
                       color: _form.io == io ? palette.ink : palette.inkSoft,
                     ),
                   ),
@@ -255,36 +293,39 @@ class _RecordSheetState extends State<RecordSheet> {
   }
 
   Widget _amount(double total, bool showsTotal, Color accent) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-        decoration: BoxDecoration(
-          color: palette.card,
-          borderRadius: BorderRadius.circular(Rad.lg),
-          border: Border.all(color: palette.line),
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+    decoration: BoxDecoration(
+      color: palette.card,
+      borderRadius: BorderRadius.circular(Rad.lg),
+      border: Border.all(color: palette.line),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text(
+          _form.amt.isEmpty ? '0' : _form.amt,
+          key: const Key('amount-expr'),
+          style: TextStyle(
+            fontSize: 34,
+            fontWeight: FontWeight.w700,
+            fontFeatures: tabular,
+            color: accent,
+          ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              _form.amt.isEmpty ? '0' : _form.amt,
-              key: const Key('amount-expr'),
-              style: TextStyle(
-                fontSize: 34,
-                fontWeight: FontWeight.w700,
-                fontFeatures: tabular,
-                color: accent,
-              ),
+        // the running total, only while the expression has an operator in
+        // it — `hasOperator` is Rust's answer, not a `contains('+')`
+        if (showsTotal)
+          Text(
+            '= ${money.fmtNum(n: total)}',
+            style: TextStyle(
+              fontSize: 15,
+              fontFeatures: tabular,
+              color: palette.inkSoft,
             ),
-            // the running total, only while the expression has an operator in
-            // it — `hasOperator` is Rust's answer, not a `contains('+')`
-            if (showsTotal)
-              Text(
-                '= ${money.fmtNum(n: total)}',
-                style: TextStyle(
-                    fontSize: 15, fontFeatures: tabular, color: palette.inkSoft),
-              ),
-          ],
-        ),
-      );
+          ),
+      ],
+    ),
+  );
 
   Widget _categories(bool zh, Color accent) {
     final cats = catalog.allCats(io: _form.io, custom: const []);
@@ -310,8 +351,9 @@ class _RecordSheetState extends State<RecordSheet> {
                 '${c.e} ${catalog.catName(cat: c, zh: zh)}',
                 style: TextStyle(
                   fontSize: 13,
-                  fontWeight:
-                      _form.cat == c.k ? FontWeight.w700 : FontWeight.w500,
+                  fontWeight: _form.cat == c.k
+                      ? FontWeight.w700
+                      : FontWeight.w500,
                   color: palette.ink,
                 ),
               ),
@@ -322,37 +364,37 @@ class _RecordSheetState extends State<RecordSheet> {
   }
 
   Widget _noteField(bool zh) => Semantics(
-        label: zh ? '备注' : 'Note',
-        textField: true,
-        child: TextField(
-          controller: _note,
-          decoration: InputDecoration(
-            hintText: zh ? '午饭、打车、房租…' : 'lunch, taxi, rent…',
-            filled: true,
-            fillColor: palette.card,
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(Rad.md),
-              borderSide: BorderSide(color: palette.line),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(Rad.md),
-              borderSide: BorderSide(color: palette.stamen, width: 2),
-            ),
-          ),
+    label: zh ? '备注' : 'Note',
+    textField: true,
+    child: TextField(
+      controller: _note,
+      decoration: InputDecoration(
+        hintText: zh ? '午饭、打车、房租…' : 'lunch, taxi, rent…',
+        filled: true,
+        fillColor: palette.card,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(Rad.md),
+          borderSide: BorderSide(color: palette.line),
         ),
-      );
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(Rad.md),
+          borderSide: BorderSide(color: palette.stamen, width: 2),
+        ),
+      ),
+    ),
+  );
 
   Widget _flashLine() => Padding(
-        padding: const EdgeInsets.only(top: 10),
-        child: Text(
-          _flash!,
-          key: const Key('flash'),
-          style: TextStyle(
-            fontSize: 13,
-            color: _flashIsError ? palette.hibiscus : palette.leafDeep,
-          ),
-        ),
-      );
+    padding: const EdgeInsets.only(top: 10),
+    child: Text(
+      _flash!,
+      key: const Key('flash'),
+      style: TextStyle(
+        fontSize: 13,
+        color: _flashIsError ? palette.hibiscus : palette.leafDeep,
+      ),
+    ),
+  );
 
   Widget _keypad(bool zh, Color accent) {
     // The shipping keypad's layout and its key *names*, which are not the same

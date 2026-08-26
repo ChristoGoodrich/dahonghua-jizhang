@@ -1950,6 +1950,52 @@ Writes go through a temporary file and a rename, which is atomic where a write
 is not — otherwise the failure mode above would be one this build creates for
 itself.
 
+### Correcting the ledger
+
+A ledger you cannot fix is worse than one you cannot chart, and until now the
+Flutter build had no way to fix one. Two ways now, both through the same Rust
+the record sheet already used.
+
+**Swipe to delete**, which writes a tombstone rather than removing a row — the
+row still syncs, and every display path filters it. The undo goes back through
+`unremove_entry`, which is a *fresh stamped write* rather than a replay of the
+old row: replaying it would restore an `updatedAt` below the push watermark, so
+the undo would never reach the cloud and the next pull would delete the entry
+again. That reasoning was already in `ledger.rs`; this is the first screen that
+depends on it.
+
+**Tap to edit**, which loads the source whole — date included, which is exactly
+what separates it from 再记一笔. Saving patches in place rather than writing a
+second row, and an untouched date is not restamped, because that stamp is what
+the merge uses to decide whose version of the date wins.
+
+An edit also does not clear the form the way 再记 does. There is no "next one of
+the same kind" when the thing being typed already exists.
+
+### An experiment whose setup destroys what it measures, twice
+
+Last increment a seed masked a save that never happened. This increment the same
+shape appeared again, from the other end.
+
+After editing a row to 99 and force-stopping, the file on disk held five rows —
+and the entry recorded before it was **gone**. That is a persistence app losing
+data, so it was worth stopping for. It was not the app:
+
+```
+$ ls app_flutter/            → config.json, entries.json
+$ flutter test integration_test/store_test.dart   → All tests passed
+$ ls app_flutter/            → (no files)
+```
+
+**`flutter test` wipes the app's data directory when it installs.** Every piece
+of device evidence about persistence therefore has to be gathered *before* a
+test run, never after — and the earlier proof was: type 78, `am force-stop`,
+read the file, find it there. That still stands, and so does the edit-to-99 that
+survived its own force-stop.
+
+Worth writing down because it is the second time in two increments that the
+measurement disturbed the thing measured, in a way that looked like a result.
+
 ### Building for Android here
 
 Whatever drives it, the Android build needs `TEMP` pointed somewhere AF_UNIX

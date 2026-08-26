@@ -49,9 +49,21 @@ String dayHeading(String label, String ymd, bool zh) {
 }
 
 class EntryListScreen extends StatefulWidget {
-  const EntryListScreen({super.key, this.zh = true});
+  const EntryListScreen({
+    super.key,
+    this.zh = true,
+    this.onEdit,
+    this.onChanged,
+  });
 
   final bool zh;
+
+  /// Open a row for editing. The shell decides where that happens.
+  final void Function(String id)? onEdit;
+
+  /// The ledger changed and should be written. Separate from `onEdit` because
+  /// a delete changes it and an edit request does not.
+  final VoidCallback? onChanged;
 
   @override
   State<EntryListScreen> createState() => _EntryListScreenState();
@@ -127,15 +139,67 @@ class _EntryListScreenState extends State<EntryListScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 22),
         child: Row(
           children: [
-            for (final e in entries) Expanded(child: _entryCard(e, zh)),
+            for (final e in entries) Expanded(child: _swipeable(e, zh)),
           ],
         ),
       );
     }
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 22),
-      child: Column(children: [for (final e in entries) _entryCard(e, zh)]),
+      child: Column(children: [for (final e in entries) _swipeable(e, zh)]),
     );
+  }
+
+  /// A row that can be swiped away.
+  ///
+  /// The delete is a tombstone rather than a removal, and the undo goes back
+  /// through `unremove_entry` — a fresh stamped write, not a replay of the old
+  /// row. Replaying it would restore an `updatedAt` below the push watermark,
+  /// so the undo would never reach the cloud and the next pull would delete the
+  /// entry again.
+  Widget _swipeable(store.EntryView e, bool zh) => Dismissible(
+    key: Key('row-${e.id}'),
+    direction: DismissDirection.endToStart,
+    background: Container(
+      alignment: Alignment.centerRight,
+      padding: const EdgeInsets.only(right: 20, bottom: 8),
+      decoration: BoxDecoration(
+        color: palette.hibiscus.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(Rad.md),
+      ),
+      child: Icon(Icons.delete_outline, color: palette.hibiscus),
+    ),
+    onDismissed: (_) => _delete(e, zh),
+    child: _entryCard(e, zh),
+  );
+
+  void _delete(store.EntryView e, bool zh) {
+    final undo = store.removeEntry(
+      id: e.id,
+      now: DateTime.now().millisecondsSinceEpoch,
+    );
+    widget.onChanged?.call();
+    _reload();
+    if (undo == null || !mounted) return;
+
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(zh ? '已删除' : 'Deleted'),
+          action: SnackBarAction(
+            label: zh ? '撤销' : 'Undo',
+            onPressed: () {
+              store.unremoveEntry(
+                undo: undo,
+                now: DateTime.now().millisecondsSinceEpoch,
+              );
+              widget.onChanged?.call();
+              _reload();
+            },
+          ),
+        ),
+      );
   }
 
   Widget _header(store.ListItem item, bool zh) {
@@ -188,84 +252,96 @@ class _EntryListScreenState extends State<EntryListScreen> {
       label:
           '${label.name}, ${money.fmtSigned(n: e.amt, io: e.io)}'
           '${e.note != null ? ', ${e.note}' : ''}',
-      child: ExcludeSemantics(
-        child: Container(
-          margin: const EdgeInsets.only(bottom: 8),
-          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 11),
-          decoration: BoxDecoration(
-            color: palette.card,
-            borderRadius: BorderRadius.circular(Rad.md),
-            border: Border.all(
-              color: palette.line,
-              width: 1 / MediaQuery.devicePixelRatioOf(context),
-            ),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: accent.withValues(alpha: palette.isDark ? 0.19 : 0.12),
-                  borderRadius: BorderRadius.circular(13),
-                ),
-                child: Text(label.emoji, style: const TextStyle(fontSize: 19)),
+      child: GestureDetector(
+        onTap: () => widget.onEdit?.call(e.id),
+        child: ExcludeSemantics(
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 11),
+            decoration: BoxDecoration(
+              color: palette.card,
+              borderRadius: BorderRadius.circular(Rad.md),
+              border: Border.all(
+                color: palette.line,
+                width: 1 / MediaQuery.devicePixelRatioOf(context),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Flexible(
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: accent.withValues(
+                      alpha: palette.isDark ? 0.19 : 0.12,
+                    ),
+                    borderRadius: BorderRadius.circular(13),
+                  ),
+                  child: Text(
+                    label.emoji,
+                    style: const TextStyle(fontSize: 19),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              label.name,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 14.5,
+                                fontWeight: FontWeight.w600,
+                                color: palette.ink,
+                              ),
+                            ),
+                          ),
+                          if (e.rb == 'pending')
+                            _badge(zh ? '待报销' : 'Claim', palette.stamen, 0.18),
+                          if (e.rb == 'done')
+                            _badge(zh ? '已报销' : 'Claimed', palette.leaf, 0.19),
+                          if ((e.refund ?? 0) != 0)
+                            _badge(
+                              zh ? '退款' : 'Refund',
+                              palette.hibiscus,
+                              0.15,
+                            ),
+                        ],
+                      ),
+                      if (e.note != null && e.note!.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2),
                           child: Text(
-                            label.name,
+                            e.note!,
+                            maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontSize: 14.5,
-                              fontWeight: FontWeight.w600,
-                              color: palette.ink,
+                              fontSize: 11.5,
+                              color: palette.inkSoft,
                             ),
                           ),
                         ),
-                        if (e.rb == 'pending')
-                          _badge(zh ? '待报销' : 'Claim', palette.stamen, 0.18),
-                        if (e.rb == 'done')
-                          _badge(zh ? '已报销' : 'Claimed', palette.leaf, 0.19),
-                        if ((e.refund ?? 0) != 0)
-                          _badge(zh ? '退款' : 'Refund', palette.hibiscus, 0.15),
-                      ],
-                    ),
-                    if (e.note != null && e.note!.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 2),
-                        child: Text(
-                          e.note!,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 11.5,
-                            color: palette.inkSoft,
-                          ),
-                        ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Text(
-                money.fmtSigned(n: e.amt, io: e.io),
-                style: TextStyle(
-                  fontSize: 15.5,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: -0.2,
-                  fontFeatures: tabular,
-                  color: e.io == 'inc' ? palette.leafDeep : palette.ink,
+                const SizedBox(width: 12),
+                Text(
+                  money.fmtSigned(n: e.amt, io: e.io),
+                  style: TextStyle(
+                    fontSize: 15.5,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -0.2,
+                    fontFeatures: tabular,
+                    color: e.io == 'inc' ? palette.leafDeep : palette.ink,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
