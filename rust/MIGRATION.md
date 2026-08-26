@@ -2036,6 +2036,48 @@ Third time in three increments that the device found what the tests did not,
 and the pattern is consistent enough to name: **tests cover the paths you
 thought of, and a screen has paths you only find by touching it.**
 
+### Accounts, and a refusal that is nearly unreachable
+
+The accounts screen is the fifth, and its arithmetic is the least visible so
+far: a balance is an opening figure plus every entry that touched the account,
+and a transfer contributes to two of them with four signs at once. None of that
+is on this side. Two of its rules are enforced by *not drawing a button* —
+`default` is neither deletable nor archivable, because it is what every orphaned
+entry migrates to, and the core answers `false` to both.
+
+The increment did not stop at the screen, because the screen had nothing to
+show. Every entry was landing on `default`, and a transfer could not be saved at
+all: `validate` refuses one with no destination and nothing on the record sheet
+could name one. The picker is what makes the balances differ from each other,
+so it belongs to this increment rather than a later one.
+
+Then a test of mine expected `请选择转入账户` and got `已保存`. `pick_io` fills
+the destination with the first visible account that is **not** the source, so
+switching to 转账 already names one — the refusal is unreachable through the
+sheet whenever a second account exists. It is reachable on a fresh install,
+which has exactly one, and that is the case the test asserts now. The lesson is
+not about transfers: **a rejection the core defines is not evidence the UI can
+reach it**, and a test that asserts a refusal should say which state produces
+it.
+
+### A colour no test can see
+
+Material 3 derives a colour scheme when none is given, and its default is
+lavender. That produced the lavender navigation bar two increments ago, and this
+time it produced a lavender `名称` label on a focused field — against warm paper,
+in an app whose accent is amber. Thirty-one tests passed over it.
+
+They could not have caught it. **A colour a widget does not set is not a colour
+a widget test can read**: `expect(style.color, ...)` on a `Text` that inherits
+its colour reads `null`, and the lavender only exists after the theme resolves
+it during paint. The fix is in two places on purpose — the app now carries a
+`ThemeData` for the seams a widget cannot set (selection handles, ripples, a
+dialog's surface), and the dialog's fields spell their own label colours so they
+are right under the bare `MaterialApp` a test builds. The test asserts the
+second, which is the half a test can see.
+
+Fourth increment running that the device found what the tests did not.
+
 ### Building for Android here
 
 Whatever drives it, the Android build needs `TEMP` pointed somewhere AF_UNIX
