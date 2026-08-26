@@ -11,6 +11,7 @@ import 'api/catalog.dart';
 import 'api/glass.dart';
 import 'api/money.dart';
 import 'api/record.dart';
+import 'api/stats.dart';
 import 'api/store.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -74,6 +75,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   CategoryView dco_decode_category_view(dynamic raw);
 
   @protected
+  ChartPoint dco_decode_chart_point(dynamic raw);
+
+  @protected
+  ChartView dco_decode_chart_view(dynamic raw);
+
+  @protected
   EntryPatch dco_decode_entry_patch(dynamic raw);
 
   @protected
@@ -110,6 +117,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<CategoryView> dco_decode_list_category_view(dynamic raw);
 
   @protected
+  List<ChartPoint> dco_decode_list_chart_point(dynamic raw);
+
+  @protected
   List<EntryView> dco_decode_list_entry_view(dynamic raw);
 
   @protected
@@ -129,6 +139,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
+
+  @protected
+  List<SliceView> dco_decode_list_slice_view(dynamic raw);
+
+  @protected
+  List<TrendPointView> dco_decode_list_trend_point_view(dynamic raw);
 
   @protected
   NewEntry dco_decode_new_entry(dynamic raw);
@@ -161,7 +177,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<String>? dco_decode_opt_list_String(dynamic raw);
 
   @protected
+  OverviewView dco_decode_overview_view(dynamic raw);
+
+  @protected
   SaveResult dco_decode_save_result(dynamic raw);
+
+  @protected
+  SliceView dco_decode_slice_view(dynamic raw);
+
+  @protected
+  TrendPointView dco_decode_trend_point_view(dynamic raw);
 
   @protected
   int dco_decode_u_32(dynamic raw);
@@ -226,6 +251,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   CategoryView sse_decode_category_view(SseDeserializer deserializer);
 
   @protected
+  ChartPoint sse_decode_chart_point(SseDeserializer deserializer);
+
+  @protected
+  ChartView sse_decode_chart_view(SseDeserializer deserializer);
+
+  @protected
   EntryPatch sse_decode_entry_patch(SseDeserializer deserializer);
 
   @protected
@@ -264,6 +295,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  List<ChartPoint> sse_decode_list_chart_point(SseDeserializer deserializer);
+
+  @protected
   List<EntryView> sse_decode_list_entry_view(SseDeserializer deserializer);
 
   @protected
@@ -283,6 +317,14 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
+
+  @protected
+  List<SliceView> sse_decode_list_slice_view(SseDeserializer deserializer);
+
+  @protected
+  List<TrendPointView> sse_decode_list_trend_point_view(
+    SseDeserializer deserializer,
+  );
 
   @protected
   NewEntry sse_decode_new_entry(SseDeserializer deserializer);
@@ -319,7 +361,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<String>? sse_decode_opt_list_String(SseDeserializer deserializer);
 
   @protected
+  OverviewView sse_decode_overview_view(SseDeserializer deserializer);
+
+  @protected
   SaveResult sse_decode_save_result(SseDeserializer deserializer);
+
+  @protected
+  SliceView sse_decode_slice_view(SseDeserializer deserializer);
+
+  @protected
+  TrendPointView sse_decode_trend_point_view(SseDeserializer deserializer);
 
   @protected
   int sse_decode_u_32(SseDeserializer deserializer);
@@ -406,6 +457,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_category_view(CategoryView self, SseSerializer serializer);
 
   @protected
+  void sse_encode_chart_point(ChartPoint self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_chart_view(ChartView self, SseSerializer serializer);
+
+  @protected
   void sse_encode_entry_patch(EntryPatch self, SseSerializer serializer);
 
   @protected
@@ -448,6 +505,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_list_chart_point(
+    List<ChartPoint> self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_list_entry_view(
     List<EntryView> self,
     SseSerializer serializer,
@@ -480,6 +543,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_prim_u_8_strict(
     Uint8List self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_slice_view(
+    List<SliceView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_trend_point_view(
+    List<TrendPointView> self,
     SseSerializer serializer,
   );
 
@@ -523,7 +598,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_opt_list_String(List<String>? self, SseSerializer serializer);
 
   @protected
+  void sse_encode_overview_view(OverviewView self, SseSerializer serializer);
+
+  @protected
   void sse_encode_save_result(SaveResult self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_slice_view(SliceView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_trend_point_view(
+    TrendPointView self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_u_32(int self, SseSerializer serializer);

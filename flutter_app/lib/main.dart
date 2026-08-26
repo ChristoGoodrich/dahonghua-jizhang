@@ -17,6 +17,7 @@ import 'package:flutter/services.dart';
 
 import 'entry_list.dart';
 import 'record_sheet.dart' as sheet;
+import 'stats_screen.dart';
 import 'theme.dart';
 import 'src/rust/api/calc.dart' as calc;
 import 'src/rust/api/glass.dart' as glass;
@@ -103,6 +104,7 @@ class _HomeState extends State<Home> {
             sheet.RecordSheet(onSaved: ({required staleRate}) {
               setState(() => _listVersion++);
             }),
+            StatsScreen(key: ValueKey(_listVersion)),
           ],
         ),
         // Material 3's default NavigationBar paints itself lavender, which
@@ -128,6 +130,11 @@ class _HomeState extends State<Home> {
               icon: Icon(Icons.add_circle_outline, color: palette.inkSoft),
               selectedIcon: Icon(Icons.add_circle, color: palette.hibiscus),
               label: '记一笔',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.pie_chart_outline, color: palette.inkSoft),
+              selectedIcon: Icon(Icons.pie_chart, color: palette.hibiscus),
+              label: '统计',
             ),
           ],
         ),

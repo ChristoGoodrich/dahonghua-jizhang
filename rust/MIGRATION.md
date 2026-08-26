@@ -1879,6 +1879,32 @@ The third is a genuine no-op. `toFixed` gives up at `1e21` and returns
 f64 spacing is at least 0.125 and a one-decimal round always lands back on the
 same representable value. Checked rather than argued.
 
+### Charts, with painters that do no arithmetic
+
+The third screen, and the first non-text drawing. The point of it is what the
+painters are *not* allowed to do: `chart_points` hands back coordinates in a
+300×96 box and the painter scales that box to its canvas; `category_slices`
+hands back a start and a fraction per arc. Neither painter knows what a maximum
+is, what an empty series should do, or how a total divides.
+
+That division earns more here than on the other screens. **A chart is the
+easiest place in an app to be confidently wrong** — a line is drawn either way,
+and nothing about a wrong one looks wrong. The tests check the numbers that
+reach the painter rather than the pixels it makes of them, because the pixels
+are one scale factor away from the numbers and the numbers are what a corpus
+can pin.
+
+Two calls do a screen: `daily_trend` for the buckets and `chart_points` for the
+coordinates. Between them they carry the three guards `chart.rs` documents, and
+each has a test on the device: an all-zero range answers a maximum of 1 rather
+than dividing by zero, a series nobody draws does not set the scale, and the
+tallest drawn value lands exactly on the top padding.
+
+One thing the painter does decide, and says so: a `NaN` coordinate draws
+nothing rather than a line. `Math.max` propagates a NaN by design — that is the
+behaviour `chart_max` reproduces — and what should reach the screen when it does
+is an absence, not a plausible shape.
+
 ### Building for Android here
 
 Whatever drives it, the Android build needs `TEMP` pointed somewhere AF_UNIX
