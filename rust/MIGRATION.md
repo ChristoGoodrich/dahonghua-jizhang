@@ -1666,6 +1666,55 @@ masters.
 no tombstone and no id, because those are the store's to set — a caller that
 could set them could write a row the sync merge cannot reason about.
 
+### The first screen, and what is not in it
+
+The entry list is drawn in Dart over the Rust ledger. What the file does *not*
+contain is the point of it: no sort, no day bucketing, no per-day totals, no
+"is this today", no rounding, no grouping separators, no category fallback.
+Every one of those is a decision the core makes and the corpus pins. What is
+left is rows, colours, taps and a scroll position — and that is what a widget
+tree should be.
+
+Two calls draw the whole screen. The ids and their local days go over once; the
+grouped, totalled, labelled result comes back. Nothing is held on the Dart side
+beyond a frame, so there is no second copy of the ledger to fall out of step.
+
+Three bridge modules were needed and each earned its place rather than being
+mirrored for symmetry:
+
+* **`money`** — `fmt_num` is not `toFixed(2)` with commas. It reproduces
+  `Intl.NumberFormat`'s grouping *and* JavaScript's rounding, which breaks ties
+  toward +∞ where Rust's `f64::round` breaks them away from zero. That was the
+  first divergence this harness ever found. Dart's `NumberFormat` would round
+  differently again, and only on some locales.
+* **`catalog`** — the category lookup falls back to the **last** category rather
+  than to a generic "other", and a custom category that filled in one language
+  falls back to the other. Neither is something a second implementation gets
+  right by accident.
+* **`store`** — the ledger itself, from the increment before.
+
+### Two things the device said that the host could not
+
+**A screen reader would have heard every row twice.** React Native's
+`accessibilityLabel` on a touchable *replaces* the subtree's text; Flutter
+*merges* sibling text into the node's label. So the row published
+`餐饮, -35.50, 午饭` **and** the category, the amount and the note again after
+it. The test that caught this failed with "found 0 widgets", which looked like a
+missing label and was in fact a longer one — dumping the actual semantics tree
+settled it in one run, where guessing would not have. `ExcludeSemantics` makes
+the row say its one sentence, as the shipping row does.
+
+**Material 3 paints its own chrome.** The default `NavigationBar` is lavender,
+which against this palette's warm paper reads as a different application's
+bottom bar. Visible in a screenshot, invisible to every test — worth saying
+plainly, because a Flutter rewrite inherits Material's opinions unless each one
+is overridden on purpose.
+
+A third came free: changing `main.dart` from "the record sheet is home" to a two
+tab shell broke the two prototype tests that pumped the shell to reach it, since
+an `IndexedStack` keeps the unselected tab offstage. They now pump the record
+sheet directly, which is what they were always about.
+
 ### Building for Android here
 
 Whatever drives it, the Android build needs `TEMP` pointed somewhere AF_UNIX

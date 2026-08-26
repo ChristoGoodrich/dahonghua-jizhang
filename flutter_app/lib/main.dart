@@ -1,26 +1,55 @@
-// The record sheet, a third time.
+// The app shell.
 //
-// Slint and Dioxus each got a throwaway prototype of this same screen, so that
-// three questions could be answered on a real device rather than argued about:
-// does a Chinese IME compose, does 柔光玻璃 render, do accessibility labels
-// reach Android. This is the Flutter one, held to the same three standards.
+// Two screens so far. The record sheet is the prototype Slint and Dioxus each
+// got a throwaway of, kept because it is what answered the three questions this
+// architecture had to settle on a real device — Chinese IME composition,
+// 柔光玻璃 rendering, and accessibility labels reaching Android — and because it
+// still demonstrates the fourth: every colour and every number on it is
+// computed in Rust.
 //
-// It answers a fourth as well, which is the one this architecture introduces:
-// every colour and every number on screen is computed in Rust and crosses the
-// FFI boundary. Nothing here recomputes the material.
+// The entry list is the first *real* screen, drawing the ledger that lives on
+// the other side of the boundary.
 
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'entry_list.dart';
+import 'theme.dart';
 import 'src/rust/api/calc.dart' as calc;
 import 'src/rust/api/glass.dart' as glass;
+import 'src/rust/api/store.dart' as store;
 import 'src/rust/frb_generated.dart';
 
 Future<void> main() async {
   await RustLib.init();
+  _seedIfEmpty();
   runApp(const App());
+}
+
+/// A few rows so the list is not empty on first launch, until persistence is
+/// wired to a file. Written through the ordinary commands — there is no back
+/// door into the store, and this is not one.
+void _seedIfEmpty() {
+  if (store.entryCount() > 0) return;
+  final now = DateTime.now().millisecondsSinceEpoch;
+  const day = 86400000;
+  final rows = <(String, String, double, String?, int)>[
+    ('exp', 'food', 35.5, '午饭', now),
+    ('exp', 'trans', 12, '打车', now - 3600 * 1000),
+    ('inc', 'salary', 9000, null, now - day),
+    ('exp', 'shop', 218.4, '毛衣', now - day),
+    ('exp', 'home', 1800, '房租', now - day * 3),
+  ];
+  for (var i = 0; i < rows.length; i++) {
+    final (io, cat, amt, note, ts) = rows[i];
+    store.addEntry(
+      entry: store.NewEntry(io: io, cat: cat, amt: amt, note: note, ts: ts),
+      id: 'seed-$i',
+      now: now + i,
+    );
+  }
 }
 
 /// `rgba(r, g, b, a)` from Rust → a Flutter colour.
@@ -43,10 +72,56 @@ class App extends StatelessWidget {
   const App({super.key});
 
   @override
-  Widget build(BuildContext context) => MaterialApp(
-        title: 'proto-flutter',
+  Widget build(BuildContext context) => const MaterialApp(
+        title: '大红花记账',
         debugShowCheckedModeBanner: false,
-        home: const RecordSheet(),
+        home: Home(),
+      );
+}
+
+/// The two screens, until there is a router worth having.
+class Home extends StatefulWidget {
+  const Home({super.key});
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  int _tab = 0;
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        body: IndexedStack(
+          index: _tab,
+          children: const [EntryListScreen(), RecordSheet()],
+        ),
+        // Material 3's default NavigationBar paints itself lavender, which
+        // against this palette's warm paper reads as a different application's
+        // chrome. The colours are the theme's, not the framework's.
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: _tab,
+          onDestinationSelected: (i) => setState(() => _tab = i),
+          backgroundColor: palette.card,
+          surfaceTintColor: Colors.transparent,
+          indicatorColor: palette.stamen.withValues(alpha: 0.18),
+          height: 64,
+          labelTextStyle: WidgetStatePropertyAll(
+            TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: palette.inkSoft),
+          ),
+          destinations: [
+            NavigationDestination(
+              icon: Icon(Icons.receipt_long, color: palette.inkSoft),
+              selectedIcon: Icon(Icons.receipt_long, color: palette.hibiscus),
+              label: '账目',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.add_circle_outline, color: palette.inkSoft),
+              selectedIcon: Icon(Icons.add_circle, color: palette.hibiscus),
+              label: '记一笔',
+            ),
+          ],
+        ),
       );
 }
 

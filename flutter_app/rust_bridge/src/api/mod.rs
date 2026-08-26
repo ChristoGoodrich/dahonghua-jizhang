@@ -6,6 +6,8 @@
 //! corpus, which is what makes it trustworthy in the first place.
 
 pub mod calc;
+pub mod catalog;
 pub mod glass;
 pub mod init;
+pub mod money;
 pub mod store;

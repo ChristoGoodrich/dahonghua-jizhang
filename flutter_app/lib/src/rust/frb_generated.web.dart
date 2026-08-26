@@ -7,7 +7,9 @@
 // ignore_for_file: argument_type_not_assignable
 
 import 'api/calc.dart';
+import 'api/catalog.dart';
 import 'api/glass.dart';
+import 'api/money.dart';
 import 'api/store.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -35,6 +37,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool dco_decode_box_autoadd_bool(dynamic raw);
 
   @protected
+  CategoryView dco_decode_box_autoadd_category_view(dynamic raw);
+
+  @protected
   EntryPatch dco_decode_box_autoadd_entry_patch(dynamic raw);
 
   @protected
@@ -57,6 +62,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   UndoToken dco_decode_box_autoadd_undo_token(dynamic raw);
+
+  @protected
+  CatLabel dco_decode_cat_label(dynamic raw);
+
+  @protected
+  CategoryView dco_decode_category_view(dynamic raw);
 
   @protected
   EntryPatch dco_decode_entry_patch(dynamic raw);
@@ -87,6 +98,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<AccountView> dco_decode_list_account_view(dynamic raw);
+
+  @protected
+  List<CategoryView> dco_decode_list_category_view(dynamic raw);
 
   @protected
   List<EntryView> dco_decode_list_entry_view(dynamic raw);
@@ -164,6 +178,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool sse_decode_box_autoadd_bool(SseDeserializer deserializer);
 
   @protected
+  CategoryView sse_decode_box_autoadd_category_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   EntryPatch sse_decode_box_autoadd_entry_patch(SseDeserializer deserializer);
 
   @protected
@@ -186,6 +205,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   UndoToken sse_decode_box_autoadd_undo_token(SseDeserializer deserializer);
+
+  @protected
+  CatLabel sse_decode_cat_label(SseDeserializer deserializer);
+
+  @protected
+  CategoryView sse_decode_category_view(SseDeserializer deserializer);
 
   @protected
   EntryPatch sse_decode_entry_patch(SseDeserializer deserializer);
@@ -216,6 +241,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<AccountView> sse_decode_list_account_view(SseDeserializer deserializer);
+
+  @protected
+  List<CategoryView> sse_decode_list_category_view(
+    SseDeserializer deserializer,
+  );
 
   @protected
   List<EntryView> sse_decode_list_entry_view(SseDeserializer deserializer);
@@ -297,6 +327,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_box_autoadd_bool(bool self, SseSerializer serializer);
 
   @protected
+  void sse_encode_box_autoadd_category_view(
+    CategoryView self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_box_autoadd_entry_patch(
     EntryPatch self,
     SseSerializer serializer,
@@ -339,6 +375,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_cat_label(CatLabel self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_category_view(CategoryView self, SseSerializer serializer);
+
+  @protected
   void sse_encode_entry_patch(EntryPatch self, SseSerializer serializer);
 
   @protected
@@ -368,6 +410,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_account_view(
     List<AccountView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_category_view(
+    List<CategoryView> self,
     SseSerializer serializer,
   );
 
