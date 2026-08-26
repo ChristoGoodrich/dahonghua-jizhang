@@ -12,6 +12,7 @@ import 'api/glass.dart';
 import 'api/money.dart';
 import 'api/networth.dart';
 import 'api/record.dart';
+import 'api/reimburse.dart';
 import 'api/stats.dart';
 import 'api/store.dart';
 import 'api/subscriptions.dart';
@@ -76,6 +77,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   NewTransfer dco_decode_box_autoadd_new_transfer(dynamic raw);
 
   @protected
+  RefundState dco_decode_box_autoadd_refund_state(dynamic raw);
+
+  @protected
   SettingsView dco_decode_box_autoadd_settings_view(dynamic raw);
 
   @protected
@@ -104,6 +108,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   ChartView dco_decode_chart_view(dynamic raw);
+
+  @protected
+  ClaimList dco_decode_claim_list(dynamic raw);
+
+  @protected
+  ClaimView dco_decode_claim_view(dynamic raw);
 
   @protected
   EntryPatch dco_decode_entry_patch(dynamic raw);
@@ -152,6 +162,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<ChartPoint> dco_decode_list_chart_point(dynamic raw);
+
+  @protected
+  List<ClaimView> dco_decode_list_claim_view(dynamic raw);
 
   @protected
   List<EntryView> dco_decode_list_entry_view(dynamic raw);
@@ -229,6 +242,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   PlatformInt64? dco_decode_opt_box_autoadd_i_64(dynamic raw);
 
   @protected
+  RefundState? dco_decode_opt_box_autoadd_refund_state(dynamic raw);
+
+  @protected
   TemplateDraftView? dco_decode_opt_box_autoadd_template_draft_view(
     dynamic raw,
   );
@@ -253,6 +269,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   (String, double) dco_decode_record_string_f_64(dynamic raw);
+
+  @protected
+  RefundState dco_decode_refund_state(dynamic raw);
 
   @protected
   SaveResult dco_decode_save_result(dynamic raw);
@@ -341,6 +360,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   NewTransfer sse_decode_box_autoadd_new_transfer(SseDeserializer deserializer);
 
   @protected
+  RefundState sse_decode_box_autoadd_refund_state(SseDeserializer deserializer);
+
+  @protected
   SettingsView sse_decode_box_autoadd_settings_view(
     SseDeserializer deserializer,
   );
@@ -373,6 +395,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   ChartView sse_decode_chart_view(SseDeserializer deserializer);
+
+  @protected
+  ClaimList sse_decode_claim_list(SseDeserializer deserializer);
+
+  @protected
+  ClaimView sse_decode_claim_view(SseDeserializer deserializer);
 
   @protected
   EntryPatch sse_decode_entry_patch(SseDeserializer deserializer);
@@ -427,6 +455,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<ChartPoint> sse_decode_list_chart_point(SseDeserializer deserializer);
+
+  @protected
+  List<ClaimView> sse_decode_list_claim_view(SseDeserializer deserializer);
 
   @protected
   List<EntryView> sse_decode_list_entry_view(SseDeserializer deserializer);
@@ -512,6 +543,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   PlatformInt64? sse_decode_opt_box_autoadd_i_64(SseDeserializer deserializer);
 
   @protected
+  RefundState? sse_decode_opt_box_autoadd_refund_state(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   TemplateDraftView? sse_decode_opt_box_autoadd_template_draft_view(
     SseDeserializer deserializer,
   );
@@ -538,6 +574,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   (String, double) sse_decode_record_string_f_64(SseDeserializer deserializer);
+
+  @protected
+  RefundState sse_decode_refund_state(SseDeserializer deserializer);
 
   @protected
   SaveResult sse_decode_save_result(SseDeserializer deserializer);
@@ -650,6 +689,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_box_autoadd_refund_state(
+    RefundState self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_box_autoadd_settings_view(
     SettingsView self,
     SseSerializer serializer,
@@ -690,6 +735,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_chart_view(ChartView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_claim_list(ClaimList self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_claim_view(ClaimView self, SseSerializer serializer);
 
   @protected
   void sse_encode_entry_patch(EntryPatch self, SseSerializer serializer);
@@ -754,6 +805,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_chart_point(
     List<ChartPoint> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_claim_view(
+    List<ClaimView> self,
     SseSerializer serializer,
   );
 
@@ -869,6 +926,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_opt_box_autoadd_refund_state(
+    RefundState? self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_opt_box_autoadd_template_draft_view(
     TemplateDraftView? self,
     SseSerializer serializer,
@@ -903,6 +966,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     (String, double) self,
     SseSerializer serializer,
   );
+
+  @protected
+  void sse_encode_refund_state(RefundState self, SseSerializer serializer);
 
   @protected
   void sse_encode_save_result(SaveResult self, SseSerializer serializer);

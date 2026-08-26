@@ -26,6 +26,7 @@ import 'library_screen.dart';
 import 'me_screen.dart';
 import 'persistence.dart';
 import 'record_sheet.dart' as sheet;
+import 'reimburse_screen.dart';
 import 'stats_screen.dart';
 import 'subs_screen.dart';
 import 'theme.dart';
@@ -245,6 +246,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           title: '模板',
           desc: '一按就记的常用笔',
           onTap: () => _push(TemplatesScreen(onChanged: _configChanged)),
+        ),
+        MeRow(
+          id: 'reimburse',
+          icon: Icons.receipt_long_outlined,
+          title: '报销',
+          desc: '垫的钱,和收回来的',
+          onTap: () => _push(ReimburseScreen(onChanged: _entriesChanged)),
         ),
         MeRow(
           id: 'currency',

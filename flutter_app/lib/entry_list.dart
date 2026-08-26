@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'src/rust/api/catalog.dart' as catalog;
 import 'src/rust/api/money.dart' as money;
 import 'src/rust/api/store.dart' as store;
+import 'reimburse_screen.dart';
 import 'theme.dart';
 
 /// `y-m-d` for a local calendar day. The timezone is the platform's, so this
@@ -254,6 +255,19 @@ class _EntryListScreenState extends State<EntryListScreen> {
           '${e.note != null ? ', ${e.note}' : ''}',
       child: GestureDetector(
         onTap: () => widget.onEdit?.call(e.id),
+        // Claiming and refunding are ledger writes rather than form fields, so
+        // they live here and not on the record sheet — a draft that had already
+        // written half of itself would be a confusing thing to cancel.
+        onLongPress: () async {
+          final changed = await showEntryActions(
+            context,
+            id: e.id,
+            amt: e.amt,
+            isPending: e.rb == 'pending',
+            zh: zh,
+          );
+          if (changed) widget.onChanged?.call();
+        },
         child: ExcludeSemantics(
           child: Container(
             margin: const EdgeInsets.only(bottom: 8),
