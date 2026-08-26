@@ -31,10 +31,22 @@ use std::cmp::Ordering;
 /// TypeScript has it: the next `pullAndMerge` sends the row anyway, because a
 /// row the server does not have is in `to_push` regardless of any watermark.
 pub fn dirty_since(entries: &[Entry], watermark: i64) -> Vec<&Entry> {
-    entries
-        .iter()
-        .filter(|e| e.updated_at.unwrap_or(0) > watermark)
-        .collect()
+    dirty_since_by(
+        entries,
+        |e| e.updated_at.unwrap_or(0) as f64,
+        watermark as f64,
+    )
+}
+
+/// [`dirty_since`] at the type the rows are actually held in.
+///
+/// The TypeScript is `dirtySince<T>(items, stamp, watermark)` — generic, with
+/// the stamp injected, precisely so the filter and the advance cannot come
+/// apart. The port specialised it to `Entry` and then needed it for the
+/// `Value` rows [`crate::merge`] works in, which is how a rule ends up written
+/// twice. This is the one implementation; the `Entry` pair are wrappers.
+pub fn dirty_since_by<T>(items: &[T], stamp: impl Fn(&T) -> f64, watermark: f64) -> Vec<&T> {
+    items.iter().filter(|e| stamp(e) > watermark).collect()
 }
 
 /// How far the watermark may move after a batch is persisted.
@@ -44,14 +56,30 @@ pub fn dirty_since(entries: &[Entry], watermark: i64) -> Vec<&Entry> {
 /// actually written. A watermark that advanced on intent rather than on
 /// success would drop every change in a failed batch silently.
 pub fn advance(watermark: i64, pushed: &[&Entry]) -> i64 {
+    advance_by(watermark as f64, pushed, |e| {
+        e.updated_at.unwrap_or(0) as f64
+    }) as i64
+}
+
+/// [`advance`] at the type the rows are actually held in. See [`dirty_since_by`].
+///
+/// `Math.max`, not `f64::max`: a `NaN` stamp poisons the watermark rather than
+/// being quietly skipped, which is the louder of the two failures and the one
+/// that matches the shipping app.
+pub fn advance_by<T>(watermark: f64, pushed: &[&T], stamp: impl Fn(&T) -> f64) -> f64 {
     pushed
         .iter()
-        .fold(watermark, |m, e| m.max(e.updated_at.unwrap_or(0)))
+        .fold(watermark, |m, e| crate::num::js_max(m, stamp(e)))
 }
 
 /// `Math.max(watermark, v)` — raise the watermark after a pull or an echo.
 pub fn bump(watermark: i64, v: i64) -> i64 {
-    watermark.max(v)
+    bump_by(watermark as f64, v as f64) as i64
+}
+
+/// [`bump`] at the type the rows are actually held in. See [`dirty_since_by`].
+pub fn bump_by(watermark: f64, v: f64) -> f64 {
+    crate::num::js_max(watermark, v)
 }
 
 /// The next backoff delay: `Math.min(d ? d * 2 : base, max)`.

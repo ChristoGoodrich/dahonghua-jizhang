@@ -2078,6 +2078,149 @@ second, which is the half a test can see.
 
 Fourth increment running that the device found what the tests did not.
 
+### The sync engine, and a corpus where both halves are interpreters
+
+`sync/engine.ts` is 310 lines of which perhaps forty are decisions; the rest is
+Supabase. The forty are now `engine.rs`: a state machine over `Event` returning
+`Vec<Effect>`, which performs no I/O, reads no clock, and does not know what
+Supabase is.
+
+Every corpus before this one compares an **answer**. This module has none — it
+decides an *order of operations against a server*. So both halves of the harness
+are interpreters over one script: the TypeScript drives the shipping engine
+through a faked Supabase client and jest's fake timers, and the Rust executes
+its effects against an equivalent fake and a virtual clock. What is compared is
+what a server would have seen — every upload in arrival order, every channel
+opened and closed, every status the UI showed — plus the ledger, the section
+stamps, and the value each config section holds. 2,600 scripts, zero divergence.
+
+Three obligations fall on the caller that the module cannot enforce, and they
+are written into its docs because the TypeScript enforces them only by accident
+of ordering: sign-in means the local data is already loaded; writes made for
+`ApplyConfig` must not come back as `LocalEdit`; the clock is the platform's.
+
+### A push that a sign-out does not stop
+
+Found in nineteen scripts that flushed and signed out in the same tick. A flush
+is `async` and `cancel()` is not, so the awaits resolve after the sign-out and
+go on to move the watermark, report a status — `synced` *after* `off` — and, on
+a failure, arm a retry that `cancel()` had already run past. That retry then
+fires while signed out and uploads with `activeUser!` null.
+
+`pushScheduler.ts` now carries a generation counter, bumped by `cancel()`, and
+the flush checks it after each await. The upload already sent cannot be unsent;
+everything after it can be, and now is. Three regression tests.
+
+### A realtime row schedules a push in two ways, and I modelled one
+
+`if (push) pusher.schedule()` is written out. `store$.data.set(rows)` scheduling
+through the root subscription is not written anywhere near it — `applyingRemote`
+guards the config path but not this one. And the second only fires on a **real**
+change: the store notifies on a change, not on a call, and `mergeOne` hands back
+a fresh array whether or not it resolved to anything different. A device's own
+echo therefore wakes nothing at all.
+
+133 scripts said so. Both halves of that rule matter, and neither is visible
+from the handler alone.
+
+### Four faults in the harness before it could measure anything
+
+The corpus was not worth trusting until each of these was fixed, and every one
+of them looked like an engine divergence first:
+
+* **The generator's PRNG was degenerate.** `seed * 1103515245` passes 2^53 in
+  JavaScript, the low bits go to zero, and the sequence collapses — 603 distinct
+  scripts out of 104,000 attempts, reported without complaint. `Math.imul` does
+  the multiply in the 32 bits the algorithm actually lives in.
+* **Timers leaked between corpus lines.** The whole corpus is one jest test, so
+  `afterEach` never ran between lines: a debounce armed by line N fired inside
+  line N+1, through the previous module instance, into the *new* fake client.
+* **The fake did not remove channels.** `removeChannel` only logged, so the
+  handler kept delivering after sign-out and a row arriving then landed in the
+  ledger. Supabase does not do that; the fake was.
+* **A seed after sign-in is not a seed.** The store's root subscription is live
+  by then, so writing a row IS a local edit. Both halves now refuse the command
+  rather than diverging for a reason that has nothing to do with the engine.
+
+### A sweep that poisons the next sweep
+
+Worth its own heading, because it silently invalidated a whole pass. A sweep
+killed by a timeout never runs its `finally`, so it leaves its last injection in
+the tree. **The next sweep captures that mutated file as "original"**, applies
+its injections on top of it, and restores to it afterwards — every number it
+reports measured against a bug it does not know about. That happened here; I
+found it by hand-checking `sync.rs` and seeing *two* mutations at once.
+
+The sweep now runs the 666 core tests before it starts and refuses to measure a
+tree that cannot pass them, and it leaves `.sweepbak` copies so a kill is
+recoverable. The tests are the right guard because they pin every rule the
+injections touch.
+
+The same pass turned up its sibling: an injected zero-delay retry re-arms itself
+at the same virtual instant, and the interpreter looped until it asked for 48
+GiB and died. **A crashed interpreter scores no detection** — the injection read
+as "not caught" when it had in fact been caught catastrophically. The settle
+loop is bounded at 200 firings now, and overflowing it emits a `LOOP` marker,
+which scores as the divergence it is.
+
+### Fifty injections, and the five zeros that were real
+
+Forty-five caught. The five that were not are equivalences, and each has an
+argument rather than an excuse:
+
+| Injection | Why nothing changes |
+| --- | --- |
+| the pull seeds `newest` from the watermark | the outer `bump_by` is what keeps the watermark monotonic; the zero seed is inert |
+| a success always reports a status change | setting an observable to the value it already holds notifies nobody, on either side |
+| an empty remote blob is adopted | adopting `{}` adopts nothing — `present(k)` is false for every section |
+| a blob with no stamps reads as stamped zero | `None` and an empty `Stamps` are indistinguishable through `and_then(…).unwrap_or(1)` |
+| sign-out leaves the watermark up | a leftover can never exceed `max(local updatedAt)`, and the next pull raises it to exactly that — the ledger never shrinks |
+
+The first of those corrected a comment of mine that claimed the seed mattered.
+It does not, and the injection is how I found out.
+
+Six more zeros were corpus gaps, and closing them is most of what the sweep was
+worth:
+
+* **The backoff's *value* was unobservable.** A 1.2-second settle and a
+  70-second one both sit outside every interesting boundary, so 2s, 4s, 60s and
+  64s all looked identical. `S3` (three seconds — fires a 2s retry, not a 4s
+  one) and `S6` (sixty-two — fires the capped 60s, not an uncapped 64s) closed
+  three zeros between them.
+* **fail → succeed → fail was unreachable.** `OK` turned failure off
+  permanently and nothing turned it back on, so no script could ask whether a
+  success resets the backoff.
+* **`ConfigFailed` was unreachable.** One `failPush` flag governed both halves
+  of a flush, so "the rows landed, the config did not" — the branch the whole
+  watermark rule exists for — never happened.
+* **`ApplyConfig` was invisible.** Adoption was observable only through the
+  stamp it set, so adopting a section whose remote stamp equalled the local one
+  wrote nothing detectable, and neither did the difference between a nullish
+  presence test and a truthy one. Both halves now dump what each section holds.
+* **No row carried `fieldTs`.** This is the one that matters. Without per-field
+  stamps, `merge_one` only ever takes the whole-row path, where a push is
+  reported only when the *local* row wins — and then its stamp is already the
+  higher one, so the watermark rule has nothing to decide. **The path this
+  entire port exists to protect was not being reached.** `LF`/`TF` build a pair
+  where ours stamps the note late and theirs stamps the amount late; merged,
+  each side keeps what it edited last, and the result is a row the server has
+  never seen — exactly when the watermark must not advance, or the push meant to
+  carry it is filtered out by the very filter meant to find it.
+
+One correction of a script rather than of the corpus: my test for "sign-out
+clears the pending retry" signed back in while pushes were still failing, so the
+second start-up failed at its config push and nothing after it scheduled
+anything. **A script that never reaches the state it is testing reports zero,
+and reports it in exactly the same shape as a genuine equivalence.**
+
+### What the engine still needs
+
+The transport. `.env` carries no Supabase URL or key on this machine, so
+`supabase` is null and the shipping engine has never run against a live project
+either — which is why its own tests fake the client at the module boundary. The
+schema and the RLS policies remain unverified by anything here, and creating a
+project is the user's to do, not mine.
+
 ### Building for Android here
 
 Whatever drives it, the Android build needs `TEMP` pointed somewhere AF_UNIX

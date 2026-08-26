@@ -92,6 +92,21 @@ pub fn desc_by_amt(a: f64, b: f64) -> std::cmp::Ordering {
     }
 }
 
+/// `Math.max(a, b)` — which is not `f64::max`.
+///
+/// `f64::max` returns the non-NaN operand; `Math.max` returns NaN if either is
+/// NaN. A watermark is the place that matters: one unparseable `updatedAt`
+/// should poison the comparison loudly rather than be quietly skipped over.
+pub fn js_max(a: f64, b: f64) -> f64 {
+    if a.is_nan() || b.is_nan() {
+        f64::NAN
+    } else if a >= b {
+        a
+    } else {
+        b
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

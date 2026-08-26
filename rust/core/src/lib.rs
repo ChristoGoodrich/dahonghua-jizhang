@@ -18,6 +18,7 @@ pub mod civil;
 pub mod currency;
 pub mod cycle;
 pub mod dedup;
+pub mod engine;
 pub mod entry;
 pub mod export;
 pub mod filter;

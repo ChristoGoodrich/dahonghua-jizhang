@@ -177,6 +177,16 @@ const MODULES = [
     example: 'dump_notif',
   },
   {
+    name: 'engine',
+    corpus: 'rust/parity/engine-corpus.tsv',
+    // Stateful and then some: the sync engine decides an order of operations
+    // against a server, so both halves are interpreters replaying one script.
+    // The TypeScript half drives the shipping engine through a faked Supabase
+    // client; the Rust half executes its effects against an equivalent fake.
+    harness: 'scripts/engine-parity.harness.ts',
+    example: 'dump_engine',
+  },
+  {
     name: 'ledger',
     corpus: 'rust/parity/ledger-corpus.tsv',
     // Stateful: a ledger has no single answer, it has a history. Each corpus

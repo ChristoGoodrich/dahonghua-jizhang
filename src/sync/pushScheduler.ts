@@ -82,20 +82,34 @@ export function createPushScheduler<T>(cfg: PushSchedulerConfig<T>): PushSchedul
   let retryTimer: ReturnType<typeof setTimeout> | null = null;
   let retryDelay = 0;
   let watermark = 0;
+  // Bumped by cancel(), so a flush already in flight can tell that the ground
+  // moved under it. Without this, signing out during a push did not stop it:
+  // the awaits resolved afterwards and went on to set the watermark, report a
+  // status ('synced' AFTER 'off'), and — on a failure — arm a retry that
+  // cancel() had already run past. That retry then fired while signed out and
+  // uploaded with `activeUser!` null. Found by the engine parity corpus, in
+  // nineteen scripts that flushed and signed out in the same tick.
+  let generation = 0;
 
   async function flush(): Promise<void> {
+    const g = generation;
     const dirty = cfg.getDirty(watermark);
     try {
       if (dirty.length) {
         await cfg.pushItems(dirty);
+        // The upload itself cannot be unsent — it left before the sign-out.
+        // Everything after it can, and must.
+        if (g !== generation) return;
         // advance only past what we just persisted
         watermark = advanceWatermark(watermark, dirty, cfg.stamp);
       }
       await cfg.pushConfig();
+      if (g !== generation) return;
       retryDelay = 0;
       if (retryTimer) { clearTimeout(retryTimer); retryTimer = null; }
       cfg.onSuccess();
     } catch {
+      if (g !== generation) return;
       cfg.onError();
       scheduleRetry();
     }
@@ -125,6 +139,7 @@ export function createPushScheduler<T>(cfg: PushSchedulerConfig<T>): PushSchedul
       if (retryTimer) { clearTimeout(retryTimer); retryTimer = null; }
       retryDelay = 0;
       watermark = 0;
+      generation++;
     },
     get watermark() {
       return watermark;

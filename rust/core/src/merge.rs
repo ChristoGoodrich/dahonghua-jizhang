@@ -31,7 +31,12 @@ fn id_of(r: &Value) -> String {
 }
 
 /// `r.updatedAt ?? 0` — nullish, so a present zero stays zero.
-fn updated_at(r: &Value) -> f64 {
+///
+/// Public because the watermark is the same number: the sync engine's dirty
+/// filter and this module's resolution have to agree about what a row's stamp
+/// is, and two spellings of that is how the realtime path came to disagree
+/// with the pull.
+pub fn updated_at(r: &Value) -> f64 {
     match r.get("updatedAt") {
         None | Some(Value::Undefined) | Some(Value::Null) => 0.0,
         Some(Value::Num(n)) => *n,

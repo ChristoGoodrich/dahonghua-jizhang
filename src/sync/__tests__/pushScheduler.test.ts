@@ -118,6 +118,52 @@ describe('createPushScheduler', () => {
     expect(h.onSuccess).toHaveBeenCalledTimes(1);
   });
 
+  // A flush is async; cancel() is not. Signing out mid-push used to leave the
+  // flush running against a scheduler that no longer existed — found by the
+  // engine parity corpus, in scripts that flushed and signed out in one tick.
+  describe('cancelled while a flush is in flight', () => {
+    it('does not report success after the scheduler was cancelled', async () => {
+      const h = harness();
+      h.store.push({ id: 'a', updatedAt: 10 });
+      const done = h.sched.flushNow();
+      h.sched.cancel(); // sign-out, before the upload resolves
+      await done;
+
+      expect(h.onSuccess).not.toHaveBeenCalled();
+      expect(h.sched.watermark).toBe(0); // and it did not move
+    });
+
+    it('does not arm a retry that cancel() has already run past', async () => {
+      const h = harness();
+      h.store.push({ id: 'a', updatedAt: 10 });
+      h.setFail(true);
+      const done = h.sched.flushNow();
+      h.sched.cancel();
+      await done;
+
+      expect(h.onError).not.toHaveBeenCalled();
+      h.pushItems.mockClear();
+      // the retry that used to be armed here fired while signed out, and
+      // uploaded with a null user id
+      await jest.advanceTimersByTimeAsync(70_000);
+      expect(h.pushItems).not.toHaveBeenCalled();
+    });
+
+    it('leaves the next session unaffected', async () => {
+      const h = harness();
+      h.store.push({ id: 'a', updatedAt: 10 });
+      h.sched.flushNow();
+      h.sched.cancel();
+      await Promise.resolve();
+
+      // signing back in and pushing again works normally
+      h.sched.schedule();
+      await jest.advanceTimersByTimeAsync(800);
+      expect(h.onSuccess).toHaveBeenCalledTimes(1);
+      expect(h.sched.watermark).toBe(10);
+    });
+  });
+
   it('does not re-push items already covered by the watermark', async () => {
     const h = harness();
     h.store.push({ id: 'a', updatedAt: 10 });
