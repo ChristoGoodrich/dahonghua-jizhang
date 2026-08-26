@@ -12,6 +12,7 @@ import 'api/money.dart';
 import 'api/record.dart';
 import 'api/stats.dart';
 import 'api/store.dart';
+import 'api/sync.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi' as ffi;
@@ -165,6 +166,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<SliceView> dco_decode_list_slice_view(dynamic raw);
 
   @protected
+  List<SyncEffect> dco_decode_list_sync_effect(dynamic raw);
+
+  @protected
   List<TrendPointView> dco_decode_list_trend_point_view(dynamic raw);
 
   @protected
@@ -211,6 +215,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   SliceView dco_decode_slice_view(dynamic raw);
+
+  @protected
+  SyncEffect dco_decode_sync_effect(dynamic raw);
 
   @protected
   TierView dco_decode_tier_view(dynamic raw);
@@ -381,6 +388,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<SliceView> sse_decode_list_slice_view(SseDeserializer deserializer);
 
   @protected
+  List<SyncEffect> sse_decode_list_sync_effect(SseDeserializer deserializer);
+
+  @protected
   List<TrendPointView> sse_decode_list_trend_point_view(
     SseDeserializer deserializer,
   );
@@ -433,6 +443,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   SliceView sse_decode_slice_view(SseDeserializer deserializer);
+
+  @protected
+  SyncEffect sse_decode_sync_effect(SseDeserializer deserializer);
 
   @protected
   TierView sse_decode_tier_view(SseDeserializer deserializer);
@@ -660,6 +673,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_list_sync_effect(
+    List<SyncEffect> self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_list_trend_point_view(
     List<TrendPointView> self,
     SseSerializer serializer,
@@ -721,6 +740,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_slice_view(SliceView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_sync_effect(SyncEffect self, SseSerializer serializer);
 
   @protected
   void sse_encode_tier_view(TierView self, SseSerializer serializer);

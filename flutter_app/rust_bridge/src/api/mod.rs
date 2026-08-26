@@ -15,3 +15,4 @@ pub mod money;
 pub mod record;
 pub mod stats;
 pub mod store;
+pub mod sync;
