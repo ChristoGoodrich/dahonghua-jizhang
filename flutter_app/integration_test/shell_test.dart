@@ -1,0 +1,181 @@
+// The navigation shell on a device.
+//
+// Four tabs, a record button, and routes behind the hubs. The tests here are
+// about the shape rather than any screen: that recording is a route and so
+// returns you to what you were looking at, that a hub reaches what it lists,
+// and that the tabs keep their own state instead of rebuilding from scratch.
+//
+// The shape is not a preference. A bottom bar runs out of room at about five
+// slots and this app has twenty screens; the six-tab arrangement this replaced
+// had already stopped being able to grow.
+
+import 'package:flutter/material.dart';
+import 'package:flutter_app/main.dart';
+import 'package:flutter_app/src/rust/api/store.dart' as store;
+import 'package:flutter_app/src/rust/frb_generated.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:integration_test/integration_test.dart';
+
+int get now => DateTime.now().millisecondsSinceEpoch;
+
+void add(String id, double amt, {String? note}) {
+  final t = now;
+  store.addEntry(
+    entry: store.NewEntry(io: 'exp', cat: 'food', amt: amt, note: note, ts: t),
+    id: id,
+    now: t,
+  );
+}
+
+Future<void> shell(WidgetTester tester) async {
+  await tester.pumpWidget(const App());
+  await tester.pumpAndSettle();
+}
+
+Future<void> tapTab(WidgetTester tester, String label) async {
+  await tester.tap(find.byKey(Key('tab-$label')));
+  await tester.pumpAndSettle();
+}
+
+void main() {
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  setUpAll(() async => await RustLib.init());
+  setUp(() => store.reset());
+
+  group('the bar', () {
+    testWidgets('has four tabs and a record button', (tester) async {
+      await shell(tester);
+      for (final label in ['明细', '统计', '资产', '我的']) {
+        expect(find.byKey(Key('tab-$label')), findsOneWidget);
+      }
+      expect(find.byKey(const Key('record-button')), findsOneWidget);
+    });
+
+    testWidgets('moves between the tabs', (tester) async {
+      add('e1', 35.5, note: '午饭');
+      await shell(tester);
+      expect(find.text('午饭'), findsOneWidget);
+
+      await tapTab(tester, '资产');
+      expect(find.text('账户合计'), findsOneWidget);
+
+      await tapTab(tester, '我的');
+      expect(find.text('记账工具'), findsOneWidget);
+
+      await tapTab(tester, '明细');
+      expect(find.text('午饭'), findsOneWidget);
+    });
+  });
+
+  group('recording', () {
+    testWidgets('is a route, and saving returns to what was underneath',
+        (tester) async {
+      await shell(tester);
+      await tester.tap(find.byKey(const Key('record-button')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('key-save')), findsOneWidget);
+
+      for (final k in ['4', '2']) {
+        await tester.tap(find.byKey(Key('key-$k')));
+        await tester.pumpAndSettle();
+      }
+      await tester.tap(find.byKey(const Key('key-save')));
+      await tester.pumpAndSettle();
+
+      // still on the sheet — saving a NEW entry clears for the next one rather
+      // than leaving, which is what makes recording three things in a row work
+      expect(find.byKey(const Key('flash')), findsOneWidget);
+      expect(store.entryCount(), 1);
+
+      // and going back lands on the list, with the row on it
+      await tester.pageBack();
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('tab-明细')), findsOneWidget);
+      expect(find.text('-42.00'), findsOneWidget);
+    });
+
+    testWidgets('editing a row opens the sheet on it and comes back',
+        (tester) async {
+      add('e1', 35.5, note: '午饭');
+      await shell(tester);
+
+      await tester.tap(find.text('午饭'));
+      await tester.pumpAndSettle();
+      // the sheet opened on the entry, with its amount in the panel
+      expect(find.byKey(const Key('amount-expr')), findsOneWidget);
+      expect(
+        tester.widget<Text>(find.byKey(const Key('amount-expr'))).data,
+        '35.5',
+      );
+
+      await tester.tap(find.byKey(const Key('key-save')));
+      await tester.pumpAndSettle();
+      await tester.pageBack();
+      await tester.pumpAndSettle();
+
+      expect(store.entryCount(), 1); // edited in place, not written twice
+      expect(find.byKey(const Key('tab-明细')), findsOneWidget);
+    });
+  });
+
+  group('the 我的 hub', () {
+    testWidgets('reaches the budget screen and comes back', (tester) async {
+      await shell(tester);
+      await tapTab(tester, '我的');
+
+      await tester.tap(find.byKey(const Key('me-budget')));
+      await tester.pumpAndSettle();
+      expect(find.text('预算'), findsWidgets);
+
+      await tester.pageBack();
+      await tester.pumpAndSettle();
+      expect(find.text('记账工具'), findsOneWidget);
+    });
+
+    testWidgets('reaches the subscriptions screen and comes back',
+        (tester) async {
+      await shell(tester);
+      await tapTab(tester, '我的');
+
+      await tester.tap(find.byKey(const Key('me-subs')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('add-sub')), findsOneWidget);
+
+      await tester.pageBack();
+      await tester.pumpAndSettle();
+      expect(find.text('记账工具'), findsOneWidget);
+    });
+
+    testWidgets('lists nothing that goes nowhere', (tester) async {
+      // a hub that lists screens which do not exist teaches the reader to stop
+      // trusting it, so unbuilt ones are simply absent
+      await shell(tester);
+      await tapTab(tester, '我的');
+      final rows = find.byType(InkWell).evaluate().length;
+      // two rows plus the four tabs, and nothing else claiming to be a
+      // destination
+      expect(rows, 6);
+    });
+  });
+
+  group('what a tab keeps', () {
+    testWidgets('a change on one tab shows on another', (tester) async {
+      await shell(tester);
+      await tester.tap(find.byKey(const Key('record-button')));
+      await tester.pumpAndSettle();
+      for (final k in ['9', '9']) {
+        await tester.tap(find.byKey(Key('key-$k')));
+        await tester.pumpAndSettle();
+      }
+      await tester.tap(find.byKey(const Key('key-save')));
+      await tester.pumpAndSettle();
+      await tester.pageBack();
+      await tester.pumpAndSettle();
+
+      // the accounts screen was built before the entry existed, and has to
+      // have re-read the store rather than kept its own copy
+      await tapTab(tester, '资产');
+      expect(find.text('￥-99.00'), findsWidgets);
+    });
+  });
+}

@@ -1,14 +1,17 @@
 // The app shell.
 //
-// Two screens so far. The record sheet is the prototype Slint and Dioxus each
-// got a throwaway of, kept because it is what answered the three questions this
-// architecture had to settle on a real device — Chinese IME composition,
-// 柔光玻璃 rendering, and accessibility labels reaching Android — and because it
-// still demonstrates the fourth: every colour and every number on it is
-// computed in Rust.
+// Four tabs and a record button, which is the shipping app's shape and is a
+// shape rather than a preference: 明细 and 统计 are the two ways of reading the
+// ledger, 资产 and 我的 are hubs, and recording is the one thing frequent enough
+// to deserve an object of its own rather than a slot in a row.
 //
-// The entry list is the first *real* screen, drawing the ledger that lives on
-// the other side of the boundary.
+// Everything else is a route pushed from a hub. A bottom bar runs out of room
+// at about five slots and this app has twenty screens; the previous six-tab
+// arrangement had already stopped being able to grow.
+//
+// Editing an entry pushes the record sheet rather than switching to it, which
+// is what makes "save" mean "go back to what I was looking at" without the
+// shell having to remember where that was.
 
 import 'dart:ui' as ui;
 
@@ -17,11 +20,12 @@ import 'package:flutter/services.dart';
 
 import 'accounts_screen.dart';
 import 'budget_screen.dart';
-import 'subs_screen.dart';
 import 'entry_list.dart';
+import 'me_screen.dart';
 import 'persistence.dart';
 import 'record_sheet.dart' as sheet;
 import 'stats_screen.dart';
+import 'subs_screen.dart';
 import 'theme.dart';
 import 'src/rust/api/calc.dart' as calc;
 import 'src/rust/api/glass.dart' as glass;
@@ -108,7 +112,7 @@ class App extends StatelessWidget {
   );
 }
 
-/// The six screens, until there is a router worth having.
+/// The shell: four tabs, a record button, and routes behind the hubs.
 class Home extends StatefulWidget {
   const Home({super.key, this.store});
 
@@ -120,13 +124,10 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with WidgetsBindingObserver {
   int _tab = 0;
-  int _listVersion = 0;
-  String? _editId;
 
-  void _edit(String id) => setState(() {
-    _editId = id;
-    _tab = 1;
-  });
+  /// Bumped whenever the ledger or the config changes, and used as a key so
+  /// every screen re-reads the store instead of holding a stale copy of it.
+  int _listVersion = 0;
 
   @override
   void initState() {
@@ -153,121 +154,173 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     }
   }
 
+  void _entriesChanged() {
+    widget.store?.touchEntries();
+    setState(() => _listVersion++);
+  }
+
+  void _configChanged() {
+    widget.store?.touchConfig();
+    setState(() => _listVersion++);
+  }
+
+  void _bothChanged() {
+    widget.store?.touchEntries();
+    widget.store?.touchConfig();
+    setState(() => _listVersion++);
+  }
+
+  /// Open the record sheet. `editId` null records a new entry.
+  ///
+  /// A route rather than a tab: saving pops back to whatever was underneath,
+  /// which is the behaviour without the shell having to track it.
+  Future<void> _record({String? editId}) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => sheet.RecordSheet(
+          editId: editId,
+          onSaved: ({required staleRate}) => _entriesChanged(),
+        ),
+      ),
+    );
+    // the sheet may have written rows while it was up
+    setState(() {});
+  }
+
+  Future<void> _push(Widget screen) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => screen),
+    );
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
+    backgroundColor: palette.paper,
     body: IndexedStack(
       index: _tab,
       children: [
-        // rebuilt by key when the tab changes, so the list re-reads the
-        // ledger a save just added to
         EntryListScreen(
           key: ValueKey(_listVersion),
-          onEdit: _edit,
-          onChanged: () {
-            widget.store?.touchEntries();
-            setState(() => _listVersion++);
-          },
-        ),
-        sheet.RecordSheet(
-          editId: _editId,
-          onSaved: ({required staleRate}) {
-            widget.store?.touchEntries();
-            setState(() {
-              _listVersion++;
-              // an edit is done when it is saved; the sheet goes back to
-              // being a blank one rather than staying pointed at a row the
-              // user has finished with
-              if (_editId != null) {
-                _editId = null;
-                _tab = 0;
-              }
-            });
-          },
+          onEdit: (id) => _record(editId: id),
+          onChanged: _entriesChanged,
         ),
         StatsScreen(key: ValueKey(_listVersion)),
-        BudgetScreen(
-          key: ValueKey(_listVersion),
-          onChanged: () => widget.store?.touchConfig(),
-        ),
-        // A subscription sweep posts entries, so this screen writes both files
-        // too — and it sweeps on the way in, because the shipping app charges
-        // as soon as a due day arrives rather than at the next launch.
-        SubsScreen(
-          key: ValueKey(_listVersion),
-          onChanged: () {
-            widget.store?.touchConfig();
-            widget.store?.touchEntries();
-            setState(() => _listVersion++);
-          },
-        ),
-        // Deleting an account rewrites every entry that pointed at it, so this
-        // screen touches both files, not just the config one.
+        // 资产 is the accounts screen for now. Assets and loans belong on it
+        // too and are not ported yet; putting them anywhere else in the
+        // meantime would only mean moving them later.
         AccountsScreen(
           key: ValueKey(_listVersion),
-          onChanged: () {
-            widget.store?.touchConfig();
-            widget.store?.touchEntries();
-            setState(() => _listVersion++);
-          },
+          onChanged: _bothChanged,
+        ),
+        MeScreen(
+          key: ValueKey(_listVersion),
+          groups: _meGroups(),
         ),
       ],
     ),
-    // Material 3's default NavigationBar paints itself lavender, which
-    // against this palette's warm paper reads as a different application's
-    // chrome. The colours are the theme's, not the framework's.
-    bottomNavigationBar: NavigationBar(
-      selectedIndex: _tab,
-      onDestinationSelected: (i) => setState(() {
-        _tab = i;
-        // leaving the sheet by hand abandons the edit; coming back to it
-        // later should be a new entry, not the one someone walked away from
-        if (i != 1) _editId = null;
-      }),
-      backgroundColor: palette.card,
-      surfaceTintColor: Colors.transparent,
-      indicatorColor: palette.stamen.withValues(alpha: 0.18),
-      height: 64,
-      labelTextStyle: WidgetStatePropertyAll(
-        TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          color: palette.inkSoft,
+    bottomNavigationBar: _bar(),
+  );
+
+  List<(String, List<MeRow>)> _meGroups() => [
+    (
+      '记账工具',
+      [
+        MeRow(
+          id: 'budget',
+          icon: Icons.savings_outlined,
+          title: '预算',
+          desc: '每月、每天和分类的上限',
+          onTap: () => _push(BudgetScreen(onChanged: _configChanged)),
         ),
-      ),
-      destinations: [
-        NavigationDestination(
-          icon: Icon(Icons.receipt_long, color: palette.inkSoft),
-          selectedIcon: Icon(Icons.receipt_long, color: palette.hibiscus),
-          label: '账目',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.add_circle_outline, color: palette.inkSoft),
-          selectedIcon: Icon(Icons.add_circle, color: palette.hibiscus),
-          label: '记一笔',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.pie_chart_outline, color: palette.inkSoft),
-          selectedIcon: Icon(Icons.pie_chart, color: palette.hibiscus),
-          label: '统计',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.savings_outlined, color: palette.inkSoft),
-          selectedIcon: Icon(Icons.savings, color: palette.hibiscus),
-          label: '预算',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.autorenew_outlined, color: palette.inkSoft),
-          selectedIcon: Icon(Icons.autorenew, color: palette.hibiscus),
-          label: '订阅',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.account_balance_wallet_outlined,
-              color: palette.inkSoft),
-          selectedIcon:
-              Icon(Icons.account_balance_wallet, color: palette.hibiscus),
-          label: '账户',
+        MeRow(
+          id: 'subs',
+          icon: Icons.autorenew_outlined,
+          title: '订阅',
+          desc: '到期自动记一笔',
+          onTap: () => _push(SubsScreen(onChanged: _bothChanged)),
         ),
       ],
+    ),
+  ];
+
+  /// Material 3's default NavigationBar paints itself lavender, which against
+  /// this palette's warm paper reads as a different application's chrome. The
+  /// colours are the theme's, not the framework's.
+  ///
+  /// The record button sits beside the bar rather than inside it: the bar stays
+  /// one uninterrupted surface, and the primary action gets its own weight.
+  Widget _bar() => Container(
+    decoration: BoxDecoration(
+      color: palette.card,
+      border: Border(top: BorderSide(color: palette.line)),
+    ),
+    child: SafeArea(
+      top: false,
+      child: SizedBox(
+        height: 64,
+        child: Row(
+          children: [
+            _tabItem(0, Icons.receipt_long, '明细'),
+            _tabItem(1, Icons.pie_chart_outline, '统计'),
+            _recordButton(),
+            _tabItem(2, Icons.account_balance_wallet_outlined, '资产'),
+            _tabItem(3, Icons.person_outline, '我的'),
+          ],
+        ),
+      ),
+    ),
+  );
+
+  Widget _tabItem(int i, IconData icon, String label) {
+    final on = _tab == i;
+    return Expanded(
+      child: InkWell(
+        key: Key('tab-$label'),
+        onTap: () {
+          HapticFeedback.selectionClick();
+          setState(() => _tab = i);
+        },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 22, color: on ? palette.hibiscus : palette.inkSoft),
+            const SizedBox(height: 3),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: on ? palette.hibiscus : palette.inkSoft,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _recordButton() => Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 6),
+    child: Semantics(
+      button: true,
+      label: '记一笔',
+      child: GestureDetector(
+        key: const Key('record-button'),
+        onTap: () {
+          HapticFeedback.selectionClick();
+          _record();
+        },
+        child: Container(
+          width: 52,
+          height: 52,
+          decoration: BoxDecoration(
+            color: palette.hibiscus,
+            borderRadius: BorderRadius.circular(Rad.md),
+          ),
+          child: const Icon(Icons.add, color: Colors.white, size: 26),
+        ),
+      ),
     ),
   );
 }
