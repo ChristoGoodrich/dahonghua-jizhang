@@ -87,6 +87,7 @@ Adding a module to the harness:
 | `sync/pushScheduler` + `engine` decisions + `conflictLog` → `sync` | 454 | **Ported**, 4,252-case parity — transport left on the platform |
 | `sync/auth`, `sync/supabase` | 72 | **Nothing to port** — SDK calls and one `trim` |
 | `features/list` grouping → `list` | 60 | **Ported**, 2,819-case parity — the first UI logic across |
+| `features/record` form → `record` | 230 | **Ported**, 3,987-case parity — the record sheet's judgement |
 | UI (21 routes, 72 components) | ~11,000 | **Flutter decided**; the decisions come out screen by screen, as above |
 
 ## Phase 1 — the domain crate (in progress)
@@ -1714,6 +1715,82 @@ A third came free: changing `main.dart` from "the record sheet is home" to a two
 tab shell broke the two prototype tests that pumped the shell to reach it, since
 an `IndexedStack` keeps the unselected tab offstage. They now pump the record
 sheet directly, which is what they were always about.
+
+### The record sheet's judgement, and a save that saved twice
+
+`useRecordForm.ts` is 368 lines of hook with about sixty of judgement threaded
+through it: what a fresh form starts as, what switching direction does to the
+other fields, why a form cannot be saved, what shape reaches the store, which
+fields survive 再记. Extracted into `form.ts`, ported to `record.rs`, 3,987
+cases between them.
+
+Reading it closely turned up a shipping bug that had nothing to do with the
+port. `save()` fetches a rate, writes the entry, and then:
+
+```js
+if (source === 'cached' && cur !== base) {
+  setFlash({ msg: s.rateCached, err: true });
+  return;                                  // no onSaved, no onClose
+}
+```
+
+Record in a foreign currency with the rate endpoint unreachable and a cached
+rate present, and the sheet **stays open showing what reads as an error over an
+entry that has already been saved**. Press save again — the reasonable thing to
+do when a form shows an error and does not close — and `addEntry` runs a second
+time with a fresh id. Two rows, and nothing on screen to say the first one
+worked.
+
+The rate being stale says nothing about whether the save worked. The notice now
+travels out through `onSaved`, which reaches a toast that outlives the closing
+sheet, and it replaces the celebration rather than arriving underneath it.
+
+### One rejection, spelled by the caller
+
+`validate` answers *which* refusal applies rather than what to say about it —
+`Rejection::NoRate(cur)`, not "no rate for USD". The same line the entry list
+draws for a day's name: **a message is Intl and belongs to the platform, a
+refusal is not.** It also means the Flutter sheet and the React Native one can
+disagree about wording while agreeing exactly about what is refused.
+
+The order matters and is now stated: the amount is checked first, so a form
+wrong in two ways names the amount, because that is the field the user is
+looking at.
+
+### `parseFloat` is not `str::parse`, twice over
+
+The fee and discount fields are free text, and the TypeScript reads them with
+`parseFloat(x) || 0`. Two differences from Rust's parser, and the corpus found
+the second one:
+
+* **It reads a leading number and stops.** `"1.5kg"` is `1.5` where
+  `"1.5kg".parse::<f64>()` is an error — so a fee of 1.5 against a fee of 0.
+* **It accepts the literal `Infinity`.** The hand-written scanner reached for
+  digits and signs and never for a word, so `"Infinity"` came out `0` where
+  JavaScript gives `Infinity` — which `|| 0` then *keeps*, because an infinity
+  is truthy. One corpus case, one divergence, and the fix is four lines.
+
+### Two harness faults, one of them a repeat
+
+The first parity run reported **86 divergences and 85 were the harness**. The
+TypeScript renders `pickIo`'s partial with `?? '_'`, which replaces `null` and
+`undefined` and leaves an empty string alone; the Rust half used a helper that
+mapped empty to `_`. Same class as the `{:?}`-versus-`JSON.stringify` mismatch
+from the export increment: **a formatting difference reported as a code
+difference.**
+
+The second was subtler and is a repeat of a lesson this migration has already
+learned once. An injection storing an *empty* ledger instead of omitting it
+caught nothing, because the renderer mapped both `undefined` and `''` to `_` —
+so "absent" and "empty" were the same string on both sides. Exactly the
+`field_ts: {}` against `null` distinction the rows corpus had to learn. The
+draft renderer now quotes what is present and leaves `_` for what is not.
+
+With both fixed and a zero-rate case added — the currency screen never writes
+one, but `currencies` rides in the config blob and a restored backup is a file
+that can say anything — the sweep runs **45 injections with no zeros and
+nothing unscored**, the second time in this migration that every injection
+lands.
 
 ### Building for Android here
 

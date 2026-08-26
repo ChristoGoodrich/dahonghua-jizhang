@@ -153,6 +153,12 @@ const MODULES = [
     example: 'dump_list',
   },
   {
+    name: 'record',
+    corpus: 'rust/parity/record-corpus.tsv',
+    ts: 'scripts/record-parity.ts',
+    example: 'dump_record',
+  },
+  {
     name: 'stats',
     corpus: 'rust/parity/stats-corpus.tsv',
     ts: 'scripts/stats-parity.ts',

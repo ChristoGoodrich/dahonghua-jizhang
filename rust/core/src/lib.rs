@@ -39,6 +39,7 @@ pub mod num;
 pub mod period;
 pub mod rates;
 pub mod recap;
+pub mod record;
 pub mod reimburse;
 pub mod rows;
 pub mod search;

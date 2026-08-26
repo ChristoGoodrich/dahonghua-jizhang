@@ -15,6 +15,10 @@ import { store$, addEntry, addTransfer, updateEntry, removeEntry, unremoveEntry,
 import { noteSuggestions } from '@/domain/notes';
 import { NO_ANIM } from '@/util/boot';
 import { SPRING } from '@/theme/tokens';
+import {
+  validate, rateSource as sourceOf, initialFields, pickIo, shouldPatchTs, draft, afterSaveNext,
+  type FormFields,
+} from '../form';
 import { useFormState } from './useFormState';
 import { useAIEntry } from './useAIEntry';
 import { localDateStr } from '@/domain/dates';
@@ -86,14 +90,8 @@ export function useRecordForm({ visible, editId, initialTs, dupeId, lang, custom
 
     ratePromise.then((rate) => {
       if (cancelled) return;
-      if (rate != null) {
-        setFetchedRate(rate);
-        const cached = currencies.rates?.[cur];
-        setRateSource(cached != null && Math.abs(rate - cached) < 0.000001 ? 'cached' : 'api');
-      } else {
-        setFetchedRate(null);
-        setRateSource(null);
-      }
+      setFetchedRate(rate);
+      setRateSource(sourceOf(rate, currencies.rates?.[cur]));
     });
 
     return () => { cancelled = true; };
@@ -133,117 +131,101 @@ export function useRecordForm({ visible, editId, initialTs, dupeId, lang, custom
       const d = srcId ? store$.data.peek().find((x) => x.id === srcId) : undefined;
       setFlash(null);
       setAttempted(false);
-      if (d) {
-        setIO(d.io);
-        setCat(d.cat);
-        setTs(editId ? d.ts : initialTs ?? null); // dupe keeps no date → "now"
-        // show the original foreign amount when editing a converted entry
-        setAmt(String(d.origAmt ?? d.amt));
-        setNote(d.note ?? '');
-        setAcct(d.acct ?? 'default');
-        setAcctTo(d.acctTo ?? '');
-        setFee(d.fee ? String(d.fee) : '');
-        setDiscount(d.discount ? String(d.discount) : '');
-        setSheetTags(d.tags ?? []);
-        setLedger(d.ledger ?? '');
-        setCur(d.cur ?? baseNow);
-        setSubcat(d.subcat ?? '');
-      } else {
-        setIO('exp');
-        setCat(allCats('exp', customCats)[0].k);
-        setTs(initialTs ?? null);
-        setAmt('');
-        setNote('');
-        setAcct(store$.curAccount.peek());
-        setAcctTo('');
-        setFee('');
-        setDiscount('');
-        setSheetTags([]);
-        setLedger(store$.curLedger.peek() || '');
-        setCur(baseNow);
-        setSubcat('');
-      }
+      const f = initialFields(d, !!editId, {
+        base: baseNow,
+        acct: store$.curAccount.peek(),
+        ledger: store$.curLedger.peek() || '',
+        firstExpCat: allCats('exp', customCats)[0].k,
+        initialTs: initialTs ?? null,
+      });
+      setIO(f.io);
+      setCat(f.cat);
+      setTs(f.ts);
+      setAmt(f.amt);
+      setNote(f.note);
+      setAcct(f.acct);
+      setAcctTo(f.acctTo);
+      setFee(f.fee);
+      setDiscount(f.discount);
+      setSheetTags(f.tags);
+      setLedger(f.ledger);
+      setCur(f.cur);
+      setSubcat(f.subcat);
     }
   }
 
   function pickIO(next: IO) {
-    setIO(next);
-    setSubcat('');
-    if (next === 'xfer') {
-      const from = acct || store$.curAccount.peek();
-      const to = visibleAccts.find((a) => a.id !== from);
-      setAcct(from);
-      setAcctTo(to ? to.id : '');
-      return;
-    }
-    setCat(allCats(next, customCats)[0].k);
+    const p = pickIo(
+      next,
+      fields(),
+      visibleAccts.map((a) => a.id),
+      store$.curAccount.peek(),
+      (i) => allCats(i, customCats)[0].k,
+    );
+    setIO(p.io!);
+    setSubcat(p.subcat!);
+    if (p.cat !== undefined) setCat(p.cat);
+    if (p.acct !== undefined) setAcct(p.acct);
+    if (p.acctTo !== undefined) setAcctTo(p.acctTo);
   }
 
   function onKey(k: string) {
     setAmt((prev) => applyKey(prev, k));
   }
 
-  /** Why this form can't be saved yet, or null when it's good to go. Every
-   *  rejection needs a message: the save button used to silently do nothing on
-   *  a zero amount or an incomplete transfer, which reads as a broken button. */
+  /** The current fields as `form.ts` sees them. */
+  function fields(): FormFields {
+    return { io, cat, amt, note, acct, acctTo, fee, discount, tags: sheetTags, ledger, cur, subcat, ts };
+  }
+
+  /** Why this form can't be saved yet, or null when it's good to go.
+   *
+   *  The rejection is decided in form.ts and spelled here: a message is Intl
+   *  and belongs to the platform, a refusal is not. */
   function validationError(): string | null {
-    const value = evalExpr(amt);
-    if (!value || value <= 0) return s.errAmount;
-    if (io === 'xfer') {
-      if (!acctTo) return s.errXferTo;
-      if (acct === acctTo) return s.errXferSame;
+    const r = validate(fields(), base, currencies.rates ?? {});
+    if (!r) return null;
+    switch (r.kind) {
+      case 'amount': return s.errAmount;
+      case 'xferTo': return s.errXferTo;
+      case 'xferSame': return s.errXferSame;
+      case 'noRate': return s.errNoRate.replace('%s', r.cur);
     }
-    if (cur !== base && !currencies.rates?.[cur]) return s.errNoRate.replace('%s', cur);
-    return null;
   }
 
   // Write the entry (add or update). Returns the amount as typed (in the
   // entry's own currency) for feedback, or null when the form isn't saveable.
   function writeEntry(rateOverride?: number): number | null {
-    const value = evalExpr(amt);
-    if (!value || value <= 0) return null;
-    const trimmed = note.trim();
+    const dr = draft(fields(), base, currencies, rateOverride);
+    if (!dr) return null;
     // only patch ts on edit when the user actually re-dated the entry, so an
     // untouched date doesn't get a fresh fieldTs stamp for sync merging
     const origTs = editId ? store$.data.peek().find((x) => x.id === editId)?.ts : undefined;
-    const tsPatch = ts !== null && origTs !== undefined && origTs !== ts ? { ts } : {};
+    const tsPatch = shouldPatchTs(origTs, ts) ? { ts: ts! } : {};
 
-    if (io === 'xfer') {
-      if (!acctTo || acct === acctTo) return null; // need two distinct accounts
-      const feeN = parseFloat(fee) || 0;
-      const discN = parseFloat(discount) || 0;
+    if (dr.kind === 'xfer') {
       if (editId) {
         updateEntry(editId, {
-          io: 'xfer', cat: 'transfer', amt: value, acct, acctTo,
-          fee: feeN || undefined, discount: discN || undefined,
-          note: trimmed || undefined, ledger: ledger || undefined,
+          io: 'xfer', cat: 'transfer', amt: dr.amt, acct: dr.from, acctTo: dr.to,
+          fee: dr.fee || undefined, discount: dr.discount || undefined,
+          note: dr.note || undefined, ledger: dr.ledger || undefined,
           // clear exp/inc-only fields if an entry was converted into a transfer
           subcat: undefined, cur: undefined, origAmt: undefined,
           ...tsPatch,
         });
       } else {
-        addTransfer({ from: acct, to: acctTo, amt: value, fee: feeN, discount: discN, note: trimmed, ledger, ts: ts ?? undefined });
+        addTransfer({ from: dr.from, to: dr.to, amt: dr.amt, fee: dr.fee, discount: dr.discount, note: dr.note, ledger: dr.ledger, ts: dr.ts ?? undefined });
       }
-      return value;
+      return evalExpr(amt);
     }
 
-    const foreign = cur && cur !== base;
-    const effectiveRate = rateOverride ?? (foreign ? currencies.rates?.[cur] : undefined);
-    const storeAmt = toBase(value, cur, currencies, effectiveRate); // always persist in base currency
-    const extra = {
-      tags: sheetTags.length ? sheetTags : undefined,
-      ledger: ledger || undefined,
-      subcat: subcat || undefined,
-      cur: foreign ? cur : undefined,
-      origAmt: foreign ? value : undefined,
-      rate: foreign ? effectiveRate : undefined,
-    };
+    const { kind: _k, ts: _t, ...rest } = dr;
     if (editId) {
-      updateEntry(editId, { io, cat, amt: storeAmt, note: trimmed, acct, ...extra, ...tsPatch });
+      updateEntry(editId, { ...rest, ...tsPatch });
     } else {
-      addEntry({ io, cat, amt: storeAmt, note: trimmed, acct, ...extra, ts: ts ?? undefined });
+      addEntry({ ...rest, ts: dr.ts ?? undefined });
     }
-    return value;
+    return evalExpr(amt);
   }
 
   async function save() {
@@ -260,10 +242,7 @@ export function useRecordForm({ visible, editId, initialTs, dupeId, lang, custom
     if (cur !== base && rate == null) {
       const dateStr = localDateStr(ts ?? Date.now());
       rate = await getRateForDate(base, cur, dateStr, currencies.rates ?? {});
-      if (rate != null) {
-        const cached = currencies.rates?.[cur];
-        source = cached != null && Math.abs(rate - cached) < 0.000001 ? 'cached' : 'api';
-      }
+      source = sourceOf(rate, currencies.rates?.[cur]);
     }
 
     if (writeEntry(rate ?? undefined) === null) return;
@@ -293,20 +272,18 @@ export function useRecordForm({ visible, editId, initialTs, dupeId, lang, custom
     if (cur !== base && rate == null) {
       const dateStr = localDateStr(ts ?? Date.now());
       rate = await getRateForDate(base, cur, dateStr, currencies.rates ?? {});
-      if (rate != null) {
-        const cached = currencies.rates?.[cur];
-        source = cached != null && Math.abs(rate - cached) < 0.000001 ? 'cached' : 'api';
-      }
+      source = sourceOf(rate, currencies.rates?.[cur]);
     }
 
     const value = writeEntry(rate ?? undefined);
     if (value === null) return;
     onSaved(true, true);
-    setAmt('');
-    setNote('');
-    setSubcat('');
-    setFee('');
-    setDiscount('');
+    const next = afterSaveNext(fields());
+    setAmt(next.amt);
+    setNote(next.note);
+    setSubcat(next.subcat);
+    setFee(next.fee);
+    setDiscount(next.discount);
     const msg = s.savedNext.replace('%s', curSymbol(cur) + value.toFixed(2));
     setFlash({ msg: cur !== base && source === 'cached' ? msg + ' · ' + s.rateCached : msg });
   }
