@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'entry_list.dart';
+import 'record_sheet.dart' as sheet;
 import 'theme.dart';
 import 'src/rust/api/calc.dart' as calc;
 import 'src/rust/api/glass.dart' as glass;
@@ -89,12 +90,20 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _tab = 0;
+  int _listVersion = 0;
 
   @override
   Widget build(BuildContext context) => Scaffold(
         body: IndexedStack(
           index: _tab,
-          children: const [EntryListScreen(), RecordSheet()],
+          children: [
+            // rebuilt by key when the tab changes, so the list re-reads the
+            // ledger a save just added to
+            EntryListScreen(key: ValueKey(_listVersion)),
+            sheet.RecordSheet(onSaved: ({required staleRate}) {
+              setState(() => _listVersion++);
+            }),
+          ],
         ),
         // Material 3's default NavigationBar paints itself lavender, which
         // against this palette's warm paper reads as a different application's
@@ -125,14 +134,22 @@ class _HomeState extends State<Home> {
       );
 }
 
-class RecordSheet extends StatefulWidget {
-  const RecordSheet({super.key});
+/// The throwaway prototype, kept.
+///
+/// It is not a screen the app uses any more — the real record sheet is
+/// record_sheet.dart. This is what answered the three questions the
+/// architecture had to settle on a device before Flutter was chosen: does a
+/// Chinese IME compose, does 柔光玻璃 render, do accessibility labels reach
+/// Android. It still demonstrates the fourth: every colour on it is computed in
+/// Rust. Renamed because two classes called RecordSheet is one too many.
+class MaterialProbe extends StatefulWidget {
+  const MaterialProbe({super.key});
 
   @override
-  State<RecordSheet> createState() => _RecordSheetState();
+  State<MaterialProbe> createState() => _MaterialProbeState();
 }
 
-class _RecordSheetState extends State<RecordSheet> {
+class _MaterialProbeState extends State<MaterialProbe> {
   final _note = TextEditingController();
   String _expr = '';
 

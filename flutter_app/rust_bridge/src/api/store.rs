@@ -26,19 +26,44 @@ use dahonghua_core::civil::Civil;
 use dahonghua_core::entry::{Entry, EntrySource, Io, Patch, Reimburse};
 use dahonghua_core::jsval::{parse, stable, Value};
 use dahonghua_core::ledger::Ledger;
+use dahonghua_core::money::Currencies;
 use dahonghua_core::list::{self, DayLabel, FlatItem};
 use dahonghua_core::rows::{entry_from_value, entry_to_value};
 use dahonghua_core::store::{ImportedBill, Store, TransferOpts};
 use flutter_rust_bridge::frb;
 use std::sync::{Mutex, MutexGuard, OnceLock};
 
-fn store() -> MutexGuard<'static, Store> {
+pub(crate) fn store() -> MutexGuard<'static, Store> {
     static STORE: OnceLock<Mutex<Store>> = OnceLock::new();
     let m = STORE.get_or_init(|| Mutex::new(Store::new()));
     // A panic inside one command poisons the lock. Taking the value anyway is
     // the right call here: the alternative is that every later call fails too,
     // which turns one bad row into an unusable ledger.
     m.lock().unwrap_or_else(|e| e.into_inner())
+}
+
+/// The currency settings, which the record sheet's decisions read.
+///
+/// A second lock rather than a field on `Store`, because `Store` is core's and
+/// answers to the parity corpus — this is the bridge holding one more piece of
+/// config until the config sections themselves come across.
+fn currencies_lock() -> MutexGuard<'static, Currencies> {
+    static CUR: OnceLock<Mutex<Currencies>> = OnceLock::new();
+    let m = CUR.get_or_init(|| {
+        Mutex::new(Currencies {
+            base: "CNY".to_string(),
+            ..Default::default()
+        })
+    });
+    m.lock().unwrap_or_else(|e| e.into_inner())
+}
+
+pub(crate) fn currencies_of() -> Currencies {
+    currencies_lock().clone()
+}
+
+pub(crate) fn set_currencies_inner(c: Currencies) {
+    *currencies_lock() = c;
 }
 
 // ---------- shapes that cross ----------
@@ -576,4 +601,11 @@ pub fn snapshot_entries() -> String {
 #[frb(sync)]
 pub fn reset() {
     *store() = Store::new();
+    // the currency table too: a test that inherited the previous one's rates
+    // would take a different branch through `validate` for no stated reason,
+    // which is the fixture gap the TypeScript suite had
+    set_currencies_inner(Currencies {
+        base: "CNY".to_string(),
+        ..Default::default()
+    });
 }

@@ -126,14 +126,14 @@ void main() {
 
   group('the screen builds on top of it', () {
     testWidgets('the record sheet renders with Rust-computed colour', (tester) async {
-      await tester.pumpWidget(const MaterialApp(home: RecordSheet()));
+      await tester.pumpWidget(const MaterialApp(home: MaterialProbe()));
       await tester.pumpAndSettle();
       expect(find.text('记一笔'), findsOneWidget);
       expect(find.text('读回：「」 长度 0'), findsOneWidget);
     });
 
     testWidgets('a keypress goes through Rust and back to the screen', (tester) async {
-      await tester.pumpWidget(const MaterialApp(home: RecordSheet()));
+      await tester.pumpWidget(const MaterialApp(home: MaterialProbe()));
       await tester.pumpAndSettle();
       await tester.tap(find.text('7'));
       await tester.pumpAndSettle();

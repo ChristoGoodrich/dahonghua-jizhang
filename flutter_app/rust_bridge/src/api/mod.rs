@@ -10,4 +10,5 @@ pub mod catalog;
 pub mod glass;
 pub mod init;
 pub mod money;
+pub mod record;
 pub mod store;

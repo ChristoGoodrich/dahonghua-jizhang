@@ -1792,6 +1792,46 @@ that can say anything — the sweep runs **45 injections with no zeros and
 nothing unscored**, the second time in this migration that every injection
 lands.
 
+### The record sheet, and what a screenshot found that the tests did not
+
+The second Flutter screen, over `record.rs`. Same division as the entry list
+and the same test of whether it held: `record_sheet.dart` has no idea what makes
+a form invalid, what a fresh one starts as, what switching to a transfer does to
+the account fields, or what shape reaches the ledger.
+
+`save_form` is deliberately **one** call rather than validate-then-write. The
+TypeScript split them and grew a path where the write happened and the caller
+was told something that read like a failure; across this boundary a caller
+cannot write without validating, and cannot be told "rejected" about a row that
+exists.
+
+Every keypress crosses too. That looks extravagant until you read `applyKey`:
+what a second `.` does inside one number segment, what an operator does after an
+operator, how a lone leading `0` is replaced rather than appended to. None of it
+is obvious, all of it is the shipping app's, and a Dart approximation would be a
+second implementation of a grammar.
+
+**And then the screenshot.** Twenty tests passed, the sheet rendered, and the
+amount panel read `=0`. The keypad I had written sent `'='`, and the shipping
+keypad's equals key is named **`eq`** — so `applyKey` took `=` for a digit and
+appended it. The operators were wrong the same way: `applyKey` matches on the
+exact characters `+-×÷`, and a keypad sending `*` would have typed a `*` into
+the amount.
+
+Nothing caught this because nothing pressed those keys: every test typed digits
+and `+`. The layout now matches `CalcKeypad.tsx` key for key — including `C`,
+which I had left out entirely — and four new tests press each of the ones that
+were wrong.
+
+A second screenshot found a second thing: `请输入金额` still showing over a valid
+`0.02`. The React Native sheet clears a flash on a timer because it is a modal
+that comes and goes; this is a tab that stays, so **a complaint outlived the
+thing it complained about**. It clears when the amount changes now, which is
+better than a timer for a screen that does not close.
+
+Both are the same lesson from the entry list's nav bar, restated: a test asks
+the question you thought to ask. Looking at the screen asks the others.
+
 ### Building for Android here
 
 Whatever drives it, the Android build needs `TEMP` pointed somewhere AF_UNIX
