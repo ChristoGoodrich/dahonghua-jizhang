@@ -86,6 +86,31 @@ fn settings_lock() -> MutexGuard<'static, BudgetSettings> {
     m.lock().unwrap_or_else(|e| e.into_inner())
 }
 
+/// The reader's language, `zh` or `en`.
+///
+/// Its own lock rather than a field on `BudgetSettings`, because it is a
+/// top-level config section on the other side — `lang` sits beside `settings`
+/// in the blob, and the per-section stamps that decide a sync merge are keyed
+/// on exactly those names.
+fn lang_lock() -> MutexGuard<'static, String> {
+    static L: OnceLock<Mutex<String>> = OnceLock::new();
+    let m = L.get_or_init(|| Mutex::new("zh".to_string()));
+    m.lock().unwrap_or_else(|e| e.into_inner())
+}
+
+/// `zh` unless the config says otherwise.
+#[frb(sync)]
+pub fn language() -> String {
+    lang_lock().clone()
+}
+
+/// Anything that is not `en` is `zh`, which is what a restored config with a
+/// language this build has never heard of should fall back to.
+#[frb(sync)]
+pub fn set_language(lang: String) {
+    *lang_lock() = if lang == "en" { "en" } else { "zh" }.to_string();
+}
+
 pub(crate) fn settings_of() -> BudgetSettings {
     settings_lock().clone()
 }
@@ -839,6 +864,7 @@ pub fn snapshot_config() -> String {
         ),
         ("templates".into(), Value::Arr(templates)),
         ("curLedger".into(), Value::Str(lib.current_ledger.clone())),
+        ("lang".into(), Value::Str(language())),
         ("assets".into(), Value::Arr(assets)),
         ("loans".into(), Value::Arr(loans)),
         ("subs".into(), Value::Arr(subs)),
@@ -904,6 +930,9 @@ pub fn load_config(json: String) -> bool {
         if !accounts.is_empty() {
             store().accounts = accounts;
         }
+    }
+    if let Some(Value::Str(l)) = v.get("lang") {
+        set_language(l.clone());
     }
     if let Some(Value::Str(id)) = v.get("curAccount") {
         store().current_account = id.clone();
@@ -1100,4 +1129,5 @@ pub fn reset() {
     super::networth::set_assets_inner(Vec::new());
     super::networth::set_loans_inner(Vec::new());
     super::catalog::set_library_inner(Default::default());
+    set_language("zh".to_string());
 }

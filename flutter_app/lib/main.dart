@@ -27,6 +27,7 @@ import 'me_screen.dart';
 import 'persistence.dart';
 import 'record_sheet.dart' as sheet;
 import 'reimburse_screen.dart';
+import 'settings_screen.dart';
 import 'report_screen.dart';
 import 'stats_screen.dart';
 import 'subs_screen.dart';
@@ -129,6 +130,13 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with WidgetsBindingObserver {
   int _tab = 0;
 
+  /// Which language the app speaks, read from the store rather than assumed.
+  ///
+  /// Threaded down rather than read at each screen: a screen that fetched it
+  /// itself would keep the old one until it happened to rebuild, so switching
+  /// language would translate the app a screen at a time.
+  bool _zh = store.language() != 'en';
+
   /// Bumped whenever the ledger or the config changes, and used as a key so
   /// every screen re-reads the store instead of holding a stale copy of it.
   int _listVersion = 0;
@@ -165,7 +173,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
   void _configChanged() {
     widget.store?.touchConfig();
-    setState(() => _listVersion++);
+    setState(() {
+      _zh = store.language() != 'en';
+      _listVersion++;
+    });
   }
 
   void _bothChanged() {
@@ -183,6 +194,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       MaterialPageRoute<void>(
         builder: (_) => sheet.RecordSheet(
           editId: editId,
+          zh: _zh,
           onSaved: ({required staleRate}) => _entriesChanged(),
         ),
       ),
@@ -206,16 +218,19 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       children: [
         EntryListScreen(
           key: ValueKey(_listVersion),
+          zh: _zh,
           onEdit: (id) => _record(editId: id),
           onChanged: _entriesChanged,
         ),
-        StatsScreen(key: ValueKey(_listVersion)),
+        StatsScreen(key: ValueKey(_listVersion), zh: _zh),
         AssetsScreen(
           key: ValueKey(_listVersion),
+          zh: _zh,
           onChanged: _bothChanged,
         ),
         MeScreen(
           key: ValueKey(_listVersion),
+          zh: _zh,
           groups: _meGroups(),
         ),
       ],
@@ -223,65 +238,81 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     bottomNavigationBar: _bar(),
   );
 
-  List<(String, List<MeRow>)> _meGroups() => [
-    (
-      '记账工具',
-      [
-        MeRow(
-          id: 'budget',
-          icon: Icons.savings_outlined,
-          title: '预算',
-          desc: '每月、每天和分类的上限',
-          onTap: () => _push(BudgetScreen(onChanged: _configChanged)),
-        ),
-        MeRow(
-          id: 'subs',
-          icon: Icons.autorenew_outlined,
-          title: '订阅',
-          desc: '到期自动记一笔',
-          onTap: () => _push(SubsScreen(onChanged: _bothChanged)),
-        ),
-        MeRow(
-          id: 'templates',
-          icon: Icons.bolt_outlined,
-          title: '模板',
-          desc: '一按就记的常用笔',
-          onTap: () => _push(TemplatesScreen(onChanged: _configChanged)),
-        ),
-        MeRow(
-          id: 'report',
-          icon: Icons.insights_outlined,
-          title: '回顾',
-          desc: '这个周期和这一周,过得怎么样',
-          onTap: () => _push(const ReportScreen()),
-        ),
-        MeRow(
-          id: 'reimburse',
-          icon: Icons.receipt_long_outlined,
-          title: '报销',
-          desc: '垫的钱,和收回来的',
-          onTap: () => _push(ReimburseScreen(onChanged: _entriesChanged)),
-        ),
-        MeRow(
-          id: 'currency',
-          icon: Icons.currency_exchange,
-          title: '币种与汇率',
-          desc: '记账单位,和别的币种怎么换',
-          onTap: () => _push(CurrencyScreen(
-            onChanged: ({required ledgerToo}) =>
-                ledgerToo ? _bothChanged() : _configChanged(),
-          )),
-        ),
-        MeRow(
-          id: 'tags',
-          icon: Icons.label_outline,
-          title: '标签与账本',
-          desc: '给记录分组,或者分成几本账',
-          onTap: () => _push(TagsScreen(onChanged: _configChanged)),
-        ),
-      ],
-    ),
-  ];
+  List<(String, List<MeRow>)> _meGroups() {
+    final zh = _zh;
+    return [
+      (
+        zh ? '记账工具' : 'Tools',
+        [
+          MeRow(
+            id: 'report',
+            icon: Icons.insights_outlined,
+            title: zh ? '回顾' : 'Report',
+            desc: zh ? '这个周期和这一周,过得怎么样' : 'How the cycle and the week are going',
+            onTap: () => _push(ReportScreen(zh: zh)),
+          ),
+          MeRow(
+            id: 'reimburse',
+            icon: Icons.receipt_long_outlined,
+            title: zh ? '报销' : 'Reimbursements',
+            desc: zh ? '垫的钱,和收回来的' : 'What you fronted, and what came back',
+            onTap: () => _push(ReimburseScreen(zh: zh, onChanged: _entriesChanged)),
+          ),
+          MeRow(
+            id: 'budget',
+            icon: Icons.savings_outlined,
+            title: zh ? '预算' : 'Budgets',
+            desc: zh ? '每月、每天和分类的上限' : 'Monthly, daily and per-category caps',
+            onTap: () => _push(BudgetScreen(zh: zh, onChanged: _configChanged)),
+          ),
+          MeRow(
+            id: 'subs',
+            icon: Icons.autorenew_outlined,
+            title: zh ? '订阅' : 'Subscriptions',
+            desc: zh ? '到期自动记一笔' : 'Charges that post themselves',
+            onTap: () => _push(SubsScreen(zh: zh, onChanged: _bothChanged)),
+          ),
+          MeRow(
+            id: 'templates',
+            icon: Icons.bolt_outlined,
+            title: zh ? '模板' : 'Templates',
+            desc: zh ? '一按就记的常用笔' : 'One-tap entries you make often',
+            onTap: () => _push(TemplatesScreen(zh: zh, onChanged: _configChanged)),
+          ),
+          MeRow(
+            id: 'currency',
+            icon: Icons.currency_exchange,
+            title: zh ? '币种与汇率' : 'Currencies',
+            desc: zh ? '记账单位,和别的币种怎么换' : 'The base unit, and the rates',
+            onTap: () => _push(CurrencyScreen(
+              zh: zh,
+              onChanged: ({required ledgerToo}) =>
+                  ledgerToo ? _bothChanged() : _configChanged(),
+            )),
+          ),
+          MeRow(
+            id: 'tags',
+            icon: Icons.label_outline,
+            title: zh ? '标签与账本' : 'Tags and ledgers',
+            desc: zh ? '给记录分组,或者分成几本账' : 'Group entries, or split the books',
+            onTap: () => _push(TagsScreen(zh: zh, onChanged: _configChanged)),
+          ),
+        ],
+      ),
+      (
+        zh ? '更多' : 'More',
+        [
+          MeRow(
+            id: 'settings',
+            icon: Icons.tune,
+            title: zh ? '设置' : 'Settings',
+            desc: zh ? '语言和账单周期' : 'Language and the budget cycle',
+            onTap: () => _push(SettingsScreen(zh: zh, onChanged: _configChanged)),
+          ),
+        ],
+      ),
+    ];
+  }
 
   /// Material 3's default NavigationBar paints itself lavender, which against
   /// this palette's warm paper reads as a different application's chrome. The
@@ -300,11 +331,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         height: 64,
         child: Row(
           children: [
-            _tabItem(0, Icons.receipt_long, '明细'),
-            _tabItem(1, Icons.pie_chart_outline, '统计'),
+            _tabItem(0, Icons.receipt_long, _zh ? '明细' : 'Entries'),
+            _tabItem(1, Icons.pie_chart_outline, _zh ? '统计' : 'Stats'),
             _recordButton(),
-            _tabItem(2, Icons.account_balance_wallet_outlined, '资产'),
-            _tabItem(3, Icons.person_outline, '我的'),
+            _tabItem(2, Icons.account_balance_wallet_outlined,
+                _zh ? '资产' : 'Assets'),
+            _tabItem(3, Icons.person_outline, _zh ? '我的' : 'Me'),
           ],
         ),
       ),
@@ -343,7 +375,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     padding: const EdgeInsets.symmetric(horizontal: 6),
     child: Semantics(
       button: true,
-      label: '记一笔',
+      label: _zh ? '记一笔' : 'Record',
       child: GestureDetector(
         key: const Key('record-button'),
         onTap: () {
