@@ -28,6 +28,7 @@ pub mod jsstr;
 pub mod jsval;
 pub mod keywords;
 pub mod ledger;
+pub mod list;
 pub mod merge;
 pub mod model;
 pub mod money;

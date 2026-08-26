@@ -38,6 +38,31 @@ describe('EntryList', () => {
     expect(text).toContain('￥30.00'); // day header shows the expense total (only the 30 expense)
   });
 
+  it('names the day group, in the current language', () => {
+    // Nothing here looked at the header text, so moving the label decision into
+    // grouping.ts and forgetting to spell it out again rendered the literal
+    // word "today". Both are strings, so the typechecker was content.
+    const r = render(<EntryList entries={entries} customCats={noCustom} lang="zh" onPress={() => {}} />);
+    const text = textOf(r.toJSON());
+    expect(text).toContain(I18N.zh.today);
+    expect(text).not.toContain('today');
+  });
+
+  it('names yesterday, and dates anything older', () => {
+    const older: Entry[] = [
+      { id: 'y', ts: now - 86400000, io: 'exp', cat: 'food', amt: 1 },
+      { id: 'o', ts: now - 86400000 * 9, io: 'exp', cat: 'food', amt: 1 },
+    ];
+    const r = render(<EntryList entries={older} customCats={noCustom} lang="en" onPress={() => {}} />);
+    const text = textOf(r.toJSON());
+    expect(text).toContain(I18N.en.yesterday);
+    // the third label is a real date rather than either word
+    const dated = new Date(now - 86400000 * 9).toLocaleDateString('en-US', {
+      month: 'short', day: 'numeric', weekday: 'short',
+    });
+    expect(text).toContain(dated);
+  });
+
   it('shows the default empty message with no entries', () => {
     const r = render(<EntryList entries={[]} customCats={noCustom} lang="zh" onPress={() => {}} />);
     expect(textOf(r.toJSON())).toContain(I18N.zh.empty);

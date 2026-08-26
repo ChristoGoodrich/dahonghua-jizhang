@@ -6,9 +6,11 @@ import { Tap } from '@/components/ui/Tap';
 import { RAD, TABULAR } from '@/theme/tokens';
 import { catOf, catName } from '@/domain/cats';
 import { fmt, fmtNum } from '@/domain/money';
-import { daysAgo } from '@/domain/dates';
 import { store$ } from '@/store/ledger';
 import { SwipeableRow } from '@/features/list/SwipeableRow';
+import {
+  groupByDay, flattenGroups, type DayGroup, type FlatItem, type DayLabel,
+} from '@/features/list/grouping';
 import type { Entry, Category, IO } from '@/domain/types';
 import type { Lang } from '@/i18n';
 import { I18N } from '@/i18n';
@@ -29,31 +31,16 @@ interface Props {
   header?: React.ReactElement;
 }
 
-interface DayGroup {
-  key: string;
-  label: string;
-  dayExp: number;
-  dayInc: number;
-  items: Entry[];
-}
-
-type FlatItem =
-  | { type: 'header'; key: string; label: string; dayExp: number; dayInc: number }
-  | { type: 'entry'; key: string; entry: Entry; groupKey: string }
-  | { type: 'entryrow'; key: string; entries: Entry[]; groupKey: string };
-
 const HEADER_HEIGHT = 30;
 const ROW_HEIGHT = 67;
 
-function dayLabel(key: string, lang: Lang, s: typeof I18N['zh']): string {
-  const d = new Date(key);
-  // `Date.now() - 864e5` is twenty-four hours ago, which is the day before
-  // yesterday on the morning after the clocks go forward — so "yesterday"
-  // labelled the wrong group. `daysAgo` normalises both ends to midnight.
-  const ago = daysAgo(d.getTime());
-  if (ago === 0) return s.today;
-  if (ago === 1) return s.yesterday;
-  return d.toLocaleDateString(lang === 'zh' ? 'zh-CN' : 'en-US', {
+/** The day's printed name. Which of the three labels applies is decided in
+ *  grouping.ts; this only spells the third one, which is `toLocaleDateString`
+ *  and therefore the platform's job rather than the logic's. */
+function dayLabel(key: string, label: DayLabel, lang: Lang, s: typeof I18N['zh']): string {
+  if (label === 'today') return s.today;
+  if (label === 'yesterday') return s.yesterday;
+  return new Date(key).toLocaleDateString(lang === 'zh' ? 'zh-CN' : 'en-US', {
     month: 'short',
     day: 'numeric',
     weekday: 'short',
@@ -74,22 +61,7 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
     };
   }, [accounts, lang, s.xferLabel]);
 
-  const groups = useMemo<DayGroup[]>(() => {
-    const sorted = [...entries].sort((a, b) => b.ts - a.ts);
-    const map = new Map<string, Entry[]>();
-    for (const d of sorted) {
-      const k = new Date(d.ts).toDateString();
-      if (!map.has(k)) map.set(k, []);
-      map.get(k)!.push(d);
-    }
-    return [...map.entries()].map(([key, items]) => ({
-      key,
-      label: dayLabel(key, lang, s),
-      dayExp: items.filter((d) => d.io === 'exp').reduce((sum, d) => sum + d.amt, 0),
-      dayInc: items.filter((d) => d.io === 'inc').reduce((sum, d) => sum + d.amt, 0),
-      items,
-    }));
-  }, [entries, lang, s]);
+  const groups = useMemo<DayGroup[]>(() => groupByDay(entries), [entries]);
 
   // reimburse/refund badges — alpha tints over the card so they hold up in dark mode
   const badgeTones = useMemo(
@@ -113,24 +85,7 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
     [badgeTones],
   );
 
-  const flatData = useMemo<FlatItem[]>(() => {
-    const items: FlatItem[] = [];
-    for (const g of groups) {
-      items.push({ type: 'header', key: g.key, label: g.label, dayExp: g.dayExp, dayInc: g.dayInc });
-      if (columns > 1) {
-        // Group entries into rows of `columns` items for multi-column layout
-        for (let i = 0; i < g.items.length; i += columns) {
-          const rowEntries = g.items.slice(i, i + columns);
-          items.push({ type: 'entryrow', key: `row-${g.key}-${i}`, entries: rowEntries, groupKey: g.key });
-        }
-      } else {
-        for (const d of g.items) {
-          items.push({ type: 'entry', key: d.id, entry: d, groupKey: g.key });
-        }
-      }
-    }
-    return items;
-  }, [groups, columns]);
+  const flatData = useMemo<FlatItem[]>(() => flattenGroups(groups, columns), [groups, columns]);
 
   // no drop shadow: fifty stacked cards each casting one turns the list into
   // grey mush — the card/paper contrast plus the hairline is the separation
@@ -221,7 +176,7 @@ export function EntryList({ entries, customCats, lang, onPress, onLongPress, onD
     if (item.type === 'header') {
       return (
         <View style={styles.dayHead}>
-          <Text style={[styles.dayLabel, { color: t.inkSoft }]}>{item.label}</Text>
+          <Text style={[styles.dayLabel, { color: t.inkSoft }]}>{dayLabel(item.key, item.label, lang, s)}</Text>
           <Text style={[styles.dayLabel, TABULAR, { color: t.inkSoft }]}>
             {item.dayExp > 0 || item.dayInc === 0
               ? `${s.exp} ${fmt(item.dayExp, lang)}`

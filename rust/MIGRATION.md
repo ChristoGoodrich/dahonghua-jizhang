@@ -86,7 +86,8 @@ Adding a module to the harness:
 | `domain/jsval::parse` (new) | — | **Added** — the sync boundary is JSON in both directions |
 | `sync/pushScheduler` + `engine` decisions + `conflictLog` → `sync` | 454 | **Ported**, 4,252-case parity — transport left on the platform |
 | `sync/auth`, `sync/supabase` | 72 | **Nothing to port** — SDK calls and one `trim` |
-| UI (21 routes, 72 components) | 11,049 | Last — **Flutter decided**; Rust UI frameworks measured and set aside |
+| `features/list` grouping → `list` | 60 | **Ported**, 2,819-case parity — the first UI logic across |
+| UI (21 routes, 72 components) | ~11,000 | **Flutter decided**; the decisions come out screen by screen, as above |
 
 ## Phase 1 — the domain crate (in progress)
 
@@ -1507,6 +1508,69 @@ pattern and income is tested first. The parser was right and the fixture was
 wrong.
 
 ## Phase 3 — the UI
+
+### The first piece of UI logic, and the shape the rest will take
+
+`EntryList.tsx` is 400 lines of rows, badges and swipe gestures with about sixty
+lines of judgement threaded through it: sort the entries, bucket them into
+calendar days, total each day, decide whether the day is called "today". That
+judgement is not presentation, and it is not something to translate into Dart by
+eye.
+
+So it came out first, into `src/features/list/grouping.ts`, and then across into
+`list.rs` with a 2,819-case corpus between them. **That is the pattern for the
+remaining twenty screens**: extract the decisions into a module the shipping app
+itself uses, port that, and let the widget tree be rewritten freely because
+nothing load-bearing is left in it.
+
+Two things stay on the platform, for reasons already settled:
+
+* **The timezone.** An entry's calendar day needs a zone this crate does not
+  own, so a row arrives already projected onto its day — the shape
+  `trends::TrendRow` uses. The corpus carries `now` twice over, epoch-ms for the
+  TypeScript and a calendar day for Rust, because the two halves genuinely need
+  different things and neither should guess.
+* **The day's printed name.** "8月26日 周三" is `toLocaleDateString`. What
+  crosses is *which* of the three names applies.
+
+### A regression that typechecking could not see
+
+Moving the label decision out changed `group.label` from a printed string to one
+of `'today' | 'yesterday' | 'date'`. The render still said `{item.label}`, so
+the header read the literal word **"today"** — in a Chinese-first app.
+
+`tsc` was content, because both are `string`. Every existing `EntryList` test
+passed, because not one of them looked at the header text: they checked category
+names, signed amounts, the day total, the empty state and the tap handlers. A
+screen's most-read line of text had no test at all.
+
+Two now, and they fail against the broken render. The general point is not about
+this label: **a refactor that changes what a value *means* while keeping its
+type is invisible to a typechecker, and only a test that reads the output can
+see it.**
+
+### Twenty-one injections, one zero, and two bad injections of mine
+
+The zero is structural. "A repeated day opens a second group" caught nothing
+because `day` is a function of `ts`, so after a descending sort a day cannot
+reappear after a different one — checking only the last group is equivalent for
+every input the sort can produce. A unit test covers the property directly, with
+hand-built input in which the invariant is deliberately violated; the corpus
+cannot, and should not pretend to.
+
+Two injections were mine to fix rather than the corpus's:
+
+* **`g.exp += r.amt` → `g.exp = r.amt + g.exp`** caught nothing, and could not:
+  floating-point addition is *commutative*. Only associativity fails, so
+  swapping operands is a no-op by construction. The property it was meant to
+  pin — that the sum follows the visit order — is already carried by "the list
+  sorts oldest first", which reorders those same additions and catches 2,066.
+* **`chunks(0)` panics**, so an injection setting `columns` to take the packing
+  path could only be observed to crash, never measured. Reformulated with a
+  non-zero chunk size, it scores 205 — and the `> 1` guard it probes is
+  load-bearing in both languages for different reasons: a panic here, a loop
+  that never advances there.
+
 
 **Decided: Flutter for the UI, Rust for everything under it.** This is the shape
 Xiaomi shipped: HyperOS 3.1 removed the MIUI SDK from Weather and Gallery and
