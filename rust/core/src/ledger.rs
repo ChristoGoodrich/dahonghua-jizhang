@@ -59,7 +59,11 @@ pub fn stamp(entry: &Entry, patch: &Patch, now: i64) -> Entry {
     let mut next = entry.clone();
     patch.apply_to(&mut next);
     for field in patch.touched() {
-        next.field_ts.insert(field.to_string(), now);
+        // `stampEntry` writes `fieldTs` unconditionally — `{ ...(d.fieldTs ?? {}) }`
+        // — so a stamped row always has a map, even when the patch was empty
+        next.field_ts
+            .get_or_insert_with(Default::default)
+            .insert(field.to_string(), now);
     }
     next.updated_at = Some(now);
     next
@@ -309,9 +313,9 @@ mod tests {
         assert_eq!(e.amt, 120.0);
         assert_eq!(e.note.as_deref(), Some("rent"));
         assert_eq!(e.updated_at, Some(9_000));
-        assert_eq!(e.field_ts.get("amt"), Some(&9_000));
-        assert_eq!(e.field_ts.get("note"), Some(&9_000));
-        assert_eq!(e.field_ts.get("cat"), None); // untouched
+        assert_eq!(e.stamp_of("amt"), Some(9_000));
+        assert_eq!(e.stamp_of("note"), Some(9_000));
+        assert_eq!(e.stamp_of("cat"), None); // untouched
     }
 
     #[test]
@@ -334,8 +338,8 @@ mod tests {
             200,
         );
         let e = l.get("a").unwrap();
-        assert_eq!(e.field_ts.get("amt"), Some(&100)); // not rewritten
-        assert_eq!(e.field_ts.get("note"), Some(&200));
+        assert_eq!(e.stamp_of("amt"), Some(100)); // not rewritten
+        assert_eq!(e.stamp_of("note"), Some(200));
         assert_eq!(e.updated_at, Some(200));
     }
 
@@ -460,7 +464,7 @@ mod tests {
 
         let e = l.get("a").unwrap();
         assert_eq!(e.updated_at, Some(9_500));
-        assert_eq!(e.field_ts.get("deletedAt"), Some(&9_500));
+        assert_eq!(e.stamp_of("deletedAt"), Some(9_500));
     }
 
     #[test]

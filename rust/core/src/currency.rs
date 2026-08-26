@@ -357,7 +357,7 @@ mod tests {
         set_base_currency(w.denominated(), "USD", 9_000);
         let e = w.ledger.get("e0").unwrap();
         assert_eq!(e.updated_at, Some(9_000));
-        assert_eq!(e.field_ts.get("amt"), Some(&9_000));
+        assert_eq!(e.stamp_of("amt"), Some(9_000));
     }
 
     #[test]
@@ -379,8 +379,8 @@ mod tests {
         // and it is no longer foreign
         assert_eq!(e.cur, None);
         assert_eq!(e.orig_amt, None);
-        assert_eq!(e.field_ts.get("cur"), Some(&9_000));
-        assert_eq!(e.field_ts.get("origAmt"), Some(&9_000));
+        assert_eq!(e.stamp_of("cur"), Some(9_000));
+        assert_eq!(e.stamp_of("origAmt"), Some(9_000));
     }
 
     #[test]
@@ -421,7 +421,7 @@ mod tests {
 
         assert_eq!(w.ledger.get("e0").unwrap().fee, Some(10.0));
         assert_eq!(w.ledger.get("e1").unwrap().fee, None);
-        assert_eq!(w.ledger.get("e1").unwrap().field_ts.get("fee"), None);
+        assert_eq!(w.ledger.get("e1").unwrap().stamp_of("fee"), None);
     }
 
     #[test]

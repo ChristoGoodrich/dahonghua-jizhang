@@ -390,7 +390,7 @@ mod tests {
         remove_account(&mut accounts, &mut ledger, &mut cur, "a1", 9_000);
         let e = ledger.get("e0").unwrap();
         assert_eq!(e.updated_at, Some(9_000));
-        assert_eq!(e.field_ts.get("acct"), Some(&9_000));
+        assert_eq!(e.stamp_of("acct"), Some(9_000));
     }
 
     #[test]
@@ -399,7 +399,7 @@ mod tests {
         remove_account(&mut accounts, &mut ledger, &mut cur, "a1", 9_000);
         let e = ledger.get("e2").unwrap();
         assert_eq!(e.updated_at, None); // never stamped
-        assert!(e.field_ts.is_empty());
+        assert!(!e.has_stamps());
     }
 
     #[test]

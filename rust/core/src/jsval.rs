@@ -149,6 +149,213 @@ fn quote(s: &str) -> String {
     out
 }
 
+/// `JSON.parse`, for the JSON `JSON.stringify` produces.
+///
+/// The sync boundary is JSON in **both** directions — a row arrives as JSON and
+/// leaves as JSON — so reading it is core's job rather than the caller's. This
+/// is scoped to that: it reads what [`stringify`] writes, which is what the
+/// server column holds and what the parity corpora are written as. It is
+/// lenient where `JSON.parse` would throw, because nothing here is a validator;
+/// every shape it sees has already been through `JSON.stringify` once.
+///
+/// Two places where matching JavaScript took care:
+///
+/// * **A repeated key keeps the last value at the first position.**
+///   `{"a":1,"b":2,"a":3}` parses to `{a:3,b:2}` — `a` stays where it first
+///   appeared and takes the later value. Appending blindly would leave two `a`
+///   entries and [`Value::get`] would answer with the first, which is the
+///   opposite of what JavaScript does. The sync merge has already been bitten
+///   once by a duplicate key resolving the wrong way round.
+/// * **A lone surrogate becomes `U+FFFD`.** A JavaScript string is a sequence
+///   of UTF-16 code units and may hold an unpaired one; a Rust `String` cannot.
+///   `stringify` never emits one, so this is reachable only from input written
+///   by hand.
+pub fn parse(s: &str) -> Value {
+    let mut p = Parser {
+        b: s.as_bytes(),
+        i: 0,
+    };
+    p.value()
+}
+
+struct Parser<'a> {
+    b: &'a [u8],
+    i: usize,
+}
+
+impl Parser<'_> {
+    fn ws(&mut self) {
+        while self.i < self.b.len() && (self.b[self.i] as char).is_ascii_whitespace() {
+            self.i += 1;
+        }
+    }
+
+    fn eat(&mut self, c: u8) -> bool {
+        self.ws();
+        if self.i < self.b.len() && self.b[self.i] == c {
+            self.i += 1;
+            true
+        } else {
+            false
+        }
+    }
+
+    fn lit(&mut self, s: &str) -> bool {
+        self.ws();
+        if self.b[self.i..].starts_with(s.as_bytes()) {
+            self.i += s.len();
+            true
+        } else {
+            false
+        }
+    }
+
+    fn hex4(&mut self) -> Option<u32> {
+        let end = self.i + 4;
+        let hex = std::str::from_utf8(self.b.get(self.i..end)?).ok()?;
+        let n = u32::from_str_radix(hex, 16).ok()?;
+        self.i = end;
+        Some(n)
+    }
+
+    fn string(&mut self) -> String {
+        if !self.eat(b'"') {
+            return String::new();
+        }
+        let mut out = String::new();
+        while self.i < self.b.len() {
+            let c = self.b[self.i];
+            self.i += 1;
+            match c {
+                b'"' => return out,
+                b'\\' if self.i < self.b.len() => {
+                    let e = self.b[self.i];
+                    self.i += 1;
+                    match e {
+                        b'n' => out.push('\n'),
+                        b't' => out.push('\t'),
+                        b'r' => out.push('\r'),
+                        b'b' => out.push('\u{8}'),
+                        b'f' => out.push('\u{c}'),
+                        b'u' => out.push(self.escape()),
+                        other => out.push(other as char),
+                    }
+                }
+                _ => {
+                    // a multi-byte character: copy its whole sequence
+                    let len = utf8_len(c);
+                    let end = (self.i - 1 + len).min(self.b.len());
+                    match std::str::from_utf8(&self.b[self.i - 1..end]) {
+                        Ok(s) => out.push_str(s),
+                        Err(_) => out.push('\u{FFFD}'),
+                    }
+                    self.i = end;
+                }
+            }
+        }
+        out
+    }
+
+    /// The character a `\u` escape names, joining a surrogate pair when the
+    /// next escape completes one.
+    fn escape(&mut self) -> char {
+        let Some(n) = self.hex4() else {
+            return '\u{FFFD}';
+        };
+        if (0xD800..0xDC00).contains(&n) && self.b.get(self.i..self.i + 2) == Some(&b"\\u"[..]) {
+            let save = self.i;
+            self.i += 2;
+            if let Some(lo) = self.hex4() {
+                if (0xDC00..0xE000).contains(&lo) {
+                    let cp = 0x10000 + ((n - 0xD800) << 10) + (lo - 0xDC00);
+                    return char::from_u32(cp).unwrap_or('\u{FFFD}');
+                }
+            }
+            self.i = save;
+        }
+        char::from_u32(n).unwrap_or('\u{FFFD}')
+    }
+
+    fn value(&mut self) -> Value {
+        self.ws();
+        let Some(&c) = self.b.get(self.i) else {
+            return Value::Undefined;
+        };
+        match c {
+            b'{' => {
+                self.i += 1;
+                let mut entries: Vec<(String, Value)> = Vec::new();
+                if self.eat(b'}') {
+                    return Value::Obj(entries);
+                }
+                loop {
+                    self.ws();
+                    let k = self.string();
+                    self.eat(b':');
+                    let v = self.value();
+                    // a repeated key takes the later value at the earlier
+                    // position, which is where `JSON.parse` leaves it
+                    match entries.iter_mut().find(|(x, _)| *x == k) {
+                        Some((_, slot)) => *slot = v,
+                        None => entries.push((k, v)),
+                    }
+                    if !self.eat(b',') {
+                        self.eat(b'}');
+                        return Value::Obj(entries);
+                    }
+                }
+            }
+            b'[' => {
+                self.i += 1;
+                let mut items = Vec::new();
+                if self.eat(b']') {
+                    return Value::Arr(items);
+                }
+                loop {
+                    items.push(self.value());
+                    if !self.eat(b',') {
+                        self.eat(b']');
+                        return Value::Arr(items);
+                    }
+                }
+            }
+            b'"' => Value::Str(self.string()),
+            _ => {
+                if self.lit("true") {
+                    return Value::Bool(true);
+                }
+                if self.lit("false") {
+                    return Value::Bool(false);
+                }
+                if self.lit("null") {
+                    return Value::Null;
+                }
+                let start = self.i;
+                while self
+                    .b
+                    .get(self.i)
+                    .is_some_and(|c| matches!(c, b'-' | b'+' | b'.' | b'e' | b'E' | b'0'..=b'9'))
+                {
+                    self.i += 1;
+                }
+                match std::str::from_utf8(&self.b[start..self.i]) {
+                    Ok(t) => Value::Num(t.parse().unwrap_or(f64::NAN)),
+                    Err(_) => Value::Num(f64::NAN),
+                }
+            }
+        }
+    }
+}
+
+fn utf8_len(b: u8) -> usize {
+    match b {
+        0x00..=0x7f => 1,
+        0xc0..=0xdf => 2,
+        0xe0..=0xef => 3,
+        _ => 4,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -241,5 +448,62 @@ mod tests {
         ]);
         // the emoji sorts first, because its surrogate is below U+E000
         assert!(stable(&v).starts_with("{\"\u{1F600}\""), "{}", stable(&v));
+    }
+
+    #[test]
+    fn what_stringify_writes_is_what_parse_reads() {
+        for v in [
+            Value::Null,
+            Value::Bool(true),
+            Value::Num(1.5),
+            Value::Num(-0.0),
+            Value::Num(1e21),
+            Value::Str("a\"b\\c\nd\te\u{1}f".into()),
+            Value::Str("\u{4E2D}\u{1F600}".into()),
+            Value::Arr(vec![Value::Num(1.0), Value::Null]),
+            obj(&[("b", Value::Num(1.0)), ("a", Value::Arr(vec![]))]),
+        ] {
+            let round = parse(&stable(&v));
+            assert_eq!(stable(&round), stable(&v), "{v:?}");
+        }
+    }
+
+    #[test]
+    fn a_repeated_key_takes_the_later_value_at_the_earlier_position() {
+        let v = parse("{\"a\":1,\"b\":2,\"a\":3}");
+        assert_eq!(v.keys(), vec!["a", "b"]);
+        assert_eq!(v.num("a"), Some(3.0));
+    }
+
+    #[test]
+    fn nesting_and_empties_come_back() {
+        assert_eq!(stable(&parse("{}")), "{}");
+        assert_eq!(stable(&parse("[]")), "[]");
+        let nested = "{\"a\":{\"b\":[1,{\"c\":null}]}}";
+        assert_eq!(stable(&parse(nested)), nested);
+    }
+
+    #[test]
+    fn a_surrogate_pair_is_one_character_and_a_lone_one_is_not() {
+        assert_eq!(parse("\"\u{1F600}\""), Value::Str("\u{1F600}".into()));
+        assert_eq!(parse("\"\\ud83d\\ude00\""), Value::Str("\u{1F600}".into()));
+        // a Rust String cannot hold an unpaired surrogate, and stringify never
+        // writes one
+        assert_eq!(parse("\"\\ud83d\""), Value::Str("\u{FFFD}".into()));
+    }
+
+    #[test]
+    fn numbers_read_the_way_javascript_reads_them() {
+        assert_eq!(parse("1e21"), Value::Num(1e21));
+        assert_eq!(parse("-1.5"), Value::Num(-1.5));
+        assert_eq!(parse("0"), Value::Num(0.0));
+        // 2^53+1 is not representable, and lands on the same f64 either side
+        assert_eq!(parse("9007199254740993"), Value::Num(9007199254740992.0));
+    }
+
+    #[test]
+    fn nothing_at_all_is_undefined_rather_than_a_panic() {
+        assert_eq!(parse(""), Value::Undefined);
+        assert_eq!(parse("   "), Value::Undefined);
     }
 }

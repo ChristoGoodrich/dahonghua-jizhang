@@ -134,3 +134,30 @@ describe('merge outcome', () => {
     expect(mergeById([local], [remote]).merged[0].rb).toBe('pending');
   });
 });
+
+describe('a stamp is always a whole number of milliseconds', () => {
+  // `field_ts` is a jsonb column, so it would hold a fraction happily, and the
+  // Rust port models a stamp as an i64 and would truncate one. Nothing writes a
+  // fraction: `stampEntry` is the only writer and it writes `Date.now()`. That
+  // is an invariant the port depends on, so it is pinned here rather than left
+  // to hold by luck — if it ever stops holding, this fails before sync starts
+  // quietly disagreeing with itself across two languages.
+  it('holds across every mutation that stamps', () => {
+    jest.spyOn(Date, 'now').mockReturnValue(1_700_000_000_123.5);
+    try {
+      const e = addEntry({ ts: 1000, io: 'exp', cat: 'food', amt: 10 });
+      updateEntry(e.id, { amt: 20, note: 'x' });
+      toggleReimburse(e.id);
+      removeEntry(e.id);
+      for (const row of store$.data.peek()) {
+        for (const [k, v] of Object.entries(row.fieldTs ?? {})) {
+          expect(Number.isInteger(v)).toBe(true);
+          expect(`${k}=${v}`).not.toContain('.');
+        }
+        expect(Number.isInteger(row.updatedAt)).toBe(true);
+      }
+    } finally {
+      jest.restoreAllMocks();
+    }
+  });
+});

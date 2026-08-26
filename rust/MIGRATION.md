@@ -82,7 +82,9 @@ Adding a module to the harness:
 | `store/inbox` → `inbox` | 212 | **Ported**, 305-case parity — the deciding half |
 | `sync/merge` | 173 | **Ported**, 7,043-case parity — the heart of sync, and already pure |
 | `domain/jsval` (new) | — | **Added** — a JSON value and `JSON.stringify`, because the serialisation *is* the comparison |
-| `sync/*` (the rest) | 620 | After this — decisions across, transport left behind |
+| `sync/rows` | 94 | **Ported**, 4,539-case parity — the wire shape, and the JSON on either side |
+| `domain/jsval::parse` (new) | — | **Added** — the sync boundary is JSON in both directions |
+| `sync/*` (the rest) | 526 | Next — the scheduler, the config sections, the conflict log |
 | UI (21 routes, 72 components) | 11,049 | Last — **Flutter decided**; Rust UI frameworks measured and set aside |
 
 ## Phase 1 — the domain crate (in progress)
@@ -1154,6 +1156,97 @@ Three injections reported "anchor not found" — anchors that had gone stale whe
 since. This is the failure mode named last time and it does not announce itself:
 **an injection whose anchor misses reports as nothing, not as a problem.** Two
 of them catch 233 and 225 cases now that they land.
+
+### An empty map is not an absent map
+
+`rows.ts` maps an entry to its database row and back. It looked like the least
+interesting file in `sync/`, and the first parity run disagreed with the port on
+**631 of 4,529 cases** — all of them the same thing, and all of them the port's
+fault:
+
+```
+entry { fieldTs: {} }   TypeScript  field_ts: {}      Rust  field_ts: null
+```
+
+`Entry::field_ts` was a `BTreeMap`, so "no stamps" and "an empty stamp map" were
+the same value. In the TypeScript they are not: `e.fieldTs ?? null` writes `{}`
+for one and `null` for the other, and `field_ts` is a `jsonb` column that stores
+both. The port was narrower than the column it wrote to.
+
+It is now an `Option<BTreeMap<…>>`. The interesting part is why nothing had
+caught it: the `ledger` corpus renders stamps with `Object.keys(e.fieldTs ?? {})`
+on the TypeScript side, which prints an absent map and an empty one identically.
+**The distinction was invisible to every corpus until a row had to cross the
+wire.** Only one production line changed (`ledger::stamp`); everything else was
+an assertion.
+
+### What the schema settles, and what it does not
+
+Three narrowings in this module. Two are provable, one had to be made true.
+
+**`rb` and `src` read back as `None` when the column holds something else.** The
+TypeScript casts (`r.rb as Entry['rb']`) and carries the value; the port has an
+enum and cannot. That would matter if such a value existed — the port would
+erase on the next push what the TypeScript preserved. It cannot exist:
+
+```sql
+rb  text check (rb in ('pending', 'done'))
+src text check (src is null or src in ('bill', 'notif'))
+```
+
+**A fractional stamp** had no such guarantee. `field_ts` is `jsonb` and holds any
+number; the port models a stamp as `i64` and truncates. A corpus line asking for
+`{"amt": 1.5}` duly diverged. Rather than delete the line and call it
+unreachable, the question was who can write one — and the answer is exactly one
+function, `stampEntry`, whose `now` is a **parameter** any caller supplies. So
+the invariant was not the code's, it was `Date.now()`'s. It is the code's now:
+
+```ts
+const t = Math.trunc(now);
+```
+
+with a test that fails if it ever stops holding, before sync starts quietly
+disagreeing with itself across two languages. The same reasoning found a
+reachable version of the problem in `importV7`, which restores a **file**:
+`isValidEntry` asks only that `ts` be finite, and `ts`/`deleted_at`/`updated_at`
+are `bigint` columns. `pushRows` upserts the whole dirty batch in one call and
+throws on any error, so one row the server refuses fails the batch and the
+scheduler retries it forever — **all sync stops because of one number**. Restore
+now truncates on the way in.
+
+### The corpus had been avoiding its most common escape
+
+The `rows` sweep opened with six zeros clustered in the JSON reader, which was
+the point of writing them: this is the first corpus whose *input* format is the
+thing under test. Each one named a shape `JSON.stringify` does not produce, so
+the corpus — generated with `JSON.stringify` — could not contain it:
+
+* a repeated key (`JSON.parse` keeps the last value at the **first** position;
+  appending would leave two and `Value::get` answers with the first — the same
+  duplicate-key bug the merge had, one increment earlier)
+* a `\uXXXX` escape for a character with a literal form
+* **a newline**
+
+The last one was self-inflicted. The generators avoid newlines so a case cannot
+span two lines, and that caution was never checked: `JSON.stringify` escapes a
+newline, so a value containing one puts **no** newline in the line. The reader's
+single most common escape had no coverage because of a precaution that was not
+necessary. Twelve hand-written lines closed all six; `\n` alone catches 1,856.
+
+Two zeros remain and both are structural: JSON has no `NaN` syntax, and `amt` is
+`not null`.
+
+### A sweep is only as current as its reference
+
+The first run of the repaired sweep reported 29 non-zero counts and two of them
+looked wrong — small numbers where the reasoning said zero. They were: the
+harness read its TypeScript reference from a file on disk, and the corpus had
+been regenerated since. Every count in that run was for a corpus that no longer
+existed, and nothing in the output said so.
+
+The sweep now regenerates its own reference. Worth stating plainly, because it
+is the same shape as the anchor problem: **the failure mode of a verification
+tool is not a wrong answer, it is a plausible one.**
 
 ## Phase 2 — state and sync
 

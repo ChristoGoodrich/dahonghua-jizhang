@@ -159,7 +159,7 @@ mod tests {
         let mut l = ledger();
         assert!(toggle_reimburse(&mut l, "e0", 9_000));
         assert_eq!(l.get("e0").unwrap().rb, Some(Reimburse::Pending));
-        assert_eq!(l.get("e0").unwrap().field_ts.get("rb"), Some(&9_000));
+        assert_eq!(l.get("e0").unwrap().stamp_of("rb"), Some(9_000));
     }
 
     #[test]
@@ -169,7 +169,7 @@ mod tests {
         toggle_reimburse(&mut l, "e0", 9_100);
         assert_eq!(l.get("e0").unwrap().rb, None);
         // the clear is stamped too, so it beats a device still holding pending
-        assert_eq!(l.get("e0").unwrap().field_ts.get("rb"), Some(&9_100));
+        assert_eq!(l.get("e0").unwrap().stamp_of("rb"), Some(9_100));
     }
 
     #[test]
@@ -198,7 +198,7 @@ mod tests {
         let e = l.get("e0").unwrap();
         assert_eq!(e.rb, None);
         assert_eq!(e.rb_amt, None);
-        assert_eq!(e.field_ts.get("rbAmt"), Some(&9_100));
+        assert_eq!(e.stamp_of("rbAmt"), Some(9_100));
     }
 
     #[test]
@@ -232,7 +232,7 @@ mod tests {
         refund_entry(&mut l, "e0", 30.0, true, &[], "default", "r0".into(), 9_000);
         let inc = l.get("r0").unwrap();
         assert_eq!(inc.updated_at, Some(9_000));
-        assert!(inc.field_ts.is_empty());
+        assert!(!inc.has_stamps());
     }
 
     #[test]

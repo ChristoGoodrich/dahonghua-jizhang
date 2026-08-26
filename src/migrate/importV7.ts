@@ -106,10 +106,26 @@ export function importV7(backup: unknown): ImportResult {
   // it. Keep the last copy, which is what the merge's own Map would have kept.
   const unique = [...new Map(valid.map((e) => [e.id, e] as const)).values()];
 
+  // `ts`, `deletedAt` and `updatedAt` are `bigint` columns (see
+  // supabase/migrations/0001_init.sql). `isValidEntry` only asks that `ts` be
+  // finite, so a hand-edited or third-party file can carry `1.5` — a value the
+  // column is not meant to hold and the Rust port's `i64` cannot represent.
+  // It would not stop at that one row either: `pushRows` upserts the whole
+  // dirty batch in one call and throws on any error, so a single row the
+  // server refuses fails the batch, and the scheduler retries it forever. All
+  // sync stops because of one number.
+  //
+  // A fractional epoch-ms means nothing anyway. Truncate rather than reject —
+  // dropping the entry would lose the user's data to fix a rounding error.
+  const ms = (n: number | null | undefined): number | undefined =>
+    typeof n === 'number' && Number.isFinite(n) ? Math.trunc(n) : undefined;
+
   const now = Date.now();
   const stamped = unique.map((e, i) => {
     const { fieldTs, ...rest } = e;
-    return { ...rest, updatedAt: now + i };
+    const out: Entry = { ...rest, ts: ms(e.ts) ?? 0, updatedAt: now + i };
+    if (e.deletedAt != null) out.deletedAt = ms(e.deletedAt);
+    return out;
   });
   store$.data.set(stamped);
 

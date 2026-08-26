@@ -350,9 +350,15 @@ export function addTransfer(p: {
  * over a stale device that still holds a value.
  */
 export function stampEntry<T extends Entry>(d: T, patch: Partial<Entry>, now: number): T {
+  // Whole milliseconds. `now` is a parameter, so this does not get to assume
+  // the caller passed `Date.now()`; `updated_at` is a bigint column and the
+  // Rust port models a stamp as an i64, so a fraction here is a value one side
+  // of the sync can hold and the other cannot. Truncate at the single writer
+  // rather than hope every caller does.
+  const t = Math.trunc(now);
   const fieldTs = { ...(d.fieldTs ?? {}) };
-  for (const k of Object.keys(patch)) if (k !== 'fieldTs' && k !== 'updatedAt') fieldTs[k] = now;
-  return { ...d, ...patch, fieldTs, updatedAt: now };
+  for (const k of Object.keys(patch)) if (k !== 'fieldTs' && k !== 'updatedAt') fieldTs[k] = t;
+  return { ...d, ...patch, fieldTs, updatedAt: t };
 }
 
 export function updateEntry(id: string, patch: Partial<Entry>): void {

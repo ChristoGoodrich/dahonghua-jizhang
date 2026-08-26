@@ -171,7 +171,16 @@ fn render(l: &Ledger) -> String {
     l.all()
         .iter()
         .map(|e| {
-            let ft: Vec<String> = e.field_ts.iter().map(|(k, v)| format!("{k}={v}")).collect(); // BTreeMap already iterates sorted
+            // `Object.keys(e.fieldTs ?? {})` on the other side, which renders an
+            // absent map and an empty one the same way — this corpus cannot see
+            // the difference between them, which is how the port kept a
+            // narrower type until a row had to cross the wire
+            let ft: Vec<String> = e
+                .field_ts
+                .iter()
+                .flatten()
+                .map(|(k, v)| format!("{k}={v}"))
+                .collect(); // BTreeMap already iterates sorted
             let ft = if ft.is_empty() {
                 "_".to_string()
             } else {

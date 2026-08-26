@@ -66,6 +66,16 @@ describe('importV7 sync stamping', () => {
     expect(store$.data.peek()[0].fieldTs).toBeUndefined();
   });
 
+  it('truncates a fractional timestamp the bigint column cannot hold', () => {
+    // isValidEntry only asks that ts be finite, and one row the server refuses
+    // fails the whole upsert batch — which the scheduler then retries forever
+    importV7({ version: 8, data: [entry({ id: 'a', ts: 1.5 }), entry({ id: 'b', ts: 2.9, deletedAt: 7.7 })] });
+    const rows = store$.data.peek();
+    expect(rows[0].ts).toBe(1);
+    expect(rows[1].ts).toBe(2);
+    expect(rows[1].deletedAt).toBe(7);
+  });
+
   it('collapses a repeated id, keeping the last copy', () => {
     // a backup is a file and can say anything. Two rows sharing an id make the
     // sync merge incoherent — it indexes by id, resolves the pair to one row,

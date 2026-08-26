@@ -132,16 +132,36 @@ pub struct Entry {
     pub deleted_at: Option<i64>,
     /// Last-write-wins tiebreaker.
     pub updated_at: Option<i64>,
-    /// Per-field last-write time, for field-level merge. A `BTreeMap` rather
-    /// than a `HashMap` so serialisation and any debug output are ordered —
-    /// an unordered map here made diffs unreadable during the port.
-    pub field_ts: BTreeMap<String, i64>,
+    /// Per-field last-write time, for field-level merge.
+    ///
+    /// `Option`, and the distinction is not decoration: an entry that has never
+    /// been edited has **no** stamp map, while one edited with an empty patch
+    /// has an empty one, and `entryToRow` writes those to the `field_ts` jsonb
+    /// column as `null` and `{}` respectively. Collapsing them cost 631 of
+    /// 4,529 parity cases — the port was narrower than the column.
+    ///
+    /// A `BTreeMap` rather than a `HashMap` so serialisation and any debug
+    /// output are ordered; an unordered map made diffs unreadable during the
+    /// port.
+    pub field_ts: Option<BTreeMap<String, i64>>,
 }
 
 impl Entry {
     /// Is this row live, i.e. not tombstoned?
     pub fn is_live(&self) -> bool {
         self.deleted_at.is_none()
+    }
+
+    /// When one field was last edited, if it ever was.
+    pub fn stamp_of(&self, field: &str) -> Option<i64> {
+        self.field_ts.as_ref()?.get(field).copied()
+    }
+
+    /// Does this row carry any per-field stamp at all? The merge's two-tier
+    /// test: an empty map is not enough, matching
+    /// `!!r.fieldTs && Object.keys(r.fieldTs).length > 0`.
+    pub fn has_stamps(&self) -> bool {
+        self.field_ts.as_ref().is_some_and(|f| !f.is_empty())
     }
 }
 
