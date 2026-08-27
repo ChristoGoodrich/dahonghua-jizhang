@@ -2260,6 +2260,75 @@ still in flight, so a second device charges from its own stale cursor before it
 learns the first already did. With random ids both rows survive the merge and
 the user is billed twice; with a derived id they are the same row.
 
+### `Number(s)` is not `str::parse`, three ways at once
+
+The backup corpus was the smallest one written — four rules about filenames —
+and it found more JavaScript semantics per case than any before it. All three
+were mine, and all three were in one line: I read the timestamp out of
+`backup_1700.json` with `parse::<i64>()`, where the TypeScript uses `Number(s)`.
+
+* **`Number('')` is `0`.** Not an error, not `NaN`. So `backup_.json` is the
+  *oldest* backup — it sorts last and is pruned first — while my version treated
+  it as unorderable and put it at the end, to be pruned last. The two answers
+  are opposites, and the wrong one keeps a nameless file forever while deleting
+  a real backup.
+* **`Number('12.5')` and `Number('1e+21')` parse.** An integer parse fails on
+  both.
+* **Rust's parser takes `inf`, `infinity`, `nan` and `NaN`;** JavaScript's takes
+  none of them. `Number('nan')` is `NaN` because it is *unparseable*, not
+  because it spells one.
+
+1,096 divergences, down to 4, down to none. `num::js_number` joins `js_round`,
+`js_num` and `js_max` on the list of things that look like a one-liner and are
+not.
+
+The last four were not made to go away by trimming the corpus. `backup_name`
+took an `i64`, and the TypeScript takes a JS number and interpolates it — so
+`backup_12.5.json` is a name it can produce. The signature is `f64` through
+`js_num` now: the difference removed rather than hidden.
+
+### A sort that was not a total order, again
+
+`backups.sort((a, b) => b.time - a.time)` is fine until a name has no number in
+it. Then `time` is `NaN`, the comparator returns `NaN`, and ECMA-262 leaves the
+result implementation-defined from there — so a stray `backup_draft.json` in the
+directory made the sort, and therefore the *prune*, arbitrary. A backup could be
+deleted while a file named after nothing was kept.
+
+This is the same failure `domain/order.ts` fixed for amounts and the same fix:
+rank the unorderable value explicitly, at the end, where pruning reaches it only
+after every real backup is safe. Applied to the TypeScript alongside the port,
+so the two agree about a case neither had an answer for before.
+
+### What encryption cost, and why it is not here
+
+The shipping app encrypts backups with AES-256-GCM over a PBKDF2-SHA256 key.
+Porting that would cost `dahonghua-core` three dependencies against the one it
+has — and that one, `regex-lite`, was chosen for wasm size. A cipher is also not
+a decision the ledger needs to own: the filename says whether a file is
+encrypted, and what that means belongs to the platform.
+
+So local snapshots are plain, and the screen says so rather than offering a
+switch that does nothing. An encrypted snapshot restored from an older install
+still *lists* — a row that silently vanished would read as data loss — with its
+restore button disabled rather than absent.
+
+### The emulator was the slow thing, and I blamed the tests
+
+The integration suite went from 17 minutes to 38 over several increments. I put
+it down to load, and on the strength of that widened the margins in a timing
+test — which was the right change for the wrong reason.
+
+The real answer arrived when a run failed with `Connection closed before test
+suite loaded`: `dumpsys` could not reach its own services, `logcat` was hours
+stale, and installing one APK took 57 seconds. The emulator had been degrading
+for hours. A cold restart put the same suite back at 19 minutes and the backup
+file at 8 seconds.
+
+Worth naming because the misattribution was cheap only by luck: the test change
+stands on its own. **A measurement that drifts is a fact about the instrument
+until proven otherwise.**
+
 ### Building for Android here
 
 Whatever drives it, the Android build needs `TEMP` pointed somewhere AF_UNIX

@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'assets_screen.dart';
+import 'backup_screen.dart';
 import 'budget_screen.dart';
 import 'currency_screen.dart';
 import 'entry_list.dart';
@@ -302,6 +303,17 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       (
         zh ? '更多' : 'More',
         [
+          MeRow(
+            id: 'backup',
+            icon: Icons.archive_outlined,
+            title: zh ? '备份' : 'Backups',
+            desc: zh ? '存一份现在的样子,随时回去' : 'Snapshots you can go back to',
+            onTap: () => _push(BackupScreen(
+              zh: zh,
+              // a restore replaces both files and every screen's contents
+              onRestored: _bothChanged,
+            )),
+          ),
           MeRow(
             id: 'settings',
             icon: Icons.tune,

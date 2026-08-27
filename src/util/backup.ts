@@ -1,6 +1,11 @@
 import * as FileSystem from 'expo-file-system/legacy';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { encryptBackup, decryptBackup } from './crypto';
+import { backupName, listBackupNames, pruneBackups, type BackupInfo } from './backupNames';
+
+// Re-exported so callers keep one import for "a backup"; the shape itself now
+// lives with the naming rules it comes from.
+export type { BackupInfo };
 
 const BACKUP_DIR = FileSystem.documentDirectory + 'backups/';
 const MAX_BACKUPS = 10;
@@ -24,9 +29,7 @@ export async function createBackup(keep = MAX_BACKUPS, password?: string): Promi
   const entries = JSON.parse((await AsyncStorage.getItem('dhh_entries_v1')) ?? '[]');
   const config = JSON.parse((await AsyncStorage.getItem('dhh_config_v1')) ?? '{}');
   const data: BackupData = { version: 1, timestamp: Date.now(), entries, config };
-  const ext = password ? '.enc.json' : '.json';
-  const name = `backup_${data.timestamp}${ext}`;
-  const path = BACKUP_DIR + name;
+  const path = BACKUP_DIR + backupName(data.timestamp, !!password);
   const payload = password
     ? await encryptBackup(JSON.stringify(data), password)
     : JSON.stringify(data);
@@ -68,26 +71,13 @@ export async function runAutoBackup(opts: AutoBackupOpts): Promise<boolean> {
   }
 }
 
-export interface BackupInfo {
-  name: string;
-  path: string;
-  time: number;
-  encrypted: boolean;
-}
+/** A backup on disk. `path` is this module's; the rest is backupNames'. */
+export type BackupOnDisk = BackupInfo & { path: string };
 
-export async function listBackups(): Promise<BackupInfo[]> {
+export async function listBackups(): Promise<BackupOnDisk[]> {
   await ensureBackupDir();
   const names = await FileSystem.readDirectoryAsync(BACKUP_DIR);
-  const backups = names
-    .filter((n) => n.startsWith('backup_') && (n.endsWith('.json') || n.endsWith('.enc.json')))
-    .map((name) => {
-      const encrypted = name.endsWith('.enc.json');
-      const stripped = encrypted ? name.replace('.enc.json', '') : name.replace('.json', '');
-      const ts = Number(stripped.replace('backup_', ''));
-      return { name, path: BACKUP_DIR + name, time: ts, encrypted };
-    });
-  backups.sort((a, b) => b.time - a.time);
-  return backups;
+  return listBackupNames(names).map((b) => ({ ...b, path: BACKUP_DIR + b.name }));
 }
 
 export async function restoreBackup(path: string, password?: string): Promise<BackupData> {
@@ -98,11 +88,7 @@ export async function restoreBackup(path: string, password?: string): Promise<Ba
 }
 
 async function cleanOldBackups(keep = MAX_BACKUPS): Promise<void> {
-  const list = await listBackups();
-  if (list.length > keep) {
-    const excess = list.slice(keep);
-    for (const b of excess) {
-      await FileSystem.deleteAsync(b.path);
-    }
+  for (const b of pruneBackups(await listBackups(), keep)) {
+    await FileSystem.deleteAsync((b as BackupOnDisk).path);
   }
 }

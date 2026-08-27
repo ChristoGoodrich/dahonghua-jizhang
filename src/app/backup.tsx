@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { observer } from '@legendapp/state/react';
 import { store$, patchSettings } from '@/store/ledger';
 import { importV7 } from '@/migrate/importV7';
-import { createBackup, listBackups, restoreBackup, type BackupData, type BackupInfo } from '@/util/backup';
+import { createBackup, listBackups, restoreBackup, type BackupData, type BackupOnDisk } from '@/util/backup';
 import { useTheme } from '@/theme/ThemeContext';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { Tap } from '@/components/ui/Tap';
@@ -27,7 +27,7 @@ export default observer(function BackupScreen() {
   const lang = store$.lang.get();
   const s = I18N[lang];
   const settings = store$.settings.get();
-  const [backups, setBackups] = useState<BackupInfo[]>([]);
+  const [backups, setBackups] = useState<BackupOnDisk[]>([]);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState('');
   const [encryptEnabled, setEncryptEnabled] = useState(false);
@@ -91,7 +91,7 @@ export default observer(function BackupScreen() {
     );
   }
 
-  async function onRestore(b: BackupInfo) {
+  async function onRestore(b: BackupOnDisk) {
     if (b.encrypted) {
       promptPasswordAndRestore(b.path);
       return;

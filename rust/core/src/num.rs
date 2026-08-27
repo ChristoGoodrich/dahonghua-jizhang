@@ -107,6 +107,48 @@ pub fn js_max(a: f64, b: f64) -> f64 {
     }
 }
 
+/// `Number(s)` from JavaScript, which is not `str::parse`.
+///
+/// Three differences bite in practice, and the backup corpus found all three:
+///
+/// * **`Number('')` is `0`**, not an error and not `NaN`. So is any string of
+///   nothing but whitespace. That is why a backup file called `backup_.json`
+///   reads as epoch zero rather than as unorderable: it sorts oldest and is
+///   pruned first, which is a defensible thing to do with a file whose name
+///   says nothing.
+/// * It accepts **fractional and exponential** forms, so `12.5` and `1e+21`
+///   are numbers where an integer parse would fail.
+/// * It accepts `Infinity` with an optional sign, and rejects the spellings
+///   Rust's own parser takes — `inf`, `NaN` and `nan` are all `NaN` here.
+///
+/// Hexadecimal, octal and binary literals are accepted, as `Number` does.
+pub fn js_number(s: &str) -> f64 {
+    let t = s.trim_matches(|c: char| c.is_whitespace() || c == '\u{feff}');
+    if t.is_empty() {
+        return 0.0;
+    }
+    match t {
+        "Infinity" | "+Infinity" => return f64::INFINITY,
+        "-Infinity" => return f64::NEG_INFINITY,
+        _ => {}
+    }
+    for (prefix, radix) in [("0x", 16), ("0o", 8), ("0b", 2)] {
+        let upper = prefix.to_ascii_uppercase();
+        if let Some(rest) = t.strip_prefix(prefix).or_else(|| t.strip_prefix(&upper)) {
+            return u128::from_str_radix(rest, radix)
+                .map(|v| v as f64)
+                .unwrap_or(f64::NAN);
+        }
+    }
+    // Rust's parser takes `inf`, `infinity`, `nan` and `NaN` in any case;
+    // JavaScript's takes none of them.
+    let lower = t.to_ascii_lowercase();
+    if lower.contains("inf") || lower.contains("nan") {
+        return f64::NAN;
+    }
+    t.parse().unwrap_or(f64::NAN)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -159,6 +201,28 @@ mod tests {
     fn to_fixed_leaves_non_finite_alone() {
         assert!(to_fixed(f64::NAN, 2).is_nan());
         assert_eq!(to_fixed(f64::INFINITY, 2), f64::INFINITY);
+    }
+
+    #[test]
+    fn js_number_is_not_str_parse() {
+        // the three the backup corpus caught
+        assert_eq!(js_number(""), 0.0);
+        assert_eq!(js_number("   "), 0.0);
+        assert_eq!(js_number("12.5"), 12.5);
+        assert_eq!(js_number("1e+21"), 1e21);
+        // the spellings Rust takes but JavaScript does not
+        assert!(js_number("inf").is_nan());
+        assert!(js_number("NaN").is_nan());
+        assert!(js_number("nan").is_nan());
+        // and the one it does take
+        assert_eq!(js_number("Infinity"), f64::INFINITY);
+        assert_eq!(js_number("-Infinity"), f64::NEG_INFINITY);
+        // ordinary cases
+        assert_eq!(js_number("1700"), 1700.0);
+        assert_eq!(js_number("-1"), -1.0);
+        assert_eq!(js_number("0x10"), 16.0);
+        assert!(js_number("draft").is_nan());
+        assert!(js_number("12abc").is_nan());
     }
 
     #[test]

@@ -177,6 +177,12 @@ const MODULES = [
     example: 'dump_notif',
   },
   {
+    name: 'backup',
+    corpus: 'rust/parity/backup-corpus.tsv',
+    ts: 'scripts/backup-parity.ts',
+    example: 'dump_backup',
+  },
+  {
     name: 'engine',
     corpus: 'rust/parity/engine-corpus.tsv',
     // Stateful and then some: the sync engine decides an order of operations

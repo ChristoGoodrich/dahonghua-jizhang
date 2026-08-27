@@ -9,6 +9,7 @@
 
 pub mod accounts;
 pub mod archive;
+pub mod backup;
 pub mod bills;
 pub mod budget;
 pub mod calc;

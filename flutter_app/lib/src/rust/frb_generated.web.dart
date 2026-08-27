@@ -7,6 +7,7 @@
 // ignore_for_file: argument_type_not_assignable
 
 import 'api/accounts.dart';
+import 'api/backup.dart';
 import 'api/budget.dart';
 import 'api/calc.dart';
 import 'api/catalog.dart';
@@ -45,6 +46,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   AssetView dco_decode_asset_view(dynamic raw);
+
+  @protected
+  BackupInfoView dco_decode_backup_info_view(dynamic raw);
 
   @protected
   bool dco_decode_bool(dynamic raw);
@@ -168,6 +172,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<AssetView> dco_decode_list_asset_view(dynamic raw);
+
+  @protected
+  List<BackupInfoView> dco_decode_list_backup_info_view(dynamic raw);
 
   @protected
   List<CatBudgetView> dco_decode_list_cat_budget_view(dynamic raw);
@@ -295,6 +302,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RefundState dco_decode_refund_state(dynamic raw);
 
   @protected
+  RestoreResult dco_decode_restore_result(dynamic raw);
+
+  @protected
   SaveResult dco_decode_save_result(dynamic raw);
 
   @protected
@@ -347,6 +357,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   AssetView sse_decode_asset_view(SseDeserializer deserializer);
+
+  @protected
+  BackupInfoView sse_decode_backup_info_view(SseDeserializer deserializer);
 
   @protected
   bool sse_decode_bool(SseDeserializer deserializer);
@@ -480,6 +493,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<AssetView> sse_decode_list_asset_view(SseDeserializer deserializer);
+
+  @protected
+  List<BackupInfoView> sse_decode_list_backup_info_view(
+    SseDeserializer deserializer,
+  );
 
   @protected
   List<CatBudgetView> sse_decode_list_cat_budget_view(
@@ -625,6 +643,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RefundState sse_decode_refund_state(SseDeserializer deserializer);
 
   @protected
+  RestoreResult sse_decode_restore_result(SseDeserializer deserializer);
+
+  @protected
   SaveResult sse_decode_save_result(SseDeserializer deserializer);
 
   @protected
@@ -682,6 +703,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_asset_view(AssetView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_backup_info_view(
+    BackupInfoView self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_bool(bool self, SseSerializer serializer);
@@ -857,6 +884,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_asset_view(
     List<AssetView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_backup_info_view(
+    List<BackupInfoView> self,
     SseSerializer serializer,
   );
 
@@ -1048,6 +1081,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_refund_state(RefundState self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_restore_result(RestoreResult self, SseSerializer serializer);
 
   @protected
   void sse_encode_save_result(SaveResult self, SseSerializer serializer);
