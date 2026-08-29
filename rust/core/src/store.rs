@@ -184,6 +184,32 @@ impl Store {
     /// nothing in the TypeScript because the TypeScript generates its own; the
     /// caller is expected to supply one id per bill.
     pub fn import_bills(&mut self, bills: &[ImportedBill], ids: &[String], now: i64) -> usize {
+        self.push_batch(bills, ids, now, EntrySource::Bill)
+    }
+
+    /// Record payments the notification listener captured. Returns how many
+    /// landed.
+    ///
+    /// The same write as [`Store::import_bills`] under a different source, and
+    /// the source is what makes it more than a label: the drain planner reads
+    /// `src == notif` to know which ledger rows already stand for a captured
+    /// payment. An entry written without it would be invisible to the dedup and
+    /// the next drain would post it again.
+    pub fn post_captured(&mut self, drafts: &[ImportedBill], ids: &[String], now: i64) -> usize {
+        self.push_batch(drafts, ids, now, EntrySource::Notif)
+    }
+
+    /// One write for a batch of rows that arrived from outside the app.
+    ///
+    /// `updated_at` steps by one per row so a batch has a stable order rather
+    /// than an arbitrary one among entries sharing a millisecond.
+    fn push_batch(
+        &mut self,
+        bills: &[ImportedBill],
+        ids: &[String],
+        now: i64,
+        src: EntrySource,
+    ) -> usize {
         if bills.is_empty() {
             return 0;
         }
@@ -196,7 +222,7 @@ impl Store {
                 cat: b.cat.clone(),
                 amt: b.amt,
                 note: (!b.note.is_empty()).then(|| b.note.clone()),
-                src: Some(EntrySource::Bill),
+                src: Some(src),
                 updated_at: Some(now + i as i64),
                 ..Default::default()
             });

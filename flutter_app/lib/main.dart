@@ -15,6 +15,8 @@
 
 import 'dart:ui' as ui;
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -25,6 +27,8 @@ import 'currency_screen.dart';
 import 'entry_list.dart';
 import 'library_screen.dart';
 import 'me_screen.dart';
+import 'capture_screen.dart';
+import 'inbox.dart';
 import 'import_screen.dart';
 import 'persistence.dart';
 import 'record_sheet.dart' as sheet;
@@ -143,10 +147,28 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   /// every screen re-reads the store instead of holding a stale copy of it.
   int _listVersion = 0;
 
+  /// The capture inbox, drained on every return to the foreground.
+  ///
+  /// The listener writes to a native queue whether this app is running or not,
+  /// so the queue is what carries a payment across a killed process. Resuming
+  /// is the moment the Dart side is guaranteed to be alive to read it — and
+  /// waiting for the user to open one screen would mean the feature only worked
+  /// when watched.
+  final Inbox _inbox = Inbox();
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    unawaited(_drain());
+  }
+
+  Future<void> _drain() async {
+    await _inbox.load();
+    final r = await _inbox.drain();
+    // Only a row that reached the ledger needs the file written; a queued or
+    // unparsed capture is the inbox's own business and it has saved itself.
+    if (r.posted > 0 && mounted) _entriesChanged();
   }
 
   @override
@@ -166,6 +188,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         state == AppLifecycleState.detached) {
       widget.store?.flush();
     }
+    if (state == AppLifecycleState.resumed) unawaited(_drain());
   }
 
   void _entriesChanged() {
@@ -304,6 +327,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       (
         zh ? '更多' : 'More',
         [
+          MeRow(
+            id: 'capture',
+            icon: Icons.notifications_active_outlined,
+            title: zh ? '自动记账' : 'Auto-capture',
+            desc: zh ? '支付通知一到就记下' : 'A payment push becomes an entry',
+            onTap: () => _push(CaptureScreen(zh: zh, onChanged: _entriesChanged)),
+          ),
           MeRow(
             id: 'import',
             icon: Icons.file_upload_outlined,

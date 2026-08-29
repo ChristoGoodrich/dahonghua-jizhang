@@ -10,6 +10,7 @@ import 'api/accounts.dart';
 import 'api/backup.dart';
 import 'api/budget.dart';
 import 'api/calc.dart';
+import 'api/capture.dart';
 import 'api/catalog.dart';
 import 'api/currency.dart';
 import 'api/glass.dart';
@@ -132,6 +133,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ClaimView dco_decode_claim_view(dynamic raw);
 
   @protected
+  DraftView dco_decode_draft_view(dynamic raw);
+
+  @protected
+  DrainPlan dco_decode_drain_plan(dynamic raw);
+
+  @protected
   EntryPatch dco_decode_entry_patch(dynamic raw);
 
   @protected
@@ -198,6 +205,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<ClaimView> dco_decode_list_claim_view(dynamic raw);
 
   @protected
+  List<DraftView> dco_decode_list_draft_view(dynamic raw);
+
+  @protected
   List<EntryView> dco_decode_list_entry_view(dynamic raw);
 
   @protected
@@ -208,6 +218,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<LoanView> dco_decode_list_loan_view(dynamic raw);
+
+  @protected
+  List<PendingView> dco_decode_list_pending_view(dynamic raw);
 
   @protected
   List<double> dco_decode_list_prim_f_64_loose(dynamic raw);
@@ -228,6 +241,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<RateView> dco_decode_list_rate_view(dynamic raw);
 
   @protected
+  List<RawNotifView> dco_decode_list_raw_notif_view(dynamic raw);
+
+  @protected
   List<(String, double)> dco_decode_list_record_string_f_64(dynamic raw);
 
   @protected
@@ -244,6 +260,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<TrendPointView> dco_decode_list_trend_point_view(dynamic raw);
+
+  @protected
+  List<UnparsedView> dco_decode_list_unparsed_view(dynamic raw);
 
   @protected
   LoanView dco_decode_loan_view(dynamic raw);
@@ -302,7 +321,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   PendingCharges dco_decode_pending_charges(dynamic raw);
 
   @protected
+  PendingView dco_decode_pending_view(dynamic raw);
+
+  @protected
   RateView dco_decode_rate_view(dynamic raw);
+
+  @protected
+  RawNotifView dco_decode_raw_notif_view(dynamic raw);
 
   @protected
   RecapView dco_decode_recap_view(dynamic raw);
@@ -354,6 +379,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void dco_decode_unit(dynamic raw);
+
+  @protected
+  UnparsedView dco_decode_unparsed_view(dynamic raw);
 
   @protected
   WeeklyView dco_decode_weekly_view(dynamic raw);
@@ -463,6 +491,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ClaimView sse_decode_claim_view(SseDeserializer deserializer);
 
   @protected
+  DraftView sse_decode_draft_view(SseDeserializer deserializer);
+
+  @protected
+  DrainPlan sse_decode_drain_plan(SseDeserializer deserializer);
+
+  @protected
   EntryPatch sse_decode_entry_patch(SseDeserializer deserializer);
 
   @protected
@@ -539,6 +573,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<ClaimView> sse_decode_list_claim_view(SseDeserializer deserializer);
 
   @protected
+  List<DraftView> sse_decode_list_draft_view(SseDeserializer deserializer);
+
+  @protected
   List<EntryView> sse_decode_list_entry_view(SseDeserializer deserializer);
 
   @protected
@@ -549,6 +586,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<LoanView> sse_decode_list_loan_view(SseDeserializer deserializer);
+
+  @protected
+  List<PendingView> sse_decode_list_pending_view(SseDeserializer deserializer);
 
   @protected
   List<double> sse_decode_list_prim_f_64_loose(SseDeserializer deserializer);
@@ -567,6 +607,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<RateView> sse_decode_list_rate_view(SseDeserializer deserializer);
+
+  @protected
+  List<RawNotifView> sse_decode_list_raw_notif_view(
+    SseDeserializer deserializer,
+  );
 
   @protected
   List<(String, double)> sse_decode_list_record_string_f_64(
@@ -591,6 +636,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<TrendPointView> sse_decode_list_trend_point_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  List<UnparsedView> sse_decode_list_unparsed_view(
     SseDeserializer deserializer,
   );
 
@@ -659,7 +709,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   PendingCharges sse_decode_pending_charges(SseDeserializer deserializer);
 
   @protected
+  PendingView sse_decode_pending_view(SseDeserializer deserializer);
+
+  @protected
   RateView sse_decode_rate_view(SseDeserializer deserializer);
+
+  @protected
+  RawNotifView sse_decode_raw_notif_view(SseDeserializer deserializer);
 
   @protected
   RecapView sse_decode_recap_view(SseDeserializer deserializer);
@@ -713,6 +769,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_decode_unit(SseDeserializer deserializer);
+
+  @protected
+  UnparsedView sse_decode_unparsed_view(SseDeserializer deserializer);
 
   @protected
   WeeklyView sse_decode_weekly_view(SseDeserializer deserializer);
@@ -862,6 +921,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_claim_view(ClaimView self, SseSerializer serializer);
 
   @protected
+  void sse_encode_draft_view(DraftView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_drain_plan(DrainPlan self, SseSerializer serializer);
+
+  @protected
   void sse_encode_entry_patch(EntryPatch self, SseSerializer serializer);
 
   @protected
@@ -958,6 +1023,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_list_draft_view(
+    List<DraftView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_list_entry_view(
     List<EntryView> self,
     SseSerializer serializer,
@@ -971,6 +1042,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_list_loan_view(List<LoanView> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_pending_view(
+    List<PendingView> self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_list_prim_f_64_loose(
@@ -1003,6 +1080,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_list_rate_view(List<RateView> self, SseSerializer serializer);
 
   @protected
+  void sse_encode_list_raw_notif_view(
+    List<RawNotifView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_list_record_string_f_64(
     List<(String, double)> self,
     SseSerializer serializer,
@@ -1032,6 +1115,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_trend_point_view(
     List<TrendPointView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_unparsed_view(
+    List<UnparsedView> self,
     SseSerializer serializer,
   );
 
@@ -1111,7 +1200,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_pending_view(PendingView self, SseSerializer serializer);
+
+  @protected
   void sse_encode_rate_view(RateView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_raw_notif_view(RawNotifView self, SseSerializer serializer);
 
   @protected
   void sse_encode_recap_view(RecapView self, SseSerializer serializer);
@@ -1172,6 +1267,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_unit(void self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_unparsed_view(UnparsedView self, SseSerializer serializer);
 
   @protected
   void sse_encode_weekly_view(WeeklyView self, SseSerializer serializer);

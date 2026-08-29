@@ -9,6 +9,7 @@ pub mod accounts;
 pub mod backup;
 pub mod budget;
 pub mod calc;
+pub mod capture;
 pub mod catalog;
 pub mod currency;
 pub mod glass;

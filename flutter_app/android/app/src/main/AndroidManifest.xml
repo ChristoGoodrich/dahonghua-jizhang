@@ -25,6 +25,22 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <!--
+          The listener is bound by the system, from another process, so it has
+          to be exported. That is not a hole: android:permission means only a
+          caller holding BIND_NOTIFICATION_LISTENER_SERVICE — i.e. the OS — can
+          bind, and the user still has to grant notification access by hand in
+          Settings.
+        -->
+        <service
+            android:name=".notif.NotifCaptureService"
+            android:label="大红花记账 · 自动记账"
+            android:exported="true"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

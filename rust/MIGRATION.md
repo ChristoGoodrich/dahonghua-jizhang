@@ -2250,6 +2250,41 @@ one, so the day the editor lands the argument is the only change.
 list that quietly dropped them would leave "18 rows" unexplained next to six
 entries. "3 rows, 3 already recorded" is the sentence a user can act on.
 
+### Auto-capture, and two tests that asserted the wrong field
+
+The notification listener came across nearly verbatim — `NotifCaptureService`
+and `NotifStore` are the shipping Kotlin with the package renamed, because
+there was nothing wrong with them and rewriting working native code to feel
+productive is how a port acquires bugs it did not inherit. The Expo module
+became a `MethodChannel`, method for method, so the two read side by side.
+
+The line the shipping build drew is the one that matters and it is kept exactly:
+the listener is deliberately dumb. Whitelist, three text fields, write the row.
+Everything that decides what a notification MEANS is in `notif.rs`, where 1,284
+parity cases hold it, because a rule living in Kotlin costs a full rebuild to
+change and cannot be tested.
+
+The drain's order of operations is Dart's and is the whole design: the native
+queue is acknowledged only after the results are in the ledger, so a crash
+mid-drain replays instead of losing payments. A test now watches that order
+from inside `markConsumed` — the ledger count at the moment of acknowledgement.
+From the outside a drain that acknowledged first and then crashed looks
+identical to one that never ran, so the ordering had to be observed where it
+happens or not at all.
+
+**The two dedup tests passed with the dedup deleted.** They asserted `posted`
+and the ledger count. But a duplicate that escapes the dedup does not post — the
+follow-up push for a payment carries no merchant, so it is not confident, so it
+goes to the inbox to wait. `posted` stays 1 and the ledger stays 1, and both
+tests go green over exactly the bug they exist to catch. They assert the whole
+result now: nothing posted, nothing queued, nothing waiting.
+
+The first injection that found this returned a zero for a different reason and
+nearly got believed: `sed` expands a bare `&` in the replacement, so `false &&`
+became `false <match><match>`, the crate did not compile, and a build failure
+counts no detections. A zero from a sweep is a claim about the tests; it has to
+be a claim the sweep was actually in a position to make.
+
 ### A walk over the hub that had quietly stopped walking
 
 Adding one row to the 我的 hub broke a settings test, and the break was worth
