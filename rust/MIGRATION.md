@@ -2213,13 +2213,28 @@ second start-up failed at its config push and nothing after it scheduled
 anything. **A script that never reaches the state it is testing reports zero,
 and reports it in exactly the same shape as a genuine equivalence.**
 
-### What the engine still needs
+### Sync is out of scope, and what that leaves behind
 
-The transport. `.env` carries no Supabase URL or key on this machine, so
-`supabase` is null and the shipping engine has never run against a live project
-either — which is why its own tests fake the client at the module boundary. The
-schema and the RLS policies remain unverified by anything here, and creating a
-project is the user's to do, not mine.
+The transport was never written and now will not be: cloud sync is cut from the
+project. The Flutter half went with it — `sync.dart`, its bridge and its 21
+integration tests were 1,125 lines wired to no screen, and dead code that nobody
+can reach is worse than no code.
+
+The **core** half stays: `engine.rs`, `sync.rs` and `merge.rs`, with 13,895
+parity cases between them. That is not sentimentality about work already done.
+They cost nothing at runtime, they are the most thoroughly verified thing in the
+crate, and if a different backend ever turns up the hard half — the field-level
+merge, the watermark, the order of operations — is already proven against the
+shipping TypeScript rather than merely written.
+
+`rows.rs` is not sync code at all, whatever its origin: `entry_to_value` and
+`entry_from_value` are what persistence uses to write and read the ledger file.
+
+One consequence worth naming, because it will look like an oversight later: the
+ledger still stamps `fieldTs` on every field it writes. Those stamps exist for a
+merge that no longer happens. They are kept because the ledger's stamping is one
+mechanism — `Ledger::update` does not know why it is stamping — and because
+removing them would invalidate the ledger corpus to save a few bytes per row.
 
 ### The first function the timezone rule had to cut in half
 

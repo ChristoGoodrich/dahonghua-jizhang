@@ -18,7 +18,6 @@ import 'api/report.dart';
 import 'api/stats.dart';
 import 'api/store.dart';
 import 'api/subscriptions.dart';
-import 'api/sync.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'frb_generated.dart';
@@ -81,7 +80,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.12.0';
 
   @override
-  int get rustContentHash => -2008228809;
+  int get rustContentHash => -1734664071;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -496,48 +495,6 @@ abstract class RustLibApi extends BaseApi {
     required List<String> starts,
     required String today,
   });
-
-  String crateApiSyncSyncConfigBlob();
-
-  List<SyncEffect> crateApiSyncSyncConfigPulled({
-    required bool ok,
-    String? json,
-  });
-
-  List<SyncEffect> crateApiSyncSyncConfigPushDone({required bool ok});
-
-  List<SyncEffect> crateApiSyncSyncEntriesPulled({String? json});
-
-  List<SyncEffect> crateApiSyncSyncFlushDone({required String outcome});
-
-  void crateApiSyncSyncLoadStamps({required String json});
-
-  List<SyncEffect> crateApiSyncSyncLocalEdit({
-    required List<String> sections,
-    required PlatformInt64 now,
-  });
-
-  List<SyncEffect> crateApiSyncSyncPulledPushDone({required bool ok});
-
-  List<SyncEffect> crateApiSyncSyncRealtimeConfig({required String json});
-
-  List<SyncEffect> crateApiSyncSyncRealtimeEntry({required String json});
-
-  void crateApiSyncSyncReset();
-
-  List<SyncEffect> crateApiSyncSyncRetryNow();
-
-  List<String> crateApiSyncSyncSections();
-
-  List<SyncEffect> crateApiSyncSyncSignIn({required String userId});
-
-  List<SyncEffect> crateApiSyncSyncSignOut();
-
-  String crateApiSyncSyncStampsJson();
-
-  String crateApiSyncSyncStatus();
-
-  List<SyncEffect> crateApiSyncSyncTimerFired({required String timer});
 
   List<String> crateApiCatalogTags();
 
@@ -3673,501 +3630,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  String crateApiSyncSyncConfigBlob() {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          return pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 115,
-          )!;
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_String,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiSyncSyncConfigBlobConstMeta,
-        argValues: [],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiSyncSyncConfigBlobConstMeta =>
-      const TaskConstMeta(debugName: "sync_config_blob", argNames: []);
-
-  @override
-  List<SyncEffect> crateApiSyncSyncConfigPulled({
-    required bool ok,
-    String? json,
-  }) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_bool(ok, serializer);
-          sse_encode_opt_String(json, serializer);
-          return pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 116,
-          )!;
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_list_sync_effect,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiSyncSyncConfigPulledConstMeta,
-        argValues: [ok, json],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiSyncSyncConfigPulledConstMeta =>
-      const TaskConstMeta(
-        debugName: "sync_config_pulled",
-        argNames: ["ok", "json"],
-      );
-
-  @override
-  List<SyncEffect> crateApiSyncSyncConfigPushDone({required bool ok}) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_bool(ok, serializer);
-          return pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 117,
-          )!;
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_list_sync_effect,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiSyncSyncConfigPushDoneConstMeta,
-        argValues: [ok],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiSyncSyncConfigPushDoneConstMeta =>
-      const TaskConstMeta(debugName: "sync_config_push_done", argNames: ["ok"]);
-
-  @override
-  List<SyncEffect> crateApiSyncSyncEntriesPulled({String? json}) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_opt_String(json, serializer);
-          return pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 118,
-          )!;
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_list_sync_effect,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiSyncSyncEntriesPulledConstMeta,
-        argValues: [json],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiSyncSyncEntriesPulledConstMeta =>
-      const TaskConstMeta(debugName: "sync_entries_pulled", argNames: ["json"]);
-
-  @override
-  List<SyncEffect> crateApiSyncSyncFlushDone({required String outcome}) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_String(outcome, serializer);
-          return pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 119,
-          )!;
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_list_sync_effect,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiSyncSyncFlushDoneConstMeta,
-        argValues: [outcome],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiSyncSyncFlushDoneConstMeta =>
-      const TaskConstMeta(debugName: "sync_flush_done", argNames: ["outcome"]);
-
-  @override
-  void crateApiSyncSyncLoadStamps({required String json}) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_String(json, serializer);
-          return pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 120,
-          )!;
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_unit,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiSyncSyncLoadStampsConstMeta,
-        argValues: [json],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiSyncSyncLoadStampsConstMeta =>
-      const TaskConstMeta(debugName: "sync_load_stamps", argNames: ["json"]);
-
-  @override
-  List<SyncEffect> crateApiSyncSyncLocalEdit({
-    required List<String> sections,
-    required PlatformInt64 now,
-  }) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_list_String(sections, serializer);
-          sse_encode_i_64(now, serializer);
-          return pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 121,
-          )!;
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_list_sync_effect,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiSyncSyncLocalEditConstMeta,
-        argValues: [sections, now],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiSyncSyncLocalEditConstMeta => const TaskConstMeta(
-    debugName: "sync_local_edit",
-    argNames: ["sections", "now"],
-  );
-
-  @override
-  List<SyncEffect> crateApiSyncSyncPulledPushDone({required bool ok}) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_bool(ok, serializer);
-          return pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 122,
-          )!;
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_list_sync_effect,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiSyncSyncPulledPushDoneConstMeta,
-        argValues: [ok],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiSyncSyncPulledPushDoneConstMeta =>
-      const TaskConstMeta(debugName: "sync_pulled_push_done", argNames: ["ok"]);
-
-  @override
-  List<SyncEffect> crateApiSyncSyncRealtimeConfig({required String json}) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_String(json, serializer);
-          return pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 123,
-          )!;
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_list_sync_effect,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiSyncSyncRealtimeConfigConstMeta,
-        argValues: [json],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiSyncSyncRealtimeConfigConstMeta =>
-      const TaskConstMeta(
-        debugName: "sync_realtime_config",
-        argNames: ["json"],
-      );
-
-  @override
-  List<SyncEffect> crateApiSyncSyncRealtimeEntry({required String json}) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_String(json, serializer);
-          return pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 124,
-          )!;
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_list_sync_effect,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiSyncSyncRealtimeEntryConstMeta,
-        argValues: [json],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiSyncSyncRealtimeEntryConstMeta =>
-      const TaskConstMeta(debugName: "sync_realtime_entry", argNames: ["json"]);
-
-  @override
-  void crateApiSyncSyncReset() {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          return pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 125,
-          )!;
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_unit,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiSyncSyncResetConstMeta,
-        argValues: [],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiSyncSyncResetConstMeta =>
-      const TaskConstMeta(debugName: "sync_reset", argNames: []);
-
-  @override
-  List<SyncEffect> crateApiSyncSyncRetryNow() {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          return pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 126,
-          )!;
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_list_sync_effect,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiSyncSyncRetryNowConstMeta,
-        argValues: [],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiSyncSyncRetryNowConstMeta =>
-      const TaskConstMeta(debugName: "sync_retry_now", argNames: []);
-
-  @override
-  List<String> crateApiSyncSyncSections() {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          return pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 127,
-          )!;
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_list_String,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiSyncSyncSectionsConstMeta,
-        argValues: [],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiSyncSyncSectionsConstMeta =>
-      const TaskConstMeta(debugName: "sync_sections", argNames: []);
-
-  @override
-  List<SyncEffect> crateApiSyncSyncSignIn({required String userId}) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_String(userId, serializer);
-          return pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 128,
-          )!;
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_list_sync_effect,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiSyncSyncSignInConstMeta,
-        argValues: [userId],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiSyncSyncSignInConstMeta =>
-      const TaskConstMeta(debugName: "sync_sign_in", argNames: ["userId"]);
-
-  @override
-  List<SyncEffect> crateApiSyncSyncSignOut() {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          return pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 129,
-          )!;
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_list_sync_effect,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiSyncSyncSignOutConstMeta,
-        argValues: [],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiSyncSyncSignOutConstMeta =>
-      const TaskConstMeta(debugName: "sync_sign_out", argNames: []);
-
-  @override
-  String crateApiSyncSyncStampsJson() {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          return pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 130,
-          )!;
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_String,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiSyncSyncStampsJsonConstMeta,
-        argValues: [],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiSyncSyncStampsJsonConstMeta =>
-      const TaskConstMeta(debugName: "sync_stamps_json", argNames: []);
-
-  @override
-  String crateApiSyncSyncStatus() {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          return pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 131,
-          )!;
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_String,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiSyncSyncStatusConstMeta,
-        argValues: [],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiSyncSyncStatusConstMeta =>
-      const TaskConstMeta(debugName: "sync_status", argNames: []);
-
-  @override
-  List<SyncEffect> crateApiSyncSyncTimerFired({required String timer}) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_String(timer, serializer);
-          return pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 132,
-          )!;
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_list_sync_effect,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiSyncSyncTimerFiredConstMeta,
-        argValues: [timer],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiSyncSyncTimerFiredConstMeta =>
-      const TaskConstMeta(debugName: "sync_timer_fired", argNames: ["timer"]);
-
-  @override
   List<String> crateApiCatalogTags() {
     return handler.executeSync(
       SyncTask(
@@ -4176,7 +3638,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           return pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 133,
+            funcId: 115,
           )!;
         },
         codec: SseCodec(
@@ -4203,7 +3665,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           return pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 134,
+            funcId: 116,
           )!;
         },
         codec: SseCodec(
@@ -4229,7 +3691,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           return pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 135,
+            funcId: 117,
           )!;
         },
         codec: SseCodec(
@@ -4260,7 +3722,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           return pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 136,
+            funcId: 118,
           )!;
         },
         codec: SseCodec(
@@ -4289,7 +3751,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           return pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 137,
+            funcId: 119,
           )!;
         },
         codec: SseCodec(
@@ -4316,7 +3778,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           return pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 138,
+            funcId: 120,
           )!;
         },
         codec: SseCodec(
@@ -4347,7 +3809,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           return pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 139,
+            funcId: 121,
           )!;
         },
         codec: SseCodec(
@@ -4381,7 +3843,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           return pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 140,
+            funcId: 122,
           )!;
         },
         codec: SseCodec(
@@ -4416,7 +3878,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           return pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 141,
+            funcId: 123,
           )!;
         },
         codec: SseCodec(
@@ -4445,7 +3907,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           return pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 142,
+            funcId: 124,
           )!;
         },
         codec: SseCodec(
@@ -4486,7 +3948,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           return pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 143,
+            funcId: 125,
           )!;
         },
         codec: SseCodec(
@@ -4523,7 +3985,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           return pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 144,
+            funcId: 126,
           )!;
         },
         codec: SseCodec(
@@ -4560,7 +4022,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           return pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 145,
+            funcId: 127,
           )!;
         },
         codec: SseCodec(
@@ -5182,12 +4644,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  List<SyncEffect> dco_decode_list_sync_effect(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return (raw as List<dynamic>).map(dco_decode_sync_effect).toList();
-  }
-
-  @protected
   List<TemplateView> dco_decode_list_template_view(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return (raw as List<dynamic>).map(dco_decode_template_view).toList();
@@ -5518,20 +4974,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       to: dco_decode_opt_String(arr[12]),
       periods: dco_decode_opt_box_autoadd_u_32(arr[13]),
       charged: dco_decode_u_32(arr[14]),
-    );
-  }
-
-  @protected
-  SyncEffect dco_decode_sync_effect(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 4)
-      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
-    return SyncEffect(
-      kind: dco_decode_String(arr[0]),
-      json: dco_decode_String(arr[1]),
-      name: dco_decode_String(arr[2]),
-      ms: dco_decode_i_64(arr[3]),
     );
   }
 
@@ -6459,18 +5901,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  List<SyncEffect> sse_decode_list_sync_effect(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var len_ = sse_decode_i_32(deserializer);
-    var ans_ = <SyncEffect>[];
-    for (var idx_ = 0; idx_ < len_; ++idx_) {
-      ans_.add(sse_decode_sync_effect(deserializer));
-    }
-    return ans_;
-  }
-
-  @protected
   List<TemplateView> sse_decode_list_template_view(
     SseDeserializer deserializer,
   ) {
@@ -6916,21 +6346,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       to: var_to,
       periods: var_periods,
       charged: var_charged,
-    );
-  }
-
-  @protected
-  SyncEffect sse_decode_sync_effect(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_kind = sse_decode_String(deserializer);
-    var var_json = sse_decode_String(deserializer);
-    var var_name = sse_decode_String(deserializer);
-    var var_ms = sse_decode_i_64(deserializer);
-    return SyncEffect(
-      kind: var_kind,
-      json: var_json,
-      name: var_name,
-      ms: var_ms,
     );
   }
 
@@ -7724,18 +7139,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_list_sync_effect(
-    List<SyncEffect> self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    for (final item in self) {
-      sse_encode_sync_effect(item, serializer);
-    }
-  }
-
-  @protected
   void sse_encode_list_template_view(
     List<TemplateView> self,
     SseSerializer serializer,
@@ -8070,15 +7473,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_opt_String(self.to, serializer);
     sse_encode_opt_box_autoadd_u_32(self.periods, serializer);
     sse_encode_u_32(self.charged, serializer);
-  }
-
-  @protected
-  void sse_encode_sync_effect(SyncEffect self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_String(self.kind, serializer);
-    sse_encode_String(self.json, serializer);
-    sse_encode_String(self.name, serializer);
-    sse_encode_i_64(self.ms, serializer);
   }
 
   @protected

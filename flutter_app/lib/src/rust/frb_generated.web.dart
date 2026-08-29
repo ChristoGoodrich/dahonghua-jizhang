@@ -21,7 +21,6 @@ import 'api/report.dart';
 import 'api/stats.dart';
 import 'api/store.dart';
 import 'api/subscriptions.dart';
-import 'api/sync.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'frb_generated.dart';
@@ -225,9 +224,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<SubView> dco_decode_list_sub_view(dynamic raw);
 
   @protected
-  List<SyncEffect> dco_decode_list_sync_effect(dynamic raw);
-
-  @protected
   List<TemplateView> dco_decode_list_template_view(dynamic raw);
 
   @protected
@@ -315,9 +311,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   SubView dco_decode_sub_view(dynamic raw);
-
-  @protected
-  SyncEffect dco_decode_sync_effect(dynamic raw);
 
   @protected
   TemplateDraftView dco_decode_template_draft_view(dynamic raw);
@@ -554,9 +547,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<SubView> sse_decode_list_sub_view(SseDeserializer deserializer);
 
   @protected
-  List<SyncEffect> sse_decode_list_sync_effect(SseDeserializer deserializer);
-
-  @protected
   List<TemplateView> sse_decode_list_template_view(
     SseDeserializer deserializer,
   );
@@ -656,9 +646,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   SubView sse_decode_sub_view(SseDeserializer deserializer);
-
-  @protected
-  SyncEffect sse_decode_sync_effect(SseDeserializer deserializer);
 
   @protected
   TemplateDraftView sse_decode_template_draft_view(
@@ -975,12 +962,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_list_sub_view(List<SubView> self, SseSerializer serializer);
 
   @protected
-  void sse_encode_list_sync_effect(
-    List<SyncEffect> self,
-    SseSerializer serializer,
-  );
-
-  @protected
   void sse_encode_list_template_view(
     List<TemplateView> self,
     SseSerializer serializer,
@@ -1096,9 +1077,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_sub_view(SubView self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_sync_effect(SyncEffect self, SseSerializer serializer);
 
   @protected
   void sse_encode_template_draft_view(
