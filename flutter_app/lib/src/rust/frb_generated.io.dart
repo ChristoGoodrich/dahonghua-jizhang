@@ -17,6 +17,7 @@ import 'api/networth.dart';
 import 'api/record.dart';
 import 'api/reimburse.dart';
 import 'api/report.dart';
+import 'api/search.dart';
 import 'api/stats.dart';
 import 'api/store.dart';
 import 'api/subscriptions.dart';
@@ -102,6 +103,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   UndoToken dco_decode_box_autoadd_undo_token(dynamic raw);
+
+  @protected
+  WallTime dco_decode_box_autoadd_wall_time(dynamic raw);
 
   @protected
   BudgetSettings dco_decode_budget_settings(dynamic raw);
@@ -304,10 +308,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   UndoToken? dco_decode_opt_box_autoadd_undo_token(dynamic raw);
 
   @protected
+  WallTime? dco_decode_opt_box_autoadd_wall_time(dynamic raw);
+
+  @protected
   List<String>? dco_decode_opt_list_String(dynamic raw);
 
   @protected
   OverviewView dco_decode_overview_view(dynamic raw);
+
+  @protected
+  ParsedQueryView dco_decode_parsed_query_view(dynamic raw);
 
   @protected
   PendingCharges dco_decode_pending_charges(dynamic raw);
@@ -374,6 +384,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   UnparsedView dco_decode_unparsed_view(dynamic raw);
+
+  @protected
+  WallTime dco_decode_wall_time(dynamic raw);
 
   @protected
   WeeklyView dco_decode_weekly_view(dynamic raw);
@@ -454,6 +467,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   UndoToken sse_decode_box_autoadd_undo_token(SseDeserializer deserializer);
+
+  @protected
+  WallTime sse_decode_box_autoadd_wall_time(SseDeserializer deserializer);
 
   @protected
   BudgetSettings sse_decode_budget_settings(SseDeserializer deserializer);
@@ -686,10 +702,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  WallTime? sse_decode_opt_box_autoadd_wall_time(SseDeserializer deserializer);
+
+  @protected
   List<String>? sse_decode_opt_list_String(SseDeserializer deserializer);
 
   @protected
   OverviewView sse_decode_overview_view(SseDeserializer deserializer);
+
+  @protected
+  ParsedQueryView sse_decode_parsed_query_view(SseDeserializer deserializer);
 
   @protected
   PendingCharges sse_decode_pending_charges(SseDeserializer deserializer);
@@ -758,6 +780,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   UnparsedView sse_decode_unparsed_view(SseDeserializer deserializer);
+
+  @protected
+  WallTime sse_decode_wall_time(SseDeserializer deserializer);
 
   @protected
   WeeklyView sse_decode_weekly_view(SseDeserializer deserializer);
@@ -873,6 +898,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_box_autoadd_undo_token(
     UndoToken self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_wall_time(
+    WallTime self,
     SseSerializer serializer,
   );
 
@@ -1165,10 +1196,22 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_opt_box_autoadd_wall_time(
+    WallTime? self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_opt_list_String(List<String>? self, SseSerializer serializer);
 
   @protected
   void sse_encode_overview_view(OverviewView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_parsed_query_view(
+    ParsedQueryView self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_pending_charges(
@@ -1247,6 +1290,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_unparsed_view(UnparsedView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_wall_time(WallTime self, SseSerializer serializer);
 
   @protected
   void sse_encode_weekly_view(WeeklyView self, SseSerializer serializer);

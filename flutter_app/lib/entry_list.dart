@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 
 import 'src/rust/api/catalog.dart' as catalog;
 import 'src/rust/api/money.dart' as money;
+import 'src/rust/api/search.dart' as search;
 import 'src/rust/api/store.dart' as store;
 import 'reimburse_screen.dart';
 import 'theme.dart';
@@ -74,6 +75,14 @@ class _EntryListScreenState extends State<EntryListScreen> {
   List<store.ListItem> _items = const [];
   Map<String, store.EntryView> _byId = const {};
 
+  final _query = TextEditingController();
+  bool _searching = false;
+
+  /// What the box turned out to mean, kept so the row under it can say so.
+  /// A query that reads as a date leaves no text behind, and a user who typed
+  /// 上周 and saw an empty list deserves to know it was understood.
+  search.ParsedQueryView? _parsed;
+
   @override
   void initState() {
     super.initState();
@@ -88,18 +97,53 @@ class _EntryListScreenState extends State<EntryListScreen> {
   /// ledger to fall out of step with.
   void _reload() {
     final live = store.liveEntries();
+    var ids = live.map((e) => e.id).toList();
+    var days = live
+        .map((e) => localDay(DateTime.fromMillisecondsSinceEpoch(e.ts)))
+        .toList();
+
+    final q = _query.text.trim();
+    search.ParsedQueryView? parsed;
+    if (q.isNotEmpty) {
+      // The query may name a range, and a range is not something Rust can
+      // resolve: midnight last Monday is a question about this device's zone.
+      parsed = search.parseQuery(query: q, today: localDay(DateTime.now()));
+      final keep = search
+          .searchIds(
+            ids: ids,
+            text: parsed.text,
+            io: parsed.io,
+            fromMs: _msOf(parsed.from),
+            toMs: _msOf(parsed.to),
+            zh: widget.zh,
+          )
+          .toSet();
+      final kept = [for (var i = 0; i < ids.length; i++) if (keep.contains(ids[i])) i];
+      ids = [for (final i in kept) ids[i]];
+      days = [for (final i in kept) days[i]];
+    }
+
     final items = store.listItems(
-      ids: live.map((e) => e.id).toList(),
-      days: live
-          .map((e) => localDay(DateTime.fromMillisecondsSinceEpoch(e.ts)))
-          .toList(),
+      ids: ids,
+      days: days,
       today: localDay(DateTime.now()),
       columns: 1,
     );
     setState(() {
       _byId = {for (final e in live) e.id: e};
       _items = items;
+      _parsed = parsed;
     });
+  }
+
+  static int? _msOf(search.WallTime? t) => t == null
+      ? null
+      : DateTime(t.y, t.mo, t.d, t.h, t.mi, t.s).millisecondsSinceEpoch;
+
+  @override
+  void dispose() {
+    _query.dispose();
+    super.dispose();
   }
 
   @override
@@ -110,22 +154,81 @@ class _EntryListScreenState extends State<EntryListScreen> {
       appBar: AppBar(
         backgroundColor: palette.paper,
         surfaceTintColor: Colors.transparent,
-        title: Text(
-          zh ? '大红花记账' : 'Red Blossom',
-          style: TextStyle(
-            color: palette.ink,
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
+        title: _searching
+            ? TextField(
+                key: const Key('search-field'),
+                controller: _query,
+                autofocus: true,
+                style: TextStyle(fontSize: 16, color: palette.ink),
+                cursorColor: palette.hibiscus,
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  isDense: true,
+                  hintText: zh ? '找一笔:上周、支出、星巴克' : 'last week · income · coffee',
+                  hintStyle: TextStyle(fontSize: 15, color: palette.inkSoft),
+                ),
+                onChanged: (_) => _reload(),
+              )
+            : Text(
+                zh ? '大红花记账' : 'Red Blossom',
+                style: TextStyle(
+                  color: palette.ink,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+        actions: [
+          IconButton(
+            key: const Key('search-toggle'),
+            icon: Icon(_searching ? Icons.close : Icons.search,
+                color: palette.ink),
+            onPressed: () {
+              setState(() {
+                _searching = !_searching;
+                if (!_searching) _query.clear();
+              });
+              _reload();
+            },
           ),
-        ),
+        ],
       ),
-      body: _items.isEmpty
-          ? _empty(zh)
-          : ListView.builder(
-              padding: const EdgeInsets.only(top: 6, bottom: 140),
-              itemCount: _items.length,
-              itemBuilder: (context, i) => _row(_items[i], zh),
-            ),
+      body: Column(children: [
+        if (_searching && _parsed != null) _readback(zh),
+        Expanded(
+          child: _items.isEmpty
+              ? _empty(zh)
+              : ListView.builder(
+                  padding: const EdgeInsets.only(top: 6, bottom: 140),
+                  itemCount: _items.length,
+                  itemBuilder: (context, i) => _row(_items[i], zh),
+                ),
+        ),
+      ]),
+    );
+  }
+
+
+  /// What the box was understood to mean.
+  ///
+  /// Worth its space because the query language is invisible otherwise: a user
+  /// who types 上周 and gets four rows has no way to tell whether the word was
+  /// read as a date or matched as text against a note.
+  Widget _readback(bool zh) {
+    final p = _parsed!;
+    final bits = <String>[
+      if (p.from != null)
+        zh
+            ? '${p.from!.mo}月${p.from!.d}日 到 ${p.to!.mo}月${p.to!.d}日'
+            : '${p.from!.mo}/${p.from!.d} – ${p.to!.mo}/${p.to!.d}',
+      if (p.io != null)
+        p.io == 'inc' ? (zh ? '只看收入' : 'income only') : (zh ? '只看支出' : 'expense only'),
+    ];
+    if (bits.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      key: const Key('search-readback'),
+      padding: const EdgeInsets.fromLTRB(22, 0, 22, 6),
+      child: Text(bits.join(zh ? ' · ' : ' · '),
+          style: TextStyle(fontSize: 12, color: palette.hibiscus)),
     );
   }
 
@@ -396,8 +499,14 @@ class _EntryListScreenState extends State<EntryListScreen> {
           child: const Text('🌺', style: TextStyle(fontSize: 44)),
         ),
         const SizedBox(height: 14),
+        // An empty ledger and an empty search look the same and are not the
+        // same thing. Telling a user who is searching that they have never
+        // recorded anything is worse than saying nothing.
         Text(
-          zh ? '还没有记账' : 'Nothing recorded yet',
+          _query.text.trim().isEmpty
+              ? (zh ? '还没有记账' : 'Nothing recorded yet')
+              : (zh ? '没有找到' : 'Nothing matched'),
+          key: const Key('list-empty'),
           style: TextStyle(fontSize: 13, color: palette.inkSoft),
         ),
       ],

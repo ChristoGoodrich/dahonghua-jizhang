@@ -2250,6 +2250,52 @@ one, so the day the editor lands the argument is the only change.
 list that quietly dropped them would leave "18 rows" unexplained next to six
 entries. "3 rows, 3 already recorded" is the sentence a user can act on.
 
+### An audit of what was ported and never reached
+
+Having written `inbox` twice, the obvious next question was how many other
+modules the bridge had never touched. Fifteen, of which most are internal
+helpers (`jsstr`, `jsobj`, `keywords`) or the sync trio kept on purpose. The
+rest are whole features, ported and unreachable:
+
+| module | what it is |
+| --- | --- |
+| `search` | free-text search plus `>100` / `<=50` amount operators |
+| `filter` | filtering, and reading a date range out of a search box |
+| `export` | the rows an export is made of, and the CSV they render to |
+| `statement` | the credit-card cycle: 出账日, 还款日, 本期待还 |
+| `streak` | the consecutive-day logging streak |
+| `notes` | note suggestions learned from history |
+| `period` | day / week / month / half-year / year windows |
+
+The list is the remaining work, in a form that cannot be argued with. `search`
+and `filter` are wired now; the others are named here so the next increment
+does not have to rediscover them.
+
+### The search seam, and an injection that found the test I had not written
+
+A query can name a *range*, and a range is not something the core may resolve.
+`parse_search_query` splits 上周 支出 星巴克 into a civil range, a direction and
+the text that is left; Dart turns the civil pair into the epoch bounds the
+filter compares against, because midnight last Monday is a question about the
+device's zone. That is the same cut the report screen and the import screen
+took, and it is now the fourth.
+
+The screen says back what it understood. Without that the query language is
+invisible: a user who types 上周 and gets four rows cannot tell whether the word
+was read as a date or matched as text against a note.
+
+Nineteen tests, and the injection sweep found the missing one. Removing the
+date bounds *in Dart* — `fromMs: null` — was caught by nothing. The range tests
+called the bridge directly with explicit bounds, and the screen test asserted
+only that the readback rendered. So the one seam the file exists to protect was
+the one thing not tested through the screen: a UI that draws the label and then
+forgets to pass the bounds looked completely correct. There is now a test that
+types a date and checks a row actually left the list.
+
+It uses 今天 rather than 上周, deliberately. An entry recorded during the test is
+today by construction, so there is no hour of the week at which it means
+something else.
+
 ### I rewrote a module the core already had
 
 `inbox.rs` was ported long before the capture screen was — `drain`,
