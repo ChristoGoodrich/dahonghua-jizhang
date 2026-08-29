@@ -6,123 +6,82 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `already_seen`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`
+// These functions are ignored because they are not marked as `pub`: `as_str`, `inbox_lock`, `parse_source`, `pending_view`, `post`, `unparsed_view`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `from`
 
-/// Work out what the queue would add to the ledger and to the inbox.
+/// Drain the native queue: classify, record what is confident, keep the rest.
 ///
-/// `waiting_*` are the drafts already sitting in the inbox from an earlier
-/// drain, passed in parallel arrays because they live on the Dart side. They
-/// count as already-represented payments: a follow-up push for something the
-/// user has not confirmed yet must not queue twice.
-///
-/// Account and ledger are left unset on purpose. A notification says nothing
-/// about which account paid, and guessing "whatever was last used" silently
-/// corrupts account balances.
-DrainPlan planDrain({
+/// Writes before returning, deliberately — Dart acknowledges the native queue
+/// after this call, and nothing may sit between the decision and the row
+/// reaching the ledger.
+DrainSummary drainCaptures({
   required List<RawNotifView> raws,
-  required List<String> waitingIo,
-  required List<double> waitingAmt,
-  required Int64List waitingTs,
-}) => RustLib.instance.api.crateApiCapturePlanDrain(
-  raws: raws,
-  waitingIo: waitingIo,
-  waitingAmt: waitingAmt,
-  waitingTs: waitingTs,
-);
-
-/// Write captured payments to the ledger in one go. Returns how many landed.
-///
-/// Tagged `src: notif`, which is what lets a later drain know these rows
-/// already stand for those payments. Account and ledger stay unset: a
-/// notification does not say which account paid, and a guess would corrupt a
-/// balance silently.
-int postCaptured({
-  required List<String> io,
-  required List<String> cat,
-  required List<double> amt,
-  required List<String> note,
-  required Int64List ts,
-  required List<String> ids,
   required PlatformInt64 now,
-}) => RustLib.instance.api.crateApiCapturePostCaptured(
-  io: io,
-  cat: cat,
-  amt: amt,
-  note: note,
-  ts: ts,
-  ids: ids,
-  now: now,
-);
+}) => RustLib.instance.api.crateApiCaptureDrainCaptures(raws: raws, now: now);
 
-/// A payment ready to become an entry.
-class DraftView {
-  final String io;
-  final String cat;
-  final double amt;
-  final String note;
-  final PlatformInt64 ts;
+List<PendingView> inboxPending() =>
+    RustLib.instance.api.crateApiCaptureInboxPending();
 
-  const DraftView({
-    required this.io,
-    required this.cat,
-    required this.amt,
-    required this.note,
-    required this.ts,
-  });
+List<UnparsedView> inboxUnparsed() =>
+    RustLib.instance.api.crateApiCaptureInboxUnparsed();
 
-  @override
-  int get hashCode =>
-      io.hashCode ^ cat.hashCode ^ amt.hashCode ^ note.hashCode ^ ts.hashCode;
+/// Accept a waiting payment.
+///
+/// False for an id that is no longer queued, which is a no-op rather than an
+/// error: the caller is a screen that may be acting on a row a later drain has
+/// since resolved.
+bool confirmPending({required String id, required PlatformInt64 now}) =>
+    RustLib.instance.api.crateApiCaptureConfirmPending(id: id, now: now);
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is DraftView &&
-          runtimeType == other.runtimeType &&
-          io == other.io &&
-          cat == other.cat &&
-          amt == other.amt &&
-          note == other.note &&
-          ts == other.ts;
-}
+void dismissPending({required String id}) =>
+    RustLib.instance.api.crateApiCaptureDismissPending(id: id);
 
-/// What draining the queue would do. Nothing has happened yet.
-class DrainPlan {
-  /// Confident captures: a merchant name came through, so the note means
-  /// something and the row can post unattended.
-  final List<DraftView> posted;
-  final List<PendingView> pending;
-  final List<UnparsedView> unparsed;
+void clearUnparsed() => RustLib.instance.api.crateApiCaptureClearUnparsed();
 
-  /// Every id handed in, including the ones that became nothing. A duplicate
-  /// push is still handled — leaving it in the queue would re-examine it on
-  /// every drain forever.
-  final List<String> consumed;
+/// Everything the inbox holds, for the file that carries it across a restart.
+String inboxBlob() => RustLib.instance.api.crateApiCaptureInboxBlob();
 
-  const DrainPlan({
+/// Read the inbox back. False for a document that cannot be read at all.
+///
+/// Unlike the ledger, a failure here is not something to refuse over: every
+/// item is either replaceable from the wallet's own export or was never going
+/// to become an entry. It starts empty and says so.
+bool loadInbox({required String json}) =>
+    RustLib.instance.api.crateApiCaptureLoadInbox(json: json);
+
+/// How many unparsed captures are kept. Asked rather than restated, so a test
+/// that checks the bound is checking the core's bound and not a copy of it.
+int maxUnparsed() => RustLib.instance.api.crateApiCaptureMaxUnparsed();
+
+/// Forget everything the inbox holds. For tests, which share one process.
+void resetInbox() => RustLib.instance.api.crateApiCaptureResetInbox();
+
+/// What one drain did.
+class DrainSummary {
+  /// Added to the ledger outright.
+  final int posted;
+
+  /// Parsed, but waiting for a tap.
+  final int queued;
+  final int unparsed;
+
+  const DrainSummary({
     required this.posted,
-    required this.pending,
+    required this.queued,
     required this.unparsed,
-    required this.consumed,
   });
 
   @override
-  int get hashCode =>
-      posted.hashCode ^
-      pending.hashCode ^
-      unparsed.hashCode ^
-      consumed.hashCode;
+  int get hashCode => posted.hashCode ^ queued.hashCode ^ unparsed.hashCode;
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is DrainPlan &&
+      other is DrainSummary &&
           runtimeType == other.runtimeType &&
           posted == other.posted &&
-          pending == other.pending &&
-          unparsed == other.unparsed &&
-          consumed == other.consumed;
+          queued == other.queued &&
+          unparsed == other.unparsed;
 }
 
 /// A parsed payment that was not confident enough to post unattended.
@@ -134,18 +93,33 @@ class PendingView {
   /// What the notification actually said, for the confirm sheet. A user
   /// asked to accept a guess deserves to see what it was a guess about.
   final String raw;
-  final DraftView draft;
+  final String io;
+  final String cat;
+  final double amt;
+  final String note;
+  final PlatformInt64 ts;
 
   const PendingView({
     required this.id,
     required this.source,
     required this.raw,
-    required this.draft,
+    required this.io,
+    required this.cat,
+    required this.amt,
+    required this.note,
+    required this.ts,
   });
 
   @override
   int get hashCode =>
-      id.hashCode ^ source.hashCode ^ raw.hashCode ^ draft.hashCode;
+      id.hashCode ^
+      source.hashCode ^
+      raw.hashCode ^
+      io.hashCode ^
+      cat.hashCode ^
+      amt.hashCode ^
+      note.hashCode ^
+      ts.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -155,7 +129,11 @@ class PendingView {
           id == other.id &&
           source == other.source &&
           raw == other.raw &&
-          draft == other.draft;
+          io == other.io &&
+          cat == other.cat &&
+          amt == other.amt &&
+          note == other.note &&
+          ts == other.ts;
 }
 
 /// One row out of the native queue.
@@ -199,10 +177,6 @@ class RawNotifView {
 }
 
 /// A capture from a watched app that no rule understood.
-///
-/// Kept on purpose. Notification wording differs by app version, bank and
-/// region, and there is no way to write rules for text nobody has seen — this
-/// is how the real strings on a real phone become visible.
 class UnparsedView {
   final String id;
   final String pkg;

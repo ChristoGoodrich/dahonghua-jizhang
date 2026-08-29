@@ -2250,6 +2250,47 @@ one, so the day the editor lands the argument is the only change.
 list that quietly dropped them would leave "18 rows" unexplained next to six
 entries. "3 rows, 3 already recorded" is the sentence a user can act on.
 
+### I rewrote a module the core already had
+
+`inbox.rs` was ported long before the capture screen was — `drain`,
+`already_seen`, `Inbox::absorb`, `Inbox::confirm_pending`, under an
+inbox-corpus of its own. I did not look, and wrote all four again by hand in
+the bridge and in Dart. They agreed with the core, which is the least
+reassuring possible outcome: the hand-written pair was not tested against
+`inbox.ts` and would have drifted the first time either was touched.
+
+The whole thing now delegates. The bridge holds the `Inbox`, converts shapes,
+and does the ledger write the core deliberately leaves to its caller; the
+duplicate `already_seen` and the hand-rolled candidate loop are gone, and
+`inbox.dart` lost its own copies of `PendingItem`, `UnparsedItem` and their
+JSON. What is left in Dart is exactly the three things the core cannot do —
+read the native queue, write the file, acknowledge the queue — and the order
+between them, which is the design.
+
+Two more consequences worth having:
+
+The pending list is no longer mirrored on both sides. `Inbox.pending` is a
+getter that asks Rust, because a second copy of a list is a second thing that
+can be wrong. And the unparsed bound is asked for rather than restated, so the
+test that checks it is checking the core's bound and not a copy.
+
+The lesson is not "read the source first", which everybody already believes.
+It is that a duplicate that AGREES is the expensive kind. A wrong one fails a
+test on the day it is written; a right one waits until someone changes the
+tested copy, and then only the untested copy is wrong.
+
+### A test that could not tell "saved" from "never written"
+
+The injection sweep that caught the duplication caught something smaller and
+sharper on the way. `inbox_blob` made to return `{}` failed one test where it
+should have failed two: "a discarded payment stays discarded across a restart"
+reopened the inbox and asserted the pending list was EMPTY — which is exactly
+what a file that was never written also produces.
+
+It discards one of two payments now, and asserts the other one is still there.
+An assertion that a thing is absent can only ever be evidence when something
+else is present.
+
 ### Auto-capture, and two tests that asserted the wrong field
 
 The notification listener came across nearly verbatim — `NotifCaptureService`

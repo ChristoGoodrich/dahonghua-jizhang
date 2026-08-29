@@ -133,10 +133,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ClaimView dco_decode_claim_view(dynamic raw);
 
   @protected
-  DraftView dco_decode_draft_view(dynamic raw);
-
-  @protected
-  DrainPlan dco_decode_drain_plan(dynamic raw);
+  DrainSummary dco_decode_drain_summary(dynamic raw);
 
   @protected
   EntryPatch dco_decode_entry_patch(dynamic raw);
@@ -203,9 +200,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<ClaimView> dco_decode_list_claim_view(dynamic raw);
-
-  @protected
-  List<DraftView> dco_decode_list_draft_view(dynamic raw);
 
   @protected
   List<EntryView> dco_decode_list_entry_view(dynamic raw);
@@ -491,10 +485,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ClaimView sse_decode_claim_view(SseDeserializer deserializer);
 
   @protected
-  DraftView sse_decode_draft_view(SseDeserializer deserializer);
-
-  @protected
-  DrainPlan sse_decode_drain_plan(SseDeserializer deserializer);
+  DrainSummary sse_decode_drain_summary(SseDeserializer deserializer);
 
   @protected
   EntryPatch sse_decode_entry_patch(SseDeserializer deserializer);
@@ -571,9 +562,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<ClaimView> sse_decode_list_claim_view(SseDeserializer deserializer);
-
-  @protected
-  List<DraftView> sse_decode_list_draft_view(SseDeserializer deserializer);
 
   @protected
   List<EntryView> sse_decode_list_entry_view(SseDeserializer deserializer);
@@ -921,10 +909,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_claim_view(ClaimView self, SseSerializer serializer);
 
   @protected
-  void sse_encode_draft_view(DraftView self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_drain_plan(DrainPlan self, SseSerializer serializer);
+  void sse_encode_drain_summary(DrainSummary self, SseSerializer serializer);
 
   @protected
   void sse_encode_entry_patch(EntryPatch self, SseSerializer serializer);
@@ -1019,12 +1004,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_claim_view(
     List<ClaimView> self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_list_draft_view(
-    List<DraftView> self,
     SseSerializer serializer,
   );
 

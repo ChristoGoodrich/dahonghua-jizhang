@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 
 import 'inbox.dart';
 import 'notif_capture.dart';
+import 'src/rust/api/capture.dart' as capture;
 import 'theme.dart';
 
 class CaptureScreen extends StatefulWidget {
@@ -92,14 +93,14 @@ class _CaptureScreenState extends State<CaptureScreen> {
     if (on) await _reload();
   }
 
-  Future<void> _accept(PendingItem p) async {
+  Future<void> _accept(capture.PendingView p) async {
     await _inbox.accept(p);
     if (!mounted) return;
     setState(() => _flash = widget.zh ? '已记一笔' : 'Recorded');
     widget.onChanged?.call();
   }
 
-  Future<void> _reject(PendingItem p) async {
+  Future<void> _reject(capture.PendingView p) async {
     await _inbox.reject(p);
     if (mounted) setState(() {});
   }
@@ -239,7 +240,7 @@ class _CaptureScreenState extends State<CaptureScreen> {
     ];
   }
 
-  Widget _pendingRow(PendingItem p, bool zh) => Container(
+  Widget _pendingRow(capture.PendingView p, bool zh) => Container(
         key: Key('pending-${p.id}'),
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.all(14),

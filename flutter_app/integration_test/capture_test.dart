@@ -18,6 +18,7 @@ import 'package:flutter/services.dart' show PlatformException;
 import 'package:flutter_app/capture_screen.dart';
 import 'package:flutter_app/inbox.dart';
 import 'package:flutter_app/notif_capture.dart';
+import 'package:flutter_app/src/rust/api/capture.dart' as capture;
 import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_app/src/rust/frb_generated.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -149,7 +150,12 @@ void main() {
         '${(await getApplicationDocumentsDirectory()).path}/capture_test');
     if (!await tmp.exists()) await tmp.create(recursive: true);
   });
-  setUp(() => store.reset());
+  setUp(() {
+    store.reset();
+    // The inbox lives in Rust and outlives a widget, so one test's
+    // captures are another's fixture unless this is here.
+    capture.resetInbox();
+  });
 
   group('draining', () {
     testWidgets('a payment with a merchant posts to the ledger unattended',
@@ -327,24 +333,18 @@ void main() {
     });
 
     testWidgets('the unparsed list is bounded', (tester) async {
-      final inbox = await freshInbox(FakeNative());
-      for (var i = 0; i < Inbox.maxUnparsed + 8; i++) {
-        inbox.unparsed = [
-          ...inbox.unparsed,
-          UnparsedItem(id: 'u$i', pkg: wechat, raw: 'noise $i', postedAt: i),
-        ];
-      }
-      // A drain is what enforces the bound, so run one over a fresh capture.
+      final bound = capture.maxUnparsed();
       final native = FakeNative(queue: [
-        notif(pkg: wechat, title: '微信', text: '你有一条新消息'),
+        for (var i = 0; i < bound + 8; i++)
+          notif(pkg: wechat, title: '微信', text: '你有一条新消息 $i'),
       ]);
-      final bounded = Inbox(native: native, dir: tmp);
-      await bounded.load();
-      bounded.unparsed = inbox.unparsed;
-      await bounded.drain();
+      final inbox = await freshInbox(native);
 
-      expect(bounded.unparsed.length, Inbox.maxUnparsed);
-      expect(bounded.unparsed.last.raw, contains('新消息'),
+      final r = await inbox.drain();
+
+      expect(r.unparsed, bound + 8, reason: 'the drain saw all of them');
+      expect(inbox.unparsed.length, bound, reason: 'the inbox kept the bound');
+      expect(inbox.unparsed.last.raw, contains('${bound + 7}'),
           reason: 'the newest is the one kept');
     });
   });
@@ -437,17 +437,26 @@ void main() {
 
     testWidgets('a discarded payment stays discarded across a restart',
         (tester) async {
+      // TWO payments, one discarded. Asserting an empty list would pass just as
+      // well if the file were never written — the surviving one is what tells
+      // "discarded" apart from "nothing was saved".
+      final t = DateTime.now().millisecondsSinceEpoch;
       final native = FakeNative(queue: [
-        notif(title: '支付宝', text: '付款成功12.00元'),
+        notif(title: '支付宝', text: '付款成功12.00元', postedAt: t),
+        notif(title: '支付宝', text: '付款成功98.00元', postedAt: t - 600000),
       ]);
       final inbox = await freshInbox(native);
       await show(tester, native: native, inbox: inbox);
-      await tester.tap(find.byKey(Key('reject-${inbox.pending.single.id}')));
+      expect(inbox.pending, hasLength(2));
+
+      final gone = inbox.pending.firstWhere((p) => p.amt == 12.0);
+      await tester.tap(find.byKey(Key('reject-${gone.id}')));
       await tester.pumpAndSettle();
 
       final reopened = Inbox(native: native, dir: tmp);
       await reopened.load();
-      expect(reopened.pending, isEmpty);
+      expect(reopened.pending, hasLength(1));
+      expect(reopened.pending.single.amt, 98.0);
     });
 
     testWidgets('the unparsed list can be cleared', (tester) async {
