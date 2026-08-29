@@ -40,6 +40,10 @@ dependencies:
   # The one plugin persistence needs: Dart alone cannot find the Android
   # app-private directory, and a hardcoded path is not one.
   path_provider: ^2.1.5
+  # The document picker. Reading a bill export means reaching outside the
+  # app's own storage, which is a permission dialog and a content URI —
+  # neither of which Dart can do alone.
+  file_picker: ^12.1.2
 
 dev_dependencies:
   flutter_test:

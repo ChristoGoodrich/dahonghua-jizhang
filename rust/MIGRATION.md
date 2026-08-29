@@ -2213,6 +2213,70 @@ second start-up failed at its config push and nothing after it scheduled
 anything. **A script that never reaches the state it is testing reports zero,
 and reports it in exactly the same shape as a genuine equivalence.**
 
+### The import screen, and a fixture that had to be real GBK
+
+Three ported modules meet at one screen: `encoding` decides whether the file is
+UTF-8 or GBK, `bills` finds the header and reads the rows, `dedup` maps each row
+to a category and works out which the ledger already holds. The bridge does the
+orchestration `billImport.ts` does, because that orchestration is where the two
+platform questions live.
+
+**The ledger is read at the pick, not at `initState`.** The shipping screen
+does the same — `store$.data.peek()` inside `pick()` — and the comment there
+says why in six words. A row recorded while the file browser is open is a row
+the dedup has to see, or the import writes it twice.
+
+**The wall time in the file becomes an instant in Dart.** A candidate crosses
+carrying six numbers and no opinion; `DateTime(y, mo, d, h, mi, s)` applies the
+zone. A bill row reading 02:30 on a spring-forward morning is a wall time that
+does not exist, and the platform is the only thing here entitled to say what it
+means. This is the same cut the report screen took, and it is now the third
+place it has come up.
+
+The fixture is the part worth recording. Writing the 支付宝 export as a Dart
+string would have tested nothing: the reason `encoding.rs` exists at all is that
+微信 writes UTF-8 with a BOM and 支付宝 writes GBK, and a fixture that is UTF-8
+either way cannot tell the two apart — it would pass with the GBK table deleted.
+Dart has no GBK encoder, so the 332 bytes are spelled out as integers, generated
+once from Python's codec. The test asserts 星巴克 comes back, which is a thing
+mojibake cannot fake.
+
+Custom categories are passed empty, and the code says so rather than leaving a
+reader to wonder: this port has no custom-category editor yet. The core already
+takes them and `map_category` already prefers a custom keyword over a built-in
+one, so the day the editor lands the argument is the only change.
+
+**What the screen shows that the shipping one also shows: the duplicates.** A
+list that quietly dropped them would leave "18 rows" unexplained next to six
+entries. "3 rows, 3 already recorded" is the sentence a user can act on.
+
+### A walk over the hub that had quietly stopped walking
+
+Adding one row to the 我的 hub broke a settings test, and the break was worth
+more than the row. `me-settings` had dropped below the fold, and
+`tester.tap` on a clipped row does not fail — it computes the row's centre,
+which now lands on the tab bar, and taps that instead.
+
+The neighbouring test is the part that matters. `lists nothing that goes
+nowhere` walks every hub row and checks each reaches a screen, deliberately
+written without a count so that adding a screen would not mean editing a test.
+It was reading the built `InkWell`s — and a `ListView` does not build what is
+off screen. So the walk had been covering one screenful and passing, over a
+smaller fraction of the hub with every screen added, for four increments. It
+did not fail when the hub grew. It just stopped looking.
+
+Now it scrolls the list, collecting keys a screenful at a time, and it takes 22
+seconds instead of 3 — which is roughly the ratio of what it was actually
+checking. The count is still not asserted; one anchor is, that the walk's last
+row is the hub's last row. That fails if the walk stops early and does not have
+to be edited to add a screen.
+
+Two smaller things fell out. `ensureVisible` rather than
+`find.byType(Scrollable)`, because four tabs are alive in an `IndexedStack` at
+once and the ambiguity is invisible from the screen. And a pop has to scroll
+back to the top: the offset a row needed survives the route, so the heading the
+test recognises the hub by was no longer built.
+
 ### Sync is out of scope, and what that leaves behind
 
 The transport was never written and now will not be: cloud sync is cut from the

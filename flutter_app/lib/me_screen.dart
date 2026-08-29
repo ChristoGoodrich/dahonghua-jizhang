@@ -57,6 +57,10 @@ class MeScreen extends StatelessWidget {
       body: SafeArea(
         bottom: false,
         child: ListView(
+          // Named so a test can scroll it. There are four tabs alive in an
+          // IndexedStack at once, so `find.byType(Scrollable)` is ambiguous
+          // here in a way that is not obvious from the screen.
+          key: const Key('me-list'),
           padding: const EdgeInsets.fromLTRB(22, 18, 22, 120),
           children: [
             Text(zh ? '我的' : 'Me',

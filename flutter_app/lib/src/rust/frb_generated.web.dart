@@ -13,6 +13,7 @@ import 'api/calc.dart';
 import 'api/catalog.dart';
 import 'api/currency.dart';
 import 'api/glass.dart';
+import 'api/imports.dart';
 import 'api/money.dart';
 import 'api/networth.dart';
 import 'api/record.dart';
@@ -107,6 +108,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BudgetSettings dco_decode_budget_settings(dynamic raw);
 
   @protected
+  CandidateView dco_decode_candidate_view(dynamic raw);
+
+  @protected
   CatBudgetView dco_decode_cat_budget_view(dynamic raw);
 
   @protected
@@ -155,6 +159,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   PlatformInt64 dco_decode_i_64(dynamic raw);
 
   @protected
+  ImportPreview dco_decode_import_preview(dynamic raw);
+
+  @protected
   InsightCopyView dco_decode_insight_copy_view(dynamic raw);
 
   @protected
@@ -174,6 +181,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<BackupInfoView> dco_decode_list_backup_info_view(dynamic raw);
+
+  @protected
+  List<CandidateView> dco_decode_list_candidate_view(dynamic raw);
 
   @protected
   List<CatBudgetView> dco_decode_list_cat_budget_view(dynamic raw);
@@ -209,6 +219,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Int64List dco_decode_list_prim_i_64_strict(dynamic raw);
 
   @protected
+  List<int> dco_decode_list_prim_u_8_loose(dynamic raw);
+
+  @protected
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
 
   @protected
@@ -216,6 +229,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<(String, double)> dco_decode_list_record_string_f_64(dynamic raw);
+
+  @protected
+  List<RowErrorView> dco_decode_list_row_error_view(dynamic raw);
 
   @protected
   List<SliceView> dco_decode_list_slice_view(dynamic raw);
@@ -299,6 +315,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   RestoreResult dco_decode_restore_result(dynamic raw);
+
+  @protected
+  RowErrorView dco_decode_row_error_view(dynamic raw);
 
   @protected
   SaveResult dco_decode_save_result(dynamic raw);
@@ -420,6 +439,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BudgetSettings sse_decode_budget_settings(SseDeserializer deserializer);
 
   @protected
+  CandidateView sse_decode_candidate_view(SseDeserializer deserializer);
+
+  @protected
   CatBudgetView sse_decode_cat_budget_view(SseDeserializer deserializer);
 
   @protected
@@ -468,6 +490,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   PlatformInt64 sse_decode_i_64(SseDeserializer deserializer);
 
   @protected
+  ImportPreview sse_decode_import_preview(SseDeserializer deserializer);
+
+  @protected
   InsightCopyView sse_decode_insight_copy_view(SseDeserializer deserializer);
 
   @protected
@@ -489,6 +514,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<BackupInfoView> sse_decode_list_backup_info_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  List<CandidateView> sse_decode_list_candidate_view(
     SseDeserializer deserializer,
   );
 
@@ -530,6 +560,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Int64List sse_decode_list_prim_i_64_strict(SseDeserializer deserializer);
 
   @protected
+  List<int> sse_decode_list_prim_u_8_loose(SseDeserializer deserializer);
+
+  @protected
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
 
   @protected
@@ -537,6 +570,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<(String, double)> sse_decode_list_record_string_f_64(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  List<RowErrorView> sse_decode_list_row_error_view(
     SseDeserializer deserializer,
   );
 
@@ -634,6 +672,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   RestoreResult sse_decode_restore_result(SseDeserializer deserializer);
+
+  @protected
+  RowErrorView sse_decode_row_error_view(SseDeserializer deserializer);
 
   @protected
   SaveResult sse_decode_save_result(SseDeserializer deserializer);
@@ -797,6 +838,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_candidate_view(CandidateView self, SseSerializer serializer);
+
+  @protected
   void sse_encode_cat_budget_view(CatBudgetView self, SseSerializer serializer);
 
   @protected
@@ -845,6 +889,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_i_64(PlatformInt64 self, SseSerializer serializer);
 
   @protected
+  void sse_encode_import_preview(ImportPreview self, SseSerializer serializer);
+
+  @protected
   void sse_encode_insight_copy_view(
     InsightCopyView self,
     SseSerializer serializer,
@@ -877,6 +924,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_backup_info_view(
     List<BackupInfoView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_candidate_view(
+    List<CandidateView> self,
     SseSerializer serializer,
   );
 
@@ -938,6 +991,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_list_prim_u_8_loose(List<int> self, SseSerializer serializer);
+
+  @protected
   void sse_encode_list_prim_u_8_strict(
     Uint8List self,
     SseSerializer serializer,
@@ -949,6 +1005,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_record_string_f_64(
     List<(String, double)> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_row_error_view(
+    List<RowErrorView> self,
     SseSerializer serializer,
   );
 
@@ -1065,6 +1127,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_restore_result(RestoreResult self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_row_error_view(RowErrorView self, SseSerializer serializer);
 
   @protected
   void sse_encode_save_result(SaveResult self, SseSerializer serializer);

@@ -32,6 +32,19 @@ Future<void> shell(WidgetTester tester) async {
 String textOf(WidgetTester tester, String key) =>
     tester.widget<Text>(find.byKey(Key(key))).data!;
 
+/// Tap a row on the 我的 hub, scrolling it into view first.
+///
+/// The hub grows. A row that fitted on screen when its test was written does
+/// not stay fitted, and tapping one that has dropped below the fold lands on
+/// the tab bar instead — which looks enough like success to keep passing.
+Future<void> tapMeRow(WidgetTester tester, String key) async {
+  final f = find.byKey(Key(key));
+  await tester.ensureVisible(f);
+  await tester.pumpAndSettle();
+  await tester.tap(f);
+  await tester.pumpAndSettle();
+}
+
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(() async => await RustLib.init());
@@ -91,8 +104,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('记账工具'), findsOneWidget);
 
-      await tester.tap(find.byKey(const Key('me-settings')));
-      await tester.pumpAndSettle();
+      await tapMeRow(tester, 'me-settings');
       await tester.tap(find.byKey(const Key('lang-en')));
       await tester.pumpAndSettle();
       await tester.pageBack();
@@ -111,8 +123,7 @@ void main() {
       await shell(tester);
       await tester.tap(find.byKey(const Key('tab-Me')));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('me-subs')));
-      await tester.pumpAndSettle();
+      await tapMeRow(tester, 'me-subs');
 
       expect(find.text('Subscriptions'), findsOneWidget);
       expect(find.text('No subscriptions yet'), findsOneWidget);

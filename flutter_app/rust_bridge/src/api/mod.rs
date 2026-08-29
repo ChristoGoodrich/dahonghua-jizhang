@@ -12,6 +12,7 @@ pub mod calc;
 pub mod catalog;
 pub mod currency;
 pub mod glass;
+pub mod imports;
 pub mod init;
 pub mod money;
 pub mod networth;

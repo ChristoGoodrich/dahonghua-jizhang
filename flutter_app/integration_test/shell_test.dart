@@ -40,6 +40,76 @@ Future<void> tapTab(WidgetTester tester, String label) async {
   await tester.pumpAndSettle();
 }
 
+/// Every row on the 我的 hub, found by scrolling the whole list.
+///
+/// Reading the built `InkWell`s was the first spelling and it was wrong in a
+/// way that hid itself: a `ListView` does not build what is off screen, so the
+/// walk silently stopped covering the hub the moment it grew past one
+/// screenful. It went on passing, over fewer rows each time a screen was added.
+Future<List<String>> meRowKeys(WidgetTester tester) async {
+  final list = find.byKey(const Key('me-list'));
+  final seen = <String>[];
+
+  void collect() {
+    for (final w in tester.widgetList<InkWell>(find.byType(InkWell))) {
+      final k = w.key;
+      if (k is ValueKey<String> &&
+          k.value.startsWith('me-') &&
+          !seen.contains(k.value)) {
+        seen.add(k.value);
+      }
+    }
+  }
+
+  collect();
+  // Scroll to the end a screenful at a time, taking what each one brings into
+  // being. `dragUntilVisible` cannot help here: the point is to find rows whose
+  // keys are not known in advance.
+  for (var i = 0; i < 20; i++) {
+    final before = seen.length;
+    await tester.drag(list, const Offset(0, -400));
+    await tester.pumpAndSettle();
+    collect();
+    if (seen.length == before) break;
+  }
+  return seen;
+}
+
+/// Tap a hub row, scrolling it into view first.
+///
+/// A row below the fold is laid out but clipped, and tapping it lands on
+/// whatever occupies those coordinates instead — for the bottom of this screen,
+/// the tab bar. `ensureVisible` walks up to the row's own scrollable, which
+/// matters because four tabs are alive in an `IndexedStack` and `Scrollable`
+/// alone is ambiguous.
+/// Come back from a pushed screen to the top of the hub.
+///
+/// Scrolling to reach a row is not undone by popping the route, so the first
+/// group heading — which is how these tests recognise the hub — is no longer
+/// built when the list is left part way down. The pop and the scroll belong
+/// together, or the next assertion is about the wrong thing.
+Future<void> backToHub(WidgetTester tester) async {
+  await tester.pageBack();
+  await tester.pumpAndSettle();
+  await tester.scrollUntilVisible(
+    find.text('记账工具'),
+    -300,
+    scrollable: find.descendant(
+      of: find.byKey(const Key('me-list')),
+      matching: find.byType(Scrollable),
+    ),
+  );
+  await tester.pumpAndSettle();
+}
+
+Future<void> tapMeRow(WidgetTester tester, String key) async {
+  final f = find.byKey(Key(key));
+  await tester.ensureVisible(f);
+  await tester.pumpAndSettle();
+  await tester.tap(f);
+  await tester.pumpAndSettle();
+}
+
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(() async => await RustLib.init());
@@ -126,12 +196,10 @@ void main() {
       await shell(tester);
       await tapTab(tester, '我的');
 
-      await tester.tap(find.byKey(const Key('me-budget')));
-      await tester.pumpAndSettle();
+      await tapMeRow(tester, 'me-budget');
       expect(find.text('预算'), findsWidgets);
 
-      await tester.pageBack();
-      await tester.pumpAndSettle();
+      await backToHub(tester);
       expect(find.text('记账工具'), findsOneWidget);
     });
 
@@ -140,12 +208,10 @@ void main() {
       await shell(tester);
       await tapTab(tester, '我的');
 
-      await tester.tap(find.byKey(const Key('me-subs')));
-      await tester.pumpAndSettle();
+      await tapMeRow(tester, 'me-subs');
       expect(find.byKey(const Key('add-sub')), findsOneWidget);
 
-      await tester.pageBack();
-      await tester.pumpAndSettle();
+      await backToHub(tester);
       expect(find.text('记账工具'), findsOneWidget);
     });
 
@@ -159,22 +225,19 @@ void main() {
       await shell(tester);
       await tapTab(tester, '我的');
 
-      final keys = tester
-          .widgetList<InkWell>(find.byType(InkWell))
-          .map((w) => w.key)
-          .whereType<ValueKey<String>>()
-          .map((k) => k.value)
-          .where((k) => k.startsWith('me-'))
-          .toList();
+      final keys = await meRowKeys(tester);
       expect(keys, isNotEmpty);
+      // One anchor rather than a count: the walk has to reach the LAST row, or
+      // it is back to covering whatever fits on a screen. A count would have to
+      // be edited to add a screen, which is the thing this test avoids.
+      expect(keys.last, 'me-settings',
+          reason: 'the walk stopped before the bottom of the hub');
 
       for (final k in keys) {
-        await tester.tap(find.byKey(Key(k)));
-        await tester.pumpAndSettle();
+        await tapMeRow(tester, k);
         // something was pushed — the hub is no longer the top route
         expect(find.text('记账工具'), findsNothing, reason: '$k went nowhere');
-        await tester.pageBack();
-        await tester.pumpAndSettle();
+        await backToHub(tester);
         expect(find.text('记账工具'), findsOneWidget);
       }
     });

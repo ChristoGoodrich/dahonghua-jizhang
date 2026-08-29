@@ -25,6 +25,7 @@ import 'currency_screen.dart';
 import 'entry_list.dart';
 import 'library_screen.dart';
 import 'me_screen.dart';
+import 'import_screen.dart';
 import 'persistence.dart';
 import 'record_sheet.dart' as sheet;
 import 'reimburse_screen.dart';
@@ -303,6 +304,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       (
         zh ? '更多' : 'More',
         [
+          MeRow(
+            id: 'import',
+            icon: Icons.file_upload_outlined,
+            title: zh ? '导入账单' : 'Import bills',
+            desc: zh ? '支付宝或微信导出的 CSV' : 'A CSV from Alipay or WeChat',
+            onTap: () => _push(ImportScreen(zh: zh, onImported: _entriesChanged)),
+          ),
           MeRow(
             id: 'backup',
             icon: Icons.archive_outlined,

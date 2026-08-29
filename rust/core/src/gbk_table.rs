@@ -14,6 +14,10 @@
 ///
 /// `static` rather than `const`: a const of this size is copied in at every
 /// use site, which is 48 KiB of duplication per lookup call.
+///
+/// Left unformatted on purpose: rustfmt would put every cell on its own line,
+/// which is 23,940 lines of a file nobody reads and a diff nobody can review.
+#[rustfmt::skip]
 pub static GBK_INDEX: [u16; 23940] = [
     0x4e02, 0x4e04, 0x4e05, 0x4e06, 0x4e0f, 0x4e12, 0x4e17, 0x4e1f, 0x4e20, 0x4e21, 0x4e23, 0x4e26, 0x4e29, 0x4e2e, 0x4e2f, 0x4e31,
     0x4e33, 0x4e35, 0x4e37, 0x4e3c, 0x4e40, 0x4e41, 0x4e42, 0x4e44, 0x4e46, 0x4e4a, 0x4e51, 0x4e55, 0x4e57, 0x4e5a, 0x4e5b, 0x4e62,
