@@ -29,6 +29,7 @@ import 'api/statement.dart';
 import 'api/stats.dart';
 import 'api/store.dart';
 import 'api/subscriptions.dart';
+import 'api/theme.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'frb_generated.dart';
@@ -271,6 +272,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<TemplateView> dco_decode_list_template_view(dynamic raw);
 
   @protected
+  List<ThemeOption> dco_decode_list_theme_option(dynamic raw);
+
+  @protected
   List<TrendPointView> dco_decode_list_trend_point_view(dynamic raw);
 
   @protected
@@ -388,6 +392,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   TemplateView dco_decode_template_view(dynamic raw);
+
+  @protected
+  ThemeOption dco_decode_theme_option(dynamic raw);
+
+  @protected
+  ThemeView dco_decode_theme_view(dynamic raw);
 
   @protected
   TierView dco_decode_tier_view(dynamic raw);
@@ -676,6 +686,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  List<ThemeOption> sse_decode_list_theme_option(SseDeserializer deserializer);
+
+  @protected
   List<TrendPointView> sse_decode_list_trend_point_view(
     SseDeserializer deserializer,
   );
@@ -809,6 +822,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   TemplateView sse_decode_template_view(SseDeserializer deserializer);
+
+  @protected
+  ThemeOption sse_decode_theme_option(SseDeserializer deserializer);
+
+  @protected
+  ThemeView sse_decode_theme_view(SseDeserializer deserializer);
 
   @protected
   TierView sse_decode_tier_view(SseDeserializer deserializer);
@@ -1186,6 +1205,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_list_theme_option(
+    List<ThemeOption> self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_list_trend_point_view(
     List<TrendPointView> self,
     SseSerializer serializer,
@@ -1343,6 +1368,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_template_view(TemplateView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_theme_option(ThemeOption self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_theme_view(ThemeView self, SseSerializer serializer);
 
   @protected
   void sse_encode_tier_view(TierView self, SseSerializer serializer);

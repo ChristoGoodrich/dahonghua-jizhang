@@ -12,6 +12,7 @@ import 'package:flutter_app/budget_screen.dart';
 import 'package:flutter_app/src/rust/api/budget.dart' as budget;
 import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_app/src/rust/frb_generated.dart';
+import 'package:flutter_app/theme.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -107,7 +108,7 @@ void main() {
       // exactly at the cap is not over — `used > limit`, not `>=`
       expect(
         tester.widget<Text>(find.byKey(const Key('tier-monthly-pct'))).style!.color,
-        const Color(0xFF4E8A5F), // leafDeep
+        palette.leafDeep,
       );
       expect(textOf(tester, 'tier-monthly-text'), contains('还剩 ￥0.00'));
     });

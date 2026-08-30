@@ -2250,6 +2250,98 @@ one, so the day the editor lands the argument is the only change.
 list that quietly dropped them would leave "18 rows" unexplained next to six
 entries. "3 rows, 3 already recorded" is the sentence a user can act on.
 
+### The suite outgrew one run
+
+At 28 files and 506 tests the integration suite takes twenty minutes, and it
+started failing in a way that is not about the code: a file fails to load with
+"Connection closed before test suite loaded", and once the run has gone on long
+enough the last file is cut off mid-way with two dozen tests marked "did not
+complete".
+
+Each affected file passes on its own. `bridge_test` alone: 14 passed.
+`export_test` and `accounts_test` together: 48 passed. Nothing was wrong with
+them.
+
+The cost of that is worse than the lost time. A suite that fails randomly is a
+suite whose failures stop being read — the previous lesson in this file was
+about exactly that, and it was about believing a timing test when the emulator
+was the problem. So the suite runs in two halves now. Fourteen files each,
+about ten minutes apiece, and a red result means something again.
+
+### Seven flowers, and three places a correct palette can fail to arrive
+
+`theme.rs` is the 31st corpus. `makeTheme` is colour arithmetic over a table of
+constants, which sounds like the least likely thing in the app to diverge — and
+is exactly why it was worth pinning, because two of its rules are easy to
+"tidy" into something different:
+
+* **The alpha is string concatenation.** `base.hibiscus + '14'` appends two hex
+  digits to a six-digit colour. A caller that parsed the accent, applied an
+  opacity and re-serialised would land on a different byte for some accents,
+  and the two halves have to agree byte for byte or the corpus is worthless.
+* **Dark mode replaces surfaces and keeps accents**, applied *after* the
+  per-theme overrides rather than before. A dark sakura is sakura's accent on
+  the shared dark paper, not sakura's own paper darkened.
+
+The corpus is exhaustive rather than sampled: seven themes times two modes
+times every field is 504 cases. Sampling a table of constants only tests the
+sampler.
+
+The Dart side is where the interesting part was. `palette` was a `const` read
+in 444 places, and it is a **getter** now — which is what lets every one of
+those call sites follow a theme change without any of them knowing a theme
+exists. Three things had to line up, and each is a place a perfectly correct
+palette fails to reach the screen:
+
+1. The getter caches, so every caller of `setTheme` must `refreshPalette()`.
+   There is a test that deliberately does *not* refresh and asserts the stale
+   colour, because that is the failure mode the cache buys and it should be
+   written down rather than discovered.
+2. `MaterialApp.theme` is computed once, in a `StatelessWidget`. Without the
+   root rebuilding, a dark app keeps light dialogs and light menus — every
+   widget this app does not paint itself, including the switch the setting is
+   toggled with. `App` is stateful now for that one reason.
+3. `ColorScheme.fromSeed` needs `brightness` told, not inferred. Without it
+   Material derives light defaults from the seed and a dark room gets black
+   text on a dark card.
+
+One test is worth more than the rest: every flower, in both rooms, must keep
+enough luminance between paper and ink to be read. It is the only assertion
+here that would catch a swap in the constants themselves, which the corpus
+cannot — the corpus proves both languages agree, not that the answer is usable.
+
+### The palette had been wrong the whole time
+
+Wiring it broke five tests, and the reason is the point of having done it.
+
+The hand-written Dart palette did not match the design tokens. Its `hibiscus`
+was `#B83A48`, which is the TypeScript's **hibiscusDeep**; every accent was one
+shade too dark. `stamen` was `#E0A93C`, which is the *daisy* theme's accent
+rather than the shared amber `#E8A838`. Both greens were different values
+outright, and `paperWarm` was off by a shade.
+
+Nothing was broken by it. Nothing crashed, no number was wrong, and no test
+could catch it, because until today there was no source of truth on this side
+to compare against — the palette *was* the source of truth, and a hand-copied
+one cannot disagree with itself.
+
+The five tests that failed were the ones asserting a **literal colour**. They
+assert `palette.hibiscus` now, which is both correct and the only spelling that
+survives a theme: a test naming `Color(0xFFB83A48)` was a second copy of the
+palette, and it went stale the moment the first one was fixed.
+
+And a third duplicate turned up in the same neighbourhood. `parseRgba` was
+defined in both `main.dart` and `theme.dart`, and they had drifted:
+`theme.dart`'s returns black for a string with fewer than three numbers, while
+`main.dart`'s indexes `n[0]` unguarded and throws. Being in the same library as
+its callers, the unguarded one is the one that ran. It is deleted.
+
+That is three duplicates in this project now — `inbox`, `subs`, `parseRgba` —
+and all three had the same signature: written twice, agreeing for a while, then
+diverging in the copy nothing was watching. The rule that catches them is not a
+review habit but a question that can be asked of the tree: *what is defined
+more than once, and which copy do the tests actually reach?*
+
 ### The rate a date deserves, and the picker that had to exist first
 
 `rates` is wired, which empties the audit list of feature modules. It is the

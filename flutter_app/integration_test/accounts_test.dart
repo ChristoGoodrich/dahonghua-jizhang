@@ -15,6 +15,7 @@ import 'package:flutter_app/record_sheet.dart';
 import 'package:flutter_app/src/rust/api/accounts.dart' as accounts;
 import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_app/src/rust/frb_generated.dart';
+import 'package:flutter_app/theme.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -182,7 +183,7 @@ void main() {
 
       expect(
         tester.widget<Text>(find.byKey(const Key('acct-信用卡-bal'))).style!.color,
-        const Color(0xFFB83A48), // hibiscus
+        palette.hibiscus,
       );
     });
   });
@@ -386,8 +387,8 @@ void main() {
 
       final name = tester.widget<TextField>(find.byKey(const Key('new-name')));
       expect(name.decoration!.floatingLabelStyle!.color,
-          const Color(0xFFE0A93C)); // stamen
-      expect(name.decoration!.labelStyle!.color, const Color(0xFF8A8178));
+          palette.stamen);
+      expect(name.decoration!.labelStyle!.color, palette.inkSoft);
 
       await tester.tap(find.byKey(const Key('new-cancel')));
       await tester.pumpAndSettle();

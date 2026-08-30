@@ -91,45 +91,49 @@ bool _seedIfEmpty() {
   return true;
 }
 
-/// `rgba(r, g, b, a)` from Rust → a Flutter colour.
-///
-/// The mix, the ambient pull and the readability curve all happened on the
-/// other side of the boundary; this only parses the answer.
-Color parseRgba(String s) {
-  final n = RegExp(
-    r'[-0-9.eE+]+',
-  ).allMatches(s).map((m) => double.parse(m.group(0)!)).toList();
-  return Color.fromRGBO(
-    n[0].toInt(),
-    n[1].toInt(),
-    n[2].toInt(),
-    n.length > 3 ? n[3] : 1,
-  );
-}
-
 const paper = '#FBF7F0';
 const card = '#FFFFFF';
 const ink = '#2B2622';
 
-class App extends StatelessWidget {
+/// The root, and the only thing that can rebuild `MaterialApp.theme`.
+///
+/// Stateful for exactly one reason: a theme change has to reach `appTheme()`,
+/// and a `StatelessWidget` computes it once. Every widget below reads
+/// `palette` and follows on its own rebuild, but the Material defaults —
+/// dialogs, menus, the switch this very setting is toggled with — come from
+/// here.
+class App extends StatefulWidget {
   const App({super.key, this.store});
 
   final Persistence? store;
 
   @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  @override
   Widget build(BuildContext context) => MaterialApp(
     title: '大红花记账',
     debugShowCheckedModeBanner: false,
     theme: appTheme(),
-    home: Home(store: store),
+    home: Home(
+      store: widget.store,
+      onThemeChanged: () => setState(() {}),
+    ),
   );
 }
 
 /// The shell: four tabs, a record button, and routes behind the hubs.
 class Home extends StatefulWidget {
-  const Home({super.key, this.store});
+  const Home({super.key, this.store, this.onThemeChanged});
 
   final Persistence? store;
+
+  /// The palette changed, so the root has to rebuild for the Material
+  /// defaults to follow. Null when the shell is shown without a root above
+  /// it, which is how most tests pump it.
+  final VoidCallback? onThemeChanged;
 
   @override
   State<Home> createState() => _HomeState();
@@ -204,6 +208,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       _zh = store.language() != 'en';
       _listVersion++;
     });
+    // The theme lives in the config too, and only the root can carry it into
+    // `MaterialApp`. Called unconditionally rather than on a theme-shaped
+    // change: a rebuild of one widget is cheaper than knowing which setting
+    // moved.
+    widget.onThemeChanged?.call();
   }
 
   void _bothChanged() {

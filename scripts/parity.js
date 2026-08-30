@@ -189,6 +189,12 @@ const MODULES = [
     example: 'dump_encoding',
   },
   {
+    name: 'theme',
+    corpus: 'rust/parity/theme-corpus.tsv',
+    ts: 'scripts/theme-parity.ts',
+    example: 'dump_theme',
+  },
+  {
     name: 'engine',
     corpus: 'rust/parity/engine-corpus.tsv',
     // Stateful and then some: the sync engine decides an order of operations

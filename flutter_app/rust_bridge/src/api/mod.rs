@@ -29,3 +29,4 @@ pub mod statement;
 pub mod stats;
 pub mod store;
 pub mod subscriptions;
+pub mod theme;

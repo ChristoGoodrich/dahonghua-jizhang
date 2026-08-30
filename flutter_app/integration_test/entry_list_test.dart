@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/entry_list.dart';
 import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_app/src/rust/frb_generated.dart';
+import 'package:flutter_app/theme.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -58,7 +59,7 @@ void main() {
 
     expect(find.text('+9,000.00'), findsOneWidget); // grouping, from Rust
     final amt = tester.widget<Text>(find.text('+9,000.00'));
-    expect(amt.style!.color, const Color(0xFF4E8A5F)); // leafDeep, not ink
+    expect(amt.style!.color, palette.leafDeep, reason: 'leafDeep, not ink');
   });
 
   testWidgets('days are grouped and headed, newest first', (tester) async {

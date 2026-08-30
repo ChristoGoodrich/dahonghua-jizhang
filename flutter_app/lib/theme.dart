@@ -6,6 +6,8 @@
 
 import 'package:flutter/material.dart';
 
+import 'src/rust/api/theme.dart' as theme;
+
 /// `rgba(r, g, b, a)` from Rust → a Flutter colour.
 ///
 /// The mix, the ambient pull and the readability curve all happened on the
@@ -29,30 +31,48 @@ Color parseHex(String hex, {double? opacity}) {
   return Color(0xFF000000 | v).withValues(alpha: opacity ?? 1);
 }
 
-/// The default theme's tokens. One theme for now; the other six follow the same
-/// shape, and which one is active is a settings read that does not exist yet.
+/// One theme's colours, parsed from the strings the core hands over.
+///
+/// Every value here is computed in Rust — seven flowers times light and dark,
+/// under a 504-case corpus. What is left on this side is `#RRGGBB` to a
+/// `Color`, which is the one thing that genuinely cannot cross.
 class Palette {
-  const Palette();
+  Palette(this._t);
 
-  final String paperHex = '#FBF7F0';
-  final String cardHex = '#FFFFFF';
+  final theme.ThemeView _t;
 
-  Color get paper => const Color(0xFFFBF7F0);
-  Color get paperWarm => const Color(0xFFF5EDE1);
-  Color get card => const Color(0xFFFFFFFF);
-  Color get ink => const Color(0xFF2B2622);
-  Color get inkSoft => const Color(0xFF8A8178);
-  Color get line => const Color(0xFFEADFCF);
-  Color get leafDeep => const Color(0xFF4E8A5F);
-  Color get leaf => const Color(0xFF7FB88C);
-  Color get stamen => const Color(0xFFE0A93C);
-  Color get hibiscus => const Color(0xFFB83A48);
-  Color get hibiscusDeep => const Color(0xFF8E2A36);
+  /// Some tokens want the hex, not the colour: `glass.rs` takes strings.
+  String get paperHex => _t.paper;
+  String get cardHex => _t.card;
 
-  bool get isDark => false;
+  Color get paper => parseHex(_t.paper);
+  Color get paperWarm => parseHex(_t.paperWarm);
+  Color get card => parseHex(_t.card);
+  Color get ink => parseHex(_t.ink);
+  Color get inkSoft => parseHex(_t.inkSoft);
+  Color get line => parseHex(_t.line);
+  Color get leafDeep => parseHex(_t.leafDeep);
+  Color get leaf => parseHex(_t.leaf);
+  Color get stamen => parseHex(_t.stamen);
+  Color get hibiscus => parseHex(_t.hibiscus);
+  Color get hibiscusDeep => parseHex(_t.hibiscusDeep);
+
+  bool get isDark => _t.isDark;
 }
 
-const palette = Palette();
+Palette? _active;
+
+/// The palette in force.
+///
+/// A getter rather than a constant, which is what lets four hundred call sites
+/// reading `palette.ink` follow a theme change without any of them knowing a
+/// theme exists. Cached because it is read once per widget per build, and
+/// invalidated by [refreshPalette] when the choice changes.
+Palette get palette => _active ??= Palette(theme.currentTheme());
+
+/// Forget the cached palette. Call after changing the theme; the next read
+/// rebuilds it from the core.
+void refreshPalette() => _active = null;
 
 /// Corner radii, matching `theme/tokens.ts`.
 class Rad {
@@ -79,8 +99,13 @@ const tabular = [FontFeature.tabularFigures()];
 /// the ones with no seam to set — selection handles, ripples, a dialog's
 /// surface — which would otherwise be a different application's chrome.
 ThemeData appTheme() {
+  // The brightness is told, not inferred. Without it Material derives light
+  // defaults from the seed and a dark room gets black text on a dark card —
+  // every widget this app does not paint itself, which is most of the
+  // dialogs and every menu.
   final scheme = ColorScheme.fromSeed(
     seedColor: palette.hibiscus,
+    brightness: palette.isDark ? Brightness.dark : Brightness.light,
     primary: palette.hibiscus,
     secondary: palette.stamen,
     surface: palette.card,

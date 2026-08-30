@@ -865,6 +865,8 @@ pub fn snapshot_config() -> String {
         ("templates".into(), Value::Arr(templates)),
         ("curLedger".into(), Value::Str(lib.current_ledger.clone())),
         ("lang".into(), Value::Str(language())),
+        ("theme".into(), Value::Str(super::theme::theme_key())),
+        ("dark".into(), Value::Bool(super::theme::is_dark())),
         ("assets".into(), Value::Arr(assets)),
         ("loans".into(), Value::Arr(loans)),
         ("subs".into(), Value::Arr(subs)),
@@ -933,6 +935,20 @@ pub fn load_config(json: String) -> bool {
     }
     if let Some(Value::Str(l)) = v.get("lang") {
         set_language(l.clone());
+    }
+    {
+        // Read together, because they are one choice. A config with a theme
+        // and no `dark` key is one written before dark mode existed, and its
+        // room was lit.
+        let key = v
+            .get("theme")
+            .and_then(|x| match x {
+                Value::Str(s) => Some(s.clone()),
+                _ => None,
+            })
+            .unwrap_or_else(|| "default".into());
+        let dark = matches!(v.get("dark"), Some(Value::Bool(true)));
+        super::theme::set_theme(key, dark);
     }
     if let Some(Value::Str(id)) = v.get("curAccount") {
         store().current_account = id.clone();

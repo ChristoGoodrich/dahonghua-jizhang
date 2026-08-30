@@ -19,6 +19,7 @@ import 'src/rust/api/budget.dart' as budget;
 // `export` is a reserved word in Dart, so the prefix cannot be the module name.
 import 'src/rust/api/export.dart' as exporter;
 import 'src/rust/api/store.dart' as store;
+import 'src/rust/api/theme.dart' as theme;
 import 'theme.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -45,6 +46,21 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   late int _cycleStart;
+  late String _themeKey;
+  late bool _dark;
+
+  /// Change the palette, then throw away the cached one so the next read
+  /// rebuilds it. The shell rebuilds too — a theme that only repainted the
+  /// screen that changed it would be the language bug all over again.
+  void _setTheme(String key, bool dark) {
+    theme.setTheme(key: key, dark: dark);
+    refreshPalette();
+    setState(() {
+      _themeKey = key;
+      _dark = dark;
+    });
+    widget.onChanged?.call();
+  }
   bool _busy = false;
   String? _flash;
 
@@ -103,6 +119,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void initState() {
     super.initState();
     _cycleStart = budget.settings().cycleStart;
+    _themeKey = theme.themeKey();
+    _dark = theme.isDark();
   }
 
   void _setCycle(int day) {
@@ -155,6 +173,73 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     },
                   ),
                 ),
+            ]),
+          ]),
+          const SizedBox(height: 20),
+          _group(zh ? '主题' : 'Theme', [
+            Text(
+              zh
+                  ? '七种花，各有白天和夜里。颜色都是算出来的，不是写死在界面里的。'
+                  : 'Seven flowers, each with a day and a night. The colours '
+                      'are computed, not written into the screens.',
+              style: TextStyle(fontSize: 12, color: palette.inkSoft),
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final o in theme.themeOptions())
+                  GestureDetector(
+                    key: Key('theme-${o.key}'),
+                    onTap: () => _setTheme(o.key, _dark),
+                    child: Container(
+                      width: 34,
+                      height: 34,
+                      decoration: BoxDecoration(
+                        color: parseHex(o.swatch),
+                        shape: BoxShape.circle,
+                        // The chosen one is ringed rather than ticked: a tick
+                        // in the middle of a swatch hides the colour being
+                        // chosen.
+                        border: Border.all(
+                          color: _themeKey == o.key
+                              ? palette.ink
+                              : palette.line,
+                          width: _themeKey == o.key ? 2.5 : 1,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            // A row rather than a `SwitchListTile`: a ListTile inside a
+            // decorated box cannot paint its own ink, and Flutter says so
+            // loudly. The rest of this screen is rows and chips anyway.
+            Row(children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(zh ? '夜间模式' : 'Dark',
+                        style: TextStyle(fontSize: 15, color: palette.ink)),
+                    Text(
+                      zh
+                          ? '花还是那朵花，只是灯关了'
+                          : 'The flower keeps its colour; the room does not',
+                      style:
+                          TextStyle(fontSize: 12, color: palette.inkSoft),
+                    ),
+                  ],
+                ),
+              ),
+              Switch(
+                key: const Key('dark-toggle'),
+                value: _dark,
+                onChanged: (v) => _setTheme(_themeKey, v),
+                activeThumbColor: palette.hibiscus,
+              ),
             ]),
           ]),
           const SizedBox(height: 20),
@@ -228,8 +313,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const SizedBox(height: 24),
           Text(
             zh
-                ? '锁屏、提醒、周报月报和主题还没做 — 它们要等各自的平台插件。'
-                : 'App lock, reminders, reports and themes are not here yet: '
+                ? '锁屏、提醒和周报月报还没做 — 它们要等各自的平台插件。'
+                : 'App lock, reminders and scheduled reports are not here yet: '
                     'each needs a platform plugin this build does not have.',
             key: const Key('settings-note'),
             style: TextStyle(fontSize: 11.5, color: palette.inkSoft),

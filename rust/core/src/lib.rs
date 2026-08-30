@@ -54,6 +54,7 @@ pub mod store;
 pub mod streak;
 pub mod subs;
 pub mod sync;
+pub mod theme;
 pub mod trends;
 pub mod weekly;
 
