@@ -15,6 +15,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import 'src/rust/api/money.dart' as money;
+import 'src/rust/api/period.dart' as period;
 import 'src/rust/api/stats.dart' as stats;
 import 'src/rust/api/store.dart' as store;
 import 'theme.dart';
@@ -33,9 +34,19 @@ class StatsScreen extends StatefulWidget {
 }
 
 class _StatsScreenState extends State<StatsScreen> {
-  /// 7, 30 or 90 days.
-  int _window = 30;
+  /// Which window: day, week, month, halfyear or year.
+  ///
+  /// `month` is not the calendar month — it is the accounting cycle, so a
+  /// ledger that turns over on the 15th gets the 15th to the 14th here too.
+  String _period = 'month';
+
+  /// A day inside the window being shown. Stepping moves this, and the window
+  /// is re-derived from it rather than tracked alongside it.
+  String _anchor = _day(DateTime.now());
+
   String _io = 'exp';
+
+  late period.WindowView _win;
 
   late stats.OverviewView _overview;
   List<stats.TrendPointView> _points = const [];
@@ -54,20 +65,106 @@ class _StatsScreenState extends State<StatsScreen> {
     final days = live
         .map((e) => _day(DateTime.fromMillisecondsSinceEpoch(e.ts)))
         .toList();
-    final today = _day(DateTime.now());
 
+    final win = period.periodWindow(anchor: _anchor, period: _period);
+    // Everything on this screen is about the window, so the window is what the
+    // ids are narrowed to before anything is counted. Passing the whole ledger
+    // to the totals and the donut — which is what this screen used to do — made
+    // them say something different from the chart above them.
+    final inWin = period
+        .idsInPeriod(
+          ids: ids,
+          daysOf: days,
+          anchor: _anchor,
+          period: _period,
+        )
+        .toSet();
+    final kept = [for (var i = 0; i < ids.length; i++) if (inWin.contains(ids[i])) i];
+    final winIds = [for (final i in kept) ids[i]];
+    final winDays = [for (final i in kept) days[i]];
+
+    // The trend counts back from a day, so it counts back from the END of the
+    // window rather than from today — otherwise stepping to last month would
+    // move the totals and leave the chart where it was.
+    //
+    // Except for the window we are still inside, which stops at today. A chart
+    // that ran to the end of the month would end in a flat tail of days that
+    // have not happened, and a flat tail reads as spending having stopped.
+    final (axisEnd, span) = _clampToToday(win);
     final points = stats.dailyTrend(
-      ids: ids,
-      daysOf: days,
-      days: _window,
-      today: today,
+      ids: winIds,
+      daysOf: winDays,
+      days: span,
+      today: axisEnd,
     );
     setState(() {
-      _overview = stats.overview(ids: ids);
+      _win = win;
+      _overview = stats.overview(ids: winIds);
       _points = points;
       _chart = stats.chartPoints(points: points, series: 'both');
-      _slices = stats.categorySlices(ids: ids, io: _io, zh: widget.zh);
+      _slices = stats.categorySlices(ids: winIds, io: _io, zh: widget.zh);
     });
+  }
+
+  void _step(int dir) {
+    setState(() => _anchor =
+        period.stepPeriod(anchor: _anchor, period: _period, dir: dir));
+    _reload();
+  }
+
+  void _setPeriod(String p) {
+    setState(() {
+      _period = p;
+      // Back to now when the window changes: the anchor was chosen inside a
+      // window that no longer exists, and landing in an arbitrary month is
+      // harder to explain than landing in this one.
+      _anchor = _day(DateTime.now());
+    });
+    _reload();
+  }
+
+  /// What window is on screen, in words.
+  ///
+  /// Rendered here rather than in Rust: a month name is ICU text, and the core
+  /// says so — the same reason currency symbols stayed on this side.
+  String _windowLabel(bool zh) {
+    final from = _parse(_win.start);
+    final to = _parse(_win.last);
+    switch (_period) {
+      case 'day':
+        return zh ? '${from.month}月${from.day}日' : '${from.month}/${from.day}';
+      case 'year':
+        return zh ? '${from.year} 年' : '${from.year}';
+      case 'halfyear':
+        final first = from.month <= 6;
+        return zh
+            ? '${from.year} 年${first ? '上' : '下'}半年'
+            : '${from.year} H${first ? 1 : 2}';
+      default:
+        return zh
+            ? '${from.month}月${from.day}日 – ${to.month}月${to.day}日'
+            : '${from.month}/${from.day} – ${to.month}/${to.day}';
+    }
+  }
+
+  /// The window's axis end, and how many days of it to draw.
+  ///
+  /// A window entirely in the future is left alone: there is nothing to clamp
+  /// to and a negative span would be worse than an empty chart.
+  (String, int) _clampToToday(period.WindowView w) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final start = _parse(w.start);
+    final last = _parse(w.last);
+    if (!today.isBefore(last) || today.isBefore(start)) {
+      return (w.last, w.days);
+    }
+    return (_day(today), today.difference(start).inDays + 1);
+  }
+
+  static DateTime _parse(String ymd) {
+    final p = ymd.split('-').map(int.parse).toList();
+    return DateTime(p[0], p[1], p[2]);
   }
 
   @override
@@ -135,36 +232,70 @@ class _StatsScreenState extends State<StatsScreen> {
     );
   }
 
-  Widget _windowPicker(bool zh) => Row(
+  static const _periods = ['day', 'week', 'month', 'halfyear', 'year'];
+
+  String _periodName(String p, bool zh) => switch (p) {
+        'day' => zh ? '日' : 'Day',
+        'week' => zh ? '周' : 'Week',
+        'halfyear' => zh ? '半年' : 'Half',
+        'year' => zh ? '年' : 'Year',
+        _ => zh ? '月' : 'Month',
+      };
+
+  Widget _windowPicker(bool zh) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          for (final d in [7, 30, 90])
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: GestureDetector(
-                key: Key('window-$d'),
-                onTap: () {
-                  setState(() => _window = d);
-                  _reload();
-                },
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 13, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: _window == d ? palette.card : Colors.transparent,
-                    borderRadius: BorderRadius.circular(Rad.pill),
-                    border: Border.all(
-                        color: _window == d ? palette.stamen : palette.line),
+          Wrap(
+            spacing: 8,
+            runSpacing: 6,
+            children: [
+              for (final p in _periods)
+                GestureDetector(
+                  key: Key('period-$p'),
+                  onTap: () => _setPeriod(p),
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 13, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: _period == p ? palette.card : Colors.transparent,
+                      borderRadius: BorderRadius.circular(Rad.pill),
+                      border: Border.all(
+                          color: _period == p ? palette.stamen : palette.line),
+                    ),
+                    child: Text(_periodName(p, zh),
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight:
+                              _period == p ? FontWeight.w700 : FontWeight.w500,
+                          color: palette.ink,
+                        )),
                   ),
-                  child: Text(zh ? '$d 天' : '${d}d',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight:
-                            _window == d ? FontWeight.w700 : FontWeight.w500,
-                        color: palette.ink,
-                      )),
                 ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(children: [
+            IconButton(
+              key: const Key('period-prev'),
+              visualDensity: VisualDensity.compact,
+              icon: Icon(Icons.chevron_left, color: palette.inkSoft, size: 20),
+              onPressed: () => _step(-1),
+            ),
+            Expanded(
+              child: Text(
+                _windowLabel(zh),
+                key: const Key('period-label'),
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 13, color: palette.ink),
               ),
             ),
+            IconButton(
+              key: const Key('period-next'),
+              visualDensity: VisualDensity.compact,
+              icon: Icon(Icons.chevron_right, color: palette.inkSoft, size: 20),
+              onPressed: () => _step(1),
+            ),
+          ]),
         ],
       );
 

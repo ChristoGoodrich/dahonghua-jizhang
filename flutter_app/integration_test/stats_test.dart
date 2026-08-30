@@ -132,12 +132,17 @@ void main() {
         (tester) async {
       add('a', 'exp', 30);
       await show(tester);
-      await tester.tap(find.byKey(const Key('window-7')));
+      await tester.tap(find.byKey(const Key('period-week')));
       await tester.pumpAndSettle();
-      // 7 days back from today
+
+      // The week runs Monday to Sunday, so the first point is this week's
+      // Monday — not seven days back from today, which is what a fixed 7-day
+      // window used to give and what made "this week" mean two different
+      // things on one screen.
       final first = tester.widget<Text>(find.byKey(const Key('axis-first')));
-      final d = DateTime.now().subtract(const Duration(days: 6));
-      expect(first.data, '${d.month}/${d.day}');
+      final now = DateTime.now();
+      final monday = now.subtract(Duration(days: now.weekday - 1));
+      expect(first.data, '${monday.month}/${monday.day}');
     });
   });
 

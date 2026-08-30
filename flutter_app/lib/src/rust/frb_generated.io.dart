@@ -16,6 +16,7 @@ import 'api/history.dart';
 import 'api/imports.dart';
 import 'api/money.dart';
 import 'api/networth.dart';
+import 'api/period.dart';
 import 'api/record.dart';
 import 'api/reimburse.dart';
 import 'api/report.dart';
@@ -392,6 +393,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   WeeklyView dco_decode_weekly_view(dynamic raw);
+
+  @protected
+  WindowView dco_decode_window_view(dynamic raw);
 
   @protected
   String sse_decode_String(SseDeserializer deserializer);
@@ -788,6 +792,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   WeeklyView sse_decode_weekly_view(SseDeserializer deserializer);
+
+  @protected
+  WindowView sse_decode_window_view(SseDeserializer deserializer);
 
   @protected
   void sse_encode_String(String self, SseSerializer serializer);
@@ -1298,6 +1305,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_weekly_view(WeeklyView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_window_view(WindowView self, SseSerializer serializer);
 }
 
 // Section: wire_class

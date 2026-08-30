@@ -2250,6 +2250,40 @@ one, so the day the editor lands the argument is the only change.
 list that quietly dropped them would leave "18 rows" unexplained next to six
 entries. "3 rows, 3 already recorded" is the sentence a user can act on.
 
+### A screen where three numbers disagreed and nothing said so
+
+`period` is wired, and wiring it exposed what the stats screen had actually
+been doing. The window picker said 7 / 30 / 90 days and drove the **chart**.
+The totals above it and the donut below it read the whole ledger — every entry
+ever recorded. Three numbers on one screen, about three different spans, none
+of them labelled.
+
+Nothing was wrong in any one place. `overview(ids)` and `category_slices(ids)`
+take the ids they are given and had been given all of them, which is what those
+functions are for. The bug was that nobody had ever chosen what the screen was
+about.
+
+It is about a window now: day, week, month, half-year, year, with a label
+saying which one and arrows to step it. `month` is the accounting cycle rather
+than the calendar month, so a ledger turning over on the 15th gets the 15th to
+the 14th here as well — the cycle start comes from the store rather than from
+the caller, because it is a setting the user has already made and a screen
+passing its own would be a second place for it to be wrong.
+
+Two decisions in the wiring worth keeping written down:
+
+**The trend counts back from the window's end, not from today.** Otherwise
+stepping to last month moves the totals and leaves the chart where it was.
+
+**Except in the window we are still inside, where it stops at today.** A chart
+running to the end of the current month ends in a flat tail of days that have
+not happened, and a flat tail reads as spending having stopped. A window
+entirely in the future is left alone: there is nothing to clamp to, and a
+negative span is worse than an empty chart.
+
+The labels stay in Dart. `period.rs` says why and it has not changed: rendering
+a month name is ICU text, the same reason `curOf` stayed behind in `money.rs`.
+
 ### A BOM cannot cross as a Dart string
 
 The CSV export is wired, and it found a boundary rule worth writing down.
