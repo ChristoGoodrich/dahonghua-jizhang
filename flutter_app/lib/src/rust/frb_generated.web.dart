@@ -14,6 +14,7 @@ import 'api/capture.dart';
 import 'api/catalog.dart';
 import 'api/currency.dart';
 import 'api/glass.dart';
+import 'api/history.dart';
 import 'api/imports.dart';
 import 'api/money.dart';
 import 'api/networth.dart';

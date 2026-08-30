@@ -13,6 +13,7 @@ pub mod capture;
 pub mod catalog;
 pub mod currency;
 pub mod glass;
+pub mod history;
 pub mod imports;
 pub mod init;
 pub mod money;

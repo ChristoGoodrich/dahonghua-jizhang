@@ -2250,6 +2250,36 @@ one, so the day the editor lands the argument is the only change.
 list that quietly dropped them would leave "18 rows" unexplained next to six
 entries. "3 rows, 3 already recorded" is the sentence a user can act on.
 
+### Two more off the list, and a rule better than the one I tested for
+
+`streak` and `notes` are wired. Both are small, both had a slot waiting —
+`MeScreen` has taken a `streak` parameter since it was written and `main.dart`
+had never passed one, so the line simply never rendered.
+
+The streak test I wrote first was wrong, and the code's rule is the better one.
+I asserted that a ledger last written yesterday has no streak: the count is
+days ending today, so nothing running now. The core says otherwise, and says
+why — **today not being logged yet does not break the streak**, because
+otherwise opening the app in the morning shows a zero for a streak that is
+still running. Nothing yesterday either and it really is over.
+
+That is a product decision sitting in a port, and the only reason it survived
+the port is that it was written down where the person re-testing it would read
+it. The test now states the rule instead of contradicting it.
+
+Note hints are offered, never imposed. A category recorded for the first time
+has no history and shows nothing, which is the ordinary state rather than a
+gap — so there is no empty row, and a test says so.
+
+The suite caught a wart in them that the feature's own tests did not. Opening
+the sheet to EDIT an entry noted 午饭 offered 午饭 back as a chip: an entry's own
+note is usually the most-used note for its category, so the sheet opened
+offering the row back to itself, and tapping it would have done nothing.
+`edit_test` found it by counting two widgets where it expected one — a test
+about something else entirely, which is the argument for running the whole
+suite rather than the file you just touched. The hints now drop whatever is
+already in the box, and ask for five so that dropping one still leaves four.
+
 ### An audit of what was ported and never reached
 
 Having written `inbox` twice, the obvious next question was how many other

@@ -17,6 +17,7 @@ import 'src/rust/api/calc.dart' as calc;
 import 'src/rust/api/catalog.dart' as catalog;
 import 'src/rust/api/money.dart' as money;
 import 'src/rust/api/record.dart' as record;
+import 'src/rust/api/history.dart' as history;
 import 'theme.dart';
 
 /// The refusals `validate_form` can answer, spelled.
@@ -670,26 +671,79 @@ class _RecordSheetState extends State<RecordSheet> {
     });
   }
 
-  Widget _noteField(bool zh) => Semantics(
-    label: zh ? '备注' : 'Note',
-    textField: true,
-    child: TextField(
-      controller: _note,
-      decoration: InputDecoration(
-        hintText: zh ? '午饭、打车、房租…' : 'lunch, taxi, rent…',
-        filled: true,
-        fillColor: palette.card,
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(Rad.md),
-          borderSide: BorderSide(color: palette.line),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(Rad.md),
-          borderSide: BorderSide(color: palette.stamen, width: 2),
+  Widget _noteField(bool zh) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Semantics(
+        label: zh ? '备注' : 'Note',
+        textField: true,
+        child: TextField(
+          controller: _note,
+          decoration: InputDecoration(
+            hintText: zh ? '午饭、打车、房租…' : 'lunch, taxi, rent…',
+            filled: true,
+            fillColor: palette.card,
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(Rad.md),
+              borderSide: BorderSide(color: palette.line),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(Rad.md),
+              borderSide: BorderSide(color: palette.stamen, width: 2),
+            ),
+          ),
         ),
       ),
-    ),
+      ..._noteHints(zh),
+    ],
   );
+
+  /// What this category is usually called, learned from the ledger.
+  ///
+  /// Offered, never imposed: tapping one fills the box, and a user who wants
+  /// something else types it. A category recorded for the first time has no
+  /// history and shows nothing, which is the ordinary state and not a gap.
+  List<Widget> _noteHints(bool zh) {
+    // One more than the limit, because the note already in the box is dropped
+    // and asking for four should still be able to show four.
+    final typed = _note.text.trim();
+    final hints = history
+        .noteHints(io: _form.io, cat: _form.cat, limit: 5)
+        // A chip offering exactly what is already written does nothing when
+        // tapped. It is also the common case when EDITING: an entry's own note
+        // is usually the most-used note for its category, so the sheet would
+        // open offering the row back to itself.
+        .where((h) => h != typed)
+        .take(4)
+        .toList();
+    if (hints.isEmpty) return const [];
+    return [
+      const SizedBox(height: 8),
+      Wrap(
+        key: const Key('note-hints'),
+        spacing: 8,
+        runSpacing: 6,
+        children: [
+          for (final h in hints)
+            GestureDetector(
+              key: Key('note-hint-$h'),
+              onTap: () => setState(() => _note.text = h),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: palette.paperWarm,
+                  borderRadius: BorderRadius.circular(999),
+                  border: Border.all(color: palette.line),
+                ),
+                child: Text(h,
+                    style: TextStyle(fontSize: 12.5, color: palette.ink)),
+              ),
+            ),
+        ],
+      ),
+    ];
+  }
 
   Widget _flashLine() => Padding(
     padding: const EdgeInsets.only(top: 10),

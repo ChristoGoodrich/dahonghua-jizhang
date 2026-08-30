@@ -40,6 +40,8 @@ import 'subs_screen.dart';
 import 'theme.dart';
 import 'src/rust/api/calc.dart' as calc;
 import 'src/rust/api/glass.dart' as glass;
+import 'src/rust/api/budget.dart' as budget;
+import 'src/rust/api/history.dart' as history;
 import 'src/rust/api/store.dart' as store;
 import 'src/rust/frb_generated.dart';
 
@@ -257,11 +259,34 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           key: ValueKey(_listVersion),
           zh: _zh,
           groups: _meGroups(),
+          streak: _streak(),
         ),
       ],
     ),
     bottomNavigationBar: _bar(),
   );
+
+
+  /// How many entries this cycle, and how many days in a row.
+  ///
+  /// Both are the core's arithmetic over days Dart resolved — "consecutive" is
+  /// a claim about calendar days, and which day an instant falls on is the
+  /// device's zone to answer. Null before there is anything to say.
+  (int, int)? _streak() {
+    final live = store.liveEntries();
+    if (live.isEmpty) return null;
+    final today = DateTime.now();
+    final days = live
+        .map((e) {
+          final d = DateTime.fromMillisecondsSinceEpoch(e.ts);
+          return '${d.year}-${d.month}-${d.day}';
+        })
+        .toList();
+    final todayKey = '${today.year}-${today.month}-${today.day}';
+    final ids = live.map((e) => e.id).toList();
+    final inCycle = budget.cycleIds(ids: ids, daysOf: days, today: todayKey);
+    return (inCycle.length, history.streak(days: days, today: todayKey).toInt());
+  }
 
   List<(String, List<MeRow>)> _meGroups() {
     final zh = _zh;
