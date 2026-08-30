@@ -2250,6 +2250,42 @@ one, so the day the editor lands the argument is the only change.
 list that quietly dropped them would leave "18 rows" unexplained next to six
 entries. "3 rows, 3 already recorded" is the sentence a user can act on.
 
+### The rate a date deserves, and the picker that had to exist first
+
+`rates` is wired, which empties the audit list of feature modules. It is the
+first thing in this port to touch the network at all: `INTERNET` was not in the
+manifest until now, and the only thing that ever leaves the phone is a currency
+pair and a date.
+
+The split is the one `rates.rs` already described. HTTP, a fifteen-second
+timeout and a failed request collapsing to "no answer" are Dart's. Which source
+to believe, in what order, whether a number is usable, and how to invert "1 base
+= X target" into the store's "1 foreign = N base" are all the core's. A screen
+that could reorder the sources would be a second place for the policy to live.
+
+Then the increment stopped, because the feature was unreachable. The record
+sheet has a `cur` field on its form and **no way to set it** — no currency
+picker, anywhere. Fetching a rate for an entry that can only ever be in the
+base currency is `statementDay: null` again: a wire run to a switch nobody
+installed. So the picker came first, and it appears only when a second currency
+is tracked, because a row of one chip is not a choice.
+
+Two decisions worth keeping:
+
+**A fetched rate is not a stale rate.** `staleRate` now means `source == 'cache'`
+and nothing else. Marking a rate fetched for the entry's own day as stale would
+teach a user to ignore the notice, and the notice is the only thing standing
+between them and a silently wrong conversion.
+
+**A failed fetch saves the row.** No signal, a captive portal, an API that is
+down — `resolve` falls through to the cache and the notice says so, which is
+exactly the behaviour this screen had before there was any fetching. Losing an
+entry to a bad network would be a worse bug than the one being fixed.
+
+The tests inject the fetcher. Two public APIs cannot be a test dependency: a
+suite that fails because a rate service is down is a suite people learn to
+ignore.
+
 ### The corpus was testing a file the app did not run
 
 The audit found one more thing, and it is the worst-shaped defect in the

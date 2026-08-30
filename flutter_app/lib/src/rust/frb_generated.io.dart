@@ -17,6 +17,7 @@ import 'api/imports.dart';
 import 'api/money.dart';
 import 'api/networth.dart';
 import 'api/period.dart';
+import 'api/rates.dart';
 import 'api/record.dart';
 import 'api/reimburse.dart';
 import 'api/report.dart';
@@ -355,6 +356,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   RefundState dco_decode_refund_state(dynamic raw);
+
+  @protected
+  ResolvedRate dco_decode_resolved_rate(dynamic raw);
 
   @protected
   RestoreResult dco_decode_restore_result(dynamic raw);
@@ -771,6 +775,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   RefundState sse_decode_refund_state(SseDeserializer deserializer);
+
+  @protected
+  ResolvedRate sse_decode_resolved_rate(SseDeserializer deserializer);
 
   @protected
   RestoreResult sse_decode_restore_result(SseDeserializer deserializer);
@@ -1301,6 +1308,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_refund_state(RefundState self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_resolved_rate(ResolvedRate self, SseSerializer serializer);
 
   @protected
   void sse_encode_restore_result(RestoreResult self, SseSerializer serializer);

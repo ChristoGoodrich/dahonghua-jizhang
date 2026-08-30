@@ -17,7 +17,10 @@ import 'src/rust/api/calc.dart' as calc;
 import 'src/rust/api/catalog.dart' as catalog;
 import 'src/rust/api/money.dart' as money;
 import 'src/rust/api/record.dart' as record;
+import 'rate_fetch.dart';
+import 'src/rust/api/currency.dart' as cur;
 import 'src/rust/api/history.dart' as history;
+import 'src/rust/api/rates.dart' as rates;
 import 'theme.dart';
 
 /// The refusals `validate_form` can answer, spelled.
@@ -81,7 +84,13 @@ extension FormEdit on record.FormView {
 }
 
 class RecordSheet extends StatefulWidget {
-  const RecordSheet({super.key, this.zh = true, this.onSaved, this.editId});
+  const RecordSheet({
+    super.key,
+    this.zh = true,
+    this.onSaved,
+    this.editId,
+    this.fetchRate,
+  });
 
   final bool zh;
   final void Function({required bool staleRate})? onSaved;
@@ -92,6 +101,17 @@ class RecordSheet extends StatefulWidget {
   /// from 再记一笔, where the same fields land on a new row dated today.
   final String? editId;
 
+  /// Where the exchange rate comes from. A test has no network, and the part
+  /// worth testing is what this screen does with each answer.
+  final Future<rates.ResolvedRate> Function({
+    required String base,
+    required String target,
+    required String day,
+    required String today,
+    required int nowMinutes,
+    double? cached,
+  })? fetchRate;
+
   @override
   State<RecordSheet> createState() => _RecordSheetState();
 }
@@ -99,6 +119,10 @@ class RecordSheet extends StatefulWidget {
 class _RecordSheetState extends State<RecordSheet> {
   late record.FormView _form;
   final _note = TextEditingController();
+
+  /// A rate request is in flight. The save button is held rather than
+  /// disabled-looking: pressing twice would write the row twice.
+  bool _fetching = false;
   String? _flash;
   bool _flashIsError = false;
 
@@ -157,19 +181,52 @@ class _RecordSheetState extends State<RecordSheet> {
     });
   }
 
-  void _save() {
+  Future<void> _save() async {
     final now = DateTime.now().millisecondsSinceEpoch;
-    // The rate the entry's own date deserves would be fetched here; until that
-    // HTTP is wired, the cached one is what there is — and saying so is the
-    // whole point of `staleRate`.
     final cached = record.cachedRate(code: _form.cur);
+    final base = record.baseCurrency();
+    final foreign = _form.cur != base;
+
+    // Ask the network for the rate this entry's own DATE deserves. A cached
+    // rate is today's, and an expense entered a week late converted at today's
+    // rate is quietly the wrong number.
+    //
+    // Failing is ordinary. No signal, a captive portal, an API that is down:
+    // `resolveRate` falls through to the cache and `staleRate` says so, which
+    // is the same outcome this screen had before there was any fetching at all.
+    var rate = cached;
+    var wasCached = cached != null && foreign;
+    if (foreign) {
+      setState(() => _fetching = true);
+      // An absent stamp is a form that has not been dated, which means now.
+      final at = _form.ts == null
+          ? DateTime.now()
+          : DateTime.fromMillisecondsSinceEpoch(_form.ts!.toInt());
+      final today = DateTime.now();
+      final r = await (widget.fetchRate ?? fetchRate)(
+        base: base,
+        target: _form.cur,
+        day: '${at.year}-${at.month}-${at.day}',
+        today: '${today.year}-${today.month}-${today.day}',
+        nowMinutes: today.hour * 60 + today.minute,
+        cached: cached,
+      );
+      if (!mounted) return;
+      setState(() => _fetching = false);
+      rate = r.rate;
+      // Only a rate that came from the cache is a stale one. A fetched rate
+      // for the entry's own day is exactly right, and saying otherwise would
+      // teach the user to ignore the notice.
+      wasCached = r.source == 'cache';
+    }
+
     final r = record.saveForm(
       form: _form.copyWith(note: _note.text),
       editId: widget.editId ?? '',
       id: 'e${now}x${_form.amt.hashCode}',
       now: now,
-      rateOverride: cached,
-      rateWasCached: cached != null && _form.cur != record.baseCurrency(),
+      rateOverride: rate,
+      rateWasCached: wasCached,
     );
 
     if (r.rejected != null) {
@@ -241,6 +298,7 @@ class _RecordSheetState extends State<RecordSheet> {
                     const SizedBox(height: 14),
                     _accountRow(zh, accent),
                     const SizedBox(height: 14),
+                    ..._currencyRow(zh, accent),
                     _noteField(zh),
                     _tagRow(zh, accent),
                     _ledgerRow(zh, accent),
@@ -671,6 +729,58 @@ class _RecordSheetState extends State<RecordSheet> {
     });
   }
 
+  /// Which currency this entry is in.
+  ///
+  /// Absent entirely until a second currency is being tracked: a row of one
+  /// chip is not a choice, and every ledger starts with exactly one currency.
+  ///
+  /// This is what makes the rate fetch reachable at all. Wiring the fetch
+  /// without it would have been the same shape of mistake as an account model
+  /// that carries a statement day nothing can set.
+  List<Widget> _currencyRow(bool zh, Color accent) {
+    final base = record.baseCurrency();
+    final codes = [base, ...cur.rates().map((r) => r.code).where((c) => c != base)];
+    if (codes.length < 2) return const [];
+    return [
+      Row(children: [
+        Text(zh ? '币种' : 'Currency',
+            style: TextStyle(fontSize: 12, color: palette.inkSoft)),
+        const SizedBox(width: 10),
+        Expanded(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(children: [
+              for (final c in codes)
+                Padding(
+                  padding: const EdgeInsets.only(right: 6),
+                  child: GestureDetector(
+                    key: Key('cur-$c'),
+                    onTap: () => setState(() => _form = _form.copyWith(cur: c)),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: _form.cur == c
+                            ? accent.withValues(alpha: 0.18)
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(Rad.pill),
+                        border: Border.all(
+                            color: _form.cur == c ? accent : palette.line),
+                      ),
+                      child: Text(c,
+                          style:
+                              TextStyle(fontSize: 12, color: palette.ink)),
+                    ),
+                  ),
+                ),
+            ]),
+          ),
+        ),
+      ]),
+      const SizedBox(height: 14),
+    ];
+  }
+
   Widget _noteField(bool zh) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -819,7 +929,8 @@ class _RecordSheetState extends State<RecordSheet> {
       // it, so a finder that goes by text cannot say which one it means
       child: GestureDetector(
         key: Key('key-$k'),
-        onTap: () => isSave ? _save() : _key(k),
+        // Held while a rate is in flight: pressing twice would write twice.
+        onTap: () => isSave ? (_fetching ? null : _save()) : _key(k),
         onLongPress: isSave ? _saveAsTemplate : null,
         child: Container(
           height: 52,
