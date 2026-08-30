@@ -15,6 +15,8 @@ import 'package:flutter/material.dart';
 
 import 'src/rust/api/accounts.dart' as accounts;
 import 'src/rust/api/money.dart' as money;
+import 'src/rust/api/statement.dart' as statement;
+import 'src/rust/api/store.dart' as store;
 import 'theme.dart';
 
 class AccountsScreen extends StatefulWidget {
@@ -33,6 +35,14 @@ class AccountsScreen extends StatefulWidget {
 class _AccountsScreenState extends State<AccountsScreen> {
   List<accounts.AccountBalance> _rows = const [];
   double _total = 0;
+  /// Per credit card, or absent when it has no cycle configured.
+  Map<String, statement.StatementView> _statements = const {};
+
+  /// Cards due inside a week, soonest first. Past-due ones are in here
+  /// too, with a negative count — a reminder that disappears once it is
+  /// late is a reminder that vanishes when it starts to matter.
+  List<statement.DueView> _due = const [];
+
   bool _showArchived = false;
 
   @override
@@ -42,9 +52,42 @@ class _AccountsScreenState extends State<AccountsScreen> {
   }
 
   void _reload() {
+    final rows = accounts.balances();
+    // The days are Dart's, as everywhere: a statement closes on a calendar day
+    // and which day an entry falls on is this device's zone to answer.
+    final live = store.liveEntries();
+    final ids = live.map((e) => e.id).toList();
+    final days = live.map((e) {
+      final d = DateTime.fromMillisecondsSinceEpoch(e.ts);
+      return '${d.year}-${d.month}-${d.day}';
+    }).toList();
+    final now = DateTime.now();
+    final today = '${now.year}-${now.month}-${now.day}';
+
+    final stmts = <String, statement.StatementView>{};
+    for (final a in rows) {
+      // Asked per account rather than in one sweep: `statement_of` answers
+      // `None` for anything that is not a configured credit card, so the map
+      // ends up holding exactly the cards that have a cycle.
+      final st = statement.statementOf(
+        accountId: a.id,
+        ids: ids,
+        daysOf: days,
+        today: today,
+      );
+      if (st != null) stmts[a.id] = st;
+    }
+
     setState(() {
-      _rows = accounts.balances();
+      _rows = rows;
       _total = accounts.totalBalance();
+      _statements = stmts;
+      _due = statement.dueWithin(
+        ids: ids,
+        daysOf: days,
+        today: today,
+        withinDays: 7,
+      );
     });
   }
 
@@ -130,6 +173,10 @@ class _AccountsScreenState extends State<AccountsScreen> {
         padding: const EdgeInsets.fromLTRB(22, 6, 22, 120),
         children: [
           _totalCard(zh),
+          if (_due.isNotEmpty) ...[
+            const SizedBox(height: 14),
+            _dueBanner(zh),
+          ],
           const SizedBox(height: 16),
           for (final a in shown) _row(a, zh),
           if (archivedCount > 0)
@@ -174,6 +221,113 @@ class _AccountsScreenState extends State<AccountsScreen> {
           ],
         ),
       );
+
+  /// Where a credit card is in its cycle, under its balance.
+  ///
+  /// Nothing at all for a card with no statement day: a cycle nobody has
+  /// configured has no 出账日 to report, and a row of zeroes would read as a
+  /// card that is paid off.
+  List<Widget> _statementLine(accounts.AccountBalance a, bool zh) {
+    final st = _statements[a.id];
+    if (st == null) return const [];
+    final sym = zh ? '￥' : '\$';
+    final bits = <String>[
+      zh
+          ? '本期待还 ${money.fmt(n: st.billedDue, symbol: sym)}'
+          : 'Billed ${money.fmt(n: st.billedDue, symbol: sym)}',
+      if (st.unbilled != 0)
+        zh
+            ? '未出账 ${money.fmt(n: st.unbilled, symbol: sym)}'
+            : 'Unbilled ${money.fmt(n: st.unbilled, symbol: sym)}',
+      if (st.overpay > 0)
+        zh
+            ? '溢缴款 ${money.fmt(n: st.overpay, symbol: sym)}'
+            : 'Overpaid ${money.fmt(n: st.overpay, symbol: sym)}',
+    ];
+    return [
+      const SizedBox(height: 4),
+      Text(
+        bits.join(' · '),
+        key: Key('acct-${a.id}-stmt'),
+        style: TextStyle(fontSize: 11.5, color: palette.inkSoft),
+      ),
+      if (st.dueDate != null)
+        Text(
+          _dueLine(st, zh),
+          key: Key('acct-${a.id}-due'),
+          style: TextStyle(
+            fontSize: 11.5,
+            // Overdue is the one state worth a colour. Everything else here is
+            // information; this one is a thing to go and do.
+            color: (st.daysToDue ?? 1) < 0 ? palette.hibiscusDeep : palette.inkSoft,
+          ),
+        ),
+    ];
+  }
+
+  String _dueLine(statement.StatementView st, bool zh) {
+    final n = st.daysToDue ?? 0;
+    final d = st.dueDate!.split('-');
+    final when = zh ? '${d[1]}月${d[2]}日' : '${d[1]}/${d[2]}';
+    if (st.billedDue <= 0) {
+      return zh ? '还款日 $when · 已结清' : 'Due $when · settled';
+    }
+    if (n < 0) {
+      return zh ? '逾期 ${-n} 天' : '${-n} days overdue';
+    }
+    if (n == 0) return zh ? '今天还款' : 'Due today';
+    return zh ? '还款日 $when · 还有 $n 天' : 'Due $when · $n days';
+  }
+
+  /// Cards due inside a week, at the top where they will be seen.
+  ///
+  /// The same facts are on each card's own row; this is here because a row
+  /// halfway down a list is not a reminder. Overdue reads first — it is sorted
+  /// by days remaining and a negative count sorts before a positive one.
+  Widget _dueBanner(bool zh) => Container(
+        key: const Key('due-banner'),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: palette.hibiscus.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(Rad.md),
+          border: Border.all(color: palette.hibiscus.withValues(alpha: 0.35)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(zh ? '要还款了' : 'Payments due',
+                style: TextStyle(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w700,
+                    color: palette.hibiscusDeep)),
+            const SizedBox(height: 4),
+            for (final d in _due)
+              Padding(
+                key: Key('due-${d.accountId}'),
+                padding: const EdgeInsets.only(top: 2),
+                child: Text(
+                  _dueBannerLine(d, zh),
+                  style: TextStyle(fontSize: 12, color: palette.ink),
+                ),
+              ),
+          ],
+        ),
+      );
+
+  String _dueBannerLine(statement.DueView d, bool zh) {
+    final amt = money.fmt(n: d.billedDue, symbol: zh ? '￥' : '\$');
+    if (d.daysToDue < 0) {
+      return zh
+          ? '${d.accountName} $amt · 逾期 ${-d.daysToDue} 天'
+          : '${d.accountName} $amt · ${-d.daysToDue} days overdue';
+    }
+    if (d.daysToDue == 0) {
+      return zh ? '${d.accountName} $amt · 今天' : '${d.accountName} $amt · today';
+    }
+    return zh
+        ? '${d.accountName} $amt · 还有 ${d.daysToDue} 天'
+        : '${d.accountName} $amt · in ${d.daysToDue} days';
+  }
 
   Widget _row(accounts.AccountBalance a, bool zh) {
     final kindLabel = switch (a.kind) {
@@ -222,6 +376,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                       color: a.balance < 0 ? palette.hibiscus : palette.ink,
                     ),
                   ),
+                  ..._statementLine(a, zh),
                 ],
               ),
             ),
@@ -290,6 +445,8 @@ class _NewAccountDialogState extends State<_NewAccountDialog> {
   final _name = TextEditingController();
   final _balance = TextEditingController();
   String _kind = 'cash';
+  int? _statementDay;
+  int? _dueDay;
 
   @override
   void dispose() {
@@ -321,12 +478,61 @@ class _NewAccountDialogState extends State<_NewAccountDialog> {
       name: name,
       balance: double.tryParse(_balance.text.replaceAll(',', '')) ?? 0,
       kind: _kind,
-      statementDay: null,
-      dueDay: null,
+      // Only a credit card has a cycle. The core drops these for any other
+      // kind anyway; passing them only where they mean something keeps the
+      // two ends saying the same thing.
+      statementDay: _kind == 'credit' ? _statementDay : null,
+      dueDay: _kind == 'credit' ? _dueDay : null,
       fxCode: null,
     );
     Navigator.pop(context, true);
   }
+
+  /// 1..28 and no further, the same ceiling the cycle start has: a card that
+  /// closed on the 31st would skip February entirely.
+  Widget _dayPicker({
+    required String keyPrefix,
+    required String label,
+    required int? value,
+    required void Function(int?) onPick,
+    required bool zh,
+  }) =>
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 12),
+          Text(label, style: TextStyle(fontSize: 12, color: palette.inkSoft)),
+          const SizedBox(height: 6),
+          Wrap(
+            spacing: 6,
+            runSpacing: 6,
+            children: [
+              for (final d in const [1, 5, 10, 15, 20, 25, 28])
+                GestureDetector(
+                  key: Key('$keyPrefix-$d'),
+                  // Tapping the chosen one clears it: a card whose cycle was
+                  // set by mistake needs a way back to unset, and unset is a
+                  // real state the core reads as "no cycle configured".
+                  onTap: () => onPick(value == d ? null : d),
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: value == d
+                          ? palette.stamen.withValues(alpha: 0.18)
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(Rad.pill),
+                      border: Border.all(
+                          color: value == d ? palette.stamen : palette.line),
+                    ),
+                    child: Text('$d',
+                        style: TextStyle(fontSize: 12, color: palette.ink)),
+                  ),
+                ),
+            ],
+          ),
+        ],
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -336,7 +542,10 @@ class _NewAccountDialogState extends State<_NewAccountDialog> {
       backgroundColor: palette.card,
       title: Text(zh ? '新建账户' : 'New account',
           style: TextStyle(fontSize: 16, color: palette.ink)),
-      content: Column(
+      // Scrollable because a credit card adds two more rows, and a dialog that
+      // overflows on a short screen loses its buttons.
+      content: SingleChildScrollView(
+        child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           TextField(
@@ -385,8 +594,24 @@ class _NewAccountDialogState extends State<_NewAccountDialog> {
                 ),
             ],
           ),
+          if (_kind == 'credit') ...[
+            _dayPicker(
+              keyPrefix: 'stmt-day',
+              label: zh ? '出账日' : 'Statement day',
+              value: _statementDay,
+              onPick: (d) => setState(() => _statementDay = d),
+              zh: zh,
+            ),
+            _dayPicker(
+              keyPrefix: 'due-day',
+              label: zh ? '还款日' : 'Due day',
+              value: _dueDay,
+              onPick: (d) => setState(() => _dueDay = d),
+              zh: zh,
+            ),
+          ],
         ],
-      ),
+      )),
       actions: [
         TextButton(
           key: const Key('new-cancel'),

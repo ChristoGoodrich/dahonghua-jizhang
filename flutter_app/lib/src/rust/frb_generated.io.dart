@@ -21,6 +21,7 @@ import 'api/record.dart';
 import 'api/reimburse.dart';
 import 'api/report.dart';
 import 'api/search.dart';
+import 'api/statement.dart';
 import 'api/stats.dart';
 import 'api/store.dart';
 import 'api/subscriptions.dart';
@@ -99,6 +100,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   SettingsView dco_decode_box_autoadd_settings_view(dynamic raw);
 
   @protected
+  StatementView dco_decode_box_autoadd_statement_view(dynamic raw);
+
+  @protected
   TemplateDraftView dco_decode_box_autoadd_template_draft_view(dynamic raw);
 
   @protected
@@ -139,6 +143,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   DrainSummary dco_decode_drain_summary(dynamic raw);
+
+  @protected
+  DueView dco_decode_due_view(dynamic raw);
 
   @protected
   EntryPatch dco_decode_entry_patch(dynamic raw);
@@ -205,6 +212,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<ClaimView> dco_decode_list_claim_view(dynamic raw);
+
+  @protected
+  List<DueView> dco_decode_list_due_view(dynamic raw);
 
   @protected
   List<EntryView> dco_decode_list_entry_view(dynamic raw);
@@ -300,6 +310,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RefundState? dco_decode_opt_box_autoadd_refund_state(dynamic raw);
 
   @protected
+  StatementView? dco_decode_opt_box_autoadd_statement_view(dynamic raw);
+
+  @protected
   TemplateDraftView? dco_decode_opt_box_autoadd_template_draft_view(
     dynamic raw,
   );
@@ -357,6 +370,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   SliceView dco_decode_slice_view(dynamic raw);
+
+  @protected
+  StatementView dco_decode_statement_view(dynamic raw);
 
   @protected
   SubView dco_decode_sub_view(dynamic raw);
@@ -464,6 +480,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  StatementView sse_decode_box_autoadd_statement_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   TemplateDraftView sse_decode_box_autoadd_template_draft_view(
     SseDeserializer deserializer,
   );
@@ -506,6 +527,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   DrainSummary sse_decode_drain_summary(SseDeserializer deserializer);
+
+  @protected
+  DueView sse_decode_due_view(SseDeserializer deserializer);
 
   @protected
   EntryPatch sse_decode_entry_patch(SseDeserializer deserializer);
@@ -582,6 +606,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<ClaimView> sse_decode_list_claim_view(SseDeserializer deserializer);
+
+  @protected
+  List<DueView> sse_decode_list_due_view(SseDeserializer deserializer);
 
   @protected
   List<EntryView> sse_decode_list_entry_view(SseDeserializer deserializer);
@@ -695,6 +722,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  StatementView? sse_decode_opt_box_autoadd_statement_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   TemplateDraftView? sse_decode_opt_box_autoadd_template_draft_view(
     SseDeserializer deserializer,
   );
@@ -754,6 +786,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   SliceView sse_decode_slice_view(SseDeserializer deserializer);
+
+  @protected
+  StatementView sse_decode_statement_view(SseDeserializer deserializer);
 
   @protected
   SubView sse_decode_sub_view(SseDeserializer deserializer);
@@ -896,6 +931,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_box_autoadd_statement_view(
+    StatementView self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_box_autoadd_template_draft_view(
     TemplateDraftView self,
     SseSerializer serializer,
@@ -948,6 +989,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_drain_summary(DrainSummary self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_due_view(DueView self, SseSerializer serializer);
 
   @protected
   void sse_encode_entry_patch(EntryPatch self, SseSerializer serializer);
@@ -1044,6 +1088,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     List<ClaimView> self,
     SseSerializer serializer,
   );
+
+  @protected
+  void sse_encode_list_due_view(List<DueView> self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_entry_view(
@@ -1190,6 +1237,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_opt_box_autoadd_statement_view(
+    StatementView? self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_opt_box_autoadd_template_draft_view(
     TemplateDraftView? self,
     SseSerializer serializer,
@@ -1263,6 +1316,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_slice_view(SliceView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_statement_view(StatementView self, SseSerializer serializer);
 
   @protected
   void sse_encode_sub_view(SubView self, SseSerializer serializer);

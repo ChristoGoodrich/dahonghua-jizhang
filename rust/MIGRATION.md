@@ -2250,6 +2250,38 @@ one, so the day the editor lands the argument is the only change.
 list that quietly dropped them would leave "18 rows" unexplained next to six
 entries. "3 rows, 3 already recorded" is the sentence a user can act on.
 
+### The last one off the list, and why it was unreachable
+
+`statement` is wired, which finishes the audit. 492 lines of credit-card cycle
+arithmetic — 出账日, 还款日, 本期待还, 未出账, 溢缴款 — that nothing could reach,
+for a reason worth naming precisely.
+
+The `Account` model has carried `statement_day` and `due_day` since it was
+ported. The bridge passes them. The accounts screen's new-account dialog wrote:
+
+    statementDay: null,
+    dueDay: null,
+
+unconditionally. So the fields existed, the arithmetic existed, the corpus
+passed, and no user could ever configure a cycle. Nothing was broken; a wire was
+never run. That is what the whole audit was looking for, and it is invisible to
+every kind of test that asks whether a function is correct.
+
+Three decisions in the wiring:
+
+**Unset has to be reachable.** Tapping the chosen day again clears it — a card
+whose cycle was set by mistake needs a way back, and the core reads "no
+statement day" as a real state rather than as a default.
+
+**A card with no cycle shows nothing, not zeroes.** A row reading 本期待还 ￥0
+looks like a card that is paid off, which is the opposite of "we do not know".
+
+**The due banner is at the top, and keeps overdue cards in it.** The same facts
+are on each card's own row, but a row halfway down a list is not a reminder —
+and a reminder that disappears once it is late disappears exactly when it
+starts to matter. `due_soon` sorts by days remaining, so negative counts
+come first without any extra rule.
+
 ### A screen where three numbers disagreed and nothing said so
 
 `period` is wired, and wiring it exposed what the stats screen had actually

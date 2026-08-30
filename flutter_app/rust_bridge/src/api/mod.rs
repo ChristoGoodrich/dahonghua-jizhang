@@ -24,6 +24,7 @@ pub mod record;
 pub mod reimburse;
 pub mod report;
 pub mod search;
+pub mod statement;
 pub mod stats;
 pub mod store;
 pub mod subscriptions;
