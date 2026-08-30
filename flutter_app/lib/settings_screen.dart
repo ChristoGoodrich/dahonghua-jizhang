@@ -9,14 +9,25 @@
 // What is here is the two preferences that are pure store: which language the
 // app speaks, and which day of the month the budget cycle turns over.
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'src/rust/api/budget.dart' as budget;
+// `export` is a reserved word in Dart, so the prefix cannot be the module name.
+import 'src/rust/api/export.dart' as exporter;
 import 'src/rust/api/store.dart' as store;
 import 'theme.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key, this.zh = true, this.onChanged});
+  const SettingsScreen({
+    super.key,
+    this.zh = true,
+    this.onChanged,
+    this.share,
+  });
 
   final bool zh;
 
@@ -24,12 +35,69 @@ class SettingsScreen extends StatefulWidget {
   /// shell rather than this screen decides what that means.
   final VoidCallback? onChanged;
 
+  /// Where the exported file goes. A test cannot drive a share sheet, and the
+  /// part worth testing is the file — that it exists, and what is in it.
+  final Future<void> Function(String path)? share;
+
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
   late int _cycleStart;
+  bool _busy = false;
+  String? _flash;
+
+  /// Write the ledger to a file and hand it to whatever the user picks.
+  ///
+  /// A file, not a string: a share sheet passes a path, and the CSV of a
+  /// long-running ledger is far past what a text intent will carry. It goes to
+  /// a temporary directory rather than to documents, because this is a copy on
+  /// its way out and not a second ledger to keep in step.
+  Future<void> _export() async {
+    setState(() {
+      _busy = true;
+      _flash = null;
+    });
+    try {
+      final live = store.liveEntries();
+      // Bytes, because the BOM Excel needs does not survive being a Dart
+      // string — `Utf8Decoder` strips a leading one.
+      final csv = exporter.exportCsv(
+        ids: live.map((e) => e.id).toList(),
+        daysOf: live.map((e) {
+          final d = DateTime.fromMillisecondsSinceEpoch(e.ts);
+          return '${d.year}-${d.month}-${d.day}';
+        }).toList(),
+      );
+      final dir = await getTemporaryDirectory();
+      final stamp = DateTime.now();
+      final name = 'dahonghua-${stamp.year}'
+          '${stamp.month.toString().padLeft(2, '0')}'
+          '${stamp.day.toString().padLeft(2, '0')}.csv';
+      final file = File('${dir.path}/$name');
+      await file.writeAsBytes(csv);
+
+      if (widget.share != null) {
+        await widget.share!(file.path);
+      } else {
+        await SharePlus.instance.share(
+          ShareParams(files: [XFile(file.path)], fileNameOverrides: [name]),
+        );
+      }
+      if (mounted) {
+        setState(() => _flash =
+            widget.zh ? '已导出 ${live.length} 条' : 'Exported ${live.length}');
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() =>
+            _flash = widget.zh ? '导出失败了' : 'The export did not go through');
+      }
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
 
   @override
   void initState() {
@@ -124,12 +192,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ],
           ),
+          const SizedBox(height: 20),
+          _group(
+            zh ? '数据' : 'Data',
+            [
+              Text(
+                zh
+                    ? '导出成 CSV,Excel 和别的记账 app 都读得了。日期是本机的日期,不是格林威治的。'
+                    : 'Export as CSV, which Excel and other ledgers can read. '
+                        'The dates are the ones this phone shows, not UTC.',
+                style: TextStyle(fontSize: 12, color: palette.inkSoft),
+              ),
+              const SizedBox(height: 12),
+              FilledButton.icon(
+                key: const Key('export-csv'),
+                onPressed: _busy ? null : _export,
+                icon: const Icon(Icons.ios_share, size: 18),
+                style: FilledButton.styleFrom(
+                  backgroundColor: palette.hibiscus,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+                label: Text(zh ? '导出 CSV' : 'Export CSV'),
+              ),
+              if (_flash != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Text(_flash!,
+                      key: const Key('export-flash'),
+                      style:
+                          TextStyle(fontSize: 12.5, color: palette.leafDeep)),
+                ),
+            ],
+          ),
           const SizedBox(height: 24),
           Text(
             zh
-                ? '锁屏、提醒、周报月报、主题和导出还没做 — 它们要等各自的平台插件。'
-                : 'App lock, reminders, reports, themes and export are not here '
-                    'yet: each needs a platform plugin this build does not have.',
+                ? '锁屏、提醒、周报月报和主题还没做 — 它们要等各自的平台插件。'
+                : 'App lock, reminders, reports and themes are not here yet: '
+                    'each needs a platform plugin this build does not have.',
             key: const Key('settings-note'),
             style: TextStyle(fontSize: 11.5, color: palette.inkSoft),
           ),

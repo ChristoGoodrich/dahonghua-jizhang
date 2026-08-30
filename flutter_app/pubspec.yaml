@@ -44,6 +44,7 @@ dependencies:
   # app's own storage, which is a permission dialog and a content URI —
   # neither of which Dart can do alone.
   file_picker: ^12.1.2
+  share_plus: ^13.3.0
 
 dev_dependencies:
   flutter_test:

@@ -10,6 +10,7 @@ import 'api/calc.dart';
 import 'api/capture.dart';
 import 'api/catalog.dart';
 import 'api/currency.dart';
+import 'api/export.dart';
 import 'api/glass.dart';
 import 'api/history.dart';
 import 'api/imports.dart';

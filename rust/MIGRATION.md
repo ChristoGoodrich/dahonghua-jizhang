@@ -2250,6 +2250,31 @@ one, so the day the editor lands the argument is the only change.
 list that quietly dropped them would leave "18 rows" unexplained next to six
 entries. "3 rows, 3 already recorded" is the sentence a user can act on.
 
+### A BOM cannot cross as a Dart string
+
+The CSV export is wired, and it found a boundary rule worth writing down.
+
+`to_csv` starts the document with U+FEFF, and the core says why: without it
+Excel guesses a code page and every Chinese category name comes out as
+mojibake. The first version of the bridge returned a `String`, and the BOM
+arrived gone. Dart's `Utf8Decoder` **strips a leading BOM**, and
+flutter_rust_bridge decodes every string with it — so a BOM is not something a
+Dart `String` can carry across this boundary at all, no matter what Rust wrote.
+
+The fix is not to re-add it in Dart, which would split one decision across two
+languages and leave the core's comment describing something that no longer
+happens. The export returns `Vec<u8>`. An export is a file, and a file is
+bytes; the string was the wrong shape before the BOM ever came up.
+
+The test had the same bug as the code and for the same reason. Asserting
+`csv().codeUnitAt(0) == 0xFEFF` on decoded text can never pass — and, worse, an
+assertion written the other way round would have passed with the BOM deleted.
+It checks the first three bytes now.
+
+XLSX stays unported, as `export.rs` said it would: `writeXlsx` is 210 lines of
+ZIP and XML with no decisions in it, and the core carries one dependency. CSV
+opens in Excel, which is what the BOM is for.
+
 ### Two more off the list, and a rule better than the one I tested for
 
 `streak` and `notes` are wired. Both are small, both had a slot waiting —

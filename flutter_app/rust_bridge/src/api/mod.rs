@@ -12,6 +12,7 @@ pub mod calc;
 pub mod capture;
 pub mod catalog;
 pub mod currency;
+pub mod export;
 pub mod glass;
 pub mod history;
 pub mod imports;
