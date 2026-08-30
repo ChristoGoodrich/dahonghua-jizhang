@@ -2250,6 +2250,51 @@ one, so the day the editor lands the argument is the only change.
 list that quietly dropped them would leave "18 rows" unexplained next to six
 entries. "3 rows, 3 already recorded" is the sentence a user can act on.
 
+### The corpus was testing a file the app did not run
+
+The audit found one more thing, and it is the worst-shaped defect in the
+project so far.
+
+`subs.rs` and `subscriptions.rs` were **two ports of the same TypeScript
+file**. Same functions, written twice, six months apart in project time. The
+bridge called `subs`. The parity harness — `dump_subs.rs` — called
+`subscriptions`. So the sentence this whole migration rests on, *"the Rust
+agrees with the shipping app across 119,779 cases"*, was true of a module no
+user could reach, while the module that actually ran was compared against
+nothing.
+
+They had already drifted, in exactly the place the earlier port had left a
+comment about:
+
+```
+// `sub.lastCharged ?? encode(cursor)` — nullish, not truthy. The cursor
+// above uses `if (sub.lastCharged)` and so treats an empty string as
+// missing, but this one keeps it. Two different truthiness tests on the
+// same field, three lines apart; conflating them is what the corpus caught.
+```
+
+`subs.rs` — the shipped one — conflated them. The corpus could not see it,
+because the corpus was reading the other file.
+
+Traced through the bridge, the divergence turns out to be unreachable: the only
+path that returns the seeded cursor is the one where nothing fired, and
+`subs_apply` returns early on an empty charge list before it writes. So this
+was not a bug users had. It was a bug users were one refactor away from, with
+the safety net pointed at the wrong trapeze.
+
+There is one module now. `subs.rs` gained `cursor_of`, `due_charges`,
+`allowed_charges` and `charge_id` with the corpus-tested semantics, `apply_cap`
+delegates to `allowed_charges` so the cap has one implementation, and
+`seed_cursor` holds the nullish rule in one place with the comment on it.
+`subscriptions.rs` is deleted and `dump_subs.rs` points at `subs`.
+
+The corpus passes: 1,789 cases, unchanged. That run is the whole point — it
+converts "the shipped module is untested" into "the shipped module is proven",
+and it is the reason to repoint the harness rather than to keep both.
+
+Five new unit tests pin the two truthiness rules, which neither port had ever
+tested directly. Re-injecting the conflation fails two of them.
+
 ### The last one off the list, and why it was unreachable
 
 `statement` is wired, which finishes the audit. 492 lines of credit-card cycle

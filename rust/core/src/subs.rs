@@ -74,24 +74,59 @@ pub struct DueResult {
     pub last_charged: String,
 }
 
-/// Catch up every charge from the subscription's cursor to today inclusive.
-///
-/// `start` is where the cursor sits: the decoded `last_charged`, or the day the
-/// subscription was created when it has never fired. Converting `created` from
-/// an epoch stamp is the caller's job.
-///
 /// The 120-iteration guard is inherited. Ten years of monthly charges is more
 /// than a catch-up ever needs, and it means a corrupt cursor cannot spin.
+const MAX_CATCH_UP: usize = 120;
+
+/// Where this subscription's cursor sits.
+///
+/// `if (sub.lastCharged)` in the TypeScript — a **truthy** test, so an empty
+/// string counts as never having fired and the fallback is used. Read the note
+/// on [`due_charges`] before assuming the other read of this field agrees.
+pub fn cursor_of(sub: &Sub, created_fallback: Civil) -> Civil {
+    sub.last_charged
+        .as_deref()
+        .filter(|s| !s.is_empty())
+        .and_then(decode)
+        .unwrap_or(created_fallback)
+}
+
+/// Catch up every charge from the cursor to today inclusive.
+///
+/// `created_fallback` is where to start when the subscription has never fired.
+/// The TypeScript uses `sub.created` falling back to the current time, and both
+/// of those are clocks, so the caller supplies it.
+pub fn due_charges(sub: &Sub, today: Civil, created_fallback: Civil) -> DueResult {
+    let cursor = cursor_of(sub, created_fallback);
+    catch_up(sub, cursor, today, seed_cursor(sub, cursor))
+}
+
+/// Catch up from a cursor the caller has already resolved.
+///
+/// The Flutter side does the resolving, because `sub.created` is an epoch stamp
+/// and turning one into a calendar day needs a timezone.
 pub fn compute_due_charges(sub: &Sub, start: Civil, today: Civil) -> DueResult {
+    catch_up(sub, start, today, seed_cursor(sub, start))
+}
+
+/// The cursor value carried out when nothing fires.
+///
+/// `sub.lastCharged ?? encode(cursor)` — **nullish**, not truthy. Three lines
+/// above, [`cursor_of`] treats an empty string as missing; this one keeps it.
+/// Two different truthiness tests on the same field, and the corpus is what
+/// caught them being conflated. Written once here so there is one place for
+/// them to disagree rather than two.
+fn seed_cursor(sub: &Sub, cursor: Civil) -> String {
+    sub.last_charged.clone().unwrap_or_else(|| encode(cursor))
+}
+
+fn catch_up(sub: &Sub, start: Civil, today: Civil, seed: String) -> DueResult {
     let mut cursor = start;
     let mut charges = Vec::new();
-    let mut last_charged = match sub.last_charged.as_deref() {
-        Some(s) if !s.is_empty() => s.to_string(),
-        _ => encode(cursor),
-    };
+    let mut last_charged = seed;
 
-    for _ in 0..120 {
-        // strictly after the cursor
+    for _ in 0..MAX_CATCH_UP {
+        // strictly after the cursor, by a calendar day
         let after = Civil::new(cursor.y, cursor.m, cursor.d + 1);
         let due = next_due_date(sub, after);
         if due > today {
@@ -108,6 +143,29 @@ pub fn compute_due_charges(sub: &Sub, start: Civil, today: Civil) -> DueResult {
     }
 }
 
+/// How many of `charges` may actually fire, given an instalment cap.
+///
+/// `periods` absent or zero means an open-ended subscription and everything
+/// fires. Otherwise the total over the subscription's life is capped, and a
+/// plan that has run its course fires nothing — while still advancing its
+/// cursor, so the catch-up is not recomputed on every boot.
+pub fn allowed_charges(sub: &Sub, charges: usize) -> usize {
+    match sub.periods.filter(|p| *p > 0) {
+        None => charges,
+        Some(periods) => {
+            let remaining = periods.saturating_sub(sub.charged.unwrap_or(0)) as usize;
+            charges.min(remaining)
+        }
+    }
+}
+
+/// The deterministic id a charge posts under: `sub_<subscription>_<epoch ms>`.
+///
+/// Derived rather than random, for the reason the module header gives.
+pub fn charge_id(sub_id: &str, ts_ms: i64) -> String {
+    format!("sub_{sub_id}_{ts_ms}")
+}
+
 /// The instalment cap: never fire more than `periods` charges in total.
 ///
 /// Split out of the sweep because the platform applies it too. Turning a due
@@ -115,13 +173,8 @@ pub fn compute_due_charges(sub: &Sub, start: Civil, today: Civil) -> DueResult {
 /// two calls with Dart in the middle — and both halves have to cap the same
 /// way, or a fully-paid instalment fires once more on the way through.
 pub fn apply_cap(sub: &Sub, charges: Vec<Civil>) -> Vec<Civil> {
-    match sub.periods.filter(|p| *p > 0) {
-        Some(periods) => {
-            let remaining = periods.saturating_sub(sub.charged.unwrap_or(0)) as usize;
-            charges.into_iter().take(remaining).collect()
-        }
-        None => charges,
-    }
+    let n = allowed_charges(sub, charges.len());
+    charges.into_iter().take(n).collect()
 }
 
 /// What a sweep did.
@@ -362,12 +415,69 @@ mod tests {
         assert_eq!(r.last_charged, "2026-6-15");
     }
 
+    /// The two truthiness tests, three lines apart in the TypeScript, that the
+    /// second port of this module had conflated. Neither port tested them.
+    #[test]
+    fn an_empty_cursor_means_never_fired_but_is_still_carried_out() {
+        let mut s = sub(SubFreq::Monthly, 15);
+        s.last_charged = Some(String::new());
+
+        // `if (sub.lastCharged)` — truthy, so the empty string is not a cursor
+        // and the fallback is where we start.
+        assert_eq!(cursor_of(&s, c(2026, 6, 1)), c(2026, 6, 1));
+
+        // `sub.lastCharged ?? encode(cursor)` — nullish, so the empty string
+        // survives when nothing fires. Replacing it with an encoded date here
+        // would write a cursor the TypeScript never writes.
+        let r = due_charges(&s, c(2026, 6, 10), c(2026, 6, 1));
+        assert!(r.charges.is_empty());
+        assert_eq!(r.last_charged, "");
+    }
+
+    #[test]
+    fn no_cursor_at_all_falls_back_to_the_creation_date() {
+        let s = sub(SubFreq::Monthly, 15);
+        assert_eq!(cursor_of(&s, c(2026, 6, 1)), c(2026, 6, 1));
+
+        let r = due_charges(&s, c(2026, 8, 20), c(2026, 6, 1));
+        assert_eq!(
+            r.charges,
+            vec![c(2026, 6, 15), c(2026, 7, 15), c(2026, 8, 15)]
+        );
+    }
+
+    #[test]
+    fn a_stored_cursor_is_preferred_over_the_fallback() {
+        let mut s = sub(SubFreq::Monthly, 15);
+        s.last_charged = Some("2026-6-15".into()); // 0-indexed month: July 15
+        assert_eq!(cursor_of(&s, c(2026, 0, 1)), c(2026, 6, 15));
+    }
+
+    #[test]
+    fn a_zero_period_count_is_open_ended_rather_than_finished() {
+        let mut s = sub(SubFreq::Monthly, 15);
+        s.periods = Some(0);
+        assert_eq!(allowed_charges(&s, 3), 3);
+    }
+
+    #[test]
+    fn an_instalment_allows_only_what_is_left() {
+        let mut s = sub(SubFreq::Monthly, 15);
+        s.periods = Some(6);
+        s.charged = Some(4);
+        assert_eq!(allowed_charges(&s, 3), 2);
+        assert_eq!(
+            apply_cap(&s, vec![c(2026, 6, 15), c(2026, 7, 15), c(2026, 8, 15)]).len(),
+            2
+        );
+    }
+
     #[test]
     fn the_catch_up_cannot_run_away() {
         let s = sub(SubFreq::Monthly, 1);
         // fifty years of arrears, capped at the inherited guard
         let r = compute_due_charges(&s, c(1976, 0, 1), c(2026, 0, 1));
-        assert_eq!(r.charges.len(), 120);
+        assert_eq!(r.charges.len(), MAX_CATCH_UP);
     }
 
     #[test]

@@ -53,7 +53,6 @@ pub mod stats;
 pub mod store;
 pub mod streak;
 pub mod subs;
-pub mod subscriptions;
 pub mod sync;
 pub mod trends;
 pub mod weekly;

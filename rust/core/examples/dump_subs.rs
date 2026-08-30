@@ -3,7 +3,10 @@
 
 use dahonghua_core::civil::Civil;
 use dahonghua_core::model::{Sub, SubFreq};
-use dahonghua_core::subscriptions::{allowed_charges, due_charges, next_due_date};
+// The corpus tests the module the APP runs. It used to test `subscriptions`,
+// a second port of the same TypeScript that nothing shipped — so the parity
+// guarantee covered a file no user could reach.
+use dahonghua_core::subs::{allowed_charges, due_charges, next_due_date};
 use std::io::{self, Read};
 
 fn show(c: Civil) -> String {
