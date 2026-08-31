@@ -26,6 +26,20 @@ Future<void> sheet(WidgetTester tester, {String? editId}) async {
   await tester.pumpAndSettle();
 }
 
+/// Tap something on the sheet, scrolling it into view first.
+///
+/// The sheet grows: a currency row arrived between the accounts and the note,
+/// and a chip that fitted on screen when its test was written does not stay
+/// fitted. Tapping one below the fold lands on whatever is at those
+/// coordinates instead — which is a pass or a fail depending on luck.
+Future<void> tapOnSheet(WidgetTester tester, Key key) async {
+  final f = find.byKey(key);
+  await tester.ensureVisible(f);
+  await tester.pumpAndSettle();
+  await tester.tap(f);
+  await tester.pumpAndSettle();
+}
+
 Future<void> press(WidgetTester tester, String k) async {
   await tester.tap(find.byKey(Key('key-$k')));
   await tester.pumpAndSettle();
@@ -185,10 +199,8 @@ void main() {
       catalog.addTag(kind: 'normal', name: '公司');
       await sheet(tester);
 
-      await tester.tap(find.byKey(const Key('tag-chip-报销')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('tag-chip-公司')));
-      await tester.pumpAndSettle();
+      await tapOnSheet(tester, const Key('tag-chip-报销'));
+      await tapOnSheet(tester, const Key('tag-chip-公司'));
       await press(tester, '5');
       await press(tester, 'save');
 
@@ -199,10 +211,8 @@ void main() {
       catalog.addTag(kind: 'normal', name: '报销');
       await sheet(tester);
 
-      await tester.tap(find.byKey(const Key('tag-chip-报销')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('tag-chip-报销')));
-      await tester.pumpAndSettle();
+      await tapOnSheet(tester, const Key('tag-chip-报销'));
+      await tapOnSheet(tester, const Key('tag-chip-报销'));
       await press(tester, '5');
       await press(tester, 'save');
 
@@ -220,8 +230,7 @@ void main() {
       catalog.addTag(kind: 'ledger', name: '旅行');
       await sheet(tester);
 
-      await tester.tap(find.byKey(const Key('ledger-chip-旅行')));
-      await tester.pumpAndSettle();
+      await tapOnSheet(tester, const Key('ledger-chip-旅行'));
       await press(tester, '5');
       await press(tester, 'save');
 
@@ -233,10 +242,8 @@ void main() {
       catalog.addTag(kind: 'ledger', name: '旅行');
       await sheet(tester);
 
-      await tester.tap(find.byKey(const Key('ledger-chip-旅行')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('ledger-chip-旅行')));
-      await tester.pumpAndSettle();
+      await tapOnSheet(tester, const Key('ledger-chip-旅行'));
+      await tapOnSheet(tester, const Key('ledger-chip-旅行'));
       await press(tester, '5');
       await press(tester, 'save');
 

@@ -241,6 +241,11 @@ void main() {
       await tester.pumpWidget(const MaterialApp(home: SettingsScreen()));
       await tester.pumpAndSettle();
 
+      // The note is the last thing on a screen that keeps growing, and a
+      // ListView does not build what is off screen.
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('settings-note')), 300);
+      await tester.pumpAndSettle();
       final note = tester.widget<Text>(find.byKey(const Key('settings-note')));
       expect(note.data, isNot(contains('导出')),
           reason: 'a list of what is missing has to stop naming what is here');

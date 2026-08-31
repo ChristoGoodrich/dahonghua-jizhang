@@ -164,8 +164,23 @@ void main() {
     testWidgets('says so, rather than listing rows that do nothing',
         (tester) async {
       await show(tester);
+      // The note is the last thing on a screen that keeps growing, and a
+      // ListView does not build what is off screen.
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('settings-note')), 300);
+      await tester.pumpAndSettle();
       expect(find.byKey(const Key('settings-note')), findsOneWidget);
-      expect(textOf(tester, 'settings-note'), contains('平台插件'));
+
+      // Asserted by what it NAMES rather than by its wording. A note listing
+      // absent features is only worth having while it is accurate, and the
+      // way it goes wrong is by still naming something that has since been
+      // built — which is exactly what a substring match on the sentence
+      // would not notice.
+      final note = textOf(tester, 'settings-note');
+      expect(note, contains('提醒'), reason: 'reminders really are missing');
+      expect(note, isNot(contains('锁屏')), reason: 'the lock is here now');
+      expect(note, isNot(contains('主题')), reason: 'so are themes');
+      expect(note, isNot(contains('导出')), reason: 'and so is export');
     });
   });
 }

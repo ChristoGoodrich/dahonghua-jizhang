@@ -29,6 +29,7 @@ import 'library_screen.dart';
 import 'me_screen.dart';
 import 'capture_screen.dart';
 import 'inbox.dart';
+import 'lock_gate.dart';
 import 'import_screen.dart';
 import 'persistence.dart';
 import 'record_sheet.dart' as sheet;
@@ -117,9 +118,15 @@ class _AppState extends State<App> {
     title: '大红花记账',
     debugShowCheckedModeBanner: false,
     theme: appTheme(),
-    home: Home(
-      store: widget.store,
-      onThemeChanged: () => setState(() {}),
+    // The gate wraps the shell rather than replacing it: covering the app
+    // keeps the navigator mounted, so unlocking returns to wherever the user
+    // was rather than to the first tab.
+    home: LockGate(
+      zh: store.language() != 'en',
+      child: Home(
+        store: widget.store,
+        onThemeChanged: () => setState(() {}),
+      ),
     ),
   );
 }

@@ -18,6 +18,7 @@ import 'package:share_plus/share_plus.dart';
 import 'src/rust/api/budget.dart' as budget;
 // `export` is a reserved word in Dart, so the prefix cannot be the module name.
 import 'src/rust/api/export.dart' as exporter;
+import 'src/rust/api/lock.dart' as lock;
 import 'src/rust/api/store.dart' as store;
 import 'src/rust/api/theme.dart' as theme;
 import 'theme.dart';
@@ -48,6 +49,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late int _cycleStart;
   late String _themeKey;
   late bool _dark;
+  late bool _lock;
 
   /// Change the palette, then throw away the cached one so the next read
   /// rebuilds it. The shell rebuilds too — a theme that only repainted the
@@ -121,6 +123,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _cycleStart = budget.settings().cycleStart;
     _themeKey = theme.themeKey();
     _dark = theme.isDark();
+    _lock = lock.lockEnabled();
   }
 
   void _setCycle(int day) {
@@ -243,6 +246,38 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ]),
           ]),
           const SizedBox(height: 20),
+          _group(zh ? '安全' : 'Security', [
+            Row(children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(zh ? '打开时验证' : 'Lock the app',
+                        style: TextStyle(fontSize: 15, color: palette.ink)),
+                    Text(
+                      zh
+                          ? '用手机自己的指纹或密码。没设过的手机不会被挡在门外。'
+                          : "Uses the phone's own fingerprint or passcode. A "
+                              'phone with neither set is not shut out.',
+                      style:
+                          TextStyle(fontSize: 12, color: palette.inkSoft),
+                    ),
+                  ],
+                ),
+              ),
+              Switch(
+                key: const Key('lock-toggle'),
+                value: _lock,
+                onChanged: (v) {
+                  lock.lockSetEnabled(enabled: v);
+                  setState(() => _lock = v);
+                  widget.onChanged?.call();
+                },
+                activeThumbColor: palette.hibiscus,
+              ),
+            ]),
+          ]),
+          const SizedBox(height: 20),
           _group(
             zh ? '账单周期' : 'Budget cycle',
             [
@@ -313,9 +348,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const SizedBox(height: 24),
           Text(
             zh
-                ? '锁屏、提醒和周报月报还没做 — 它们要等各自的平台插件。'
-                : 'App lock, reminders and scheduled reports are not here yet: '
-                    'each needs a platform plugin this build does not have.',
+                ? '提醒和周报月报还没做 — 它们要等通知插件。'
+                : 'Reminders and scheduled reports are not here yet: both need '
+                    'a notification plugin this build does not have.',
             key: const Key('settings-note'),
             style: TextStyle(fontSize: 11.5, color: palette.inkSoft),
           ),

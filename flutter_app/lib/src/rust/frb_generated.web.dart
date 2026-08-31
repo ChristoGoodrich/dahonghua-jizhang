@@ -17,6 +17,7 @@ import 'api/export.dart';
 import 'api/glass.dart';
 import 'api/history.dart';
 import 'api/imports.dart';
+import 'api/lock.dart';
 import 'api/money.dart';
 import 'api/networth.dart';
 import 'api/period.dart';
@@ -233,6 +234,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<LoanView> dco_decode_list_loan_view(dynamic raw);
 
   @protected
+  List<LockAction> dco_decode_list_lock_action(dynamic raw);
+
+  @protected
   List<PendingView> dco_decode_list_pending_view(dynamic raw);
 
   @protected
@@ -282,6 +286,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   LoanView dco_decode_loan_view(dynamic raw);
+
+  @protected
+  LockAction dco_decode_lock_action(dynamic raw);
 
   @protected
   NetWorthView dco_decode_net_worth_view(dynamic raw);
@@ -407,6 +414,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   int dco_decode_u_32(dynamic raw);
+
+  @protected
+  BigInt dco_decode_u_64(dynamic raw);
 
   @protected
   int dco_decode_u_8(dynamic raw);
@@ -639,6 +649,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<LoanView> sse_decode_list_loan_view(SseDeserializer deserializer);
 
   @protected
+  List<LockAction> sse_decode_list_lock_action(SseDeserializer deserializer);
+
+  @protected
   List<PendingView> sse_decode_list_pending_view(SseDeserializer deserializer);
 
   @protected
@@ -700,6 +713,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   LoanView sse_decode_loan_view(SseDeserializer deserializer);
+
+  @protected
+  LockAction sse_decode_lock_action(SseDeserializer deserializer);
 
   @protected
   NetWorthView sse_decode_net_worth_view(SseDeserializer deserializer);
@@ -837,6 +853,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   int sse_decode_u_32(SseDeserializer deserializer);
+
+  @protected
+  BigInt sse_decode_u_64(SseDeserializer deserializer);
 
   @protected
   int sse_decode_u_8(SseDeserializer deserializer);
@@ -1136,6 +1155,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_list_loan_view(List<LoanView> self, SseSerializer serializer);
 
   @protected
+  void sse_encode_list_lock_action(
+    List<LockAction> self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_list_pending_view(
     List<PendingView> self,
     SseSerializer serializer,
@@ -1224,6 +1249,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_loan_view(LoanView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_lock_action(LockAction self, SseSerializer serializer);
 
   @protected
   void sse_encode_net_worth_view(NetWorthView self, SseSerializer serializer);
@@ -1386,6 +1414,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_u_32(int self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_u_64(BigInt self, SseSerializer serializer);
 
   @protected
   void sse_encode_u_8(int self, SseSerializer serializer);

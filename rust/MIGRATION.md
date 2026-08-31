@@ -2250,6 +2250,65 @@ one, so the day the editor lands the argument is the only change.
 list that quietly dropped them would leave "18 rows" unexplained next to six
 entries. "3 rows, 3 already recorded" is the sentence a user can act on.
 
+### A component that was mostly not a component
+
+`LockGate.tsx` is 137 lines of which perhaps twenty draw anything. The rest is
+*when to prompt, when to open without asking, when to stay shut, and which
+answer belongs to which attempt* — and every comment in it is a bug somebody
+found. That made it the clearest case yet for the split this migration keeps
+drawing: the decisions are `lock.rs`, and Dart asks the device, watches the
+lifecycle and paints a cover.
+
+Five rules came across, each with the cost of getting it wrong written next to
+it:
+
+* **An attempt has an id and a stale one may not speak.** Android's
+  `BiometricPrompt` can be torn down by the OS without invoking its callback.
+  An attempt that settles later must not open the app, and must not clear a
+  newer attempt's in-flight flag.
+* **Pressing unlock supersedes a prompt already up.** Bailing out instead left
+  a hung prompt latching the flag on forever, and the button was dead with no
+  feedback until the process restarted.
+* **An error leaves the gate shut.** The first version unlocked. Some Android
+  devices throw after repeated failures, which turned the lock into a
+  formality.
+* **Nothing enrolled means open.** There is nothing to check against and
+  gating on it locks a user out of their own ledger.
+* **Only a real trip through the background supersedes.** iOS reports
+  `inactive` then `active` around its own dialog.
+
+No parity corpus. The TypeScript half would have to be a React component driven
+through a faked `expo-local-authentication` and a faked `AppState` — the shape
+the engine harness took, and a large piece of work for a module whose rules are
+each one sentence and each already written down in a comment. What it has
+instead is 26 unit tests that state the rules in those words, and injections
+that check they bite: making an error unlock fails one, removing the attempt
+check fails another. Said plainly here because "31 corpora" should not be read
+as covering this.
+
+### Three tests that could not exist on a device
+
+The lifecycle rules are the ones a device test cannot reach, and finding that
+out cost three attempts.
+
+`tester.binding.handleAppLifecycleStateChanged(paused)` does not *simulate* a
+pause on a real device. It causes one: the engine stops the frame pipeline, the
+driver loses the app it was driving, and the run hangs with the app alive and
+silent. `pumpAndSettle` was the first suspect and was wrong — settling waits
+for a frame that is not coming, but a plain `pump` hangs too, because the
+problem is upstream of pumping.
+
+So those three assertions live in the core, where a lifecycle is an enum rather
+than an operating system. What the device file keeps is the part this side owns
+— that each callback reaches the right event — and a comment saying why the
+rest is not there.
+
+One of the replacements was wrong on its first writing, in a way worth keeping:
+I asserted that `inactive` never re-locks. It does. The rule is narrower —
+`inactive` spares a prompt that is **actually up**, and with nothing being
+answered, leaving the foreground is leaving the foreground. There are two tests
+now, one for each side of that.
+
 ### The suite outgrew one run
 
 At 28 files and 506 tests the integration suite takes twenty minutes, and it

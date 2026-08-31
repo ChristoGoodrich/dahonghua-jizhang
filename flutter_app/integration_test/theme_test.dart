@@ -175,6 +175,11 @@ void main() {
         (tester) async {
       await showSettings(tester);
 
+      // The note is the last thing on a screen that keeps growing, and a
+      // ListView does not build what is off screen.
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('settings-note')), 300);
+      await tester.pumpAndSettle();
       final note = tester.widget<Text>(find.byKey(const Key('settings-note')));
       expect(note.data, isNot(contains('主题')));
     });
