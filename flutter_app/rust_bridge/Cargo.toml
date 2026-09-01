@@ -11,6 +11,10 @@ flutter_rust_bridge = "=2.12.0"
 # The domain crate. The bridge owns the FFI-shaped types; the core stays pure
 # and keeps answering to the parity harness rather than to Dart.
 dahonghua-core = { path = "../../rust/core" }
+# The ledger's storage. Rust owns the bytes now, not Dart — which means SQLite
+# has to cross-compile to three Android ABIs, and `bundled` compiles it from
+# source for each rather than trusting whatever libsqlite3 the phone ships.
+dahonghua-store = { path = "../../rust/store" }
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }

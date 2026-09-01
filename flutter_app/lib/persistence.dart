@@ -1,24 +1,24 @@
 // The ledger on disk.
 //
-// Rust owns the state and knows its shape; this owns the file and nothing else.
-// The split is the same one the whole migration draws — `snapshot_entries`
-// decides what a saved ledger *is*, and everything here is bytes, paths and a
-// timer.
+// Rust owns the state, the schema and the bytes; this owns the path and a
+// timer. That is a smaller job than this file used to have — it used to hold
+// the file too, reading and writing JSON — and the shrinking is the point.
+// `path_provider` knows where an app is allowed to write, which is genuinely
+// platform knowledge; everything after that is storage, and storage belongs
+// with the thing that owns the ledger.
 //
-// Two files rather than one, matching the React Native build's two AsyncStorage
-// keys. Renaming an account should not rewrite ten thousand entries, and a
-// write that fails halfway should not be able to take both with it.
+// What changed underneath: a save used to rewrite every entry. One edited note
+// re-serialised ten thousand rows and pushed the whole array back through the
+// filesystem. Now a save writes the rows that changed, in one transaction.
 //
-// What this is NOT: a way to open an existing React Native install. That
-// build's AsyncStorage is a SQLite database, not a file, so the *shape* is
-// shared and the storage is not. Moving an install across is platform work
-// that has not been done.
+// The old files are still read once, and then kept. See `_migrate`.
 
 import 'dart:async';
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
 
+import 'src/rust/api/db.dart' as db;
 import 'src/rust/api/store.dart' as store;
 
 class Persistence {
@@ -26,105 +26,138 @@ class Persistence {
 
   final Directory _dir;
   final Duration _debounce;
-  Timer? _entriesTimer;
-  Timer? _configTimer;
+  Timer? _timer;
 
-  /// A file that existed and could not be read.
+  /// Set when the database could not be opened or read.
   ///
-  /// Saving over it is the step that turns "unreadable" into "gone", so while
-  /// this is set the corresponding save is refused. A user who backs the file
-  /// up, or an update that can read it, still can.
-  bool entriesUnreadable = false;
-  bool configUnreadable = false;
+  /// While this is set every save is refused, for the reason the JSON version
+  /// refused them: writing over something unreadable is the step that turns a
+  /// recoverable problem into a permanent one. A user who copies the file
+  /// somewhere safe, or an update that can read it, still can.
+  String? openError;
 
-  File get _entriesFile => File('${_dir.path}/entries.json');
-  File get _configFile => File('${_dir.path}/config.json');
+  bool get healthy => openError == null;
 
-  /// Open the store's files and load whatever is in them.
-  ///
-  /// A missing file is a first launch, not a failure. A file that exists and
-  /// cannot be read is neither: the store is left alone and the save for that
-  /// file is refused, because writing over it is what would turn a recoverable
-  /// problem into a permanent one.
+  File get _dbFile => File('${_dir.path}/ledger.db');
+  File get _legacyEntries => File('${_dir.path}/entries.json');
+  File get _legacyConfig => File('${_dir.path}/config.json');
+
+  /// The last thing a save said, or null. Shown rather than interpreted: a
+  /// full disk and a file from a newer build are both worth reading, and
+  /// neither is something the UI can usefully branch on.
+  String? lastSaveError;
+
   static Future<Persistence> open({Directory? dir}) async {
     final d = dir ?? await getApplicationDocumentsDirectory();
     final p = Persistence._(
       d,
+      // From Rust, not from a literal here. The React Native build debounces
+      // by the same number, and what a save debounce actually decides is how
+      // much work a crash is allowed to lose — so both builds have to agree.
       Duration(milliseconds: store.persistDebounceMs()),
     );
-    await p._load();
+    await p._start();
     return p;
   }
 
-  Future<void> _load() async {
-    // config first: it carries the accounts an entry's `acct` points at, and a
-    // ledger that loaded before them would briefly name accounts that do not
-    // exist yet
-    if (await _configFile.exists()) {
-      configUnreadable = !store.loadConfig(json: await _configFile.readAsString());
+  Future<void> _start() async {
+    final err = db.openStore(path: _dbFile.path);
+    if (err.isNotEmpty) {
+      openError = err;
+      return;
     }
-    if (await _entriesFile.exists()) {
-      entriesUnreadable =
-          store.loadEntries(json: await _entriesFile.readAsString()) < 0;
+
+    await _migrate();
+
+    if (db.loadFromStore() < 0) {
+      openError = 'the ledger database could not be read';
     }
   }
 
-  /// Note that the ledger changed. The write happens after the debounce.
-  void touchEntries() {
-    _entriesTimer?.cancel();
-    _entriesTimer = Timer(_debounce, () => saveEntries());
+  /// Bring the old JSON files across, once.
+  ///
+  /// Reading them is still Dart's job because they are files, and because the
+  /// code that read them was already here and already correct about the thing
+  /// that matters: a file that exists and cannot be read is not an empty file.
+  ///
+  /// The files are **kept**, not deleted. A rename to `.bak` would be tidier
+  /// and is not worth it — this is the first run of new storage code against
+  /// the only copy of someone's ledger, and the cost of leaving two files
+  /// behind is a few hundred kilobytes, while the cost of being wrong about
+  /// the import is everything. They can be removed in a later release, once
+  /// this one has been run for a while by someone who would notice.
+  Future<void> _migrate() async {
+    if (db.alreadyMigrated()) return;
+    final hasEntries = await _legacyEntries.exists();
+    final hasConfig = await _legacyConfig.exists();
+    if (!hasEntries && !hasConfig) return;
+
+    String entries = '';
+    String config = '';
+    try {
+      if (hasEntries) entries = await _legacyEntries.readAsString();
+      if (hasConfig) config = await _legacyConfig.readAsString();
+    } catch (e) {
+      openError = 'the old ledger files could not be read: $e';
+      return;
+    }
+
+    // A file that exists and is empty is not an empty ledger — it is what a
+    // write killed partway leaves behind. Rust cannot tell the difference,
+    // because an absent file and an empty one both arrive as "". The
+    // distinction is file-shaped, so it is drawn on the side that holds files.
+    if (hasEntries && entries.trim().isEmpty) {
+      openError = 'the old ledger file is empty, which is not the same as '
+          'having no entries';
+      return;
+    }
+    if (hasConfig && config.trim().isEmpty) {
+      openError = 'the old config file is empty';
+      return;
+    }
+
+    final err = db.migrateFromJson(entriesJson: entries, configJson: config);
+    if (err.isNotEmpty) openError = err;
   }
 
-  void touchConfig() {
-    _configTimer?.cancel();
-    _configTimer = Timer(_debounce, () => saveConfig());
+  /// Note that something changed. The write happens after the debounce.
+  ///
+  /// One timer now rather than two. The old split existed because a config
+  /// change rewrote the whole ledger file otherwise; with row-level writes a
+  /// renamed account writes the config row and nothing else, so the two no
+  /// longer need separate schedules.
+  void touch() {
+    _timer?.cancel();
+    _timer = Timer(_debounce, save);
   }
+
+  /// Kept so callers that named the old methods keep working; both now mean
+  /// the same thing, because the storage no longer cares which changed.
+  void touchEntries() => touch();
+  void touchConfig() => touch();
 
   /// Write now, whatever the timer was going to do.
   ///
-  /// Called when the app is going to the background: a debounce that is still
-  /// counting when the process is killed is exactly the work a save debounce
-  /// trades away, and the moment the system says "you may be about to stop" is
-  /// the moment to stop trading.
+  /// Called when the app goes to the background: a debounce still counting
+  /// when the process is killed is exactly the work a debounce trades away,
+  /// and "you may be about to stop" is the moment to stop trading.
   Future<void> flush() async {
-    _entriesTimer?.cancel();
-    _configTimer?.cancel();
-    await saveEntries();
-    await saveConfig();
+    _timer?.cancel();
+    save();
   }
 
-  Future<void> saveEntries() async {
-    if (entriesUnreadable) return;
-    await _write(_entriesFile, store.snapshotEntries());
+  void save() {
+    if (!healthy) return;
+    final err = db.flushStore();
+    lastSaveError = err.isEmpty ? null : err;
   }
 
-  Future<void> saveConfig() async {
-    if (configUnreadable) return;
-    await _write(_configFile, store.snapshotConfig());
-  }
-
-  /// Write through a temporary file and rename over the target.
-  ///
-  /// A rename is atomic where a write is not. Writing in place means a process
-  /// killed mid-write leaves a truncated JSON file, which loads as *nothing* —
-  /// so an interrupted save would not lose the last few seconds of entries, it
-  /// would lose all of them.
-  Future<void> _write(File target, String contents) async {
-    final tmp = File('${target.path}.tmp');
-    try {
-      await tmp.writeAsString(contents, flush: true);
-      await tmp.rename(target.path);
-    } catch (_) {
-      // a failed save is not worth taking the app down for; the next change
-      // schedules another one, and the in-memory ledger is still intact
-      try {
-        if (await tmp.exists()) await tmp.delete();
-      } catch (_) {}
-    }
-  }
+  /// How many rows the next save would write. `-1` means all of them.
+  /// Exposed for tests — this number is the whole reason for the change.
+  int get pendingRows => db.dirtyEntryCount();
 
   void dispose() {
-    _entriesTimer?.cancel();
-    _configTimer?.cancel();
+    _timer?.cancel();
+    db.closeStore();
   }
 }

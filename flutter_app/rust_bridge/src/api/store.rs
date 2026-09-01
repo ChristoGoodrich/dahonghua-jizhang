@@ -35,6 +35,8 @@ use dahonghua_core::store::{ImportedBill, Store, TransferOpts};
 use flutter_rust_bridge::frb;
 use std::sync::{Mutex, MutexGuard, OnceLock};
 
+use crate::api::db;
+
 pub(crate) fn store() -> MutexGuard<'static, Store> {
     static STORE: OnceLock<Mutex<Store>> = OnceLock::new();
     let m = STORE.get_or_init(|| Mutex::new(Store::new()));
@@ -361,7 +363,9 @@ pub struct UndoToken {
 pub fn add_entry(entry: NewEntry, id: String, now: i64) -> String {
     let ts = entry.ts;
     let e: Entry = entry.into();
-    store().add_entry(e, id, ts, now)
+    let id = store().add_entry(e, id, ts, now);
+    db::mark(&id);
+    id
 }
 
 /// Edit an entry in place. Answers whether the id was found.
@@ -370,7 +374,11 @@ pub fn add_entry(entry: NewEntry, id: String, now: i64) -> String {
 /// devices editing *different* fields of one entry both keep their edit.
 #[frb(sync)]
 pub fn update_entry(id: String, patch: EntryPatch, now: i64) -> bool {
-    store().update_entry(&id, &patch.into(), now)
+    let found = store().update_entry(&id, &patch.into(), now);
+    if found {
+        db::mark(&id);
+    }
+    found
 }
 
 /// Soft-delete an entry, returning the token that reverses it.
@@ -380,12 +388,20 @@ pub fn update_entry(id: String, patch: EntryPatch, now: i64) -> bool {
 /// unknown.
 #[frb(sync)]
 pub fn remove_entry(id: String, now: i64) -> Option<UndoToken> {
-    store().remove_entry(&id, now).map(|u| UndoToken {
+    let token = store().remove_entry(&id, now).map(|u| UndoToken {
         id: u.id,
         child_ids: u.child_ids,
         refunded_id: u.refunded_id,
         prev_refund: u.prev_refund,
-    })
+    });
+    if let Some(t) = token.as_ref() {
+        db::mark(&t.id);
+        db::mark_many(t.child_ids.iter().cloned());
+        if let Some(r) = t.refunded_id.as_deref() {
+            db::mark(r);
+        }
+    }
+    token
 }
 
 /// Reverse a delete, as fresh stamped writes rather than a replayed snapshot.
@@ -395,6 +411,13 @@ pub fn remove_entry(id: String, now: i64) -> Option<UndoToken> {
 /// next pull would re-delete the entry.
 #[frb(sync)]
 pub fn unremove_entry(undo: UndoToken, now: i64) {
+    // Marked before the move, and the same three places the delete touched:
+    // the entry, its refunds, and the expense it was refunding.
+    db::mark(&undo.id);
+    db::mark_many(undo.child_ids.iter().cloned());
+    if let Some(r) = undo.refunded_id.as_deref() {
+        db::mark(r);
+    }
     store().unremove_entry(
         &dahonghua_core::ledger::RemoveUndo {
             id: undo.id,
@@ -434,7 +457,7 @@ pub struct NewTransfer {
 /// guard against.
 #[frb(sync)]
 pub fn add_transfer(transfer: NewTransfer, id: String, now: i64) -> String {
-    store().add_transfer(
+    let out = store().add_transfer(
         TransferOpts {
             from: transfer.from,
             to: transfer.to,
@@ -447,7 +470,11 @@ pub fn add_transfer(transfer: NewTransfer, id: String, now: i64) -> String {
         },
         id,
         now,
-    )
+    );
+    // A transfer is a pair of rows and only one id comes back. Marking
+    // everything is the honest answer to not knowing the other.
+    db::mark_all();
+    out
 }
 
 /// Import accepted bill rows in one write. Returns how many landed.
@@ -474,13 +501,16 @@ pub fn import_bills(
             ts: ts[i],
         })
         .collect();
-    store().import_bills(&bills, &ids, now) as u32
+    let n = store().import_bills(&bills, &ids, now) as u32;
+    db::mark_all();
+    n
 }
 
 /// Where the next entry defaults to.
 #[frb(sync)]
 pub fn set_current_account(id: String) {
     store().current_account = id;
+    db::mark_config();
 }
 
 // ---------- queries ----------

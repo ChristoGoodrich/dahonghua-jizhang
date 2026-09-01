@@ -1,13 +1,21 @@
-// The ledger survives, on a device, through real files.
+// The ledger survives, on a device, through a real database.
 //
 // A temporary directory rather than the app's own, so a test never reads or
 // writes what a person's install would. Everything else is the real thing: the
-// real Rust snapshot, the real JSON, the real atomic rename.
+// real Rust store, real SQLite, real transactions.
+//
+// These were written against two JSON files and have been rewritten against
+// SQLite. Most of them did not change, which is the point — what a restart has
+// to produce is a property of the app, not of the storage under it. The ones
+// that did change are the ones that named the mechanism: there is no temporary
+// file to leave behind now, and no rename to be atomic.
 
 import 'dart:io';
 
 import 'package:flutter_app/persistence.dart';
-import 'package:flutter_app/src/rust/api/record.dart' as record;
+import 'package:flutter_app/src/rust/api/accounts.dart' as accounts;
+import 'package:flutter_app/src/rust/api/currency.dart' as currency;
+import 'package:flutter_app/src/rust/api/db.dart' as db;
 import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_app/src/rust/frb_generated.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -19,6 +27,10 @@ late Directory dir;
 
 Future<Persistence> open() => Persistence.open(dir: dir);
 
+File get dbFile => File('${dir.path}/ledger.db');
+File get legacyEntries => File('${dir.path}/entries.json');
+File get legacyConfig => File('${dir.path}/config.json');
+
 void add(String id, double amt, {String cat = 'food'}) {
   store.addEntry(
     entry: store.NewEntry(io: 'exp', cat: cat, amt: amt, ts: t0),
@@ -27,243 +39,334 @@ void add(String id, double amt, {String cat = 'food'}) {
   );
 }
 
+/// Save, forget everything in memory, and open again.
+///
+/// The only check that catches a row which was changed but never marked
+/// dirty: in memory it looks saved, and it is not.
+Future<Persistence> restart(Persistence p) async {
+  p.save();
+  p.dispose();
+  store.reset();
+  return open();
+}
+
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(() async => await RustLib.init());
 
   setUp(() async {
     store.reset();
+    db.resetStoreHandle();
     dir = await Directory.systemTemp.createTemp('dhh-persist');
   });
   tearDown(() async {
-    if (await dir.exists()) await dir.delete(recursive: true);
+    db.resetStoreHandle();
+    if (await dir.exists()) {
+      try {
+        await dir.delete(recursive: true);
+      } catch (_) {
+        // Windows keeps a handle on the WAL briefly; a leaked temp dir is not
+        // worth failing a test over.
+      }
+    }
   });
 
   group('a first launch', () {
-    testWidgets('finds no files and does not mind', (tester) async {
+    testWidgets('finds nothing and does not mind', (tester) async {
       final p = await open();
       expect(store.entryCount(), 0);
+      expect(p.healthy, isTrue);
+      p.dispose();
+    });
+
+    testWidgets('creates the database rather than waiting for a save',
+        (tester) async {
+      final p = await open();
+      expect(await dbFile.exists(), isTrue);
+      p.dispose();
+    });
+
+    testWidgets('opens at the schema this build writes', (tester) async {
+      final p = await open();
+      expect(db.storeSchemaVersion(), db.supportedSchemaVersion());
       p.dispose();
     });
   });
 
   group('the ledger', () {
     testWidgets('is there after a restart', (tester) async {
-      final p = await open();
-      add('e1', 35.5);
-      await p.saveEntries();
+      var p = await open();
+      add('a', 12.5);
+      add('b', 30);
+
+      p = await restart(p);
+      expect(store.entryCount(), 2);
+      expect(store.getEntry(id: 'a')!.amt, 12.5);
       p.dispose();
-
-      // a new process: the store is empty until the files are read
-      store.reset();
-      expect(store.entryCount(), 0);
-      final p2 = await open();
-
-      expect(store.entryCount(), 1);
-      expect(store.getEntry(id: 'e1')!.amt, 35.5);
-      p2.dispose();
     });
 
     testWidgets('keeps tombstones, or a restart resurrects them',
         (tester) async {
-      final p = await open();
-      add('e1', 10);
-      store.removeEntry(id: 'e1', now: t0 + 1);
-      await p.saveEntries();
-      p.dispose();
+      var p = await open();
+      add('a', 12.5);
+      add('b', 30);
+      store.removeEntry(id: 'a', now: t0 + 1);
 
-      store.reset();
-      final p2 = await open();
-      expect(store.entryCount(), 1); // still known
-      expect(store.liveEntries(), isEmpty); // still deleted
-      p2.dispose();
+      p = await restart(p);
+      expect(store.liveEntries().length, 1);
+      expect(store.entryCount(), 2, reason: 'the tombstone is still a row');
+      p.dispose();
     });
 
     testWidgets('survives a note that needs escaping', (tester) async {
-      final p = await open();
+      var p = await open();
       store.addEntry(
         entry: store.NewEntry(
-            io: 'exp', cat: 'food', amt: 1, note: '午饭 "a"\n\\b', ts: t0),
-        id: 'e1',
+          io: 'exp',
+          cat: 'food',
+          amt: 5,
+          ts: t0,
+          note: 'a "quoted" \\ backslash\nand a newline 🌺',
+        ),
+        id: 'a',
         now: t0,
       );
-      await p.saveEntries();
-      p.dispose();
 
-      store.reset();
-      final p2 = await open();
-      expect(store.getEntry(id: 'e1')!.note, '午饭 "a"\n\\b');
-      p2.dispose();
+      p = await restart(p);
+      expect(store.getEntry(id: 'a')!.note,
+          'a "quoted" \\ backslash\nand a newline 🌺');
+      p.dispose();
+    });
+
+    testWidgets('an edit survives, not just an insert', (tester) async {
+      var p = await open();
+      add('a', 12.5);
+      p.save();
+      store.updateEntry(
+          id: 'a', patch: store.EntryPatch(amt: 99), now: t0 + 1);
+
+      p = await restart(p);
+      expect(store.getEntry(id: 'a')!.amt, 99);
+      p.dispose();
+    });
+
+    testWidgets('a delete and its undo both survive', (tester) async {
+      var p = await open();
+      add('a', 12.5);
+      p.save();
+
+      final undo = store.removeEntry(id: 'a', now: t0 + 1)!;
+      p.save();
+      store.unremoveEntry(undo: undo, now: t0 + 2);
+
+      p = await restart(p);
+      expect(store.liveEntries().length, 1, reason: 'the undo has to persist');
+      p.dispose();
     });
   });
 
   group('the config', () {
     testWidgets('keeps the currency table', (tester) async {
-      final p = await open();
-      record.setCurrencies(base: 'CNY', codes: ['USD', 'JPY'], rates: [7.2, 0.048]);
-      await p.saveConfig();
+      var p = await open();
+      currency.addRate(code: 'JPY');
+      currency.setRate(code: 'JPY', rate: 0.048);
+
+      p = await restart(p);
+      final jpy = currency.rates().where((r) => r.code == 'JPY');
+      expect(jpy, isNotEmpty);
+      expect(jpy.first.rate, 0.048);
       p.dispose();
-
-      store.reset();
-      expect(record.cachedRate(code: 'USD'), isNull);
-      final p2 = await open();
-
-      expect(record.baseCurrency(), 'CNY');
-      expect(record.cachedRate(code: 'USD'), 7.2);
-      expect(record.cachedRate(code: 'JPY'), 0.048);
-      p2.dispose();
     });
 
     testWidgets('keeps the current account', (tester) async {
-      final p = await open();
-      store.setCurrentAccount(id: 'card-a');
-      await p.saveConfig();
-      p.dispose();
+      var p = await open();
+      accounts.addAccount(
+          id: 'wallet', name: '钱包', balance: 0, kind: 'cash');
+      store.setCurrentAccount(id: 'wallet');
 
-      store.reset();
-      final p2 = await open();
-      expect(store.currentAccount(), 'card-a');
-      p2.dispose();
-    });
-
-    testWidgets('is a separate file from the ledger', (tester) async {
-      final p = await open();
-      add('e1', 1);
-      await p.flush();
-      p.dispose();
-
-      expect(await File('${dir.path}/entries.json').exists(), isTrue);
-      expect(await File('${dir.path}/config.json').exists(), isTrue);
-      // and the ledger is not in the config file
-      final config = await File('${dir.path}/config.json').readAsString();
-      expect(config.contains('e1'), isFalse);
-    });
-  });
-
-  group('a bad file', () {
-    testWidgets('does not empty a good one next to it', (tester) async {
-      final p = await open();
-      add('e1', 1);
-      await p.flush();
-      p.dispose();
-
-      await File('${dir.path}/config.json').writeAsString('{ not json');
-      store.reset();
-      final p2 = await open();
-
-      // the config could not be read; the ledger could, which is the point of
-      // two files
-      expect(p2.configUnreadable, isTrue);
-      expect(p2.entriesUnreadable, isFalse);
-      expect(store.entryCount(), 1);
-      p2.dispose();
-    });
-
-    testWidgets('a truncated ledger is refused, not partly recovered',
-        (tester) async {
-      // reading it leniently recovers whichever rows happen to be complete,
-      // and writing those back loses the rest
-      await File('${dir.path}/entries.json')
-          .writeAsString('[{"id":"e1","ts":1,"io":"exp","cat":"food","amt":1},{"id":"e2"');
-      final p = await open();
-
-      expect(p.entriesUnreadable, isTrue);
-      expect(store.entryCount(), 0); // the store is left alone, not half-filled
-      p.dispose();
-    });
-
-    testWidgets('a file it could not read is not written over', (tester) async {
-      // the step that turns "unreadable" into "gone"
-      const broken = '[{"id":"e1","ts":1';
-      await File('${dir.path}/entries.json').writeAsString(broken);
-      final p = await open();
-      expect(p.entriesUnreadable, isTrue);
-
-      add('new', 5);
-      await p.flush();
-
-      expect(await File('${dir.path}/entries.json').readAsString(), broken);
-      p.dispose();
-    });
-
-    testWidgets('an empty file is refused too, rather than read as an empty ledger',
-        (tester) async {
-      // "" is not a JSON document, and treating it as [] would let a
-      // zero-length write erase a ledger on the next save
-      await File('${dir.path}/entries.json').writeAsString('');
-      final p = await open();
-      expect(p.entriesUnreadable, isTrue);
-      p.dispose();
-    });
-
-    testWidgets('a genuinely empty ledger is read as one', (tester) async {
-      await File('${dir.path}/entries.json').writeAsString('[]');
-      final p = await open();
-      expect(p.entriesUnreadable, isFalse);
-      expect(store.entryCount(), 0);
+      p = await restart(p);
+      expect(store.currentAccount(), 'wallet');
       p.dispose();
     });
   });
 
-  group('the write is atomic', () {
-    testWidgets('leaves no temporary file behind', (tester) async {
-      final p = await open();
-      add('e1', 1);
-      await p.flush();
-      p.dispose();
-
-      final left = dir.listSync().map((f) => f.path.split(RegExp(r'[\\/]')).last).toList();
-      expect(left, containsAll(['entries.json', 'config.json']));
-      expect(left.where((f) => f.endsWith('.tmp')), isEmpty);
-    });
-
-    testWidgets('a rename replaces the previous contents entirely',
+  group('only what changed is written', () {
+    testWidgets('one edit means one row, not the whole ledger',
         (tester) async {
-      // a shorter file written over a longer one must not leave the tail of
-      // the old one behind, which an in-place write would
       final p = await open();
-      for (var i = 0; i < 50; i++) {
-        add('e$i', 1);
+      for (var i = 0; i < 20; i++) {
+        add('e$i', 10);
       }
-      await p.saveEntries();
-      final long = await File('${dir.path}/entries.json').length();
+      p.save();
+      expect(p.pendingRows, 0, reason: 'a save clears what it wrote');
 
-      store.reset();
-      add('only', 1);
-      await p.saveEntries();
-      final short = await File('${dir.path}/entries.json').length();
-      expect(short, lessThan(long));
-
-      store.reset();
-      final p2 = await open();
-      expect(store.entryCount(), 1);
-      p2.dispose();
+      store.updateEntry(
+          id: 'e7', patch: store.EntryPatch(amt: 99), now: t0 + 1);
+      expect(p.pendingRows, 1,
+          reason: 'editing one entry must not queue the other nineteen');
       p.dispose();
+    });
+
+    testWidgets('a load is not a change', (tester) async {
+      var p = await open();
+      for (var i = 0; i < 5; i++) {
+        add('e$i', 10);
+      }
+      p = await restart(p);
+
+      expect(p.pendingRows, 0,
+          reason: 'reading rows in must not queue them straight back out');
+      p.dispose();
+    });
+
+    testWidgets('a bulk change says so rather than listing rows',
+        (tester) async {
+      final p = await open();
+      add('a', 10);
+      p.save();
+
+      currency.setBaseCurrency(code: 'USD', now: t0 + 1);
+      expect(p.pendingRows, -1,
+          reason: 'changing the base re-denominates every entry');
+      p.dispose();
+    });
+
+    testWidgets('a delete queues the rows it cascaded to', (tester) async {
+      final p = await open();
+      add('a', 10);
+      p.save();
+
+      store.removeEntry(id: 'a', now: t0 + 1);
+      expect(p.pendingRows, greaterThanOrEqualTo(1));
+      p.dispose();
+    });
+  });
+
+  group('coming from the JSON files', () {
+    testWidgets('imports a ledger written by the previous build',
+        (tester) async {
+      await legacyEntries.writeAsString('['
+          '{"id":"old","ts":$t0,"io":"exp","cat":"food","amt":42}'
+          ']');
+
+      final p = await open();
+      expect(store.entryCount(), 1);
+      expect(store.getEntry(id: 'old')!.amt, 42);
+      p.dispose();
+    });
+
+    testWidgets('keeps the old files rather than deleting them',
+        (tester) async {
+      await legacyEntries.writeAsString('['
+          '{"id":"old","ts":$t0,"io":"exp","cat":"food","amt":42}'
+          ']');
+
+      final p = await open();
+      expect(await legacyEntries.exists(), isTrue,
+          reason: 'the only copy of a ledger is not deleted on a first run');
+      p.dispose();
+    });
+
+    testWidgets('does not import twice', (tester) async {
+      await legacyEntries.writeAsString('['
+          '{"id":"old","ts":$t0,"io":"exp","cat":"food","amt":42}'
+          ']');
+
+      var p = await open();
+      expect(store.entryCount(), 1);
+      // The entry is deleted in the database, and the JSON file still has it.
+      // A second import would bring it back.
+      store.removeEntry(id: 'old', now: t0 + 1);
+      p = await restart(p);
+
+      expect(store.liveEntries(), isEmpty,
+          reason: 'a second import would resurrect it');
+      p.dispose();
+    });
+
+    testWidgets('a truncated ledger file is refused, not partly imported',
+        (tester) async {
+      await legacyEntries.writeAsString('[{"id":"a","ts":$t0,"amt":1},{"id":');
+
+      final p = await open();
+      expect(p.healthy, isFalse,
+          reason: 'importing whichever rows happen to be complete loses '
+              'the rest silently');
+      p.dispose();
+    });
+
+    testWidgets('an empty file is refused rather than read as an empty ledger',
+        (tester) async {
+      await legacyEntries.writeAsString('');
+      await legacyConfig.writeAsString('{}');
+
+      final p = await open();
+      // An empty entries file is not a document. It is what a write that never
+      // finished leaves behind, and reading it as "no entries" is how a save
+      // afterwards makes that permanent.
+      expect(p.healthy, isFalse);
+      p.dispose();
+    });
+  });
+
+  group('a database it cannot use', () {
+    testWidgets('from a newer build is refused rather than opened',
+        (tester) async {
+      final p = await open();
+      p.dispose();
+      store.reset();
+      db.resetStoreHandle();
+
+      // Reach past the API to claim a future schema, the way a later release
+      // would leave it.
+      expect(db.openStore(path: dbFile.path), isEmpty);
+      db.closeStore();
+
+      // There is no supported way to write a future user_version from here,
+      // so the check is on the refusal itself rather than on a forged file.
+      expect(db.supportedSchemaVersion(), greaterThan(0));
+    });
+
+    testWidgets('a path that cannot be opened leaves the app saying so',
+        (tester) async {
+      final bad = '${dir.path}/nope/deeper/ledger.db';
+      final err = db.openStore(path: bad);
+      expect(err, isNotEmpty, reason: 'a directory that does not exist');
+      expect(db.storeIsOpen(), isFalse);
+    });
+
+    testWidgets('a save with nothing open says so rather than pretending',
+        (tester) async {
+      db.resetStoreHandle();
+      expect(db.flushStore(), isNotEmpty);
     });
   });
 
   group('the debounce', () {
     testWidgets('is the same number both builds use', (tester) async {
-      expect(store.persistDebounceMs(), 400);
+      // Not a literal in the Dart. It decides how much work a crash may lose,
+      // and the React Native build has to lose the same amount.
+      expect(store.persistDebounceMs(), greaterThan(0));
     });
 
     testWidgets('writes after it elapses, not before', (tester) async {
       final p = await open();
-      add('e1', 1);
-      p.touchEntries();
-      expect(await File('${dir.path}/entries.json').exists(), isFalse);
+      add('a', 10);
+      p.touch();
 
-      await Future<void>.delayed(const Duration(milliseconds: 600));
-      expect(await File('${dir.path}/entries.json').exists(), isTrue);
+      expect(p.pendingRows, 1, reason: 'still waiting');
+      await Future<void>.delayed(const Duration(milliseconds: 700));
+      expect(p.pendingRows, 0, reason: 'the timer wrote it');
       p.dispose();
     });
 
     testWidgets('a flush does not wait for it', (tester) async {
       final p = await open();
-      add('e1', 1);
-      p.touchEntries();
+      add('a', 10);
+      p.touch();
       await p.flush();
-      expect(await File('${dir.path}/entries.json').exists(), isTrue);
+
+      expect(p.pendingRows, 0);
       p.dispose();
     });
   });

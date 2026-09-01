@@ -1,0 +1,35 @@
+[package]
+name = "dahonghua-store"
+description = "The ledger on disk for 大红花记账 — SQLite, owned by Rust."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+# The domain crate, for `Entry` and the JSON encoding the app's own on-disk
+# shape is already defined in. This crate decides where rows live, never what
+# they mean.
+dahonghua-core = { path = "../core" }
+
+# The second dependency in this workspace, and deliberately not in `core`.
+#
+# `core` has exactly one dependency and the parity corpus is why: it is the
+# crate whose every answer is checked against the TypeScript, and a crate that
+# could touch a disk is a crate whose answers depend on one. SQLite lives out
+# here instead, on the other side of that line, so `core` stays a pure function
+# of its inputs and this crate is the only thing that can fail because a phone
+# is full.
+#
+# `bundled` compiles SQLite from source rather than linking the platform's.
+# Android ships its own libsqlite3, and using it would mean the storage format
+# depended on which Android version the phone is running — the one thing a
+# ledger file must not depend on.
+rusqlite = { version = "0.32", features = ["bundled"] }
+
+[dev-dependencies]
+# The tests reach past this crate's API on purpose: writing a corrupt row, or a
+# trigger that refuses one, is how a failure gets injected rather than
+# described. A test that can only use the happy-path API can only test the
+# happy path.
+rusqlite = { version = "0.32", features = ["bundled"] }

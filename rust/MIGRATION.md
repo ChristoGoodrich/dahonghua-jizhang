@@ -2962,6 +2962,89 @@ that. `path_provider` supplies the directory; `rusqlite` does the rest.
 are Android components rather than React Native ones, and only their binding to
 the app changes.
 
+## Phase 2, finished — persistence moves to Rust
+
+The plan said `rusqlite` and the core owning the bytes. It took until now
+because the JSON files worked, and a thing that works is the hardest kind of
+thing to justify replacing.
+
+What they could not do is write *part* of a ledger. Every change re-serialised
+every entry and pushed the whole array back through the filesystem — fine at a
+hundred entries, wrong at ten thousand, and it degrades gradually enough that
+nobody notices the day it starts mattering. Everything else about them was
+good: atomic through a temp file and a rename, debounced, and refusing to
+overwrite a file they could not read.
+
+### The crate is not `core`
+
+`dahonghua-store` is a new workspace member depending on `dahonghua-core` and
+`rusqlite`. It is deliberately not inside `core`, which still has exactly one
+dependency.
+
+The parity corpus is the reason. `core` is the crate whose every answer is
+checked against the TypeScript, and a crate that can touch a disk is a crate
+whose answers depend on one. Persistence is not domain logic; it goes on the
+other side of that line, and `core` stays a pure function of its inputs.
+
+`bundled` compiles SQLite from source for each Android ABI rather than linking
+the platform's. Android ships its own libsqlite3, and using it would make the
+storage format depend on which Android version the phone is running — the one
+thing a ledger file must not depend on. It costs 2.7 MB in the arm64 library.
+
+### The rows are documents
+
+`entries` has five columns and one of them is the entry, as the app's own JSON.
+Not twenty-five columns, which is what "we moved to SQLite" usually means.
+
+The app does not query in SQL — `core::Ledger` holds the ledger in memory and
+answers everything there, so a wide table buys queryability nothing asks for.
+The encoding in `core::rows` is already the on-disk shape and already checked
+against the TypeScript, so a backup from either build stays readable by the
+other. And `Entry` grows: a wide table needs a schema migration every time a
+field is added, written under time pressure against someone's only copy of
+their data. What *is* a column is what gets ordered or searched — the id, the
+timestamp, and the two sync stamps.
+
+### Which rows get written, and the risk that carries
+
+The bridge keeps a dirty set. A mutation that forgets to mark its rows saves
+nothing, silently, and the loss only appears after a restart — so the rule is
+that doubt resolves in one direction: any operation that can touch rows it was
+not handed marks **everything**. A delete cascading to refunds, an account
+removal reassigning entries, a base-currency change re-denominating the ledger,
+any bulk import. Only operations whose blast radius the core reports exactly —
+and `RemoveUndo` reports it exactly, which is what `child_ids` and
+`refunded_id` are for — get a narrow mark.
+
+The check that matters is not the dirty count. It is `restart()` in the tests:
+save, drop everything in memory, reopen, and look for the change. Removing the
+mark from `update_entry` fails two tests, and the one worth having is the
+restart, because it is the one that demonstrates the data was actually lost.
+
+### Two things this got wrong first
+
+**The Android build went green having compiled nothing.** The function proving
+the store was linked returned `SCHEMA_VERSION` — a `const`, inlined at the call
+site, so the constant reached the APK while every line of SQLite was dead-
+stripped behind it. The same shape as the release build's silent `logger.warn`:
+a check that cannot fail is not a check. Opening a real connection and reading
+the pragma back is a claim the linker cannot satisfy by inlining, and the arm64
+library then contained SQLite 3.46.0 and 940 references to it.
+
+**An empty legacy file became readable.** The JSON build refused an empty
+`entries.json`, because that is what a write killed partway leaves behind and
+not what "no entries" looks like. The migration lost that: an absent file and
+an empty one both arrive in Rust as `""`. The distinction is file-shaped, so it
+is drawn on the side that holds files.
+
+### The old files are kept
+
+Migration is one-time, marked in the database rather than by the files' absence,
+and the JSON is **not deleted**. This is the first run of new storage code
+against the only copy of someone's ledger; two files cost a few hundred
+kilobytes and being wrong costs everything. A later release can remove them,
+once this one has been run for a while by someone who would notice.
+
 ## Phase 5 — shipping it
 
 Everything above is about whether the app is right. This is about whether it is

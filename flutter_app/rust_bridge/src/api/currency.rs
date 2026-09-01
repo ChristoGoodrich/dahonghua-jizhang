@@ -25,6 +25,7 @@ use flutter_rust_bridge::frb;
 use std::collections::BTreeMap;
 
 use super::store::{currencies_of, set_currencies_inner, set_settings_inner, settings_of};
+use crate::api::db;
 
 /// One tracked currency and what it is worth.
 #[derive(Debug, Clone, PartialEq)]
@@ -79,6 +80,7 @@ fn base_code(c: &Currencies) -> String {
 /// and [`set_base_currency`] refuses anything unusable at the point it matters.
 #[frb(sync)]
 pub fn set_rate(code: String, rate: f64) {
+    db::mark_config();
     let mut c = currencies_of();
     core::set_rate(&mut c, &code, rate);
     set_currencies_inner(c);
@@ -90,6 +92,7 @@ pub fn set_rate(code: String, rate: f64) {
 /// `if (!rates[code])` is a truthiness test, and a rate of zero is not a rate.
 #[frb(sync)]
 pub fn add_rate(code: String) {
+    db::mark_config();
     let mut c = currencies_of();
     core::add_rate(&mut c, &code);
     set_currencies_inner(c);
@@ -97,6 +100,7 @@ pub fn add_rate(code: String) {
 
 #[frb(sync)]
 pub fn remove_rate(code: String) {
+    db::mark_config();
     let mut c = currencies_of();
     core::remove_rate(&mut c, &code);
     set_currencies_inner(c);
@@ -105,6 +109,9 @@ pub fn remove_rate(code: String) {
 /// What a base switch did: `ok` | `same` | `noRate`.
 #[frb(sync)]
 pub fn set_base_currency(code: String, now: i64) -> String {
+    // Changing the base currency re-denominates every entry in the
+    // ledger, which is as bulk as a change gets.
+    db::mark_all();
     // Five guards, held in this order and this order only:
     //
     //   store → subscriptions → networth(assets) → networth(loans)

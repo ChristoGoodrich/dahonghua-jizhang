@@ -18,6 +18,7 @@ use dahonghua_core::networth;
 use flutter_rust_bridge::frb;
 
 use super::store::{store, AccountView};
+use crate::api::db;
 
 /// An account with its live balance.
 #[derive(Debug, Clone, PartialEq)]
@@ -114,6 +115,7 @@ pub fn add_account(
     due_day: Option<u32>,
     fx_code: Option<String>,
 ) -> String {
+    db::mark_config();
     let mut s = store();
     let a = core::add_account(
         &mut s.accounts,
@@ -136,6 +138,9 @@ pub fn add_account(
 /// would have nowhere to move its entries to.
 #[frb(sync)]
 pub fn remove_account(id: String, now: i64) -> bool {
+    // Removing an account reassigns every entry that pointed at it, and
+    // the core reports back only whether it found the account.
+    db::mark_all();
     let mut s = store();
     let store_ref = &mut *s;
     core::remove_account(
@@ -153,6 +158,7 @@ pub fn remove_account(id: String, now: i64) -> bool {
 /// the next record sheet does not open on an account the picker will not show.
 #[frb(sync)]
 pub fn archive_account(id: String, archived: bool) -> bool {
+    db::mark_config();
     let mut s = store();
     let store_ref = &mut *s;
     core::archive_account(
