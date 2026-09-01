@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/ic_launcher_background" />
+    <foreground android:drawable="@mipmap/ic_launcher_foreground" />
+    <!--
+      The themed-icon layer, for launchers that tint every icon to the
+      wallpaper. Android draws it as a silhouette, so it is a separate piece
+      of art rather than the foreground recoloured — the flower has to read
+      as one shape once its detail is gone.
+    -->
+    <monochrome android:drawable="@mipmap/ic_launcher_monochrome" />
+</adaptive-icon>

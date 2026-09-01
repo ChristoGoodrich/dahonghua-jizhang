@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The two strings the OS shows outside the app: the launcher label, and the
+  name of the notification listener in Android's own Settings screen. Both are
+  read by the system rather than by Flutter, so they cannot come from the app's
+  own locale handling — they live here, in Android's.
+-->
+<resources>
+    <string name="app_name">大红花记账</string>
+    <string name="notif_service_name">大红花记账 · 自动记账</string>
+</resources>

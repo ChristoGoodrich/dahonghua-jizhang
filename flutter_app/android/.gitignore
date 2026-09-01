@@ -12,3 +12,9 @@ GeneratedPluginRegistrant.java
 key.properties
 **/*.keystore
 **/*.jks
+
+# Gradle's own output. `/build/` in flutter_app/.gitignore is anchored to that
+# directory and does not reach this one, so the first `flutter build apk` here
+# left several hundred megabytes staged and untracked.
+/build/
+**/build/

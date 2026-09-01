@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      The paper the app is printed on. `#FBF7F0` is the light theme's
+      background, so the window the OS paints before Flutter has drawn a frame
+      is already the right colour and the app does not flash white.
+    -->
+    <color name="splash_background">#FBF7F0</color>
+
+    <!--
+      The adaptive icon's background layer. Not night-aware on purpose: a
+      launcher icon that changed colour with the system theme would stop being
+      the thing users look for on a home screen.
+    -->
+    <color name="ic_launcher_background">#FBF7F0</color>
+</resources>

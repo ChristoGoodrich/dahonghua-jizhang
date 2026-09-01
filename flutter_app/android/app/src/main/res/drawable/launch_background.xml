@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Modify this file to customize your launch splash screen -->
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@android:color/white" />
+<!--
+  What the OS shows between tapping the icon and Flutter's first frame.
 
-    <!-- You can insert your own image assets here -->
-    <!-- <item>
+  `@color/splash_background` has a values-night variant, so this one file is
+  both themes: light paper, dark ink, chosen by the system before any of this
+  app's code has run. That is the whole reason the colour is a resource rather
+  than a literal here.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/splash_background" />
+    <item>
         <bitmap
             android:gravity="center"
-            android:src="@mipmap/launch_image" />
-    </item> -->
+            android:src="@drawable/splash" />
+    </item>
 </layer-list>
