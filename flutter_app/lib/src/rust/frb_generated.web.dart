@@ -7,6 +7,7 @@
 // ignore_for_file: argument_type_not_assignable
 
 import 'api/accounts.dart';
+import 'api/acct.dart';
 import 'api/backup.dart';
 import 'api/budget.dart';
 import 'api/calc.dart';
@@ -55,6 +56,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   AccountView dco_decode_account_view(dynamic raw);
+
+  @protected
+  AcctRowView dco_decode_acct_row_view(dynamic raw);
 
   @protected
   AssetView dco_decode_asset_view(dynamic raw);
@@ -199,6 +203,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<AccountView> dco_decode_list_account_view(dynamic raw);
+
+  @protected
+  List<AcctRowView> dco_decode_list_acct_row_view(dynamic raw);
 
   @protected
   List<AssetView> dco_decode_list_asset_view(dynamic raw);
@@ -464,6 +471,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   AccountView sse_decode_account_view(SseDeserializer deserializer);
 
   @protected
+  AcctRowView sse_decode_acct_row_view(SseDeserializer deserializer);
+
+  @protected
   AssetView sse_decode_asset_view(SseDeserializer deserializer);
 
   @protected
@@ -618,6 +628,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<AccountView> sse_decode_list_account_view(SseDeserializer deserializer);
+
+  @protected
+  List<AcctRowView> sse_decode_list_acct_row_view(SseDeserializer deserializer);
 
   @protected
   List<AssetView> sse_decode_list_asset_view(SseDeserializer deserializer);
@@ -920,6 +933,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_account_view(AccountView self, SseSerializer serializer);
 
   @protected
+  void sse_encode_acct_row_view(AcctRowView self, SseSerializer serializer);
+
+  @protected
   void sse_encode_asset_view(AssetView self, SseSerializer serializer);
 
   @protected
@@ -1120,6 +1136,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_account_view(
     List<AccountView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_acct_row_view(
+    List<AcctRowView> self,
     SseSerializer serializer,
   );
 

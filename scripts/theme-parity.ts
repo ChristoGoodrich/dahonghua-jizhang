@@ -27,7 +27,11 @@ for (const line of raw.split('\n')) {
   const [rawKey, darkFlag, field] = l.split('\t');
   const key = keyOf(rawKey);
   const dark = darkFlag === '1';
-  const t = makeTheme(key, dark) as Record<string, unknown>;
+  // Through `unknown`: `Theme` has named fields and no index signature, so
+  // TypeScript refuses the direct cast — correctly, since the whole point here
+  // is to look a field up by a name that comes from the corpus rather than
+  // from the type. This is the harness reaching past the type on purpose.
+  const t = makeTheme(key, dark) as unknown as Record<string, unknown>;
 
   let value: string;
   if (field === 'swatch') {

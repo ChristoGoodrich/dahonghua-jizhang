@@ -5,6 +5,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { observer } from '@legendapp/state/react';
 import { store$ } from '@/store/ledger';
 import { acctBalance } from '@/domain/networth';
+import { acctRows } from '@/features/assets/acctRows';
 import { statementSummary } from '@/domain/statement';
 import { catOf, catName } from '@/domain/cats';
 import { fmt, fmtNum } from '@/domain/money';
@@ -31,20 +32,7 @@ export default observer(function AccountDetailScreen() {
   };
 
   // entries touching this account, newest first, with the delta they applied here
-  const rows = useMemo(() => {
-    if (!id) return [] as { d: Entry; delta: number }[];
-    const out: { d: Entry; delta: number }[] = [];
-    for (const d of data) {
-      if (d.deletedAt) continue;
-      if (d.io === 'xfer') {
-        if (d.acct === id) out.push({ d, delta: -(d.amt + (d.fee ?? 0)) });
-        else if (d.acctTo === id) out.push({ d, delta: d.amt + (d.discount ?? 0) });
-      } else if (d.acct === id || (!d.acct && id === 'default')) {
-        out.push({ d, delta: d.io === 'inc' ? d.amt : -d.amt });
-      }
-    }
-    return out.sort((a, b) => b.d.ts - a.d.ts);
-  }, [data, id]);
+  const rows = useMemo(() => acctRows(id ?? '', data), [data, id]);
 
   const bal = account ? acctBalance(account.id, accounts, data) : 0;
   const owed = account?.kind === 'credit' && bal < 0;

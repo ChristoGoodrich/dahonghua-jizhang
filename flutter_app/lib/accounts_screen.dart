@@ -17,6 +17,7 @@ import 'src/rust/api/accounts.dart' as accounts;
 import 'src/rust/api/money.dart' as money;
 import 'src/rust/api/statement.dart' as statement;
 import 'src/rust/api/store.dart' as store;
+import 'account_detail_screen.dart';
 import 'theme.dart';
 
 class AccountsScreen extends StatefulWidget {
@@ -35,6 +36,7 @@ class AccountsScreen extends StatefulWidget {
 class _AccountsScreenState extends State<AccountsScreen> {
   List<accounts.AccountBalance> _rows = const [];
   double _total = 0;
+
   /// Per credit card, or absent when it has no cycle configured.
   Map<String, statement.StatementView> _statements = const {};
 
@@ -114,8 +116,10 @@ class _AccountsScreenState extends State<AccountsScreen> {
       builder: (ctx) => AlertDialog(
         key: const Key('delete-dialog'),
         backgroundColor: palette.card,
-        title: Text(zh ? '删除账户' : 'Delete account',
-            style: TextStyle(fontSize: 16, color: palette.ink)),
+        title: Text(
+          zh ? '删除账户' : 'Delete account',
+          style: TextStyle(fontSize: 16, color: palette.ink),
+        ),
         content: Text(
           zh
               ? '「${_name(a)}」上的记录会移到默认账户,不会被删除。'
@@ -149,8 +153,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
   @override
   Widget build(BuildContext context) {
     final zh = widget.zh;
-    final shown =
-        _rows.where((a) => _showArchived || !a.archived).toList();
+    final shown = _rows.where((a) => _showArchived || !a.archived).toList();
     final archivedCount = _rows.where((a) => a.archived).length;
 
     return Scaffold(
@@ -158,9 +161,14 @@ class _AccountsScreenState extends State<AccountsScreen> {
       appBar: AppBar(
         backgroundColor: palette.paper,
         surfaceTintColor: Colors.transparent,
-        title: Text(zh ? '账户' : 'Accounts',
-            style: TextStyle(
-                color: palette.ink, fontSize: 20, fontWeight: FontWeight.w700)),
+        title: Text(
+          zh ? '账户' : 'Accounts',
+          style: TextStyle(
+            color: palette.ink,
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
         actions: [
           IconButton(
             key: const Key('add-account'),
@@ -173,20 +181,21 @@ class _AccountsScreenState extends State<AccountsScreen> {
         padding: const EdgeInsets.fromLTRB(22, 6, 22, 120),
         children: [
           _totalCard(zh),
-          if (_due.isNotEmpty) ...[
-            const SizedBox(height: 14),
-            _dueBanner(zh),
-          ],
+          if (_due.isNotEmpty) ...[const SizedBox(height: 14), _dueBanner(zh)],
           const SizedBox(height: 16),
-          for (final a in shown) _row(a, zh),
+          for (final a in shown) _row(context, a, zh),
           if (archivedCount > 0)
             TextButton(
               key: const Key('toggle-archived'),
               onPressed: () => setState(() => _showArchived = !_showArchived),
               style: TextButton.styleFrom(foregroundColor: palette.inkSoft),
-              child: Text(_showArchived
-                  ? (zh ? '隐藏已归档' : 'Hide archived')
-                  : (zh ? '显示已归档($archivedCount)' : 'Show archived ($archivedCount)')),
+              child: Text(
+                _showArchived
+                    ? (zh ? '隐藏已归档' : 'Hide archived')
+                    : (zh
+                          ? '显示已归档($archivedCount)'
+                          : 'Show archived ($archivedCount)'),
+              ),
             ),
         ],
       ),
@@ -194,33 +203,35 @@ class _AccountsScreenState extends State<AccountsScreen> {
   }
 
   Widget _totalCard(bool zh) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        decoration: BoxDecoration(
-          color: palette.card,
-          borderRadius: BorderRadius.circular(Rad.lg),
-          border: Border.all(color: palette.line),
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+    decoration: BoxDecoration(
+      color: palette.card,
+      borderRadius: BorderRadius.circular(Rad.lg),
+      border: Border.all(color: palette.line),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          zh ? '账户合计' : 'Total',
+          style: TextStyle(fontSize: 12, color: palette.inkSoft),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(zh ? '账户合计' : 'Total',
-                style: TextStyle(fontSize: 12, color: palette.inkSoft)),
-            const SizedBox(height: 3),
-            Text(
-              money.fmt(n: _total, symbol: zh ? '￥' : '\$'),
-              key: const Key('acct-total'),
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
-                fontFeatures: tabular,
-                // a negative total is a real state — a credit card with a
-                // balance owed — so it is coloured rather than hidden
-                color: _total < 0 ? palette.hibiscus : palette.ink,
-              ),
-            ),
-          ],
+        const SizedBox(height: 3),
+        Text(
+          money.fmt(n: _total, symbol: zh ? '￥' : '\$'),
+          key: const Key('acct-total'),
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.w700,
+            fontFeatures: tabular,
+            // a negative total is a real state — a credit card with a
+            // balance owed — so it is coloured rather than hidden
+            color: _total < 0 ? palette.hibiscus : palette.ink,
+          ),
         ),
-      );
+      ],
+    ),
+  );
 
   /// Where a credit card is in its cycle, under its balance.
   ///
@@ -259,7 +270,9 @@ class _AccountsScreenState extends State<AccountsScreen> {
             fontSize: 11.5,
             // Overdue is the one state worth a colour. Everything else here is
             // information; this one is a thing to go and do.
-            color: (st.daysToDue ?? 1) < 0 ? palette.hibiscusDeep : palette.inkSoft,
+            color: (st.daysToDue ?? 1) < 0
+                ? palette.hibiscusDeep
+                : palette.inkSoft,
           ),
         ),
     ];
@@ -285,34 +298,37 @@ class _AccountsScreenState extends State<AccountsScreen> {
   /// halfway down a list is not a reminder. Overdue reads first — it is sorted
   /// by days remaining and a negative count sorts before a positive one.
   Widget _dueBanner(bool zh) => Container(
-        key: const Key('due-banner'),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        decoration: BoxDecoration(
-          color: palette.hibiscus.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(Rad.md),
-          border: Border.all(color: palette.hibiscus.withValues(alpha: 0.35)),
+    key: const Key('due-banner'),
+    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+    decoration: BoxDecoration(
+      color: palette.hibiscus.withValues(alpha: 0.08),
+      borderRadius: BorderRadius.circular(Rad.md),
+      border: Border.all(color: palette.hibiscus.withValues(alpha: 0.35)),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          zh ? '要还款了' : 'Payments due',
+          style: TextStyle(
+            fontSize: 12.5,
+            fontWeight: FontWeight.w700,
+            color: palette.hibiscusDeep,
+          ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(zh ? '要还款了' : 'Payments due',
-                style: TextStyle(
-                    fontSize: 12.5,
-                    fontWeight: FontWeight.w700,
-                    color: palette.hibiscusDeep)),
-            const SizedBox(height: 4),
-            for (final d in _due)
-              Padding(
-                key: Key('due-${d.accountId}'),
-                padding: const EdgeInsets.only(top: 2),
-                child: Text(
-                  _dueBannerLine(d, zh),
-                  style: TextStyle(fontSize: 12, color: palette.ink),
-                ),
-              ),
-          ],
-        ),
-      );
+        const SizedBox(height: 4),
+        for (final d in _due)
+          Padding(
+            key: Key('due-${d.accountId}'),
+            padding: const EdgeInsets.only(top: 2),
+            child: Text(
+              _dueBannerLine(d, zh),
+              style: TextStyle(fontSize: 12, color: palette.ink),
+            ),
+          ),
+      ],
+    ),
+  );
 
   String _dueBannerLine(statement.DueView d, bool zh) {
     final amt = money.fmt(n: d.billedDue, symbol: zh ? '￥' : '\$');
@@ -322,14 +338,16 @@ class _AccountsScreenState extends State<AccountsScreen> {
           : '${d.accountName} $amt · ${-d.daysToDue} days overdue';
     }
     if (d.daysToDue == 0) {
-      return zh ? '${d.accountName} $amt · 今天' : '${d.accountName} $amt · today';
+      return zh
+          ? '${d.accountName} $amt · 今天'
+          : '${d.accountName} $amt · today';
     }
     return zh
         ? '${d.accountName} $amt · 还有 ${d.daysToDue} 天'
         : '${d.accountName} $amt · in ${d.daysToDue} days';
   }
 
-  Widget _row(accounts.AccountBalance a, bool zh) {
+  Widget _row(BuildContext context, accounts.AccountBalance a, bool zh) {
     final kindLabel = switch (a.kind) {
       'credit' => zh ? '信用' : 'Credit',
       'prepaid' => zh ? '储值' : 'Prepaid',
@@ -338,94 +356,112 @@ class _AccountsScreenState extends State<AccountsScreen> {
     };
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        decoration: BoxDecoration(
-          color: palette.card,
-          borderRadius: BorderRadius.circular(Rad.md),
-          border: Border.all(color: palette.line),
+      child: InkWell(
+        key: Key('acct-${a.id}-open'),
+        borderRadius: BorderRadius.circular(Rad.md),
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => AccountDetailScreen(id: a.id, zh: zh),
+          ),
         ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(children: [
-                    Text(_name(a),
-                        key: Key('acct-${a.id}-name'),
-                        style: TextStyle(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            color: palette.card,
+            borderRadius: BorderRadius.circular(Rad.md),
+            border: Border.all(color: palette.line),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          _name(a),
+                          key: Key('acct-${a.id}-name'),
+                          style: TextStyle(
                             fontSize: 14.5,
                             fontWeight: FontWeight.w600,
-                            color: palette.ink)),
-                    const SizedBox(width: 6),
-                    _chip(kindLabel, palette.inkSoft),
-                    if (a.archived) ...[
-                      const SizedBox(width: 4),
-                      _chip(zh ? '已归档' : 'Archived', palette.stamen),
-                    ],
-                  ]),
-                  const SizedBox(height: 2),
-                  Text(
-                    money.fmt(n: a.balance, symbol: zh ? '￥' : '\$'),
-                    key: Key('acct-${a.id}-bal'),
-                    style: TextStyle(
-                      fontSize: 15.5,
-                      fontWeight: FontWeight.w700,
-                      fontFeatures: tabular,
-                      color: a.balance < 0 ? palette.hibiscus : palette.ink,
+                            color: palette.ink,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        _chip(kindLabel, palette.inkSoft),
+                        if (a.archived) ...[
+                          const SizedBox(width: 4),
+                          _chip(zh ? '已归档' : 'Archived', palette.stamen),
+                        ],
+                      ],
                     ),
-                  ),
-                  ..._statementLine(a, zh),
-                ],
-              ),
-            ),
-            // Neither button is offered for the default account: it is the
-            // fallback every orphaned entry migrates to, so the core refuses
-            // both, and a button that does nothing when pressed is worse than
-            // no button at all.
-            if (!a.isDefault) ...[
-              IconButton(
-                key: Key('acct-${a.id}-archive'),
-                tooltip: a.archived
-                    ? (zh ? '取消归档' : 'Unarchive')
-                    : (zh ? '归档' : 'Archive'),
-                icon: Icon(
-                  a.archived
-                      ? Icons.unarchive_outlined
-                      : Icons.archive_outlined,
-                  size: 20,
-                  color: palette.inkSoft,
+                    const SizedBox(height: 2),
+                    Text(
+                      money.fmt(n: a.balance, symbol: zh ? '￥' : '\$'),
+                      key: Key('acct-${a.id}-bal'),
+                      style: TextStyle(
+                        fontSize: 15.5,
+                        fontWeight: FontWeight.w700,
+                        fontFeatures: tabular,
+                        color: a.balance < 0 ? palette.hibiscus : palette.ink,
+                      ),
+                    ),
+                    ..._statementLine(a, zh),
+                  ],
                 ),
-                onPressed: () {
-                  accounts.archiveAccount(id: a.id, archived: !a.archived);
-                  _changed();
-                },
               ),
-              IconButton(
-                key: Key('acct-${a.id}-delete'),
-                tooltip: zh ? '删除' : 'Delete',
-                icon: Icon(Icons.delete_outline,
-                    size: 20, color: palette.hibiscus),
-                onPressed: () => _confirmDelete(a),
-              ),
+              // Neither button is offered for the default account: it is the
+              // fallback every orphaned entry migrates to, so the core refuses
+              // both, and a button that does nothing when pressed is worse than
+              // no button at all.
+              if (!a.isDefault) ...[
+                IconButton(
+                  key: Key('acct-${a.id}-archive'),
+                  tooltip: a.archived
+                      ? (zh ? '取消归档' : 'Unarchive')
+                      : (zh ? '归档' : 'Archive'),
+                  icon: Icon(
+                    a.archived
+                        ? Icons.unarchive_outlined
+                        : Icons.archive_outlined,
+                    size: 20,
+                    color: palette.inkSoft,
+                  ),
+                  onPressed: () {
+                    accounts.archiveAccount(id: a.id, archived: !a.archived);
+                    _changed();
+                  },
+                ),
+                IconButton(
+                  key: Key('acct-${a.id}-delete'),
+                  tooltip: zh ? '删除' : 'Delete',
+                  icon: Icon(
+                    Icons.delete_outline,
+                    size: 20,
+                    color: palette.hibiscus,
+                  ),
+                  onPressed: () => _confirmDelete(a),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
   }
 
   Widget _chip(String text, Color tone) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-        decoration: BoxDecoration(
-          color: tone.withValues(alpha: 0.14),
-          borderRadius: BorderRadius.circular(Rad.pill),
-        ),
-        child: Text(text,
-            style: TextStyle(
-                fontSize: 10, fontWeight: FontWeight.w700, color: tone)),
-      );
+    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+    decoration: BoxDecoration(
+      color: tone.withValues(alpha: 0.14),
+      borderRadius: BorderRadius.circular(Rad.pill),
+    ),
+    child: Text(
+      text,
+      style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: tone),
+    ),
+  );
 }
 
 /// The new-account form.
@@ -462,13 +498,13 @@ class _NewAccountDialogState extends State<_NewAccountDialog> {
   /// is amber. The app theme fixes it globally; this fixes it for a dialog
   /// shown under a bare `MaterialApp`, which is how the tests show it.
   InputDecoration _fieldStyle(String label) => InputDecoration(
-        labelText: label,
-        labelStyle: TextStyle(color: palette.inkSoft),
-        floatingLabelStyle: TextStyle(color: palette.stamen),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: palette.stamen, width: 2),
-        ),
-      );
+    labelText: label,
+    labelStyle: TextStyle(color: palette.inkSoft),
+    floatingLabelStyle: TextStyle(color: palette.stamen),
+    focusedBorder: UnderlineInputBorder(
+      borderSide: BorderSide(color: palette.stamen, width: 2),
+    ),
+  );
 
   void _submit() {
     final name = _name.text.trim();
@@ -496,43 +532,47 @@ class _NewAccountDialogState extends State<_NewAccountDialog> {
     required int? value,
     required void Function(int?) onPick,
     required bool zh,
-  }) =>
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+  }) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const SizedBox(height: 12),
+      Text(label, style: TextStyle(fontSize: 12, color: palette.inkSoft)),
+      const SizedBox(height: 6),
+      Wrap(
+        spacing: 6,
+        runSpacing: 6,
         children: [
-          const SizedBox(height: 12),
-          Text(label, style: TextStyle(fontSize: 12, color: palette.inkSoft)),
-          const SizedBox(height: 6),
-          Wrap(
-            spacing: 6,
-            runSpacing: 6,
-            children: [
-              for (final d in const [1, 5, 10, 15, 20, 25, 28])
-                GestureDetector(
-                  key: Key('$keyPrefix-$d'),
-                  // Tapping the chosen one clears it: a card whose cycle was
-                  // set by mistake needs a way back to unset, and unset is a
-                  // real state the core reads as "no cycle configured".
-                  onTap: () => onPick(value == d ? null : d),
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: value == d
-                          ? palette.stamen.withValues(alpha: 0.18)
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(Rad.pill),
-                      border: Border.all(
-                          color: value == d ? palette.stamen : palette.line),
-                    ),
-                    child: Text('$d',
-                        style: TextStyle(fontSize: 12, color: palette.ink)),
+          for (final d in const [1, 5, 10, 15, 20, 25, 28])
+            GestureDetector(
+              key: Key('$keyPrefix-$d'),
+              // Tapping the chosen one clears it: a card whose cycle was
+              // set by mistake needs a way back to unset, and unset is a
+              // real state the core reads as "no cycle configured".
+              onTap: () => onPick(value == d ? null : d),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
+                decoration: BoxDecoration(
+                  color: value == d
+                      ? palette.stamen.withValues(alpha: 0.18)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(Rad.pill),
+                  border: Border.all(
+                    color: value == d ? palette.stamen : palette.line,
                   ),
                 ),
-            ],
-          ),
+                child: Text(
+                  '$d',
+                  style: TextStyle(fontSize: 12, color: palette.ink),
+                ),
+              ),
+            ),
         ],
-      );
+      ),
+    ],
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -540,78 +580,83 @@ class _NewAccountDialogState extends State<_NewAccountDialog> {
     return AlertDialog(
       key: const Key('new-account-dialog'),
       backgroundColor: palette.card,
-      title: Text(zh ? '新建账户' : 'New account',
-          style: TextStyle(fontSize: 16, color: palette.ink)),
+      title: Text(
+        zh ? '新建账户' : 'New account',
+        style: TextStyle(fontSize: 16, color: palette.ink),
+      ),
       // Scrollable because a credit card adds two more rows, and a dialog that
       // overflows on a short screen loses its buttons.
       content: SingleChildScrollView(
         child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            key: const Key('new-name'),
-            controller: _name,
-            autofocus: true,
-            cursorColor: palette.stamen,
-            decoration: _fieldStyle(zh ? '名称' : 'Name'),
-          ),
-          TextField(
-            key: const Key('new-balance'),
-            controller: _balance,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            cursorColor: palette.stamen,
-            decoration: _fieldStyle(zh ? '初始余额' : 'Opening balance'),
-          ),
-          const SizedBox(height: 14),
-          Wrap(
-            spacing: 6,
-            children: [
-              for (final k in ['cash', 'credit', 'prepaid', 'fx'])
-                GestureDetector(
-                  key: Key('kind-$k'),
-                  onTap: () => setState(() => _kind = k),
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: _kind == k
-                          ? palette.stamen.withValues(alpha: 0.18)
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(Rad.pill),
-                      border: Border.all(
-                          color: _kind == k ? palette.stamen : palette.line),
-                    ),
-                    child: Text(
-                      switch (k) {
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              key: const Key('new-name'),
+              controller: _name,
+              autofocus: true,
+              cursorColor: palette.stamen,
+              decoration: _fieldStyle(zh ? '名称' : 'Name'),
+            ),
+            TextField(
+              key: const Key('new-balance'),
+              controller: _balance,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              cursorColor: palette.stamen,
+              decoration: _fieldStyle(zh ? '初始余额' : 'Opening balance'),
+            ),
+            const SizedBox(height: 14),
+            Wrap(
+              spacing: 6,
+              children: [
+                for (final k in ['cash', 'credit', 'prepaid', 'fx'])
+                  GestureDetector(
+                    key: Key('kind-$k'),
+                    onTap: () => setState(() => _kind = k),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
+                      decoration: BoxDecoration(
+                        color: _kind == k
+                            ? palette.stamen.withValues(alpha: 0.18)
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(Rad.pill),
+                        border: Border.all(
+                          color: _kind == k ? palette.stamen : palette.line,
+                        ),
+                      ),
+                      child: Text(switch (k) {
                         'credit' => zh ? '信用' : 'Credit',
                         'prepaid' => zh ? '储值' : 'Prepaid',
                         'fx' => zh ? '外币' : 'FX',
                         _ => zh ? '现金' : 'Cash',
-                      },
-                      style: TextStyle(fontSize: 12, color: palette.ink),
+                      }, style: TextStyle(fontSize: 12, color: palette.ink)),
                     ),
                   ),
-                ),
+              ],
+            ),
+            if (_kind == 'credit') ...[
+              _dayPicker(
+                keyPrefix: 'stmt-day',
+                label: zh ? '出账日' : 'Statement day',
+                value: _statementDay,
+                onPick: (d) => setState(() => _statementDay = d),
+                zh: zh,
+              ),
+              _dayPicker(
+                keyPrefix: 'due-day',
+                label: zh ? '还款日' : 'Due day',
+                value: _dueDay,
+                onPick: (d) => setState(() => _dueDay = d),
+                zh: zh,
+              ),
             ],
-          ),
-          if (_kind == 'credit') ...[
-            _dayPicker(
-              keyPrefix: 'stmt-day',
-              label: zh ? '出账日' : 'Statement day',
-              value: _statementDay,
-              onPick: (d) => setState(() => _statementDay = d),
-              zh: zh,
-            ),
-            _dayPicker(
-              keyPrefix: 'due-day',
-              label: zh ? '还款日' : 'Due day',
-              value: _dueDay,
-              onPick: (d) => setState(() => _dueDay = d),
-              zh: zh,
-            ),
           ],
-        ],
-      )),
+        ),
+      ),
       actions: [
         TextButton(
           key: const Key('new-cancel'),

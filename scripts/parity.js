@@ -147,6 +147,12 @@ const MODULES = [
     example: 'dump_sync',
   },
   {
+    name: 'acct',
+    corpus: 'rust/parity/acct-corpus.tsv',
+    ts: 'scripts/acct-parity.ts',
+    example: 'dump_acct',
+  },
+  {
     name: 'list',
     corpus: 'rust/parity/list-corpus.tsv',
     ts: 'scripts/list-parity.ts',

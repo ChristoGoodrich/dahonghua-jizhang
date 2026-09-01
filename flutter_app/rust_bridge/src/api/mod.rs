@@ -6,6 +6,7 @@
 //! corpus, which is what makes it trustworthy in the first place.
 
 pub mod accounts;
+pub mod acct;
 pub mod backup;
 pub mod budget;
 pub mod calc;

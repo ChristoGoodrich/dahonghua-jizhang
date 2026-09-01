@@ -89,6 +89,7 @@ Adding a module to the harness:
 | `features/list` grouping → `list` | 60 | **Ported**, 2,819-case parity — the first UI logic across |
 | `features/record` form → `record` | 230 | **Ported**, 3,987-case parity — the record sheet's judgement |
 | `features/stats` geometry → `chart` | 40 | **Ported**, 2,940-case parity — where a chart's points go |
+| `features/assets/acctRows` (extracted) | 18 | **Ported**, 5,400-case parity — the account detail screen's rules |
 | UI (21 routes, 72 components) | ~11,000 | **Flutter decided**; the decisions come out screen by screen, as above |
 
 ## Phase 1 — the domain crate (in progress)
@@ -3118,6 +3119,65 @@ cannot resolve; a sync folder keeps both copies under different names. That is
 survivable rather than fatal — the merge is idempotent and order-independent,
 so merging both copies in either order converges. Worth knowing, not worth
 preventing.
+
+## The last screen, and a corpus that could not see
+
+`account-detail` was the one route the React Native app had and this one did
+not. Porting it turned up two things worth more than the screen.
+
+### The logic was inside a component
+
+The rules — which entries belong to an account, and the number at the end of
+each row — lived in a `useMemo` in `app/account-detail.tsx`. There was nothing
+for the parity harness to call.
+
+So it was **extracted in TypeScript first**, into
+`src/features/assets/acctRows.ts`, and the component now uses it. That is the
+precedent `src/features/list/grouping.ts` set: parity runs against the shipping
+code, and a second implementation written to be compared against is not the
+shipping code. All 919 React Native tests stay green.
+
+The rules are not symmetric and each is a decision. A transfer appears on both
+accounts with **different** deltas — the sender pays the fee, the recipient
+takes the discount, so the two rows are not negatives of each other. An entry
+with no account belongs to `default`, and an *empty string* is also no account
+because JavaScript's `!d.acct` is falsy for both. That last rule does not
+extend to transfers, which always name both sides.
+
+### The corpus was blind to the property the module claims
+
+5,400 cases, zero divergence on the first run. Three injections: dropping the
+recipient's discount failed 172 cases, treating an empty `acct` as a named
+account failed 431 — and replacing the stable sort with a tie-break by id
+failed **nothing**.
+
+The generator numbered entries `e0, e1, e2…` in input order, so sorting by id
+and preserving input order are the same answer for every case it produced. The
+module's comment says the sort must be stable because JavaScript's is; the
+corpus could not tell whether that was true. Ids are now drawn from a
+deliberately unsorted pool, and the same injection fails 201 cases.
+
+A corpus that agrees is not evidence until something has been shown to make it
+disagree.
+
+### An injection that never happened
+
+The screen-side injection was applied with `python -c "..."`, and the shell
+expanded `\$` inside the double quotes. The pattern no longer matched, the
+replace silently did nothing, the script printed "injected" anyway, and all 13
+tests passed.
+
+Third instance of one shape in this project: the `sed` ampersand, the `const`
+that inlined so the linker dropped every line of SQLite, and now this. **A
+check that cannot fail is not a check.** Injections now assert the pattern was
+found before writing, so a no-op is an error rather than a green run.
+
+### Also fixed: the TypeScript side was not green
+
+`npm run typecheck` had been failing since the theme work —
+`scripts/theme-parity.ts` casts a `Theme` to a keyed record and needs to go
+through `unknown` to do it. The rule at the bottom of this document says the
+TypeScript app stays shippable and green the entire time. It had not been.
 
 ## Phase 5 — shipping it
 
