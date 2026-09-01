@@ -53,6 +53,21 @@ List<int> csvBytes() {
 /// content rather than about the bytes.
 String csv() => utf8.decode(csvBytes().skip(3).toList());
 
+/// Tap a control on the settings screen, scrolling it into view first.
+///
+/// The screen keeps growing — reminders arrived above this button — and a
+/// ListView does not build what is off screen. Tapping a control below the
+/// fold lands on whatever is at those coordinates instead.
+Future<void> tapSetting(WidgetTester tester, Key key) async {
+  // `scrollUntilVisible`, not `ensureVisible`: the latter needs the widget to
+  // be in the tree already, and a ListView does not build what is off screen
+  // at all. There is nothing to make visible until the scroll has built it.
+  await tester.scrollUntilVisible(find.byKey(key), 300);
+  await tester.pumpAndSettle();
+  await tester.tap(find.byKey(key));
+  await tester.pumpAndSettle();
+}
+
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(() async => await RustLib.init());
@@ -154,8 +169,7 @@ void main() {
       ));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byKey(const Key('export-csv')));
-      await tester.pumpAndSettle();
+      await tapSetting(tester, const Key('export-csv'));
 
       expect(shared, isNotNull);
       final file = File(shared!);
@@ -170,8 +184,7 @@ void main() {
         home: SettingsScreen(share: (p) async => shared = p),
       ));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('export-csv')));
-      await tester.pumpAndSettle();
+      await tapSetting(tester, const Key('export-csv'));
 
       final name = shared!.split(RegExp(r'[/\\]')).last;
       expect(name, startsWith('dahonghua-'));
@@ -187,8 +200,7 @@ void main() {
       ));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byKey(const Key('export-csv')));
-      await tester.pumpAndSettle();
+      await tapSetting(tester, const Key('export-csv'));
 
       expect(find.text('已导出 3 条'), findsOneWidget);
     });
@@ -201,8 +213,7 @@ void main() {
       ));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byKey(const Key('export-csv')));
-      await tester.pumpAndSettle();
+      await tapSetting(tester, const Key('export-csv'));
 
       expect(find.text('导出失败了'), findsOneWidget);
     });
@@ -214,8 +225,7 @@ void main() {
         home: SettingsScreen(share: (p) async => shared = p),
       ));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('export-csv')));
-      await tester.pumpAndSettle();
+      await tapSetting(tester, const Key('export-csv'));
 
       final bytes = await File(shared!).readAsBytes();
       expect(bytes.take(3).toList(), [0xEF, 0xBB, 0xBF]);
@@ -230,9 +240,10 @@ void main() {
       ));
       await tester.pumpAndSettle();
 
-      expect(find.text('Export CSV'), findsOneWidget);
-      await tester.tap(find.byKey(const Key('export-csv')));
+      await tester.scrollUntilVisible(find.byKey(const Key('export-csv')), 300);
       await tester.pumpAndSettle();
+      expect(find.text('Export CSV'), findsOneWidget);
+      await tapSetting(tester, const Key('export-csv'));
       expect(find.text('Exported 1'), findsOneWidget);
     });
 
@@ -247,8 +258,16 @@ void main() {
         find.byKey(const Key('settings-note')), 300);
       await tester.pumpAndSettle();
       final note = tester.widget<Text>(find.byKey(const Key('settings-note')));
-      expect(note.data, isNot(contains('导出')),
-          reason: 'a list of what is missing has to stop naming what is here');
+
+      // The note is allowed to say xlsx export is not done — that one is a
+      // decision, and it says why. What it may not do is leave `导出`
+      // unqualified, which reads as "this app cannot export" to someone who
+      // has just used the button three lines above.
+      for (final sentence in note.data!.split('。')) {
+        if (!sentence.contains('导出')) continue;
+        expect(sentence, contains('xlsx'),
+            reason: 'a list of what is missing has to stop naming what is here');
+      }
     });
   });
 }

@@ -24,6 +24,7 @@ pub mod period;
 pub mod rates;
 pub mod record;
 pub mod reimburse;
+pub mod remind;
 pub mod report;
 pub mod search;
 pub mod statement;

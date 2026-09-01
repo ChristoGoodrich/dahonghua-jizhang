@@ -19,8 +19,10 @@ import 'src/rust/api/budget.dart' as budget;
 // `export` is a reserved word in Dart, so the prefix cannot be the module name.
 import 'src/rust/api/export.dart' as exporter;
 import 'src/rust/api/lock.dart' as lock;
+import 'src/rust/api/remind.dart' as remind;
 import 'src/rust/api/store.dart' as store;
 import 'src/rust/api/theme.dart' as theme;
+import 'reminders.dart';
 import 'theme.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -29,6 +31,7 @@ class SettingsScreen extends StatefulWidget {
     this.zh = true,
     this.onChanged,
     this.share,
+    this.notifier,
   });
 
   final bool zh;
@@ -41,6 +44,10 @@ class SettingsScreen extends StatefulWidget {
   /// part worth testing is the file — that it exists, and what is in it.
   final Future<void> Function(String path)? share;
 
+  /// Who receives the schedules. A test cannot drive the notification
+  /// service; what is worth testing is which schedules it is handed.
+  final Notifier? notifier;
+
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
@@ -50,6 +57,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late String _themeKey;
   late bool _dark;
   late bool _lock;
+  late String _remindAt;
+  late bool _weekly;
+  late bool _monthly;
+
+  /// Hand the operating system whatever is switched on, and say so if it
+  /// refuses. A switch left on that schedules nothing is worse than no switch.
+  Future<void> _syncReminders() async {
+    final ok = await syncReminders(
+      zh: widget.zh,
+      notifier: widget.notifier,
+    );
+    if (!mounted) return;
+    setState(() => _flash = ok
+        ? null
+        : (widget.zh
+            ? '系统没给通知权限，提醒发不出来'
+            : 'Notifications are not permitted, so nothing will arrive'));
+    widget.onChanged?.call();
+  }
 
   /// Change the palette, then throw away the cached one so the next read
   /// rebuilds it. The shell rebuilds too — a theme that only repainted the
@@ -124,6 +150,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _themeKey = theme.themeKey();
     _dark = theme.isDark();
     _lock = lock.lockEnabled();
+    _remindAt = remind.dailyReminderAt();
+    _weekly = remind.weeklyReportOn();
+    _monthly = remind.monthlyReportOn();
   }
 
   void _setCycle(int day) {
@@ -246,6 +275,97 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ]),
           ]),
           const SizedBox(height: 20),
+          _group(zh ? '提醒' : 'Reminders', [
+            Text(
+              zh
+                  ? '每天一次，加上周报和月报。时间是手机的本地时间，跟着手机走。'
+                  : 'A daily nudge, plus a weekly and a monthly summary. The '
+                      'times are this phone\u2019s local time and travel with it.',
+              style: TextStyle(fontSize: 12, color: palette.inkSoft),
+            ),
+            const SizedBox(height: 12),
+            Row(children: [
+              Text(zh ? '每日提醒' : 'Daily',
+                  style: TextStyle(fontSize: 15, color: palette.ink)),
+              const Spacer(),
+              // Off is a real state, so the row of times includes a way back to
+              // it: tapping the chosen one again turns the reminder off.
+              Wrap(
+                spacing: 6,
+                children: [
+                  for (final t in const ['08:00', '12:00', '21:00', '22:00'])
+                    GestureDetector(
+                      key: Key('remind-$t'),
+                      onTap: () async {
+                        final next = _remindAt == t ? '' : t;
+                        remind.setDailyReminder(at: next);
+                        setState(() => _remindAt = remind.dailyReminderAt());
+                        await _syncReminders();
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 9, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: _remindAt == t
+                              ? palette.stamen.withValues(alpha: 0.18)
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(Rad.pill),
+                          border: Border.all(
+                              color: _remindAt == t
+                                  ? palette.stamen
+                                  : palette.line),
+                        ),
+                        child: Text(t,
+                            style: TextStyle(
+                                fontSize: 11.5, color: palette.ink)),
+                      ),
+                    ),
+                ],
+              ),
+            ]),
+            const SizedBox(height: 6),
+            Text(
+              _remindAt.isEmpty
+                  ? (zh ? '现在：关着' : 'Currently: off')
+                  : (zh ? '现在：$_remindAt' : 'Currently: $_remindAt'),
+              key: const Key('remind-current'),
+              style: TextStyle(fontSize: 12, color: palette.inkSoft),
+            ),
+            const SizedBox(height: 10),
+            Row(children: [
+              Expanded(
+                child: Text(zh ? '周报（周日晚上）' : 'Weekly report (Sunday evening)',
+                    style: TextStyle(fontSize: 14, color: palette.ink)),
+              ),
+              Switch(
+                key: const Key('weekly-toggle'),
+                value: _weekly,
+                onChanged: (v) async {
+                  remind.setWeeklyReport(enabled: v);
+                  setState(() => _weekly = v);
+                  await _syncReminders();
+                },
+                activeThumbColor: palette.hibiscus,
+              ),
+            ]),
+            Row(children: [
+              Expanded(
+                child: Text(zh ? '月报（1 号早上）' : 'Monthly report (1st, morning)',
+                    style: TextStyle(fontSize: 14, color: palette.ink)),
+              ),
+              Switch(
+                key: const Key('monthly-toggle'),
+                value: _monthly,
+                onChanged: (v) async {
+                  remind.setMonthlyReport(enabled: v);
+                  setState(() => _monthly = v);
+                  await _syncReminders();
+                },
+                activeThumbColor: palette.hibiscus,
+              ),
+            ]),
+          ]),
+          const SizedBox(height: 20),
           _group(zh ? '安全' : 'Security', [
             Row(children: [
               Expanded(
@@ -348,9 +468,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const SizedBox(height: 24),
           Text(
             zh
-                ? '提醒和周报月报还没做 — 它们要等通知插件。'
-                : 'Reminders and scheduled reports are not here yet: both need '
-                    'a notification plugin this build does not have.',
+                ? '表格导出（xlsx）不做 — CSV 表格软件都认得，而写 xlsx 要给核心加一堆依赖。'
+                : 'Spreadsheet (xlsx) export is deliberately absent: CSV opens '
+                    'in every spreadsheet, and writing xlsx would cost the core '
+                    'a pile of dependencies.',
             key: const Key('settings-note'),
             style: TextStyle(fontSize: 11.5, color: palette.inkSoft),
           ),

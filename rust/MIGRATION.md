@@ -2250,6 +2250,41 @@ one, so the day the editor lands the argument is the only change.
 list that quietly dropped them would leave "18 rows" unexplained next to six
 entries. "3 rows, 3 already recorded" is the sentence a user can act on.
 
+### A defect the port declines to reproduce
+
+Reminders are wired, and porting them turned up a bug in the shipping app that
+this port deliberately does not carry across.
+
+`scheduleCustomReminder` and `scheduleDailyReminder` both call
+`cancelAllScheduledNotificationsAsync()` before scheduling — and only those two
+do. So turning the daily reminder on silently cancels the weekly and the
+monthly report. Whether a user has the reports they switched on depends on the
+order they last touched three unrelated switches, and nothing anywhere says so.
+
+The rule this project has followed is to reproduce faithfully, because a
+difference nobody chose is a divergence and the corpus exists to catch exactly
+that. This is the other case: not a decision that happens to look odd, but a
+defect with nothing downstream depending on it. Every schedule has a stable id
+now, and the platform cancels **by id**. Turning one on cannot touch another.
+
+Two smaller things came out of the same decision. "Cancel all" is a claim over
+notifications this app never posted, which is worth not making even when it
+happens to be harmless. And the ids have to be stable across releases: a changed
+id orphans whatever the OS already holds under the old one, leaving a
+notification nothing in the app can cancel.
+
+The injection that proves the tests see it took two attempts, and the first was
+the interesting one. Cancelling everything *before* scheduling the daily leaves
+the reports scheduled after it — the tests passed, and they were right to. The
+real shape is cancel-all-then-schedule-only-the-daily, and that fails two tests.
+An injection is a claim about the code; if it does not reproduce the defect it
+names, a green run says nothing about either.
+
+And a zero in between was not a zero at all: the emulator had gone, the run
+reported "no devices", and `grep -c` on the log dutifully returned 0 failures.
+The same trap as the `sed` ampersand earlier, and the same rule — a sweep has to
+be in a position to make the claim before its result means anything.
+
 ### A component that was mostly not a component
 
 `LockGate.tsx` is 137 lines of which perhaps twenty draw anything. The rest is

@@ -21,6 +21,7 @@ import 'api/period.dart';
 import 'api/rates.dart';
 import 'api/record.dart';
 import 'api/reimburse.dart';
+import 'api/remind.dart';
 import 'api/report.dart';
 import 'api/search.dart';
 import 'api/statement.dart';
@@ -244,6 +245,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Float64List dco_decode_list_prim_f_64_strict(dynamic raw);
 
   @protected
+  Int32List dco_decode_list_prim_i_32_strict(dynamic raw);
+
+  @protected
   Int64List dco_decode_list_prim_i_64_strict(dynamic raw);
 
   @protected
@@ -263,6 +267,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<RowErrorView> dco_decode_list_row_error_view(dynamic raw);
+
+  @protected
+  List<ScheduleView> dco_decode_list_schedule_view(dynamic raw);
 
   @protected
   List<SliceView> dco_decode_list_slice_view(dynamic raw);
@@ -379,6 +386,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   SaveResult dco_decode_save_result(dynamic raw);
+
+  @protected
+  ScheduleView dco_decode_schedule_view(dynamic raw);
 
   @protected
   SettingsView dco_decode_settings_view(dynamic raw);
@@ -659,6 +669,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Float64List sse_decode_list_prim_f_64_strict(SseDeserializer deserializer);
 
   @protected
+  Int32List sse_decode_list_prim_i_32_strict(SseDeserializer deserializer);
+
+  @protected
   Int64List sse_decode_list_prim_i_64_strict(SseDeserializer deserializer);
 
   @protected
@@ -682,6 +695,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<RowErrorView> sse_decode_list_row_error_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  List<ScheduleView> sse_decode_list_schedule_view(
     SseDeserializer deserializer,
   );
 
@@ -816,6 +834,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   SaveResult sse_decode_save_result(SseDeserializer deserializer);
+
+  @protected
+  ScheduleView sse_decode_schedule_view(SseDeserializer deserializer);
 
   @protected
   SettingsView sse_decode_settings_view(SseDeserializer deserializer);
@@ -1177,6 +1198,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_list_prim_i_32_strict(
+    Int32List self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_list_prim_i_64_strict(
     Int64List self,
     SseSerializer serializer,
@@ -1209,6 +1236,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_row_error_view(
     List<RowErrorView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_schedule_view(
+    List<ScheduleView> self,
     SseSerializer serializer,
   );
 
@@ -1373,6 +1406,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_save_result(SaveResult self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_schedule_view(ScheduleView self, SseSerializer serializer);
 
   @protected
   void sse_encode_settings_view(SettingsView self, SseSerializer serializer);

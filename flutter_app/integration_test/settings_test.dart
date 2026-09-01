@@ -45,6 +45,19 @@ Future<void> tapMeRow(WidgetTester tester, String key) async {
   await tester.pumpAndSettle();
 }
 
+/// The same thing one screen over, and with the other scroll call.
+///
+/// `ensureVisible` needs the widget to be in the tree already; the settings
+/// screen is a ListView, which does not build what is off screen at all, so
+/// there is nothing to make visible until a scroll has built it. The Me tab
+/// above is short enough that its rows always exist. This one is not.
+Future<void> tapSetting(WidgetTester tester, Key key) async {
+  await tester.scrollUntilVisible(find.byKey(key), 300);
+  await tester.pumpAndSettle();
+  await tester.tap(find.byKey(key));
+  await tester.pumpAndSettle();
+}
+
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(() async => await RustLib.init());
@@ -135,8 +148,7 @@ void main() {
       await show(tester);
       expect(textOf(tester, 'cycle-current'), contains('1'));
 
-      await tester.tap(find.byKey(const Key('cycle-15')));
-      await tester.pumpAndSettle();
+      await tapSetting(tester, const Key('cycle-15'));
 
       expect(budget.settings().cycleStart, 15);
       expect(textOf(tester, 'cycle-current'), contains('15'));
@@ -145,6 +157,8 @@ void main() {
     testWidgets('offers nothing past 28', (tester) async {
       // the months without a 29th, 30th or 31st would skip a cycle entirely
       await show(tester);
+      await tester.scrollUntilVisible(find.byKey(const Key('cycle-28')), 300);
+      await tester.pumpAndSettle();
       expect(find.byKey(const Key('cycle-28')), findsOneWidget);
       expect(find.byKey(const Key('cycle-31')), findsNothing);
     });
@@ -154,8 +168,7 @@ void main() {
       // the setting is not decorative: the cycle is what the budget screen and
       // the report both slice by
       await show(tester);
-      await tester.tap(find.byKey(const Key('cycle-15')));
-      await tester.pumpAndSettle();
+      await tapSetting(tester, const Key('cycle-15'));
       expect(budget.settings().cycleStart, 15);
     });
   });
@@ -177,10 +190,18 @@ void main() {
       // built — which is exactly what a substring match on the sentence
       // would not notice.
       final note = textOf(tester, 'settings-note');
-      expect(note, contains('提醒'), reason: 'reminders really are missing');
-      expect(note, isNot(contains('锁屏')), reason: 'the lock is here now');
+      expect(note, isNot(contains('提醒')), reason: 'reminders are here now');
+      expect(note, isNot(contains('锁屏')), reason: 'so is the lock');
       expect(note, isNot(contains('主题')), reason: 'so are themes');
-      expect(note, isNot(contains('导出')), reason: 'and so is export');
+
+      // Export is the one that cannot be a plain substring check: the note is
+      // allowed to say the xlsx half is not done, because that one is a
+      // decision with a reason. It is not allowed to leave `导出` unqualified,
+      // which reads as "this app cannot export" next to a button that does.
+      for (final sentence in note.split('。')) {
+        if (!sentence.contains('导出')) continue;
+        expect(sentence, contains('xlsx'), reason: 'CSV export is here');
+      }
     });
   });
 }

@@ -868,6 +868,18 @@ pub fn snapshot_config() -> String {
         ("theme".into(), Value::Str(super::theme::theme_key())),
         ("dark".into(), Value::Bool(super::theme::is_dark())),
         ("lock".into(), Value::Bool(super::lock::lock_enabled())),
+        (
+            "remindAt".into(),
+            Value::Str(super::remind::daily_reminder_at()),
+        ),
+        (
+            "weeklyReport".into(),
+            Value::Bool(super::remind::weekly_report_on()),
+        ),
+        (
+            "monthlyReport".into(),
+            Value::Bool(super::remind::monthly_report_on()),
+        ),
         ("assets".into(), Value::Arr(assets)),
         ("loans".into(), Value::Arr(loans)),
         ("subs".into(), Value::Arr(subs)),
@@ -954,6 +966,14 @@ pub fn load_config(json: String) -> bool {
     // Restored, not switched on: loading a file is not a user turning the lock
     // on, and prompting here would ask before there is a screen to ask over.
     super::lock::lock_load(matches!(v.get("lock"), Some(Value::Bool(true))));
+    super::remind::load_reminders(
+        match v.get("remindAt") {
+            Some(Value::Str(s)) => s.clone(),
+            _ => String::new(),
+        },
+        matches!(v.get("weeklyReport"), Some(Value::Bool(true))),
+        matches!(v.get("monthlyReport"), Some(Value::Bool(true))),
+    );
     if let Some(Value::Str(id)) = v.get("curAccount") {
         store().current_account = id.clone();
     }
