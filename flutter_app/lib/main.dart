@@ -35,6 +35,7 @@ import 'persistence.dart';
 import 'record_sheet.dart' as sheet;
 import 'reimburse_screen.dart';
 import 'settings_screen.dart';
+import 'sync_screen.dart';
 import 'report_screen.dart';
 import 'stats_screen.dart';
 import 'subs_screen.dart';
@@ -391,6 +392,17 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
               zh: zh,
               // a restore replaces both files and every screen's contents
               onRestored: _bothChanged,
+            )),
+          ),
+          MeRow(
+            id: 'sync',
+            icon: Icons.sync_alt,
+            title: zh ? '同步' : 'Sync',
+            desc: zh ? '通过一个文件,和另一台设备合并' : 'Merge with another device, through a file',
+            onTap: () => _push(SyncScreen(
+              zh: zh,
+              // a merge rewrites the ledger and may add accounts
+              onChanged: _bothChanged,
             )),
           ),
           MeRow(

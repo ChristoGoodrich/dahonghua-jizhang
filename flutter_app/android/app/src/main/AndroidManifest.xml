@@ -1,8 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!--
-      The only thing this app reaches the network for is an exchange rate.
-      No ledger data leaves the phone: the request is a currency pair and a
-      date, and it goes to a public rate API.
+      The only thing this app reaches the network for is an exchange rate. The
+      request is a currency pair and a date, and it goes to a public rate API.
+
+      Syncing does not change that, which is why it works the way it does: the
+      app writes a file and reads one back, and moving that file between
+      devices is the user's doing. The ledger can end up in a cloud folder —
+      but because someone put it there, not because this app sent it anywhere.
     -->
     <uses-permission android:name="android.permission.INTERNET" />
     <application

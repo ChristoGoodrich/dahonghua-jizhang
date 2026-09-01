@@ -32,6 +32,7 @@ import 'api/statement.dart';
 import 'api/stats.dart';
 import 'api/store.dart';
 import 'api/subscriptions.dart';
+import 'api/sync.dart';
 import 'api/theme.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -404,6 +405,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   SubView dco_decode_sub_view(dynamic raw);
+
+  @protected
+  SyncReport dco_decode_sync_report(dynamic raw);
 
   @protected
   TemplateDraftView dco_decode_template_draft_view(dynamic raw);
@@ -852,6 +856,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   SubView sse_decode_sub_view(SseDeserializer deserializer);
+
+  @protected
+  SyncReport sse_decode_sync_report(SseDeserializer deserializer);
 
   @protected
   TemplateDraftView sse_decode_template_draft_view(
@@ -1424,6 +1431,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_sub_view(SubView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_sync_report(SyncReport self, SseSerializer serializer);
 
   @protected
   void sse_encode_template_draft_view(

@@ -85,7 +85,7 @@ Adding a module to the harness:
 | `sync/rows` | 94 | **Ported**, 4,539-case parity — the wire shape, and the JSON on either side |
 | `domain/jsval::parse` (new) | — | **Added** — the sync boundary is JSON in both directions |
 | `sync/pushScheduler` + `engine` decisions + `conflictLog` → `sync` | 454 | **Ported**, 4,252-case parity — transport left on the platform |
-| `sync/auth`, `sync/supabase` | 72 | **Nothing to port** — SDK calls and one `trim` |
+| `sync/auth`, `sync/supabase` | 72 | **Not ported, and not replaced** — this build syncs through a file, with no server and no account |
 | `features/list` grouping → `list` | 60 | **Ported**, 2,819-case parity — the first UI logic across |
 | `features/record` form → `record` | 230 | **Ported**, 3,987-case parity — the record sheet's judgement |
 | `features/stats` geometry → `chart` | 40 | **Ported**, 2,940-case parity — where a chart's points go |
@@ -3044,6 +3044,80 @@ and the JSON is **not deleted**. This is the first run of new storage code
 against the only copy of someone's ledger; two files cost a few hundred
 kilobytes and being wrong costs everything. A later release can remove them,
 once this one has been run for a while by someone who would notice.
+
+## Sync, without a server
+
+The plan assumed Supabase, because that is what the React Native build uses.
+It is not what this one uses: sync is a **file**, and the app never talks to
+anything.
+
+The app writes a document; you put it wherever your files already follow you —
+a cloud folder, WebDAV, a USB stick — and the other device reads it, merges,
+and writes it back. Carrying the file is the user's job, and the folder they
+already sync is better at it than anything this app could build.
+
+The consequence worth the section: `AndroidManifest.xml` has said since the
+capture work that the only thing this app reaches the network for is an
+exchange rate. That statement survives. A ledger can still end up in a cloud
+folder — but because someone put it there, not because this app sent it. Every
+other transport would have required editing that comment, and a claim about
+where a person's money data goes is not a comment worth weakening.
+
+### The hard part was already done
+
+`merge_by_id` carries this, and it is the most heavily checked function in the
+project: 7,043 parity cases, plus 4,539 for the wire shape it reads. Field-
+level last-write-wins where both sides carry stamps, whole-row newest-wins
+where they do not. Nothing about the merge is new. What is new is the envelope.
+
+### What syncs
+
+Entries, and accounts. Not the rest of the config.
+
+Accounts merge as a **union by id** rather than through `merge_by_id`, because
+an account carries no `updatedAt` and there is nothing to compare. Both sides
+keep everything either had; on a collision the local copy stands. That never
+loses an account and never leaves an entry pointing at one that does not exist
+here — which is the failure that matters, since an entry names its account.
+
+It does not carry a rename across. That is a real limit, it is the safe
+direction to be wrong in, and fixing it needs the per-section stamps
+`core::sync::adopt_sections` expects — which this build does not yet maintain.
+The screen says so rather than leaving it to be discovered.
+
+Rates, budgets, reminders, the theme and the lock do not sync at all. They are
+per-device settings more often than not, and a whole-blob newest-wins would
+silently drop whichever side wrote second.
+
+### The order is the design
+
+Merge, then write. Writing this device's copy over the file without merging
+first is how the other device's entries disappear, and it is the only way to
+lose data with this feature. So the screen numbers the steps, puts reading
+first in the layout, says why in both languages — and a test asserts that the
+merge button sits above the write button. A screen that led with "write the
+file" would be a screen that suggested the destructive order.
+
+### An injection found a missing test
+
+Two injections. Making the merge take the document wholesale failed four tests,
+including the two that represent real loss.
+
+Dropping tombstones from the written document failed only **one** — and that
+was the finding. The tests covered a deletion made on *this* device surviving a
+document that still had the row, and never covered the other direction: the
+other device deletes, this one still has it live. That is the direction a
+tombstone actually has to travel. Without it in the document this device never
+learns the row is gone, and the next write-back hands it back to them. With the
+test added, the same injection fails two.
+
+### What a file cannot do
+
+Two devices writing the document at the same moment is a conflict the file
+cannot resolve; a sync folder keeps both copies under different names. That is
+survivable rather than fatal — the merge is idempotent and order-independent,
+so merging both copies in either order converges. Worth knowing, not worth
+preventing.
 
 ## Phase 5 — shipping it
 
