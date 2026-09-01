@@ -20,6 +20,14 @@ import 'package:integration_test/integration_test.dart';
 
 int get now => DateTime.now().millisecondsSinceEpoch;
 
+/// A day of the month that is not today, and that every month has.
+///
+/// Any fixed day is today once a month, so a test asserting the "next charge"
+/// wording has to pick around the calendar rather than pick a number. Capped
+/// at 28 so February does not overflow into the following month, which is its
+/// own tested behaviour and not what these tests are about.
+int get notToday => DateTime.now().day == 28 ? 27 : 28;
+
 /// A subscription created `daysAgo` days back, so a sweep has something to
 /// catch up on.
 String makeSub({
@@ -211,13 +219,30 @@ void main() {
 
     testWidgets('draws the amount, the frequency and the next date',
         (tester) async {
-      makeSub(amt: 15, day: 1);
+      // Not `day: 1`. A subscription due TODAY reads "今天扣款" rather than
+      // naming a next date, which is correct and which made this test fail
+      // every 1st of the month — it was written on a day that was not one.
+      // The day is picked away from today for the same reason a fixed date
+      // would be wrong in either direction.
+      makeSub(amt: 15, day: notToday);
       await show(tester);
 
       expect(textOf(tester, 'sub-s-音乐-0-name'), '音乐');
       expect(textOf(tester, 'sub-s-音乐-0-amt'), '￥15');
       expect(textOf(tester, 'sub-s-音乐-0-due'), contains('每月'));
       expect(textOf(tester, 'sub-s-音乐-0-due'), contains('下次'));
+    });
+
+    testWidgets('says charges today rather than naming today as the next date',
+        (tester) async {
+      // The other half of the rule above, and the reason it was found: on the
+      // day a subscription is due, "下次 9月1日" would be telling the user to
+      // wait for something already happening.
+      makeSub(amt: 15, day: DateTime.now().day);
+      await show(tester);
+
+      expect(textOf(tester, 'sub-s-音乐-0-due'), contains('今天扣款'));
+      expect(textOf(tester, 'sub-s-音乐-0-due'), isNot(contains('下次')));
     });
 
     testWidgets('shows an instalment plan as a fraction', (tester) async {
