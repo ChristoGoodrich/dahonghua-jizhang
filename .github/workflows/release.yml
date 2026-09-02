@@ -1,188 +1,91 @@
 name: Release
 
-# A `v*` tag cuts a GitHub Release with an installable arm64 APK attached — that is
-# the whole flow for personal builds and internal testers, and it needs no accounts.
+# Tag a version, get a signed APK attached to a GitHub release.
 #
-# Store submission is a separate, deliberate act: run this workflow by hand with
-# `submit_to_stores` ticked. It needs an EXPO_TOKEN secret, an EAS-linked project
-# (`eas init`), and Apple/Google developer accounts — without those the EAS jobs
-# fail, which is why they must never ride along on a tag.
+# Rewritten when the React Native tree was removed: this used to run
+# `expo prebuild` and Gradle against the generated project, and EAS on top.
+# There is no Expo any more, and no EAS account in the loop.
+#
+# Signing needs two secrets, and the release is built unsigned without them
+# rather than silently falling back to the debug key — a debug-signed APK
+# cannot be updated by a properly signed one later, so shipping one by
+# accident is the mistake that surfaces months afterwards. See
+# flutter_app/android/README.md.
+#
+#   ANDROID_KEYSTORE_BASE64   the .jks, base64 encoded
+#   ANDROID_KEY_PROPERTIES    the key.properties contents, with storeFile
+#                             pointing at android/keystore.jks
 
 on:
   push:
-    tags:
-      - "v*"
+    tags: ['v*']
   workflow_dispatch:
-    inputs:
-      submit_to_stores:
-        description: "Also build and submit via EAS (needs EXPO_TOKEN + store accounts)"
-        type: boolean
-        default: false
 
 jobs:
   apk:
-    name: Build APK and publish release
     runs-on: ubuntu-latest
-    timeout-minutes: 60
-    permissions:
-      contents: write
+    timeout-minutes: 45
+
+    # Hoisted to the job: a step's own `env:` is not visible to that step's
+    # `if:`, and a secret cannot be read from a step-level `if` at all.
+    env:
+      HAVE_KEY: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
 
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "17"
+          java-version: '17'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Generate native android/ project
-        run: npx expo prebuild -p android --no-install
-
-      - name: Install required Android SDK packages (NDK + cmake)
-        run: |
-          yes | sdkmanager --licenses > /dev/null 2>&1 || true
-          sdkmanager "platforms;android-35" "build-tools;35.0.0" "ndk;27.1.12297006" "cmake;3.22.1"
-
-      - name: Build release APK (arm64-v8a)
-        working-directory: android
-        run: ./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a --no-daemon --stacktrace
-
-      - name: Name the APK after the tag
-        id: apk
-        run: |
-          SRC=$(ls android/app/build/outputs/apk/release/*.apk | head -1)
-          NAME="dahonghua-${GITHUB_REF_NAME}-arm64.apk"
-          cp "$SRC" "$NAME"
-          echo "path=$NAME" >> "$GITHUB_OUTPUT"
-
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
         with:
-          name: dahonghua-apk
-          path: ${{ steps.apk.outputs.path }}
-          if-no-files-found: error
+          channel: stable
 
-      - name: Publish GitHub Release
+      - name: Set up Rust for the Android targets
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android,armv7-linux-androideabi,i686-linux-android,x86_64-linux-android
+
+      - name: Restore the signing key
+        if: env.HAVE_KEY == 'true'
+        working-directory: flutter_app/android
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > keystore.jks
+          echo "${{ secrets.ANDROID_KEY_PROPERTIES }}" > key.properties
+
+      - name: Dependencies
+        working-directory: flutter_app
+        run: flutter pub get
+
+      - name: Build
+        working-directory: flutter_app
+        run: flutter build apk --release
+
+      # The build stamps `-debugsigned` into the versionName when it found no
+      # key, so this asks the artifact what happened rather than re-deriving
+      # what the build decided. A tagged release that is debug-signed is a
+      # release nobody can ever update, so it fails here instead of shipping.
+      - name: Refuse to publish a debug-signed release
         if: startsWith(github.ref, 'refs/tags/v')
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        working-directory: flutter_app
         run: |
-          cat > release-notes.md <<'NOTES'
-          **Install:** download the `.apk` below on an arm64 Android phone and open it.
+          AAPT=$(ls "$ANDROID_HOME"/build-tools/*/aapt2 | tail -1)
+          VERSION=$("$AAPT" dump badging build/app/outputs/flutter-apk/app-release.apk             | sed -n "s/.*versionName='\([^']*\)'.*//p")
+          echo "versionName=$VERSION"
+          case "$VERSION" in
+            *-debugsigned)
+              echo "::error::built with the debug key — set ANDROID_KEYSTORE_BASE64 and ANDROID_KEY_PROPERTIES"
+              exit 1
+              ;;
+          esac
 
-          Signed with the standard Android debug key, so it installs over any previous
-          build of this app without losing local data. Not a Play Store build.
-          NOTES
-          gh release create "$GITHUB_REF_NAME" "${{ steps.apk.outputs.path }}" \
-            --title "$GITHUB_REF_NAME" \
-            --notes-file release-notes.md
-
-  build-android:
-    name: EAS build (Android)
-    if: ${{ inputs.submit_to_stores }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Node
-        uses: actions/setup-node@v4
+      - name: Attach to the release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/v')
         with:
-          node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build Android
-        run: npx eas build --platform android --profile production --non-interactive --no-wait
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-
-  build-ios:
-    name: EAS build (iOS)
-    if: ${{ inputs.submit_to_stores }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build iOS
-        run: npx eas build --platform ios --profile production --non-interactive --no-wait
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-
-  submit-android:
-    name: Submit to Google Play
-    needs: build-android
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Submit to Google Play
-        run: npx eas submit --platform android --profile production --non-interactive
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-
-  submit-ios:
-    name: Submit to App Store
-    needs: build-ios
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Submit to App Store
-        run: npx eas submit --platform ios --profile production --non-interactive
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          files: flutter_app/build/app/outputs/flutter-apk/app-release.apk

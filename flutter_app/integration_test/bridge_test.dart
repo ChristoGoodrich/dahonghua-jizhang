@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/main.dart';
 import 'package:flutter_app/src/rust/api/calc.dart' as calc;
 import 'package:flutter_app/src/rust/api/glass.dart' as glass;
-import 'package:flutter_app/src/rust/frb_generated.dart';
 // `parseRgba` lives in theme.dart; main.dart used to carry a second copy of
 // it that had already drifted — it threw on a malformed string where this one
 // returns black.

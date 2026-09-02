@@ -7,9 +7,15 @@ on:
     branches: [main]
 
 jobs:
-  ci:
+  # Rust, and the goldens.
+  #
+  # No `npm ci` and no node_modules: the React Native tree is gone and every
+  # script left is plain Node. `goldens` holds the core to the answers the
+  # TypeScript gave on the day it was removed — scripts/goldens.js says what
+  # that does and does not still prove.
+  core:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     steps:
       - name: Checkout
@@ -18,35 +24,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Typecheck
-        run: npm run typecheck
-
-      - name: Test with coverage
-        run: npm test -- --coverage
-
-      - name: Check coverage threshold
-        run: |
-          SUMMARY=coverage/coverage-summary.json
-          if [ ! -f "$SUMMARY" ]; then
-            echo "::error::coverage-summary.json not found. Ensure tests ran with --coverage."
-            exit 1
-          fi
-          LINE_PCT=$(node -e "const s=require('./$SUMMARY'); console.log(s.total.lines.pct)")
-          echo "Line coverage: ${LINE_PCT}%"
-          if [ "$(node -e "console.log(${LINE_PCT} < 70 ? 'fail' : 'pass')")" = "fail" ]; then
-            echo "::error::Line coverage ${LINE_PCT}% is below the 70% threshold."
-            exit 1
-          fi
-          echo "Coverage threshold met (${LINE_PCT}% >= 70%)."
+          node-version: 22
 
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
@@ -72,31 +50,21 @@ jobs:
       - name: Rust tests
         run: npm run rust:test
 
-      # The migration's real gate: the Rust port must answer identically to the
-      # TypeScript still shipping to users, case for case.
-      - name: TypeScript ↔ Rust parity
-        run: npm run parity
-
       # The bridge is its own cargo project, outside the rust/ workspace, so
-      # `rust:clippy` never saw it — two thousand lines of Rust that had been
-      # checked only by hand, every time, by whoever remembered.
+      # `rust:clippy` does not reach it.
       - name: Bridge format
         run: npm run bridge:fmt
 
       - name: Bridge lint
         run: npm run bridge:clippy
 
-      # A test file that is not imported by all_test.dart is a test file that
-      # silently stopped running, which is worse than one that fails.
+      - name: Goldens
+        run: npm run goldens
+
+      # A test file not imported by all_test.dart is a test file that silently
+      # stopped running, which is worse than one that fails.
       - name: Integration suite is complete
         run: npm run tests:check
-
-      - name: Upload coverage to Codecov
-        if: always()
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          fail_ci_if_error: false
 
   flutter:
     runs-on: ubuntu-latest
@@ -140,7 +108,7 @@ jobs:
         working-directory: flutter_app
         run: flutter analyze --no-fatal-infos
 
-      # The whole suite in one entrypoint. Per-file it was 33 APK builds and
+      # The whole suite in one entrypoint. Per file it was 33 APK builds and
       # about twenty minutes; this is one build and about five, which is what
       # makes running it on every push affordable at all.
       - name: Integration tests
@@ -152,3 +120,7 @@ jobs:
           disable-animations: true
           working-directory: flutter_app
           script: flutter test integration_test/all_test.dart
+
+      - name: Release APK builds
+        working-directory: flutter_app
+        run: flutter build apk --release

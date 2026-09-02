@@ -1,91 +1,39 @@
-# Building & shipping 大红花记账
+# Releasing
 
-The app is built with **Expo**, so iOS builds happen **in the cloud (EAS)** — you
-do **not** need a Mac. You do need developer accounts to publish to the stores.
-
-## Releasing it to yourself (no accounts, no EAS)
-
-Tag a commit and GitHub builds an installable arm64 APK and attaches it to a
-Release:
+Tag a version and CI builds a signed APK and attaches it to a GitHub release.
 
 ```bash
-git tag v1.0.0 && git push origin v1.0.0
+git tag -a v1.1.0 -m "…"
+git push origin v1.1.0
 ```
 
-Every push to `main` also leaves an APK as a workflow artifact, so a tag is only
-needed when you want a permanent, downloadable version.
+## Before you tag
 
-The APK is signed with the standard Android **debug** key. That is fine for your
-own phone and for testers — and because the key is the same in every build, a new
-one installs straight over the old one without wiping the ledger. It is *not*
-acceptable to Google Play, which needs the `production` profile below and a real
-upload key.
+- `npm run goldens` — the core still answers what the shipping app answered
+- `npm run rust:test`, `npm run rust:clippy`, `npm run bridge:clippy`
+- `cd flutter_app && flutter test integration_test/all_test.dart`
+- Bump `version:` in `flutter_app/pubspec.yaml`. The part after `+` is the
+  versionCode, and Android refuses an update whose versionCode did not increase.
 
-## Accounts you'll need
-- **Expo account** — free, <https://expo.dev>
-- **Apple Developer Program** — US$99/yr, for the App Store
-- **Google Play Console** — US$25 one-time, for Google Play
+## Signing
 
-App identity is already set in `app.json`:
-`ios.bundleIdentifier` / `android.package` = `com.dahonghua.app` (change if you like).
+CI needs two secrets. Without them the build still succeeds, stamps
+`-debugsigned` into the version name, and then **fails the release step on
+purpose** — a debug-signed APK cannot be updated by a properly signed one, so
+publishing one quietly is a mistake that surfaces months later.
 
-## One-time setup
-```bash
-npm i -g eas-cli
-cd dahonghua-app
-eas login
-eas build:configure        # links the project to your Expo account
-```
+| Secret | What |
+| --- | --- |
+| `ANDROID_KEYSTORE_BASE64` | the `.jks`, base64 encoded |
+| `ANDROID_KEY_PROPERTIES` | the contents of `key.properties`, with `storeFile=android/keystore.jks` |
 
-### Cloud sync keys (optional but recommended)
-The Supabase URL + anon key are **public** (safe to embed). Either keep them in a
-local `.env` (already read via `EXPO_PUBLIC_*`) and they'll be baked into the build,
-or add them as EAS env vars in `eas.json` under each profile's `"env"`.
+[flutter_app/android/README.md](flutter_app/android/README.md) covers making the
+key, why `-validity 10000`, and why losing it ends the app's ability to update
+under `com.dahonghua.app` forever.
 
-## Try it on a device first (fastest)
-```bash
-npx expo start            # scan the QR with Expo Go (most features work)
-```
-Expo Go can't run a few native-only pieces (biometric lock prompt UI, push
-scheduling, future OCR). For those, build a **development client**:
-```bash
-eas build -p android --profile development
-eas build -p ios     --profile development
-```
+## Installing over the old app
 
-## Internal test builds (shareable, no store)
-```bash
-eas build -p android --profile preview   # produces an installable .apk
-eas build -p ios     --profile preview   # ad-hoc/internal distribution
-```
-Download the artifact from the link EAS prints (or the Expo dashboard) and install.
-
-## Production store builds
-```bash
-eas build -p android --profile production   # .aab for Google Play
-eas build -p ios     --profile production   # for App Store
-```
-
-## Submit to the stores
-```bash
-eas submit -p android --profile production   # needs a Play service-account JSON
-eas submit -p ios     --profile production   # walks you through App Store Connect
-```
-First-time submission also needs store listings (screenshots, description, privacy
-policy). Since data can sync to the cloud, both stores will ask about data
-collection — declare: account email (auth) + the user's own financial entries,
-stored under per-user row-level security, never shared. The on-device lock and
-passcodes are never uploaded.
-
-## OTA updates (after the first store release)
-```bash
-eas update --branch production --message "fix xyz"
-```
-Ships JS/asset changes without a new store review (native changes still need a build).
-
-## Checklist before first submit
-- [ ] Bump `version` in `app.json` (and let `autoIncrement` handle build numbers)
-- [ ] Confirm `.env` Supabase keys are set (or sync stays off — that's fine for v1)
-- [ ] `npx tsc --noEmit` and `npm test` are green
-- [ ] Walk the app once on a real device (record → tabs → settings → export)
-- [ ] Prepare store screenshots (the 4 tabs + a recap make good shots)
+The React Native build published as `com.dahonghua.app` and was signed by EAS.
+If that key is not available, Android refuses the update on a signature
+mismatch and the path is uninstall, install, and carry the ledger across with
+Settings → 导出. That export exists partly for this.

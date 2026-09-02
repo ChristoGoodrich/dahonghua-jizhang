@@ -4,14 +4,13 @@
 
 # 大红花记账 · Red Blossom
 
-**An offline-first personal ledger for iOS, Android and the web — bilingual (中文 / English), private by default, cloud sync optional.**
+**An offline-first personal ledger for Android — bilingual (中文 / English), and private not by policy but by construction.**
 
 [![CI](https://github.com/ChristoGoodrich/dahonghua-jizhang/actions/workflows/ci.yml/badge.svg)](https://github.com/ChristoGoodrich/dahonghua-jizhang/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Expo SDK 56](https://img.shields.io/badge/Expo%20SDK-56-000020?logo=expo&logoColor=white)](https://docs.expo.dev/versions/v56.0.0/)
-[![React Native 0.85](https://img.shields.io/badge/React%20Native-0.85-61DAFB?logo=react&logoColor=white)](https://reactnative.dev)
-[![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](tsconfig.json)
-[![Platforms](https://img.shields.io/badge/platforms-iOS%20·%20Android%20·%20Web-lightgrey)](#)
+[![Rust core](https://img.shields.io/badge/core-Rust-CE422B?logo=rust&logoColor=white)](rust/core)
+[![Flutter](https://img.shields.io/badge/UI-Flutter-02569B?logo=flutter&logoColor=white)](flutter_app)
+[![Goldens](https://img.shields.io/badge/goldens-125%2C683%20cases-success)](rust/parity/golden)
 
 **English** · [简体中文](README.zh-CN.md)
 
@@ -25,14 +24,33 @@ reward: a bloom per entry, a streak, a garden that fills up over the month.
 
 Underneath the flowers it is a complete double-sided ledger: accounts, transfers,
 multi-currency, budgets, subscriptions, reimbursements, loans, net worth, statistics and
-PDF reports. **It runs entirely on your device.** Cloud sync, AI quick-entry and crash
-reporting are all opt-in — leave them unconfigured and the app never touches the network.
+reports. **It runs entirely on your device.** The only thing it ever asks the network for
+is an exchange rate — a currency pair and a date. Syncing between two devices is a file
+you carry, so even that goes nowhere on its own.
+
+## How it is built
+
+A **Rust core** decides everything: money arithmetic, budget cycles, statistics,
+statement dates, the merge between two devices. A **Flutter UI** draws it, and two small
+Kotlin components handle what only Android can — reading payment notifications, and the
+home-screen widget.
+
+The rule is that the core decides and everything else transports or draws. A screen that
+computes its own answer can disagree with the rest of the app, and its answer is the one
+nobody thinks to test.
+
+This app was a React Native app until 2026. The rewrite kept it honest with a parity
+harness: every ported module was run against the shipping TypeScript over a shared corpus
+and had to answer identically. Those 125,683 answers are frozen in
+[`rust/parity/golden/`](rust/parity/golden) and still gate every commit — each line was
+produced by the code that was in users' hands. The TypeScript itself is at the `rn-final`
+tag.
 
 ## Table of contents
 
 - [Features](#features)
 - [Getting started](#getting-started)
-- [Configuration](#configuration)
+- [Not in this build](#not-in-this-build)
 - [Project structure](#project-structure)
 - [Scripts](#scripts)
 - [Testing and quality](#testing-and-quality)
@@ -52,188 +70,181 @@ reporting are all opt-in — leave them unconfigured and the app never touches t
 | **Calculator keypad** | Type `12.5+8` and it settles the arithmetic for you. |
 | **Learned note chips** | The notes you use most for the selected category, ranked by frequency then recency, offered as one-tap chips. No configuration. |
 | **Backdating** | Today / yesterday / 2 days ago chips plus a date picker — an entry doesn't have to mean "now". |
-| **再记 (Again)** | Saves without closing the sheet, so a run of similar entries goes in one sitting. Any entry can also be duplicated into a fresh one dated today. |
+| **再记 (Again)** | Saves without closing the sheet, so a run of similar entries goes in one sitting. |
 | **Templates** | Pin recurring entries (rent, commute) as chips above the keypad. |
 | **Transfers** | Between accounts, with fee and bonus legs. |
 | **Multi-currency** | Per-entry currency and rate. Switching the base currency converts entries, balances, assets, loans, subscriptions, templates and budgets — it never just relabels them. |
-| **AI quick entry** | Type "午饭35" or "coffee 4.5", tap ✨, and the amount, category, direction and note are filled in. Optional — see [AI_SETUP.md](AI_SETUP.md). |
-| **Receipt scan** | Photograph a receipt and let the model pull the total out of it. Optional, same setup. |
 
 ### Money you hold
 
-- **Accounts** — balances, archiving (hidden from pickers, history and balance kept), credit-card statement days.
+- **Accounts** — balances, archiving (hidden from pickers, history and balance kept), credit-card statement days, and a per-account history where a transfer shows what it actually did to *that* account.
 - **Other assets and debts** — property, vehicles, funds, tracked by hand.
 - **Loans** — money lent and borrowed, with partial repayments.
 - **Net worth** — accounts + assets − debts, in one number.
 - **Budget** — a monthly pot with a configurable cycle start day, progress, forecast and an insight banner.
-- **Subscriptions** — monthly/yearly recurring charges posted automatically, with the next due date. Charge ids are derived from (subscription, charge instant), so two devices converge on one row instead of double-charging.
+- **Subscriptions** — recurring charges posted automatically, with the next due date. Charge ids are derived from (subscription, charge instant), so two devices converge on one row instead of double-charging.
 - **Reimbursements** — mark an entry pending, confirm it when the money comes back.
 - **Multiple ledgers, tags and sub-categories** — for separating work from personal, or a trip from the rest of the month.
 
 ### Reading the numbers
 
-- **Activity and calendar views** of the same ledger, with search and filters; tapping a day opens the record sheet pre-dated to it.
+- **Activity view** with search and filters.
 - **Statistics** — category donut, six-period trend, by weekday, by time of day, day/week/month/half/year switch, this-month-vs-last-month-so-far.
 - **Insights** — next-cycle forecast from the last three cycles, with a trend direction, a confidence level and tips.
-- **Monthly report** — generated as a shareable PDF.
 - **Recap and streaks** — a monthly wrap-up and a consecutive-days counter.
 
-### Getting data in
+### Getting data in and out
 
-- **Bill import** — Alipay and WeChat CSV exports, including their GBK encoding (decoded by a generated pure-JS table, so it works in Expo Go without a native module), with duplicate detection against what you already have.
-- **Auto-capture (Android)** — an optional notification listener reads payment notifications, parses them, and queues anything it isn't sure about for you to confirm or dismiss.
-- **Restore** — reads this app's backups and the previous app's v7 backup JSON.
+- **Bill import** — Alipay and WeChat CSV exports, including their GBK encoding, with duplicate detection against what you already have.
+- **Auto-capture** — an optional notification listener reads payment notifications, parses them, and queues anything it isn't sure about for you to confirm or dismiss.
+- **Backups** — snapshots you can restore, and this app also reads the previous app's v7 backup JSON.
+- **CSV export** of the whole ledger.
+
+### Two devices, no server
+
+Sync is a file. The app writes a document; you put it wherever your files already follow
+you — a cloud folder, WebDAV, a USB stick — and the other device reads it, **merges**,
+and writes it back. Where both edited the same entry the later edit wins, field by field;
+anything deleted stays deleted.
+
+There is no account, no server and no credential, which is why the manifest can still say
+the only thing this app reaches the network for is an exchange rate. A ledger can end up
+in a cloud folder because *you* put it there.
 
 ### Data, privacy and safety
 
-- **Offline-first.** Everything is stored locally through AsyncStorage. With no keys configured, nothing leaves the device.
-- **Optional cloud sync** — Supabase with email one-time-code sign-in, row-level security so a user can only ever read their own rows, realtime updates across devices, and soft-delete tombstones so a deletion propagates. See [SYNC_SETUP.md](SYNC_SETUP.md).
-- **Backups** — manual or automatic (daily/weekly, capped count, oldest pruned), optionally encrypted with AES-256-GCM. Export as CSV, Excel or JSON.
-- **App lock** — biometrics or device passcode, re-locking whenever the app leaves the foreground, and failing *closed* on any authentication error. Lock settings and passcodes are never uploaded.
+- **Offline-first.** SQLite, owned by the Rust core, written a row at a time.
+- **App lock** — biometrics or device passcode, re-locking whenever the app leaves the foreground, and failing *closed* on any authentication error.
 - **Balance privacy** — an eye toggle masks every amount on the summary, asset and account screens.
 
 ### Look and feel
 
 - **中文 / English** throughout, switchable at runtime.
 - **Light and dark**, plus flower themes (default, ocean, forest, sunset).
-- **Home-screen widget** — a budget app-widget provider on Android.
-- **Reminders** — a daily nudge, plus weekly (Sunday 20:00) and monthly (1st, 09:00) report notifications.
+- **Home-screen widget** — the budget, drawn from numbers the app itself computed, so it cannot disagree with the budget screen.
+- **Reminders** — a daily nudge, plus weekly (Sunday 20:00) and monthly (1st, 09:00) reports.
 - Haptics, glass navigation bar, petal-burst animation on save.
+
+## Not in this build
+
+Listed because a README that quietly drops a feature is worse than one that says it went.
+The React Native app had these; this one does not.
+
+| | Why |
+| --- | --- |
+| **iOS and web** | Nobody has an iOS device to test on, and shipping a binary nobody has run is not shipping. |
+| **AI quick entry, receipt scan** | Needed a model API key and a network round trip for something the calculator keypad already does in two taps. |
+| **Cloud sync (Supabase)** | Replaced by file sync, above. The merge logic is the same code, and far better tested. |
+| **Encrypted backups** | The snapshot is written but not encrypted yet; the app still *reads* encrypted backups from the old one. |
+| **PDF monthly report** | The report exists as a screen. Rendering it to a PDF does not. |
+| **Calendar view** | The activity list and statistics cover what it did. |
+| **xlsx export** | CSV opens in every spreadsheet, and writing xlsx would cost the core a pile of dependencies for no decision. |
+
 
 ## Getting started
 
-### Prerequisites
-
-- **Node.js 20+** and npm
-- A device or emulator: [Expo Go](https://expo.dev/go) is enough for most of the app; the
-  biometric prompt, notification capture and widgets need a development build.
-
-### Install and run
+You need the Flutter SDK, a Rust toolchain with the Android targets, and an Android
+device or emulator. There is no Node dependency to install — the scripts here are plain
+Node, and `node_modules` no longer exists.
 
 ```bash
-git clone https://github.com/ChristoGoodrich/dahonghua-jizhang.git
+rustup target add aarch64-linux-android armv7-linux-androideabi x86_64-linux-android
+
+cd flutter_app
+flutter pub get
+flutter run
 ```
 
-```bash
-cd dahonghua-jizhang && npm install
-```
-
-```bash
-npx expo start
-```
-
-Then press `i` for the iOS simulator, `a` for an Android emulator, `w` for the web build,
-or scan the QR code with Expo Go.
-
-The app is fully usable at this point — no accounts, no keys, no backend.
-
-## Configuration
-
-Copy [`.env.example`](.env.example) to `.env` and fill in only what you want. Every
-variable is optional; each unset feature simply stays hidden.
-
-| Variable | Enables | Guide |
-| --- | --- | --- |
-| `EXPO_PUBLIC_SUPABASE_URL` | Cloud sync + account | [SYNC_SETUP.md](SYNC_SETUP.md) |
-| `EXPO_PUBLIC_SUPABASE_ANON_KEY` | Cloud sync + account | [SYNC_SETUP.md](SYNC_SETUP.md) |
-| `EXPO_PUBLIC_AI_PROXY_URL` | AI quick entry via your own server proxy (**recommended** — the LLM key stays server-side) | [AI_SETUP.md](AI_SETUP.md) |
-| `EXPO_PUBLIC_MIMO_API_KEY` | AI quick entry calling MiMo directly — **personal builds only**, the key ships inside the bundle | [AI_SETUP.md](AI_SETUP.md) |
-| `EXPO_PUBLIC_SENTRY_DSN` | Crash reporting | [sentry.io](https://sentry.io) |
-
-Restart with `npx expo start -c` after changing `.env` so the values are picked up.
-
-> `EXPO_PUBLIC_*` variables are **baked into the client bundle** and readable by anyone
-> who installs the build. The Supabase anon key is designed for that (row-level security
-> is what protects the data); an LLM key is not — keep it behind the proxy. Put anything
-> you must not publish in `.env.local`, which is gitignored.
+`flutter run` builds the Rust core for your device's ABI on the way, through cargokit.
+The first build compiles SQLite from source for each target and is slow; later ones are
+not.
 
 ## Project structure
 
 ```
-src/
-  app/          expo-router screens (file-based routes)
-  features/     screen-level composition: record, list, stats, budget, assets, me, nav…
-  components/   shared widgets + the ui/ primitives (Btn, Chip, Icon, Rows, SheetShell)
-  domain/       pure logic — money, cycles, budgets, stats, bill parsing, insights…
-  store/        Legend-State observable store + persistence and per-domain actions
-  sync/         Supabase auth, sync engine, merge, push scheduler, conflict log
-  ai/           prompt building, response normalization, client (no key on device)
-  i18n/         zh/ and en/ JSON bundles
-  theme/        design tokens + theme context
-  util/         backup, crypto, pdf, share, haptics, analytics, sentry, widgets
-modules/        notif-capture — Android notification-listener native module
-plugins/        android-widget config plugin (Kotlin provider + layouts)
-WidgetExtension/ iOS WidgetKit budget widget (Swift) — not wired into a build yet
-supabase/       SQL migrations, RLS audit, the ai-parse edge function
-e2e/            Detox end-to-end tests
-docs/           archive/ — historical specs and phase plans (see docs/archive/README.md)
-```
+rust/
+  core/            the domain. Pure, and one dependency (regex-lite).
+  store/           SQLite. Outside core on purpose — a crate that can touch a
+                   disk has answers that depend on one.
+  parity/golden/   125,683 answers the TypeScript gave, frozen.
+  MIGRATION.md     why each decision went the way it did.
 
-`domain/` is deliberately free of React and platform APIs, which is why most of the test
-suite can run in a plain Node environment.
+flutter_app/
+  lib/             the UI, one file per screen.
+  rust_bridge/     the FFI layer (flutter_rust_bridge). Its own cargo project.
+  integration_test/  601 tests. all_test.dart runs them in one build.
+  android/…/kotlin/  the notification listener and the home-screen widget.
+  tool/gen_icons.py  launcher icon and splash, from assets/images/.
+
+scripts/           goldens, corpus generators, the test aggregator.
+assets/images/     the icon, shared with what the Kotlin widget draws.
+```
 
 ## Scripts
 
 | Command | What it does |
 | --- | --- |
-| `npm start` | Expo dev server |
-| `npm run ios` / `npm run android` | Build and run the native app |
-| `npm run web` | Run in the browser |
-| `npm test` | Jest suite |
-| `npm run typecheck` | `tsc --noEmit` |
-| `npm run lint` | ESLint via `expo lint` |
-| `npm run storybook` | Component workbench on port 6006 |
-| `npm run e2e:build:ios` / `npm run e2e:test:ios` | Detox on the iOS simulator |
-| `npm run e2e:build:android` / `npm run e2e:test:android` | Detox on an Android emulator |
+| `npm run goldens` | The core against 125,683 recorded answers |
+| `npm run rust:test` | 764 Rust tests |
+| `npm run rust:clippy` / `rust:fmt` | Lint and format the workspace |
+| `npm run bridge:clippy` / `bridge:fmt` | The bridge is a separate cargo project |
+| `npm run tests:check` | Fails if `all_test.dart` is stale |
+| `flutter test integration_test/all_test.dart` | The whole suite, ~5 minutes |
 
 ## Testing and quality
 
-**663 tests across 69 suites**, alongside a clean `tsc --noEmit` and zero ESLint errors.
-CI runs lint, typecheck and tests with coverage on every push and pull request, and
-**fails the build under 70 % line coverage**.
+Three layers, and they answer different questions.
 
-```bash
-npm test -- --coverage
-```
+**Rust unit tests** prove the core does what its author believed. **The goldens** prove
+it does what the app that shipped to users did — a stronger claim, and the one that
+caught real divergences during the rewrite (JavaScript's `Math.round` breaks ties toward
++∞; Rust's `f64::round` breaks them away from zero). **The integration suite** runs on a
+real device and proves the app built out of them works.
 
-Tests live in `__tests__/` directories next to the code they cover. Domain logic is
-tested directly; the sync engine is tested against a faked Supabase client, so it is
-exercised without any credentials configured.
+A golden failure means the core now answers something the shipping app did not. It is
+not a formatting nit, and it must not be fixed by regenerating the goldens — there is
+nothing left to regenerate them from.
+
+Tests here are also checked by breaking what they cover and confirming they fail. Three
+times during this rewrite a check turned out to be incapable of failing, and each one
+looked green.
 
 ## Building and releasing
 
-Builds go through [EAS](https://docs.expo.dev/build/introduction/), so iOS builds do not
-need a Mac. Full walkthrough, including store submission and OTA updates, in
-[RELEASE.md](RELEASE.md).
-
 ```bash
-eas build -p android --profile preview
+cd flutter_app
+flutter build apk --release
 ```
 
-Two GitHub workflows are wired up already:
+Without a signing key the release build falls back to the debug key and stamps
+`-debugsigned` into the version name, which shows up in Android's app info. That is fine
+for your own phone and nothing else: a debug-signed APK cannot be updated by a properly
+signed one later. [`flutter_app/android/README.md`](flutter_app/android/README.md) covers
+making a real key, and what losing it costs.
 
-- **[build-apk.yml](.github/workflows/build-apk.yml)** — builds an installable arm64 APK on every push to `main` and uploads it as an artifact.
-- **[release.yml](.github/workflows/release.yml)** — on a `v*` tag, builds that same APK and publishes it as a GitHub Release. Store submission through EAS is the same workflow run by hand with `submit_to_stores` ticked, and needs an `EXPO_TOKEN` secret plus developer accounts.
+Debug builds install as `com.dahonghua.app.debug`, so running the test suite on a phone
+does not uninstall the app that phone is using.
 
 ## Tech stack
 
-| Layer | Choice |
+| Layer | What |
 | --- | --- |
-| Runtime | Expo SDK 56, React Native 0.85, React 19.2, React Compiler enabled |
-| Routing | expo-router with typed routes |
-| State | Legend-State observables + an explicit AsyncStorage hydrate/save loop |
-| Language | TypeScript, `strict: true` |
-| Backend (optional) | Supabase — Postgres, auth, realtime, edge functions |
-| Testing | Jest + jest-expo, Detox, Storybook |
-| Monitoring (optional) | Sentry |
+| Domain | Rust 2021, one dependency (`regex-lite`) |
+| Storage | SQLite via `rusqlite`, bundled and compiled per ABI |
+| UI | Flutter, `flutter_rust_bridge` 2.12 |
+| Android | Kotlin: a `NotificationListenerService` and a `RemoteViews` widget |
+| Sync | A file you carry. No server, no account, no credentials |
+| Platform | Android. iOS is deliberately absent — see AGENTS.md |
+
 
 ## Documentation
 
 | Document | Contents |
 | --- | --- |
-| [SYNC_SETUP.md](SYNC_SETUP.md) | Standing up Supabase: schema, migrations, email OTP, keys |
-| [AI_SETUP.md](AI_SETUP.md) | The AI quick-entry proxy, and the direct-key alternative |
-| [RELEASE.md](RELEASE.md) | EAS builds, store submission, OTA updates, pre-submit checklist |
+| [rust/MIGRATION.md](rust/MIGRATION.md) | Why the rewrite went the way it did, module by module, including the things it got wrong first |
+| [flutter_app/android/README.md](flutter_app/android/README.md) | Making a signing key, and what losing it costs |
+| [AGENTS.md](AGENTS.md) | The rules this codebase is written under |
+| [RELEASE.md](RELEASE.md) | Tagging a release |
 | [DATA_MODEL_assets.md](DATA_MODEL_assets.md) | How accounts, assets, loans and net worth relate |
 | [CHANGELOG.md](CHANGELOG.md) | Release history |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Development workflow, commit and PR conventions |
@@ -256,5 +267,5 @@ for how to report one privately.
 [MIT](LICENSE).
 
 <div align="center">
-<sub>Built with <a href="https://expo.dev">Expo</a> 🌺</sub>
+<sub>A Rust core, a Flutter UI, and no server 🌺</sub>
 </div>

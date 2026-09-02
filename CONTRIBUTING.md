@@ -19,19 +19,21 @@ For a security vulnerability, do **not** open an issue — see [SECURITY.md](SEC
 Requires Node.js 20+.
 
 ```bash
-npm install
+rustup target add aarch64-linux-android armv7-linux-androideabi x86_64-linux-android
+cd flutter_app && flutter pub get
 ```
 
 ```bash
-npx expo start
+flutter run
 ```
 
 No environment variables are needed to develop: cloud sync, AI entry and crash reporting
 all stay hidden until their keys are configured. See the [README](README.md#configuration)
 if you want to switch them on.
 
-**Expo SDK 56 has moved a lot of APIs.** Check the exact versioned docs at
-<https://docs.expo.dev/versions/v56.0.0/> before reaching for an Expo API — older
+**The core decides; everything else transports or draws.** Before putting logic
+in a screen, ask whether two implementations of it could ever disagree — if so
+it belongs in `rust/core`. See [AGENTS.md](AGENTS.md). Older
 tutorials and pre-56 answers are frequently wrong now.
 
 ## Before you push
@@ -40,13 +42,13 @@ All three must pass; CI runs the same three and additionally fails under 70 % li
 coverage.
 
 ```bash
-npm run lint && npm run typecheck && npm test
+npm run rust:clippy && npm run rust:test && npm run goldens
 ```
 
 Coverage locally:
 
 ```bash
-npm test -- --coverage
+cd flutter_app && flutter test integration_test/all_test.dart
 ```
 
 ## Code conventions
@@ -63,7 +65,8 @@ npm test -- --coverage
 - Tests live in a `__tests__/` directory beside the code under test, named `*.test.ts(x)`.
 - Every bug fix should come with a test that fails before the fix.
 - Domain logic is tested directly. Things that touch the network are tested against fakes — see `src/sync/__tests__/engine.test.ts` for the pattern.
-- Detox end-to-end tests are in `e2e/`; add a `testID` when a flow needs to be reachable from one.
+- Integration tests are in `flutter_app/integration_test/`; give a widget a `Key` when a test needs to reach it. Add a file and re-run `node scripts/gen-all-tests.js`.
+- After writing a test, break the thing it covers and check that it fails. Three times in this project a check turned out to be incapable of failing, and each one looked green.
 
 ## Commits
 
@@ -74,7 +77,7 @@ feat: add per-category budgets
 fix: keep delete-undo from clobbering concurrent edits
 refactor: split billImport.ts into billParse.ts and billDedup.ts
 test: cover the subscription charge-id derivation
-chore: bump expo to 56.0.12
+chore: bump flutter_rust_bridge to 2.12.1
 docs: document the AI proxy contract
 ```
 

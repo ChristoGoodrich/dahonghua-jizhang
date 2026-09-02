@@ -3347,6 +3347,50 @@ assumed: `aapt` reports `com.dahonghua.app.debug` for the debug APK and
 `com.dahonghua.app` for the release one, both are installed on the emulator at
 once, and the 601-test suite passes under the new package.
 
+## The rewrite is over
+
+The React Native tree is gone. It is at the `rn-final` tag, which is the commit
+before this one, and `git checkout rn-final -- src/` brings it back.
+
+Everything below this line was written while both trees existed. It is kept as
+written — the reasoning is the record, and a document edited to look as though
+it always knew the answer is worth less than one that shows where it changed
+its mind.
+
+### What survived the deletion
+
+The corpora did. `npm run parity` ran two implementations and compared them,
+which works only while both exist; before deleting anything, the TypeScript was
+asked every question one last time and its answers were written to
+`rust/parity/golden/`. 125,683 of them. `npm run goldens` checks the core
+against those files and needs no TypeScript, no `node_modules`, and no npm
+install.
+
+What that no longer catches is a change in the TypeScript, because nothing will
+change it again. What it still catches — and this is the part that mattered —
+is the core drifting from answers that were verified against code that was in
+users' hands. It was checked by breaking it: making a transfer's sender stop
+paying the fee produced 178 divergences, and reverting made them go away.
+
+### What went with it
+
+`src/`, `plugins/`, `modules/`, the Expo config, the Detox suite, the Supabase
+project, the iOS WidgetKit extension, `node_modules`, and every `*-parity.ts`.
+The two workflows that built and tested the React Native app are gone; the
+release workflow was rewritten for Flutter and now **refuses to publish a
+tagged release built with the debug key**, which the old one had no reason to
+check.
+
+`AGENTS.md` said "Expo HAS CHANGED — read the versioned docs before writing any
+code." It now describes the codebase that exists. That file is loaded into
+every session here, so leaving it would have actively misled whoever came next.
+
+The READMEs claimed features this build does not have: AI quick entry, receipt
+scan, encrypted backups, a PDF report, a calendar view, xlsx export, iOS, web.
+Each was checked against the source rather than assumed, and they are now
+listed under "Not in this build" with why. A README that quietly drops a
+feature is worse than one that says it went.
+
 ## Rules while both trees exist
 
 - The TypeScript app stays shippable and green the entire time. It is the

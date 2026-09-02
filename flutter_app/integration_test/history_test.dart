@@ -13,7 +13,6 @@ import 'package:flutter_app/main.dart';
 import 'package:flutter_app/record_sheet.dart' as sheet;
 import 'package:flutter_app/src/rust/api/history.dart' as history;
 import 'package:flutter_app/src/rust/api/store.dart' as store;
-import 'package:flutter_app/src/rust/frb_generated.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'rust_init.dart';
