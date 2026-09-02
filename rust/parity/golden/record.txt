@@ -1,0 +1,3987 @@
+validate	amount
+draft	none
+afterNext	exp|_|_|_|default|cash|_|_|[work,food]|_|JPY|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:
+draft	entry inc  0.3 note=a"b acct=default tags=[work] ledger=_ subcat='noodles' cur=_ orig=_ rate=_ ts=1700000000000
+afterNext	inc|_|_|_|default|card-a|_|_|[work]|_|_|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|_|card-a|_|_|[]|trip|JPY|_|1000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	ok
+draft	xfer default>card-a 20 fee=0 disc=0 note=_ ledger=_ ts=1700000000000
+afterNext	xfer|transfer|_|_|default|card-a|_|_|[work]|_|CNY|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	xferTo
+draft	none
+afterNext	xfer|_|_|_|card-a|_|_|_|[]|trip|USD|_|0
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	noRate:EUR
+draft	entry inc salary 266.25 note=_ acct=default tags=[work,food] ledger='trip' subcat=_ cur='EUR' orig=35.5 rate=7.5 ts=1000
+afterNext	inc|salary|_|_|default|cash|_|_|[work,food]|trip|EUR|_|1000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	xferTo
+draft	none
+afterNext	xfer|food|_|_|_|_|_|_|[work,food]|_|_|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry exp  1.44 note=午饭 acct=card-a tags=[work] ledger='home' subcat=_ cur='JPY' orig=30 rate=0.048 ts=_
+afterNext	exp|_|_|_|card-a|_|_|_|[work]|home|JPY|_|_
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|_|card-a|_|_|[work]|_|CNY|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry inc  93.60000000000001 note=午饭 acct=_ tags=_ ledger='trip' subcat=_ cur='USD' orig=13 rate=7.2 ts=1700000000000
+afterNext	inc|_|_|_|_|_|_|_|[]|trip|USD|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	xferTo
+draft	none
+afterNext	xfer|food|_|_|cash|_|_|_|[]|home|CNY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|transfer|_|_|cash|default|_|_|[]|trip|JPY|_|1000
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	xferTo
+draft	none
+afterNext	xfer|_|_|_|default|_|_|_|[]|trip|EUR|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry inc food 216 note=午饭 acct=default tags=[work,food] ledger='trip' subcat='noodles' cur='USD' orig=30 rate=7.2 ts=0
+afterNext	inc|food|_|_|default|cash|_|_|[work,food]|trip|USD|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|_|cash|_|_|[]|home|EUR|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:
+draft	xfer >default 13 fee=2 disc=0 note=午饭 ledger=home ts=0
+afterNext	xfer|_|_|_|_|default|_|_|[work]|home|_|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry exp salary 0.0000012999999999999998 note=午饭 acct=default tags=[work,food] ledger='home' subcat=_ cur='EUR' orig=13 rate=1e-7 ts=1000
+afterNext	exp|salary|_|_|default|card-a|_|_|[work,food]|home|EUR|_|1000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	amount
+draft	none
+afterNext	exp|food|_|_|_|default|_|_|[]|_|USD|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	xferSame
+draft	none
+afterNext	xfer|_|_|_|card-a|card-a|_|_|[work,food]|trip|CNY|_|_
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=
+validate	amount
+draft	none
+afterNext	exp|food|_|_|default|cash|_|_|[]|_|USD|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|salary|_|_|card-a|default|_|_|[work]|_|_|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|_|_|_|_|[work]|trip|CNY|_|1000
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	ok
+draft	xfer >card-a 30 fee=0 disc=2 note=_ ledger=trip ts=0
+afterNext	xfer|food|_|_|_|card-a|_|_|[]|trip|CNY|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|_|_|_|default|cash|_|_|[]|home|_|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|transfer|_|_|_|default|_|_|[work,food]|home|EUR|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|default|card-a|_|_|[]|trip|_|_|1000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	amount
+draft	none
+afterNext	xfer|salary|_|_|card-a|cash|_|_|[work]|_|USD|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:
+draft	entry inc transfer 13 note=午饭 acct=default tags=_ ledger='trip' subcat=_ cur=_ orig=_ rate=_ ts=_
+afterNext	inc|transfer|_|_|default|card-a|_|_|[]|trip|_|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:EUR
+draft	xfer card-a>default 20 fee=0 disc=2 note=午饭 ledger=home ts=1000
+afterNext	xfer|_|_|_|card-a|default|_|_|[work]|home|EUR|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry inc food 30 note=午饭 acct=card-a tags=[work] ledger=_ subcat=_ cur=_ orig=_ rate=_ ts=0
+afterNext	inc|food|_|_|card-a|default|_|_|[work]|_|CNY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry inc  0.96 note=_ acct=_ tags=[work] ledger='home' subcat=_ cur='JPY' orig=20 rate=0.048 ts=1700000000000
+afterNext	inc|_|_|_|_|cash|_|_|[work]|home|JPY|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|cash|_|_|_|[]|home|CNY|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	xferTo
+draft	none
+afterNext	xfer|salary|_|_|cash|_|_|_|[work,food]|home|EUR|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	xfer >cash 300 fee=100 disc=2 note=午饭 ledger=home ts=1700000000000
+afterNext	xfer|food|_|_|_|cash|_|_|[]|home|CNY|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	xferSame
+draft	none
+afterNext	xfer|food|_|_|card-a|card-a|_|_|[work,food]|trip|_|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	xferTo
+draft	none
+afterNext	xfer|_|_|_|cash|_|_|_|[work,food]|_|JPY|_|1000
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=
+validate	noRate:
+draft	entry exp  300 note=午饭 acct=default tags=_ ledger='trip' subcat='noodles' cur=_ orig=_ rate=_ ts=1700000000000
+afterNext	exp|_|_|_|default|_|_|_|[]|trip|_|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|transfer|_|_|card-a|cash|_|_|[]|home|_|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry inc food 0.00000355 note=a"b acct=default tags=[work] ledger='home' subcat=_ cur='EUR' orig=35.5 rate=1e-7 ts=0
+afterNext	inc|food|_|_|default|cash|_|_|[work]|home|EUR|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|card-a|default|_|_|[work,food]|trip|CNY|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	amount
+draft	none
+afterNext	xfer|transfer|_|_|card-a|default|_|_|[work]|trip|EUR|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|cash|_|_|_|[work]|trip|EUR|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|food|_|_|default|card-a|_|_|[]|_|CNY|_|_
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	ok
+draft	entry inc transfer 93.60000000000001 note=午饭 acct=cash tags=_ ledger='trip' subcat='noodles' cur='USD' orig=13 rate=7.2 ts=1700000000000
+afterNext	inc|transfer|_|_|cash|default|_|_|[]|trip|USD|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|_|card-a|_|_|[work,food]|home|CNY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry inc  0 note=午饭 acct=cash tags=[work,food] ledger='trip' subcat='noodles' cur='USD' orig=35.5 rate=0 ts=1700000000000
+afterNext	inc|_|_|_|cash|cash|_|_|[work,food]|trip|USD|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	ok
+draft	xfer >cash 0.5 fee=0 disc=0 note=_ ledger=home ts=0
+afterNext	xfer|food|_|_|_|cash|_|_|[]|home|JPY|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry exp food 0.3 note=午饭 acct=default tags=_ ledger='home' subcat='noodles' cur=_ orig=_ rate=_ ts=0
+afterNext	exp|food|_|_|default|cash|_|_|[]|home|CNY|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry inc salary 1.44 note=午饭 acct=_ tags=_ ledger='trip' subcat='noodles' cur='JPY' orig=30 rate=0.048 ts=_
+afterNext	inc|salary|_|_|_|default|_|_|[]|trip|JPY|_|_
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	amount
+draft	none
+afterNext	inc|_|_|_|card-a|cash|_|_|[work]|_|JPY|_|1000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|_|card-a|_|_|[]|trip|CNY|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|_|_|_|_|cash|_|_|[work,food]|_|CNY|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry exp  0 note=午饭 acct=card-a tags=[work,food] ledger='home' subcat=_ cur='JPY' orig=0.3 rate=0 ts=_
+afterNext	exp|_|_|_|card-a|default|_|_|[work,food]|home|JPY|_|_
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	amount
+draft	none
+afterNext	exp|_|_|_|_|cash|_|_|[work]|_|_|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:
+draft	entry inc  0.5 note=午饭 acct=cash tags=_ ledger=_ subcat=_ cur=_ orig=_ rate=_ ts=1000
+afterNext	inc|_|_|_|cash|_|_|_|[]|_|_|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|_|_|_|_|cash|_|_|[]|home|EUR|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|_|_|_|default|default|_|_|[work]|_|CNY|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry inc food 0.024 note=午饭 acct=card-a tags=[work] ledger='trip' subcat='noodles' cur='JPY' orig=0.5 rate=0.048 ts=1700000000000
+afterNext	inc|food|_|_|card-a|_|_|_|[work]|trip|JPY|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	xfer card-a>cash 20 fee=0 disc=0 note=_ ledger=home ts=1000
+afterNext	xfer|food|_|_|card-a|cash|_|_|[]|home|USD|_|1000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	xferTo
+draft	none
+afterNext	xfer|food|_|_|card-a|_|_|_|[work,food]|trip|JPY|_|0
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	ok
+draft	entry exp food 0.624 note=午饭 acct=_ tags=[work] ledger='home' subcat='noodles' cur='JPY' orig=13 rate=0.048 ts=_
+afterNext	exp|food|_|_|_|card-a|_|_|[work]|home|JPY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	xferSame
+draft	none
+afterNext	xfer|salary|_|_|cash|cash|_|_|[work]|trip|_|_|_
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	xferTo
+draft	none
+afterNext	xfer|_|_|_|default|_|_|_|[work,food]|home|EUR|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	ok
+draft	entry inc  13 note=午饭 acct=cash tags=[work,food] ledger='trip' subcat='noodles' cur=_ orig=_ rate=_ ts=1000
+afterNext	inc|_|_|_|cash|default|_|_|[work,food]|trip|CNY|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|transfer|_|_|cash|cash|_|_|[]|trip|JPY|_|_
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=
+validate	amount
+draft	none
+afterNext	inc|_|_|_|cash|cash|_|_|[work]|trip|EUR|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	amount
+draft	none
+afterNext	inc|_|_|_|cash|_|_|_|[work,food]|home|CNY|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry exp salary 0.3 note=午饭 acct=default tags=[work,food] ledger='trip' subcat=_ cur='EUR' orig=0.3 rate=_ ts=_
+afterNext	exp|salary|_|_|default|cash|_|_|[work,food]|trip|EUR|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:
+draft	xfer >cash 0.3 fee=-3 disc=0 note=午饭 ledger=home ts=1000
+afterNext	xfer|food|_|_|_|cash|_|_|[work,food]|home|_|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|_|cash|_|_|[work,food]|trip|JPY|_|0
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	noRate:EUR
+draft	entry inc  13 note=_ acct=_ tags=[work] ledger=_ subcat='noodles' cur='EUR' orig=13 rate=_ ts=0
+afterNext	inc|_|_|_|_|_|_|_|[work]|_|EUR|_|0
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	xferSame
+draft	none
+afterNext	xfer|salary|_|_|card-a|card-a|_|_|[work]|home|JPY|_|0
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	ok
+draft	xfer cash>default 13 fee=0 disc=0 note=午饭 ledger=home ts=_
+afterNext	xfer|salary|_|_|cash|default|_|_|[]|home|JPY|_|_
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|default|card-a|_|_|[]|_|EUR|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	xfer default>card-a 13 fee=0 disc=100 note=_ ledger=_ ts=1700000000000
+afterNext	xfer|salary|_|_|default|card-a|_|_|[work,food]|_|USD|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	ok
+draft	xfer default>cash 0.5 fee=2.5 disc=0 note=a"b ledger=_ ts=1000
+afterNext	xfer|_|_|_|default|cash|_|_|[work,food]|_|USD|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|transfer|_|_|card-a|default|_|_|[]|home|JPY|_|0
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	amount
+draft	none
+afterNext	exp|_|_|_|card-a|card-a|_|_|[]|home|EUR|_|0
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|cash|default|_|_|[work]|_|EUR|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	xferSame
+draft	none
+afterNext	xfer|salary|_|_|card-a|card-a|_|_|[work]|home|JPY|_|_
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=
+validate	ok
+draft	entry exp transfer 2.16 note=_ acct=default tags=_ ledger='trip' subcat='noodles' cur='USD' orig=0.3 rate=7.2 ts=1700000000000
+afterNext	exp|transfer|_|_|default|cash|_|_|[]|trip|USD|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|transfer|_|_|default|card-a|_|_|[work,food]|home|JPY|_|1000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	ok
+draft	xfer default>cash 300 fee=100 disc=0.5 note=午饭 ledger=home ts=1700000000000
+afterNext	xfer|food|_|_|default|cash|_|_|[work]|home|USD|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	amount
+draft	none
+afterNext	xfer|transfer|_|_|default|default|_|_|[work]|_|CNY|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:
+draft	xfer cash>default 13 fee=0 disc=1.5 note=_ ledger=home ts=0
+afterNext	xfer|salary|_|_|cash|default|_|_|[work,food]|home|_|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:EUR
+draft	xfer >card-a 20 fee=2.5 disc=0 note=午饭 ledger=_ ts=1000
+afterNext	xfer|_|_|_|_|card-a|_|_|[work,food]|_|EUR|_|1000
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	noRate:
+draft	entry exp food 13 note=午饭 acct=card-a tags=[work,food] ledger='home' subcat=_ cur=_ orig=_ rate=_ ts=1700000000000
+afterNext	exp|food|_|_|card-a|cash|_|_|[work,food]|home|_|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:EUR
+draft	xfer card-a>default 13 fee=2 disc=0 note=a"b ledger=_ ts=1000
+afterNext	xfer|transfer|_|_|card-a|default|_|_|[work]|_|EUR|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry inc salary 0.0144 note=午饭 acct=card-a tags=[work] ledger=_ subcat=_ cur='JPY' orig=0.3 rate=0.048 ts=0
+afterNext	inc|salary|_|_|card-a|cash|_|_|[work]|_|JPY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry exp  13 note=午饭 acct=cash tags=_ ledger='trip' subcat='noodles' cur=_ orig=_ rate=_ ts=0
+afterNext	exp|_|_|_|cash|card-a|_|_|[]|trip|CNY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|_|_|_|card-a|cash|_|_|[work]|trip|CNY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	xfer card-a>cash 0.3 fee=2.5 disc=1.5 note=_ ledger=_ ts=_
+afterNext	xfer|_|_|_|card-a|cash|_|_|[work]|_|CNY|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|default|_|_|_|[work]|_|_|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry exp  14.4 note=_ acct=default tags=_ ledger='trip' subcat=_ cur='JPY' orig=300 rate=0.048 ts=_
+afterNext	exp|_|_|_|default|card-a|_|_|[]|trip|JPY|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:
+draft	entry exp food 35.5 note=午饭 acct=default tags=_ ledger='home' subcat=_ cur=_ orig=_ rate=_ ts=1000
+afterNext	exp|food|_|_|default|_|_|_|[]|home|_|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|cash|default|_|_|[work,food]|home|JPY|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	amount
+draft	none
+afterNext	exp|transfer|_|_|default|card-a|_|_|[work,food]|home|EUR|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	xfer card-a>default 0.5 fee=0.5 disc=2.5 note=午饭 ledger=_ ts=0
+afterNext	xfer|transfer|_|_|card-a|default|_|_|[work,food]|_|CNY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|transfer|_|_|card-a|cash|_|_|[work]|home|_|_|1000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=
+validate	ok
+draft	entry inc transfer 1.704 note=午饭 acct=card-a tags=_ ledger='home' subcat=_ cur='JPY' orig=35.5 rate=0.048 ts=1700000000000
+afterNext	inc|transfer|_|_|card-a|default|_|_|[]|home|JPY|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|transfer|_|_|cash|cash|_|_|[]|trip|CNY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry exp transfer 300 note=午饭 acct=default tags=[work,food] ledger='trip' subcat=_ cur='EUR' orig=300 rate=_ ts=0
+afterNext	exp|transfer|_|_|default|cash|_|_|[work,food]|trip|EUR|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry exp transfer 0 note=午饭 acct=default tags=_ ledger='trip' subcat=_ cur='JPY' orig=30 rate=0 ts=_
+afterNext	exp|transfer|_|_|default|_|_|_|[]|trip|JPY|_|_
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	noRate:EUR
+draft	entry inc salary 3.75 note=_ acct=cash tags=_ ledger='home' subcat='noodles' cur='EUR' orig=0.5 rate=7.5 ts=1700000000000
+afterNext	inc|salary|_|_|cash|cash|_|_|[]|home|EUR|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:
+draft	entry exp transfer 13 note=午饭 acct=card-a tags=[work,food] ledger=_ subcat='noodles' cur=_ orig=_ rate=_ ts=1000
+afterNext	exp|transfer|_|_|card-a|_|_|_|[work,food]|_|_|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|_|_|_|_|cash|_|_|[]|trip|EUR|_|1000
+pickIo	io=xfer subcat= cat=_ acct= acctTo=default
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|card-a|cash|_|_|[]|trip|JPY|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|transfer|_|_|default|_|_|_|[work,food]|trip|USD|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|food|_|_|default|default|_|_|[]|trip|EUR|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:
+draft	xfer cash>default 20 fee=100 disc=-3 note=_ ledger=_ ts=1000
+afterNext	xfer|_|_|_|cash|default|_|_|[work]|_|_|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|salary|_|_|cash|card-a|_|_|[work]|_|JPY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry inc transfer 0.3 note=a"b acct=default tags=[work] ledger=_ subcat=_ cur=_ orig=_ rate=_ ts=1700000000000
+afterNext	inc|transfer|_|_|default|cash|_|_|[work]|_|CNY|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	amount
+draft	none
+afterNext	xfer|transfer|_|_|_|_|_|_|[work,food]|home|USD|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct= acctTo=default
+validate	amount
+draft	none
+afterNext	inc|food|_|_|card-a|card-a|_|_|[work,food]|home|USD|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	ok
+draft	entry inc  0.0144 note=午饭 acct=default tags=_ ledger='home' subcat='noodles' cur='JPY' orig=0.3 rate=0.048 ts=_
+afterNext	inc|_|_|_|default|_|_|_|[]|home|JPY|_|_
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	noRate:EUR
+draft	entry inc food 2250 note=午饭 acct=default tags=[work,food] ledger='trip' subcat='noodles' cur='EUR' orig=300 rate=7.5 ts=_
+afterNext	inc|food|_|_|default|_|_|_|[work,food]|trip|EUR|_|_
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	noRate:EUR
+draft	entry inc transfer 13 note=午饭 acct=_ tags=_ ledger=_ subcat=_ cur='EUR' orig=13 rate=_ ts=_
+afterNext	inc|transfer|_|_|_|default|_|_|[]|_|EUR|_|_
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|default|_|_|_|[]|home|_|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|_|default|_|_|[work,food]|_|CNY|_|0
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	ok
+draft	entry inc food 216 note=a"b acct=_ tags=[work,food] ledger=_ subcat=_ cur='USD' orig=30 rate=7.2 ts=1000
+afterNext	inc|food|_|_|_|default|_|_|[work,food]|_|USD|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:
+draft	entry inc salary 300 note=午饭 acct=cash tags=[work] ledger='home' subcat='noodles' cur=_ orig=_ rate=_ ts=0
+afterNext	inc|salary|_|_|cash|cash|_|_|[work]|home|_|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|food|_|_|cash|cash|_|_|[work]|home|USD|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|default|_|_|_|[work]|home|USD|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry exp food 35.5 note=_ acct=default tags=[work] ledger=_ subcat='noodles' cur='EUR' orig=35.5 rate=_ ts=_
+afterNext	exp|food|_|_|default|default|_|_|[work]|_|EUR|_|_
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	ok
+draft	entry inc salary 266.25 note=午饭 acct=_ tags=[work,food] ledger='home' subcat=_ cur='JPY' orig=35.5 rate=7.5 ts=0
+afterNext	inc|salary|_|_|_|card-a|_|_|[work,food]|home|JPY|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:
+draft	entry inc food 30 note=午饭 acct=default tags=_ ledger='trip' subcat=_ cur=_ orig=_ rate=_ ts=0
+afterNext	inc|food|_|_|default|cash|_|_|[]|trip|_|_|0
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	amount
+draft	none
+afterNext	exp|food|_|_|_|default|_|_|[work,food]|_|JPY|_|_
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	amount
+draft	none
+afterNext	xfer|salary|_|_|cash|_|_|_|[]|_|JPY|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|default|default|_|_|[work,food]|trip|JPY|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|transfer|_|_|card-a|cash|_|_|[work,food]|_|USD|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|transfer|_|_|default|_|_|_|[work]|_|USD|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|card-a|card-a|_|_|[]|home|JPY|_|_
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|cash|cash|_|_|[]|trip|USD|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|transfer|_|_|card-a|_|_|_|[work]|_|CNY|_|0
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=
+validate	amount
+draft	none
+afterNext	xfer|salary|_|_|card-a|cash|_|_|[work]|home|JPY|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|_|_|_|cash|card-a|_|_|[]|_|JPY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:
+draft	entry exp food 20 note=午饭 acct=card-a tags=[work] ledger='home' subcat=_ cur=_ orig=_ rate=_ ts=1700000000000
+afterNext	exp|food|_|_|card-a|cash|_|_|[work]|home|_|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	xferTo
+draft	none
+afterNext	xfer|salary|_|_|cash|_|_|_|[]|home|CNY|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=
+validate	noRate:
+draft	entry exp  0.5 note=_ acct=card-a tags=[work,food] ledger='home' subcat=_ cur=_ orig=_ rate=_ ts=0
+afterNext	exp|_|_|_|card-a|card-a|_|_|[work,food]|home|_|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry inc transfer 0.5 note=_ acct=default tags=_ ledger='home' subcat='noodles' cur=_ orig=_ rate=_ ts=1700000000000
+afterNext	inc|transfer|_|_|default|card-a|_|_|[]|home|CNY|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry inc transfer 2250 note=_ acct=cash tags=_ ledger=_ subcat='noodles' cur='EUR' orig=300 rate=7.5 ts=_
+afterNext	inc|transfer|_|_|cash|card-a|_|_|[]|_|EUR|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|transfer|_|_|cash|default|_|_|[work]|home|JPY|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry exp food 300 note=午饭 acct=card-a tags=[work] ledger='home' subcat='noodles' cur=_ orig=_ rate=_ ts=0
+afterNext	exp|food|_|_|card-a|default|_|_|[work]|home|CNY|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|card-a|default|_|_|[]|_|JPY|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry inc food 255.6 note=_ acct=card-a tags=_ ledger=_ subcat=_ cur='USD' orig=35.5 rate=7.2 ts=0
+afterNext	inc|food|_|_|card-a|_|_|_|[]|_|USD|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|transfer|_|_|cash|default|_|_|[]|home|JPY|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	xfer default>cash 0.5 fee=0 disc=-3 note=a"b ledger=trip ts=1000
+afterNext	xfer|transfer|_|_|default|cash|_|_|[work,food]|trip|CNY|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|card-a|cash|_|_|[work,food]|_|EUR|_|_
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=
+validate	noRate:
+draft	entry exp salary 20 note=_ acct=_ tags=[work] ledger='home' subcat=_ cur=_ orig=_ rate=_ ts=_
+afterNext	exp|salary|_|_|_|_|_|_|[work]|home|_|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|card-a|default|_|_|[work]|trip|_|_|1000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	ok
+draft	entry exp food 216 note=午饭 acct=_ tags=_ ledger='trip' subcat='noodles' cur='USD' orig=30 rate=7.2 ts=_
+afterNext	exp|food|_|_|_|_|_|_|[]|trip|USD|_|_
+pickIo	io=xfer subcat= cat=_ acct= acctTo=default
+validate	ok
+draft	entry inc transfer 2250 note=_ acct=_ tags=_ ledger=_ subcat=_ cur='JPY' orig=300 rate=7.5 ts=_
+afterNext	inc|transfer|_|_|_|cash|_|_|[]|_|JPY|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|default|default|_|_|[work]|home|EUR|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|cash|default|_|_|[work,food]|_|JPY|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|_|_|_|_|cash|_|_|[]|trip|JPY|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|default|cash|_|_|[]|home|CNY|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	xfer card-a>cash 0.3 fee=0 disc=0 note=午饭 ledger=home ts=1000
+afterNext	xfer|transfer|_|_|card-a|cash|_|_|[work]|home|USD|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry inc transfer 3e-8 note=_ acct=default tags=[work] ledger=_ subcat=_ cur='EUR' orig=0.3 rate=1e-7 ts=_
+afterNext	inc|transfer|_|_|default|card-a|_|_|[work]|_|EUR|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|salary|_|_|card-a|default|_|_|[work]|_|JPY|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|food|_|_|_|cash|_|_|[]|trip|EUR|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	xferTo
+draft	none
+afterNext	xfer|salary|_|_|cash|_|_|_|[work,food]|trip|JPY|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|_|_|_|_|_|_|_|[work,food]|home|_|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|food|_|_|default|card-a|_|_|[work,food]|home|EUR|_|1000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	amount
+draft	none
+afterNext	inc|_|_|_|cash|default|_|_|[work,food]|trip|CNY|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	ok
+draft	entry inc food 0.624 note=午饭 acct=default tags=[work,food] ledger='home' subcat=_ cur='JPY' orig=13 rate=0.048 ts=0
+afterNext	inc|food|_|_|default|card-a|_|_|[work,food]|home|JPY|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|cash|default|_|_|[work,food]|_|USD|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|food|_|_|default|_|_|_|[work,food]|_|EUR|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry inc  0.00000355 note=_ acct=card-a tags=[work,food] ledger=_ subcat=_ cur='EUR' orig=35.5 rate=1e-7 ts=1700000000000
+afterNext	inc|_|_|_|card-a|card-a|_|_|[work,food]|_|EUR|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|salary|_|_|default|_|_|_|[work]|home|EUR|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|transfer|_|_|_|_|_|_|[work]|home|JPY|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct= acctTo=
+validate	amount
+draft	none
+afterNext	inc|food|_|_|card-a|card-a|_|_|[work]|_|EUR|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry inc transfer 13 note=午饭 acct=cash tags=[work,food] ledger='trip' subcat='noodles' cur=_ orig=_ rate=_ ts=_
+afterNext	inc|transfer|_|_|cash|card-a|_|_|[work,food]|trip|CNY|_|_
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	noRate:EUR
+draft	entry exp  5e-8 note=a"b acct=_ tags=_ ledger='trip' subcat=_ cur='EUR' orig=0.5 rate=1e-7 ts=1000
+afterNext	exp|_|_|_|_|default|_|_|[]|trip|EUR|_|1000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	xferTo
+draft	none
+afterNext	xfer|_|_|_|card-a|_|_|_|[]|trip|_|_|_
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	amount
+draft	none
+afterNext	xfer|salary|_|_|cash|cash|_|_|[work]|trip|EUR|_|1000
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|card-a|card-a|_|_|[]|_|_|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|card-a|_|_|_|[]|home|CNY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|transfer|_|_|default|cash|_|_|[work,food]|home|JPY|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	amount
+draft	none
+afterNext	exp|transfer|_|_|default|card-a|_|_|[work]|_|JPY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry exp  35.5 note=午饭 acct=default tags=[work] ledger='home' subcat='noodles' cur='EUR' orig=35.5 rate=_ ts=1700000000000
+afterNext	exp|_|_|_|default|cash|_|_|[work]|home|EUR|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	ok
+draft	xfer card-a>default 13 fee=-3 disc=-3 note=_ ledger=home ts=1000
+afterNext	xfer|food|_|_|card-a|default|_|_|[work]|home|JPY|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|_|_|_|default|default|_|_|[work,food]|_|EUR|_|_
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	ok
+draft	entry inc transfer 0.0144 note=_ acct=default tags=[work] ledger='home' subcat='noodles' cur='JPY' orig=0.3 rate=0.048 ts=0
+afterNext	inc|transfer|_|_|default|default|_|_|[work]|home|JPY|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	xferSame
+draft	none
+afterNext	xfer|transfer|_|_|cash|cash|_|_|[work]|home|JPY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|transfer|_|_|default|_|_|_|[]|home|CNY|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|card-a|card-a|_|_|[]|home|_|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=
+validate	xferSame
+draft	none
+afterNext	xfer|transfer|_|_|card-a|card-a|_|_|[work,food]|home|_|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|transfer|_|_|card-a|default|_|_|[work]|_|CNY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|_|cash|_|_|[]|home|USD|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	xfer card-a>cash 0.5 fee=0.5 disc=0 note=午饭 ledger=home ts=_
+afterNext	xfer|food|_|_|card-a|cash|_|_|[work]|home|JPY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry exp  35.5 note=_ acct=cash tags=[work,food] ledger='home' subcat='noodles' cur=_ orig=_ rate=_ ts=_
+afterNext	exp|_|_|_|cash|card-a|_|_|[work,food]|home|CNY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	xferTo
+draft	none
+afterNext	xfer|transfer|_|_|cash|_|_|_|[]|trip|USD|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry inc food 93.60000000000001 note=午饭 acct=default tags=_ ledger='trip' subcat=_ cur='USD' orig=13 rate=7.2 ts=_
+afterNext	inc|food|_|_|default|_|_|_|[]|trip|USD|_|_
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	amount
+draft	none
+afterNext	inc|food|_|_|default|card-a|_|_|[]|_|USD|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|food|_|_|card-a|_|_|_|[]|_|EUR|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	amount
+draft	none
+afterNext	exp|transfer|_|_|card-a|cash|_|_|[work]|home|JPY|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|card-a|default|_|_|[work]|home|CNY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|cash|_|_|_|[work]|home|EUR|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:
+draft	entry exp  300 note=午饭 acct=cash tags=[work,food] ledger='home' subcat=_ cur=_ orig=_ rate=_ ts=1700000000000
+afterNext	exp|_|_|_|cash|cash|_|_|[work,food]|home|_|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	noRate:
+draft	entry inc  30 note=午饭 acct=_ tags=[work] ledger=_ subcat=_ cur=_ orig=_ rate=_ ts=1700000000000
+afterNext	inc|_|_|_|_|_|_|_|[work]|_|_|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry inc salary 0.0000012999999999999998 note=午饭 acct=_ tags=_ ledger='home' subcat='noodles' cur='EUR' orig=13 rate=1e-7 ts=1700000000000
+afterNext	inc|salary|_|_|_|default|_|_|[]|home|EUR|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=
+validate	ok
+draft	entry exp transfer 0.0144 note=午饭 acct=_ tags=[work,food] ledger=_ subcat=_ cur='JPY' orig=0.3 rate=0.048 ts=_
+afterNext	exp|transfer|_|_|_|cash|_|_|[work,food]|_|JPY|_|_
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	noRate:EUR
+draft	entry exp food 3e-8 note=_ acct=card-a tags=_ ledger='trip' subcat=_ cur='EUR' orig=0.3 rate=1e-7 ts=1700000000000
+afterNext	exp|food|_|_|card-a|card-a|_|_|[]|trip|EUR|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	ok
+draft	entry inc  2250 note=午饭 acct=_ tags=_ ledger='home' subcat='noodles' cur='JPY' orig=300 rate=7.5 ts=1700000000000
+afterNext	inc|_|_|_|_|default|_|_|[]|home|JPY|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	noRate:
+draft	xfer >card-a 35.5 fee=2 disc=2.5 note=_ ledger=trip ts=_
+afterNext	xfer|food|_|_|_|card-a|_|_|[work,food]|trip|_|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:
+draft	entry exp food 30 note=午饭 acct=_ tags=[work,food] ledger='trip' subcat=_ cur=_ orig=_ rate=_ ts=1700000000000
+afterNext	exp|food|_|_|_|default|_|_|[work,food]|trip|_|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|default|card-a|_|_|[]|trip|EUR|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|card-a|default|_|_|[work,food]|_|EUR|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|food|_|_|_|cash|_|_|[work]|home|JPY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|_|cash|_|_|[work,food]|trip|JPY|_|_
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|_|default|_|_|[]|_|JPY|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|_|_|_|card-a|default|_|_|[work]|_|EUR|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|cash|card-a|_|_|[work]|_|JPY|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|default|_|_|_|[]|_|EUR|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|default|card-a|_|_|[work,food]|trip|_|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry exp salary 0.024 note=_ acct=_ tags=_ ledger=_ subcat='noodles' cur='JPY' orig=0.5 rate=0.048 ts=1000
+afterNext	exp|salary|_|_|_|_|_|_|[]|_|JPY|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|transfer|_|_|cash|default|_|_|[work,food]|_|USD|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:
+draft	entry exp food 300 note=午饭 acct=card-a tags=_ ledger='home' subcat=_ cur=_ orig=_ rate=_ ts=1000
+afterNext	exp|food|_|_|card-a|default|_|_|[]|home|_|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|transfer|_|_|default|default|_|_|[]|_|CNY|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|_|_|_|_|card-a|_|_|[]|_|USD|_|1000
+pickIo	io=xfer subcat= cat=_ acct= acctTo=default
+validate	amount
+draft	none
+afterNext	exp|_|_|_|card-a|cash|_|_|[work,food]|home|CNY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	xfer cash>default 0.3 fee=0 disc=0.5 note=午饭 ledger=trip ts=0
+afterNext	xfer|transfer|_|_|cash|default|_|_|[work,food]|trip|USD|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|food|_|_|_|cash|_|_|[work]|trip|_|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|card-a|_|_|_|[]|trip|JPY|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	xferSame
+draft	none
+afterNext	xfer|salary|_|_|default|default|_|_|[]|_|CNY|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|_|_|_|card-a|card-a|_|_|[work,food]|trip|JPY|_|1000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	amount
+draft	none
+afterNext	exp|_|_|_|default|cash|_|_|[work,food]|_|USD|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry exp food 97.5 note=a"b acct=card-a tags=_ ledger=_ subcat='noodles' cur='EUR' orig=13 rate=7.5 ts=1700000000000
+afterNext	exp|food|_|_|card-a|card-a|_|_|[]|_|EUR|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|food|_|_|cash|default|_|_|[work,food]|_|EUR|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	xfer default>cash 0.3 fee=0 disc=-3 note=午饭 ledger=trip ts=1700000000000
+afterNext	xfer|_|_|_|default|cash|_|_|[work]|trip|CNY|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	xfer default>card-a 300 fee=-3 disc=100 note=午饭 ledger=trip ts=_
+afterNext	xfer|_|_|_|default|card-a|_|_|[]|trip|USD|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	xfer cash>card-a 0.3 fee=0 disc=100 note=a"b ledger=trip ts=0
+afterNext	xfer|transfer|_|_|cash|card-a|_|_|[work]|trip|JPY|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|default|_|_|_|[]|trip|JPY|_|1000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|default|card-a|_|_|[]|trip|_|_|1000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|card-a|_|_|_|[]|trip|CNY|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=
+validate	ok
+draft	entry inc salary 93.60000000000001 note=午饭 acct=_ tags=[work,food] ledger='trip' subcat='noodles' cur='USD' orig=13 rate=7.2 ts=1000
+afterNext	inc|salary|_|_|_|card-a|_|_|[work,food]|trip|USD|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|transfer|_|_|default|card-a|_|_|[]|trip|CNY|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:
+draft	entry exp food 13 note=午饭 acct=card-a tags=[work] ledger='home' subcat=_ cur=_ orig=_ rate=_ ts=1700000000000
+afterNext	exp|food|_|_|card-a|cash|_|_|[work]|home|_|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	ok
+draft	xfer default>card-a 0.5 fee=0.5 disc=100 note=午饭 ledger=_ ts=1000
+afterNext	xfer|salary|_|_|default|card-a|_|_|[]|_|CNY|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry exp salary 0 note=午饭 acct=card-a tags=_ ledger='home' subcat='noodles' cur='EUR' orig=0.3 rate=0 ts=0
+afterNext	exp|salary|_|_|card-a|card-a|_|_|[]|home|EUR|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry inc food 1.704 note=_ acct=card-a tags=_ ledger='trip' subcat=_ cur='JPY' orig=35.5 rate=0.048 ts=0
+afterNext	inc|food|_|_|card-a|cash|_|_|[]|trip|JPY|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|salary|_|_|default|cash|_|_|[work]|home|JPY|_|_
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|cash|card-a|_|_|[work]|trip|JPY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry inc salary 225 note=午饭 acct=_ tags=_ ledger='trip' subcat=_ cur='USD' orig=30 rate=7.5 ts=1700000000000
+afterNext	inc|salary|_|_|_|_|_|_|[]|trip|USD|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|cash|_|_|_|[work,food]|home|_|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|card-a|default|_|_|[work]|home|_|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry inc food 13 note=_ acct=cash tags=[work] ledger=_ subcat='noodles' cur=_ orig=_ rate=_ ts=1000
+afterNext	inc|food|_|_|cash|card-a|_|_|[work]|_|CNY|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:
+draft	xfer default>cash 30 fee=0 disc=2.5 note=午饭 ledger=home ts=1700000000000
+afterNext	xfer|food|_|_|default|cash|_|_|[work]|home|_|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|transfer|_|_|cash|default|_|_|[work,food]|home|JPY|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry exp salary 0 note=_ acct=cash tags=_ ledger=_ subcat='noodles' cur='EUR' orig=13 rate=0 ts=1000
+afterNext	exp|salary|_|_|cash|card-a|_|_|[]|_|EUR|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry inc transfer 0.3 note=午饭 acct=card-a tags=_ ledger=_ subcat='noodles' cur=_ orig=_ rate=_ ts=1000
+afterNext	inc|transfer|_|_|card-a|_|_|_|[]|_|CNY|_|1000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	ok
+draft	entry inc transfer 1.704 note=午饭 acct=_ tags=_ ledger=_ subcat=_ cur='JPY' orig=35.5 rate=0.048 ts=0
+afterNext	inc|transfer|_|_|_|cash|_|_|[]|_|JPY|_|0
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	ok
+draft	xfer card-a>cash 13 fee=2.5 disc=0 note=午饭 ledger=_ ts=0
+afterNext	xfer|_|_|_|card-a|cash|_|_|[work]|_|USD|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry inc salary 13 note=午饭 acct=card-a tags=[work,food] ledger='home' subcat='noodles' cur=_ orig=_ rate=_ ts=_
+afterNext	inc|salary|_|_|card-a|default|_|_|[work,food]|home|CNY|_|_
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	xferTo
+draft	none
+afterNext	xfer|food|_|_|card-a|_|_|_|[work,food]|home|USD|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|food|_|_|card-a|default|_|_|[]|home|EUR|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:
+draft	entry inc transfer 20 note=午饭 acct=cash tags=_ ledger='home' subcat=_ cur=_ orig=_ rate=_ ts=0
+afterNext	inc|transfer|_|_|cash|_|_|_|[]|home|_|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry exp salary 30 note=_ acct=_ tags=_ ledger='home' subcat='noodles' cur=_ orig=_ rate=_ ts=_
+afterNext	exp|salary|_|_|_|default|_|_|[]|home|CNY|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|transfer|_|_|cash|cash|_|_|[work,food]|_|EUR|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:EUR
+draft	xfer card-a>cash 35.5 fee=2.5 disc=2 note=午饭 ledger=_ ts=1700000000000
+afterNext	xfer|food|_|_|card-a|cash|_|_|[]|_|EUR|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|cash|default|_|_|[]|trip|_|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry exp food 0.624 note=午饭 acct=_ tags=[work,food] ledger=_ subcat='noodles' cur='JPY' orig=13 rate=0.048 ts=_
+afterNext	exp|food|_|_|_|_|_|_|[work,food]|_|JPY|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:
+draft	xfer default>card-a 0.5 fee=0 disc=1.5 note=a"b ledger=home ts=1700000000000
+afterNext	xfer|food|_|_|default|card-a|_|_|[]|home|_|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|salary|_|_|default|default|_|_|[]|trip|JPY|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry exp transfer 0.3 note=_ acct=_ tags=[work,food] ledger='home' subcat='noodles' cur=_ orig=_ rate=_ ts=1700000000000
+afterNext	exp|transfer|_|_|_|default|_|_|[work,food]|home|CNY|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry exp transfer 0.624 note=_ acct=default tags=[work,food] ledger='home' subcat=_ cur='JPY' orig=13 rate=0.048 ts=0
+afterNext	exp|transfer|_|_|default|_|_|_|[work,food]|home|JPY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|transfer|_|_|cash|cash|_|_|[work,food]|trip|CNY|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:
+draft	entry exp salary 0.3 note=午饭 acct=default tags=[work,food] ledger=_ subcat='noodles' cur=_ orig=_ rate=_ ts=_
+afterNext	exp|salary|_|_|default|card-a|_|_|[work,food]|_|_|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	xfer >default 20 fee=1.5 disc=-3 note=午饭 ledger=trip ts=1700000000000
+afterNext	xfer|transfer|_|_|_|default|_|_|[work]|trip|JPY|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry exp food 0 note=_ acct=cash tags=_ ledger='home' subcat=_ cur='EUR' orig=30 rate=0 ts=0
+afterNext	exp|food|_|_|cash|_|_|_|[]|home|EUR|_|0
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=
+validate	amount
+draft	none
+afterNext	inc|_|_|_|default|default|_|_|[work]|home|USD|_|_
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	noRate:EUR
+draft	xfer cash>card-a 20 fee=0 disc=1.5 note=午饭 ledger=home ts=1700000000000
+afterNext	xfer|_|_|_|cash|card-a|_|_|[work,food]|home|EUR|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	ok
+draft	entry exp transfer 0.96 note=a"b acct=_ tags=[work] ledger=_ subcat='noodles' cur='JPY' orig=20 rate=0.048 ts=_
+afterNext	exp|transfer|_|_|_|cash|_|_|[work]|_|JPY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|transfer|_|_|cash|cash|_|_|[work,food]|_|EUR|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|transfer|_|_|_|card-a|_|_|[]|trip|JPY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|_|_|_|card-a|card-a|_|_|[work]|trip|USD|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry inc salary 0.624 note=午饭 acct=default tags=_ ledger='home' subcat='noodles' cur='JPY' orig=13 rate=0.048 ts=_
+afterNext	inc|salary|_|_|default|card-a|_|_|[]|home|JPY|_|_
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	amount
+draft	none
+afterNext	inc|_|_|_|card-a|_|_|_|[work,food]|home|CNY|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:
+draft	xfer default>cash 30 fee=1.5 disc=0 note=_ ledger=trip ts=1000
+afterNext	xfer|_|_|_|default|cash|_|_|[work,food]|trip|_|_|1000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|default|_|_|_|[]|home|EUR|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	xfer >default 35.5 fee=2.5 disc=2 note=_ ledger=_ ts=_
+afterNext	xfer|transfer|_|_|_|default|_|_|[work]|_|JPY|_|_
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|default|_|_|_|[]|home|_|_|1000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	amount
+draft	none
+afterNext	inc|_|_|_|card-a|cash|_|_|[]|trip|EUR|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:
+draft	entry exp food 300 note=a"b acct=_ tags=_ ledger='home' subcat=_ cur=_ orig=_ rate=_ ts=_
+afterNext	exp|food|_|_|_|card-a|_|_|[]|home|_|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	xfer card-a>default 0.5 fee=0.5 disc=0 note=_ ledger=trip ts=_
+afterNext	xfer|transfer|_|_|card-a|default|_|_|[work]|trip|CNY|_|_
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	ok
+draft	entry inc  0.024 note=_ acct=default tags=[work] ledger='home' subcat='noodles' cur='JPY' orig=0.5 rate=0.048 ts=1000
+afterNext	inc|_|_|_|default|card-a|_|_|[work]|home|JPY|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|transfer|_|_|_|default|_|_|[work,food]|home|EUR|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	ok
+draft	entry inc food 0.96 note=午饭 acct=cash tags=[work,food] ledger=_ subcat='noodles' cur='JPY' orig=20 rate=0.048 ts=_
+afterNext	inc|food|_|_|cash|default|_|_|[work,food]|_|JPY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|transfer|_|_|cash|cash|_|_|[work,food]|home|JPY|_|0
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|cash|_|_|_|[work]|home|USD|_|_
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	amount
+draft	none
+afterNext	inc|_|_|_|card-a|_|_|_|[work]|home|CNY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry inc food 35.5 note=午饭 acct=card-a tags=[work,food] ledger=_ subcat=_ cur=_ orig=_ rate=_ ts=1000
+afterNext	inc|food|_|_|card-a|cash|_|_|[work,food]|_|CNY|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|transfer|_|_|card-a|cash|_|_|[work]|trip|_|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry exp salary 13 note=午饭 acct=_ tags=[work,food] ledger=_ subcat='noodles' cur='EUR' orig=13 rate=_ ts=_
+afterNext	exp|salary|_|_|_|card-a|_|_|[work,food]|_|EUR|_|_
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	xferSame
+draft	none
+afterNext	xfer|food|_|_|cash|cash|_|_|[work,food]|trip|JPY|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry inc food 30 note=a"b acct=default tags=[work] ledger='home' subcat=_ cur=_ orig=_ rate=_ ts=_
+afterNext	inc|food|_|_|default|default|_|_|[work]|home|CNY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|card-a|card-a|_|_|[work]|trip|JPY|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	amount
+draft	none
+afterNext	xfer|transfer|_|_|card-a|default|_|_|[work,food]|home|USD|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=
+validate	xferSame
+draft	none
+afterNext	xfer|salary|_|_|cash|cash|_|_|[work]|_|_|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|card-a|cash|_|_|[work,food]|_|CNY|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|transfer|_|_|default|cash|_|_|[work]|trip|CNY|_|1000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	noRate:
+draft	entry exp food 0.5 note=午饭 acct=default tags=_ ledger='home' subcat='noodles' cur=_ orig=_ rate=_ ts=0
+afterNext	exp|food|_|_|default|cash|_|_|[]|home|_|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	xfer >card-a 13 fee=0 disc=0.5 note=_ ledger=home ts=_
+afterNext	xfer|transfer|_|_|_|card-a|_|_|[]|home|CNY|_|_
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	amount
+draft	none
+afterNext	xfer|transfer|_|_|cash|default|_|_|[]|_|USD|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|default|default|_|_|[]|home|EUR|_|1000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	amount
+draft	none
+afterNext	xfer|transfer|_|_|_|default|_|_|[work]|trip|EUR|_|0
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=
+validate	ok
+draft	entry exp transfer 216 note=_ acct=card-a tags=_ ledger='trip' subcat='noodles' cur='USD' orig=30 rate=7.2 ts=0
+afterNext	exp|transfer|_|_|card-a|card-a|_|_|[]|trip|USD|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|food|_|_|default|_|_|_|[]|home|JPY|_|1000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|default|card-a|_|_|[work]|_|EUR|_|1000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	ok
+draft	entry inc  0.3 note=午饭 acct=default tags=_ ledger='trip' subcat=_ cur=_ orig=_ rate=_ ts=0
+afterNext	inc|_|_|_|default|default|_|_|[]|trip|CNY|_|0
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	ok
+draft	xfer card-a>default 35.5 fee=0.5 disc=100 note=午饭 ledger=home ts=1000
+afterNext	xfer|food|_|_|card-a|default|_|_|[work]|home|USD|_|1000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|_|default|_|_|[work]|trip|CNY|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|_|default|_|_|[work,food]|home|USD|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	xfer default>cash 0.5 fee=0 disc=1.5 note=_ ledger=_ ts=_
+afterNext	xfer|transfer|_|_|default|cash|_|_|[]|_|JPY|_|_
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	ok
+draft	xfer card-a>cash 0.3 fee=2 disc=-3 note=a"b ledger=_ ts=_
+afterNext	xfer|salary|_|_|card-a|cash|_|_|[]|_|CNY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry exp salary 225 note=午饭 acct=card-a tags=[work] ledger=_ subcat='noodles' cur='EUR' orig=30 rate=7.5 ts=0
+afterNext	exp|salary|_|_|card-a|card-a|_|_|[work]|_|EUR|_|0
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=
+validate	amount
+draft	none
+afterNext	inc|transfer|_|_|card-a|cash|_|_|[]|_|JPY|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|salary|_|_|_|_|_|_|[work,food]|_|EUR|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry exp transfer 3.6 note=午饭 acct=card-a tags=_ ledger=_ subcat=_ cur='USD' orig=0.5 rate=7.2 ts=_
+afterNext	exp|transfer|_|_|card-a|cash|_|_|[]|_|USD|_|_
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	ok
+draft	entry inc salary 0.3 note=午饭 acct=card-a tags=[work,food] ledger=_ subcat=_ cur=_ orig=_ rate=_ ts=1700000000000
+afterNext	inc|salary|_|_|card-a|_|_|_|[work,food]|_|CNY|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry exp  35.5 note=_ acct=card-a tags=[work] ledger=_ subcat=_ cur='EUR' orig=35.5 rate=_ ts=1700000000000
+afterNext	exp|_|_|_|card-a|_|_|_|[work]|_|EUR|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|default|cash|_|_|[work,food]|_|EUR|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry exp salary 20 note=午饭 acct=default tags=[work] ledger='home' subcat='noodles' cur=_ orig=_ rate=_ ts=1700000000000
+afterNext	exp|salary|_|_|default|_|_|_|[work]|home|CNY|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry inc salary 144 note=午饭 acct=_ tags=[work] ledger='home' subcat=_ cur='USD' orig=20 rate=7.2 ts=0
+afterNext	inc|salary|_|_|_|card-a|_|_|[work]|home|USD|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry inc  0.0144 note=午饭 acct=cash tags=_ ledger='home' subcat=_ cur='JPY' orig=0.3 rate=0.048 ts=1000
+afterNext	inc|_|_|_|cash|default|_|_|[]|home|JPY|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry exp food 0 note=a"b acct=default tags=[work,food] ledger='home' subcat='noodles' cur='EUR' orig=35.5 rate=0 ts=_
+afterNext	exp|food|_|_|default|card-a|_|_|[work,food]|home|EUR|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry inc food 0.624 note=_ acct=_ tags=[work,food] ledger='trip' subcat=_ cur='JPY' orig=13 rate=0.048 ts=_
+afterNext	inc|food|_|_|_|card-a|_|_|[work,food]|trip|JPY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|card-a|_|_|_|[work,food]|_|EUR|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:
+draft	entry exp  20 note=a"b acct=_ tags=[work,food] ledger='home' subcat=_ cur=_ orig=_ rate=_ ts=0
+afterNext	exp|_|_|_|_|card-a|_|_|[work,food]|home|_|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry exp salary 2.16 note=午饭 acct=cash tags=[work] ledger=_ subcat=_ cur='USD' orig=0.3 rate=7.2 ts=1000
+afterNext	exp|salary|_|_|cash|_|_|_|[work]|_|USD|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|transfer|_|_|default|cash|_|_|[work,food]|trip|JPY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|_|default|_|_|[]|trip|CNY|_|_
+pickIo	io=xfer subcat= cat=_ acct= acctTo=
+validate	ok
+draft	entry exp  5e-8 note=_ acct=default tags=[work] ledger='trip' subcat='noodles' cur='JPY' orig=0.5 rate=1e-7 ts=1700000000000
+afterNext	exp|_|_|_|default|cash|_|_|[work]|trip|JPY|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|transfer|_|_|_|_|_|_|[work]|home|_|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|transfer|_|_|_|_|_|_|[work]|_|USD|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct= acctTo=default
+validate	ok
+draft	entry exp salary 0.5 note=_ acct=default tags=_ ledger='trip' subcat='noodles' cur=_ orig=_ rate=_ ts=1000
+afterNext	exp|salary|_|_|default|card-a|_|_|[]|trip|CNY|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|_|_|_|card-a|card-a|_|_|[work]|home|EUR|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|default|card-a|_|_|[work,food]|_|EUR|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	xferTo
+draft	none
+afterNext	xfer|salary|_|_|default|_|_|_|[]|home|_|_|_
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	ok
+draft	entry inc transfer 3.6 note=_ acct=_ tags=[work,food] ledger='home' subcat=_ cur='USD' orig=0.5 rate=7.2 ts=_
+afterNext	inc|transfer|_|_|_|_|_|_|[work,food]|home|USD|_|_
+pickIo	io=xfer subcat= cat=_ acct= acctTo=
+validate	amount
+draft	none
+afterNext	inc|food|_|_|default|cash|_|_|[work]|trip|JPY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	xfer default>cash 0.3 fee=0 disc=0 note=_ ledger=_ ts=_
+afterNext	xfer|_|_|_|default|cash|_|_|[work,food]|_|CNY|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|default|default|_|_|[work,food]|home|JPY|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|default|card-a|_|_|[work,food]|trip|_|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|cash|default|_|_|[work,food]|home|EUR|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|food|_|_|_|_|_|_|[work,food]|trip|CNY|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	xferTo
+draft	none
+afterNext	xfer|transfer|_|_|default|_|_|_|[]|trip|CNY|_|1000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	amount
+draft	none
+afterNext	inc|_|_|_|_|cash|_|_|[work,food]|_|_|_|0
+pickIo	io=xfer subcat= cat=_ acct= acctTo=default
+validate	ok
+draft	entry inc salary 144 note=午饭 acct=card-a tags=[work,food] ledger='trip' subcat=_ cur='USD' orig=20 rate=7.2 ts=1000
+afterNext	inc|salary|_|_|card-a|_|_|_|[work,food]|trip|USD|_|1000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	ok
+draft	entry exp transfer 2.16 note=午饭 acct=card-a tags=[work,food] ledger='home' subcat=_ cur='USD' orig=0.3 rate=7.2 ts=1000
+afterNext	exp|transfer|_|_|card-a|default|_|_|[work,food]|home|USD|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry inc transfer 93.60000000000001 note=a"b acct=default tags=[work,food] ledger='trip' subcat='noodles' cur='USD' orig=13 rate=7.2 ts=_
+afterNext	inc|transfer|_|_|default|card-a|_|_|[work,food]|trip|USD|_|_
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	ok
+draft	entry inc salary 255.6 note=午饭 acct=_ tags=[work,food] ledger='home' subcat=_ cur='USD' orig=35.5 rate=7.2 ts=0
+afterNext	inc|salary|_|_|_|cash|_|_|[work,food]|home|USD|_|0
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|card-a|default|_|_|[work,food]|home|CNY|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|food|_|_|_|card-a|_|_|[work]|trip|USD|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|cash|cash|_|_|[work]|home|_|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry inc salary 30 note=_ acct=card-a tags=[work] ledger='home' subcat='noodles' cur='EUR' orig=30 rate=_ ts=1000
+afterNext	inc|salary|_|_|card-a|card-a|_|_|[work]|home|EUR|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|transfer|_|_|cash|_|_|_|[work]|home|CNY|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|card-a|card-a|_|_|[]|trip|USD|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|_|_|_|card-a|card-a|_|_|[work]|trip|USD|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|_|_|_|cash|cash|_|_|[]|home|CNY|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|transfer|_|_|default|_|_|_|[work]|_|JPY|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|transfer|_|_|default|_|_|_|[work]|_|JPY|_|0
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	xferTo
+draft	none
+afterNext	xfer|salary|_|_|cash|_|_|_|[work,food]|_|_|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:
+draft	entry inc salary 0.5 note=_ acct=cash tags=_ ledger='home' subcat=_ cur=_ orig=_ rate=_ ts=1700000000000
+afterNext	inc|salary|_|_|cash|default|_|_|[]|home|_|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|default|default|_|_|[]|trip|USD|_|_
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	ok
+draft	xfer >card-a 35.5 fee=0 disc=0.5 note=午饭 ledger=_ ts=0
+afterNext	xfer|salary|_|_|_|card-a|_|_|[work]|_|CNY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry inc salary 144 note=_ acct=cash tags=[work,food] ledger=_ subcat=_ cur='USD' orig=20 rate=7.2 ts=1700000000000
+afterNext	inc|salary|_|_|cash|_|_|_|[work,food]|_|USD|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry exp  0.000002 note=午饭 acct=_ tags=_ ledger='trip' subcat=_ cur='USD' orig=20 rate=1e-7 ts=0
+afterNext	exp|_|_|_|_|_|_|_|[]|trip|USD|_|0
+pickIo	io=xfer subcat= cat=_ acct= acctTo=
+validate	ok
+draft	entry inc salary 0 note=午饭 acct=default tags=[work] ledger='trip' subcat='noodles' cur='USD' orig=0.5 rate=0 ts=1000
+afterNext	inc|salary|_|_|default|default|_|_|[work]|trip|USD|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|card-a|default|_|_|[]|trip|_|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|food|_|_|cash|card-a|_|_|[work]|_|CNY|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|card-a|_|_|_|[work,food]|home|JPY|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:
+draft	xfer >card-a 0.5 fee=2.5 disc=-3 note=午饭 ledger=_ ts=1000
+afterNext	xfer|food|_|_|_|card-a|_|_|[]|_|_|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|_|default|_|_|[work]|trip|EUR|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:EUR
+draft	xfer >card-a 0.5 fee=0 disc=0 note=a"b ledger=_ ts=1000
+afterNext	xfer|salary|_|_|_|card-a|_|_|[work,food]|_|EUR|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|transfer|_|_|card-a|default|_|_|[work,food]|_|_|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	amount
+draft	none
+afterNext	inc|_|_|_|_|default|_|_|[]|trip|CNY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|_|card-a|_|_|[work,food]|home|EUR|_|_
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	amount
+draft	none
+afterNext	inc|transfer|_|_|card-a|default|_|_|[work,food]|trip|CNY|_|1000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=
+validate	xferSame
+draft	none
+afterNext	xfer|transfer|_|_|cash|cash|_|_|[work]|home|USD|_|1000
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	xferSame
+draft	none
+afterNext	xfer|_|_|_|default|default|_|_|[]|_|JPY|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	amount
+draft	none
+afterNext	exp|transfer|_|_|card-a|default|_|_|[work]|_|JPY|_|0
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=
+validate	ok
+draft	entry exp transfer 1.44 note=午饭 acct=default tags=_ ledger=_ subcat='noodles' cur='JPY' orig=30 rate=0.048 ts=_
+afterNext	exp|transfer|_|_|default|cash|_|_|[]|_|JPY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:EUR
+draft	xfer >default 30 fee=1.5 disc=0 note=午饭 ledger=home ts=_
+afterNext	xfer|food|_|_|_|default|_|_|[]|home|EUR|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|card-a|card-a|_|_|[]|trip|USD|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|_|cash|_|_|[work,food]|trip|USD|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry inc food 0.3 note=a"b acct=card-a tags=_ ledger='trip' subcat=_ cur=_ orig=_ rate=_ ts=1700000000000
+afterNext	inc|food|_|_|card-a|_|_|_|[]|trip|CNY|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|food|_|_|cash|default|_|_|[work,food]|trip|_|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry inc  0 note=_ acct=_ tags=[work,food] ledger='trip' subcat=_ cur='USD' orig=0.5 rate=0 ts=0
+afterNext	inc|_|_|_|_|default|_|_|[work,food]|trip|USD|_|0
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=
+validate	amount
+draft	none
+afterNext	inc|_|_|_|cash|default|_|_|[work,food]|_|_|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	xferTo
+draft	none
+afterNext	xfer|_|_|_|card-a|_|_|_|[]|home|JPY|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	xferSame
+draft	none
+afterNext	xfer|salary|_|_|cash|cash|_|_|[work]|trip|_|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|transfer|_|_|default|_|_|_|[work]|home|CNY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry exp salary 0.000003 note=午饭 acct=default tags=[work] ledger=_ subcat='noodles' cur='EUR' orig=30 rate=1e-7 ts=_
+afterNext	exp|salary|_|_|default|default|_|_|[work]|_|EUR|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|food|_|_|card-a|_|_|_|[work,food]|_|EUR|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|transfer|_|_|cash|_|_|_|[work,food]|trip|USD|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry inc food 216 note=午饭 acct=default tags=_ ledger=_ subcat='noodles' cur='USD' orig=30 rate=7.2 ts=_
+afterNext	inc|food|_|_|default|card-a|_|_|[]|_|USD|_|_
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	amount
+draft	none
+afterNext	exp|_|_|_|card-a|card-a|_|_|[]|trip|EUR|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry exp salary 300 note=a"b acct=cash tags=[work] ledger='trip' subcat='noodles' cur=_ orig=_ rate=_ ts=1700000000000
+afterNext	exp|salary|_|_|cash|default|_|_|[work]|trip|CNY|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry inc salary 300 note=_ acct=card-a tags=[work,food] ledger=_ subcat=_ cur='EUR' orig=300 rate=_ ts=0
+afterNext	inc|salary|_|_|card-a|default|_|_|[work,food]|_|EUR|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry inc transfer 300 note=午饭 acct=card-a tags=_ ledger='home' subcat='noodles' cur='EUR' orig=300 rate=_ ts=1000
+afterNext	inc|transfer|_|_|card-a|default|_|_|[]|home|EUR|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry exp transfer 255.6 note=午饭 acct=_ tags=_ ledger=_ subcat='noodles' cur='USD' orig=35.5 rate=7.2 ts=0
+afterNext	exp|transfer|_|_|_|default|_|_|[]|_|USD|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	xferTo
+draft	none
+afterNext	xfer|salary|_|_|cash|_|_|_|[]|home|_|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	xferTo
+draft	none
+afterNext	xfer|transfer|_|_|card-a|_|_|_|[]|trip|JPY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry exp salary 300 note=_ acct=card-a tags=[work,food] ledger='trip' subcat=_ cur=_ orig=_ rate=_ ts=1000
+afterNext	exp|salary|_|_|card-a|default|_|_|[work,food]|trip|CNY|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry inc food 225 note=午饭 acct=_ tags=_ ledger='home' subcat='noodles' cur='EUR' orig=30 rate=7.5 ts=1000
+afterNext	inc|food|_|_|_|cash|_|_|[]|home|EUR|_|1000
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	xferSame
+draft	none
+afterNext	xfer|food|_|_|cash|cash|_|_|[work,food]|trip|JPY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	xferSame
+draft	none
+afterNext	xfer|salary|_|_|card-a|card-a|_|_|[work]|_|CNY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|default|card-a|_|_|[work]|_|EUR|_|_
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	amount
+draft	none
+afterNext	exp|_|_|_|card-a|cash|_|_|[]|home|JPY|_|1000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	amount
+draft	none
+afterNext	exp|_|_|_|_|cash|_|_|[work]|home|JPY|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	xfer default>cash 300 fee=0 disc=0 note=午饭 ledger=trip ts=1000
+afterNext	xfer|transfer|_|_|default|cash|_|_|[]|trip|USD|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry inc salary 0.3 note=午饭 acct=_ tags=[work] ledger='trip' subcat='noodles' cur='EUR' orig=0.3 rate=_ ts=_
+afterNext	inc|salary|_|_|_|default|_|_|[work]|trip|EUR|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry exp food 1.44 note=_ acct=_ tags=[work,food] ledger='trip' subcat='noodles' cur='JPY' orig=30 rate=0.048 ts=1700000000000
+afterNext	exp|food|_|_|_|default|_|_|[work,food]|trip|JPY|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct= acctTo=default
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|default|default|_|_|[work,food]|home|CNY|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|transfer|_|_|_|cash|_|_|[work]|home|USD|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry inc  20 note=午饭 acct=card-a tags=[work] ledger='trip' subcat='noodles' cur='EUR' orig=20 rate=_ ts=1000
+afterNext	inc|_|_|_|card-a|default|_|_|[work]|trip|EUR|_|1000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	noRate:EUR
+draft	entry exp  0.000002 note=午饭 acct=_ tags=[work,food] ledger=_ subcat=_ cur='EUR' orig=20 rate=1e-7 ts=1700000000000
+afterNext	exp|_|_|_|_|cash|_|_|[work,food]|_|EUR|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	noRate:EUR
+draft	entry exp  35.5 note=午饭 acct=default tags=[work,food] ledger=_ subcat=_ cur='EUR' orig=35.5 rate=_ ts=0
+afterNext	exp|_|_|_|default|cash|_|_|[work,food]|_|EUR|_|0
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|_|default|_|_|[work,food]|_|USD|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry inc food 13 note=午饭 acct=_ tags=[work,food] ledger='trip' subcat='noodles' cur=_ orig=_ rate=_ ts=0
+afterNext	inc|food|_|_|_|_|_|_|[work,food]|trip|CNY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|transfer|_|_|card-a|card-a|_|_|[]|trip|EUR|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|card-a|card-a|_|_|[work,food]|_|CNY|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	xfer card-a>default 300 fee=-3 disc=0 note=午饭 ledger=home ts=1000
+afterNext	xfer|_|_|_|card-a|default|_|_|[work,food]|home|JPY|_|1000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=
+validate	ok
+draft	xfer card-a>cash 300 fee=2 disc=2 note=午饭 ledger=trip ts=_
+afterNext	xfer|transfer|_|_|card-a|cash|_|_|[]|trip|CNY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry inc salary 13 note=午饭 acct=default tags=_ ledger=_ subcat=_ cur='EUR' orig=13 rate=_ ts=1000
+afterNext	inc|salary|_|_|default|cash|_|_|[]|_|EUR|_|1000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	noRate:EUR
+draft	entry inc food 20 note=午饭 acct=_ tags=[work] ledger='home' subcat='noodles' cur='EUR' orig=20 rate=_ ts=0
+afterNext	inc|food|_|_|_|cash|_|_|[work]|home|EUR|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|food|_|_|cash|default|_|_|[work]|_|USD|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|_|_|_|cash|cash|_|_|[work,food]|home|_|_|0
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=
+validate	amount
+draft	none
+afterNext	xfer|salary|_|_|default|_|_|_|[work]|_|CNY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry exp  300 note=午饭 acct=_ tags=_ ledger='trip' subcat='noodles' cur='EUR' orig=300 rate=_ ts=_
+afterNext	exp|_|_|_|_|cash|_|_|[]|trip|EUR|_|_
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|_|_|_|_|[work]|home|USD|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry exp  3.6 note=午饭 acct=default tags=_ ledger='trip' subcat=_ cur='USD' orig=0.5 rate=7.2 ts=1000
+afterNext	exp|_|_|_|default|_|_|_|[]|trip|USD|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|_|_|_|cash|card-a|_|_|[work]|trip|JPY|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|cash|_|_|_|[work,food]|home|_|_|1000
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|_|card-a|_|_|[work,food]|home|USD|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry exp transfer 0.3 note=午饭 acct=card-a tags=[work,food] ledger=_ subcat='noodles' cur='EUR' orig=0.3 rate=_ ts=1700000000000
+afterNext	exp|transfer|_|_|card-a|cash|_|_|[work,food]|_|EUR|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|_|_|_|_|cash|_|_|[]|_|EUR|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	amount
+draft	none
+afterNext	xfer|transfer|_|_|default|_|_|_|[]|trip|JPY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:
+draft	entry exp transfer 13 note=_ acct=card-a tags=[work,food] ledger='trip' subcat=_ cur=_ orig=_ rate=_ ts=0
+afterNext	exp|transfer|_|_|card-a|default|_|_|[work,food]|trip|_|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	xfer >cash 0.5 fee=0 disc=1.5 note=午饭 ledger=trip ts=0
+afterNext	xfer|transfer|_|_|_|cash|_|_|[]|trip|CNY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|default|card-a|_|_|[]|_|_|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|transfer|_|_|default|cash|_|_|[]|_|CNY|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	xferSame
+draft	none
+afterNext	xfer|salary|_|_|card-a|card-a|_|_|[work,food]|trip|USD|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|food|_|_|_|card-a|_|_|[work,food]|trip|EUR|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|card-a|_|_|_|[work]|_|EUR|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|default|_|_|_|[]|trip|CNY|_|1000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|default|default|_|_|[work]|trip|CNY|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry exp salary 0 note=_ acct=default tags=[work,food] ledger='trip' subcat='noodles' cur='JPY' orig=0.5 rate=0 ts=0
+afterNext	exp|salary|_|_|default|_|_|_|[work,food]|trip|JPY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry exp salary 1.44 note=午饭 acct=card-a tags=[work] ledger='home' subcat='noodles' cur='JPY' orig=30 rate=0.048 ts=_
+afterNext	exp|salary|_|_|card-a|default|_|_|[work]|home|JPY|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry exp  1.44 note=午饭 acct=card-a tags=_ ledger='home' subcat=_ cur='JPY' orig=30 rate=0.048 ts=_
+afterNext	exp|_|_|_|card-a|card-a|_|_|[]|home|JPY|_|_
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|cash|cash|_|_|[]|_|USD|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:
+draft	entry exp  30 note=午饭 acct=card-a tags=[work] ledger=_ subcat=_ cur=_ orig=_ rate=_ ts=1000
+afterNext	exp|_|_|_|card-a|card-a|_|_|[work]|_|_|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry inc  13 note=午饭 acct=card-a tags=[work] ledger='home' subcat='noodles' cur=_ orig=_ rate=_ ts=1000
+afterNext	inc|_|_|_|card-a|card-a|_|_|[work]|home|CNY|_|1000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	ok
+draft	entry inc  35.5 note=午饭 acct=_ tags=[work,food] ledger='home' subcat=_ cur=_ orig=_ rate=_ ts=1000
+afterNext	inc|_|_|_|_|cash|_|_|[work,food]|home|CNY|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|food|_|_|card-a|cash|_|_|[]|trip|JPY|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|card-a|default|_|_|[]|trip|CNY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|food|_|_|default|default|_|_|[]|_|CNY|_|0
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	noRate:
+draft	entry inc salary 20 note=午饭 acct=card-a tags=[work] ledger='trip' subcat=_ cur=_ orig=_ rate=_ ts=_
+afterNext	inc|salary|_|_|card-a|_|_|_|[work]|trip|_|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|_|_|_|default|card-a|_|_|[work,food]|_|JPY|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:EUR
+draft	xfer cash>card-a 0.5 fee=0 disc=0 note=_ ledger=home ts=0
+afterNext	xfer|transfer|_|_|cash|card-a|_|_|[work,food]|home|EUR|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|card-a|cash|_|_|[]|home|_|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|default|cash|_|_|[]|trip|USD|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	xfer default>card-a 20 fee=0 disc=100 note=午饭 ledger=trip ts=_
+afterNext	xfer|_|_|_|default|card-a|_|_|[work]|trip|USD|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry exp  13 note=午饭 acct=default tags=[work] ledger=_ subcat='noodles' cur=_ orig=_ rate=_ ts=_
+afterNext	exp|_|_|_|default|card-a|_|_|[work]|_|CNY|_|_
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	ok
+draft	xfer cash>card-a 20 fee=-3 disc=0 note=a"b ledger=_ ts=1700000000000
+afterNext	xfer|transfer|_|_|cash|card-a|_|_|[work]|_|JPY|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|transfer|_|_|cash|_|_|_|[work]|home|USD|_|0
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	amount
+draft	none
+afterNext	inc|_|_|_|_|card-a|_|_|[]|_|EUR|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|transfer|_|_|_|_|_|_|[]|trip|EUR|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|transfer|_|_|cash|cash|_|_|[work,food]|home|CNY|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|card-a|default|_|_|[]|trip|JPY|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=
+validate	xferSame
+draft	none
+afterNext	xfer|transfer|_|_|card-a|card-a|_|_|[work,food]|trip|EUR|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	xfer default>cash 20 fee=100 disc=1.5 note=_ ledger=home ts=1700000000000
+afterNext	xfer|salary|_|_|default|cash|_|_|[work]|home|CNY|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry inc food 0.0144 note=_ acct=card-a tags=_ ledger='home' subcat=_ cur='JPY' orig=0.3 rate=0.048 ts=_
+afterNext	inc|food|_|_|card-a|card-a|_|_|[]|home|JPY|_|_
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	amount
+draft	none
+afterNext	inc|_|_|_|default|cash|_|_|[work,food]|home|JPY|_|_
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	noRate:EUR
+draft	entry inc transfer 20 note=午饭 acct=card-a tags=[work,food] ledger=_ subcat='noodles' cur='EUR' orig=20 rate=_ ts=0
+afterNext	inc|transfer|_|_|card-a|_|_|_|[work,food]|_|EUR|_|0
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|cash|_|_|_|[work]|home|CNY|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|default|default|_|_|[]|_|JPY|_|_
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	ok
+draft	entry inc food 0 note=午饭 acct=card-a tags=[work] ledger='home' subcat='noodles' cur='USD' orig=0.5 rate=0 ts=_
+afterNext	inc|food|_|_|card-a|_|_|_|[work]|home|USD|_|_
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	ok
+draft	entry exp salary 3.6 note=_ acct=card-a tags=_ ledger='home' subcat='noodles' cur='USD' orig=0.5 rate=7.2 ts=0
+afterNext	exp|salary|_|_|card-a|card-a|_|_|[]|home|USD|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|transfer|_|_|cash|cash|_|_|[work]|trip|CNY|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	ok
+draft	xfer default>card-a 300 fee=0.5 disc=1.5 note=_ ledger=home ts=_
+afterNext	xfer|transfer|_|_|default|card-a|_|_|[work,food]|home|CNY|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|food|_|_|cash|cash|_|_|[work,food]|trip|CNY|_|0
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	noRate:
+draft	entry inc  35.5 note=午饭 acct=card-a tags=[work,food] ledger=_ subcat=_ cur=_ orig=_ rate=_ ts=0
+afterNext	inc|_|_|_|card-a|_|_|_|[work,food]|_|_|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|cash|cash|_|_|[work,food]|home|_|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|_|_|_|default|card-a|_|_|[work]|trip|_|_|1000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	ok
+draft	xfer >default 30 fee=-3 disc=100 note=_ ledger=trip ts=0
+afterNext	xfer|transfer|_|_|_|default|_|_|[work]|trip|JPY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|_|card-a|_|_|[work]|home|JPY|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry exp  35.5 note=午饭 acct=_ tags=[work] ledger='home' subcat='noodles' cur=_ orig=_ rate=_ ts=1700000000000
+afterNext	exp|_|_|_|_|card-a|_|_|[work]|home|CNY|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct= acctTo=default
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|card-a|card-a|_|_|[work,food]|_|_|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry exp transfer 20 note=_ acct=cash tags=[work] ledger=_ subcat='noodles' cur='EUR' orig=20 rate=_ ts=1700000000000
+afterNext	exp|transfer|_|_|cash|_|_|_|[work]|_|EUR|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry exp  300 note=_ acct=card-a tags=[work] ledger='trip' subcat='noodles' cur=_ orig=_ rate=_ ts=0
+afterNext	exp|_|_|_|card-a|_|_|_|[work]|trip|CNY|_|0
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	ok
+draft	entry inc transfer 2160 note=_ acct=card-a tags=[work] ledger='trip' subcat=_ cur='USD' orig=300 rate=7.2 ts=1000
+afterNext	inc|transfer|_|_|card-a|default|_|_|[work]|trip|USD|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	xferSame
+draft	none
+afterNext	xfer|salary|_|_|cash|cash|_|_|[work,food]|_|_|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry exp salary 255.6 note=a"b acct=card-a tags=[work,food] ledger='trip' subcat=_ cur='USD' orig=35.5 rate=7.2 ts=_
+afterNext	exp|salary|_|_|card-a|card-a|_|_|[work,food]|trip|USD|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry exp  30 note=午饭 acct=cash tags=[work] ledger=_ subcat=_ cur=_ orig=_ rate=_ ts=_
+afterNext	exp|_|_|_|cash|_|_|_|[work]|_|CNY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	xfer card-a>cash 0.3 fee=100 disc=0 note=午饭 ledger=home ts=_
+afterNext	xfer|salary|_|_|card-a|cash|_|_|[work,food]|home|USD|_|_
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	amount
+draft	none
+afterNext	inc|food|_|_|_|card-a|_|_|[work]|_|EUR|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|transfer|_|_|default|cash|_|_|[work,food]|home|EUR|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|card-a|default|_|_|[work,food]|home|EUR|_|_
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	noRate:
+draft	xfer card-a>default 0.3 fee=2 disc=-3 note=午饭 ledger=trip ts=_
+afterNext	xfer|_|_|_|card-a|default|_|_|[work]|trip|_|_|_
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|default|card-a|_|_|[work,food]|trip|EUR|_|1000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	amount
+draft	none
+afterNext	exp|food|_|_|cash|_|_|_|[work]|home|JPY|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry inc  0.3 note=_ acct=card-a tags=_ ledger='home' subcat='noodles' cur=_ orig=_ rate=_ ts=0
+afterNext	inc|_|_|_|card-a|cash|_|_|[]|home|CNY|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	xferTo
+draft	none
+afterNext	xfer|_|_|_|_|_|_|_|[work]|home|_|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|card-a|default|_|_|[work,food]|home|EUR|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry exp salary 0 note=_ acct=default tags=[work] ledger=_ subcat='noodles' cur='EUR' orig=30 rate=0 ts=1700000000000
+afterNext	exp|salary|_|_|default|cash|_|_|[work]|_|EUR|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:EUR
+draft	xfer card-a>cash 30 fee=0 disc=0 note=_ ledger=trip ts=0
+afterNext	xfer|food|_|_|card-a|cash|_|_|[work,food]|trip|EUR|_|0
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	amount
+draft	none
+afterNext	inc|transfer|_|_|cash|card-a|_|_|[]|home|CNY|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	xferTo
+draft	none
+afterNext	xfer|food|_|_|cash|_|_|_|[work,food]|_|JPY|_|_
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	amount
+draft	none
+afterNext	exp|_|_|_|card-a|_|_|_|[]|home|CNY|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry inc salary 144 note=_ acct=card-a tags=_ ledger=_ subcat=_ cur='USD' orig=20 rate=7.2 ts=0
+afterNext	inc|salary|_|_|card-a|cash|_|_|[]|_|USD|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|transfer|_|_|_|cash|_|_|[work]|home|CNY|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	xfer card-a>cash 0.5 fee=2 disc=-3 note=午饭 ledger=_ ts=_
+afterNext	xfer|_|_|_|card-a|cash|_|_|[]|_|USD|_|_
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	ok
+draft	entry exp  0.96 note=午饭 acct=cash tags=[work,food] ledger='home' subcat=_ cur='JPY' orig=20 rate=0.048 ts=1700000000000
+afterNext	exp|_|_|_|cash|cash|_|_|[work,food]|home|JPY|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	xferSame
+draft	none
+afterNext	xfer|transfer|_|_|card-a|card-a|_|_|[]|_|EUR|_|0
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	amount
+draft	none
+afterNext	inc|food|_|_|_|cash|_|_|[]|trip|CNY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:
+draft	xfer card-a>default 300 fee=-3 disc=-3 note=午饭 ledger=_ ts=0
+afterNext	xfer|food|_|_|card-a|default|_|_|[work,food]|_|_|_|0
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	noRate:
+draft	entry inc food 20 note=午饭 acct=card-a tags=[work] ledger='trip' subcat='noodles' cur=_ orig=_ rate=_ ts=_
+afterNext	inc|food|_|_|card-a|card-a|_|_|[work]|trip|_|_|_
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=
+validate	amount
+draft	none
+afterNext	xfer|salary|_|_|default|cash|_|_|[work]|trip|USD|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|default|cash|_|_|[work]|home|_|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	xferTo
+draft	none
+afterNext	xfer|salary|_|_|cash|_|_|_|[work,food]|trip|EUR|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|_|_|_|default|default|_|_|[work,food]|home|JPY|_|0
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|default|cash|_|_|[work,food]|home|EUR|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	xferTo
+draft	none
+afterNext	xfer|food|_|_|cash|_|_|_|[]|trip|CNY|_|1000
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=
+validate	amount
+draft	none
+afterNext	exp|transfer|_|_|default|card-a|_|_|[]|trip|USD|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry exp  35.5 note=_ acct=_ tags=[work] ledger='home' subcat='noodles' cur=_ orig=_ rate=_ ts=1000
+afterNext	exp|_|_|_|_|card-a|_|_|[work]|home|CNY|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|card-a|_|_|_|[work,food]|_|_|_|0
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	amount
+draft	none
+afterNext	exp|transfer|_|_|card-a|cash|_|_|[work,food]|_|_|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|salary|_|_|default|default|_|_|[work]|trip|CNY|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	noRate:EUR
+draft	entry inc transfer 13 note=午饭 acct=default tags=[work,food] ledger=_ subcat=_ cur='EUR' orig=13 rate=_ ts=1000
+afterNext	inc|transfer|_|_|default|card-a|_|_|[work,food]|_|EUR|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|card-a|_|_|_|[work,food]|trip|USD|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	xferSame
+draft	none
+afterNext	xfer|food|_|_|default|default|_|_|[work]|trip|CNY|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry inc  13 note=午饭 acct=default tags=_ ledger=_ subcat='noodles' cur='EUR' orig=13 rate=_ ts=1700000000000
+afterNext	inc|_|_|_|default|card-a|_|_|[]|_|EUR|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	xfer card-a>default 35.5 fee=100 disc=2.5 note=午饭 ledger=trip ts=0
+afterNext	xfer|transfer|_|_|card-a|default|_|_|[work]|trip|JPY|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|_|_|_|_|default|_|_|[]|trip|CNY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|transfer|_|_|_|cash|_|_|[work]|home|JPY|_|0
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	noRate:
+draft	xfer default>cash 35.5 fee=100 disc=0 note=午饭 ledger=_ ts=0
+afterNext	xfer|_|_|_|default|cash|_|_|[]|_|_|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	xfer >card-a 300 fee=0.5 disc=-3 note=_ ledger=trip ts=0
+afterNext	xfer|salary|_|_|_|card-a|_|_|[work,food]|trip|CNY|_|0
+pickIo	io=xfer subcat= cat=_ acct= acctTo=default
+validate	amount
+draft	none
+afterNext	inc|_|_|_|cash|_|_|_|[work]|trip|CNY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry inc transfer 35.5 note=午饭 acct=card-a tags=[work,food] ledger='trip' subcat='noodles' cur='EUR' orig=35.5 rate=_ ts=0
+afterNext	inc|transfer|_|_|card-a|default|_|_|[work,food]|trip|EUR|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry exp food 30 note=a"b acct=_ tags=_ ledger='home' subcat=_ cur='EUR' orig=30 rate=_ ts=1700000000000
+afterNext	exp|food|_|_|_|cash|_|_|[]|home|EUR|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|_|_|_|cash|_|_|_|[work,food]|trip|EUR|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|transfer|_|_|cash|cash|_|_|[work,food]|trip|JPY|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|cash|card-a|_|_|[work,food]|_|_|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|salary|_|_|card-a|_|_|_|[work]|home|_|_|0
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|cash|default|_|_|[]|_|EUR|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry inc food 20 note=_ acct=card-a tags=[work] ledger='trip' subcat=_ cur=_ orig=_ rate=_ ts=0
+afterNext	inc|food|_|_|card-a|card-a|_|_|[work]|trip|CNY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|food|_|_|default|_|_|_|[]|_|CNY|_|_
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	ok
+draft	xfer card-a>cash 0.3 fee=0 disc=0.5 note=_ ledger=home ts=1700000000000
+afterNext	xfer|_|_|_|card-a|cash|_|_|[work,food]|home|USD|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|transfer|_|_|default|_|_|_|[work]|home|EUR|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|food|_|_|cash|_|_|_|[work]|_|JPY|_|_
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	noRate:
+draft	entry inc transfer 0.3 note=午饭 acct=card-a tags=_ ledger='home' subcat='noodles' cur=_ orig=_ rate=_ ts=1700000000000
+afterNext	inc|transfer|_|_|card-a|card-a|_|_|[]|home|_|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=
+validate	ok
+draft	entry inc transfer 0.5 note=a"b acct=cash tags=_ ledger=_ subcat='noodles' cur=_ orig=_ rate=_ ts=1700000000000
+afterNext	inc|transfer|_|_|cash|card-a|_|_|[]|_|CNY|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry inc transfer 2.16 note=a"b acct=_ tags=_ ledger='trip' subcat=_ cur='USD' orig=0.3 rate=7.2 ts=0
+afterNext	inc|transfer|_|_|_|card-a|_|_|[]|trip|USD|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:
+draft	entry exp salary 30 note=午饭 acct=_ tags=[work,food] ledger='trip' subcat='noodles' cur=_ orig=_ rate=_ ts=1700000000000
+afterNext	exp|salary|_|_|_|default|_|_|[work,food]|trip|_|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|transfer|_|_|cash|_|_|_|[work]|trip|_|_|0
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	ok
+draft	entry inc  216 note=_ acct=cash tags=[work] ledger=_ subcat='noodles' cur='USD' orig=30 rate=7.2 ts=1000
+afterNext	inc|_|_|_|cash|_|_|_|[work]|_|USD|_|1000
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	ok
+draft	entry inc  1.44 note=a"b acct=cash tags=[work] ledger='trip' subcat='noodles' cur='JPY' orig=30 rate=0.048 ts=1700000000000
+afterNext	inc|_|_|_|cash|default|_|_|[work]|trip|JPY|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:
+draft	entry inc food 13 note=午饭 acct=_ tags=[work,food] ledger='trip' subcat='noodles' cur=_ orig=_ rate=_ ts=1000
+afterNext	inc|food|_|_|_|_|_|_|[work,food]|trip|_|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry inc transfer 300 note=a"b acct=_ tags=[work] ledger='home' subcat='noodles' cur='EUR' orig=300 rate=_ ts=_
+afterNext	inc|transfer|_|_|_|cash|_|_|[work]|home|EUR|_|_
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	noRate:
+draft	xfer cash>default 35.5 fee=0.5 disc=1.5 note=午饭 ledger=trip ts=0
+afterNext	xfer|_|_|_|cash|default|_|_|[work]|trip|_|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|food|_|_|_|cash|_|_|[work]|_|EUR|_|0
+pickIo	io=xfer subcat= cat=_ acct= acctTo=
+validate	ok
+draft	xfer cash>card-a 13 fee=0 disc=1.5 note=_ ledger=home ts=_
+afterNext	xfer|food|_|_|cash|card-a|_|_|[work]|home|JPY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	xfer default>cash 20 fee=-3 disc=0 note=a"b ledger=trip ts=1700000000000
+afterNext	xfer|_|_|_|default|cash|_|_|[work,food]|trip|USD|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|_|_|_|card-a|_|_|_|[work]|_|JPY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|_|_|_|cash|default|_|_|[work]|trip|CNY|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	xferTo
+draft	none
+afterNext	xfer|salary|_|_|cash|_|_|_|[]|home|CNY|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	xferTo
+draft	none
+afterNext	xfer|transfer|_|_|default|_|_|_|[work]|trip|USD|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|transfer|_|_|default|cash|_|_|[work,food]|trip|USD|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|transfer|_|_|card-a|card-a|_|_|[work,food]|trip|USD|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	amount
+draft	none
+afterNext	inc|food|_|_|_|card-a|_|_|[work]|home|USD|_|_
+pickIo	io=xfer subcat= cat=_ acct= acctTo=
+validate	ok
+draft	entry inc salary 0.3 note=午饭 acct=cash tags=[work,food] ledger=_ subcat='noodles' cur=_ orig=_ rate=_ ts=_
+afterNext	inc|salary|_|_|cash|default|_|_|[work,food]|_|CNY|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|salary|_|_|default|_|_|_|[work,food]|home|EUR|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	xferTo
+draft	none
+afterNext	xfer|_|_|_|card-a|_|_|_|[work]|trip|USD|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|card-a|card-a|_|_|[work,food]|_|JPY|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|_|_|_|default|_|_|_|[]|_|CNY|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|transfer|_|_|default|default|_|_|[work]|trip|EUR|_|0
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	amount
+draft	none
+afterNext	exp|food|_|_|_|_|_|_|[work,food]|home|CNY|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	xfer cash>default 0.5 fee=1.5 disc=2.5 note=午饭 ledger=home ts=1700000000000
+afterNext	xfer|salary|_|_|cash|default|_|_|[work]|home|JPY|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=
+validate	ok
+draft	xfer >card-a 35.5 fee=0 disc=0 note=_ ledger=_ ts=1000
+afterNext	xfer|salary|_|_|_|card-a|_|_|[]|_|JPY|_|1000
+pickIo	io=xfer subcat= cat=_ acct= acctTo=default
+validate	amount
+draft	none
+afterNext	exp|transfer|_|_|default|default|_|_|[work]|_|CNY|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|food|_|_|cash|_|_|_|[work]|home|EUR|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:
+draft	entry inc transfer 0.5 note=a"b acct=_ tags=_ ledger='trip' subcat='noodles' cur=_ orig=_ rate=_ ts=1700000000000
+afterNext	inc|transfer|_|_|_|default|_|_|[]|trip|_|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct= acctTo=default
+validate	ok
+draft	entry inc salary 20 note=_ acct=cash tags=[work] ledger='trip' subcat=_ cur=_ orig=_ rate=_ ts=0
+afterNext	inc|salary|_|_|cash|card-a|_|_|[work]|trip|CNY|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|transfer|_|_|default|cash|_|_|[work,food]|trip|JPY|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|transfer|_|_|cash|_|_|_|[work]|trip|_|_|_
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	noRate:
+draft	xfer >default 30 fee=100 disc=0 note=午饭 ledger=trip ts=1000
+afterNext	xfer|salary|_|_|_|default|_|_|[work]|trip|_|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry exp salary 30 note=午饭 acct=_ tags=[work] ledger=_ subcat='noodles' cur=_ orig=_ rate=_ ts=_
+afterNext	exp|salary|_|_|_|_|_|_|[work]|_|CNY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|_|_|_|default|_|_|_|[work]|_|USD|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|cash|default|_|_|[]|trip|JPY|_|_
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|default|card-a|_|_|[work]|trip|CNY|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry exp food 13 note=午饭 acct=cash tags=[work] ledger='trip' subcat=_ cur=_ orig=_ rate=_ ts=_
+afterNext	exp|food|_|_|cash|_|_|_|[work]|trip|CNY|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	xferSame
+draft	none
+afterNext	xfer|food|_|_|card-a|card-a|_|_|[work,food]|_|USD|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	xferSame
+draft	none
+afterNext	xfer|salary|_|_|card-a|card-a|_|_|[work,food]|trip|USD|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|cash|_|_|_|[]|home|EUR|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|transfer|_|_|cash|cash|_|_|[]|trip|JPY|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|food|_|_|_|cash|_|_|[work]|trip|EUR|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|_|_|_|default|card-a|_|_|[]|trip|CNY|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	xfer >default 13 fee=0 disc=1.5 note=_ ledger=_ ts=1700000000000
+afterNext	xfer|food|_|_|_|default|_|_|[work,food]|_|CNY|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	xferSame
+draft	none
+afterNext	xfer|_|_|_|card-a|card-a|_|_|[work]|trip|USD|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry inc food 13 note=午饭 acct=card-a tags=_ ledger='trip' subcat='noodles' cur='EUR' orig=13 rate=_ ts=0
+afterNext	inc|food|_|_|card-a|_|_|_|[]|trip|EUR|_|0
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|default|default|_|_|[work]|_|USD|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:
+draft	entry exp transfer 20 note=_ acct=cash tags=[work,food] ledger=_ subcat='noodles' cur=_ orig=_ rate=_ ts=1000
+afterNext	exp|transfer|_|_|cash|_|_|_|[work,food]|_|_|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry inc food 255.6 note=午饭 acct=card-a tags=_ ledger=_ subcat=_ cur='USD' orig=35.5 rate=7.2 ts=_
+afterNext	inc|food|_|_|card-a|cash|_|_|[]|_|USD|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|salary|_|_|card-a|cash|_|_|[]|home|EUR|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|salary|_|_|default|default|_|_|[work]|_|JPY|_|1000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	amount
+draft	none
+afterNext	exp|food|_|_|card-a|card-a|_|_|[]|_|_|_|1000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	noRate:EUR
+draft	xfer cash>default 20 fee=2.5 disc=2.5 note=午饭 ledger=_ ts=1000
+afterNext	xfer|salary|_|_|cash|default|_|_|[work]|_|EUR|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|transfer|_|_|card-a|_|_|_|[work]|trip|_|_|_
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	ok
+draft	entry exp transfer 0.624 note=午饭 acct=default tags=[work,food] ledger='trip' subcat=_ cur='JPY' orig=13 rate=0.048 ts=1000
+afterNext	exp|transfer|_|_|default|default|_|_|[work,food]|trip|JPY|_|1000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|cash|card-a|_|_|[work]|_|_|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|card-a|card-a|_|_|[]|trip|USD|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	xferSame
+draft	none
+afterNext	xfer|food|_|_|card-a|card-a|_|_|[work]|trip|CNY|_|1000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=
+validate	ok
+draft	entry exp salary 3.6 note=a"b acct=cash tags=_ ledger='home' subcat=_ cur='USD' orig=0.5 rate=7.2 ts=1000
+afterNext	exp|salary|_|_|cash|default|_|_|[]|home|USD|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|transfer|_|_|_|card-a|_|_|[work]|_|_|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry exp salary 0.624 note=午饭 acct=default tags=_ ledger=_ subcat='noodles' cur='JPY' orig=13 rate=0.048 ts=0
+afterNext	exp|salary|_|_|default|_|_|_|[]|_|JPY|_|0
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	ok
+draft	entry inc salary 0.3 note=午饭 acct=_ tags=[work,food] ledger=_ subcat='noodles' cur=_ orig=_ rate=_ ts=0
+afterNext	inc|salary|_|_|_|card-a|_|_|[work,food]|_|CNY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|default|cash|_|_|[work]|home|EUR|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry exp transfer 0.000002 note=午饭 acct=cash tags=[work,food] ledger='trip' subcat='noodles' cur='USD' orig=20 rate=1e-7 ts=_
+afterNext	exp|transfer|_|_|cash|cash|_|_|[work,food]|trip|USD|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|cash|default|_|_|[work,food]|home|CNY|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:EUR
+draft	xfer >cash 30 fee=-3 disc=2 note=_ ledger=_ ts=1700000000000
+afterNext	xfer|salary|_|_|_|cash|_|_|[work]|_|EUR|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry exp transfer 35.5 note=_ acct=default tags=_ ledger='home' subcat=_ cur=_ orig=_ rate=_ ts=1700000000000
+afterNext	exp|transfer|_|_|default|card-a|_|_|[]|home|CNY|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	ok
+draft	entry exp salary 255.6 note=午饭 acct=cash tags=_ ledger=_ subcat='noodles' cur='USD' orig=35.5 rate=7.2 ts=1700000000000
+afterNext	exp|salary|_|_|cash|default|_|_|[]|_|USD|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	xfer >default 13 fee=1.5 disc=0 note=a"b ledger=trip ts=_
+afterNext	xfer|_|_|_|_|default|_|_|[]|trip|USD|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:
+draft	entry inc food 20 note=_ acct=_ tags=[work,food] ledger='trip' subcat=_ cur=_ orig=_ rate=_ ts=1000
+afterNext	inc|food|_|_|_|_|_|_|[work,food]|trip|_|_|1000
+pickIo	io=xfer subcat= cat=_ acct= acctTo=
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|default|_|_|_|[]|_|CNY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	xferTo
+draft	none
+afterNext	xfer|salary|_|_|card-a|_|_|_|[work,food]|trip|USD|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	amount
+draft	none
+afterNext	exp|food|_|_|card-a|default|_|_|[]|_|CNY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|salary|_|_|cash|_|_|_|[work,food]|_|EUR|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|transfer|_|_|cash|_|_|_|[work]|home|EUR|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry exp transfer 20 note=午饭 acct=card-a tags=[work,food] ledger=_ subcat=_ cur=_ orig=_ rate=_ ts=0
+afterNext	exp|transfer|_|_|card-a|_|_|_|[work,food]|_|CNY|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry exp transfer 255.6 note=午饭 acct=default tags=_ ledger='trip' subcat=_ cur='USD' orig=35.5 rate=7.2 ts=1000
+afterNext	exp|transfer|_|_|default|cash|_|_|[]|trip|USD|_|1000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	ok
+draft	entry inc salary 216 note=_ acct=cash tags=[work] ledger='home' subcat=_ cur='USD' orig=30 rate=7.2 ts=_
+afterNext	inc|salary|_|_|cash|default|_|_|[work]|home|USD|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|_|_|_|cash|card-a|_|_|[work]|home|USD|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|food|_|_|_|card-a|_|_|[work]|trip|EUR|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry exp  216 note=_ acct=_ tags=_ ledger='trip' subcat='noodles' cur='USD' orig=30 rate=7.2 ts=1700000000000
+afterNext	exp|_|_|_|_|card-a|_|_|[]|trip|USD|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:
+draft	xfer card-a>default 0.5 fee=0 disc=2 note=午饭 ledger=home ts=_
+afterNext	xfer|food|_|_|card-a|default|_|_|[work]|home|_|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	xfer default>cash 20 fee=-3 disc=0 note=午饭 ledger=trip ts=1000
+afterNext	xfer|salary|_|_|default|cash|_|_|[work,food]|trip|CNY|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:
+draft	xfer card-a>cash 30 fee=2.5 disc=100 note=午饭 ledger=_ ts=0
+afterNext	xfer|_|_|_|card-a|cash|_|_|[]|_|_|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|food|_|_|_|cash|_|_|[work,food]|trip|_|_|1000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=
+validate	noRate:EUR
+draft	entry inc transfer 300 note=a"b acct=card-a tags=[work] ledger=_ subcat='noodles' cur='EUR' orig=300 rate=_ ts=_
+afterNext	inc|transfer|_|_|card-a|default|_|_|[work]|_|EUR|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|_|_|_|_|_|_|_|[work]|trip|JPY|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|_|_|_|default|cash|_|_|[work,food]|_|EUR|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry inc food 14.4 note=_ acct=default tags=_ ledger=_ subcat='noodles' cur='JPY' orig=300 rate=0.048 ts=1700000000000
+afterNext	inc|food|_|_|default|card-a|_|_|[]|_|JPY|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	xfer default>cash 13 fee=1.5 disc=0.5 note=_ ledger=trip ts=0
+afterNext	xfer|_|_|_|default|cash|_|_|[work,food]|trip|CNY|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|_|_|_|default|card-a|_|_|[work]|home|JPY|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|card-a|cash|_|_|[work]|trip|_|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry exp  14.4 note=午饭 acct=default tags=[work,food] ledger='trip' subcat='noodles' cur='JPY' orig=300 rate=0.048 ts=0
+afterNext	exp|_|_|_|default|default|_|_|[work,food]|trip|JPY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|cash|_|_|_|[work,food]|_|USD|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:
+draft	entry exp salary 300 note=午饭 acct=card-a tags=_ ledger='trip' subcat='noodles' cur=_ orig=_ rate=_ ts=1000
+afterNext	exp|salary|_|_|card-a|default|_|_|[]|trip|_|_|1000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=
+validate	amount
+draft	none
+afterNext	inc|food|_|_|cash|default|_|_|[work]|_|_|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	xfer >default 0.3 fee=1.5 disc=0 note=_ ledger=home ts=1000
+afterNext	xfer|food|_|_|_|default|_|_|[work]|home|CNY|_|1000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|cash|cash|_|_|[]|trip|EUR|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	xferTo
+draft	none
+afterNext	xfer|food|_|_|card-a|_|_|_|[]|trip|EUR|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:
+draft	entry exp transfer 300 note=午饭 acct=card-a tags=_ ledger='home' subcat=_ cur=_ orig=_ rate=_ ts=1700000000000
+afterNext	exp|transfer|_|_|card-a|card-a|_|_|[]|home|_|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	ok
+draft	entry inc  216 note=_ acct=_ tags=_ ledger='home' subcat=_ cur='USD' orig=30 rate=7.2 ts=1000
+afterNext	inc|_|_|_|_|default|_|_|[]|home|USD|_|1000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	ok
+draft	entry exp  97.5 note=_ acct=default tags=[work,food] ledger='trip' subcat='noodles' cur='JPY' orig=13 rate=7.5 ts=1000
+afterNext	exp|_|_|_|default|cash|_|_|[work,food]|trip|JPY|_|1000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	noRate:
+draft	entry inc transfer 300 note=午饭 acct=default tags=_ ledger=_ subcat=_ cur=_ orig=_ rate=_ ts=1700000000000
+afterNext	inc|transfer|_|_|default|_|_|_|[]|_|_|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:
+draft	entry inc salary 20 note=午饭 acct=cash tags=[work,food] ledger='home' subcat=_ cur=_ orig=_ rate=_ ts=_
+afterNext	inc|salary|_|_|cash|default|_|_|[work,food]|home|_|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry exp  0 note=_ acct=cash tags=[work,food] ledger='trip' subcat=_ cur='EUR' orig=0.3 rate=0 ts=1700000000000
+afterNext	exp|_|_|_|cash|_|_|_|[work,food]|trip|EUR|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|food|_|_|card-a|_|_|_|[work,food]|_|CNY|_|1000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=
+validate	amount
+draft	none
+afterNext	xfer|transfer|_|_|card-a|cash|_|_|[work,food]|_|USD|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry exp transfer 0.000003 note=_ acct=_ tags=[work,food] ledger='home' subcat=_ cur='JPY' orig=30 rate=1e-7 ts=1700000000000
+afterNext	exp|transfer|_|_|_|_|_|_|[work,food]|home|JPY|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|transfer|_|_|default|default|_|_|[]|_|USD|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|_|_|_|card-a|_|_|_|[work,food]|home|JPY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry exp transfer 144 note=午饭 acct=_ tags=_ ledger=_ subcat=_ cur='USD' orig=20 rate=7.2 ts=_
+afterNext	exp|transfer|_|_|_|_|_|_|[]|_|USD|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|cash|default|_|_|[work,food]|home|CNY|_|1000
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	noRate:EUR
+draft	xfer >cash 35.5 fee=0 disc=0 note=午饭 ledger=_ ts=0
+afterNext	xfer|transfer|_|_|_|cash|_|_|[work]|_|EUR|_|0
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	ok
+draft	entry exp salary 30 note=_ acct=_ tags=_ ledger='home' subcat='noodles' cur=_ orig=_ rate=_ ts=1700000000000
+afterNext	exp|salary|_|_|_|_|_|_|[]|home|CNY|_|1700000000000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry inc food 0.5 note=_ acct=default tags=[work,food] ledger=_ subcat=_ cur=_ orig=_ rate=_ ts=_
+afterNext	inc|food|_|_|default|card-a|_|_|[work,food]|_|CNY|_|_
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	xferTo
+draft	none
+afterNext	xfer|food|_|_|card-a|_|_|_|[]|home|EUR|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|_|_|_|card-a|cash|_|_|[work]|home|JPY|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	xfer|food|_|_|cash|card-a|_|_|[]|trip|CNY|_|1000
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=
+validate	xferTo
+draft	none
+afterNext	xfer|salary|_|_|default|_|_|_|[work]|_|CNY|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|transfer|_|_|card-a|default|_|_|[work]|home|JPY|_|1000
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	ok
+draft	entry exp transfer 20 note=_ acct=default tags=[work] ledger=_ subcat=_ cur=_ orig=_ rate=_ ts=1000
+afterNext	exp|transfer|_|_|default|_|_|_|[work]|_|CNY|_|1000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=card-a
+validate	amount
+draft	none
+afterNext	exp|transfer|_|_|_|default|_|_|[work]|home|EUR|_|1000
+pickIo	io=xfer subcat= cat=_ acct= acctTo=default
+validate	amount
+draft	none
+afterNext	inc|_|_|_|card-a|card-a|_|_|[work,food]|home|EUR|_|_
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=default
+validate	noRate:
+draft	entry inc food 0.3 note=午饭 acct=default tags=[work,food] ledger='trip' subcat='noodles' cur=_ orig=_ rate=_ ts=_
+afterNext	inc|food|_|_|default|cash|_|_|[work,food]|trip|_|_|_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|transfer|_|_|card-a|card-a|_|_|[]|home|_|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|salary|_|_|default|default|_|_|[]|_|USD|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|default|cash|_|_|[work]|trip|USD|_|0
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	amount
+draft	none
+afterNext	exp|_|_|_|default|_|_|_|[work]|trip|EUR|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	ok
+draft	entry inc food 0.0144 note=午饭 acct=card-a tags=[work,food] ledger=_ subcat=_ cur='JPY' orig=0.3 rate=0.048 ts=_
+afterNext	inc|food|_|_|card-a|_|_|_|[work,food]|_|JPY|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|food|_|_|default|default|_|_|[]|_|_|_|0
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry inc salary 30 note=午饭 acct=card-a tags=[work] ledger=_ subcat=_ cur='EUR' orig=30 rate=_ ts=1700000000000
+afterNext	inc|salary|_|_|card-a|_|_|_|[work]|_|EUR|_|1700000000000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	exp|salary|_|_|_|_|_|_|[]|_|EUR|_|1000
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:
+draft	entry exp food 35.5 note=a"b acct=cash tags=_ ledger='home' subcat='noodles' cur=_ orig=_ rate=_ ts=_
+afterNext	exp|food|_|_|cash|_|_|_|[]|home|_|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry inc food 3.6 note=午饭 acct=cash tags=[work,food] ledger=_ subcat='noodles' cur='USD' orig=0.5 rate=7.2 ts=1000
+afterNext	inc|food|_|_|cash|card-a|_|_|[work,food]|_|USD|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+validate	noRate:
+draft	entry exp food 20 note=午饭 acct=cash tags=_ ledger=_ subcat='noodles' cur=_ orig=_ rate=_ ts=1700000000000
+afterNext	exp|food|_|_|cash|cash|_|_|[]|_|_|_|1700000000000
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	noRate:EUR
+draft	xfer default>card-a 300 fee=2.5 disc=2.5 note=_ ledger=_ ts=1000
+afterNext	xfer|transfer|_|_|default|card-a|_|_|[]|_|EUR|_|1000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	amount
+draft	none
+afterNext	exp|food|_|_|cash|cash|_|_|[work]|home|CNY|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:
+draft	xfer cash>card-a 0.3 fee=0 disc=2.5 note=午饭 ledger=trip ts=1000
+afterNext	xfer|salary|_|_|cash|card-a|_|_|[work]|trip|_|_|1000
+pickIo	io=xfer subcat= cat=_ acct=cash acctTo=default
+validate	xferSame
+draft	none
+afterNext	xfer|transfer|_|_|cash|cash|_|_|[work]|trip|USD|_|0
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	noRate:EUR
+draft	entry inc salary 0.000002 note=_ acct=default tags=[work,food] ledger=_ subcat=_ cur='EUR' orig=20 rate=1e-7 ts=_
+afterNext	inc|salary|_|_|default|card-a|_|_|[work,food]|_|EUR|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	xferTo
+draft	none
+afterNext	xfer|transfer|_|_|default|_|_|_|[work]|_|USD|_|1000
+pickIo	io=xfer subcat= cat=_ acct=default acctTo=
+validate	xferSame
+draft	none
+afterNext	xfer|salary|_|_|cash|cash|_|_|[work]|home|EUR|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	ok
+draft	entry inc transfer 0.3 note=a"b acct=_ tags=[work] ledger='home' subcat='noodles' cur=_ orig=_ rate=_ ts=_
+afterNext	inc|transfer|_|_|_|_|_|_|[work]|home|CNY|_|_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+validate	amount
+draft	none
+afterNext	inc|_|_|_|card-a|_|_|_|[work,food]|home|_|_|0
+pickIo	io=xfer subcat= cat=_ acct=card-a acctTo=
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|1000
+initial	inc|salary|35.5|_|default|_|0.5|_|[work,food]|_|CNY|noodles|1000
+initial	exp|food|12345.678|_|default|_|_|3|[work]|trip|USD|_|1700000000000
+initial	inc|food|0|a"b|default|_|_|_|[]|_|USD|noodles|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|1700000000000
+initial	exp|salary|72|﻿午饭|cash|card-a|_|_|[work,food]|trip|CNY|noodles|1000
+initial	exp|food|35.5|﻿午饭|default|cash|_|_|[work]|home|CNY|noodles|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|1700000000000
+initial	inc|food|72|_|card-a|_|_|3|[]|home|CNY|_|1000
+initial	exp|salary|0|_|card-a|_|_|_|[]|_|CNY|_|1000
+initial	xfer|salary|1e+21|_|cash|_|0.5|3|[]|trip|USD|noodles|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|0
+initial	exp|salary|10|﻿午饭|card-a|cash|_|3|[]|trip|USD|_|1700000000000
+initial	exp|food|0|_|cash|cash|_|_|[]|home|CNY|_|_
+initial	xfer|food|0.5|午饭|card-a|_|0.5|3|[]|trip|JPY|noodles|1700000000000
+initial	exp|salary|0|_|card-a|cash|0.5|_|[]|home|USD|noodles|1000
+initial	xfer|food|0|a"b|default|_|_|_|[]|_|CNY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|_
+initial	xfer|food|0.5|_|cash|_|_|_|[]|_|USD|noodles|1000
+initial	xfer|food|12345.678|_|default|_|_|_|[]|trip|CNY|_|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|_
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|_
+initial	exp|salary|12345.678|﻿午饭|default|default|_|_|[]|trip|CNY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|0
+initial	xfer|food|12345.678|﻿午饭|default|default|_|_|[]|home|JPY|_|1000
+initial	inc|food|0|a"b|card-a|_|_|3|[]|_|CNY|noodles|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|_
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|_
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|1700000000000
+initial	inc|food|12345.678|_|default|card-a|_|_|[]|home|USD|_|1700000000000
+initial	inc|salary|0.5|_|default|_|_|3|[work,food]|_|CNY|_|1700000000000
+initial	exp|food|0|  午饭  |default|_|_|_|[work]|_|USD|_|1000
+initial	inc|food|72|_|default|_|_|3|[]|_|JPY|noodles|0
+initial	inc|food|10|﻿午饭|card-a|_|_|3|[work]|_|USD|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|_
+initial	inc|salary|0.5|a"b|cash|card-a|_|_|[]|_|JPY|_|1700000000000
+initial	inc|food|72|_|default|cash|0.5|_|[]|_|CNY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|1700000000000
+initial	exp|food|12345.678|_|default|_|_|_|[work,food]|home|JPY|_|_
+initial	exp|salary|10|﻿午饭|default|_|_|_|[]|trip|CNY|_|1000
+initial	xfer|food|12345.678|  午饭  |default|_|_|3|[work]|_|CNY|_|1000
+initial	inc|salary|35.5|午饭|default|_|_|_|[]|_|USD|_|0
+initial	xfer|food|0|_|default|_|_|_|[work]|trip|USD|noodles|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|_
+initial	xfer|salary|12345.678|_|cash|cash|_|_|[]|trip|CNY|noodles|1700000000000
+initial	xfer|salary|12345.678|a"b|default|card-a|_|_|[]|_|USD|_|_
+initial	inc|salary|1e+21|_|card-a|cash|0.5|3|[]|home|USD|noodles|0
+initial	exp|food|1e+21|_|default|_|_|_|[work]|trip|JPY|_|_
+initial	inc|food|12345.678|_|cash|_|_|_|[]|_|CNY|noodles|_
+initial	exp|food|0.5|_|card-a|_|_|_|[]|_|JPY|_|0
+initial	inc|food|0|a"b|default|_|_|3|[work]|_|USD|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|1700000000000
+initial	xfer|food|72|_|card-a|cash|_|_|[]|home|USD|_|_
+initial	inc|salary|0.5|  午饭  |default|_|0.5|_|[]|trip|JPY|noodles|0
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|1000
+initial	xfer|food|12345.678|a"b|default|_|2|_|[]|_|JPY|noodles|1700000000000
+initial	exp|salary|12345.678|  |default|cash|_|_|[]|_|USD|noodles|_
+initial	exp|salary|0|_|card-a|card-a|_|_|[]|trip|USD|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|0
+initial	exp|food|12345.678|午饭|default|_|_|_|[]|_|CNY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|_
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|_
+initial	inc|salary|0|午饭|cash|card-a|_|_|[]|_|CNY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|1700000000000
+initial	exp|salary|12345.678|午饭|default|_|_|_|[]|home|CNY|noodles|1700000000000
+initial	exp|salary|0|_|default|card-a|_|_|[]|home|JPY|_|1700000000000
+initial	xfer|food|72|午饭|default|default|0.5|_|[]|_|CNY|noodles|0
+initial	inc|salary|1e+21|  |default|_|_|_|[]|_|CNY|noodles|1700000000000
+initial	exp|food|35.5|_|cash|cash|_|_|[]|_|JPY|_|_
+initial	inc|salary|10|_|default|card-a|2|_|[work]|home|CNY|noodles|1700000000000
+initial	exp|salary|0|_|default|_|_|_|[work,food]|trip|USD|_|1000
+initial	exp|food|72|_|cash|_|_|_|[]|_|JPY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|1700000000000
+initial	xfer|salary|10|﻿午饭|default|_|0.5|_|[]|_|CNY|noodles|1000
+initial	inc|salary|0.5|a"b|card-a|_|2|_|[]|_|CNY|_|1700000000000
+initial	xfer|food|12345.678|午饭|card-a|_|_|_|[]|trip|JPY|noodles|0
+initial	xfer|food|1e+21|_|cash|_|_|_|[]|home|JPY|_|1700000000000
+initial	xfer|food|35.5|_|default|default|_|3|[]|_|JPY|_|1700000000000
+initial	exp|salary|10|_|cash|_|_|_|[]|_|CNY|_|1000
+initial	inc|food|0.5|_|default|_|_|_|[]|home|CNY|_|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|1700000000000
+initial	xfer|food|0|_|default|_|_|_|[]|_|USD|noodles|1000
+initial	inc|salary|72|_|default|default|_|_|[]|_|JPY|_|1700000000000
+initial	xfer|salary|72|﻿午饭|default|_|_|_|[]|_|CNY|noodles|1000
+initial	xfer|salary|35.5|_|card-a|card-a|_|_|[]|home|USD|_|1700000000000
+initial	xfer|food|0|﻿午饭|cash|_|_|3|[]|_|CNY|noodles|0
+initial	xfer|salary|35.5|  |default|_|_|3|[]|_|JPY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|1000
+initial	inc|food|10|﻿午饭|default|_|_|_|[]|_|USD|_|0
+initial	inc|food|72|_|cash|cash|_|_|[work]|_|JPY|noodles|1700000000000
+initial	xfer|food|0|a"b|default|default|2|_|[work]|_|CNY|noodles|1000
+initial	xfer|food|0|  午饭  |default|_|0.5|_|[]|_|CNY|_|0
+initial	exp|food|72|_|default|_|0.5|_|[]|_|JPY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|_
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|0
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|_
+initial	exp|salary|12345.678|_|cash|_|0.5|_|[]|home|JPY|_|_
+initial	xfer|salary|0.5|_|cash|_|_|3|[work,food]|trip|CNY|noodles|0
+initial	inc|food|1e+21|_|default|_|_|_|[]|trip|CNY|_|1000
+initial	exp|salary|0|午饭|cash|_|_|_|[]|_|CNY|_|_
+initial	xfer|food|12345.678|_|default|_|0.5|_|[]|trip|USD|_|1700000000000
+initial	xfer|food|0|a"b|cash|_|0.5|_|[]|home|JPY|_|1700000000000
+initial	exp|salary|1e+21|a"b|default|_|_|_|[]|trip|CNY|_|1700000000000
+initial	inc|food|12345.678|_|card-a|_|_|3|[]|_|CNY|_|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|_
+initial	xfer|food|0|午饭|cash|default|_|3|[]|_|JPY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|1700000000000
+initial	inc|food|0|﻿午饭|default|_|2|_|[]|_|CNY|_|1700000000000
+initial	exp|salary|12345.678|_|card-a|card-a|0.5|3|[work]|home|CNY|_|1000
+initial	inc|food|0|_|card-a|_|_|_|[work,food]|home|CNY|_|1000
+initial	xfer|salary|10|  午饭  |default|default|2|_|[work]|_|JPY|_|1700000000000
+initial	xfer|food|10|  午饭  |default|card-a|_|_|[]|_|CNY|_|1700000000000
+initial	exp|salary|1e+21|﻿午饭|default|_|_|_|[]|_|CNY|_|1000
+initial	xfer|food|12345.678|_|cash|cash|_|_|[]|home|USD|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|_
+initial	inc|food|12345.678|午饭|default|_|_|_|[]|_|CNY|_|1000
+initial	exp|food|0|午饭|card-a|_|_|_|[]|_|CNY|_|1700000000000
+initial	xfer|food|0.5|a"b|cash|_|_|_|[]|home|USD|_|1000
+initial	inc|food|0|  |card-a|card-a|_|_|[]|_|USD|_|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|1700000000000
+initial	xfer|food|0.5|_|cash|_|_|_|[work,food]|_|CNY|noodles|1000
+initial	inc|salary|12345.678|午饭|default|_|_|_|[]|_|USD|noodles|1700000000000
+initial	inc|food|35.5|_|default|_|0.5|_|[work,food]|trip|JPY|_|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|_
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|0
+initial	exp|salary|35.5|午饭|card-a|_|_|3|[]|_|CNY|noodles|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|0
+initial	exp|salary|35.5|_|default|_|_|3|[]|trip|CNY|_|1700000000000
+initial	exp|salary|72|_|card-a|card-a|_|3|[]|_|JPY|noodles|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|_
+initial	xfer|food|0.5|_|default|_|_|_|[]|_|CNY|noodles|1700000000000
+initial	xfer|salary|0|﻿午饭|card-a|_|_|_|[]|trip|JPY|noodles|0
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|1000
+initial	xfer|salary|0|_|cash|_|_|_|[work]|trip|CNY|noodles|1700000000000
+initial	xfer|salary|0|  午饭  |cash|cash|_|_|[]|home|CNY|_|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|0
+initial	xfer|food|0|_|default|card-a|0.5|_|[]|_|USD|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|1700000000000
+initial	inc|food|12345.678|  |card-a|card-a|_|_|[]|_|CNY|_|1700000000000
+initial	xfer|salary|0|_|card-a|_|0.5|_|[]|_|JPY|noodles|0
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|1000
+initial	xfer|food|0|午饭|card-a|card-a|_|_|[]|trip|CNY|noodles|_
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|0
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|_
+initial	inc|salary|1e+21|_|default|_|_|_|[]|home|CNY|noodles|_
+initial	inc|salary|0.5|  |default|card-a|_|_|[]|home|USD|_|1700000000000
+initial	exp|salary|10|_|cash|_|_|_|[]|home|CNY|_|_
+initial	inc|food|10|_|default|_|_|_|[]|trip|CNY|_|1700000000000
+initial	xfer|salary|1e+21|午饭|card-a|_|_|_|[work]|_|USD|_|_
+initial	xfer|food|1e+21|_|cash|card-a|_|_|[work]|_|JPY|noodles|1700000000000
+initial	exp|salary|35.5|_|cash|_|_|_|[]|_|CNY|_|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|0
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|_
+initial	inc|salary|0|  |default|_|2|_|[]|trip|JPY|_|1700000000000
+initial	inc|food|1e+21|午饭|default|cash|_|3|[]|trip|CNY|_|1000
+initial	inc|food|1e+21|_|default|cash|0.5|3|[]|_|JPY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|0
+initial	exp|salary|35.5|_|default|_|_|_|[]|_|USD|_|1000
+initial	inc|food|10|﻿午饭|cash|_|0.5|_|[work]|_|CNY|_|1000
+initial	xfer|food|1e+21|_|default|cash|_|_|[work]|_|CNY|_|1000
+initial	xfer|food|10|_|card-a|_|_|_|[work,food]|trip|CNY|noodles|1700000000000
+initial	exp|salary|10|a"b|card-a|_|_|_|[]|_|JPY|_|1000
+initial	inc|salary|35.5|  |default|card-a|_|_|[]|_|CNY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|1700000000000
+initial	inc|food|0|﻿午饭|card-a|default|_|3|[]|trip|CNY|_|1700000000000
+initial	xfer|food|0|_|cash|card-a|_|3|[]|home|USD|_|0
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|_
+initial	inc|salary|12345.678|  |card-a|_|_|3|[]|_|CNY|noodles|1000
+initial	exp|salary|0|_|default|_|0.5|3|[]|home|CNY|_|1000
+initial	inc|food|72|_|default|cash|_|_|[]|_|USD|_|1000
+initial	exp|salary|12345.678|_|default|_|_|_|[]|_|CNY|_|0
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|0
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|1700000000000
+initial	exp|food|0|a"b|card-a|_|_|_|[]|home|CNY|_|1000
+initial	exp|food|72|午饭|default|card-a|2|_|[work,food]|home|CNY|_|1000
+initial	exp|food|10|_|default|_|_|_|[]|_|CNY|noodles|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|_
+initial	inc|food|12345.678|午饭|default|_|_|_|[]|trip|CNY|_|1700000000000
+initial	xfer|salary|1e+21|午饭|default|cash|_|3|[]|_|JPY|noodles|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|1700000000000
+initial	exp|salary|12345.678|a"b|card-a|_|2|_|[]|_|JPY|_|1000
+initial	exp|salary|72|午饭|default|cash|_|_|[work]|_|CNY|_|0
+initial	xfer|salary|0.5|_|default|_|2|_|[work,food]|_|CNY|noodles|1700000000000
+initial	xfer|food|0.5|_|card-a|_|_|_|[]|trip|CNY|noodles|1700000000000
+initial	inc|food|1e+21|_|cash|_|_|_|[work,food]|trip|CNY|_|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|1700000000000
+initial	exp|food|35.5|_|cash|card-a|2|_|[]|_|USD|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|_
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|1000
+initial	xfer|salary|0|午饭|card-a|_|0.5|_|[]|_|JPY|noodles|1000
+initial	exp|salary|35.5|a"b|default|_|_|3|[]|_|USD|_|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|_
+initial	exp|food|72|_|default|_|0.5|_|[]|trip|CNY|_|1000
+initial	exp|food|72|_|cash|_|_|_|[work]|_|CNY|_|_
+initial	inc|food|10|午饭|default|cash|_|_|[work,food]|_|CNY|noodles|0
+initial	xfer|food|1e+21|  |card-a|card-a|0.5|_|[]|_|JPY|noodles|1000
+initial	xfer|food|0.5|_|default|_|_|_|[work]|home|CNY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|1700000000000
+initial	xfer|food|10|午饭|card-a|_|_|3|[work,food]|trip|JPY|noodles|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|1700000000000
+initial	inc|food|0|午饭|default|_|_|3|[work,food]|_|CNY|_|1700000000000
+initial	xfer|food|0|  |card-a|default|0.5|_|[]|trip|JPY|noodles|1000
+initial	exp|salary|10|_|cash|default|_|_|[]|_|CNY|noodles|0
+initial	inc|food|0|午饭|default|_|2|_|[]|_|CNY|_|1000
+initial	xfer|salary|0|_|default|_|_|_|[work]|_|CNY|noodles|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|_
+initial	xfer|food|1e+21|午饭|default|_|_|_|[work,food]|_|CNY|noodles|1000
+initial	exp|salary|0|_|cash|default|_|3|[work,food]|_|USD|_|1000
+initial	xfer|food|72|﻿午饭|default|card-a|0.5|_|[]|_|USD|noodles|1000
+initial	xfer|salary|0.5|﻿午饭|default|card-a|_|_|[]|trip|CNY|_|1000
+initial	inc|food|0.5|a"b|default|cash|_|3|[work,food]|home|JPY|_|_
+initial	xfer|salary|0.5|_|default|default|0.5|_|[]|_|CNY|_|1000
+initial	xfer|salary|0.5|  |default|_|0.5|_|[work]|trip|CNY|noodles|1700000000000
+initial	xfer|salary|1e+21|_|default|default|_|_|[]|_|USD|_|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|1700000000000
+initial	exp|food|1e+21|午饭|default|_|2|_|[]|trip|JPY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|_
+initial	inc|salary|0|_|default|_|_|_|[]|_|CNY|noodles|1000
+initial	inc|food|0|_|card-a|_|_|_|[]|_|CNY|_|1000
+initial	xfer|food|1e+21|  午饭  |card-a|card-a|_|_|[]|home|CNY|_|1700000000000
+initial	inc|salary|12345.678|_|cash|_|_|3|[]|_|CNY|_|1000
+initial	xfer|salary|0.5|_|cash|_|_|3|[]|home|CNY|noodles|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|1700000000000
+initial	inc|food|1e+21|a"b|default|_|_|3|[work,food]|_|CNY|_|0
+initial	exp|salary|12345.678|午饭|cash|cash|_|3|[work,food]|trip|CNY|_|_
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|1700000000000
+initial	inc|food|0.5|_|default|cash|_|_|[]|trip|CNY|noodles|1000
+initial	xfer|food|72|_|cash|default|_|3|[]|trip|CNY|noodles|0
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|1000
+initial	inc|food|10|  |default|_|_|3|[]|trip|CNY|noodles|1000
+initial	xfer|salary|0|_|cash|_|0.5|3|[]|home|CNY|noodles|_
+initial	exp|salary|72|﻿午饭|cash|card-a|_|_|[]|trip|JPY|noodles|1700000000000
+initial	exp|salary|10|a"b|card-a|_|_|3|[]|trip|JPY|_|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|_
+initial	inc|salary|72|_|card-a|_|2|3|[]|trip|USD|noodles|1700000000000
+initial	inc|salary|72|﻿午饭|card-a|_|_|3|[]|trip|CNY|noodles|1000
+initial	xfer|salary|72|午饭|default|cash|_|3|[]|_|CNY|_|1000
+initial	exp|food|35.5|_|default|card-a|0.5|3|[work,food]|_|USD|_|_
+initial	inc|food|35.5|  |default|_|_|_|[work,food]|_|CNY|noodles|1000
+initial	inc|salary|72|_|default|cash|_|3|[]|_|CNY|_|1700000000000
+initial	exp|salary|12345.678|_|default|_|2|_|[]|_|CNY|noodles|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|0
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|1700000000000
+initial	exp|salary|0|  |cash|card-a|_|_|[]|_|USD|noodles|1000
+initial	xfer|salary|72|_|default|default|_|_|[]|_|JPY|noodles|_
+initial	xfer|food|35.5|_|card-a|_|_|_|[]|_|USD|_|1000
+initial	exp|food|12345.678|_|cash|default|_|_|[]|_|CNY|_|1700000000000
+initial	exp|salary|0|_|cash|_|_|_|[]|_|USD|_|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|0
+initial	exp|salary|1e+21|_|cash|default|0.5|3|[work]|trip|CNY|_|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|0
+initial	inc|salary|72|_|card-a|_|_|_|[work]|_|JPY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|0
+initial	inc|food|0|_|default|_|_|_|[]|_|CNY|noodles|0
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|1700000000000
+initial	exp|food|35.5|﻿午饭|card-a|_|_|_|[work]|home|CNY|noodles|_
+initial	exp|salary|72|a"b|default|_|_|3|[work]|_|CNY|noodles|1000
+initial	xfer|salary|0.5|  午饭  |default|default|_|_|[]|_|JPY|_|1700000000000
+initial	exp|food|72|  |default|default|_|_|[]|_|CNY|_|0
+initial	inc|salary|12345.678|_|cash|_|_|_|[]|home|CNY|noodles|0
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|0
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|_
+initial	xfer|food|10|_|cash|_|2|_|[work]|_|CNY|_|0
+initial	inc|food|72|午饭|default|_|0.5|_|[]|home|CNY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|1700000000000
+initial	inc|salary|0|a"b|default|_|_|_|[]|_|USD|noodles|1700000000000
+initial	xfer|food|1e+21|_|default|_|0.5|_|[]|_|CNY|_|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|1700000000000
+initial	inc|salary|1e+21|_|default|_|_|_|[]|_|USD|noodles|1000
+initial	inc|salary|72|  午饭  |cash|default|_|3|[]|_|CNY|_|1000
+initial	xfer|food|0|_|default|card-a|_|_|[]|_|CNY|noodles|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|0
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|1700000000000
+initial	exp|food|12345.678|_|default|_|_|3|[work,food]|home|USD|_|0
+initial	inc|food|10|午饭|default|_|_|_|[]|trip|JPY|_|1700000000000
+initial	xfer|salary|0|a"b|cash|card-a|_|3|[work,food]|_|CNY|_|1700000000000
+initial	exp|salary|12345.678|_|card-a|_|_|3|[work,food]|trip|USD|_|1700000000000
+initial	exp|food|12345.678|午饭|default|_|2|_|[]|trip|USD|noodles|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|_
+initial	xfer|salary|10|_|cash|_|_|3|[]|_|JPY|noodles|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|1700000000000
+initial	inc|food|0.5|_|default|_|_|_|[work]|home|USD|_|_
+initial	exp|food|72|_|default|card-a|_|_|[]|_|CNY|_|1000
+initial	exp|salary|0.5|a"b|card-a|_|_|_|[]|trip|JPY|_|1700000000000
+initial	xfer|food|0|_|cash|_|_|_|[]|_|CNY|_|_
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|0
+initial	exp|salary|12345.678|_|default|_|_|_|[work,food]|_|JPY|noodles|1700000000000
+initial	exp|food|35.5|午饭|default|default|_|_|[work,food]|_|CNY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|_
+initial	exp|food|10|a"b|default|cash|_|3|[]|_|JPY|noodles|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|_
+initial	exp|salary|35.5|_|card-a|_|_|_|[]|_|CNY|_|1700000000000
+initial	inc|salary|10|_|card-a|_|_|_|[work,food]|_|CNY|_|1000
+initial	exp|salary|0|午饭|cash|_|_|3|[work]|_|USD|_|1000
+initial	exp|food|0|午饭|cash|default|_|3|[]|_|CNY|_|1000
+initial	exp|food|1e+21|﻿午饭|default|_|_|_|[]|trip|CNY|_|1700000000000
+initial	exp|food|10|﻿午饭|default|default|_|_|[]|_|CNY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|_
+initial	xfer|food|35.5|_|card-a|_|_|3|[work,food]|trip|JPY|_|1000
+initial	xfer|salary|1e+21|_|default|_|_|_|[]|home|USD|_|1700000000000
+initial	xfer|salary|1e+21|﻿午饭|default|_|_|_|[]|trip|CNY|_|_
+initial	xfer|salary|0.5|_|default|cash|_|_|[]|_|CNY|noodles|1700000000000
+initial	xfer|food|10|午饭|cash|_|_|3|[work,food]|trip|CNY|_|1700000000000
+initial	xfer|salary|72|午饭|cash|card-a|_|_|[]|_|USD|noodles|1700000000000
+initial	exp|food|12345.678|午饭|cash|_|2|_|[]|_|USD|_|0
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|1000
+initial	exp|salary|12345.678|_|cash|cash|_|_|[]|home|CNY|noodles|0
+initial	exp|food|12345.678|  |default|cash|_|_|[work,food]|_|CNY|_|1000
+initial	exp|food|0|_|card-a|card-a|_|_|[]|trip|JPY|noodles|_
+initial	exp|salary|72|_|cash|_|0.5|_|[work]|trip|CNY|_|1700000000000
+initial	exp|food|10|_|card-a|cash|2|_|[]|trip|CNY|_|1700000000000
+initial	exp|salary|0|午饭|default|_|_|3|[]|_|JPY|_|0
+initial	xfer|salary|0.5|_|default|_|_|_|[]|trip|USD|_|1700000000000
+initial	inc|food|0|_|default|card-a|_|_|[]|home|CNY|noodles|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|1700000000000
+initial	xfer|salary|1e+21|午饭|default|_|2|_|[]|_|USD|_|1700000000000
+initial	exp|food|1e+21|_|default|_|_|_|[]|_|CNY|_|1000
+initial	exp|food|72|_|default|card-a|_|3|[]|home|CNY|_|1000
+initial	xfer|food|0|a"b|card-a|_|_|_|[]|trip|USD|noodles|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|0
+initial	exp|salary|0.5|  午饭  |default|default|_|_|[]|home|CNY|noodles|1000
+initial	inc|salary|35.5|午饭|card-a|_|_|_|[]|home|JPY|_|1000
+initial	exp|salary|1e+21|_|cash|_|_|_|[]|_|CNY|noodles|1700000000000
+initial	xfer|food|0|_|cash|_|_|_|[]|_|CNY|_|1700000000000
+initial	exp|salary|35.5|  |cash|_|_|_|[]|_|CNY|noodles|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|1700000000000
+initial	inc|salary|10|午饭|default|_|_|_|[]|home|CNY|noodles|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|0
+initial	exp|food|12345.678|午饭|cash|card-a|0.5|_|[]|home|CNY|_|0
+initial	inc|food|35.5|a"b|card-a|default|_|_|[]|_|CNY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|1000
+initial	xfer|food|0.5|a"b|cash|default|_|3|[]|_|CNY|noodles|1000
+initial	exp|salary|72|_|card-a|_|_|3|[work]|_|CNY|_|1000
+initial	inc|food|72|  |cash|_|0.5|_|[work,food]|home|USD|_|1700000000000
+initial	inc|food|0|午饭|cash|_|_|3|[]|_|CNY|noodles|_
+initial	exp|salary|0.5|_|default|_|2|3|[work,food]|trip|USD|noodles|0
+initial	inc|food|0.5|午饭|default|_|_|_|[]|_|USD|_|1700000000000
+initial	xfer|food|72|  |cash|_|2|3|[]|home|CNY|noodles|_
+initial	inc|food|35.5|午饭|default|_|_|3|[]|_|JPY|noodles|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|_
+initial	xfer|salary|0.5|_|default|_|_|_|[work]|trip|JPY|_|1000
+initial	exp|food|1e+21|﻿午饭|cash|_|_|_|[work]|home|CNY|noodles|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|1700000000000
+initial	inc|salary|0.5|  |cash|_|2|_|[work,food]|_|USD|noodles|1700000000000
+initial	exp|food|0|  午饭  |cash|_|0.5|_|[]|_|JPY|_|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|1000
+initial	exp|food|10|_|default|_|_|_|[]|_|JPY|_|1000
+initial	exp|food|0.5|午饭|cash|default|_|_|[]|_|CNY|_|1000
+initial	exp|food|35.5|﻿午饭|cash|_|2|_|[]|home|USD|_|0
+initial	inc|salary|0|午饭|cash|cash|_|_|[]|_|CNY|noodles|0
+initial	exp|salary|0.5|  |card-a|cash|2|_|[]|_|CNY|_|_
+initial	inc|salary|10|_|default|card-a|_|_|[]|_|CNY|noodles|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|1000
+initial	xfer|food|0|_|default|cash|_|_|[]|trip|CNY|_|1000
+initial	xfer|food|0.5|_|default|_|_|3|[]|_|JPY|noodles|1000
+initial	exp|salary|35.5|_|default|_|2|3|[work,food]|trip|USD|_|1000
+initial	inc|food|35.5|  |cash|default|_|_|[]|home|CNY|_|0
+initial	inc|salary|72|_|card-a|_|_|_|[work]|trip|JPY|noodles|1000
+initial	xfer|salary|0|午饭|card-a|_|_|_|[]|home|JPY|noodles|_
+initial	inc|food|0|_|cash|_|_|_|[]|_|USD|noodles|_
+initial	exp|salary|72|_|default|_|_|_|[]|_|USD|_|1700000000000
+initial	inc|salary|1e+21|_|default|_|_|3|[]|_|CNY|noodles|0
+initial	exp|salary|0.5|  午饭  |card-a|_|_|_|[]|_|JPY|_|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|1700000000000
+initial	xfer|salary|0|午饭|card-a|_|2|3|[]|trip|USD|noodles|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|_
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|1700000000000
+initial	exp|salary|0|午饭|card-a|_|0.5|_|[]|_|CNY|_|_
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|0
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|0
+initial	xfer|salary|10|﻿午饭|default|_|_|_|[work,food]|trip|CNY|noodles|1700000000000
+initial	xfer|salary|1e+21|a"b|default|_|_|_|[work,food]|trip|USD|noodles|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|0
+initial	inc|salary|0.5|_|default|_|_|_|[work,food]|home|CNY|_|1700000000000
+initial	inc|food|72|_|default|_|0.5|_|[]|trip|USD|noodles|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|1000
+initial	xfer|food|72|午饭|default|card-a|_|_|[]|home|JPY|noodles|1700000000000
+initial	inc|food|12345.678|午饭|default|cash|_|3|[]|home|JPY|_|0
+initial	exp|salary|0.5|  午饭  |default|cash|_|_|[]|home|CNY|_|1000
+initial	exp|salary|1e+21|午饭|default|default|_|3|[]|trip|CNY|noodles|1700000000000
+initial	xfer|food|0|  |card-a|_|_|_|[]|_|JPY|_|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|0
+initial	inc|salary|72|午饭|default|_|_|_|[]|_|USD|_|1700000000000
+initial	xfer|salary|0.5|  |default|_|0.5|3|[]|home|JPY|_|1700000000000
+initial	xfer|salary|10|  |card-a|card-a|_|_|[work]|_|JPY|_|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|1000
+initial	inc|food|0|_|card-a|default|_|_|[work,food]|_|JPY|_|0
+initial	inc|food|0|午饭|default|default|_|3|[work,food]|_|CNY|_|0
+initial	xfer|food|72|_|default|_|_|_|[]|_|USD|noodles|0
+initial	exp|salary|72|_|cash|_|2|_|[work,food]|_|CNY|_|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|1000
+initial	xfer|salary|72|_|default|_|_|3|[]|_|JPY|_|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|1000
+initial	xfer|salary|35.5|_|default|card-a|_|_|[]|_|USD|_|1700000000000
+initial	xfer|food|10|_|default|_|_|3|[work,food]|_|CNY|_|1000
+initial	exp|food|0|  午饭  |default|_|_|_|[]|_|JPY|noodles|1700000000000
+initial	xfer|food|0|  |card-a|_|_|_|[]|_|CNY|_|_
+initial	xfer|salary|10|_|default|_|0.5|_|[work,food]|home|CNY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|1700000000000
+initial	exp|food|1e+21|  |cash|card-a|2|3|[work]|home|USD|_|0
+initial	exp|salary|0|_|cash|default|0.5|_|[work]|home|USD|_|_
+initial	exp|salary|12345.678|  午饭  |card-a|card-a|_|3|[]|_|CNY|noodles|1700000000000
+initial	inc|salary|10|﻿午饭|default|default|_|_|[]|trip|USD|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|0
+initial	exp|salary|0.5|  |default|_|_|_|[]|_|CNY|_|1700000000000
+initial	xfer|salary|0.5|_|default|_|_|3|[work]|_|CNY|noodles|_
+initial	exp|salary|35.5|  |cash|_|2|_|[]|_|CNY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|1000
+initial	xfer|salary|0|_|cash|card-a|_|_|[]|_|USD|_|1700000000000
+initial	xfer|salary|0.5|_|card-a|_|_|_|[]|_|CNY|_|1000
+initial	exp|salary|0|  |cash|_|_|3|[]|_|CNY|noodles|1000
+initial	xfer|salary|0|午饭|default|_|_|_|[work,food]|_|JPY|_|1700000000000
+initial	xfer|salary|72|午饭|default|_|_|_|[]|_|USD|noodles|0
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|1700000000000
+initial	inc|food|12345.678|_|card-a|_|_|3|[work,food]|_|CNY|_|_
+initial	xfer|salary|10|_|card-a|_|_|3|[work]|_|CNY|noodles|_
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|1700000000000
+initial	inc|food|1e+21|  |default|card-a|_|_|[work]|_|USD|_|0
+initial	exp|salary|10|_|default|default|0.5|_|[]|_|JPY|noodles|0
+initial	inc|food|72|﻿午饭|default|_|_|_|[]|home|CNY|noodles|1700000000000
+initial	exp|food|1e+21|_|card-a|card-a|0.5|_|[]|trip|CNY|_|1000
+initial	inc|food|72|_|default|cash|_|3|[work,food]|_|JPY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|_
+initial	inc|salary|72|  午饭  |default|_|_|_|[]|_|JPY|_|_
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|_
+initial	xfer|food|72|  午饭  |cash|_|_|_|[]|trip|USD|noodles|1700000000000
+initial	exp|salary|0|_|default|_|_|_|[work]|trip|USD|_|1000
+initial	exp|salary|72|a"b|default|_|2|3|[]|home|CNY|_|1700000000000
+initial	xfer|food|12345.678|a"b|default|cash|_|_|[work,food]|_|CNY|noodles|1000
+initial	exp|food|35.5|a"b|default|_|_|_|[]|trip|CNY|noodles|1000
+initial	xfer|salary|0.5|﻿午饭|cash|card-a|_|_|[]|_|CNY|noodles|1000
+initial	inc|salary|10|a"b|default|default|_|3|[]|trip|CNY|_|1000
+initial	inc|salary|0|_|default|_|_|3|[]|_|CNY|_|_
+initial	inc|food|0|a"b|default|_|_|3|[work]|home|JPY|noodles|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|_
+initial	inc|salary|72|_|default|_|_|_|[]|_|USD|_|1000
+initial	xfer|food|0|午饭|default|card-a|_|3|[work,food]|trip|USD|_|0
+initial	exp|food|0.5|  |default|_|_|_|[]|_|CNY|noodles|_
+initial	inc|food|72|_|default|_|_|3|[]|trip|CNY|noodles|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|_
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|0
+initial	xfer|food|0.5|  午饭  |default|card-a|0.5|_|[work]|_|CNY|_|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|_
+initial	inc|salary|0.5|a"b|default|default|0.5|_|[work]|_|JPY|noodles|0
+initial	inc|food|0|_|default|_|_|3|[]|_|CNY|noodles|_
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|0
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|_
+initial	xfer|food|35.5|  |default|default|2|_|[]|_|CNY|_|1700000000000
+initial	exp|salary|0|_|default|cash|_|_|[work]|_|CNY|noodles|_
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|_
+initial	inc|salary|0|  |default|_|_|_|[]|trip|JPY|_|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|0
+initial	xfer|food|1e+21|_|cash|_|2|_|[]|_|JPY|noodles|0
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|0
+initial	exp|food|0|_|cash|_|_|3|[work]|_|CNY|noodles|0
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|1000
+initial	exp|salary|10|_|default|_|_|_|[]|home|CNY|_|1000
+initial	exp|salary|72|_|default|_|_|3|[]|_|CNY|_|1700000000000
+initial	xfer|food|12345.678|午饭|default|card-a|_|_|[work]|_|USD|_|1000
+initial	inc|salary|0|_|card-a|_|_|_|[work]|_|CNY|_|1000
+initial	exp|food|1e+21|a"b|default|_|_|_|[work]|_|JPY|_|1000
+initial	inc|salary|1e+21|_|default|_|_|3|[]|_|USD|noodles|1700000000000
+initial	xfer|food|0.5|  午饭  |default|card-a|_|_|[]|home|USD|noodles|1700000000000
+initial	inc|food|35.5|a"b|card-a|cash|0.5|_|[]|_|CNY|noodles|1700000000000
+initial	exp|salary|0|a"b|default|_|2|_|[]|_|JPY|noodles|1000
+initial	xfer|food|72|_|default|cash|_|_|[]|home|JPY|_|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|_
+initial	exp|salary|72|_|default|card-a|_|_|[]|_|USD|noodles|0
+initial	inc|salary|10|_|cash|_|_|_|[work]|_|CNY|noodles|_
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|1700000000000
+initial	exp|salary|0|_|default|_|_|_|[work,food]|_|USD|noodles|1000
+initial	xfer|salary|72|_|default|_|0.5|3|[]|_|USD|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|_|CNY|_|_
+initial	inc|salary|72|午饭|card-a|_|_|3|[]|_|CNY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|_
+initial	inc|salary|35.5|_|default|card-a|0.5|_|[]|_|CNY|_|1000
+initial	xfer|salary|1e+21|_|default|cash|_|_|[work]|trip|CNY|noodles|1700000000000
+initial	inc|salary|35.5|_|default|_|_|_|[]|home|JPY|noodles|1700000000000
+initial	inc|food|72|a"b|default|_|_|3|[work,food]|_|USD|_|_
+initial	exp|salary|0.5|_|default|_|2|_|[]|trip|CNY|noodles|1000
+initial	exp|salary|0.5|_|default|default|_|_|[work]|_|CNY|_|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|1000
+initial	exp|food|12345.678|a"b|cash|_|2|3|[]|trip|JPY|noodles|1000
+initial	inc|salary|72|_|default|cash|_|_|[]|_|CNY|_|1700000000000
+initial	exp|food|_|_|card-a|_|_|_|[]|trip|CNY|_|_
+initial	inc|salary|1e+21|午饭|default|default|_|_|[work,food]|trip|CNY|noodles|1000
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|0
+initial	xfer|food|1e+21|  |card-a|card-a|_|_|[]|trip|CNY|noodles|0
+initial	exp|food|72|午饭|default|_|_|_|[work]|_|CNY|_|1700000000000
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	cached
+patchTs	false
+rateSource	null
+patchTs	false
+rateSource	null
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	null
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	null
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	null
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	cached
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	null
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	null
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	null
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	cached
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	null
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	cached
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	cached
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	null
+patchTs	false
+rateSource	cached
+patchTs	false
+rateSource	cached
+patchTs	true
+rateSource	null
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	cached
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	null
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	null
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	cached
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	cached
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	cached
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	cached
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	null
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	null
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	cached
+patchTs	true
+rateSource	null
+patchTs	true
+rateSource	null
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	null
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	null
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	cached
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	null
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	null
+patchTs	false
+rateSource	cached
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	cached
+patchTs	true
+rateSource	cached
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	null
+patchTs	false
+rateSource	cached
+patchTs	false
+rateSource	cached
+patchTs	false
+rateSource	cached
+patchTs	false
+rateSource	null
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	cached
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	null
+patchTs	true
+rateSource	null
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	null
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	null
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	null
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	null
+patchTs	false
+rateSource	cached
+patchTs	false
+rateSource	cached
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	null
+patchTs	true
+rateSource	null
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	cached
+patchTs	false
+rateSource	cached
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	null
+patchTs	false
+rateSource	null
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	null
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	null
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	cached
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	null
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	null
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	cached
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	cached
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	null
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	null
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	null
+patchTs	false
+rateSource	null
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	null
+patchTs	false
+rateSource	null
+patchTs	false
+rateSource	null
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	cached
+patchTs	true
+rateSource	null
+patchTs	true
+rateSource	null
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	null
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	null
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	null
+patchTs	true
+rateSource	null
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	null
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	cached
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	cached
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	cached
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	cached
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	null
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	null
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	cached
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	cached
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	cached
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	null
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	null
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	null
+patchTs	true
+rateSource	api
+patchTs	true
+rateSource	cached
+patchTs	true
+rateSource	null
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	api
+patchTs	false
+rateSource	null
+patchTs	false
+rateSource	null
+patchTs	false
+rateSource	null
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	false
+rateSource	api
+patchTs	true
+rateSource	cached
+patchTs	true
+rateSource	cached
+patchTs	false
+rateSource	api
+patchTs	true
+validate	ok
+validate	amount
+validate	amount
+validate	amount
+validate	amount
+validate	amount
+validate	amount
+validate	amount
+validate	xferTo
+validate	xferSame
+validate	ok
+validate	noRate:EUR
+validate	ok
+validate	noRate:
+validate	amount
+draft	entry exp food 30 note=_ acct=default tags=_ ledger=_ subcat=_ cur=_ orig=_ rate=_ ts=_
+draft	entry exp food 20 note=_ acct=default tags=_ ledger=_ subcat=_ cur=_ orig=_ rate=_ ts=_
+draft	entry exp food 72 note=_ acct=default tags=_ ledger=_ subcat=_ cur='USD' orig=10 rate=7.2 ts=_
+draft	entry exp food 75 note=_ acct=default tags=_ ledger=_ subcat=_ cur='USD' orig=10 rate=7.5 ts=_
+draft	entry exp food 0 note=_ acct=default tags=_ ledger=_ subcat=_ cur='USD' orig=10 rate=0 ts=_
+draft	entry exp food 10 note=_ acct=default tags=_ ledger=_ subcat=_ cur='EUR' orig=10 rate=_ ts=_
+draft	entry exp food 30 note=午饭 acct=default tags=_ ledger=_ subcat=_ cur=_ orig=_ rate=_ ts=_
+draft	entry exp food 30 note=午饭 acct=default tags=_ ledger=_ subcat=_ cur=_ orig=_ rate=_ ts=_
+draft	xfer a>b 30 fee=1.5 disc=0 note=_ ledger=_ ts=_
+draft	xfer a>b 30 fee=0 disc=-3 note=_ ledger=_ ts=_
+draft	none
+draft	entry exp food 30 note=_ acct=default tags=[work] ledger='home' subcat='noodles' cur=_ orig=_ rate=_ ts=_
+draft	entry exp food 30 note=_ acct=default tags=_ ledger=_ subcat=_ cur=_ orig=_ rate=_ ts=1700000000000
+draft	xfer a>b 30 fee=1.5 disc=0 note=_ ledger=_ ts=_
+draft	xfer a>b 30 fee=2.5 disc=0 note=_ ledger=_ ts=_
+draft	xfer a>b 30 fee=100 disc=0 note=_ ledger=_ ts=_
+draft	xfer a>b 30 fee=0.5 disc=0 note=_ ledger=_ ts=_
+draft	xfer a>b 30 fee=3 disc=0 note=_ ledger=_ ts=_
+draft	xfer a>b 30 fee=0 disc=0 note=_ ledger=_ ts=_
+draft	xfer a>b 30 fee=0 disc=0 note=_ ledger=_ ts=_
+draft	xfer a>b 30 fee=Infinity disc=0 note=_ ledger=_ ts=_
+draft	xfer a>b 30 fee=0 disc=0 note=_ ledger=_ ts=_
+draft	xfer a>b 30 fee=0 disc=0 note=_ ledger=_ ts=_
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|_
+initial	exp|food|_|_|card-a|_|_|_|[]|home|CNY|_|5000
+initial	inc|salary|10|pay|bank|_|_|_|[work]|_|USD|_|1000
+initial	inc|salary|10|pay|bank|_|_|_|[work]|_|USD|_|_
+initial	inc|salary|10|pay|bank|_|_|_|[work]|_|USD|_|5000
+initial	inc|salary|10|pay|bank|_|2|_|[work]|_|USD|_|1000
+initial	inc|salary|10|pay|bank|_|_|_|[work]|_|CNY|_|1000
+initial	inc|salary|72|pay|bank|_|_|_|[work]|_|USD|_|1000
+initial	inc|salary|0|pay|bank|_|_|_|[work]|_|USD|_|1000
+initial	inc|salary|10|pay|default|_|_|_|[work]|_|USD|_|1000
+initial	inc|salary|10|pay|bank|_|_|_|[work]|_|USD|_|1000
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+pickIo	io=exp subcat= cat=first-exp acct=_ acctTo=_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+pickIo	io=inc subcat= cat=first-inc acct=_ acctTo=_
+pickIo	io=xfer subcat= cat=_ acct=a acctTo=b
+pickIo	io=xfer subcat= cat=_ acct=a acctTo=
+pickIo	io=xfer subcat= cat=_ acct=cur acctTo=b
+pickIo	io=xfer subcat= cat=_ acct=a acctTo=
+rateSource	cached
+rateSource	cached
+rateSource	api
+rateSource	api
+rateSource	api
+rateSource	null
+rateSource	null
+rateSource	cached
+rateSource	api
+patchTs	true
+patchTs	false
+patchTs	false
+patchTs	false
+patchTs	false
+patchTs	true
+patchTs	false
+validate	noRate:USD
+draft	entry exp food 0 note=_ acct=default tags=_ ledger=_ subcat=_ cur='USD' orig=10 rate=0 ts=_
+validate	noRate:EUR
+draft	entry exp food 0 note=_ acct=default tags=_ ledger=_ subcat=_ cur='EUR' orig=10 rate=0 ts=_
+validate	ok
+draft	entry exp food 0.48 note=_ acct=default tags=_ ledger=_ subcat=_ cur='JPY' orig=10 rate=0.048 ts=_
+validate	ok
+draft	entry exp food 10 note=_ acct=default tags=_ ledger=_ subcat=_ cur=_ orig=_ rate=_ ts=_
+validate	noRate:USD
+afterNext	inc|salary|_|_|bank|_|_|_|[work]|home|USD|_|5000

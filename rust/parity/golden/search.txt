@@ -1,0 +1,4627 @@
+notes	coffee
+notes	
+search	0
+search	00000
+search	00
+search	0
+pickledger	
+archacct	a0
+search	0
+search	00000
+search	00100
+search	11111
+search	1
+pickacct	a0,a1,a2
+notes	coffee,tea,lunch
+notes	
+pickledger	
+search	0000
+search	0100
+archledger	
+archledger	home,trip
+archledger	
+search	00
+search	0
+search	0
+archledger	
+search	111
+archacct	a1
+notes	
+pickledger	
+search	00000
+search	1
+pickledger	home,trip,work,,Trip
+search	0000
+search	0
+archledger	trip,
+search	000
+pickacct	a0,a1
+archacct	
+archledger	
+archledger	home
+notes	
+search	0
+search	1111
+archacct	a0,a1,a2
+search	000
+pickacct	a0,a1,a3
+search	11111
+pickledger	home,trip
+search	0
+notes	coffee
+search	1
+pickacct	a0,a1,a2
+search	000
+pickacct	a0,a1,a2,a3,a4
+pickledger	home,trip
+search	0000
+notes	
+archacct	
+notes	lunch,coffee
+pickledger	
+notes	
+search	000
+search	00000
+search	000
+search	1
+notes	lunch,tea
+pickacct	
+search	1110
+notes	
+archacct	a0
+notes	
+search	00
+notes	
+notes	
+pickledger	home
+archledger	home,,Trip
+notes	
+search	001
+notes	lunch
+search	000
+archledger	
+notes	
+search	000
+search	000
+archledger	work
+archledger	
+archacct	
+archledger	home
+search	0000
+archacct	
+search	00000
+archledger	trip,work
+notes	coffee,tea
+search	0000
+search	0000
+archacct	a0
+archacct	a0,a2
+pickledger	home,trip
+search	1111
+search	000
+archledger	work
+pickacct	a0,a1,a2
+archacct	
+search	0
+search	10001
+archledger	
+notes	lunch
+pickacct	
+archledger	
+search	1
+pickledger	home,trip
+pickacct	a0,a1,a3
+archacct	a1,a2
+search	0
+archledger	home
+search	11
+notes	tea
+search	1
+notes	
+notes	lunch,tea,coffee
+notes	
+notes	
+search	00
+search	0
+archacct	a0,a1
+notes	
+notes	coffee
+search	00000
+archledger	
+archacct	a1
+search	0100
+notes	lunch,coffee
+notes	coffee
+search	000
+archledger	home
+notes	coffee,tea
+pickledger	
+archledger	home,trip
+pickledger	
+pickacct	a0,a1
+pickacct	
+search	000
+search	00100
+search	00000
+search	00000
+notes	
+archacct	a0
+notes	
+archacct	a0
+search	00000
+search	0000
+notes	coffee,tea,lunch
+archacct	
+notes	lunch
+search	0
+archacct	
+search	00110
+search	0
+pickacct	a1,a2
+search	0000
+search	1
+archacct	
+search	11111
+notes	coffee,tea
+pickledger	
+search	0
+notes	tea
+search	00000
+archledger	
+archacct	a2
+search	000
+archledger	home
+search	000
+search	0
+archledger	
+pickacct	
+archacct	a0
+notes	coffee
+notes	coffee
+pickledger	
+search	00
+notes	
+pickacct	a0,a2
+search	0000
+pickacct	
+pickacct	a0
+pickacct	a0,a1,a2,a3
+search	000
+search	0000
+notes	lunch
+search	0000
+archledger	
+search	000
+archacct	
+notes	lunch
+pickledger	home
+search	0000
+archledger	
+pickacct	
+pickledger	
+archacct	
+search	00
+pickacct	
+notes	
+pickacct	a0,a2
+notes	lunch,coffee
+notes	
+archacct	a0,a1,a2
+search	00000
+archacct	a1,a2
+search	01
+notes	coffee
+notes	lunch
+pickledger	trip
+search	0
+search	11
+search	00
+search	0
+pickledger	home,work,
+search	00
+notes	tea
+pickledger	home,trip
+notes	lunch,tea,coffee
+pickledger	home,trip,work,
+notes	tea
+notes	
+search	000
+archacct	a0,a1
+pickledger	home
+pickledger	home,trip,work,
+search	000
+notes	coffee
+search	10
+search	0
+pickledger	home
+pickacct	a1,a2
+notes	coffee
+archledger	
+notes	
+search	01111
+pickledger	home
+notes	coffee
+search	0000
+notes	coffee
+search	10000
+notes	
+archacct	a0,a2
+search	000
+notes	coffee
+pickacct	
+search	1110
+archacct	
+search	00000
+pickacct	a0,a1,a2
+pickledger	home
+search	1
+archacct	
+notes	
+archacct	
+archledger	
+search	00001
+search	11
+search	0000
+search	0000
+pickledger	home,trip,work,
+pickacct	a0
+search	0
+search	1
+pickledger	trip,work,Trip
+notes	
+notes	
+pickledger	home,work,,Trip
+archacct	
+pickacct	a0
+notes	coffee,lunch
+search	00000
+pickledger	home,trip,work,
+search	0000
+archacct	a0,a2
+archledger	trip
+search	000
+pickacct	a0,a2,a3,a4
+notes	lunch
+search	00
+pickacct	a0,a1,a2,a3
+archledger	home
+archacct	a0,a1,a2
+archledger	
+search	110
+notes	lunch,coffee
+pickledger	home,work,,Trip
+pickacct	a0,a2,a3
+archacct	
+archacct	a3
+pickacct	a1
+search	00000
+archledger	home
+search	00001
+notes	lunch
+search	0000
+pickledger	
+notes	lunch
+pickacct	
+pickledger	trip,work
+search	0001
+search	00
+pickacct	a0,a1
+search	000
+pickacct	a1,a3
+archledger	
+search	00100
+search	00
+pickacct	a0
+pickledger	home,
+pickacct	a2
+archledger	
+notes	tea,coffee
+notes	coffee
+pickacct	a1,a2,a4
+search	00001
+search	00
+archacct	
+search	0000
+archacct	
+archledger	,Trip
+notes	lunch
+search	00
+archledger	trip,work
+notes	
+search	10
+search	0100
+search	000
+notes	
+pickacct	
+search	11
+archacct	a1
+archacct	
+archledger	
+pickledger	
+archacct	a0,a4
+search	0
+notes	lunch,coffee
+archacct	
+notes	lunch
+archledger	
+pickacct	a1,a2
+archacct	
+search	0
+pickledger	home
+search	00
+search	1011
+search	0
+search	00000
+pickacct	a0,a1
+search	0
+pickacct	a0,a1,a2
+search	00100
+search	00
+pickledger	home,trip
+pickacct	a0
+search	0000
+pickledger	home,trip,work
+search	1101
+pickacct	a0
+archacct	a0,a2,a3
+notes	tea
+archledger	
+pickledger	home,trip,work,
+archacct	
+search	0000
+search	0
+pickledger	home,trip
+search	00001
+notes	lunch
+search	10000
+notes	lunch,coffee
+pickacct	a0,a1
+notes	lunch
+pickacct	a0,a1
+notes	coffee
+archledger	
+pickacct	a1,a2
+archacct	a0
+search	000
+search	0
+search	00000
+search	0
+archledger	
+pickacct	a0,a1,a2
+search	000
+notes	coffee
+search	0
+search	0
+archledger	
+archacct	
+search	0
+notes	lunch,coffee
+search	1110
+pickledger	
+archacct	
+notes	coffee
+notes	lunch
+pickledger	home,trip
+search	11110
+search	0
+archacct	a2
+archledger	home
+pickacct	a0,a1
+notes	tea
+search	000
+archacct	a0,a1
+archacct	
+pickledger	home,trip,work,,Trip
+archacct	a0,a3
+notes	
+notes	tea,coffee
+search	0
+archacct	
+pickacct	a1,a2
+archacct	
+archledger	
+notes	lunch,coffee
+notes	lunch
+archledger	
+search	00000
+search	11
+pickacct	
+search	00000
+notes	
+search	000
+search	00
+notes	coffee
+search	01000
+pickledger	
+search	1111
+notes	lunch
+archledger	
+notes	lunch
+pickledger	
+notes	coffee
+search	00
+notes	coffee
+search	10000
+notes	tea,lunch,coffee
+pickacct	a0,a1,a2,a3
+notes	
+search	00
+pickledger	
+search	1
+archledger	
+search	00000
+archledger	home,work
+archledger	
+search	00000
+notes	coffee
+pickacct	
+pickacct	a0
+notes	lunch
+notes	
+archledger	
+search	0
+archacct	
+search	001
+notes	
+search	000
+notes	lunch,coffee,tea
+search	01000
+search	0
+pickledger	home
+search	0000
+archledger	home
+pickacct	
+pickledger	
+archacct	
+notes	
+archledger	
+pickacct	a1,a3
+pickledger	
+search	00
+archledger	
+search	0
+pickledger	home,trip,work
+search	0000
+pickacct	a0,a1,a2
+notes	lunch
+notes	lunch,tea
+search	0
+search	1
+notes	
+search	00
+search	1111
+pickacct	a0,a1,a2
+search	000
+pickledger	home,trip
+notes	tea
+search	00000
+pickledger	trip,work,
+archledger	
+archacct	a2
+search	00001
+search	00
+notes	
+pickledger	
+archledger	
+archacct	
+pickacct	a1,a2
+search	11101
+search	1
+archacct	a1,a2,a3
+search	00010
+pickacct	
+search	1111
+search	0000
+pickacct	a0,a2,a3,a4
+archacct	a0,a1
+pickacct	a0,a1,a2,a3,a4
+archledger	
+pickledger	home,trip,work
+archacct	
+notes	tea
+search	0000
+search	0
+notes	
+pickacct	a0,a1
+notes	
+notes	coffee
+search	0000
+search	000
+archledger	
+search	000
+search	000
+notes	coffee
+search	01000
+search	11
+notes	
+pickacct	a0,a1
+notes	
+search	11111
+archledger	work
+notes	
+notes	
+notes	
+search	0
+search	0000
+notes	
+archacct	a2
+notes	lunch
+search	0
+notes	
+search	0
+search	0000
+notes	
+archacct	a1,a2,a3
+archacct	
+archacct	
+notes	lunch
+pickacct	
+search	00000
+pickledger	home,trip,work,,Trip
+search	01001
+pickacct	a0,a1,a2,a3,a4
+notes	coffee
+search	0000
+archacct	
+notes	coffee,tea
+archledger	trip,work
+notes	tea
+search	0000
+pickacct	a0
+search	00
+pickacct	a0,a1,a2,a3
+search	0110
+pickledger	
+search	00
+archledger	home,work
+search	0
+search	00
+archacct	
+notes	lunch
+notes	
+pickacct	a2,a3
+search	11
+notes	
+search	0
+search	111
+pickledger	home,trip,work
+archledger	home
+pickacct	
+notes	coffee
+archacct	
+pickledger	home
+archacct	a2
+notes	lunch
+pickacct	a0,a1,a3
+search	0000
+notes	
+notes	coffee,lunch
+notes	
+search	0000
+notes	
+pickacct	
+notes	coffee
+search	00000
+pickledger	home,trip
+pickledger	home,trip
+search	0100
+pickledger	,Trip
+search	00
+archledger	
+search	0000
+notes	lunch,coffee
+search	0
+pickledger	
+notes	
+pickledger	home,work
+search	000
+search	00000
+pickledger	trip,work,
+notes	tea,coffee,lunch
+archacct	
+search	0
+pickacct	a0
+archacct	a1
+archledger	
+search	000
+search	000
+notes	
+archacct	a1
+notes	
+archledger	trip
+pickacct	a0,a1,a2,a3,a4
+search	11
+pickledger	home,trip,work
+search	0000
+archacct	
+search	0111
+search	00000
+notes	lunch
+notes	tea,coffee
+archledger	home,
+search	00000
+notes	
+archacct	a1
+search	000
+notes	coffee,tea
+search	000
+notes	lunch,tea
+notes	
+notes	coffee
+archacct	a2
+notes	
+pickledger	home
+notes	
+pickledger	home,trip,work,
+pickledger	home,,Trip
+notes	coffee
+pickledger	home,,Trip
+notes	lunch
+notes	coffee
+archledger	
+pickacct	a1,a2,a3
+archacct	
+archledger	work
+search	00000
+search	00011
+notes	
+archacct	
+pickacct	a0,a1
+pickledger	trip
+archacct	a0
+pickledger	
+archacct	a0
+pickacct	a0,a1,a2,a3
+search	110
+archacct	
+search	01101
+archledger	
+pickacct	a0,a1
+search	000
+archledger	
+pickacct	a0,a1,a2
+pickacct	a0
+archacct	
+notes	coffee
+notes	
+archacct	
+pickledger	home,work,
+search	1111
+archacct	a0
+archacct	
+search	0000
+search	1
+search	000
+archledger	
+search	0
+pickledger	home,work
+notes	coffee,tea,lunch
+archledger	work
+search	00000
+notes	
+notes	lunch
+notes	coffee,lunch
+notes	
+search	111
+search	1
+pickledger	
+search	00000
+notes	lunch
+search	0
+search	0000
+notes	coffee,tea
+search	10000
+search	10
+pickacct	a0
+pickacct	a0,a1
+search	0
+search	000
+search	10
+archledger	
+pickacct	a0,a2
+search	00
+notes	coffee
+notes	
+search	00
+notes	coffee
+search	0
+archacct	a0
+search	0
+search	10000
+search	01
+notes	lunch,coffee
+notes	coffee
+search	0
+pickledger	home
+notes	
+archacct	a0
+search	0
+archledger	trip,work
+archledger	home,
+search	0000
+search	010
+archledger	home
+pickledger	
+archacct	
+pickacct	a0,a1
+search	0
+archledger	
+pickacct	
+notes	
+search	00
+archacct	a1,a2,a3
+pickacct	a0,a1,a3,a4
+archacct	
+search	0000
+search	00000
+pickacct	
+search	00
+notes	
+archledger	trip
+archacct	
+pickacct	a1
+pickledger	home,work,,Trip
+pickacct	
+search	1111
+search	0
+pickledger	home,Trip
+pickacct	a0,a1
+notes	
+search	1
+search	000
+pickacct	a1
+search	00000
+notes	coffee,tea
+pickacct	
+pickledger	
+archacct	a2
+notes	
+pickacct	a0
+archacct	
+pickacct	a0,a1,a2,a3,a4
+notes	coffee
+search	11
+archledger	
+notes	
+pickacct	a0
+notes	coffee
+search	10
+archledger	
+pickledger	home,trip,work
+notes	
+notes	
+archledger	
+search	00000
+pickacct	
+notes	coffee,tea,lunch
+search	00000
+search	0001
+search	0000
+pickacct	a0,a2,a4
+archacct	
+archacct	a1
+search	00000
+archacct	
+search	0
+search	0
+notes	
+archledger	
+search	1
+pickacct	a0,a1,a2
+search	000
+archacct	a0
+archledger	trip
+search	00
+notes	lunch,tea
+pickledger	work
+archacct	
+pickacct	a0,a2
+search	00
+search	0
+pickacct	
+search	0000
+search	00100
+search	1
+search	10
+search	00
+notes	
+notes	
+search	0
+archledger	
+search	00000
+search	00
+archacct	
+search	00000
+pickledger	home,work,
+search	00000
+search	00
+archledger	home
+notes	lunch
+archacct	
+pickledger	home,trip
+pickledger	home,trip,work,
+search	000
+pickledger	
+archledger	
+search	000
+notes	lunch,coffee
+archacct	a0,a2
+pickacct	a0,a1,a2
+pickledger	home,trip
+search	1000
+pickacct	a0,a1,a2
+pickledger	trip,work
+archacct	a0,a3
+search	000
+notes	lunch
+archacct	
+archacct	a1,a2,a3
+search	0000
+search	000
+pickacct	a0,a3,a4
+notes	
+search	00
+pickledger	home
+pickledger	home,trip,work,,Trip
+archledger	
+archacct	
+pickacct	a1
+archledger	
+archledger	
+pickacct	a3
+search	11
+pickacct	a2
+search	010
+archacct	a0
+search	0000
+search	0
+notes	lunch,coffee
+archacct	a3
+pickacct	a0
+notes	
+pickacct	a0,a1,a2
+archacct	
+notes	
+notes	
+archacct	a1
+archacct	
+pickacct	
+notes	coffee
+archledger	
+archledger	
+search	00000
+notes	coffee
+notes	coffee
+notes	coffee,tea,lunch
+search	0
+notes	coffee,lunch
+pickledger	home
+pickledger	
+archledger	trip
+search	0000
+archledger	
+notes	lunch,coffee
+archacct	a4
+archledger	
+notes	
+archacct	a1
+search	0
+notes	
+search	0
+notes	lunch
+archledger	home,work,
+notes	lunch,coffee
+search	0000
+archledger	trip
+search	00
+search	00
+search	001
+archacct	
+search	1
+archledger	
+notes	lunch
+notes	coffee
+notes	coffee
+search	00
+pickledger	
+search	00
+notes	
+archacct	
+search	00
+pickacct	a0,a1,a3,a4
+archledger	
+archledger	
+search	11111
+notes	lunch,tea,coffee
+pickledger	home,trip
+notes	tea
+archacct	a0
+search	000
+notes	
+pickacct	a0
+search	11
+archacct	
+search	00000
+archledger	
+notes	
+notes	lunch
+notes	
+search	0000
+archledger	
+search	0000
+pickledger	home,trip
+archacct	a4
+search	1111
+pickacct	a0
+search	0
+pickacct	
+archledger	trip
+search	0
+search	0
+search	0
+notes	lunch
+search	00
+pickledger	home,work,
+search	000
+notes	
+notes	
+archledger	trip
+notes	tea
+archacct	a3
+search	00
+archledger	home
+search	00010
+pickacct	
+search	00
+pickledger	
+pickacct	a1,a3,a4
+search	0000
+pickacct	a0,a1,a2,a4
+pickledger	home,trip
+pickacct	a0
+pickacct	a0,a1,a2
+pickacct	a0,a1,a2,a4
+notes	tea
+archledger	
+notes	coffee
+search	000
+archledger	
+search	0000
+archacct	
+pickacct	a0,a1,a2
+pickledger	trip
+search	0000
+notes	lunch
+archacct	a1,a2
+search	000
+search	100
+pickacct	a0,a1
+pickledger	work,,Trip
+pickacct	a0,a1,a2
+search	0000
+search	0000
+notes	
+search	0000
+search	1111
+search	11111
+search	00
+notes	tea
+notes	
+archledger	Trip
+notes	lunch,coffee
+pickledger	home
+pickacct	a0
+notes	coffee,tea
+search	000
+pickacct	
+search	00
+search	0
+archledger	
+notes	
+notes	
+notes	lunch,coffee
+notes	
+notes	
+archledger	
+archacct	a0
+archledger	home
+notes	
+search	0
+search	00000
+search	0
+notes	coffee
+notes	coffee
+archacct	a0
+search	0001
+search	1111
+notes	
+archacct	a0,a2
+search	11110
+search	0000
+search	01
+pickledger	
+archacct	
+search	00
+archledger	home
+search	00000
+archacct	a1
+search	0
+archledger	
+notes	
+archacct	a1
+archacct	a0,a2
+pickledger	trip,work
+archacct	a0,a3
+search	0100
+notes	coffee
+search	001
+search	0
+archledger	
+search	0000
+archledger	work
+pickacct	a0,a1
+archledger	trip,work,Trip
+notes	lunch
+search	000
+pickacct	
+notes	
+pickacct	a0
+pickacct	a0
+pickledger	
+notes	coffee
+search	00100
+search	00111
+notes	
+archledger	home,work
+search	0000
+notes	lunch
+pickledger	home,trip,work
+pickledger	
+notes	coffee,lunch
+archacct	a1,a2
+pickacct	
+archledger	
+search	0
+search	01
+pickledger	home,trip,work,
+notes	tea,lunch
+search	00000
+notes	coffee,lunch
+pickledger	home,trip,work,
+pickledger	home,trip,work,
+search	00
+archledger	
+search	000
+archledger	home
+search	00000
+search	000
+search	00
+pickacct	a0,a1,a2,a3
+notes	
+pickledger	
+pickacct	a0
+search	0000
+search	100
+archledger	
+search	010
+notes	
+pickledger	
+search	001
+archacct	
+notes	coffee,lunch
+pickacct	a0,a1,a2,a3
+pickacct	a0,a1,a2
+search	00000
+search	00000
+archacct	a0
+archacct	
+pickledger	home
+search	1
+search	01
+pickacct	a0,a1
+search	11000
+search	0000
+pickledger	home,trip,,Trip
+search	0
+search	001
+notes	lunch
+pickledger	home,trip,work,
+notes	
+notes	
+notes	lunch,coffee
+pickledger	home,trip,work,,Trip
+search	000
+pickacct	a1,a2
+search	0000
+search	00
+search	0000
+search	00
+notes	
+search	000
+notes	
+archledger	home,trip
+archledger	home,work
+search	00010
+notes	
+notes	lunch,coffee
+archacct	a0,a3,a4
+pickledger	
+pickledger	home,trip,work
+search	00000
+pickledger	
+archacct	
+pickacct	a0,a1,a2
+pickacct	a0,a2,a3
+notes	coffee
+search	1
+archledger	
+notes	
+archledger	
+search	1
+archledger	home,work
+search	0000
+notes	coffee,tea
+search	01
+pickledger	home
+notes	lunch
+archacct	
+pickacct	a0,a1
+search	00
+pickacct	
+pickledger	trip,work
+archledger	
+archacct	a1,a3
+notes	
+archledger	home
+search	0000
+pickacct	a0,a1,a3
+search	11
+pickacct	a0,a2,a3,a4
+notes	
+search	1111
+archacct	a1
+pickacct	a0
+pickacct	a0
+search	00000
+pickacct	a0
+archacct	a0
+notes	lunch,coffee,tea
+search	00
+notes	lunch,coffee
+pickledger	home,trip
+search	0000
+search	000
+archledger	
+pickacct	
+notes	lunch,coffee
+search	000
+archacct	
+notes	lunch,coffee
+notes	coffee,lunch
+pickledger	work
+archacct	a1,a2,a4
+archacct	
+archacct	
+pickacct	a0,a1,a2,a3,a4
+search	0000
+search	000
+search	0
+notes	coffee,tea
+search	0000
+notes	coffee,lunch
+search	10
+pickacct	a0,a1
+pickledger	home,trip,work,,Trip
+pickacct	
+pickledger	home,trip,
+pickacct	
+search	0000
+pickacct	a0,a1,a2
+notes	coffee
+notes	coffee,lunch
+pickacct	a0,a1
+archledger	home
+search	000
+search	0
+search	0
+notes	coffee
+search	0
+archacct	a1
+notes	
+pickacct	
+notes	lunch,tea
+search	00000
+pickacct	a0,a1
+notes	lunch
+notes	
+search	00
+search	01001
+pickledger	
+search	000
+search	100
+notes	lunch
+archledger	
+archacct	
+search	0
+notes	coffee
+notes	tea
+search	01
+search	0
+search	00
+archacct	a0,a2,a3
+search	0100
+notes	
+search	000
+notes	
+archacct	a0,a3
+notes	
+search	00
+search	0000
+search	00000
+notes	coffee,lunch
+search	0
+pickacct	a0,a1,a2,a3,a4
+search	000
+pickacct	
+search	000
+archledger	
+archacct	
+pickledger	home,trip,work,,Trip
+pickacct	a1,a3
+pickledger	home
+notes	tea,lunch,coffee
+notes	tea,coffee
+notes	lunch,tea
+pickacct	a0,a1
+search	0
+search	00000
+notes	coffee
+pickledger	home,trip,work
+search	0
+archacct	
+notes	
+archledger	work
+pickledger	home,work
+pickledger	work,
+pickacct	
+search	00
+search	000
+notes	
+pickledger	home,trip,work,,Trip
+pickledger	home,work
+archacct	a2,a3
+pickacct	a0,a1
+pickledger	
+archledger	
+notes	tea
+pickacct	a0
+notes	
+archacct	
+archledger	trip
+archledger	
+pickledger	home,work,
+search	0000
+search	1111
+archacct	
+pickacct	a1,a3,a4
+pickledger	home,trip
+search	00
+pickledger	
+notes	coffee
+pickledger	home,
+pickacct	
+search	00
+archacct	a0
+search	0
+search	0
+search	000
+pickacct	a1
+pickledger	home,trip,work,
+search	0
+search	000
+search	101
+pickledger	home,trip,work,
+archledger	
+search	01111
+search	0
+pickacct	a1,a2
+pickacct	a0,a1,a3,a4
+pickledger	home,trip,work
+pickledger	trip
+pickledger	home
+search	00
+search	00000
+search	1
+archacct	
+search	000
+archledger	
+search	01000
+archacct	a0
+notes	
+search	11000
+search	1
+search	0
+pickledger	trip,work,Trip
+search	01110
+archledger	
+search	1111
+pickledger	home,trip,work,
+pickledger	
+search	00000
+search	0
+search	00
+notes	lunch,coffee
+archacct	a2,a3
+notes	coffee,lunch
+pickledger	
+search	00
+search	00
+notes	
+pickledger	home
+notes	
+notes	
+search	00
+notes	
+search	00001
+archacct	a2,a4
+archacct	a0,a4
+notes	
+search	01001
+pickacct	a0,a1,a2,a3,a4
+notes	coffee,lunch
+notes	
+search	001
+archledger	
+notes	lunch
+pickledger	home,trip,work,
+pickacct	a0,a1,a3
+notes	coffee
+search	00000
+search	11111
+search	01
+notes	coffee,lunch
+search	0111
+archledger	home
+archledger	home
+notes	
+archledger	
+search	00
+pickledger	home,trip,work
+search	11
+search	0000
+notes	
+notes	tea,lunch
+notes	lunch,coffee
+notes	lunch
+notes	
+search	10010
+search	0
+notes	tea
+notes	
+archledger	trip,
+notes	coffee,tea
+search	10
+search	111
+notes	lunch,tea
+archacct	a2
+search	1
+search	00
+search	100
+pickacct	a0,a2,a3
+pickledger	
+notes	coffee
+notes	lunch,coffee
+pickledger	home,trip
+pickledger	
+search	0001
+search	1001
+notes	coffee
+notes	
+notes	
+search	1
+search	00
+search	0
+search	0000
+archacct	a0
+search	00000
+archacct	
+search	00000
+pickacct	a0,a2,a4
+pickacct	a0,a1,a2,a3,a4
+notes	
+notes	coffee
+notes	coffee
+archledger	
+archacct	
+archledger	
+archledger	home
+pickacct	a1
+pickacct	a0,a1,a2,a4
+search	11101
+search	100
+notes	
+search	000
+pickledger	home,trip
+archacct	a0
+pickacct	
+archledger	trip
+pickacct	a0
+archledger	
+notes	
+notes	
+search	0
+notes	lunch
+pickacct	a0,a2
+pickledger	home,work
+pickacct	
+search	111
+notes	
+pickacct	a0,a1,a4
+notes	lunch
+pickacct	a0,a1
+search	1001
+pickacct	a0
+pickacct	a0,a1,a2
+search	01
+archledger	Trip
+notes	
+search	000
+pickledger	home,trip,,Trip
+archledger	home
+archledger	trip,
+notes	
+archledger	home
+notes	
+search	0001
+notes	
+search	00
+archacct	a3
+search	00000
+notes	lunch
+pickledger	
+search	0
+search	0000
+pickledger	home,trip,
+pickledger	home,trip,work
+notes	
+archacct	
+notes	
+archacct	a2
+search	000
+search	100
+archacct	
+notes	coffee
+search	000
+notes	tea
+archledger	
+pickledger	home
+notes	
+pickledger	home,trip,work
+search	000
+archledger	home,trip,work
+notes	lunch,coffee
+pickledger	
+notes	
+pickledger	home
+search	100
+pickledger	
+pickledger	home,trip
+notes	
+search	0000
+notes	
+archacct	a0,a4
+archacct	
+archacct	
+archledger	
+search	0010
+search	1000
+pickledger	home,trip,work,
+notes	
+archledger	home,work
+search	0000
+notes	coffee,lunch
+archledger	
+archledger	home
+notes	lunch,coffee
+search	10
+search	000
+notes	tea,lunch,coffee
+pickacct	a0,a1,a2,a3,a4
+archledger	
+pickacct	a1,a2,a3
+pickledger	home,trip
+notes	
+pickledger	home,trip,work,
+search	00
+pickacct	a0
+notes	tea,lunch,coffee
+notes	lunch
+pickledger	home,trip
+pickledger	trip,work,
+pickacct	a1,a4
+archledger	
+archacct	
+search	00000
+search	000
+search	10101
+pickacct	a1,a3
+archledger	
+pickledger	home,work,
+search	01100
+pickacct	
+notes	coffee
+search	1
+notes	coffee
+search	0
+archacct	a0
+notes	lunch
+archacct	a2
+search	11111
+search	0
+pickledger	home,trip,
+notes	coffee
+search	0
+notes	
+archledger	
+pickledger	home
+archacct	
+pickacct	a0,a1
+pickacct	a0,a1,a2
+archledger	
+pickacct	a1
+archledger	
+archacct	a0,a4
+search	1
+archledger	
+search	00000
+notes	coffee,tea
+pickledger	home,trip,work,,Trip
+search	001
+archledger	work,
+search	00
+pickledger	home,trip
+search	110
+search	0
+notes	coffee,tea,lunch
+search	0
+notes	coffee
+pickacct	a0,a1,a2,a3
+archledger	
+search	0000
+notes	coffee
+search	111
+search	000
+pickledger	home,trip,work,
+notes	lunch,coffee
+archacct	
+notes	lunch
+pickledger	home,trip,,Trip
+search	100
+pickledger	home
+search	11
+search	0000
+notes	
+notes	
+search	0000
+search	1111
+search	00000
+search	000
+pickacct	
+pickledger	home,trip,work,
+pickledger	home,trip,work,
+search	0000
+search	0
+notes	coffee
+pickledger	home,trip,work,Trip
+notes	
+notes	lunch
+notes	lunch
+archledger	
+search	00
+notes	tea,coffee,lunch
+notes	lunch
+notes	coffee
+archledger	
+pickledger	trip,work
+archacct	a4
+pickledger	home,trip,work
+archacct	a0
+archacct	
+notes	lunch
+notes	
+archacct	
+search	0
+archacct	
+search	0000
+archledger	
+search	10001
+pickacct	a0,a1,a2
+pickacct	a0
+pickacct	a0,a1,a2
+pickacct	a0,a1
+search	000
+pickledger	home,trip,work,Trip
+pickacct	
+search	00011
+pickledger	home,trip,work
+pickacct	a1
+notes	tea,lunch
+notes	
+search	0000
+archledger	trip,work,
+archledger	home,trip
+search	00000
+notes	
+search	000
+pickacct	a1,a3
+archacct	
+pickacct	
+search	00000
+archacct	
+archledger	
+notes	coffee
+archledger	
+archledger	
+archledger	
+pickledger	home
+pickledger	home,trip,work
+archacct	
+search	0011
+pickledger	
+search	0
+archledger	home,
+search	00001
+pickacct	a0
+search	0
+archacct	a0,a1
+notes	
+search	0
+notes	lunch
+notes	
+search	00
+archacct	
+notes	coffee
+search	00
+pickledger	home
+pickacct	
+notes	coffee,tea,lunch
+search	00
+search	0010
+pickledger	
+archledger	work,Trip
+search	0000
+pickacct	a0,a1,a2,a3
+search	0100
+pickacct	
+search	0000
+search	1
+search	0
+search	11111
+pickacct	a0,a1
+archacct	
+search	000
+pickledger	home,trip,work,,Trip
+notes	
+pickacct	a0,a1,a2,a3
+notes	
+notes	
+notes	
+search	1
+search	000
+search	0000
+archledger	
+archledger	Trip
+search	00
+notes	
+archledger	
+pickacct	a0,a1
+pickledger	
+pickacct	a0,a1
+search	000
+search	0
+archledger	home,trip,work
+search	00010
+search	00000
+search	10000
+archacct	a1
+search	0010
+pickledger	trip,work
+search	0000
+pickacct	
+notes	coffee,lunch
+archacct	a1,a3
+notes	lunch
+notes	
+pickledger	home
+notes	
+pickledger	home
+archacct	a1,a2
+search	00
+notes	lunch,tea
+notes	lunch
+search	00010
+notes	lunch,coffee
+search	000
+archledger	trip
+search	0
+archacct	a0,a1,a3
+search	000
+pickacct	a0,a1,a2,a4
+search	00000
+notes	coffee
+archledger	
+pickledger	home
+search	0000
+search	0000
+archledger	
+pickledger	home,trip
+search	0000
+archledger	
+archacct	a0,a4
+notes	lunch,tea,coffee
+archledger	
+notes	
+search	00000
+search	111
+search	00
+archacct	a1
+search	1
+archacct	a1
+pickledger	home,trip,work,
+notes	lunch
+archacct	
+archacct	
+search	00000
+notes	
+archacct	
+notes	lunch
+pickacct	
+search	1
+archacct	a0
+search	0
+pickacct	
+archacct	
+search	00
+search	11111
+search	00
+search	1
+archledger	
+pickacct	a0
+pickacct	a0,a1,a4
+search	01001
+search	1011
+archacct	a2
+search	111
+pickledger	trip,work,
+search	0000
+search	0000
+pickledger	home
+search	00
+notes	lunch
+pickledger	home
+pickledger	home,trip,,Trip
+notes	coffee,lunch
+search	0
+archledger	
+archacct	a0,a3,a4
+pickacct	
+archledger	trip,work
+archledger	home
+search	01
+search	10
+archacct	
+notes	lunch,coffee,tea
+pickacct	
+archacct	a2,a3
+notes	lunch,coffee,tea
+notes	
+search	10
+archledger	home
+search	000
+notes	
+pickledger	home,trip
+archacct	a1
+search	0001
+notes	coffee,lunch
+search	0000
+search	00
+pickledger	home,trip,work
+search	00
+search	00
+pickledger	home,trip
+search	01
+archacct	
+pickledger	trip,work,
+pickledger	
+search	00000
+search	0
+search	0000
+search	111
+notes	tea,lunch
+notes	
+search	00
+archacct	
+archledger	
+search	10000
+search	001
+search	0000
+notes	
+archacct	a0
+archledger	
+search	00
+search	0000
+notes	lunch
+notes	coffee,tea
+search	00010
+notes	coffee
+search	00000
+search	0000
+search	00
+notes	coffee
+search	101
+search	000
+notes	coffee
+search	0
+pickledger	home,work,
+notes	coffee
+search	01000
+notes	coffee,lunch
+search	00
+archacct	
+pickacct	a1,a2,a3
+pickacct	a0,a1
+pickledger	trip,work,,Trip
+pickacct	a0,a1,a2
+pickacct	a0,a1,a2
+notes	lunch,coffee
+search	1
+notes	
+notes	coffee
+pickacct	a1,a2,a3
+search	0000
+search	000
+search	11111
+notes	
+notes	
+pickledger	home,trip
+pickacct	a0,a1,a2,a3,a4
+pickacct	a0
+notes	tea
+search	000
+archledger	
+search	000
+search	1111
+search	0
+search	0
+notes	lunch
+search	00
+search	00
+search	0000
+notes	
+search	00000
+notes	coffee
+archacct	
+search	00
+search	11
+pickledger	home
+search	0000
+search	00
+notes	
+search	1011
+archacct	a0
+search	000
+pickledger	home
+search	11111
+notes	lunch,coffee,tea
+archacct	
+pickledger	home,trip,work,
+notes	coffee,lunch
+search	0
+notes	lunch,coffee
+archledger	
+archledger	
+archacct	
+search	0000
+archledger	
+search	00000
+archledger	
+search	0000
+archledger	
+pickledger	work,
+pickacct	a0,a1,a3
+pickacct	a0,a1
+notes	tea,lunch,coffee
+archledger	
+search	001
+search	000
+notes	lunch
+notes	lunch,coffee
+search	00000
+search	001
+notes	coffee,lunch,tea
+notes	coffee
+notes	
+notes	coffee,lunch
+archacct	a0
+pickacct	a1,a3
+archledger	
+search	0000
+pickledger	home,trip,
+archacct	
+search	000
+search	00000
+pickacct	
+notes	
+archledger	trip
+archledger	
+pickledger	trip,work,,Trip
+search	0000
+archledger	
+archledger	
+search	1
+search	000
+archledger	
+notes	
+search	0
+archacct	
+pickledger	
+pickledger	
+search	01000
+search	00
+archledger	
+search	00
+search	0
+search	0
+search	0
+notes	lunch,coffee
+notes	tea
+archacct	a0,a2,a3
+pickacct	a0
+archledger	
+pickacct	a0,a1
+archledger	
+notes	tea
+pickacct	a0,a1,a2
+archacct	
+notes	coffee
+archledger	
+search	0
+pickledger	
+search	00
+search	1
+pickacct	a0,a1,a3
+pickacct	a0
+archacct	a1,a2
+search	000
+notes	lunch
+search	0011
+search	00
+search	00000
+notes	lunch,coffee
+pickledger	home
+archacct	
+notes	
+notes	
+archacct	
+search	0
+archledger	trip,work,Trip
+search	00000
+archledger	
+pickacct	a0,a1
+search	000
+search	10000
+search	00
+search	111
+pickledger	
+pickledger	
+archacct	
+search	00000
+notes	coffee,lunch
+notes	
+pickacct	a0,a1
+notes	coffee
+pickledger	home,trip,work,
+pickacct	
+archacct	a1
+archledger	
+pickacct	a0,a1,a2
+notes	
+pickledger	home,work,Trip
+search	11111
+archledger	
+notes	lunch,coffee
+search	0
+archledger	
+notes	coffee,lunch
+search	0000
+search	0
+archledger	
+search	01
+pickacct	a0,a1
+search	0
+archacct	a1,a3
+search	11
+search	0000
+archledger	
+notes	
+notes	
+pickacct	a0,a1
+search	0
+pickledger	
+notes	tea
+archledger	
+notes	
+search	01
+search	00100
+pickacct	a0,a1
+notes	
+notes	coffee
+pickacct	a0,a1,a3
+pickacct	a0,a1,a2
+notes	
+notes	lunch
+pickacct	a2,a3,a4
+notes	coffee
+archacct	
+archacct	a0,a1,a3
+pickledger	home,work
+notes	
+notes	coffee
+notes	
+pickledger	home,trip,work,,Trip
+search	0011
+search	000
+notes	coffee,lunch
+pickledger	home,work,Trip
+search	0
+archacct	a0,a4
+pickledger	home,trip,work,,Trip
+archacct	a0,a1
+pickledger	home,trip,work,,Trip
+notes	
+search	010
+pickacct	
+search	1010
+search	00000
+notes	coffee
+notes	coffee,lunch
+notes	coffee
+archacct	
+pickacct	a0,a1,a3
+archledger	
+search	110
+notes	
+archacct	
+archledger	work
+search	1111
+archledger	work
+archledger	home
+notes	lunch
+notes	
+archledger	
+archledger	
+search	000
+pickacct	a1
+search	00000
+pickacct	a0,a1
+pickledger	home,trip,work
+search	0000
+search	0110
+pickledger	
+notes	coffee
+search	0000
+notes	lunch
+search	000
+search	00000
+notes	lunch,coffee
+pickledger	home
+search	00100
+search	0
+notes	
+notes	coffee
+notes	
+search	11111
+search	0
+archacct	a0,a2,a3
+search	00
+notes	
+archacct	a0
+notes	coffee,lunch
+search	0
+search	00
+archacct	
+notes	lunch
+search	00000
+pickledger	trip
+search	0
+pickacct	
+search	00000
+notes	coffee,lunch
+notes	
+search	010
+pickacct	a0
+notes	
+archledger	
+search	00
+archacct	a2
+search	0
+notes	
+notes	lunch,tea,coffee
+archacct	
+notes	coffee,lunch
+pickacct	a0
+pickledger	work
+notes	coffee,lunch
+notes	lunch,coffee
+archacct	a0
+pickledger	home,trip
+search	1
+archacct	
+archacct	
+archacct	
+notes	
+archacct	a0
+pickledger	home,,Trip
+pickledger	home,work,
+archacct	
+pickacct	a0
+search	01
+search	01101
+archacct	
+pickledger	home,trip
+notes	lunch,coffee
+notes	
+pickacct	
+notes	coffee
+archacct	a3
+archacct	a0,a4
+notes	
+notes	
+archledger	
+search	11111
+archacct	
+pickacct	a0,a1
+pickacct	a0
+search	0000
+notes	lunch
+pickacct	a0,a1,a3
+pickledger	
+archledger	
+pickacct	a0,a1
+search	00000
+search	00000
+search	0000
+search	0000
+archacct	a1,a2,a3
+archacct	a1,a3
+search	11
+search	00
+notes	
+notes	lunch,coffee
+pickledger	home,work
+pickacct	a0,a4
+notes	
+search	11111
+search	0
+notes	coffee,lunch
+search	1
+archledger	
+search	00000
+archledger	
+archacct	a1,a3
+notes	
+archacct	
+pickledger	work
+search	000
+pickacct	a2
+search	0
+archledger	
+archledger	
+pickacct	a0,a1,a3,a4
+search	000
+search	0000
+search	0
+archledger	home
+archacct	
+archacct	
+search	00
+archledger	
+pickledger	home,trip
+search	0
+search	01
+notes	coffee,tea
+archacct	a1
+search	11111
+search	111
+search	0001
+pickledger	trip,work,
+archacct	
+search	01
+search	1
+search	0
+notes	
+notes	
+archacct	
+search	0
+archledger	
+notes	
+search	1111
+pickacct	a0,a1,a2,a3
+notes	coffee,tea
+notes	coffee,lunch
+notes	coffee
+pickledger	home,trip,work,,Trip
+pickacct	a0,a1,a2
+notes	tea
+search	11
+pickacct	a0,a1,a2
+archledger	
+search	11
+pickacct	a0
+search	00
+search	1
+pickacct	
+notes	
+pickacct	a0,a1,a2
+pickledger	home
+pickledger	home,trip
+pickacct	a1,a2
+pickledger	home,trip
+archacct	a0,a1,a2,a3
+archledger	
+notes	coffee
+pickledger	home,trip
+search	000
+search	11
+notes	
+search	0
+search	01
+search	00
+notes	lunch
+search	0100
+archledger	
+archledger	home,trip,work
+archacct	
+pickledger	
+pickledger	home,trip
+pickledger	trip
+pickacct	a0
+archacct	
+archledger	work
+archacct	a0,a3
+search	00
+search	0
+search	00
+search	00
+search	000
+archacct	
+search	0
+archledger	work,
+notes	
+notes	lunch
+archacct	
+pickacct	a0,a1,a2
+search	00
+pickledger	home,trip,work
+pickacct	a0
+search	1
+pickledger	home
+pickacct	
+notes	lunch,coffee
+search	00000
+search	0
+notes	
+pickacct	a0
+search	010
+search	000
+search	0001
+pickacct	a0,a1
+search	000
+archacct	a0,a1
+archledger	
+notes	lunch,coffee
+notes	lunch
+pickledger	home,trip
+notes	tea
+search	00100
+pickledger	home,trip,work,
+search	00000
+pickacct	a1,a2,a3
+search	00000
+archacct	a4
+search	01001
+notes	
+archacct	a0,a1
+notes	lunch,coffee
+pickacct	a0,a2,a3,a4
+pickacct	
+notes	
+search	000
+search	00
+archledger	work,
+notes	lunch,coffee
+search	1111
+notes	coffee,lunch
+archledger	
+archacct	a0
+archacct	a0,a4
+archacct	
+notes	
+search	000
+pickacct	a0
+pickledger	work,Trip
+archledger	
+notes	
+archledger	home,trip
+archacct	a1,a2
+archacct	
+archledger	home,work
+archledger	trip,work,
+notes	
+pickledger	home,work,,Trip
+pickacct	a0,a1,a2,a3,a4
+pickacct	a0,a1,a2
+search	0
+search	11111
+search	1
+notes	
+archledger	home
+pickacct	
+pickacct	a0,a1,a3,a4
+notes	coffee
+search	0000
+notes	lunch
+pickacct	a0
+search	0000
+search	0
+search	0000
+search	00
+pickledger	
+notes	
+notes	lunch
+archledger	
+search	0
+search	0
+archledger	trip
+search	0
+archledger	
+pickacct	a0
+notes	
+notes	
+archacct	a0,a2
+search	10111
+search	00000
+notes	lunch
+notes	tea
+search	100
+notes	coffee
+search	00000
+archacct	
+pickacct	a0,a1
+notes	
+pickledger	home,trip
+archacct	
+pickacct	a0
+notes	lunch
+notes	lunch,coffee
+notes	tea,coffee
+pickacct	
+notes	coffee,lunch
+notes	lunch
+notes	
+search	001
+pickacct	a0,a1,a2
+search	0010
+pickledger	trip
+archacct	a0
+pickledger	home,trip,work,Trip
+archacct	a2
+archledger	work
+search	0011
+search	00
+archacct	a1
+pickledger	home,trip,work,,Trip
+notes	lunch
+archledger	
+notes	
+archacct	a1
+search	1
+search	0000
+notes	coffee
+notes	lunch
+archacct	
+notes	
+search	0000
+search	0000
+search	100
+notes	coffee
+pickledger	home,trip,work,,Trip
+notes	
+pickacct	a1
+pickacct	a0
+archledger	
+search	00
+notes	tea
+notes	lunch,coffee
+notes	tea,coffee,lunch
+archacct	a1
+pickledger	
+search	00001
+pickacct	a0,a1,a2
+pickacct	a1,a3,a4
+search	0
+pickledger	
+pickacct	
+archledger	,Trip
+notes	
+search	0000
+search	0101
+search	00
+pickacct	a0,a2
+notes	coffee
+notes	coffee,lunch,tea
+search	1
+search	00
+search	00
+search	00
+search	000
+pickledger	
+search	11
+archledger	
+notes	lunch,coffee
+search	0
+pickledger	home,trip
+notes	
+search	000
+search	000
+notes	lunch,tea
+search	1111
+archacct	a0,a2
+pickledger	home
+notes	
+search	0
+search	00
+archacct	
+pickacct	a0
+pickledger	home,trip,work,
+search	00000
+notes	tea
+archledger	
+pickacct	a0,a1
+search	0
+search	0
+pickacct	
+archledger	home,work
+notes	lunch
+archacct	a1
+search	000
+archacct	a1
+notes	coffee
+notes	
+pickledger	home,trip,
+pickacct	
+archledger	work
+notes	
+archacct	
+notes	coffee,lunch
+pickacct	
+pickledger	trip,work,,Trip
+pickacct	a0,a1
+notes	lunch
+notes	
+pickacct	a0,a2,a4
+pickacct	a0,a2,a4
+search	00
+pickacct	a0,a1,a3
+notes	coffee,lunch
+search	10010
+pickacct	a0,a2,a3
+archacct	a0
+archacct	a0
+pickacct	a1,a3,a4
+notes	
+pickacct	a0,a2,a3
+notes	lunch,coffee
+pickledger	home,work,
+archacct	a1
+search	0
+search	00000
+notes	lunch
+archledger	
+archacct	a4
+pickacct	a0,a1,a2,a3,a4
+search	0000
+archledger	trip
+notes	
+search	11111
+notes	
+archledger	work
+search	0
+pickledger	
+search	00100
+notes	coffee
+search	10000
+search	0
+search	111
+archacct	a0
+archacct	
+search	0000
+archledger	
+archledger	
+archledger	
+search	000
+search	11
+notes	coffee
+notes	
+search	010
+notes	lunch,coffee
+notes	lunch
+notes	lunch
+notes	
+search	000
+search	000
+notes	tea
+search	111
+archacct	
+notes	lunch
+notes	coffee,lunch
+pickacct	a0
+notes	lunch
+search	000
+notes	lunch
+notes	lunch,coffee
+search	01
+notes	
+search	0000
+pickledger	home
+pickacct	a0,a1,a3,a4
+archledger	work
+archacct	a0,a3
+pickledger	home,trip,,Trip
+archledger	home,work
+pickacct	a0,a1,a2,a3
+search	0
+pickledger	home,trip
+pickledger	home
+pickacct	a0,a1,a2
+notes	coffee,lunch
+archacct	a0
+search	01000
+archacct	
+search	0000
+notes	coffee
+pickledger	trip,
+archacct	a1,a2
+search	0000
+search	000
+notes	
+archacct	
+archacct	a4
+search	10001
+archacct	a2,a4
+pickacct	a0,a1
+search	0000
+search	00001
+notes	coffee,lunch
+pickacct	a1,a2
+archledger	work
+search	000
+archledger	
+notes	
+search	0
+archacct	
+pickacct	a0,a1,a4
+search	0000
+search	0000
+search	00
+archacct	a2,a3
+pickledger	trip,work
+archledger	
+notes	
+search	00000
+search	10000
+notes	
+notes	coffee
+notes	lunch
+archacct	a0
+archledger	
+pickacct	
+archacct	a0,a1
+notes	
+pickacct	a0,a2,a3
+pickledger	home,work,,Trip
+search	0
+pickacct	a0,a1
+archledger	
+notes	lunch
+pickacct	a1
+archledger	
+pickacct	a0,a1
+archacct	
+notes	lunch
+notes	lunch
+notes	coffee
+notes	coffee
+pickacct	a0,a1
+search	00
+search	0
+archacct	a1,a2
+search	10010
+archledger	
+search	11
+notes	
+notes	
+search	01
+archledger	trip
+notes	lunch
+notes	
+search	01
+archacct	
+search	0000
+search	00
+archledger	Trip
+archacct	
+search	1
+notes	tea
+notes	lunch,tea
+search	11
+search	0000
+archledger	
+pickledger	home,trip,work,Trip
+search	11
+archacct	a1
+pickacct	a1
+notes	
+notes	
+archledger	work
+search	0
+search	0
+archacct	a0
+notes	coffee,lunch
+search	01
+search	0000
+notes	coffee,lunch
+archacct	
+notes	lunch
+archacct	a0
+pickledger	home,trip,
+pickacct	a0
+notes	lunch
+search	00000
+pickledger	
+notes	
+pickledger	
+pickledger	
+archledger	
+pickledger	home,trip
+search	01
+pickledger	
+notes	coffee
+pickledger	
+notes	
+search	0000
+pickacct	
+search	0
+pickacct	
+archledger	
+notes	lunch,coffee
+search	1
+pickledger	home,trip
+pickacct	a0
+search	0
+archacct	a0,a1,a4
+pickacct	a0
+search	0000
+pickledger	
+search	000
+search	00110
+notes	
+pickacct	a1
+search	1111
+search	00000
+archledger	trip
+archledger	
+search	10101
+notes	coffee,tea,lunch
+search	11
+notes	lunch,coffee
+pickacct	a0
+search	11110
+pickacct	a0,a2,a3,a4
+search	0000
+archacct	
+search	00
+archledger	
+archledger	
+pickledger	home,trip,work,
+pickacct	a1,a2,a3
+pickledger	
+search	0101
+notes	lunch
+notes	coffee
+archledger	
+pickledger	
+archledger	home
+search	01000
+notes	
+notes	lunch,coffee
+archledger	work
+archledger	home
+search	00000
+archacct	
+notes	
+archacct	a1
+pickacct	a0,a1
+notes	lunch
+search	1010
+search	1111
+notes	tea
+archacct	
+notes	
+search	0000
+notes	
+search	010
+archacct	
+pickacct	a0,a1,a3
+pickledger	home,trip
+search	0000
+notes	lunch,tea
+archacct	
+search	0
+archledger	trip
+search	00
+archledger	home
+search	0
+pickacct	
+pickledger	home,work
+pickacct	a0,a1,a2,a3
+search	1000
+archledger	home
+search	0010
+archacct	a1
+pickacct	
+archacct	a1,a2
+notes	lunch,coffee
+notes	
+archledger	home,trip
+search	00000
+search	0100
+notes	
+archledger	trip
+search	000
+notes	
+search	01
+search	00000
+notes	coffee
+pickacct	a0,a1,a2,a3,a4
+pickledger	
+search	0000
+search	0000
+notes	lunch,coffee
+search	00111
+pickacct	
+notes	
+notes	
+notes	
+search	000
+search	0
+pickledger	trip,work,Trip
+search	1111
+search	0
+archledger	work
+archledger	
+notes	coffee,tea,lunch
+archacct	a0
+search	0
+pickacct	
+pickledger	home,trip,work
+search	0000
+archacct	a0,a2
+notes	lunch,tea
+pickacct	a0
+notes	
+archacct	a3
+pickacct	
+notes	
+archacct	a2,a3
+pickledger	home
+search	00
+search	10011
+archledger	work
+pickacct	a0,a1,a2
+archledger	
+search	0000
+search	1010
+pickacct	a1,a2,a3
+pickacct	a0
+pickacct	a0,a1,a3
+notes	
+notes	
+archledger	
+search	0
+notes	lunch
+archacct	
+archacct	a1,a2,a3
+archacct	a0,a2,a4
+pickledger	home
+archledger	
+search	1
+search	000
+archledger	
+notes	tea,coffee
+notes	coffee
+search	1
+notes	lunch
+pickledger	home
+search	0
+pickacct	
+search	000
+archledger	
+notes	lunch
+pickledger	
+archledger	home,trip
+notes	
+notes	coffee,lunch
+pickacct	a0,a1
+search	0
+search	0
+pickledger	trip,work
+notes	lunch
+notes	
+notes	lunch,tea
+pickledger	home,work,,Trip
+notes	coffee,lunch
+pickacct	a0,a1,a3,a4
+archledger	work,
+notes	tea
+archacct	a1
+search	0000
+archacct	a1,a3
+pickledger	trip
+search	0100
+pickacct	
+pickledger	home,trip,work
+search	0000
+archledger	
+pickledger	home,trip,work
+archacct	a0,a1
+notes	coffee,lunch
+notes	
+pickledger	home,trip
+search	100
+pickacct	a0,a1,a2,a3
+notes	
+search	001
+notes	lunch,tea
+notes	
+search	00
+search	0
+search	000
+pickledger	home,trip
+search	000
+search	0
+pickacct	a0
+notes	lunch,coffee
+search	0
+search	0
+search	0000
+search	1
+archledger	
+search	000
+search	00100
+archledger	
+search	00010
+archledger	
+notes	
+pickledger	
+archacct	a1,a2,a4
+search	0101
+search	0000
+notes	
+search	000
+search	00000
+search	000
+pickledger	home
+search	0
+search	110
+search	00
+search	011
+notes	
+notes	coffee,lunch
+search	0000
+search	1
+pickacct	
+notes	
+archledger	home
+search	0
+pickacct	a0,a2
+search	0
+notes	coffee
+notes	lunch
+pickledger	home,trip
+search	0100
+notes	coffee
+notes	tea,coffee
+notes	coffee,lunch
+search	0
+notes	lunch,tea
+archledger	work
+search	111
+search	1
+search	00
+archledger	
+search	111
+notes	coffee
+search	000
+search	0101
+search	000
+search	00000
+notes	lunch
+notes	coffee
+archledger	
+search	0
+archacct	a0
+notes	lunch
+archledger	trip,work
+pickacct	
+notes	lunch
+search	0
+archacct	
+pickacct	a0,a1,a2
+notes	
+pickacct	a0
+pickledger	
+archledger	
+search	0100
+pickacct	a1,a2
+search	01
+search	00000
+search	0001
+notes	coffee
+notes	
+search	010
+pickacct	
+pickacct	a0,a1,a2,a3,a4
+search	000
+search	00
+pickledger	
+notes	lunch
+notes	coffee
+notes	
+notes	coffee
+search	00
+notes	coffee,lunch
+pickacct	
+archledger	
+notes	coffee
+archacct	a0
+search	1
+pickledger	home,trip,work,,Trip
+search	000
+pickledger	home
+search	0000
+search	0
+search	00000
+notes	lunch,coffee
+search	00
+pickledger	home,trip,work,,Trip
+notes	coffee
+notes	
+search	000
+pickacct	a0
+search	0
+notes	
+notes	lunch
+search	111
+pickledger	home,trip,work,,Trip
+archacct	a0
+search	00000
+notes	coffee,lunch
+notes	coffee,lunch
+search	0
+pickledger	home,trip,work,
+search	11
+archacct	
+notes	coffee
+search	000
+pickledger	home
+archacct	
+search	001
+notes	coffee
+pickacct	
+pickledger	home,trip,work,
+pickledger	home
+search	0011
+pickledger	home,trip
+archledger	
+notes	coffee
+notes	
+search	01000
+pickacct	a0,a1,a2,a3,a4
+archledger	trip
+pickledger	
+archledger	work
+archacct	
+pickacct	a2
+search	0000
+search	0011
+search	0
+notes	lunch
+notes	coffee,lunch
+archacct	a0,a1
+archledger	
+notes	lunch
+archacct	a0
+archledger	trip,Trip
+search	00000
+notes	lunch
+notes	
+archacct	
+search	00
+search	110
+archledger	
+search	0000
+search	0
+notes	coffee,lunch
+notes	coffee,lunch
+search	00
+pickledger	home,trip
+search	0
+notes	lunch,tea
+search	1111
+search	11111
+pickledger	home,trip,,Trip
+notes	
+pickledger	home,trip,work,
+archacct	
+archacct	
+search	1111
+pickledger	trip,work,
+search	0
+notes	coffee
+notes	coffee,lunch
+notes	tea
+notes	
+search	0000
+pickledger	home,trip,work,
+notes	
+pickacct	a0,a1
+search	1
+search	00
+pickacct	a0
+archledger	
+archledger	
+archledger	
+archledger	trip,work
+notes	coffee,lunch
+search	00
+pickacct	a0,a2,a3
+search	00100
+archledger	
+notes	
+pickacct	a0
+pickacct	
+pickacct	
+pickledger	home,trip
+notes	lunch,coffee
+notes	
+search	1000
+search	0000
+search	00
+archacct	
+notes	tea,lunch
+pickacct	a2
+notes	
+notes	
+archacct	
+pickledger	
+notes	coffee
+search	00000
+pickledger	home,work
+archacct	a0
+search	1000
+pickledger	home
+search	00
+search	0
+notes	tea,coffee,lunch
+archledger	trip
+pickledger	
+archacct	
+notes	lunch
+notes	lunch,tea
+notes	
+search	0000
+pickledger	home,trip,work,,Trip
+search	00000
+search	0
+search	00
+search	000
+search	0100
+notes	lunch
+pickacct	a0,a1,a2
+pickledger	home
+archledger	
+archacct	
+archledger	
+search	0000
+search	00
+pickacct	a0
+notes	lunch,coffee
+notes	
+search	0100
+pickledger	
+archledger	
+search	011
+search	00000
+archacct	
+search	11
+search	00
+archacct	a0
+archacct	a2
+archledger	
+search	0
+pickledger	trip
+pickacct	a1,a3
+pickacct	a1,a2
+search	000
+notes	coffee
+notes	
+notes	coffee
+pickacct	a0,a1
+search	10
+notes	lunch
+archledger	
+notes	lunch,coffee
+notes	tea,lunch,coffee
+pickledger	home,trip,work
+search	00
+archacct	a0,a1,a3
+archacct	a0
+pickacct	a0,a2,a3,a4
+search	00000
+notes	tea,coffee
+search	0
+pickacct	a0
+notes	lunch,tea,coffee
+archacct	
+notes	coffee,lunch
+archledger	trip
+pickacct	a0
+archledger	home
+search	00000
+pickledger	trip
+pickledger	home,trip
+pickledger	
+pickacct	a0,a1,a2,a3,a4
+pickledger	home
+pickacct	
+notes	
+search	000
+archacct	a1
+notes	coffee
+pickledger	home,trip
+search	00
+archacct	a0,a2,a3
+search	0000
+pickacct	a0,a1,a2,a3,a4
+notes	
+pickledger	home,work
+search	0011
+pickledger	
+pickacct	
+search	0
+pickledger	trip,work,
+search	1
+search	000
+archacct	a0,a1
+search	00000
+archledger	home,trip
+pickledger	home,trip,work
+search	0
+notes	coffee,lunch
+notes	coffee
+pickledger	home,trip
+archledger	trip
+search	00000
+pickledger	
+search	00000
+notes	coffee,lunch
+pickledger	
+notes	
+archledger	
+pickacct	
+notes	coffee
+notes	coffee
+search	01000
+search	0
+notes	lunch
+notes	
+archacct	a3
+notes	
+notes	
+pickacct	a0,a1
+archledger	
+archacct	
+archledger	
+notes	
+pickledger	home,trip,work,,Trip
+archledger	
+notes	lunch
+search	0
+search	10000
+archledger	
+search	010
+search	0001
+search	00000
+search	00
+archledger	
+pickacct	a1,a2
+search	0000
+search	0
+archledger	trip,work,Trip
+search	0
+pickledger	home,trip,work
+notes	coffee
+search	00000
+search	0
+archledger	trip
+pickacct	a0,a1,a2
+notes	
+search	0
+pickacct	a0,a1,a2
+archledger	
+search	000
+notes	coffee
+archledger	
+pickledger	home,trip,work
+notes	coffee
+search	111
+search	0000
+archacct	a1,a3
+archledger	
+pickledger	home,trip
+pickacct	a0,a1,a2,a3,a4
+notes	
+search	000
+search	00
+search	00
+pickacct	a0,a1,a2
+search	00000
+pickledger	home,trip,work,
+pickledger	
+search	0
+search	000
+notes	
+search	0
+pickacct	a0,a1
+search	0
+archledger	
+search	0110
+archledger	home
+search	111
+search	10100
+search	10
+search	0
+pickacct	a0,a1
+notes	coffee
+notes	
+archacct	a0
+search	00000
+search	00000
+notes	tea,lunch
+pickacct	a0
+search	1111
+archacct	a0,a1
+search	1
+archledger	
+search	0
+notes	lunch
+archacct	a1,a2
+archledger	home,trip
+archacct	
+pickacct	a0,a3
+search	0
+pickacct	a0,a1
+notes	lunch
+search	1100
+search	00
+search	00000
+pickacct	a0
+search	111
+search	00000
+search	0
+archacct	
+search	0000
+pickledger	home
+search	0010
+search	0
+search	0000
+search	11111
+search	00000
+archledger	home
+search	0
+search	00000
+pickacct	a1,a2
+notes	lunch,coffee
+search	00
+archledger	
+search	0
+archledger	home
+pickacct	
+notes	
+notes	coffee,lunch
+notes	coffee,lunch
+search	1
+search	000
+search	00
+search	000
+pickacct	a0,a1,a2
+archacct	
+pickledger	home,trip,work,
+archacct	
+search	00000
+search	0000
+archledger	
+pickacct	a0,a1,a2,a3
+archledger	
+archledger	
+pickledger	home,trip
+search	00000
+pickledger	home,trip
+pickledger	home
+pickacct	
+search	0000
+archledger	trip,
+pickacct	a0
+archledger	home
+search	00
+archacct	
+search	11
+archledger	
+archledger	home,work
+search	0
+archacct	
+notes	coffee
+notes	
+search	0
+search	00000
+pickledger	home,trip,
+pickledger	home
+archledger	
+notes	lunch,tea
+notes	coffee,tea,lunch
+search	0000
+notes	
+archledger	
+archacct	a0
+archacct	
+search	010
+search	111
+archledger	
+search	000
+pickacct	a1
+notes	
+archacct	
+archacct	a0,a1,a3
+archacct	a1
+search	0000
+search	00000
+notes	coffee
+archledger	,Trip
+pickledger	trip
+pickledger	trip,work,,Trip
+archledger	
+notes	lunch,coffee
+pickledger	
+pickacct	a0
+search	0000
+archacct	
+archacct	a0
+notes	
+archacct	a0
+search	00100
+notes	
+pickacct	a0,a1,a2
+archledger	
+archacct	
+archledger	
+search	0100
+search	0
+pickledger	home,trip,work
+archledger	
+notes	lunch
+search	0
+notes	coffee,lunch
+search	00000
+search	00000
+search	000
+notes	lunch,coffee
+notes	
+archledger	home
+pickacct	a1
+pickledger	home
+notes	coffee
+search	1
+archacct	a0,a2,a3
+notes	
+pickledger	home
+pickacct	a0,a1
+notes	lunch
+archacct	a0,a3
+notes	
+notes	lunch,coffee
+pickacct	a0,a1
+search	00
+search	11111
+search	00
+notes	coffee
+pickacct	a0,a1
+archledger	work,
+pickledger	home,trip,work
+search	1
+pickacct	
+search	1100
+notes	lunch,tea
+notes	lunch
+search	0
+notes	lunch
+pickledger	home
+notes	tea
+archacct	a2
+search	0100
+search	111
+pickacct	a1
+pickacct	a0,a1
+notes	lunch
+pickledger	home,trip
+search	00
+search	00
+pickacct	a0,a3,a4
+archledger	
+search	01000
+pickacct	a0,a1
+archacct	a2
+search	0000
+notes	
+archacct	
+archacct	
+search	000
+notes	lunch
+pickacct	a0,a1,a3
+pickacct	
+search	00000
+archacct	a2
+notes	lunch,coffee
+archacct	
+notes	lunch,tea
+archledger	home,work,Trip
+pickledger	home,trip,work,,Trip
+pickledger	home,trip,
+pickledger	
+pickledger	home,trip,work,,Trip
+search	00
+pickledger	home,trip,work
+archledger	home,work,Trip
+search	1
+search	00
+notes	coffee
+search	10100
+archacct	
+notes	
+archledger	home
+pickledger	home,trip,work
+archacct	a4
+search	000
+archledger	
+search	00000
+search	00
+search	0
+notes	lunch
+pickacct	a0,a1
+archledger	trip,work,
+search	0010
+archledger	home,trip
+pickledger	trip
+pickledger	home
+pickledger	home
+search	00
+notes	coffee
+archledger	trip
+pickledger	home,trip
+search	11111
+archledger	
+notes	
+search	000
+search	1111
+notes	
+search	0
+search	111
+pickacct	a0,a1,a2
+notes	coffee,lunch,tea
+search	01
+pickacct	a0
+search	00100
+notes	lunch,tea,coffee
+pickacct	
+search	1001
+search	00000
+pickledger	home,work,,Trip
+pickacct	a0
+pickledger	home
+pickledger	home
+notes	tea,lunch
+pickledger	home,trip
+search	000
+pickacct	a0
+notes	
+notes	coffee
+notes	coffee
+pickacct	a0,a1
+search	0
+search	10000
+archledger	work
+pickacct	a0,a1,a3
+pickacct	a0,a1,a3,a4
+pickacct	a0,a1
+search	00
+search	00000
+pickledger	home,trip,work,
+search	00000
+pickledger	
+pickledger	home,trip,work,,Trip
+notes	coffee,lunch
+search	0000
+pickacct	
+notes	
+notes	
+notes	
+search	000
+search	0000
+search	0
+notes	lunch
+search	10
+archledger	trip
+archacct	
+notes	lunch,coffee
+pickledger	
+search	11
+pickledger	home,trip
+pickacct	
+search	000
+pickledger	home,trip,work,
+search	0
+notes	coffee,lunch
+search	00111
+pickacct	a0,a1,a2
+search	00
+pickacct	a0,a1
+archledger	trip
+pickledger	home,trip,work,
+archacct	a0
+search	00
+archacct	a2,a4
+search	110
+search	00101
+pickacct	
+notes	coffee,lunch
+archacct	a3
+notes	
+search	000
+archacct	a3,a4
+pickledger	
+pickacct	a0,a2,a3
+pickledger	home,trip,work,,Trip
+notes	
+search	111
+pickacct	
+search	00
+search	10000
+search	011
+pickledger	home,trip,work
+archledger	
+notes	coffee,tea
+search	00
+archledger	
+notes	
+pickledger	home,trip
+notes	
+notes	
+pickacct	a0,a1
+notes	lunch
+archacct	
+pickledger	
+archledger	
+search	110
+pickledger	home,trip
+search	00
+search	111
+archledger	
+archacct	
+archledger	
+archacct	
+pickacct	a0,a1
+search	1
+archacct	
+search	0100
+search	111
+archacct	
+archledger	
+search	0
+archacct	
+pickledger	
+search	0000
+archacct	
+pickacct	a0
+pickacct	a1,a3
+archledger	home
+search	01
+archledger	
+search	0
+archacct	a0,a1
+notes	coffee
+search	0000
+search	0000
+pickledger	
+notes	
+search	0
+notes	lunch
+archledger	home
+notes	tea,lunch,coffee
+pickacct	a0
+notes	
+archacct	
+search	111
+archledger	trip,work
+search	00100
+search	11
+pickledger	home,trip,
+search	00
+archacct	a2
+search	00000
+search	00
+search	11
+notes	
+notes	coffee
+archacct	a3,a4
+search	000
+archledger	
+notes	coffee,tea
+search	0
+archledger	work
+search	010
+search	0
+search	0
+notes	
+search	00000
+search	00
+notes	
+search	00
+pickledger	
+search	11
+search	1
+archacct	a1
+archacct	
+search	00
+pickledger	home,trip,work,
+notes	
+archacct	
+archacct	a0,a3
+search	000
+notes	
+archacct	
+notes	coffee
+notes	coffee
+search	00
+archledger	
+notes	
+search	0
+search	0
+notes	lunch,tea
+archledger	
+search	00
+search	11011
+pickledger	home,trip
+pickledger	home,trip
+search	000
+search	1000
+archledger	
+archacct	a1,a2
+notes	coffee
+search	11111
+notes	
+pickledger	trip,work,,Trip
+notes	
+archledger	
+archledger	home,,Trip
+pickledger	
+archacct	
+search	1000
+archledger	
+pickacct	a1
+search	0
+notes	coffee,lunch,tea
+pickledger	home,,Trip
+notes	tea
+pickacct	a0
+notes	lunch,coffee,tea
+pickledger	home,trip,
+archacct	
+search	0
+search	0000
+search	10
+pickledger	
+search	0000
+search	000
+search	1111
+search	0
+archacct	a0
+search	1
+notes	coffee
+notes	
+search	0000
+notes	
+archacct	
+pickledger	home,trip
+search	0000
+pickacct	a0,a1,a2,a3,a4
+archacct	a1
+notes	
+pickacct	a0,a2
+search	0000
+archacct	
+search	00001
+pickacct	a0
+notes	
+search	00001
+pickacct	
+search	00
+notes	lunch,coffee,tea
+archledger	trip
+search	00
+search	0
+search	0010
+search	0100
+archacct	a3,a4
+pickledger	home
+pickacct	a0,a1
+archacct	
+search	11
+search	0000
+pickledger	trip
+pickledger	work
+archledger	home
+notes	
+pickacct	
+pickledger	home,trip
+notes	coffee
+pickledger	home,work
+archacct	
+notes	
+archledger	
+notes	coffee,lunch
+pickacct	a0,a1
+notes	lunch
+archacct	a2
+notes	lunch,coffee
+search	0000
+archledger	trip,Trip
+search	0001
+search	1111
+archacct	a0,a1
+archledger	trip,work
+pickacct	a0,a1,a4
+search	000
+search	10100
+search	00000
+pickledger	home,trip,work
+notes	
+archledger	
+search	001
+archacct	
+archledger	
+notes	
+notes	
+search	00
+archacct	a0
+search	0
+search	0
+notes	lunch,tea,coffee
+search	00000
+notes	coffee,tea
+notes	coffee
+search	0
+archledger	
+search	0000
+search	1
+search	00000
+pickacct	a0,a1,a2,a3
+search	11111
+search	10010
+notes	coffee
+search	00
+archacct	a0
+archacct	a0,a1
+search	0
+search	00
+archledger	home
+notes	
+pickledger	
+archacct	
+archledger	home
+pickacct	a0,a2,a3,a4
+notes	lunch
+search	0
+notes	
+notes	coffee
+pickledger	home
+search	00
+search	00000
+search	0
+notes	lunch
+pickacct	a0,a1,a2
+notes	
+pickacct	a1
+search	00
+search	000
+pickledger	home,work,
+search	0
+pickacct	
+notes	
+pickledger	
+archacct	
+pickledger	home,trip,work
+archledger	
+search	11100
+search	0
+search	00000
+search	000
+archledger	
+pickacct	a0
+search	00
+pickledger	home,trip,work,,Trip
+pickacct	
+notes	
+search	0
+archacct	a0
+pickledger	home
+archacct	
+notes	
+pickacct	a0
+notes	
+search	00
+search	0
+notes	lunch
+archledger	
+search	00
+search	0
+notes	lunch,tea
+search	0000
+notes	
+archacct	a1
+pickacct	
+search	0100
+search	0000
+archacct	
+search	1
+search	0000
+pickledger	
+search	11
+archledger	
+search	0001
+notes	coffee,lunch,tea
+search	100
+pickacct	a0
+search	000
+search	00
+search	00
+search	100
+notes	
+search	0
+notes	coffee
+archledger	
+pickledger	trip,work
+pickledger	trip,work,
+archacct	
+pickledger	
+pickledger	trip
+pickledger	trip
+archledger	
+archledger	home,trip
+notes	
+archledger	
+archacct	a2,a3
+notes	
+pickledger	home,work
+pickacct	
+search	011
+archledger	
+pickledger	
+archacct	a1,a2
+archledger	trip
+pickledger	
+archacct	a0
+archacct	a0,a4
+search	1
+search	0000
+pickacct	a1,a2
+search	00010
+pickacct	a0
+pickacct	a0
+search	00
+pickacct	a0,a2
+search	00000
+search	00001
+search	00
+pickacct	a0,a1,a2,a3
+search	000
+search	0000
+search	000
+archacct	a1
+notes	
+archledger	
+archledger	
+archledger	home
+search	0
+search	0
+search	0
+search	010
+search	11
+pickacct	
+notes	coffee
+notes	lunch
+notes	
+notes	lunch
+pickacct	a1,a2,a3,a4
+archledger	
+search	00
+archacct	a3
+search	11111
+notes	
+pickacct	a0
+search	0
+pickledger	home,trip,
+search	0000
+search	000
+archacct	a0
+search	0000
+pickledger	home
+archledger	home,trip
+notes	lunch,coffee
+search	000
+search	0000
+archledger	
+search	0101
+pickledger	home
+archacct	a1
+notes	lunch,coffee
+notes	
+archacct	
+archledger	home,Trip
+archledger	
+pickledger	
+notes	lunch,coffee
+search	00000
+search	00000
+notes	
+notes	lunch
+archledger	trip
+pickacct	a0,a1,a2
+search	00
+pickacct	a0,a1,a2
+archacct	
+notes	lunch
+archacct	
+notes	
+search	011
+notes	tea
+pickledger	trip
+search	0010
+search	00
+pickledger	home,trip,,Trip
+search	10001
+search	0
+search	0
+pickacct	a0,a3
+search	00
+search	00000
+archledger	
+pickacct	a0,a2,a3
+notes	
+archledger	home
+archacct	a1
+search	000
+archledger	
+pickacct	a0
+search	0
+archacct	
+search	01
+search	00
+search	00000
+notes	tea
+search	0000
+search	00000
+notes	coffee,lunch
+pickacct	a0,a1,a3
+archacct	
+notes	
+archledger	
+notes	coffee,tea
+archledger	
+archacct	a0,a3,a4
+search	00
+archledger	
+archledger	home,trip
+archacct	
+search	00
+archacct	a0
+notes	lunch,coffee
+archledger	trip
+search	01000
+pickacct	a1,a2
+search	110
+pickledger	
+search	00
+pickledger	work
+search	0000
+search	11111
+search	1111
+search	00000
+archledger	
+search	00010
+notes	coffee
+archacct	a0,a1
+notes	lunch
+pickacct	a0
+notes	
+search	0000
+search	0100
+search	11010
+search	000
+archledger	
+search	00000
+pickledger	work,,Trip
+pickacct	a0,a1
+pickacct	a1,a3
+pickledger	home,trip,
+notes	
+notes	lunch,coffee
+search	000
+notes	lunch,tea,coffee
+search	00
+archledger	
+search	000
+archacct	a0,a1,a3
+search	11111
+pickacct	
+search	0010
+search	0000
+notes	lunch
+notes	
+notes	tea,lunch
+search	010
+search	0000
+search	00000
+notes	
+archacct	
+archacct	
+search	11111
+archacct	
+search	00000
+notes	lunch,coffee
+pickledger	trip,work
+archledger	work,
+archledger	
+search	000
+archledger	home
+archacct	a2
+pickacct	a3
+archledger	home,trip
+archacct	
+archacct	
+pickledger	trip,
+pickledger	trip,work,,Trip
+search	10
+search	1
+search	00
+notes	
+archacct	a1
+search	10
+search	11111
+notes	
+search	00
+search	0000
+search	0000
+search	0000
+archacct	a1
+notes	lunch,coffee
+archacct	
+search	0
+search	00
+search	00010
+archacct	a1
+pickledger	home,trip,work
+archacct	a2,a3
+pickacct	a0
+search	00000
+search	0000
+search	00
+notes	coffee,lunch,tea
+pickledger	trip,work,,Trip
+notes	lunch
+archacct	
+notes	coffee
+pickledger	home,work,
+notes	
+search	0001
+search	11
+search	0
+search	0
+search	00
+archacct	a0,a1,a3
+pickledger	home,trip,work,
+notes	
+notes	lunch
+search	0000
+notes	
+search	000
+pickacct	
+archledger	home,work,
+search	00000
+search	00000
+archacct	a2,a3,a4
+notes	coffee
+search	0000
+archledger	trip
+search	00
+pickacct	a1,a2,a3
+notes	coffee
+notes	coffee
+archacct	a1,a4
+search	00
+notes	lunch
+archledger	work,
+notes	
+archledger	
+pickledger	home,work,
+notes	lunch
+search	000
+pickledger	home,trip,work,
+search	00
+archledger	
+pickacct	a0
+search	001
+pickledger	home,trip,work,,Trip
+notes	tea,coffee
+search	1
+pickacct	a1
+archacct	a0
+pickacct	a0,a1
+archacct	a0,a1,a4
+search	00
+pickacct	
+search	001
+search	000
+archledger	trip
+search	0000
+search	00
+search	01
+pickacct	
+search	0000
+search	0000
+pickacct	a0,a3
+notes	lunch,tea
+search	00
+search	01000
+archledger	
+pickledger	trip,work,
+search	0000
+pickledger	home,trip,work
+pickledger	home
+pickledger	home,trip,work,
+search	00000
+search	100
+notes	tea
+archledger	home
+pickledger	
+notes	
+notes	
+search	0
+notes	coffee
+search	00000
+pickledger	trip,work
+notes	
+search	00000
+search	00
+pickledger	home,trip,work,
+search	00
+notes	lunch
+search	00000
+search	1000
+search	00000
+search	11
+search	0000
+notes	
+search	0
+search	0000
+pickledger	home,trip,work,
+search	00000
+search	01000
+search	10
+pickacct	a0,a1,a2
+notes	coffee
+search	000
+archacct	a1,a3
+search	0000
+search	00000
+search	0
+archacct	a1
+pickacct	a0,a1
+search	0
+search	000
+search	00000
+archledger	
+search	0010
+pickacct	a1,a2,a3,a4
+search	0000
+archledger	home,trip,Trip
+notes	lunch,coffee
+archacct	
+search	00
+archacct	
+pickledger	
+archacct	
+search	0
+search	000
+notes	coffee
+search	00
+pickacct	a0,a1
+search	000
+pickacct	a0,a1
+search	00
+search	1
+pickacct	
+archacct	a1,a2
+archledger	
+search	01
+notes	
+search	0
+search	1000
+notes	lunch,tea
+archledger	
+notes	
+notes	
+search	0000
+pickacct	a1,a2
+search	10011
+notes	
+archacct	a2
+pickacct	a0
+notes	lunch
+notes	
+pickledger	home,trip,work,
+pickacct	a0,a2,a3
+archledger	
+archacct	a1,a3,a4
+pickledger	
+pickacct	a0,a1
+search	000
+pickledger	trip,work
+notes	
+search	00
+archledger	
+pickacct	a3,a4
+archledger	trip
+pickledger	home,trip,
+archledger	work
+archacct	
+notes	coffee
+notes	coffee,lunch
+archledger	home
+pickacct	a0,a1
+search	1
+archacct	a0,a1,a2
+search	1111
+pickacct	a0,a1,a2,a3,a4
+archacct	
+archledger	trip,
+notes	
+search	00011
+archledger	
+pickledger	
+pickacct	a1
+search	0
+search	0000
+archledger	home
+pickledger	home,trip,work,
+search	0
+pickacct	a1
+notes	
+notes	coffee,tea
+pickledger	
+archledger	
+search	00
+archledger	
+search	1
+archledger	
+search	00000
+search	11111
+search	0
+search	111
+notes	coffee,lunch
+notes	lunch
+pickacct	a0,a1,a2,a3
+archledger	home
+notes	lunch,coffee
+search	0
+pickacct	a2
+notes	
+search	00
+search	00000
+archledger	
+archledger	work,
+search	00
+search	0
+notes	coffee,lunch
+pickledger	work,,Trip
+pickacct	a0
+notes	
+archacct	a3
+search	111
+search	000
+notes	lunch
+search	0
+notes	lunch
+notes	coffee
+search	0
+search	0
+archledger	
+notes	lunch
+search	0
+pickledger	home,trip
+archledger	
+search	00100
+archledger	
+archledger	home,Trip
+notes	
+archacct	
+archledger	
+search	00000
+pickledger	home,trip,,Trip
+pickacct	
+notes	
+pickacct	a0,a1,a2,a3
+notes	
+pickledger	home,trip
+pickacct	a0,a1
+notes	lunch
+archledger	work
+search	00
+search	01
+search	00
+archledger	home,trip
+notes	lunch,coffee
+search	010
+pickacct	
+notes	tea
+pickledger	home,trip,work,
+search	001
+pickledger	
+notes	lunch,coffee,tea
+archacct	a0,a1
+search	0
+notes	coffee,lunch
+pickledger	trip,work
+pickacct	a0,a2
+search	000
+pickacct	a0
+archacct	
+notes	lunch,coffee
+search	000
+notes	
+archacct	a1
+pickacct	a0,a1
+archledger	trip
+pickledger	home,trip,work,
+pickledger	home,trip,work
+notes	
+search	00
+pickacct	a0,a2,a3,a4
+archacct	a0
+search	111
+archacct	a1
+search	0011
+notes	
+search	10
+pickacct	
+pickledger	home,trip,work,
+notes	
+notes	
+search	00
+search	1000
+pickacct	
+search	0000
+notes	lunch,coffee
+notes	coffee,tea
+pickacct	
+notes	tea
+pickledger	home,trip,work,
+pickledger	home,trip,work,
+archledger	
+pickacct	
+notes	
+archacct	
+pickledger	home,trip,
+search	0000
+search	0
+pickledger	work
+pickledger	
+pickledger	
+archledger	home,work
+search	000
+pickacct	a2
+pickacct	a0,a1
+archledger	
+pickledger	home,trip,work
+archledger	
+notes	coffee
+archacct	a2
+pickacct	a0,a2,a3
+search	01
+search	1
+pickledger	home,trip,work
+notes	
+search	10001
+search	0
+search	000
+search	000
+archledger	
+notes	coffee
+archacct	a0,a1,a2
+search	1111
+notes	
+search	00
+search	0
+search	000
+pickledger	
+notes	coffee
+search	1111
+notes	lunch,coffee
+pickacct	a1
+notes	lunch
+search	0
+search	010
+search	11
+search	1
+archacct	a0
+search	1
+pickledger	home,trip,work,,Trip
+pickledger	home
+pickledger	home,trip,work,
+archacct	
+notes	coffee
+pickacct	
+notes	lunch
+search	0
+pickacct	a0
+archledger	trip
+search	1
+pickledger	home
+search	0000
+pickacct	a0,a1,a2,a3
+pickacct	a0,a2,a3,a4
+pickledger	home
+notes	lunch
+pickacct	
+pickacct	a0,a1
+notes	lunch,coffee
+archacct	a0,a3
+pickledger	home,trip,work,
+archacct	a0,a2
+pickacct	a1,a3
+notes	
+search	11
+search	11101
+notes	lunch,coffee
+archledger	
+archledger	
+pickacct	
+pickledger	home,trip
+archledger	trip
+search	0
+search	10
+notes	lunch
+archacct	a0,a3
+notes	lunch,coffee,tea
+pickacct	a0
+pickacct	
+pickledger	trip,work
+search	000
+search	00
+pickledger	home,trip,
+search	00
+archacct	
+archledger	
+pickacct	a0,a1,a2,a3
+notes	lunch
+notes	tea
+notes	lunch,tea
+archledger	
+search	0
+archledger	work
+pickacct	a0,a1,a2
+notes	lunch,coffee
+search	0
+search	00
+search	0
+pickacct	
+search	0000
+search	0100
+archledger	
+pickacct	
+search	0000
+notes	coffee
+search	11111
+notes	lunch
+search	0
+search	0
+notes	
+pickacct	a0,a1,a2,a3
+archledger	home,trip
+search	000
+notes	lunch,coffee
+notes	lunch
+notes	coffee
+notes	
+archacct	a0,a2
+search	000
+search	0
+search	0
+archacct	
+archledger	
+search	11111
+pickledger	home,trip
+search	10001
+search	001
+notes	
+search	00
+notes	lunch,coffee
+search	00
+search	0010
+search	0
+notes	
+notes	coffee
+pickledger	home,trip
+pickledger	home
+pickledger	trip,work
+pickacct	a0
+search	0
+search	0
+archledger	home,work
+pickacct	a0,a1
+search	1
+search	0
+search	1
+search	0
+search	1
+search	0
+search	0
+search	1
+search	1
+search	1
+notes	coffee,tea
+notes	real
+notes	a
+notes	x,y
+notes	a,b
+notes	a,b
+pickacct	a1
+pickacct	a0,a1
+pickacct	a1
+pickacct	a1
+pickacct	a1
+archacct	
+search	1
+search	0
+pickledger	,home
+pickledger	,home
+archledger	

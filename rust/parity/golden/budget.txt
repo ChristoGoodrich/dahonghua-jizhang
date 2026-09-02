@@ -1,0 +1,4210 @@
+rows	2:100000000,rent:0,:0
+rows	Z:1.0000000000000001e-20,:0,food:0,trans:0
+today	0
+rows	
+rows	
+total	0
+monthly	lim=0.0001 used=96.995 left=-96.9949 pct=96995000 over=true
+rows	
+monthly	lim=0.0001 used=99.995 left=-99.9949 pct=99995000 over=true
+tier	lim=100 used=-3 left=103 pct=-3 over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+rows	10:NaN
+rows	2:0,trans:0,rent:NaN
+tier	lim=1 used=0.1 left=0.9 pct=10 over=false
+total	-3
+daily	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=1e+21 used=99.995 left=1e+21 pct=9.999500000000001e-18 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=10.5 used=0 left=10.5 pct=0 over=false
+rows	trans:0
+rows	:0
+tier	lim=1 used=0 left=1 pct=0 over=false
+rows	10:0
+total	19
+tier	lim=100 used=0 left=100 pct=0 over=false
+total	108.495
+today	0
+rows	10:0,a:-28.57142857142857
+tier	lim=1 used=NaN left=NaN pct=NaN over=false
+rows	1:0,:0
+monthly	lim=0 used=1 left=-1 pct=0 over=false
+rows	:0,trans:0
+rows	1:0,food:0
+total	10.5
+rows	
+rows	2:99995000,food:0,rent:-28.57142857142857
+total	-3
+today	1
+rows	a:0
+rows	food:0.9523809523809524,2:0,10:0,a:0
+total	0
+rows	01:0,10:NaN
+tier	lim=100 used=10.5 left=89.5 pct=10.5 over=false
+tier	lim=0 used=0 left=0 pct=0 over=false
+rows	1:0,2:0,trans:0
+tier	lim=0 used=0.1 left=-0.1 pct=0 over=false
+rows	2:0,:0,food:-3
+rows	Z:9.523809523809524,10:0,:0
+tier	lim=100 used=1e+21 left=-1e+21 pct=1e+21 over=true
+total	NaN
+rows	a:952.3809523809524
+tier	lim=0 used=1 left=-1 pct=0 over=false
+tier	lim=100 used=100 left=0 pct=100 over=false
+tier	lim=1e+21 used=1 left=1e+21 pct=9.999999999999999e-20 over=false
+today	99.995
+tier	lim=0 used=10.5 left=-10.5 pct=0 over=false
+today	0
+tier	lim=0.0001 used=1 left=-0.9999 pct=1000000 over=true
+rows	
+rows	1:0
+today	0
+tier	lim=0.0001 used=10.5 left=-10.4999 pct=10500000 over=true
+monthly	lim=0 used=NaN left=NaN pct=0 over=false
+rows	rent:NaN
+daily	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	rent:100
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	4294967295:100,rent:0,01:0
+monthly	lim=1e+21 used=21 left=1e+21 pct=2.1e-18 over=false
+rows	01:0,food:0,trans:0
+today	0
+rows	
+rows	
+total	11.5
+tier	lim=100 used=NaN left=NaN pct=NaN over=false
+rows	01:9.523809523809525e+21
+rows	
+monthly	lim=100 used=NaN left=NaN pct=NaN over=false
+rows	
+today	0
+rows	2:0
+rows	
+tier	lim=100 used=NaN left=NaN pct=NaN over=false
+today	0
+monthly	lim=100 used=10.5 left=89.5 pct=10.5 over=false
+rows	
+today	0
+total	0
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	Z:100,a:0
+tier	lim=0 used=0 left=0 pct=0 over=false
+total	0
+monthly	lim=1e+21 used=1e+21 left=0 pct=100 over=false
+rows	10:9999.5,trans:0.1,01:0,food:0
+total	101
+monthly	lim=100 used=0 left=100 pct=0 over=false
+rows	food:0
+total	NaN
+today	0
+monthly	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	:0
+monthly	lim=0 used=0 left=0 pct=0 over=false
+rows	:-3000000
+daily	lim=100 used=0 left=100 pct=0 over=false
+monthly	lim=0 used=NaN left=NaN pct=0 over=false
+monthly	lim=1e+21 used=107.595 left=1e+21 pct=1.0759499999999999e-17 over=false
+total	NaN
+daily	lim=100 used=0 left=100 pct=0 over=false
+monthly	lim=0 used=NaN left=NaN pct=0 over=false
+total	2.1
+rows	1:0,10:0,4294967295:0,:0
+rows	
+total	NaN
+rows	food:0
+monthly	lim=100 used=NaN left=NaN pct=NaN over=false
+tier	lim=0 used=99.995 left=-99.995 pct=0 over=false
+rows	
+monthly	lim=100 used=1 left=99 pct=1 over=false
+today	0
+rows	
+monthly	lim=0 used=93.995 left=-93.995 pct=0 over=false
+today	0
+rows	10:0,rent:0,a:0,food:0
+monthly	lim=100 used=110.495 left=-10.495000000000005 pct=110.495 over=true
+rows	01:0
+rows	trans:1000000,food:0
+tier	lim=10.5 used=99.995 left=-89.495 pct=952.3333333333334 over=true
+total	300
+tier	lim=1 used=-3 left=4 pct=-300 over=false
+total	NaN
+tier	lim=100 used=1 left=99 pct=1 over=false
+tier	lim=0 used=100 left=-100 pct=0 over=false
+total	0.1
+rows	10:1.00095e-17,food:0,a:0,2:-3
+tier	lim=0.0001 used=-3 left=3.0001 pct=-3000000 over=false
+today	0
+monthly	lim=10.5 used=1e+21 left=-1e+21 pct=9.523809523809525e+21 over=true
+monthly	lim=1 used=NaN left=NaN pct=NaN over=false
+total	0
+rows	:NaN
+total	0
+today	0
+total	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	food:0,Z:0,01:0
+rows	
+today	0
+rows	:0,01:0,food:0
+tier	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+tier	lim=0 used=NaN left=NaN pct=0 over=false
+today	0
+today	0
+monthly	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	
+monthly	lim=1 used=1e+21 left=-1e+21 pct=1e+23 over=true
+total	1
+daily	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=0 used=NaN left=NaN pct=0 over=false
+today	0
+total	1.1
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+today	0
+monthly	lim=1 used=-3 left=4 pct=-300 over=false
+tier	lim=0 used=100 left=-100 pct=0 over=false
+today	0
+tier	lim=100 used=100 left=0 pct=100 over=false
+monthly	lim=1 used=199.995 left=-198.995 pct=19999.5 over=true
+rows	
+rows	
+daily	lim=100 used=0 left=100 pct=0 over=false
+today	0
+daily	lim=100 used=0 left=100 pct=0 over=false
+tier	lim=0 used=-3 left=3 pct=0 over=false
+today	0
+rows	
+daily	lim=100 used=0 left=100 pct=0 over=false
+monthly	lim=0 used=-3 left=3 pct=0 over=false
+rows	:0
+monthly	lim=100 used=110.495 left=-10.495000000000005 pct=110.495 over=true
+monthly	lim=100 used=210.6 left=-110.6 pct=210.6 over=true
+rows	1:0,10:0,Z:0,4294967295:0
+today	0
+monthly	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	
+tier	lim=100 used=-3 left=103 pct=-3 over=false
+today	0
+monthly	lim=1 used=1e+21 left=-1e+21 pct=1e+23 over=true
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+rows	a:0,rent:0
+today	0
+monthly	lim=100 used=0.1 left=99.9 pct=0.1 over=false
+tier	lim=0 used=1 left=-1 pct=0 over=false
+rows	food:0
+daily	lim=100 used=0 left=100 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+total	1e+21
+monthly	lim=10.5 used=0 left=10.5 pct=0 over=false
+today	0
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+monthly	lim=1 used=110.495 left=-109.495 pct=11049.5 over=true
+rows	
+tier	lim=1e+21 used=NaN left=NaN pct=NaN over=false
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	1:0,:0,Z:0,food:0
+monthly	lim=10.5 used=100 left=-89.5 pct=952.3809523809524 over=true
+rows	
+tier	lim=1e+21 used=NaN left=NaN pct=NaN over=false
+tier	lim=0 used=-3 left=3 pct=0 over=false
+today	1
+total	1e+21
+today	0
+rows	food:9.999999999999999e-20,:0
+monthly	lim=0 used=0 left=0 pct=0 over=false
+rows	10:0,:0,Z:0,01:0
+rows	1:0,10:0,a:0
+rows	
+total	0
+today	10.5
+rows	
+tier	lim=0.0001 used=10.5 left=-10.4999 pct=10500000 over=true
+monthly	lim=0.0001 used=1e+21 left=-1e+21 pct=9.999999999999999e+26 over=true
+total	1e+21
+monthly	lim=100 used=-3 left=103 pct=-3 over=false
+total	NaN
+monthly	lim=1 used=1e+21 left=-1e+21 pct=1e+23 over=true
+total	200
+daily	lim=100 used=0 left=100 pct=0 over=false
+today	0
+monthly	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=10.5 used=1 left=9.5 pct=9.523809523809524 over=false
+monthly	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+monthly	lim=100 used=0 left=100 pct=0 over=false
+total	3e+21
+rows	
+tier	lim=100 used=1 left=99 pct=1 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+total	1
+tier	lim=0 used=100 left=-100 pct=0 over=false
+rows	
+rows	1:0,rent:0,trans:0
+daily	lim=1 used=NaN left=NaN pct=NaN over=false
+tier	lim=1e+21 used=99.995 left=1e+21 pct=9.999500000000001e-18 over=false
+monthly	lim=0.0001 used=100.995 left=-100.9949 pct=100995000 over=true
+rows	trans:19.047619047619047,01:0
+today	0
+monthly	lim=1 used=200.09 left=-199.09 pct=20009 over=true
+total	0
+total	10.5
+total	10.5
+monthly	lim=1 used=0 left=1 pct=0 over=false
+rows	1:0,:0,food:0
+monthly	lim=10.5 used=NaN left=NaN pct=NaN over=false
+rows	
+today	0
+total	0
+rows	2:0
+today	0
+tier	lim=0.0001 used=-3 left=3.0001 pct=-3000000 over=false
+tier	lim=100 used=1e+21 left=-1e+21 pct=1e+21 over=true
+rows	1:0,01:0,rent:0,trans:0
+today	0
+tier	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	
+total	0.1
+today	0
+today	0
+total	196.995
+rows	Z:0
+total	NaN
+tier	lim=1 used=10.5 left=-9.5 pct=1050 over=true
+rows	10:1e+21,Z:0,trans:0
+total	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=0 used=100 left=-100 pct=0 over=false
+rows	:11050
+total	0
+rows	10:1e+21
+monthly	lim=100 used=10.5 left=89.5 pct=10.5 over=false
+rows	2:0,trans:0,a:0
+today	10.5
+total	0
+rows	food:0
+tier	lim=0 used=10.5 left=-10.5 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	Z:100000000,01:100,rent:0,a:0
+daily	lim=0 used=99.995 left=-99.995 pct=0 over=false
+monthly	lim=1e+21 used=21 left=1e+21 pct=2.1e-18 over=false
+today	0
+today	0
+tier	lim=0 used=99.995 left=-99.995 pct=0 over=false
+rows	Z:1.0000000000000001e-20
+total	NaN
+today	0
+monthly	lim=0.0001 used=1e+21 left=-1e+21 pct=9.999999999999999e+26 over=true
+today	99.995
+rows	food:2
+tier	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+rows	rent:0
+daily	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=0 used=0.1 left=-0.1 pct=0 over=false
+tier	lim=100 used=99.995 left=0.0049999999999954525 pct=99.995 over=false
+tier	lim=1 used=-3 left=4 pct=-300 over=false
+tier	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	a:100,2:0,10:0,rent:0
+monthly	lim=0.0001 used=100 left=-99.9999 pct=100000000 over=true
+monthly	lim=0 used=0 left=0 pct=0 over=false
+total	0
+tier	lim=0 used=NaN left=NaN pct=0 over=false
+monthly	lim=10.5 used=0 left=10.5 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	:10000,1:0,10:0
+daily	lim=100 used=0 left=100 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	2:-3
+tier	lim=1e+21 used=1 left=1e+21 pct=9.999999999999999e-20 over=false
+monthly	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	1:0,01:0,4294967295:0,Z:0,a:0
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+total	NaN
+monthly	lim=100 used=1e+21 left=-1e+21 pct=1e+21 over=true
+rows	trans:0
+today	99.995
+tier	lim=0 used=NaN left=NaN pct=0 over=false
+monthly	lim=0 used=10.5 left=-10.5 pct=0 over=false
+rows	4294967295:100,Z:0
+daily	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=100 used=97 left=3 pct=97 over=false
+rows	
+tier	lim=0 used=0.1 left=-0.1 pct=0 over=false
+total	-2.9
+tier	lim=0 used=-3 left=3 pct=0 over=false
+monthly	lim=100 used=0 left=100 pct=0 over=false
+rows	2:0,food:0
+rows	:0,01:0,1:NaN
+monthly	lim=100 used=0 left=100 pct=0 over=false
+monthly	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+total	0
+today	0
+rows	2:0,a:0
+rows	food:0,4294967295:0
+total	0
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	1:0,food:0,4294967295:0
+daily	lim=0 used=99.995 left=-99.995 pct=0 over=false
+rows	trans:100000,1:0,Z:0
+today	0
+tier	lim=0 used=NaN left=NaN pct=0 over=false
+tier	lim=0.0001 used=0.1 left=-0.0999 pct=100000 over=true
+daily	lim=100 used=0 left=100 pct=0 over=false
+today	0.1
+total	0
+today	NaN
+rows	rent:1e+21,:952.3809523809524,01:0,Z:0
+monthly	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+rows	4294967295:0,rent:0
+rows	food:0
+monthly	lim=10.5 used=99.995 left=-89.495 pct=952.3333333333334 over=true
+rows	1:0,10:0,01:0,rent:0
+rows	
+monthly	lim=100 used=0 left=100 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	1:0,10:0,food:0
+daily	lim=1 used=0 left=1 pct=0 over=false
+total	-3
+today	0
+total	1
+rows	1:0,01:0
+total	1e+21
+rows	
+total	0
+today	0
+total	0
+today	0
+rows	
+today	0
+tier	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=0.0001 used=99.995 left=-99.9949 pct=99995000 over=true
+today	0
+monthly	lim=0.0001 used=96.995 left=-96.9949 pct=96995000 over=true
+today	0
+monthly	lim=1e+21 used=1e+21 left=0 pct=100 over=false
+today	0
+tier	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+monthly	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+today	-3
+today	0
+rows	a:100000000,trans:0,rent:0
+daily	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=100 used=1 left=99 pct=1 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	
+total	0
+monthly	lim=100 used=NaN left=NaN pct=NaN over=false
+today	0
+total	0
+tier	lim=1e+21 used=1e+21 left=0 pct=100 over=false
+monthly	lim=100 used=99.995 left=0.0049999999999954525 pct=99.995 over=false
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+today	0
+rows	
+total	200.09
+monthly	lim=0 used=10.6 left=-10.6 pct=0 over=false
+rows	1:0,2:0,10:0,01:0
+rows	2:0
+rows	01:1052.3333333333333
+rows	
+today	0
+today	0
+rows	a:0
+tier	lim=100 used=10.5 left=89.5 pct=10.5 over=false
+rows	Z:0,10:NaN
+today	1e+21
+today	NaN
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+rows	10:100,:0
+rows	
+rows	2:0
+daily	lim=1 used=NaN left=NaN pct=NaN over=false
+monthly	lim=100 used=1e+21 left=-1e+21 pct=1e+21 over=true
+total	96.995
+rows	Z:0
+total	0
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+today	0
+total	-3
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	rent:0
+rows	
+monthly	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+today	0
+monthly	lim=0 used=NaN left=NaN pct=0 over=false
+monthly	lim=10.5 used=0.1 left=10.4 pct=0.9523809523809524 over=false
+tier	lim=0 used=0 left=0 pct=0 over=false
+rows	
+rows	1:0,2:0,rent:0,Z:0
+tier	lim=0 used=0.1 left=-0.1 pct=0 over=false
+monthly	lim=100 used=100.095 left=-0.09499999999999886 pct=100.095 over=true
+total	0.1
+total	0
+tier	lim=0.0001 used=10.5 left=-10.4999 pct=10500000 over=true
+rows	
+total	100.095
+total	0.1
+today	0
+tier	lim=100 used=-3 left=103 pct=-3 over=false
+tier	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	01:0,food:0,rent:0
+rows	10:0,rent:0
+today	0
+rows	:0,a:0
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	food:100,10:0,4294967295:0,:0
+today	1
+tier	lim=100 used=10.5 left=89.5 pct=10.5 over=false
+tier	lim=100 used=0 left=100 pct=0 over=false
+monthly	lim=10.5 used=0 left=10.5 pct=0 over=false
+total	0
+tier	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+daily	lim=10.5 used=10.5 left=0 pct=100 over=false
+rows	1:0,:0,rent:0
+tier	lim=100 used=0 left=100 pct=0 over=false
+rows	Z:0,4294967295:0
+total	22
+daily	lim=0 used=NaN left=NaN pct=0 over=false
+rows	
+tier	lim=0.0001 used=100 left=-99.9999 pct=100000000 over=true
+monthly	lim=10.5 used=0 left=10.5 pct=0 over=false
+total	99.995
+rows	rent:96.995
+rows	10:0,01:0
+tier	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+monthly	lim=1 used=0 left=1 pct=0 over=false
+total	1e+21
+today	0
+today	0
+total	99.995
+daily	lim=100 used=0 left=100 pct=0 over=false
+monthly	lim=1 used=10.5 left=-9.5 pct=1050 over=true
+rows	
+rows	
+tier	lim=1 used=1 left=0 pct=100 over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+rows	10:NaN
+rows	10:0,a:0
+tier	lim=100 used=1 left=99 pct=1 over=false
+rows	2:0,trans:0
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	food:0,:0,trans:0
+tier	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+daily	lim=1 used=0 left=1 pct=0 over=false
+today	0
+rows	
+monthly	lim=0 used=0 left=0 pct=0 over=false
+total	1e+21
+daily	lim=1 used=0 left=1 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+today	0
+rows	10:9.999500000000001e-18
+rows	4294967295:0,01:0
+daily	lim=1 used=-3 left=4 pct=-300 over=false
+rows	rent:0,a:0,01:0
+monthly	lim=100 used=NaN left=NaN pct=NaN over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=0 used=0 left=0 pct=0 over=false
+total	1e+21
+rows	Z:0
+rows	
+today	0
+today	0
+today	0
+tier	lim=10.5 used=0.1 left=10.4 pct=0.9523809523809524 over=false
+rows	
+today	0
+daily	lim=1e+21 used=1 left=1e+21 pct=9.999999999999999e-20 over=false
+rows	a:0,trans:-3e-19
+tier	lim=100 used=1e+21 left=-1e+21 pct=1e+21 over=true
+monthly	lim=0 used=NaN left=NaN pct=0 over=false
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	food:0,rent:NaN
+monthly	lim=1 used=0 left=1 pct=0 over=false
+tier	lim=10.5 used=100 left=-89.5 pct=952.3809523809524 over=true
+rows	2:0.9523809523809524,10:0
+rows	01:-3000000
+rows	
+rows	2:11049.5
+tier	lim=100 used=10.5 left=89.5 pct=10.5 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	10:0,rent:0
+total	0.1
+total	10.5
+total	0
+today	0
+total	NaN
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+monthly	lim=10.5 used=-3 left=13.5 pct=-28.57142857142857 over=false
+tier	lim=1e+21 used=10.5 left=1e+21 pct=1.05e-18 over=false
+total	100
+rows	
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+total	0
+rows	01:200
+monthly	lim=1 used=2e+21 left=-2e+21 pct=2e+23 over=true
+rows	rent:0,food:0
+tier	lim=1e+21 used=10.5 left=1e+21 pct=1.05e-18 over=false
+today	0
+monthly	lim=0 used=0 left=0 pct=0 over=false
+total	NaN
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+today	0
+rows	10:0,:0,2:-3
+monthly	lim=10.5 used=1e+21 left=-1e+21 pct=9.523809523809525e+21 over=true
+monthly	lim=100 used=97 left=3 pct=97 over=false
+today	0
+total	7.5
+monthly	lim=1e+21 used=NaN left=NaN pct=NaN over=false
+rows	4294967295:9.999999999999999e+26,2:0
+rows	Z:1e+23,:0
+monthly	lim=0 used=NaN left=NaN pct=0 over=false
+rows	2:101,01:0
+monthly	lim=100 used=99.995 left=0.0049999999999954525 pct=99.995 over=false
+total	0
+total	97.995
+rows	10:0,Z:0,a:0
+tier	lim=100 used=100 left=0 pct=100 over=false
+today	0
+monthly	lim=10.5 used=0 left=10.5 pct=0 over=false
+daily	lim=0 used=NaN left=NaN pct=0 over=false
+rows	
+total	0
+monthly	lim=1e+21 used=NaN left=NaN pct=NaN over=false
+today	0
+rows	
+today	0
+monthly	lim=1e+21 used=NaN left=NaN pct=NaN over=false
+daily	lim=1 used=0 left=1 pct=0 over=false
+rows	1:1
+rows	4294967295:NaN
+monthly	lim=100 used=NaN left=NaN pct=NaN over=false
+rows	2:NaN
+rows	food:0,trans:0
+today	0
+tier	lim=0.0001 used=0.1 left=-0.0999 pct=100000 over=true
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	1:0,4294967295:0,01:0
+today	0
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+monthly	lim=10.5 used=1e+21 left=-1e+21 pct=9.523809523809525e+21 over=true
+rows	1:0,01:0
+rows	
+rows	1:0,10:0,01:0,rent:0
+monthly	lim=10.5 used=0 left=10.5 pct=0 over=false
+today	0
+monthly	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+today	100
+monthly	lim=0.0001 used=0.1 left=-0.0999 pct=100000 over=true
+daily	lim=0 used=0 left=0 pct=0 over=false
+today	0
+rows	trans:0,rent:0
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	
+rows	
+daily	lim=100 used=0.1 left=99.9 pct=0.1 over=false
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+monthly	lim=0.0001 used=NaN left=NaN pct=NaN over=false
+rows	01:100,trans:0,rent:NaN
+total	0
+tier	lim=1 used=1e+21 left=-1e+21 pct=1e+23 over=true
+today	0
+today	0
+rows	10:100,1:0,rent:0,trans:0
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	a:1e+23
+rows	4294967295:0
+daily	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+rows	:0,a:0
+total	197
+today	0
+rows	
+tier	lim=10.5 used=99.995 left=-89.495 pct=952.3333333333334 over=true
+today	0
+rows	rent:100,Z:0,trans:0
+rows	Z:952.3809523809524,4294967295:0,trans:0
+rows	
+today	0
+rows	:0
+rows	a:1000000,rent:0,1:NaN
+monthly	lim=10.5 used=NaN left=NaN pct=NaN over=false
+rows	
+total	0
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	food:0
+tier	lim=100 used=0 left=100 pct=0 over=false
+rows	1:0,rent:0
+today	0
+today	0
+rows	
+monthly	lim=1 used=1e+21 left=-1e+21 pct=1e+23 over=true
+today	1
+today	0
+rows	4294967295:100,food:0.1,10:0,Z:0
+rows	trans:0
+rows	
+tier	lim=100 used=99.995 left=0.0049999999999954525 pct=99.995 over=false
+total	1e+21
+daily	lim=1 used=1e+21 left=-1e+21 pct=1e+23 over=true
+rows	
+rows	1:0,trans:0
+rows	
+rows	food:1050,01:100,:10
+rows	
+today	0
+rows	food:0,a:0
+rows	trans:0
+rows	1:0,4294967295:0
+monthly	lim=0.0001 used=-3 left=3.0001 pct=-3000000 over=false
+rows	food:NaN
+total	0
+rows	:10000,2:0,a:0
+total	NaN
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	a:0,food:0,trans:0
+total	-3
+total	131.595
+rows	10:0,a:0,rent:0
+rows	10:0,01:0,trans:0,a:-600
+tier	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=0 used=0 left=0 pct=0 over=false
+today	0
+tier	lim=10.5 used=0.1 left=10.4 pct=0.9523809523809524 over=false
+total	10.5
+total	NaN
+rows	Z:100,food:0,4294967295:-3000000
+tier	lim=0.0001 used=NaN left=NaN pct=NaN over=false
+tier	lim=0 used=0 left=0 pct=0 over=false
+rows	Z:0
+tier	lim=0 used=-3 left=3 pct=0 over=false
+today	0
+tier	lim=10.5 used=0.1 left=10.4 pct=0.9523809523809524 over=false
+monthly	lim=100 used=100 left=0 pct=100 over=false
+rows	1:0,trans:NaN
+total	NaN
+monthly	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=100 used=0 left=100 pct=0 over=false
+rows	2:100000,a:0,food:0,4294967295:NaN
+tier	lim=1 used=0 left=1 pct=0 over=false
+today	0
+monthly	lim=1e+21 used=1e+21 left=0 pct=100 over=false
+tier	lim=100 used=0.1 left=99.9 pct=0.1 over=false
+rows	:0
+tier	lim=1e+21 used=NaN left=NaN pct=NaN over=false
+monthly	lim=0.0001 used=1e+21 left=-1e+21 pct=9.999999999999999e+26 over=true
+rows	food:0,01:0
+daily	lim=100 used=0 left=100 pct=0 over=false
+today	0
+rows	10:1e+21
+tier	lim=1e+21 used=1 left=1e+21 pct=9.999999999999999e-20 over=false
+today	0
+rows	1:10500000,trans:0
+rows	
+tier	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	
+rows	01:0,rent:0
+rows	
+rows	
+daily	lim=100 used=0 left=100 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+tier	lim=10.5 used=1 left=9.5 pct=9.523809523809524 over=false
+rows	food:100,1:0,a:0,:0
+tier	lim=0 used=NaN left=NaN pct=0 over=false
+monthly	lim=100 used=0 left=100 pct=0 over=false
+tier	lim=0 used=100 left=-100 pct=0 over=false
+today	0
+rows	01:0,trans:0
+today	0
+monthly	lim=0 used=0 left=0 pct=0 over=false
+total	110.495
+total	0
+today	0
+today	0
+total	-3
+monthly	lim=1 used=NaN left=NaN pct=NaN over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+today	1
+rows	01:-280
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+today	0
+rows	food:1e+23,:NaN
+tier	lim=0 used=1 left=-1 pct=0 over=false
+monthly	lim=0.0001 used=4.5 left=-4.4999 pct=4500000 over=true
+monthly	lim=100 used=0 left=100 pct=0 over=false
+tier	lim=0.0001 used=1e+21 left=-1e+21 pct=9.999999999999999e+26 over=true
+rows	trans:100,food:0
+rows	4294967295:100,10:0,trans:0
+rows	4294967295:100,2:0,rent:0,a:0,:0
+tier	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+today	0
+today	0
+rows	
+total	0
+tier	lim=0 used=1 left=-1 pct=0 over=false
+monthly	lim=10.5 used=1e+21 left=-1e+21 pct=9.523809523809525e+21 over=true
+total	NaN
+monthly	lim=1e+21 used=100 left=1e+21 pct=9.999999999999999e-18 over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+rows	01:1e+21,10:952.3333333333334,Z:100
+total	NaN
+today	0
+tier	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=0.0001 used=NaN left=NaN pct=NaN over=false
+today	0
+tier	lim=1e+21 used=0.1 left=1e+21 pct=1.0000000000000001e-20 over=false
+total	1e+21
+today	0
+daily	lim=100 used=0 left=100 pct=0 over=false
+tier	lim=10.5 used=100 left=-89.5 pct=952.3809523809524 over=true
+daily	lim=0 used=0 left=0 pct=0 over=false
+today	0
+tier	lim=100 used=NaN left=NaN pct=NaN over=false
+monthly	lim=100 used=0 left=100 pct=0 over=false
+today	0
+tier	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+total	0
+monthly	lim=0 used=0 left=0 pct=0 over=false
+rows	
+tier	lim=100 used=0 left=100 pct=0 over=false
+today	0
+today	1
+total	0
+daily	lim=0 used=-3 left=3 pct=0 over=false
+total	99.995
+total	1e+21
+total	110.495
+monthly	lim=0 used=0 left=0 pct=0 over=false
+total	0
+rows	:0,4294967295:NaN
+total	10.5
+monthly	lim=0 used=110.5 left=-110.5 pct=0 over=false
+tier	lim=100 used=-3 left=103 pct=-3 over=false
+today	0
+today	0
+monthly	lim=10.5 used=0.1 left=10.4 pct=0.9523809523809524 over=false
+rows	food:0,4294967295:0,trans:0
+tier	lim=0.0001 used=100 left=-99.9999 pct=100000000 over=true
+rows	4294967295:0,01:0,Z:0,a:0
+today	1
+today	1e+21
+total	0
+total	10.5
+rows	:99.995,2:0,01:0,trans:0
+today	0
+rows	
+monthly	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+today	0
+rows	4294967295:0,Z:0
+tier	lim=1 used=0.1 left=0.9 pct=10 over=false
+monthly	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+daily	lim=1 used=0 left=1 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=0 used=0.1 left=-0.1 pct=0 over=false
+today	0
+rows	2:100,01:0
+total	1e+21
+tier	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+tier	lim=100 used=0.1 left=99.9 pct=0.1 over=false
+rows	1:0,4294967295:0,:0,a:0
+monthly	lim=100 used=NaN left=NaN pct=NaN over=false
+monthly	lim=0 used=0 left=0 pct=0 over=false
+total	NaN
+rows	4294967295:954.2380952380952,1:100,01:0,rent:0
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	01:0
+monthly	lim=1 used=0 left=1 pct=0 over=false
+daily	lim=1e+21 used=-3 left=1e+21 pct=-3e-19 over=false
+rows	2:0,a:0
+monthly	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+monthly	lim=10.5 used=0 left=10.5 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+total	1
+daily	lim=100 used=0 left=100 pct=0 over=false
+monthly	lim=0 used=NaN left=NaN pct=0 over=false
+rows	trans:0
+rows	
+daily	lim=100 used=0 left=100 pct=0 over=false
+today	10.5
+rows	Z:10,10:0,rent:0
+monthly	lim=1 used=0 left=1 pct=0 over=false
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+total	10.6
+rows	01:9.523809523809524,rent:0,trans:0
+total	1e+21
+tier	lim=100 used=100 left=0 pct=100 over=false
+tier	lim=0 used=1 left=-1 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+total	10.5
+rows	:9.999500000000001e-18,10:0,food:0,a:0
+rows	
+monthly	lim=0 used=100.1 left=-100.1 pct=0 over=false
+today	0
+monthly	lim=1e+21 used=101.095 left=1e+21 pct=1.01095e-17 over=false
+rows	Z:0
+rows	
+rows	
+rows	2:100,food:100,1:9.999999999999999e-18,10:0
+monthly	lim=10.5 used=NaN left=NaN pct=NaN over=false
+rows	
+daily	lim=0 used=0 left=0 pct=0 over=false
+today	0
+monthly	lim=0 used=110.495 left=-110.495 pct=0 over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+tier	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+today	0
+total	-3
+tier	lim=1e+21 used=99.995 left=1e+21 pct=9.999500000000001e-18 over=false
+tier	lim=0.0001 used=1 left=-0.9999 pct=1000000 over=true
+total	0
+total	-2.9
+total	NaN
+rows	rent:0
+rows	4294967295:0
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+today	0
+tier	lim=0.0001 used=10.5 left=-10.4999 pct=10500000 over=true
+today	0
+monthly	lim=1e+21 used=-3 left=1e+21 pct=-3e-19 over=false
+monthly	lim=100 used=NaN left=NaN pct=NaN over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=0.0001 used=-3 left=3.0001 pct=-3000000 over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+today	0
+rows	
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	01:0
+rows	
+tier	lim=1 used=1e+21 left=-1e+21 pct=1e+23 over=true
+rows	
+rows	
+tier	lim=1 used=NaN left=NaN pct=NaN over=false
+rows	01:0
+rows	2:0,food:0
+daily	lim=100 used=0 left=100 pct=0 over=false
+total	NaN
+monthly	lim=1e+21 used=29.5 left=1e+21 pct=2.9499999999999997e-18 over=false
+rows	:0
+rows	Z:10.6
+tier	lim=100 used=0 left=100 pct=0 over=false
+total	4
+today	0
+tier	lim=100 used=100 left=0 pct=100 over=false
+tier	lim=1 used=99.995 left=-98.995 pct=9999.5 over=true
+tier	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	10:0,a:0,Z:0
+rows	trans:0
+total	0
+daily	lim=1e+21 used=1 left=1e+21 pct=9.999999999999999e-20 over=false
+today	0
+rows	1:1e+21,a:1e+21
+monthly	lim=0 used=1 left=-1 pct=0 over=false
+today	0
+rows	food:199990000,01:0,rent:0,4294967295:0
+tier	lim=100 used=0.1 left=99.9 pct=0.1 over=false
+rows	4294967295:9.999999999999999e-20
+rows	10:0,:0,food:NaN
+today	0
+tier	lim=100 used=NaN left=NaN pct=NaN over=false
+total	101
+today	0
+monthly	lim=100 used=1e+21 left=-1e+21 pct=1e+21 over=true
+daily	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=100 used=-3 left=103 pct=-3 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+tier	lim=0 used=0 left=0 pct=0 over=false
+today	0
+rows	trans:0
+total	100
+tier	lim=10.5 used=1 left=9.5 pct=9.523809523809524 over=false
+tier	lim=1 used=0 left=1 pct=0 over=false
+monthly	lim=1e+21 used=0.1 left=1e+21 pct=1.0000000000000001e-20 over=false
+rows	4294967295:0,rent:0
+today	0
+tier	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+tier	lim=100 used=0 left=100 pct=0 over=false
+total	11.5
+tier	lim=100 used=1 left=99 pct=1 over=false
+tier	lim=1e+21 used=100 left=1e+21 pct=9.999999999999999e-18 over=false
+rows	
+total	0
+tier	lim=100 used=1 left=99 pct=1 over=false
+rows	10:1e+23,:0
+tier	lim=1e+21 used=NaN left=NaN pct=NaN over=false
+today	0
+today	0
+total	1
+total	-3
+rows	2:0,rent:0
+rows	1:0,a:0,2:NaN
+rows	4294967295:1e+21,10:0
+rows	
+monthly	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	trans:0
+rows	
+daily	lim=1 used=0 left=1 pct=0 over=false
+tier	lim=10.5 used=1e+21 left=-1e+21 pct=9.523809523809525e+21 over=true
+monthly	lim=0.0001 used=100 left=-99.9999 pct=100000000 over=true
+rows	1:0,01:0,a:0,:-3000000
+tier	lim=1e+21 used=1 left=1e+21 pct=9.999999999999999e-20 over=false
+total	0
+total	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=0 used=0 left=0 pct=0 over=false
+rows	trans:0
+monthly	lim=10.5 used=0 left=10.5 pct=0 over=false
+tier	lim=0 used=0.1 left=-0.1 pct=0 over=false
+total	-2
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+rows	01:10010,:952.3333333333334
+today	100
+rows	2:9.999500000000001e-18
+monthly	lim=100 used=0 left=100 pct=0 over=false
+monthly	lim=0 used=-3 left=3 pct=0 over=false
+daily	lim=1 used=0 left=1 pct=0 over=false
+tier	lim=0.0001 used=100 left=-99.9999 pct=100000000 over=true
+today	0
+today	0
+total	100.995
+today	0
+monthly	lim=0.0001 used=1e+21 left=-1e+21 pct=9.999999999999999e+26 over=true
+total	NaN
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	1:199995000,10:0,01:0,:0
+monthly	lim=100 used=NaN left=NaN pct=NaN over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+total	NaN
+daily	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=0.0001 used=0.1 left=-0.0999 pct=100000 over=true
+daily	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=100 used=1e+21 left=-1e+21 pct=1e+21 over=true
+rows	01:1.06e-18
+tier	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	:1e+21
+daily	lim=1 used=0 left=1 pct=0 over=false
+total	0
+tier	lim=1e+21 used=10.5 left=1e+21 pct=1.05e-18 over=false
+monthly	lim=100 used=0.1 left=99.9 pct=0.1 over=false
+monthly	lim=100 used=NaN left=NaN pct=NaN over=false
+today	0
+rows	Z:0,:0,4294967295:NaN
+today	1
+total	0
+today	0
+today	0
+tier	lim=100 used=0 left=100 pct=0 over=false
+total	1e+21
+rows	a:9.523809523809524,food:0,:0,01:0
+today	0
+rows	Z:0,01:0,4294967295:0
+rows	10:0,:0,food:0
+rows	2:0
+total	1e+21
+total	0
+today	10.5
+tier	lim=0.0001 used=0.1 left=-0.0999 pct=100000 over=true
+total	-2
+tier	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+rows	1:0,trans:0,food:0
+tier	lim=1e+21 used=10.5 left=1e+21 pct=1.05e-18 over=false
+rows	trans:0
+rows	
+today	0
+rows	1:0,01:0,rent:0
+rows	10:99.995,food:0,trans:0,4294967295:0
+rows	
+total	NaN
+tier	lim=0 used=0 left=0 pct=0 over=false
+rows	a:100,trans:0
+today	0
+rows	1:0,4294967295:0,rent:0
+today	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=100 used=10.5 left=89.5 pct=10.5 over=false
+monthly	lim=100 used=NaN left=NaN pct=NaN over=false
+daily	lim=100 used=10.5 left=89.5 pct=10.5 over=false
+total	97
+today	0
+rows	1:0
+tier	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+today	0
+total	-3
+daily	lim=0 used=0 left=0 pct=0 over=false
+today	0
+monthly	lim=10.5 used=0 left=10.5 pct=0 over=false
+today	0
+daily	lim=100 used=0.1 left=99.9 pct=0.1 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+total	-3
+rows	1:0,a:0
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+today	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+total	0
+total	0
+rows	2:100,4294967295:99.995,10:1.10495e-17
+tier	lim=1e+21 used=99.995 left=1e+21 pct=9.999500000000001e-18 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+total	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=10.5 used=0 left=10.5 pct=0 over=false
+total	299.995
+rows	a:100000000,2:0
+rows	4294967295:10.5
+rows	01:0,trans:NaN
+rows	1:0,01:0
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+tier	lim=100 used=NaN left=NaN pct=NaN over=false
+today	0
+rows	
+monthly	lim=100 used=0 left=100 pct=0 over=false
+total	10.5
+daily	lim=100 used=0 left=100 pct=0 over=false
+monthly	lim=1 used=0 left=1 pct=0 over=false
+today	0
+today	0
+tier	lim=1 used=1 left=0 pct=100 over=false
+rows	01:0.1,10:-3e-19
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+tier	lim=0 used=99.995 left=-99.995 pct=0 over=false
+today	0.1
+total	2e+21
+today	0
+tier	lim=0 used=NaN left=NaN pct=0 over=false
+rows	Z:1.1
+daily	lim=0 used=0 left=0 pct=0 over=false
+today	NaN
+tier	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+daily	lim=1 used=0 left=1 pct=0 over=false
+today	0
+total	0
+daily	lim=0.0001 used=99.995 left=-99.9949 pct=99995000 over=true
+total	1e+21
+today	1e+21
+rows	
+today	0
+daily	lim=1 used=0 left=1 pct=0 over=false
+monthly	lim=0 used=0 left=0 pct=0 over=false
+total	1e+21
+total	97.995
+today	0
+today	0
+rows	:0,a:-28.57142857142857
+rows	:100000000,2:-3
+total	10.5
+total	99.995
+total	0
+rows	
+monthly	lim=100 used=-3 left=103 pct=-3 over=false
+total	NaN
+total	10.5
+tier	lim=0.0001 used=99.995 left=-99.9949 pct=99995000 over=true
+rows	4294967295:0,01:0
+monthly	lim=10.5 used=1e+21 left=-1e+21 pct=9.523809523809525e+21 over=true
+rows	2:0,01:0,food:0
+rows	10:0
+today	0
+total	310.495
+today	0
+tier	lim=0 used=NaN left=NaN pct=0 over=false
+tier	lim=0 used=NaN left=NaN pct=0 over=false
+rows	Z:1.05e-18,1:0,trans:0
+tier	lim=10.5 used=100 left=-89.5 pct=952.3809523809524 over=true
+rows	
+monthly	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+total	NaN
+total	100.095
+rows	food:1e+21,rent:0
+rows	Z:0,1:-3
+rows	:NaN
+rows	food:952.3809523809524,1:-3
+today	0
+today	99.995
+monthly	lim=100 used=-3 left=103 pct=-3 over=false
+total	1e+21
+rows	1:0,trans:0,:0
+daily	lim=100 used=0 left=100 pct=0 over=false
+tier	lim=0 used=99.995 left=-99.995 pct=0 over=false
+today	0
+today	0
+tier	lim=0.0001 used=NaN left=NaN pct=NaN over=false
+total	100
+rows	food:0,a:0,trans:0
+total	0.1
+monthly	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+today	0
+monthly	lim=0 used=0 left=0 pct=0 over=false
+rows	2:0
+today	0
+monthly	lim=1e+21 used=2 left=1e+21 pct=1.9999999999999997e-19 over=false
+monthly	lim=10.5 used=1e+21 left=-1e+21 pct=9.523809523809525e+21 over=true
+total	0
+total	0
+daily	lim=1 used=0 left=1 pct=0 over=false
+total	100.1
+total	0
+rows	
+daily	lim=0 used=0 left=0 pct=0 over=false
+total	10.5
+today	0
+today	0
+today	0
+daily	lim=100 used=0 left=100 pct=0 over=false
+total	101
+tier	lim=1 used=10.5 left=-9.5 pct=1050 over=true
+today	0
+total	0
+daily	lim=1 used=0 left=1 pct=0 over=false
+today	0
+monthly	lim=1 used=0 left=1 pct=0 over=false
+total	NaN
+rows	2:0,rent:0,Z:0
+rows	
+rows	01:952.3333333333334
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	2:0,10:0,:0,trans:0
+today	0
+daily	lim=10.5 used=99.995 left=-89.495 pct=952.3333333333334 over=true
+daily	lim=1 used=10.5 left=-9.5 pct=1050 over=true
+total	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+daily	lim=100 used=10.6 left=89.4 pct=10.6 over=false
+tier	lim=10.5 used=1 left=9.5 pct=9.523809523809524 over=false
+total	-3
+rows	01:100
+rows	2:0,food:0,4294967295:0,a:0,:0
+rows	
+total	NaN
+tier	lim=100 used=NaN left=NaN pct=NaN over=false
+rows	:0
+rows	a:-3e-19
+rows	trans:-3e-19
+tier	lim=0.0001 used=-3 left=3.0001 pct=-3000000 over=false
+total	100
+total	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=10.5 used=0 left=10.5 pct=0 over=false
+monthly	lim=0 used=0 left=0 pct=0 over=false
+today	0
+monthly	lim=1 used=1.1 left=-0.10000000000000009 pct=110.00000000000001 over=true
+tier	lim=1 used=0 left=1 pct=0 over=false
+rows	01:10
+total	0.1
+tier	lim=100 used=NaN left=NaN pct=NaN over=false
+monthly	lim=0 used=199.99 left=-199.99 pct=0 over=false
+rows	2:0,Z:0,a:0,:0
+total	99.995
+monthly	lim=0.0001 used=10.5 left=-10.4999 pct=10500000 over=true
+monthly	lim=1 used=0 left=1 pct=0 over=false
+today	0
+rows	rent:0,a:0
+monthly	lim=100 used=NaN left=NaN pct=NaN over=false
+total	0.1
+rows	1:10000,Z:0
+rows	
+monthly	lim=0 used=200 left=-200 pct=0 over=false
+total	1e+21
+today	0
+rows	2:0,Z:0,trans:0
+tier	lim=1e+21 used=99.995 left=1e+21 pct=9.999500000000001e-18 over=false
+monthly	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+daily	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+tier	lim=10.5 used=NaN left=NaN pct=NaN over=false
+monthly	lim=10.5 used=10.5 left=0 pct=100 over=false
+today	0
+today	0
+monthly	lim=100 used=0 left=100 pct=0 over=false
+monthly	lim=100 used=1 left=99 pct=1 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+today	0
+monthly	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+rows	4294967295:0
+total	NaN
+daily	lim=1 used=0 left=1 pct=0 over=false
+rows	:0,rent:0,01:0,4294967295:0
+daily	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=10.5 used=0 left=10.5 pct=0 over=false
+rows	01:0,a:0
+rows	10:0,Z:0
+total	0
+rows	
+rows	1:0
+total	1e+21
+monthly	lim=10.5 used=0 left=10.5 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	1:0,2:0
+today	0
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+monthly	lim=0 used=NaN left=NaN pct=0 over=false
+tier	lim=0 used=0.1 left=-0.1 pct=0 over=false
+rows	2:0,4294967295:0
+tier	lim=0 used=0 left=0 pct=0 over=false
+rows	
+rows	
+today	0
+total	98.19999999999999
+monthly	lim=10.5 used=199.99 left=-189.49 pct=1904.6666666666667 over=true
+daily	lim=100 used=0 left=100 pct=0 over=false
+tier	lim=10.5 used=NaN left=NaN pct=NaN over=false
+today	0
+today	0
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	10:0,food:0
+total	0
+rows	4294967295:1050,Z:1,rent:9.999500000000001e-18
+rows	
+daily	lim=1 used=0 left=1 pct=0 over=false
+rows	trans:1.0000000000000001e-20,1:-3000000
+tier	lim=0 used=0.1 left=-0.1 pct=0 over=false
+rows	Z:9.523809523809525e+21,01:0
+rows	10:0
+rows	
+today	0.1
+rows	
+today	0
+monthly	lim=0 used=0 left=0 pct=0 over=false
+today	0
+total	0
+tier	lim=100 used=1e+21 left=-1e+21 pct=1e+21 over=true
+monthly	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+monthly	lim=1e+21 used=-3 left=1e+21 pct=-3e-19 over=false
+rows	4294967295:NaN
+monthly	lim=0.0001 used=307.485 left=-307.48490000000004 pct=307485000 over=true
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+rows	food:10,2:0,trans:NaN
+monthly	lim=0 used=100 left=-100 pct=0 over=false
+today	-3
+today	0
+rows	1:0,10:0,:0,01:0
+monthly	lim=10.5 used=NaN left=NaN pct=NaN over=false
+total	100.995
+rows	Z:10000,01:9699.5
+total	100
+rows	01:0
+total	96.995
+tier	lim=100 used=1 left=99 pct=1 over=false
+monthly	lim=0 used=NaN left=NaN pct=0 over=false
+tier	lim=0.0001 used=NaN left=NaN pct=NaN over=false
+monthly	lim=10.5 used=100 left=-89.5 pct=952.3809523809524 over=true
+daily	lim=100 used=0 left=100 pct=0 over=false
+monthly	lim=10.5 used=99.995 left=-89.495 pct=952.3333333333334 over=true
+rows	1:0,4294967295:0
+monthly	lim=10.5 used=NaN left=NaN pct=NaN over=false
+today	0
+rows	10:0,:0
+monthly	lim=0 used=10.5 left=-10.5 pct=0 over=false
+rows	a:0,trans:0
+today	0
+total	NaN
+monthly	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	10:1e+21,1:0,2:0,trans:0
+total	10.5
+rows	01:0,trans:0,4294967295:0,food:0
+total	0.1
+rows	2:0,4294967295:0,trans:0,:0
+rows	01:1e+21,10:0,a:0
+monthly	lim=1e+21 used=10.6 left=1e+21 pct=1.06e-18 over=false
+rows	trans:952.3809523809524,rent:0
+tier	lim=0 used=99.995 left=-99.995 pct=0 over=false
+daily	lim=100 used=1 left=99 pct=1 over=false
+today	0
+rows	trans:100000000,10:0,4294967295:0
+total	101
+total	NaN
+rows	4294967295:0
+monthly	lim=0 used=2e+21 left=-2e+21 pct=0 over=false
+today	0
+total	99.995
+rows	01:9.523809523809525e+21,Z:1.05e-18
+total	0
+total	NaN
+rows	trans:0
+today	0
+monthly	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+rows	trans:9.999999999999999e+26,food:9.523809523809525e+21,1:0,10:0,01:0
+rows	10:0,rent:0,Z:0
+rows	rent:0,food:0
+rows	
+today	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=1 used=1e+21 left=-1e+21 pct=1e+23 over=true
+total	11.6
+total	-6
+tier	lim=0 used=10.5 left=-10.5 pct=0 over=false
+monthly	lim=0 used=0 left=0 pct=0 over=false
+total	1e+21
+rows	10:0,food:0
+monthly	lim=0 used=0 left=0 pct=0 over=false
+rows	4294967295:NaN
+rows	
+daily	lim=1 used=0 left=1 pct=0 over=false
+rows	rent:0,Z:0
+daily	lim=100 used=0 left=100 pct=0 over=false
+tier	lim=0 used=10.5 left=-10.5 pct=0 over=false
+tier	lim=1 used=1e+21 left=-1e+21 pct=1e+23 over=true
+today	0
+monthly	lim=100 used=1e+21 left=-1e+21 pct=1e+21 over=true
+rows	a:0,trans:-3000000
+today	0
+monthly	lim=100 used=0 left=100 pct=0 over=false
+today	0
+total	0
+tier	lim=100 used=1 left=99 pct=1 over=false
+monthly	lim=10.5 used=200 left=-189.5 pct=1904.7619047619048 over=true
+total	0
+rows	2:9.999999999999999e+26,1:0
+total	NaN
+today	0
+rows	10:0,Z:0
+daily	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=100 used=0 left=100 pct=0 over=false
+monthly	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=10.5 used=1e+21 left=-1e+21 pct=9.523809523809525e+21 over=true
+today	NaN
+total	0
+rows	1:0,4294967295:0,food:0
+monthly	lim=100 used=97 left=3 pct=97 over=false
+monthly	lim=100 used=0.1 left=99.9 pct=0.1 over=false
+rows	Z:0,trans:0
+monthly	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+rows	01:NaN
+daily	lim=100 used=0 left=100 pct=0 over=false
+monthly	lim=0 used=101 left=-101 pct=0 over=false
+rows	
+rows	
+monthly	lim=1 used=0.1 left=0.9 pct=10 over=false
+monthly	lim=0 used=NaN left=NaN pct=0 over=false
+total	100
+total	NaN
+rows	10:0,rent:0
+today	0
+daily	lim=0 used=99.995 left=-99.995 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+monthly	lim=100 used=10.5 left=89.5 pct=10.5 over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+total	200
+total	0
+today	0
+monthly	lim=100 used=0 left=100 pct=0 over=false
+today	0
+rows	a:100000000,2:0,01:0,trans:0
+monthly	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=1 used=0 left=1 pct=0 over=false
+rows	:0,trans:0
+monthly	lim=1 used=1e+21 left=-1e+21 pct=1e+23 over=true
+today	0
+rows	Z:9.999999999999999e-18
+today	0
+rows	rent:952.3333333333334
+rows	Z:0
+today	0
+today	0
+tier	lim=10.5 used=1 left=9.5 pct=9.523809523809524 over=false
+today	0
+total	NaN
+rows	10:0
+tier	lim=1 used=0.1 left=0.9 pct=10 over=false
+today	0
+total	1e+21
+monthly	lim=1 used=12.5 left=-11.5 pct=1250 over=true
+tier	lim=1e+21 used=-3 left=1e+21 pct=-3e-19 over=false
+tier	lim=0.0001 used=1e+21 left=-1e+21 pct=9.999999999999999e+26 over=true
+tier	lim=0 used=10.5 left=-10.5 pct=0 over=false
+total	10.6
+tier	lim=0 used=99.995 left=-99.995 pct=0 over=false
+tier	lim=100 used=1e+21 left=-1e+21 pct=1e+21 over=true
+today	0
+rows	1:0,01:0
+today	10.5
+today	0
+tier	lim=1 used=-3 left=4 pct=-300 over=false
+rows	:9.999999999999999e-18
+rows	01:-28.57142857142857
+total	0
+total	0
+monthly	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=10.5 used=0 left=10.5 pct=0 over=false
+today	0
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	4294967295:99995000
+monthly	lim=1 used=98 left=-97 pct=9800 over=true
+rows	
+tier	lim=1e+21 used=1 left=1e+21 pct=9.999999999999999e-20 over=false
+rows	2:0
+daily	lim=100 used=0 left=100 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+total	1e+21
+today	1e+21
+rows	:10500000,2:0
+today	0
+monthly	lim=1e+21 used=NaN left=NaN pct=NaN over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	food:1
+today	0
+total	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=1 used=NaN left=NaN pct=NaN over=false
+monthly	lim=1 used=-3 left=4 pct=-300 over=false
+monthly	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+tier	lim=100 used=0.1 left=99.9 pct=0.1 over=false
+rows	1:0,2:0,trans:0,food:0,:0
+total	21.1
+daily	lim=100 used=0 left=100 pct=0 over=false
+total	0
+today	0
+tier	lim=0.0001 used=1 left=-0.9999 pct=1000000 over=true
+rows	2:0,a:0,4294967295:0,:0,Z:0
+total	0
+today	0
+total	NaN
+rows	food:121
+monthly	lim=100 used=0 left=100 pct=0 over=false
+rows	1:0,Z:0,01:-3000000
+today	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=100 used=-2 left=102 pct=-2 over=false
+rows	food:0.9523809523809524,10:0,a:0,rent:0
+total	0
+today	0
+rows	trans:0
+rows	:0
+rows	
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	1:0
+rows	4294967295:100,trans:0,01:0,food:0,Z:0
+today	0.1
+today	0
+rows	4294967295:10000,2:0,10:0,rent:0,trans:0
+tier	lim=0 used=0 left=0 pct=0 over=false
+rows	10:0
+daily	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=10.5 used=NaN left=NaN pct=NaN over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+today	0
+rows	2:0,a:0,:0,trans:0
+today	0
+rows	4294967295:-3
+rows	
+rows	
+monthly	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=100 used=1e+21 left=-1e+21 pct=1e+21 over=true
+today	0
+today	0
+rows	:0
+daily	lim=100 used=0 left=100 pct=0 over=false
+tier	lim=1 used=-3 left=4 pct=-300 over=false
+today	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	
+today	0
+tier	lim=0 used=0 left=0 pct=0 over=false
+rows	
+tier	lim=1 used=10.5 left=-9.5 pct=1050 over=true
+today	0
+daily	lim=100 used=0 left=100 pct=0 over=false
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	1:952.3809523809524,10:0
+monthly	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+tier	lim=1e+21 used=-3 left=1e+21 pct=-3e-19 over=false
+rows	
+monthly	lim=10.5 used=7.5 left=3 pct=71.42857142857143 over=false
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	01:9.999999999999999e-18
+monthly	lim=1 used=2e+21 left=-2e+21 pct=2e+23 over=true
+today	10.5
+monthly	lim=1e+21 used=-1.8 left=1e+21 pct=-1.8e-19 over=false
+tier	lim=1 used=100 left=-99 pct=10000 over=true
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	a:953.3333333333334,1:0
+tier	lim=10.5 used=1e+21 left=-1e+21 pct=9.523809523809525e+21 over=true
+rows	1:0,2:0,10:0,:0
+monthly	lim=0 used=0 left=0 pct=0 over=false
+today	0
+tier	lim=0 used=1 left=-1 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+tier	lim=100 used=NaN left=NaN pct=NaN over=false
+rows	a:100
+daily	lim=100 used=100 left=0 pct=100 over=false
+daily	lim=0.0001 used=99.995 left=-99.9949 pct=99995000 over=true
+total	0
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+today	0
+total	-2
+total	0.1
+today	0
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+monthly	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+total	11.5
+today	0
+rows	Z:1.0000000000000001e-20,2:0,food:0
+total	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=10.5 used=100 left=-89.5 pct=952.3809523809524 over=true
+total	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=100 used=1 left=99 pct=1 over=false
+monthly	lim=0.0001 used=NaN left=NaN pct=NaN over=false
+total	-3
+today	0
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+total	NaN
+rows	
+today	0
+tier	lim=0 used=0.1 left=-0.1 pct=0 over=false
+rows	
+today	99.995
+today	0
+total	0
+rows	
+tier	lim=1e+21 used=-3 left=1e+21 pct=-3e-19 over=false
+rows	1:0,2:0,4294967295:0
+rows	01:1e+23,:0
+rows	trans:0
+monthly	lim=1 used=NaN left=NaN pct=NaN over=false
+monthly	lim=1e+21 used=99.995 left=1e+21 pct=9.999500000000001e-18 over=false
+daily	lim=0 used=-3 left=3 pct=0 over=false
+today	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+total	0
+tier	lim=1 used=99.995 left=-98.995 pct=9999.5 over=true
+monthly	lim=100 used=1.1 left=98.9 pct=1.1 over=false
+daily	lim=10.5 used=-3 left=13.5 pct=-28.57142857142857 over=false
+today	0
+tier	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	1:0,10:0,trans:0,01:0
+rows	2:0,:0,01:0
+rows	10:0,:0,01:0,a:0
+rows	10:0,trans:0
+rows	10:100000,1:10000,:0,4294967295:0
+rows	
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+total	2e+21
+tier	lim=0 used=0.1 left=-0.1 pct=0 over=false
+rows	:NaN
+monthly	lim=0.0001 used=-3 left=3.0001 pct=-3000000 over=false
+rows	10:0,01:0
+today	99.995
+today	0
+total	0
+monthly	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=1 used=1 left=0 pct=100 over=false
+monthly	lim=0 used=NaN left=NaN pct=0 over=false
+rows	:0,Z:0
+rows	trans:0
+rows	4294967295:0,01:0
+daily	lim=10.5 used=10.5 left=0 pct=100 over=false
+monthly	lim=0 used=10.5 left=-10.5 pct=0 over=false
+daily	lim=1e+21 used=-3 left=1e+21 pct=-3e-19 over=false
+total	99.995
+total	NaN
+daily	lim=0 used=-3 left=3 pct=0 over=false
+today	NaN
+monthly	lim=10.5 used=21.1 left=-10.600000000000001 pct=200.95238095238096 over=true
+tier	lim=0 used=10.5 left=-10.5 pct=0 over=false
+rows	Z:1e+21,4294967295:0,food:0,:0
+rows	1:0,:0,trans:0,Z:0,rent:0
+rows	2:0,10:0,01:0,a:0,Z:0
+monthly	lim=100 used=10.5 left=89.5 pct=10.5 over=false
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+monthly	lim=1 used=7.5 left=-6.5 pct=750 over=true
+tier	lim=10.5 used=NaN left=NaN pct=NaN over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	4294967295:0
+rows	
+total	0
+total	1e+21
+rows	Z:0,a:0
+rows	Z:10000,rent:0
+today	0
+tier	lim=100 used=1e+21 left=-1e+21 pct=1e+21 over=true
+rows	1:NaN
+tier	lim=100 used=1 left=99 pct=1 over=false
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+monthly	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=100 used=1e+21 left=-1e+21 pct=1e+21 over=true
+monthly	lim=0.0001 used=NaN left=NaN pct=NaN over=false
+today	10.5
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+monthly	lim=0 used=94 left=-94 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	
+today	0
+total	1e+21
+daily	lim=1e+21 used=1e+21 left=0 pct=100 over=false
+today	0
+rows	
+total	97.995
+monthly	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=0 used=NaN left=NaN pct=0 over=false
+today	-3
+today	0
+total	-3
+today	0
+monthly	lim=1e+21 used=1e+21 left=0 pct=100 over=false
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	10:0,4294967295:0,Z:0
+rows	rent:100000000,:0
+total	-3
+tier	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+total	1e+21
+monthly	lim=0 used=107.5 left=-107.5 pct=0 over=false
+tier	lim=0 used=NaN left=NaN pct=0 over=false
+today	10.5
+rows	Z:0,trans:-1.9999999999999997e-19
+today	0
+rows	trans:0
+today	0
+today	1
+daily	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+monthly	lim=0 used=199.995 left=-199.995 pct=0 over=false
+total	-3
+rows	food:100,2:0,4294967295:0
+total	100
+tier	lim=1 used=0.1 left=0.9 pct=10 over=false
+today	0
+total	99.995
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+total	0
+tier	lim=100 used=-3 left=103 pct=-3 over=false
+rows	2:0,food:0,01:0
+rows	
+monthly	lim=0 used=10.5 left=-10.5 pct=0 over=false
+today	0
+monthly	lim=1e+21 used=10.6 left=1e+21 pct=1.06e-18 over=false
+tier	lim=10.5 used=1 left=9.5 pct=9.523809523809524 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	
+daily	lim=100 used=0 left=100 pct=0 over=false
+total	100
+total	-3
+total	0
+rows	:9.999999999999999e+26,1:0,food:0
+rows	trans:0,01:0,rent:0
+total	10.5
+monthly	lim=100 used=99.995 left=0.0049999999999954525 pct=99.995 over=false
+monthly	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+monthly	lim=10.5 used=1.1 left=9.4 pct=10.476190476190476 over=false
+tier	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+monthly	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+today	0
+monthly	lim=100 used=97 left=3 pct=97 over=false
+rows	1:0,:0
+total	100.095
+monthly	lim=10.5 used=0 left=10.5 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+today	0
+rows	
+monthly	lim=10.5 used=1e+21 left=-1e+21 pct=9.523809523809525e+21 over=true
+total	22
+monthly	lim=0 used=10.6 left=-10.6 pct=0 over=false
+total	99.995
+today	NaN
+today	0
+monthly	lim=1 used=-3 left=4 pct=-300 over=false
+rows	:0
+monthly	lim=0 used=0 left=0 pct=0 over=false
+rows	4294967295:10.5,food:0,trans:0
+today	0
+today	1
+rows	a:0,10:NaN
+tier	lim=100 used=99.995 left=0.0049999999999954525 pct=99.995 over=false
+today	0
+total	0
+rows	1:0
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	a:0
+rows	
+daily	lim=1 used=0 left=1 pct=0 over=false
+rows	4294967295:0,:0,a:0
+daily	lim=1 used=0 left=1 pct=0 over=false
+rows	Z:99995000,a:0
+tier	lim=100 used=99.995 left=0.0049999999999954525 pct=99.995 over=false
+rows	
+tier	lim=0 used=1 left=-1 pct=0 over=false
+tier	lim=0 used=-3 left=3 pct=0 over=false
+rows	food:1e+21
+today	0
+today	0
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+total	0
+rows	
+rows	10:0
+rows	2:1e+21,1:0,rent:0
+monthly	lim=0 used=100 left=-100 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	2:0.9523809523809524
+today	0
+monthly	lim=1e+21 used=-3 left=1e+21 pct=-3e-19 over=false
+rows	
+rows	trans:0,:0
+daily	lim=100 used=NaN left=NaN pct=NaN over=false
+monthly	lim=1e+21 used=10.5 left=1e+21 pct=1.05e-18 over=false
+tier	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+tier	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+monthly	lim=0 used=0 left=0 pct=0 over=false
+rows	
+monthly	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+monthly	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=0.0001 used=-3 left=3.0001 pct=-3000000 over=false
+today	0
+monthly	lim=10.5 used=0 left=10.5 pct=0 over=false
+rows	food:9.523809523809524,trans:1,1:0,Z:0
+rows	rent:0,01:0,4294967295:0
+daily	lim=100 used=0 left=100 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+tier	lim=10.5 used=99.995 left=-89.495 pct=952.3333333333334 over=true
+total	1e+21
+today	0
+monthly	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	food:1e+21,01:0,rent:0,Z:0
+rows	
+rows	Z:1050,rent:0
+monthly	lim=100 used=1e+21 left=-1e+21 pct=1e+21 over=true
+rows	Z:0
+rows	
+today	0
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	1:1,10:0,01:0,rent:0
+today	0
+total	7.5
+rows	01:0,rent:-3e-19
+monthly	lim=1e+21 used=NaN left=NaN pct=NaN over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	
+total	0
+rows	4294967295:1.0000000000000001e-20,food:0
+total	NaN
+total	NaN
+rows	1:0,trans:0
+rows	10:9.999999999999999e+26,2:0,Z:0,rent:0
+rows	
+rows	1:0,2:0,10:0,rent:0,food:0
+today	0
+total	0
+rows	
+rows	a:0
+rows	10:0,4294967295:0,Z:0
+daily	lim=100 used=10.5 left=89.5 pct=10.5 over=false
+rows	a:0
+rows	10:1000000
+rows	1:0.1
+today	0
+rows	1:100
+monthly	lim=10.5 used=97 left=-86.5 pct=923.8095238095237 over=true
+tier	lim=0 used=10.5 left=-10.5 pct=0 over=false
+total	0
+monthly	lim=0 used=0 left=0 pct=0 over=false
+rows	a:0
+rows	a:-280
+total	10.5
+rows	
+monthly	lim=1 used=1e+21 left=-1e+21 pct=1e+23 over=true
+monthly	lim=0 used=100 left=-100 pct=0 over=false
+tier	lim=100 used=-3 left=103 pct=-3 over=false
+rows	:0,01:0
+monthly	lim=1 used=0 left=1 pct=0 over=false
+rows	4294967295:0,rent:0,01:0,food:0
+today	0
+total	10.5
+rows	01:0,rent:0,food:0
+daily	lim=0 used=0.1 left=-0.1 pct=0 over=false
+today	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+today	0
+tier	lim=0 used=99.995 left=-99.995 pct=0 over=false
+rows	1:0,2:0,a:0,Z:0
+monthly	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	2:0,trans:0,Z:0,a:0
+daily	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=1 used=0 left=1 pct=0 over=false
+total	100
+tier	lim=1e+21 used=10.5 left=1e+21 pct=1.05e-18 over=false
+total	NaN
+rows	1:0,:0,trans:0
+tier	lim=1 used=NaN left=NaN pct=NaN over=false
+tier	lim=0.0001 used=99.995 left=-99.9949 pct=99995000 over=true
+rows	1:0,10:0,:0
+tier	lim=0 used=NaN left=NaN pct=0 over=false
+rows	Z:9.523809523809524,rent:0,trans:0
+monthly	lim=10.5 used=0 left=10.5 pct=0 over=false
+monthly	lim=0 used=NaN left=NaN pct=0 over=false
+rows	
+monthly	lim=1 used=1e+21 left=-1e+21 pct=1e+23 over=true
+today	0
+total	10.5
+rows	food:1e+23,4294967295:0,01:0,:-2899999.9999999995
+today	0
+monthly	lim=0 used=0 left=0 pct=0 over=false
+total	0.1
+monthly	lim=10.5 used=0 left=10.5 pct=0 over=false
+tier	lim=0 used=-3 left=3 pct=0 over=false
+monthly	lim=0.0001 used=210.49 left=-210.4899 pct=210490000 over=true
+rows	Z:1.06e-18
+today	0
+total	0
+rows	trans:0
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	Z:0
+tier	lim=0 used=10.5 left=-10.5 pct=0 over=false
+today	1e+21
+monthly	lim=100 used=0 left=100 pct=0 over=false
+tier	lim=10.5 used=10.5 left=0 pct=100 over=false
+rows	Z:1050,10:0,:0,4294967295:0,rent:0
+monthly	lim=0 used=NaN left=NaN pct=0 over=false
+rows	
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	
+total	10.5
+today	0
+rows	1:0,4294967295:0
+today	0
+monthly	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	1:0
+today	0
+total	1e+21
+tier	lim=10.5 used=10.5 left=0 pct=100 over=false
+rows	
+rows	Z:0
+tier	lim=100 used=0.1 left=99.9 pct=0.1 over=false
+rows	01:100,10:0
+rows	
+rows	1:0,rent:0,a:0
+rows	
+today	0
+tier	lim=100 used=0 left=100 pct=0 over=false
+rows	:952.3333333333334,rent:1,10:0
+monthly	lim=0 used=99.995 left=-99.995 pct=0 over=false
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	1:0,2:0,a:-3000000
+tier	lim=0 used=1 left=-1 pct=0 over=false
+total	NaN
+daily	lim=0 used=0.1 left=-0.1 pct=0 over=false
+rows	food:0,01:0
+rows	2:0,01:0
+daily	lim=100 used=0 left=100 pct=0 over=false
+total	110.5
+rows	1:9.999999999999999e-18
+rows	Z:0
+monthly	lim=10.5 used=NaN left=NaN pct=NaN over=false
+rows	food:0
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+total	NaN
+total	1e+21
+tier	lim=1 used=100 left=-99 pct=10000 over=true
+rows	:0
+rows	
+total	0
+rows	01:0,rent:0,a:NaN
+total	0
+rows	
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	rent:0,01:0
+monthly	lim=1 used=100.1 left=-99.1 pct=10010 over=true
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	food:0
+rows	rent:0
+rows	trans:1052.3333333333333,2:0
+monthly	lim=10.5 used=0 left=10.5 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	
+rows	2:0,:0
+rows	4294967295:0,:0
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+monthly	lim=100 used=NaN left=NaN pct=NaN over=false
+rows	food:1000000,10:0,Z:0,4294967295:NaN
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	2:0
+rows	2:0,food:-2.9
+tier	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+total	0
+today	0
+rows	10:1e+21
+tier	lim=100 used=-3 left=103 pct=-3 over=false
+tier	lim=0.0001 used=0.1 left=-0.0999 pct=100000 over=true
+rows	
+total	18
+today	0
+total	0.1
+total	1e+21
+total	11.5
+daily	lim=1 used=0 left=1 pct=0 over=false
+monthly	lim=0.0001 used=99.995 left=-99.9949 pct=99995000 over=true
+daily	lim=100 used=0 left=100 pct=0 over=false
+today	0
+today	0
+total	207.5
+tier	lim=100 used=0 left=100 pct=0 over=false
+today	0
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+total	0
+today	0
+today	0
+today	0
+tier	lim=0 used=0 left=0 pct=0 over=false
+total	NaN
+tier	lim=0 used=NaN left=NaN pct=0 over=false
+total	0
+total	1e+21
+tier	lim=1e+21 used=1e+21 left=0 pct=100 over=false
+tier	lim=1e+21 used=1e+21 left=0 pct=100 over=false
+daily	lim=100 used=100 left=0 pct=100 over=false
+rows	a:0
+rows	Z:0
+monthly	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+monthly	lim=100 used=NaN left=NaN pct=NaN over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+total	0
+tier	lim=0 used=0 left=0 pct=0 over=false
+rows	1:0,trans:0,rent:0,01:0,2:NaN
+today	0
+daily	lim=10.5 used=99.995 left=-89.495 pct=952.3333333333334 over=true
+total	11.5
+today	0
+tier	lim=1 used=10.5 left=-9.5 pct=1050 over=true
+monthly	lim=1 used=99.995 left=-98.995 pct=9999.5 over=true
+today	0
+total	0
+rows	trans:100
+rows	trans:10,1:0,10:0,01:0
+rows	1:0,rent:0,a:0
+rows	trans:0
+today	100
+today	0
+rows	Z:3e+21
+total	0
+today	1e+21
+tier	lim=100 used=100 left=0 pct=100 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	4294967295:0
+tier	lim=0 used=100 left=-100 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	
+today	0
+daily	lim=100 used=0 left=100 pct=0 over=false
+today	0
+tier	lim=10.5 used=0 left=10.5 pct=0 over=false
+total	-3
+daily	lim=0 used=0 left=0 pct=0 over=false
+today	0
+tier	lim=0.0001 used=99.995 left=-99.9949 pct=99995000 over=true
+total	1
+today	0
+tier	lim=10.5 used=10.5 left=0 pct=100 over=false
+rows	1:NaN
+rows	food:0,Z:0,trans:0,a:0
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	
+tier	lim=100 used=100 left=0 pct=100 over=false
+tier	lim=0 used=10.5 left=-10.5 pct=0 over=false
+monthly	lim=1e+21 used=NaN left=NaN pct=NaN over=false
+rows	10:9.999999999999999e+26,01:1050,rent:0
+today	0
+daily	lim=1e+21 used=1e+21 left=0 pct=100 over=false
+total	0.1
+monthly	lim=0.0001 used=1 left=-0.9999 pct=1000000 over=true
+rows	01:100000,10:0
+today	0
+today	NaN
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+total	10.6
+today	0
+total	0
+total	0.1
+rows	food:0,rent:NaN
+monthly	lim=10.5 used=NaN left=NaN pct=NaN over=false
+rows	10:0,rent:0,trans:0
+rows	food:0
+rows	10:0,4294967295:0
+rows	1:0,4294967295:0,trans:0
+rows	trans:1.05e-18,4294967295:0,food:0
+tier	lim=100 used=1 left=99 pct=1 over=false
+rows	
+today	0
+today	0
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	1:0,4294967295:0,Z:0
+monthly	lim=0 used=100.095 left=-100.095 pct=0 over=false
+total	10.5
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+monthly	lim=0 used=-3 left=3 pct=0 over=false
+today	0
+rows	Z:100
+today	0
+today	1e+21
+total	200
+tier	lim=10.5 used=10.5 left=0 pct=100 over=false
+rows	a:0
+monthly	lim=10.5 used=100.1 left=-89.6 pct=953.3333333333334 over=true
+tier	lim=10.5 used=1 left=9.5 pct=9.523809523809524 over=false
+total	-3
+monthly	lim=0 used=0 left=0 pct=0 over=false
+total	0
+tier	lim=0 used=99.995 left=-99.995 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	2:0,Z:0
+today	0
+tier	lim=0 used=-3 left=3 pct=0 over=false
+today	0
+rows	2:0,trans:0
+total	100.1
+monthly	lim=0 used=0 left=0 pct=0 over=false
+today	10.5
+daily	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	2:9.999999999999999e+26,Z:0
+rows	
+rows	1:1.15e-18,Z:NaN
+tier	lim=1e+21 used=100 left=1e+21 pct=9.999999999999999e-18 over=false
+total	10.6
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	
+total	0
+monthly	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+today	0
+rows	01:1
+rows	rent:9.999999999999999e+26,1:0,2:0
+today	0
+today	0
+monthly	lim=1 used=0 left=1 pct=0 over=false
+total	99.995
+total	100
+rows	Z:0,01:NaN
+today	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=0 used=10.5 left=-10.5 pct=0 over=false
+monthly	lim=1 used=NaN left=NaN pct=NaN over=false
+monthly	lim=10.5 used=0 left=10.5 pct=0 over=false
+rows	1:0,rent:0,:0,2:NaN
+monthly	lim=100 used=1e+21 left=-1e+21 pct=1e+21 over=true
+total	21
+today	0
+today	100
+tier	lim=10.5 used=10.5 left=0 pct=100 over=false
+total	18
+total	NaN
+monthly	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	a:0
+tier	lim=1 used=0.1 left=0.9 pct=10 over=false
+total	0
+rows	Z:0
+total	0
+monthly	lim=10.5 used=0 left=10.5 pct=0 over=false
+rows	
+tier	lim=1 used=0.1 left=0.9 pct=10 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	
+tier	lim=1 used=1e+21 left=-1e+21 pct=1e+23 over=true
+rows	4294967295:0
+rows	4294967295:0,food:NaN
+monthly	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+total	1e+21
+daily	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=0 used=-3 left=3 pct=0 over=false
+daily	lim=0 used=NaN left=NaN pct=0 over=false
+total	0.1
+monthly	lim=0 used=10.5 left=-10.5 pct=0 over=false
+rows	a:952.3809523809524,rent:0
+daily	lim=1e+21 used=100 left=1e+21 pct=9.999999999999999e-18 over=false
+rows	1:0,food:0,rent:0,4294967295:0
+monthly	lim=10.5 used=2e+21 left=-2e+21 pct=1.904761904761905e+22 over=true
+total	0
+monthly	lim=10.5 used=99.995 left=-89.495 pct=952.3333333333334 over=true
+today	0
+tier	lim=0 used=10.5 left=-10.5 pct=0 over=false
+total	0
+total	0
+monthly	lim=100 used=1e+21 left=-1e+21 pct=1e+21 over=true
+monthly	lim=100 used=100 left=0 pct=100 over=false
+monthly	lim=100 used=1.1 left=98.9 pct=1.1 over=false
+rows	10:0,Z:0,a:0
+monthly	lim=1 used=0 left=1 pct=0 over=false
+rows	trans:0,a:0,Z:0
+rows	1:-28.57142857142857
+tier	lim=1 used=-3 left=4 pct=-300 over=false
+rows	
+today	0
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+today	0
+today	100.995
+today	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+today	0
+rows	a:0
+total	0
+monthly	lim=1e+21 used=NaN left=NaN pct=NaN over=false
+rows	4294967295:0,food:0,a:0,1:NaN
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+tier	lim=0.0001 used=NaN left=NaN pct=NaN over=false
+total	NaN
+rows	food:0,rent:0,Z:0,a:NaN
+today	0
+rows	rent:0
+today	0
+tier	lim=0 used=100 left=-100 pct=0 over=false
+tier	lim=10.5 used=1e+21 left=-1e+21 pct=9.523809523809525e+21 over=true
+total	110.5
+daily	lim=100 used=0 left=100 pct=0 over=false
+total	NaN
+today	0
+rows	
+tier	lim=1e+21 used=0.1 left=1e+21 pct=1.0000000000000001e-20 over=false
+total	1
+rows	Z:0,trans:0,10:-3,4294967295:NaN
+rows	1:0,:0,trans:0,4294967295:0
+tier	lim=0.0001 used=100 left=-99.9999 pct=100000000 over=true
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	01:0,rent:0
+rows	
+tier	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+today	0
+tier	lim=10.5 used=-3 left=13.5 pct=-28.57142857142857 over=false
+monthly	lim=0 used=99.995 left=-99.995 pct=0 over=false
+rows	4294967295:0,food:0,trans:0
+rows	
+monthly	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=100 used=0 left=100 pct=0 over=false
+total	NaN
+monthly	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=100 used=1e+21 left=-1e+21 pct=1e+21 over=true
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	4294967295:0
+monthly	lim=0 used=-2 left=2 pct=0 over=false
+total	0
+today	0
+rows	
+today	0
+monthly	lim=1 used=100 left=-99 pct=10000 over=true
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	
+monthly	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=0 used=99.995 left=-99.995 pct=0 over=false
+tier	lim=0.0001 used=10.5 left=-10.4999 pct=10500000 over=true
+rows	1:0,2:0
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+today	0
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+rows	1:0,2:0,food:0,:0
+rows	
+rows	1:-3e-19
+rows	01:0.1
+rows	
+today	0
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+daily	lim=100 used=100 left=0 pct=100 over=false
+rows	01:0,Z:0,2:-290
+tier	lim=1e+21 used=0.1 left=1e+21 pct=1.0000000000000001e-20 over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+today	0
+tier	lim=1 used=0 left=1 pct=0 over=false
+total	0
+rows	2:0,Z:0
+total	11.5
+total	100
+rows	
+today	0
+monthly	lim=0 used=NaN left=NaN pct=0 over=false
+rows	:0
+total	-3
+today	0
+rows	
+daily	lim=100 used=0 left=100 pct=0 over=false
+today	0
+rows	
+rows	
+daily	lim=1 used=0 left=1 pct=0 over=false
+today	0
+daily	lim=100 used=0 left=100 pct=0 over=false
+total	0
+today	0
+rows	trans:0,food:0,:-3
+tier	lim=100 used=1e+21 left=-1e+21 pct=1e+21 over=true
+total	0
+today	0
+rows	
+daily	lim=100 used=0 left=100 pct=0 over=false
+total	1e+21
+total	0.1
+total	10.5
+monthly	lim=0.0001 used=1 left=-0.9999 pct=1000000 over=true
+rows	Z:0
+monthly	lim=0 used=0 left=0 pct=0 over=false
+total	0
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	
+daily	lim=1 used=0 left=1 pct=0 over=false
+rows	trans:NaN
+tier	lim=0 used=99.995 left=-99.995 pct=0 over=false
+tier	lim=1e+21 used=100 left=1e+21 pct=9.999999999999999e-18 over=false
+rows	trans:100000,Z:0,01:0,rent:0
+total	10.5
+monthly	lim=0 used=97 left=-97 pct=0 over=false
+rows	1:0,2:0,01:0
+rows	
+today	0
+monthly	lim=0 used=100 left=-100 pct=0 over=false
+today	0
+tier	lim=1 used=0 left=1 pct=0 over=false
+today	0
+monthly	lim=100 used=0 left=100 pct=0 over=false
+tier	lim=100 used=0.1 left=99.9 pct=0.1 over=false
+today	0
+today	0
+tier	lim=1e+21 used=10.5 left=1e+21 pct=1.05e-18 over=false
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+tier	lim=1 used=10.5 left=-9.5 pct=1050 over=true
+rows	
+monthly	lim=100 used=-3 left=103 pct=-3 over=false
+monthly	lim=1e+21 used=-3 left=1e+21 pct=-3e-19 over=false
+monthly	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+tier	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=0.0001 used=99.995 left=-99.9949 pct=99995000 over=true
+monthly	lim=100 used=199.995 left=-99.995 pct=199.995 over=true
+rows	trans:NaN
+today	0
+today	0
+total	1
+rows	Z:99995000,1:9.999999999999999e-18,10:0,trans:0,a:0
+monthly	lim=0 used=NaN left=NaN pct=0 over=false
+daily	lim=100 used=NaN left=NaN pct=NaN over=false
+daily	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+monthly	lim=10.5 used=-3 left=13.5 pct=-28.57142857142857 over=false
+rows	1:0,a:0
+rows	1:0
+rows	2:0,Z:0
+rows	2:0.1
+rows	1:0,rent:0
+tier	lim=0 used=100 left=-100 pct=0 over=false
+monthly	lim=0 used=201 left=-201 pct=0 over=false
+today	0
+total	0
+total	199.995
+rows	
+tier	lim=0 used=0 left=0 pct=0 over=false
+today	0
+monthly	lim=100 used=21 left=79 pct=21 over=false
+monthly	lim=0 used=0 left=0 pct=0 over=false
+rows	4294967295:0
+tier	lim=0 used=NaN left=NaN pct=0 over=false
+total	100.095
+rows	:0,01:0,a:0
+rows	:0,Z:0
+tier	lim=1 used=1 left=0 pct=100 over=false
+today	0
+rows	food:-3000000
+monthly	lim=1 used=99.995 left=-98.995 pct=9999.5 over=true
+monthly	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=10.5 used=99.995 left=-89.495 pct=952.3333333333334 over=true
+monthly	lim=10.5 used=110.5 left=-100 pct=1052.3809523809523 over=true
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	10:0,food:0,4294967295:0,Z:0
+monthly	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+rows	01:1e+21,a:0
+rows	4294967295:NaN
+total	1e+21
+total	10.5
+total	10.5
+total	110.5
+daily	lim=100 used=0.1 left=99.9 pct=0.1 over=false
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+tier	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+rows	
+tier	lim=0 used=0.1 left=-0.1 pct=0 over=false
+rows	trans:0,food:0
+today	0
+tier	lim=1e+21 used=1 left=1e+21 pct=9.999999999999999e-20 over=false
+monthly	lim=100 used=0 left=100 pct=0 over=false
+rows	2:0,a:0,Z:0,rent:0
+today	0
+monthly	lim=0 used=97 left=-97 pct=0 over=false
+monthly	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=100 used=NaN left=NaN pct=NaN over=false
+monthly	lim=1 used=10.5 left=-9.5 pct=1050 over=true
+today	0
+today	0
+daily	lim=100 used=0 left=100 pct=0 over=false
+total	1e+21
+rows	01:10,1:0,2:0,rent:0
+tier	lim=10.5 used=NaN left=NaN pct=NaN over=false
+total	0
+tier	lim=0 used=99.995 left=-99.995 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+total	0
+tier	lim=0 used=0 left=0 pct=0 over=false
+today	0
+today	0
+tier	lim=10.5 used=100 left=-89.5 pct=952.3809523809524 over=true
+total	0
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+today	0
+rows	
+rows	10:NaN
+monthly	lim=100 used=0 left=100 pct=0 over=false
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+today	0
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+tier	lim=1e+21 used=99.995 left=1e+21 pct=9.999500000000001e-18 over=false
+tier	lim=1 used=-3 left=4 pct=-300 over=false
+today	0
+today	0
+today	0
+today	1e+21
+tier	lim=1 used=0 left=1 pct=0 over=false
+rows	
+monthly	lim=0 used=301 left=-301 pct=0 over=false
+total	0
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+daily	lim=1 used=0 left=1 pct=0 over=false
+rows	1:9.999999999999999e+26,a:1.05e-18,Z:0
+tier	lim=0 used=0.1 left=-0.1 pct=0 over=false
+rows	
+total	-3
+today	0
+tier	lim=1e+21 used=10.5 left=1e+21 pct=1.05e-18 over=false
+monthly	lim=1 used=0 left=1 pct=0 over=false
+total	0
+rows	:923.8095238095237
+monthly	lim=0 used=100 left=-100 pct=0 over=false
+daily	lim=0 used=99.995 left=-99.995 pct=0 over=false
+tier	lim=100 used=0.1 left=99.9 pct=0.1 over=false
+tier	lim=100 used=0.1 left=99.9 pct=0.1 over=false
+rows	4294967295:9.523809523809524,food:0,:0
+rows	rent:0,food:0
+today	100
+rows	01:0,Z:0
+rows	10:100,4294967295:0
+tier	lim=0.0001 used=1 left=-0.9999 pct=1000000 over=true
+total	1e+21
+total	0
+rows	
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+daily	lim=100 used=-3 left=103 pct=-3 over=false
+monthly	lim=0 used=99.995 left=-99.995 pct=0 over=false
+monthly	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+today	0
+tier	lim=10.5 used=NaN left=NaN pct=NaN over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+today	0
+total	0
+rows	1:0
+daily	lim=1e+21 used=0.1 left=1e+21 pct=1.0000000000000001e-20 over=false
+rows	2:100,1:0,10:0,:0
+daily	lim=100 used=0 left=100 pct=0 over=false
+tier	lim=0 used=NaN left=NaN pct=0 over=false
+monthly	lim=0 used=0 left=0 pct=0 over=false
+total	110.495
+daily	lim=100 used=0 left=100 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	
+rows	Z:9.999999999999999e-18
+monthly	lim=1e+21 used=7.5 left=1e+21 pct=7.500000000000001e-19 over=false
+total	0
+today	NaN
+rows	Z:0
+rows	food:0,rent:0
+total	0.1
+rows	2:0,rent:0,:0
+rows	
+total	1e+21
+tier	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	a:9.523809523809525e+21,1:0,4294967295:0,01:0
+tier	lim=10.5 used=NaN left=NaN pct=NaN over=false
+rows	a:1e+21,trans:0
+today	1
+rows	:0
+total	100
+tier	lim=0 used=10.5 left=-10.5 pct=0 over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+total	0
+rows	
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+today	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+total	0
+today	0
+rows	:10.5,4294967295:0,Z:0
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	
+monthly	lim=0 used=97.995 left=-97.995 pct=0 over=false
+tier	lim=0 used=0.1 left=-0.1 pct=0 over=false
+rows	
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+today	0
+tier	lim=0 used=0 left=0 pct=0 over=false
+rows	:0,a:0,trans:0
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	4294967295:0
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	2:952.3333333333334,trans:100,rent:NaN
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	4294967295:0,a:0
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	10:0,:0,Z:0,rent:0,a:0
+total	100
+total	NaN
+rows	01:0,trans:0
+monthly	lim=100 used=1 left=99 pct=1 over=false
+today	0
+monthly	lim=10.5 used=8.5 left=2 pct=80.95238095238095 over=false
+tier	lim=10.5 used=100 left=-89.5 pct=952.3809523809524 over=true
+rows	
+tier	lim=100 used=1 left=99 pct=1 over=false
+total	0
+rows	a:0
+monthly	lim=10.5 used=NaN left=NaN pct=NaN over=false
+rows	rent:0
+rows	
+tier	lim=0 used=-3 left=3 pct=0 over=false
+rows	2:0
+today	0
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	01:0
+monthly	lim=100 used=0 left=100 pct=0 over=false
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+daily	lim=100 used=1e+21 left=-1e+21 pct=1e+21 over=true
+tier	lim=100 used=10.5 left=89.5 pct=10.5 over=false
+today	0
+today	NaN
+monthly	lim=0 used=7.5 left=-7.5 pct=0 over=false
+rows	
+today	0
+monthly	lim=100 used=0 left=100 pct=0 over=false
+today	0
+today	0
+monthly	lim=0 used=1 left=-1 pct=0 over=false
+tier	lim=1 used=0 left=1 pct=0 over=false
+total	NaN
+daily	lim=100 used=0 left=100 pct=0 over=false
+tier	lim=0 used=NaN left=NaN pct=0 over=false
+tier	lim=0 used=10.5 left=-10.5 pct=0 over=false
+rows	rent:1050,:0
+tier	lim=10.5 used=-3 left=13.5 pct=-28.57142857142857 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=0 used=0 left=0 pct=0 over=false
+rows	1:0,10:0,01:0,food:0
+daily	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=1e+21 used=100 left=1e+21 pct=9.999999999999999e-18 over=false
+monthly	lim=1 used=0 left=1 pct=0 over=false
+monthly	lim=0.0001 used=98.995 left=-98.9949 pct=98995000 over=true
+today	0
+rows	a:0,:0,rent:0
+rows	2:100
+today	0
+rows	01:0
+total	96.995
+daily	lim=100 used=100 left=0 pct=100 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=100 used=0 left=100 pct=0 over=false
+monthly	lim=1e+21 used=NaN left=NaN pct=NaN over=false
+tier	lim=0.0001 used=NaN left=NaN pct=NaN over=false
+tier	lim=100 used=1e+21 left=-1e+21 pct=1e+21 over=true
+monthly	lim=1 used=0 left=1 pct=0 over=false
+tier	lim=0 used=99.995 left=-99.995 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+total	0
+rows	01:1,1:0,2:0
+tier	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+daily	lim=100 used=10.5 left=89.5 pct=10.5 over=false
+today	0
+rows	food:1050,1:0,:0
+total	0
+today	0
+rows	trans:10000,rent:0
+today	0
+daily	lim=0 used=NaN left=NaN pct=0 over=false
+monthly	lim=0 used=0 left=0 pct=0 over=false
+rows	:-300
+total	0
+today	0
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	2:100000,1:0,01:0,4294967295:0
+rows	2:0
+today	0
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+monthly	lim=1 used=97 left=-96 pct=9700 over=true
+today	0
+total	0.1
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+monthly	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=1e+21 used=0.1 left=1e+21 pct=1.0000000000000001e-20 over=false
+rows	4294967295:0
+tier	lim=0.0001 used=10.5 left=-10.4999 pct=10500000 over=true
+total	-3
+total	99.995
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+monthly	lim=100 used=1e+21 left=-1e+21 pct=1e+21 over=true
+total	0
+rows	a:99.995,2:0,4294967295:0,Z:0
+monthly	lim=100 used=-3 left=103 pct=-3 over=false
+today	0
+monthly	lim=10.5 used=96.995 left=-86.495 pct=923.7619047619048 over=true
+rows	food:0.1
+rows	rent:1000000,4294967295:9.999999999999999e-18,trans:0
+rows	trans:0
+rows	trans:0,01:0,rent:-3000000
+monthly	lim=0 used=NaN left=NaN pct=0 over=false
+total	100
+total	0
+total	-5
+monthly	lim=1e+21 used=0.1 left=1e+21 pct=1.0000000000000001e-20 over=false
+tier	lim=0 used=1 left=-1 pct=0 over=false
+monthly	lim=100 used=0 left=100 pct=0 over=false
+today	0
+daily	lim=1 used=0 left=1 pct=0 over=false
+monthly	lim=100 used=100.995 left=-0.9950000000000045 pct=100.99500000000002 over=true
+monthly	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+tier	lim=1e+21 used=-3 left=1e+21 pct=-3e-19 over=false
+rows	a:0,trans:0,food:0
+tier	lim=1 used=-3 left=4 pct=-300 over=false
+rows	2:0,a:0
+tier	lim=100 used=0.1 left=99.9 pct=0.1 over=false
+today	99.995
+total	1e+21
+monthly	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=0 used=0 left=0 pct=0 over=false
+total	118
+monthly	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	rent:10.5
+monthly	lim=0.0001 used=NaN left=NaN pct=NaN over=false
+rows	a:0,rent:-3
+today	0
+monthly	lim=0 used=0 left=0 pct=0 over=false
+today	0
+monthly	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+tier	lim=10.5 used=0 left=10.5 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	a:0
+rows	food:0,01:NaN
+today	0
+total	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	1:99.995,rent:0,food:0
+total	-2
+monthly	lim=0 used=0 left=0 pct=0 over=false
+rows	
+tier	lim=1 used=1e+21 left=-1e+21 pct=1e+23 over=true
+today	0
+rows	4294967295:0,:0
+total	1e+21
+total	1e+21
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	rent:0,4294967295:0
+total	0
+rows	
+rows	
+daily	lim=1 used=0 left=1 pct=0 over=false
+rows	1:0,10:0,food:0,4294967295:0
+monthly	lim=0 used=7.5 left=-7.5 pct=0 over=false
+rows	01:100,1:0
+today	2e+21
+rows	
+rows	food:0,rent:0,trans:0
+today	0
+total	0
+monthly	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=100 used=-3 left=103 pct=-3 over=false
+rows	2:0,10:0,trans:0,rent:0
+tier	lim=1 used=0 left=1 pct=0 over=false
+today	0
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+monthly	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	food:10.5,2:0,trans:0
+tier	lim=10.5 used=-3 left=13.5 pct=-28.57142857142857 over=false
+rows	2:101
+total	97
+rows	01:0
+today	0
+today	0
+rows	
+rows	4294967295:0,Z:0,rent:0
+rows	
+monthly	lim=100 used=0.1 left=99.9 pct=0.1 over=false
+monthly	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+tier	lim=0 used=1 left=-1 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+today	0
+monthly	lim=100 used=0 left=100 pct=0 over=false
+tier	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+total	10.6
+rows	rent:NaN
+today	0
+today	0
+today	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=1 used=0 left=1 pct=0 over=false
+rows	
+tier	lim=0 used=10.5 left=-10.5 pct=0 over=false
+monthly	lim=100 used=0 left=100 pct=0 over=false
+rows	
+rows	trans:0
+monthly	lim=0 used=NaN left=NaN pct=0 over=false
+tier	lim=0 used=0.1 left=-0.1 pct=0 over=false
+rows	a:0
+rows	10:0,:0
+total	7.5
+monthly	lim=0 used=296.995 left=-296.995 pct=0 over=false
+tier	lim=1 used=99.995 left=-98.995 pct=9999.5 over=true
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	
+monthly	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+today	0
+tier	lim=1 used=1e+21 left=-1e+21 pct=1e+23 over=true
+rows	
+rows	10:0,rent:0,:NaN
+total	0.1
+rows	01:10.5,2:NaN
+today	0
+daily	lim=1 used=0 left=1 pct=0 over=false
+total	1e+21
+tier	lim=0.0001 used=-3 left=3.0001 pct=-3000000 over=false
+tier	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+tier	lim=100 used=0.1 left=99.9 pct=0.1 over=false
+rows	rent:0
+total	0
+tier	lim=10.5 used=-3 left=13.5 pct=-28.57142857142857 over=false
+total	1e+21
+monthly	lim=100 used=1e+21 left=-1e+21 pct=1e+21 over=true
+tier	lim=10.5 used=100 left=-89.5 pct=952.3809523809524 over=true
+total	0
+total	100
+rows	
+monthly	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=0 used=0 left=0 pct=0 over=false
+total	-2.9
+monthly	lim=1e+21 used=10.5 left=1e+21 pct=1.05e-18 over=false
+tier	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=10.5 used=NaN left=NaN pct=NaN over=false
+rows	
+tier	lim=0 used=100 left=-100 pct=0 over=false
+monthly	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+tier	lim=100 used=99.995 left=0.0049999999999954525 pct=99.995 over=false
+tier	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	
+monthly	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	
+rows	trans:1,1:0,2:0
+rows	4294967295:952.3333333333334,2:0,trans:0,food:NaN
+rows	a:0
+rows	4294967295:10.5,rent:0
+daily	lim=1e+21 used=-3 left=1e+21 pct=-3e-19 over=false
+rows	food:0
+rows	
+rows	:0
+rows	
+daily	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+tier	lim=1e+21 used=1 left=1e+21 pct=9.999999999999999e-20 over=false
+rows	
+monthly	lim=100 used=0 left=100 pct=0 over=false
+rows	10:10500000
+rows	1:9.999999999999999e+26,2:0
+total	0.1
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+monthly	lim=0 used=97 left=-97 pct=0 over=false
+monthly	lim=0 used=0 left=0 pct=0 over=false
+total	10.5
+rows	:99995000,a:0
+monthly	lim=0 used=194 left=-194 pct=0 over=false
+rows	a:9.523809523809524
+today	0
+daily	lim=100 used=10.5 left=89.5 pct=10.5 over=false
+monthly	lim=1 used=299.99 left=-298.99 pct=29999 over=true
+monthly	lim=100 used=0 left=100 pct=0 over=false
+tier	lim=0.0001 used=100 left=-99.9999 pct=100000000 over=true
+rows	:0,01:-3000000
+monthly	lim=10.5 used=1.1 left=9.4 pct=10.476190476190476 over=false
+today	0.1
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+total	0
+today	0
+rows	Z:1e+21,a:0
+rows	10:0,Z:0
+daily	lim=0 used=10.5 left=-10.5 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	
+daily	lim=1 used=0 left=1 pct=0 over=false
+total	0
+monthly	lim=100 used=NaN left=NaN pct=NaN over=false
+monthly	lim=100 used=1 left=99 pct=1 over=false
+tier	lim=0 used=0.1 left=-0.1 pct=0 over=false
+total	100
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+monthly	lim=0 used=0 left=0 pct=0 over=false
+rows	10:0
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+monthly	lim=0 used=-3 left=3 pct=0 over=false
+today	100
+total	0
+today	0
+tier	lim=1 used=-3 left=4 pct=-300 over=false
+monthly	lim=100 used=NaN left=NaN pct=NaN over=false
+rows	
+today	0
+rows	1:0,10:0
+rows	
+total	1e+21
+monthly	lim=1 used=0 left=1 pct=0 over=false
+monthly	lim=100 used=99.995 left=0.0049999999999954525 pct=99.995 over=false
+today	0
+monthly	lim=1 used=1e+21 left=-1e+21 pct=1e+23 over=true
+rows	food:1e+21,1:0,rent:0
+tier	lim=0.0001 used=1e+21 left=-1e+21 pct=9.999999999999999e+26 over=true
+today	NaN
+total	99.995
+daily	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=1 used=0 left=1 pct=0 over=false
+rows	1:199.99
+daily	lim=1 used=0 left=1 pct=0 over=false
+rows	
+rows	a:0,01:0,Z:0
+today	0
+monthly	lim=1 used=1.1 left=-0.10000000000000009 pct=110.00000000000001 over=true
+monthly	lim=1e+21 used=NaN left=NaN pct=NaN over=false
+total	1
+rows	trans:0,Z:0,a:NaN
+rows	1:0,10:0,rent:0
+today	NaN
+today	0
+tier	lim=0 used=0 left=0 pct=0 over=false
+rows	
+today	0
+rows	1:110.495,:0,Z:0
+rows	10:0,a:0
+daily	lim=1 used=0 left=1 pct=0 over=false
+rows	2:100
+rows	
+daily	lim=0 used=0 left=0 pct=0 over=false
+today	-3
+monthly	lim=0 used=100.995 left=-100.995 pct=0 over=false
+rows	2:0,01:0,10:NaN
+monthly	lim=100 used=0.1 left=99.9 pct=0.1 over=false
+rows	1:0,4294967295:0
+today	0
+tier	lim=0 used=-3 left=3 pct=0 over=false
+total	1e+21
+total	-6
+total	0
+rows	food:0,a:0
+total	0.1
+daily	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	1:100,4294967295:0,Z:0
+today	0
+monthly	lim=0 used=97.995 left=-97.995 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+monthly	lim=1 used=200.095 left=-199.095 pct=20009.5 over=true
+total	0
+rows	:NaN
+total	0
+monthly	lim=1 used=0 left=1 pct=0 over=false
+rows	4294967295:1e+21,:NaN
+monthly	lim=1e+21 used=NaN left=NaN pct=NaN over=false
+rows	a:-3
+tier	lim=1 used=1 left=0 pct=100 over=false
+tier	lim=0 used=0 left=0 pct=0 over=false
+rows	
+rows	
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	10:0
+tier	lim=0.0001 used=99.995 left=-99.9949 pct=99995000 over=true
+today	0
+tier	lim=1e+21 used=1e+21 left=0 pct=100 over=false
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	Z:0
+total	NaN
+total	97
+rows	2:0,Z:0
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	2:0,10:0,4294967295:0
+monthly	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+today	0
+today	0
+rows	:0,4294967295:0
+rows	4294967295:0,rent:0,Z:0,01:0,food:NaN
+total	7.5
+total	0
+monthly	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+monthly	lim=1 used=NaN left=NaN pct=NaN over=false
+today	0
+total	1e+21
+today	0
+today	0
+daily	lim=1 used=0 left=1 pct=0 over=false
+today	0
+rows	01:0
+monthly	lim=0 used=1 left=-1 pct=0 over=false
+today	0
+rows	
+today	0
+monthly	lim=1 used=100.1 left=-99.1 pct=10010 over=true
+today	0.1
+rows	01:0,:0,Z:0,food:0
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+rows	
+daily	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=100 used=0 left=100 pct=0 over=false
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+today	0
+tier	lim=0 used=-3 left=3 pct=0 over=false
+rows	a:0.1
+total	1e+21
+rows	01:-300
+rows	rent:0
+tier	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+tier	lim=100 used=-3 left=103 pct=-3 over=false
+total	1e+21
+total	0
+tier	lim=10.5 used=NaN left=NaN pct=NaN over=false
+rows	4294967295:923.8095238095237,1:0
+rows	2:0,rent:0
+monthly	lim=1 used=NaN left=NaN pct=NaN over=false
+today	0
+total	0
+rows	2:0,rent:0
+today	0
+today	0
+daily	lim=100 used=0 left=100 pct=0 over=false
+tier	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	food:0,rent:0
+total	0
+total	NaN
+total	0
+monthly	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+today	0
+total	1e+21
+total	97
+rows	trans:100,10:0
+rows	
+tier	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+tier	lim=0 used=100 left=-100 pct=0 over=false
+rows	food:0,4294967295:0
+rows	food:0
+total	NaN
+rows	4294967295:0,rent:0
+monthly	lim=100 used=0 left=100 pct=0 over=false
+rows	a:0,trans:0
+tier	lim=10.5 used=NaN left=NaN pct=NaN over=false
+daily	lim=10.5 used=10.5 left=0 pct=100 over=false
+today	0
+rows	10:0
+monthly	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=0.0001 used=10.5 left=-10.4999 pct=10500000 over=true
+total	1
+tier	lim=1 used=1e+21 left=-1e+21 pct=1e+23 over=true
+monthly	lim=100 used=10.5 left=89.5 pct=10.5 over=false
+rows	
+rows	Z:0,a:0,:0
+rows	1:0,2:0
+tier	lim=100 used=0.1 left=99.9 pct=0.1 over=false
+rows	01:0,food:0
+total	10.5
+total	110.495
+today	0
+today	NaN
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+tier	lim=1 used=99.995 left=-98.995 pct=9999.5 over=true
+today	0
+total	1e+21
+total	100
+monthly	lim=0 used=NaN left=NaN pct=0 over=false
+today	0
+monthly	lim=100 used=1 left=99 pct=1 over=false
+rows	1:0,01:0,rent:0,4294967295:0,Z:NaN
+rows	10:0
+rows	rent:10500000,10:100000,trans:10,food:0
+today	100
+daily	lim=1 used=0 left=1 pct=0 over=false
+monthly	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+monthly	lim=10.5 used=100 left=-89.5 pct=952.3809523809524 over=true
+total	1
+rows	
+tier	lim=10.5 used=10.5 left=0 pct=100 over=false
+rows	a:9999.5,Z:110.5,2:0,4294967295:0
+total	NaN
+monthly	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+total	99.995
+today	0
+rows	1:0
+rows	
+monthly	lim=10.5 used=0 left=10.5 pct=0 over=false
+tier	lim=0 used=10.5 left=-10.5 pct=0 over=false
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+monthly	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+total	0
+monthly	lim=1e+21 used=99.995 left=1e+21 pct=9.999500000000001e-18 over=false
+tier	lim=0 used=100 left=-100 pct=0 over=false
+total	0
+monthly	lim=1 used=NaN left=NaN pct=NaN over=false
+today	199.995
+rows	a:9.523809523809525e+21
+daily	lim=1 used=0.1 left=0.9 pct=10 over=false
+tier	lim=1 used=-3 left=4 pct=-300 over=false
+tier	lim=1 used=NaN left=NaN pct=NaN over=false
+daily	lim=0 used=1 left=-1 pct=0 over=false
+daily	lim=1 used=0 left=1 pct=0 over=false
+monthly	lim=100 used=1 left=99 pct=1 over=false
+rows	1:0,trans:0,Z:0
+total	0
+daily	lim=0 used=99.995 left=-99.995 pct=0 over=false
+rows	rent:0
+total	1e+21
+today	0
+tier	lim=100 used=0 left=100 pct=0 over=false
+rows	Z:1,2:0
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	Z:0,food:0,01:0
+rows	2:0.1,1:0,4294967295:0,01:0,rent:0
+rows	trans:0
+rows	
+rows	1:0,a:0,4294967295:0
+monthly	lim=1 used=-3 left=4 pct=-300 over=false
+total	100
+rows	:0
+total	10.5
+rows	1:10
+daily	lim=100 used=0 left=100 pct=0 over=false
+tier	lim=0 used=0.1 left=-0.1 pct=0 over=false
+today	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+today	0
+total	1e+21
+tier	lim=100 used=-3 left=103 pct=-3 over=false
+tier	lim=10.5 used=0 left=10.5 pct=0 over=false
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+monthly	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=1e+21 used=10.5 left=1e+21 pct=1.05e-18 over=false
+rows	
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	2:0,10:0
+total	99.995
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+today	0
+tier	lim=10.5 used=0.1 left=10.4 pct=0.9523809523809524 over=false
+monthly	lim=100 used=0 left=100 pct=0 over=false
+tier	lim=10.5 used=99.995 left=-89.495 pct=952.3333333333334 over=true
+total	99.995
+monthly	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+tier	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+today	0
+monthly	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=1 used=97 left=-96 pct=9700 over=true
+rows	2:0,a:0
+monthly	lim=1e+21 used=NaN left=NaN pct=NaN over=false
+total	10.5
+rows	:0,rent:-3
+tier	lim=0 used=10.5 left=-10.5 pct=0 over=false
+rows	
+rows	a:10
+rows	
+today	0
+tier	lim=10.5 used=10.5 left=0 pct=100 over=false
+monthly	lim=10.5 used=0 left=10.5 pct=0 over=false
+rows	2:0
+rows	
+monthly	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=0 used=10.5 left=-10.5 pct=0 over=false
+today	0
+today	0
+tier	lim=1 used=1 left=0 pct=100 over=false
+monthly	lim=1 used=NaN left=NaN pct=NaN over=false
+rows	
+daily	lim=1 used=0 left=1 pct=0 over=false
+monthly	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=1 used=1e+21 left=-1e+21 pct=1e+23 over=true
+today	0
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	a:0.9523809523809524,:0,Z:0,4294967295:0,01:0
+rows	
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+tier	lim=0 used=100 left=-100 pct=0 over=false
+rows	10:0.1,rent:0,Z:0
+rows	2:1e+23,10:0,01:NaN
+rows	
+total	0
+total	0.1
+today	1e+21
+total	NaN
+total	99.995
+daily	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=100 used=0.1 left=99.9 pct=0.1 over=false
+monthly	lim=0 used=1.2 left=-1.2 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+today	0
+total	0
+today	0
+rows	2:0,trans:0
+rows	10:0,trans:0,rent:0
+total	NaN
+today	0
+tier	lim=1 used=10.5 left=-9.5 pct=1050 over=true
+rows	trans:0
+tier	lim=0 used=NaN left=NaN pct=0 over=false
+tier	lim=0.0001 used=10.5 left=-10.4999 pct=10500000 over=true
+today	0
+tier	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+daily	lim=0 used=10.5 left=-10.5 pct=0 over=false
+rows	Z:1,food:0,:0
+tier	lim=100 used=100 left=0 pct=100 over=false
+rows	1:0,10:0,rent:0,a:0
+total	NaN
+daily	lim=1 used=0 left=1 pct=0 over=false
+total	1e+21
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	1:0,2:0,rent:0,01:0,:0
+rows	rent:0,food:0
+total	0
+today	0
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+monthly	lim=1 used=-3 left=4 pct=-300 over=false
+tier	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=1 used=99.995 left=-98.995 pct=9999.5 over=true
+rows	
+rows	
+monthly	lim=0.0001 used=1 left=-0.9999 pct=1000000 over=true
+rows	
+monthly	lim=10.5 used=1e+21 left=-1e+21 pct=9.523809523809525e+21 over=true
+rows	4294967295:1.10495e-17
+today	0
+rows	01:0,:0,a:0,4294967295:0
+today	0
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+total	0
+rows	food:0,4294967295:0,:0
+tier	lim=0 used=-3 left=3 pct=0 over=false
+rows	1:0,a:0,rent:0,:0
+rows	
+monthly	lim=0 used=0 left=0 pct=0 over=false
+today	0
+monthly	lim=1e+21 used=1e+21 left=0 pct=100 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	rent:0,a:0,Z:0
+monthly	lim=1 used=99.995 left=-98.995 pct=9999.5 over=true
+rows	10:71.42857142857143
+rows	
+total	2e+21
+rows	2:0,4294967295:0,:0
+daily	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	01:0.1,food:0,Z:0
+total	0
+monthly	lim=100 used=0 left=100 pct=0 over=false
+tier	lim=0 used=99.995 left=-99.995 pct=0 over=false
+total	0
+rows	
+tier	lim=1e+21 used=100 left=1e+21 pct=9.999999999999999e-18 over=false
+today	0
+daily	lim=1e+21 used=NaN left=NaN pct=NaN over=false
+rows	Z:0,4294967295:0
+daily	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+tier	lim=0.0001 used=100 left=-99.9999 pct=100000000 over=true
+rows	01:1,a:0,Z:0,4294967295:0
+tier	lim=10.5 used=NaN left=NaN pct=NaN over=false
+rows	a:NaN
+total	2
+today	0
+tier	lim=100 used=0 left=100 pct=0 over=false
+rows	Z:10.5
+rows	01:0
+rows	1:0,rent:0,01:0
+monthly	lim=0 used=100 left=-100 pct=0 over=false
+rows	10:9999.5,a:NaN
+rows	01:0,trans:0,1:NaN
+daily	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=0 used=10.5 left=-10.5 pct=0 over=false
+monthly	lim=0 used=100.1 left=-100.1 pct=0 over=false
+daily	lim=1 used=0 left=1 pct=0 over=false
+monthly	lim=0.0001 used=101.095 left=-101.0949 pct=101094999.99999999 over=true
+rows	
+rows	
+total	0
+today	0
+tier	lim=0.0001 used=0.1 left=-0.0999 pct=100000 over=true
+total	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	
+rows	
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+today	0
+rows	4294967295:952.3809523809524,10:0,a:0,:0
+today	0
+tier	lim=10.5 used=0.1 left=10.4 pct=0.9523809523809524 over=false
+tier	lim=10.5 used=1 left=9.5 pct=9.523809523809524 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	10:0,4294967295:0
+monthly	lim=1e+21 used=1 left=1e+21 pct=9.999999999999999e-20 over=false
+rows	10:0
+tier	lim=0.0001 used=100 left=-99.9999 pct=100000000 over=true
+tier	lim=0.0001 used=99.995 left=-99.9949 pct=99995000 over=true
+daily	lim=100 used=0 left=100 pct=0 over=false
+monthly	lim=100 used=310.485 left=-210.485 pct=310.485 over=true
+monthly	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+total	0
+rows	
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	food:0,rent:0
+monthly	lim=100 used=100 left=0 pct=100 over=false
+rows	
+rows	
+today	0.1
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+tier	lim=10.5 used=1e+21 left=-1e+21 pct=9.523809523809525e+21 over=true
+rows	01:99995000,rent:0.1,1:0,10:0
+total	NaN
+total	99.995
+rows	1:0,10:0,Z:0
+total	10.5
+total	NaN
+monthly	lim=100 used=1e+21 left=-1e+21 pct=1e+21 over=true
+today	0
+today	0
+total	99.995
+tier	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=100 used=NaN left=NaN pct=NaN over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+total	99.995
+daily	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=100 used=0.1 left=99.9 pct=0.1 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+tier	lim=100 used=0.1 left=99.9 pct=0.1 over=false
+total	99.995
+rows	
+total	0.1
+today	0
+total	0.1
+rows	food:1e+23,a:0
+rows	01:0
+today	-3
+monthly	lim=0 used=12.5 left=-12.5 pct=0 over=false
+monthly	lim=100 used=3 left=97 pct=3 over=false
+rows	trans:9.999999999999999e+26
+monthly	lim=0 used=0.5 left=-0.5 pct=0 over=false
+rows	01:0
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+tier	lim=0.0001 used=NaN left=NaN pct=NaN over=false
+today	0
+rows	10:0
+today	0
+rows	2:0,food:-3
+tier	lim=1 used=0.1 left=0.9 pct=10 over=false
+rows	a:0,:0
+rows	2:9.999999999999999e+26,rent:0,Z:0
+tier	lim=100 used=0.1 left=99.9 pct=0.1 over=false
+tier	lim=0.0001 used=1e+21 left=-1e+21 pct=9.999999999999999e+26 over=true
+monthly	lim=1 used=0 left=1 pct=0 over=false
+total	0
+monthly	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+tier	lim=0 used=0 left=0 pct=0 over=false
+rows	food:0,4294967295:0,trans:0
+rows	4294967295:0,01:0,a:0,trans:0
+rows	
+today	0
+total	100
+today	0
+rows	rent:0,food:0
+today	0
+today	0
+today	0
+today	0
+monthly	lim=10.5 used=0 left=10.5 pct=0 over=false
+today	0
+total	110.5
+monthly	lim=10.5 used=0 left=10.5 pct=0 over=false
+total	0
+monthly	lim=100 used=0 left=100 pct=0 over=false
+rows	rent:0,trans:0
+today	0
+rows	rent:0,:0
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+total	1e+21
+rows	
+rows	2:0,rent:0,a:0,food:0
+monthly	lim=100 used=1 left=99 pct=1 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+total	0
+rows	2:0,a:0,4294967295:0
+monthly	lim=0 used=10.5 left=-10.5 pct=0 over=false
+rows	rent:0,food:0
+rows	trans:0
+monthly	lim=1e+21 used=0.1 left=1e+21 pct=1.0000000000000001e-20 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=100 used=NaN left=NaN pct=NaN over=false
+total	-3
+tier	lim=1 used=0 left=1 pct=0 over=false
+rows	
+monthly	lim=1 used=NaN left=NaN pct=NaN over=false
+total	1
+monthly	lim=0 used=100.095 left=-100.095 pct=0 over=false
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	a:10.5,rent:0,food:0
+today	0
+rows	10:100,food:0
+today	0
+tier	lim=100 used=99.995 left=0.0049999999999954525 pct=99.995 over=false
+today	0
+rows	01:0,food:0,rent:0
+total	100
+today	0
+rows	
+total	NaN
+rows	rent:99.995
+today	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	Z:0,a:0,01:0
+tier	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+monthly	lim=100 used=0 left=100 pct=0 over=false
+monthly	lim=100 used=NaN left=NaN pct=NaN over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+today	99.995
+today	0
+total	0
+total	99.995
+rows	1:0
+monthly	lim=1 used=100.095 left=-99.095 pct=10009.5 over=true
+rows	Z:1.105e-17,trans:0,rent:0,01:0
+tier	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+tier	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+tier	lim=100 used=10.5 left=89.5 pct=10.5 over=false
+tier	lim=1e+21 used=1 left=1e+21 pct=9.999999999999999e-20 over=false
+tier	lim=100 used=1 left=99 pct=1 over=false
+rows	1:0,2:0,01:0
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	1:0,:0,4294967295:0
+total	296.995
+total	1e+21
+tier	lim=0 used=1 left=-1 pct=0 over=false
+rows	2:0,trans:0,food:0,rent:0
+rows	10:0
+today	0
+rows	food:0.1,:1.05e-18,10:0,a:0
+monthly	lim=1 used=0 left=1 pct=0 over=false
+total	0
+total	10.5
+rows	:0,10:NaN
+rows	2:0,Z:0,:-3e-19
+rows	rent:11050,4294967295:0,food:0,a:0,01:0
+total	0
+total	0
+daily	lim=0 used=-3 left=3 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	2:0,01:0,trans:0
+rows	rent:1.0000000000000001e-20
+today	0
+today	0
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+daily	lim=0 used=10.5 left=-10.5 pct=0 over=false
+total	0
+tier	lim=1e+21 used=1e+21 left=0 pct=100 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+monthly	lim=100 used=1 left=99 pct=1 over=false
+daily	lim=0 used=100 left=-100 pct=0 over=false
+today	0
+rows	01:0,rent:0
+rows	2:0,rent:0
+daily	lim=1 used=0 left=1 pct=0 over=false
+tier	lim=1 used=100 left=-99 pct=10000 over=true
+rows	a:0
+rows	
+total	NaN
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	rent:0
+tier	lim=100 used=NaN left=NaN pct=NaN over=false
+rows	10:0,trans:0,4294967295:0,01:0
+tier	lim=100 used=0 left=100 pct=0 over=false
+rows	food:0,01:0
+rows	rent:0,trans:0
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+total	99.995
+monthly	lim=100 used=0 left=100 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	4294967295:1e+21
+rows	
+today	0
+daily	lim=1 used=0 left=1 pct=0 over=false
+rows	
+total	96.995
+total	100.995
+total	7.5
+monthly	lim=1e+21 used=0.1 left=1e+21 pct=1.0000000000000001e-20 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+today	0
+rows	:0,trans:NaN
+monthly	lim=0 used=-3 left=3 pct=0 over=false
+monthly	lim=0 used=96.995 left=-96.995 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+rows	trans:99.995,:10.5,Z:0,4294967295:0
+daily	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=10.5 used=0 left=10.5 pct=0 over=false
+monthly	lim=0 used=NaN left=NaN pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	:0,01:0
+monthly	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=1e+21 used=NaN left=NaN pct=NaN over=false
+rows	food:9.999999999999999e+26,10:0,a:0
+total	-6
+today	0
+today	0
+total	0
+tier	lim=1 used=1 left=0 pct=100 over=false
+tier	lim=10.5 used=100 left=-89.5 pct=952.3809523809524 over=true
+rows	10:100000
+rows	
+today	10.5
+today	0
+today	0
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	a:9.999999999999999e-20
+rows	
+rows	
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+tier	lim=0 used=NaN left=NaN pct=0 over=false
+monthly	lim=0 used=-2 left=2 pct=0 over=false
+monthly	lim=100 used=1e+21 left=-1e+21 pct=1e+21 over=true
+rows	food:10.5
+daily	lim=0 used=0 left=0 pct=0 over=false
+today	0
+today	0
+rows	2:1,10:0
+tier	lim=0 used=-3 left=3 pct=0 over=false
+rows	10:0,trans:0
+rows	
+rows	:0,Z:0,rent:0
+tier	lim=0.0001 used=1 left=-0.9999 pct=1000000 over=true
+tier	lim=0 used=0.1 left=-0.1 pct=0 over=false
+rows	10:0
+tier	lim=0 used=99.995 left=-99.995 pct=0 over=false
+monthly	lim=10.5 used=100 left=-89.5 pct=952.3809523809524 over=true
+rows	2:0,Z:0,trans:0
+tier	lim=10.5 used=-3 left=13.5 pct=-28.57142857142857 over=false
+today	0
+daily	lim=100 used=0 left=100 pct=0 over=false
+monthly	lim=0.0001 used=NaN left=NaN pct=NaN over=false
+rows	a:NaN
+rows	:0,Z:NaN
+tier	lim=0.0001 used=99.995 left=-99.9949 pct=99995000 over=true
+daily	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=100 used=NaN left=NaN pct=NaN over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+monthly	lim=0 used=99.995 left=-99.995 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+today	0
+today	0.1
+today	0
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+rows	:99995000
+rows	1:99.995
+daily	lim=0 used=0 left=0 pct=0 over=false
+total	1e+21
+rows	
+today	0
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+total	1e+21
+monthly	lim=10.5 used=1 left=9.5 pct=9.523809523809524 over=false
+total	1e+21
+tier	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+total	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+tier	lim=0 used=99.995 left=-99.995 pct=0 over=false
+tier	lim=0 used=0.1 left=-0.1 pct=0 over=false
+rows	food:1e+21
+daily	lim=0 used=0 left=0 pct=0 over=false
+today	0
+today	0
+today	0
+total	0
+daily	lim=100 used=0 left=100 pct=0 over=false
+tier	lim=10.5 used=-3 left=13.5 pct=-28.57142857142857 over=false
+today	0
+today	0
+monthly	lim=100 used=0 left=100 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=1e+21 used=NaN left=NaN pct=NaN over=false
+tier	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+tier	lim=100 used=1 left=99 pct=1 over=false
+monthly	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+today	0
+daily	lim=1 used=0 left=1 pct=0 over=false
+rows	rent:0,food:0,01:0
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	01:0
+tier	lim=0.0001 used=1e+21 left=-1e+21 pct=9.999999999999999e+26 over=true
+tier	lim=10.5 used=NaN left=NaN pct=NaN over=false
+total	NaN
+today	10.5
+today	0
+tier	lim=10.5 used=99.995 left=-89.495 pct=952.3333333333334 over=true
+daily	lim=0 used=100 left=-100 pct=0 over=false
+rows	rent:10099.5
+rows	4294967295:0,a:0,rent:0
+daily	lim=100 used=0 left=100 pct=0 over=false
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+today	0
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	
+total	10.5
+tier	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+tier	lim=10.5 used=-3 left=13.5 pct=-28.57142857142857 over=false
+rows	10:0,:0
+daily	lim=0 used=-3 left=3 pct=0 over=false
+rows	rent:0,Z:0
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	01:0
+daily	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=1e+21 used=100 left=1e+21 pct=9.999999999999999e-18 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	trans:0,Z:0,01:0
+rows	10:0,01:0
+rows	2:0,:0,rent:0
+total	1
+rows	2:0,4294967295:0
+today	0
+total	1
+rows	2:NaN
+total	101
+total	NaN
+tier	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+daily	lim=1 used=0 left=1 pct=0 over=false
+today	0
+monthly	lim=10.5 used=NaN left=NaN pct=NaN over=false
+total	2
+rows	10:0,01:0,a:0,:0
+tier	lim=10.5 used=1e+21 left=-1e+21 pct=9.523809523809525e+21 over=true
+total	1
+total	100.095
+rows	4294967295:0,01:-3
+monthly	lim=10.5 used=NaN left=NaN pct=NaN over=false
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	:1,1:0,4294967295:0
+today	0
+rows	2:0,10:0
+monthly	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+today	0
+daily	lim=100 used=0 left=100 pct=0 over=false
+monthly	lim=100 used=NaN left=NaN pct=NaN over=false
+today	0
+today	0
+today	0
+monthly	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=10.5 used=10.5 left=0 pct=100 over=false
+rows	rent:0,a:0
+tier	lim=0 used=0 left=0 pct=0 over=false
+rows	01:1050
+tier	lim=1e+21 used=NaN left=NaN pct=NaN over=false
+tier	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+rows	
+rows	2:0,rent:0,a:0,01:0,food:-28.57142857142857
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+today	0
+tier	lim=10.5 used=-3 left=13.5 pct=-28.57142857142857 over=false
+rows	4294967295:952.3333333333334,2:100.99500000000002,10:0,food:0
+tier	lim=0 used=0.1 left=-0.1 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+total	NaN
+monthly	lim=0 used=0 left=0 pct=0 over=false
+rows	a:9.999999999999999e-20,2:0,Z:0,trans:0
+rows	10:0,:0
+monthly	lim=0 used=0 left=0 pct=0 over=false
+rows	
+today	0
+rows	food:0
+tier	lim=0 used=0.1 left=-0.1 pct=0 over=false
+tier	lim=0.0001 used=-3 left=3.0001 pct=-3000000 over=false
+total	0.1
+monthly	lim=0.0001 used=100 left=-99.9999 pct=100000000 over=true
+monthly	lim=1e+21 used=NaN left=NaN pct=NaN over=false
+monthly	lim=1 used=0 left=1 pct=0 over=false
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+today	-3
+total	0
+daily	lim=1 used=0 left=1 pct=0 over=false
+total	-3
+daily	lim=100 used=0 left=100 pct=0 over=false
+total	0
+tier	lim=1 used=NaN left=NaN pct=NaN over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=1 used=NaN left=NaN pct=NaN over=false
+rows	1:0,:0,a:0
+rows	:0
+total	1e+21
+today	0
+tier	lim=100 used=0 left=100 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	10:0,Z:0,trans:0
+total	0
+tier	lim=10.5 used=99.995 left=-89.495 pct=952.3333333333334 over=true
+tier	lim=0 used=-3 left=3 pct=0 over=false
+rows	trans:0
+total	0
+daily	lim=1 used=0 left=1 pct=0 over=false
+today	0
+rows	
+today	1
+monthly	lim=0 used=0 left=0 pct=0 over=false
+today	100
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	:1e+23,10:952.3809523809524,01:0
+today	0
+rows	trans:0
+monthly	lim=1e+21 used=2e+21 left=-1e+21 pct=200 over=true
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	
+rows	rent:0.9523809523809524,01:9.999500000000001e-18,10:0,a:0,4294967295:0
+monthly	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=1e+21 used=-3 left=1e+21 pct=-3e-19 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=0 used=100.095 left=-100.095 pct=0 over=false
+tier	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	01:1e+21
+rows	Z:0,a:0
+total	0
+tier	lim=100 used=99.995 left=0.0049999999999954525 pct=99.995 over=false
+rows	2:0,trans:0
+daily	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=1 used=-6 left=7 pct=-600 over=false
+rows	
+rows	a:0.1,rent:0,:0
+today	0
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+monthly	lim=0 used=99.995 left=-99.995 pct=0 over=false
+tier	lim=100 used=1e+21 left=-1e+21 pct=1e+21 over=true
+rows	1:0,2:0,10:0,a:0
+today	0
+rows	Z:0
+tier	lim=100 used=-3 left=103 pct=-3 over=false
+tier	lim=1 used=1 left=0 pct=100 over=false
+today	0
+today	10.5
+tier	lim=0 used=1 left=-1 pct=0 over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+monthly	lim=0.0001 used=-2 left=2.0001 pct=-2000000 over=false
+rows	trans:0
+total	1e+21
+rows	
+total	0
+rows	trans:0,rent:0
+today	0
+today	0
+monthly	lim=1e+21 used=100.1 left=1e+21 pct=1.0009999999999998e-17 over=false
+rows	a:0
+daily	lim=0 used=0.1 left=-0.1 pct=0 over=false
+monthly	lim=100 used=100.095 left=-0.09499999999999886 pct=100.095 over=true
+rows	food:0,:NaN
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+monthly	lim=10.5 used=-3 left=13.5 pct=-28.57142857142857 over=false
+today	0
+tier	lim=1 used=0 left=1 pct=0 over=false
+total	0
+tier	lim=1 used=0 left=1 pct=0 over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+monthly	lim=1 used=0 left=1 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+monthly	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+today	0
+rows	
+total	1e+21
+total	0
+total	-3
+rows	
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+rows	1:0,trans:0,Z:NaN
+total	1
+monthly	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+tier	lim=0.0001 used=-3 left=3.0001 pct=-3000000 over=false
+tier	lim=0.0001 used=10.5 left=-10.4999 pct=10500000 over=true
+tier	lim=100 used=1 left=99 pct=1 over=false
+tier	lim=100 used=NaN left=NaN pct=NaN over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	10:0,trans:0,01:0,Z:0,rent:-3e-19
+rows	4294967295:0
+rows	trans:100
+daily	lim=100 used=0 left=100 pct=0 over=false
+today	0
+total	100
+total	10.5
+today	0
+tier	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+monthly	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+today	0
+today	0
+rows	food:0,Z:0
+today	0
+rows	1:1.0000000000000001e-20,10:0,rent:0,a:0
+total	0
+rows	Z:-3,food:NaN
+tier	lim=0.0001 used=-3 left=3.0001 pct=-3000000 over=false
+tier	lim=1 used=NaN left=NaN pct=NaN over=false
+monthly	lim=1 used=1e+21 left=-1e+21 pct=1e+23 over=true
+tier	lim=1 used=NaN left=NaN pct=NaN over=false
+rows	:0
+rows	rent:1.0000000000000001e-20
+daily	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=0 used=1 left=-1 pct=0 over=false
+rows	a:1050
+rows	01:-3e-19
+daily	lim=1 used=0 left=1 pct=0 over=false
+today	0
+total	-2
+rows	rent:0,a:0,trans:0,food:0
+monthly	lim=100 used=2e+21 left=-2e+21 pct=2e+21 over=true
+rows	2:0
+rows	
+today	0
+tier	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+tier	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	01:0
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+rows	a:10000,trans:0,01:0
+today	0
+today	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=1 used=10.5 left=-9.5 pct=1050 over=true
+rows	:0,01:0
+rows	:0,4294967295:0,a:0,rent:NaN
+rows	01:0,trans:-3
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	
+rows	trans:0.1,4294967295:0,Z:-3e-19
+today	0
+rows	1:1,a:0,4294967295:0,rent:0
+rows	:0
+monthly	lim=0 used=-3 left=3 pct=0 over=false
+total	NaN
+total	NaN
+rows	01:1.0000000000000001e-20,2:0,a:0
+monthly	lim=0 used=10.5 left=-10.5 pct=0 over=false
+rows	food:99.995,01:0,4294967295:0,a:0
+total	99.995
+daily	lim=0 used=0 left=0 pct=0 over=false
+today	0
+rows	10:1000000,Z:0
+rows	
+tier	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	rent:0,01:0,a:0
+rows	a:NaN
+rows	01:0,food:0
+total	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+today	0
+monthly	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	Z:0,rent:0,4294967295:0
+daily	lim=100 used=0 left=100 pct=0 over=false
+total	1
+today	0
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+total	101.095
+rows	rent:0,a:0,Z:0
+tier	lim=1e+21 used=10.5 left=1e+21 pct=1.05e-18 over=false
+rows	
+rows	1:0,:0
+monthly	lim=10.5 used=NaN left=NaN pct=NaN over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+today	0
+tier	lim=10.5 used=10.5 left=0 pct=100 over=false
+monthly	lim=1 used=1 left=0 pct=100 over=false
+rows	01:0
+rows	2:0,4294967295:0,:0,rent:NaN
+total	0
+tier	lim=0 used=NaN left=NaN pct=0 over=false
+monthly	lim=1 used=NaN left=NaN pct=NaN over=false
+rows	2:0,01:0,a:0
+rows	2:100,a:0
+total	NaN
+rows	01:11500000
+tier	lim=10.5 used=-3 left=13.5 pct=-28.57142857142857 over=false
+monthly	lim=100 used=0 left=100 pct=0 over=false
+rows	10:0,food:0,trans:0,Z:0,4294967295:0
+rows	Z:0
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	10:0,food:0,01:0
+rows	2:0,Z:0,a:0,:0
+today	0
+today	0
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+tier	lim=1e+21 used=NaN left=NaN pct=NaN over=false
+monthly	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	4294967295:9.999999999999999e+26,1:0,01:0,a:0
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+monthly	lim=1 used=111.5 left=-110.5 pct=11150 over=true
+rows	
+today	1
+today	0
+today	0
+monthly	lim=10.5 used=110.495 left=-99.995 pct=1052.3333333333333 over=true
+monthly	lim=100 used=1e+21 left=-1e+21 pct=1e+21 over=true
+total	1
+today	0
+rows	trans:0,:0
+rows	01:0,rent:0
+today	0
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+monthly	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	food:9.523809523809525e+21,trans:0
+monthly	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=1 used=1e+21 left=-1e+21 pct=1e+23 over=true
+today	0
+today	10.5
+monthly	lim=0.0001 used=99.995 left=-99.9949 pct=99995000 over=true
+total	0
+today	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	2:0,Z:0,:0
+tier	lim=10.5 used=100 left=-89.5 pct=952.3809523809524 over=true
+rows	
+monthly	lim=0 used=100 left=-100 pct=0 over=false
+today	0
+rows	
+rows	trans:0,4294967295:0,Z:0
+rows	
+rows	10:0,Z:0,:0
+today	10.5
+daily	lim=0 used=0 left=0 pct=0 over=false
+today	0
+rows	01:100,1:0,Z:0,food:NaN
+monthly	lim=0 used=0 left=0 pct=0 over=false
+rows	food:0
+today	0
+today	0
+total	NaN
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+rows	10:100,2:0
+daily	lim=100 used=0 left=100 pct=0 over=false
+tier	lim=0 used=0.1 left=-0.1 pct=0 over=false
+total	99.995
+today	0
+rows	food:99995000,4294967295:-3e-19
+rows	10:0,4294967295:0,a:0
+tier	lim=10.5 used=10.5 left=0 pct=100 over=false
+tier	lim=100 used=1 left=99 pct=1 over=false
+tier	lim=1 used=100 left=-99 pct=10000 over=true
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+total	1
+monthly	lim=1 used=22 left=-21 pct=2200 over=true
+today	100
+total	NaN
+tier	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=10.5 used=-2.9 left=13.4 pct=-27.61904761904762 over=false
+monthly	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=10.5 used=0.1 left=10.4 pct=0.9523809523809524 over=false
+rows	
+monthly	lim=0 used=NaN left=NaN pct=0 over=false
+total	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	rent:0,:0
+today	0
+tier	lim=0.0001 used=NaN left=NaN pct=NaN over=false
+tier	lim=0.0001 used=-3 left=3.0001 pct=-3000000 over=false
+rows	rent:0,:0
+total	110.5
+rows	01:0
+rows	10:0,:0,1:-2
+monthly	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=1 used=-3 left=4 pct=-300 over=false
+total	NaN
+daily	lim=10.5 used=1e+21 left=-1e+21 pct=9.523809523809525e+21 over=true
+monthly	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	1:1e+23,food:0,a:0,:0,01:0
+today	0
+today	0
+today	0.1
+daily	lim=1e+21 used=10.5 left=1e+21 pct=1.05e-18 over=false
+monthly	lim=100 used=0 left=100 pct=0 over=false
+tier	lim=0 used=100 left=-100 pct=0 over=false
+rows	10:0
+rows	
+monthly	lim=10.5 used=0 left=10.5 pct=0 over=false
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+today	0
+rows	01:0
+tier	lim=100 used=10.5 left=89.5 pct=10.5 over=false
+tier	lim=100 used=0 left=100 pct=0 over=false
+daily	lim=100 used=0.1 left=99.9 pct=0.1 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+daily	lim=100 used=100 left=0 pct=100 over=false
+rows	1:0
+total	NaN
+daily	lim=1 used=0 left=1 pct=0 over=false
+monthly	lim=0 used=0.1 left=-0.1 pct=0 over=false
+monthly	lim=100 used=NaN left=NaN pct=NaN over=false
+rows	01:0
+monthly	lim=1e+21 used=0.1 left=1e+21 pct=1.0000000000000001e-20 over=false
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	
+today	0
+rows	food:0,rent:0
+rows	01:0
+rows	
+monthly	lim=10.5 used=-3 left=13.5 pct=-28.57142857142857 over=false
+rows	food:0
+monthly	lim=0.0001 used=-2 left=2.0001 pct=-2000000 over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+total	NaN
+today	1e+21
+tier	lim=0.0001 used=10.5 left=-10.4999 pct=10500000 over=true
+rows	1:0,2:0,trans:0
+total	97
+tier	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+daily	lim=100 used=99.995 left=0.0049999999999954525 pct=99.995 over=false
+tier	lim=10.5 used=NaN left=NaN pct=NaN over=false
+rows	2:0
+rows	1:100
+tier	lim=1 used=-3 left=4 pct=-300 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+monthly	lim=10.5 used=11.5 left=-1 pct=109.52380952380953 over=true
+daily	lim=0 used=0 left=0 pct=0 over=false
+today	0
+today	NaN
+tier	lim=1 used=0.1 left=0.9 pct=10 over=false
+rows	a:0
+monthly	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+monthly	lim=1e+21 used=NaN left=NaN pct=NaN over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+monthly	lim=0.0001 used=0.1 left=-0.0999 pct=100000 over=true
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	food:0,01:0,a:0
+total	101
+tier	lim=100 used=1 left=99 pct=1 over=false
+total	110.595
+rows	
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	Z:1.0000000000000001e-20
+rows	
+tier	lim=0 used=0.1 left=-0.1 pct=0 over=false
+monthly	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+rows	
+today	0
+rows	1:0,Z:-300
+monthly	lim=0 used=0 left=0 pct=0 over=false
+rows	2:0.9523809523809524,food:0
+rows	1:1,4294967295:0
+daily	lim=0 used=100 left=-100 pct=0 over=false
+rows	Z:100,1:0,:0
+rows	2:0
+monthly	lim=100 used=1 left=99 pct=1 over=false
+tier	lim=0 used=NaN left=NaN pct=0 over=false
+monthly	lim=10.5 used=0 left=10.5 pct=0 over=false
+monthly	lim=0 used=0 left=0 pct=0 over=false
+total	0
+total	10.5
+rows	
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+total	NaN
+monthly	lim=0.0001 used=NaN left=NaN pct=NaN over=false
+total	2e+21
+monthly	lim=100 used=97 left=3 pct=97 over=false
+tier	lim=1e+21 used=0.1 left=1e+21 pct=1.0000000000000001e-20 over=false
+monthly	lim=0.0001 used=1 left=-0.9999 pct=1000000 over=true
+tier	lim=1 used=0 left=1 pct=0 over=false
+tier	lim=0 used=0 left=0 pct=0 over=false
+today	0
+monthly	lim=0.0001 used=1e+21 left=-1e+21 pct=9.999999999999999e+26 over=true
+monthly	lim=0 used=99.995 left=-99.995 pct=0 over=false
+monthly	lim=0 used=0 left=0 pct=0 over=false
+rows	
+rows	1:0.1,:0,a:0
+today	0
+rows	food:0,Z:-28.57142857142857
+tier	lim=0 used=100 left=-100 pct=0 over=false
+today	0
+today	0
+rows	trans:0
+tier	lim=100 used=1 left=99 pct=1 over=false
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+total	0
+total	0
+today	0
+daily	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=1 used=0.1 left=0.9 pct=10 over=false
+rows	2:0,a:0,trans:0
+today	0
+rows	2:0,01:0
+rows	2:0,:0
+rows	1:100
+today	0
+rows	4294967295:0,a:0,01:0
+monthly	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+monthly	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+tier	lim=1 used=10.5 left=-9.5 pct=1050 over=true
+rows	10:0,4294967295:0,trans:0,food:0,:0
+total	0
+tier	lim=0.0001 used=10.5 left=-10.4999 pct=10500000 over=true
+monthly	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+daily	lim=10.5 used=0.1 left=10.4 pct=0.9523809523809524 over=false
+monthly	lim=1 used=0.1 left=0.9 pct=10 over=false
+today	0
+daily	lim=1e+21 used=1e+21 left=0 pct=100 over=false
+tier	lim=0 used=NaN left=NaN pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+monthly	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	4294967295:NaN
+monthly	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+total	2e+21
+today	0
+rows	food:0
+monthly	lim=1 used=10.5 left=-9.5 pct=1050 over=true
+monthly	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+tier	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+today	0
+today	0
+tier	lim=0 used=10.5 left=-10.5 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	
+daily	lim=100 used=0 left=100 pct=0 over=false
+tier	lim=100 used=0 left=100 pct=0 over=false
+tier	lim=1 used=0 left=1 pct=0 over=false
+rows	1:0,2:0,01:0,4294967295:0
+rows	
+rows	
+rows	
+monthly	lim=0 used=100.095 left=-100.095 pct=0 over=false
+daily	lim=1 used=0 left=1 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=1 used=NaN left=NaN pct=NaN over=false
+rows	a:0,Z:0
+total	10.6
+rows	
+monthly	lim=10.5 used=1e+21 left=-1e+21 pct=9.523809523809525e+21 over=true
+rows	food:0
+rows	10:9.523809523809524,2:0
+monthly	lim=100 used=NaN left=NaN pct=NaN over=false
+today	0
+total	NaN
+total	10.5
+rows	:0
+rows	Z:10.5
+tier	lim=0 used=99.995 left=-99.995 pct=0 over=false
+today	0
+total	0
+tier	lim=100 used=99.995 left=0.0049999999999954525 pct=99.995 over=false
+monthly	lim=1e+21 used=10.5 left=1e+21 pct=1.05e-18 over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+rows	2:0,10:0,:0,food:NaN
+rows	Z:0,4294967295:0
+rows	
+today	0
+tier	lim=1e+21 used=1 left=1e+21 pct=9.999999999999999e-20 over=false
+tier	lim=0 used=NaN left=NaN pct=0 over=false
+rows	4294967295:10500000,2:0,rent:0
+total	1e+21
+tier	lim=1e+21 used=NaN left=NaN pct=NaN over=false
+monthly	lim=0 used=10.5 left=-10.5 pct=0 over=false
+rows	:0
+monthly	lim=0.0001 used=100 left=-99.9999 pct=100000000 over=true
+daily	lim=100 used=0 left=100 pct=0 over=false
+rows	trans:9.999999999999999e+26
+rows	1:0,10:0,food:0,01:0
+monthly	lim=100 used=7.5 left=92.5 pct=7.5 over=false
+today	0
+rows	10:0
+rows	10:0,food:0,01:0
+total	NaN
+rows	2:0,food:0
+monthly	lim=100 used=NaN left=NaN pct=NaN over=false
+today	99.995
+monthly	lim=100 used=10.5 left=89.5 pct=10.5 over=false
+rows	
+total	100.1
+total	0.1
+total	0
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+tier	lim=100 used=1 left=99 pct=1 over=false
+rows	
+rows	a:100000,food:99.995,10:0,rent:0
+rows	1:0,10:0,rent:0
+rows	
+rows	trans:1800,food:0,01:0
+rows	10:0,rent:0,Z:0
+rows	10:100
+total	NaN
+tier	lim=100 used=0.1 left=99.9 pct=0.1 over=false
+rows	rent:0
+tier	lim=1e+21 used=99.995 left=1e+21 pct=9.999500000000001e-18 over=false
+today	-3
+monthly	lim=1e+21 used=100.995 left=1e+21 pct=1.0099500000000001e-17 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	10:0
+total	NaN
+rows	rent:0
+total	0
+tier	lim=100 used=99.995 left=0.0049999999999954525 pct=99.995 over=false
+monthly	lim=0 used=0 left=0 pct=0 over=false
+today	100
+rows	a:9999.5
+tier	lim=0 used=1 left=-1 pct=0 over=false
+monthly	lim=100 used=0 left=100 pct=0 over=false
+rows	
+today	0
+daily	lim=1 used=0 left=1 pct=0 over=false
+total	NaN
+rows	
+monthly	lim=0.0001 used=100 left=-99.9999 pct=100000000 over=true
+tier	lim=100 used=10.5 left=89.5 pct=10.5 over=false
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+total	NaN
+rows	a:0,rent:0
+rows	
+rows	food:0,a:0
+rows	2:0,trans:0
+rows	10:1,rent:0,:0
+tier	lim=100 used=1e+21 left=-1e+21 pct=1e+21 over=true
+today	0
+today	0
+daily	lim=1e+21 used=0 left=1e+21 pct=0 over=false
+rows	:1.1,trans:NaN
+rows	01:0,food:0,a:0
+monthly	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=10.5 used=0.1 left=10.4 pct=0.9523809523809524 over=false
+total	NaN
+today	0
+rows	
+tier	lim=10.5 used=NaN left=NaN pct=NaN over=false
+tier	lim=0.0001 used=NaN left=NaN pct=NaN over=false
+rows	01:0
+tier	lim=0.0001 used=0.1 left=-0.0999 pct=100000 over=true
+daily	lim=0 used=0 left=0 pct=0 over=false
+rows	1:0,01:0
+tier	lim=1 used=1e+21 left=-1e+21 pct=1e+23 over=true
+rows	2:10500000,1:0,:0
+today	0
+today	0
+today	0
+rows	2:0,a:0
+total	1e+21
+today	0
+rows	1:0,2:0,a:0,rent:0
+rows	:100
+monthly	lim=0 used=99.995 left=-99.995 pct=0 over=false
+tier	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+monthly	lim=1 used=-3 left=4 pct=-300 over=false
+monthly	lim=0 used=1 left=-1 pct=0 over=false
+rows	trans:0
+today	0
+tier	lim=0.0001 used=10.5 left=-10.4999 pct=10500000 over=true
+tier	lim=0 used=1 left=-1 pct=0 over=false
+rows	
+daily	lim=0 used=0 left=0 pct=0 over=false
+total	0
+total	1e+21
+today	0
+monthly	lim=0 used=0 left=0 pct=0 over=false
+total	NaN
+rows	
+total	0
+daily	lim=100 used=0 left=100 pct=0 over=false
+tier	lim=0 used=1 left=-1 pct=0 over=false
+rows	4294967295:9.999999999999999e-20
+rows	a:0,Z:0
+rows	1:0
+daily	lim=0 used=1e+21 left=-1e+21 pct=0 over=false
+daily	lim=0 used=99.995 left=-99.995 pct=0 over=false
+total	0
+rows	01:0
+monthly	lim=0 used=NaN left=NaN pct=0 over=false
+today	0
+rows	10:9.6995e-18
+rows	:0,rent:0
+rows	food:952.3809523809524,01:9.999999999999999e-18,trans:0
+tier	lim=10.5 used=0.1 left=10.4 pct=0.9523809523809524 over=false
+daily	lim=0 used=0 left=0 pct=0 over=false
+today	0
+rows	01:0,:0,4294967295:0
+rows	1:100,food:10.5,a:0,Z:0
+total	7.5
+tier	lim=0 used=NaN left=NaN pct=0 over=false
+total	NaN
+tier	lim=100 used=1e+21 left=-1e+21 pct=1e+21 over=true
+rows	1:0,4294967295:0,trans:0,a:0
+today	0
+tier	lim=0 used=10.5 left=-10.5 pct=0 over=false
+total	0
+rows	2:0,food:0,trans:0
+tier	lim=1 used=-3 left=4 pct=-300 over=false
+tier	lim=1e+21 used=1e+21 left=0 pct=100 over=false
+total	0
+rows	a:10,4294967295:9.999999999999999e-20,01:0,food:0
+rows	
+daily	lim=10.5 used=0 left=10.5 pct=0 over=false
+rows	
+daily	lim=1 used=0 left=1 pct=0 over=false
+monthly	lim=100 used=0.1 left=99.9 pct=0.1 over=false
+tier	lim=0 used=0 left=0 pct=0 over=false
+daily	lim=100 used=0 left=100 pct=0 over=false
+total	1e+21
+total	NaN
+daily	lim=0 used=0 left=0 pct=0 over=false
+tier	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+rows	2:0.1,:-3
+rows	4294967295:0
+total	110.495
+daily	lim=0.0001 used=0 left=0.0001 pct=0 over=false
+monthly	lim=100 used=0 left=100 pct=0 over=false
+rows	trans:0
+tier	lim=0 used=50 left=-50 pct=0 over=false
+tier	lim=0 used=50 left=-50 pct=0 over=false
+tier	lim=100 used=100 left=0 pct=100 over=false
+rows	zed:0,alpha:0,mid:0
+rows	1:0,2:0,10:0
+rows	2:0,10:0,b:0,a:0
+rows	1:0,z:0,4294967295:0
+rows	b:0,a:NaN
+total	0
+rows	

@@ -1,0 +1,4829 @@
+streak	1
+recap	exp=10.5 inc=0.1 net=-10.4 n=4 active=4 top=trans topAmt=10.5
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+recap	exp=0 inc=0 net=0 n=1 active=1 top=trans topAmt=0
+weekly	spent=10.5 left=90 over=false days=1 daily=14.357142857142858
+dailyeq	-0.14285714285714285
+weekly	spent=0 left=NaN over=false days=1 daily=NaN
+streak	0
+recap	exp=1e+21 inc=0 net=-1e+21 n=6 active=6 top=rent topAmt=1e+21
+weekrange	2025-12-28..2026-01-04
+weekly	spent=0 left=7 over=false days=7 daily=1
+streak	1
+weekly	spent=0 left=100.5 over=false days=4 daily=14.357142857142858
+weekly	spent=1e+21 left=-1e+21 over=true days=1 daily=1
+weekly	spent=10.5 left=-3.5 over=true days=6 daily=1
+weekly	spent=0.1 left=100.4 over=false days=6 daily=14.357142857142858
+recap	exp=1e+21 inc=1 net=-1e+21 n=3 active=3 top= topAmt=0
+weekrange	2026-06-14..2026-06-21
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+recap	exp=1e+21 inc=0 net=-1e+21 n=8 active=7 top=food topAmt=1e+21
+recap	exp=NaN inc=NaN net=NaN n=6 active=6 top=food topAmt=10.5
+dailyeq	142857142857142860000
+weekrange	2026-06-14..2026-06-21
+streak	0
+weekly	spent=100 left=1e+21 over=false days=7 daily=142857142857142860000
+dailyeq	10
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+recap	exp=11.5 inc=NaN net=NaN n=8 active=5 top=trans topAmt=11.5
+weekly	spent=-3 left=NaN over=false days=7 daily=NaN
+weekrange	2026-06-07..2026-06-14
+weekly	spent=110.5 left=NaN over=false days=7 daily=NaN
+recap	exp=NaN inc=-3 net=NaN n=8 active=6 top= topAmt=0
+weekly	spent=0.1 left=-1.1 over=false days=1 daily=-0.14285714285714285
+weekly	spent=0 left=-1 over=false days=6 daily=-0.14285714285714285
+weekly	spent=0 left=NaN over=false days=4 daily=NaN
+weekly	spent=100 left=NaN over=false days=7 daily=NaN
+weekly	spent=0 left=70 over=false days=4 daily=10
+weekly	spent=0 left=1e+21 over=false days=4 daily=142857142857142860000
+weekly	spent=1 left=-2 over=false days=1 daily=-0.14285714285714285
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+dailyeq	142857142857142860000
+weekly	spent=0 left=7 over=false days=3 daily=1
+streak	1
+dailyeq	10
+streak	1
+weekrange	2024-02-25..2024-03-03
+weekrange	2026-01-25..2026-02-01
+weekly	spent=0 left=-1 over=false days=1 daily=-0.14285714285714285
+weekly	spent=0 left=0 over=false days=6 daily=0
+weekrange	2026-06-14..2026-06-21
+streak	0
+streak	0
+weekly	spent=0 left=-1 over=false days=4 daily=-0.14285714285714285
+weekly	spent=0 left=7 over=false days=7 daily=1
+streak	0
+streak	3
+dailyeq	1
+dailyeq	0
+dailyeq	142857142857142860000
+streak	1
+weekly	spent=-3 left=1e+21 over=false days=7 daily=142857142857142860000
+recap	exp=0.1 inc=0 net=-0.1 n=3 active=3 top=trans topAmt=0.1
+weekly	spent=0 left=70 over=false days=4 daily=10
+weekly	spent=1 left=-2 over=false days=3 daily=-0.14285714285714285
+streak	2
+streak	4
+weekrange	2026-06-14..2026-06-21
+weekrange	2026-05-31..2026-06-07
+recap	exp=NaN inc=0 net=NaN n=7 active=5 top=food topAmt=100
+weekrange	2026-06-07..2026-06-14
+streak	1
+weekly	spent=NaN left=NaN over=false days=1 daily=0
+streak	1
+weekly	spent=0 left=NaN over=false days=3 daily=NaN
+recap	exp=97.1 inc=-3 net=-100.1 n=6 active=5 top=2 topAmt=100
+recap	exp=0 inc=100 net=100 n=5 active=5 top=10 topAmt=0
+weekrange	2026-06-07..2026-06-14
+streak	0
+recap	exp=0 inc=0.1 net=0.1 n=3 active=3 top=01 topAmt=0
+streak	1
+weekly	spent=0.2 left=-1.2 over=false days=1 daily=-0.14285714285714285
+streak	0
+recap	exp=10.5 inc=1 net=-9.5 n=2 active=1 top= topAmt=0
+weekly	spent=0 left=-1 over=false days=4 daily=-0.14285714285714285
+dailyeq	NaN
+streak	0
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekly	spent=0 left=70 over=false days=3 daily=10
+weekly	spent=10.5 left=-10.5 over=false days=7 daily=0
+streak	0
+dailyeq	NaN
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+streak	0
+weekly	spent=1 left=-1 over=false days=7 daily=0
+dailyeq	14.357142857142858
+weekly	spent=0 left=70 over=false days=7 daily=10
+streak	2
+streak	0
+weekly	spent=NaN left=NaN over=false days=1 daily=10
+streak	0
+dailyeq	14.357142857142858
+weekrange	2024-02-25..2024-03-03
+dailyeq	NaN
+streak	0
+weekrange	2026-03-01..2026-03-08
+weekrange	2026-01-25..2026-02-01
+weekly	spent=0 left=-1 over=false days=3 daily=-0.14285714285714285
+weekrange	2025-12-28..2026-01-04
+recap	exp=NaN inc=0 net=NaN n=5 active=4 top=trans topAmt=1e+21
+weekly	spent=100 left=-101 over=false days=7 daily=-0.14285714285714285
+weekly	spent=100 left=-101 over=false days=7 daily=-0.14285714285714285
+dailyeq	1
+weekrange	2026-05-31..2026-06-07
+streak	0
+weekrange	2024-02-25..2024-03-03
+weekrange	2026-01-25..2026-02-01
+weekly	spent=-2 left=1 over=false days=4 daily=-0.14285714285714285
+weekly	spent=0 left=1e+21 over=false days=4 daily=142857142857142860000
+weekly	spent=0 left=1e+21 over=false days=1 daily=142857142857142860000
+weekly	spent=0 left=NaN over=false days=4 daily=NaN
+streak	0
+weekly	spent=0 left=7 over=false days=1 daily=1
+dailyeq	-0.14285714285714285
+weekly	spent=0 left=0 over=false days=6 daily=0
+recap	exp=100.1 inc=1e+21 net=1e+21 n=6 active=3 top=food topAmt=100
+weekly	spent=10.5 left=90 over=false days=4 daily=14.357142857142858
+streak	2
+weekrange	2026-06-07..2026-06-14
+recap	exp=0 inc=1 net=1 n=8 active=6 top=- topAmt=0
+weekly	spent=110.5 left=NaN over=false days=6 daily=NaN
+recap	exp=1e+21 inc=11.5 net=-1e+21 n=4 active=4 top=01 topAmt=1e+21
+streak	0
+dailyeq	NaN
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+recap	exp=0.1 inc=1e+21 net=1e+21 n=4 active=4 top=rent topAmt=0.1
+streak	0
+dailyeq	142857142857142860000
+recap	exp=2e+21 inc=0 net=-2e+21 n=3 active=3 top=10 topAmt=1e+21
+weekly	spent=11.5 left=89 over=false days=3 daily=14.357142857142858
+weekly	spent=0 left=7 over=false days=4 daily=1
+dailyeq	0
+streak	2
+weekrange	2026-05-31..2026-06-07
+weekly	spent=0 left=70 over=false days=7 daily=10
+weekly	spent=0.1 left=-0.1 over=false days=1 daily=0
+recap	exp=0 inc=-3 net=-3 n=1 active=1 top=- topAmt=0
+weekrange	2024-02-25..2024-03-03
+weekrange	2026-01-25..2026-02-01
+weekrange	2026-05-31..2026-06-07
+weekrange	2025-12-28..2026-01-04
+streak	0
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+dailyeq	10
+streak	1
+streak	0
+weekly	spent=0 left=0 over=false days=4 daily=0
+dailyeq	0
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+weekly	spent=10.6 left=-11.6 over=false days=4 daily=-0.14285714285714285
+weekrange	2024-02-25..2024-03-03
+streak	2
+recap	exp=110.5 inc=0 net=-110.5 n=8 active=6 top=food topAmt=100
+weekrange	2026-06-07..2026-06-14
+streak	0
+weekrange	2026-06-07..2026-06-14
+weekly	spent=10.5 left=-10.5 over=false days=4 daily=0
+streak	0
+streak	1
+weekly	spent=-2.9 left=2.9 over=false days=7 daily=0
+dailyeq	14.357142857142858
+streak	0
+weekly	spent=0 left=100.5 over=false days=4 daily=14.357142857142858
+recap	exp=97 inc=NaN net=NaN n=6 active=6 top= topAmt=0
+weekly	spent=1 left=NaN over=false days=4 daily=NaN
+weekly	spent=0 left=1e+21 over=false days=6 daily=142857142857142860000
+weekly	spent=0 left=0 over=false days=1 daily=0
+weekrange	2024-02-25..2024-03-03
+recap	exp=1e+21 inc=0 net=-1e+21 n=6 active=6 top=10 topAmt=1e+21
+streak	0
+weekrange	2026-06-14..2026-06-21
+streak	0
+dailyeq	1
+recap	exp=2 inc=0 net=-2 n=6 active=6 top=rent topAmt=1
+dailyeq	10
+streak	0
+weekly	spent=-3 left=103.5 over=false days=6 daily=14.357142857142858
+weekrange	2026-06-14..2026-06-21
+recap	exp=NaN inc=0 net=NaN n=7 active=5 top=food topAmt=0.1
+streak	1
+weekly	spent=0 left=0 over=false days=4 daily=0
+dailyeq	NaN
+weekly	spent=NaN left=NaN over=false days=7 daily=14.357142857142858
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+weekly	spent=0 left=70 over=false days=1 daily=10
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+weekly	spent=0 left=7 over=false days=4 daily=1
+dailyeq	NaN
+dailyeq	14.357142857142858
+recap	exp=111.5 inc=-3 net=-114.5 n=8 active=6 top=food topAmt=101
+weekly	spent=0 left=7 over=false days=3 daily=1
+recap	exp=0 inc=97 net=97 n=6 active=5 top=10 topAmt=0
+dailyeq	142857142857142860000
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+streak	0
+weekrange	2026-05-31..2026-06-07
+weekrange	2026-06-07..2026-06-14
+recap	exp=1e+21 inc=NaN net=NaN n=4 active=3 top=2 topAmt=1e+21
+recap	exp=NaN inc=0 net=NaN n=8 active=6 top= topAmt=0
+streak	0
+weekly	spent=0 left=-1 over=false days=4 daily=-0.14285714285714285
+streak	1
+streak	1
+weekrange	2025-12-28..2026-01-04
+weekly	spent=-6 left=13 over=false days=4 daily=1
+streak	1
+dailyeq	NaN
+recap	exp=NaN inc=0 net=NaN n=3 active=3 top=10 topAmt=-3
+weekly	spent=1e+21 left=0 over=false days=1 daily=142857142857142860000
+dailyeq	-0.14285714285714285
+dailyeq	NaN
+weekly	spent=NaN left=NaN over=false days=4 daily=-0.14285714285714285
+weekly	spent=100 left=-101 over=false days=6 daily=-0.14285714285714285
+weekly	spent=0 left=-1 over=false days=1 daily=-0.14285714285714285
+streak	0
+recap	exp=10.6 inc=1 net=-9.6 n=8 active=7 top= topAmt=0
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=7 over=false days=1 daily=1
+weekly	spent=NaN left=NaN over=false days=1 daily=0
+weekly	spent=0 left=70 over=false days=1 daily=10
+weekly	spent=0.1 left=69.9 over=false days=7 daily=10
+weekly	spent=0 left=0 over=false days=7 daily=0
+streak	1
+weekly	spent=0 left=-1 over=false days=1 daily=-0.14285714285714285
+weekly	spent=0.1 left=1e+21 over=false days=1 daily=142857142857142860000
+dailyeq	NaN
+streak	2
+streak	1
+dailyeq	10
+weekrange	2026-05-31..2026-06-07
+streak	1
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+weekrange	2026-06-07..2026-06-14
+weekrange	2024-02-25..2024-03-03
+dailyeq	142857142857142860000
+recap	exp=NaN inc=0 net=NaN n=3 active=3 top=food topAmt=0
+weekly	spent=10.5 left=-3.5 over=true days=7 daily=1
+weekly	spent=0 left=0 over=false days=4 daily=0
+dailyeq	NaN
+weekly	spent=10.5 left=NaN over=false days=1 daily=NaN
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+recap	exp=97.1 inc=0 net=-97.1 n=3 active=3 top=rent topAmt=100
+recap	exp=1 inc=1 net=0 n=3 active=3 top=01 topAmt=1
+recap	exp=0 inc=1e+21 net=1e+21 n=2 active=2 top=- topAmt=0
+streak	2
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+streak	1
+weekly	spent=NaN left=NaN over=false days=7 daily=14.357142857142858
+streak	0
+streak	1
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekrange	2026-05-31..2026-06-07
+streak	2
+streak	0
+streak	1
+dailyeq	142857142857142860000
+recap	exp=100 inc=0 net=-100 n=3 active=2 top=01 topAmt=100
+weekrange	2026-06-14..2026-06-21
+streak	0
+dailyeq	10
+streak	0
+streak	2
+weekly	spent=0 left=100.5 over=false days=3 daily=14.357142857142858
+weekly	spent=0.1 left=-1.1 over=false days=1 daily=-0.14285714285714285
+streak	0
+weekly	spent=0 left=70 over=false days=4 daily=10
+streak	0
+dailyeq	NaN
+recap	exp=0.1 inc=0 net=-0.1 n=3 active=3 top=01 topAmt=0.1
+streak	1
+weekrange	2026-05-31..2026-06-07
+weekly	spent=0 left=70 over=false days=7 daily=10
+recap	exp=-6 inc=0 net=6 n=4 active=3 top=01 topAmt=-3
+weekly	spent=0 left=7 over=false days=1 daily=1
+weekrange	2026-01-25..2026-02-01
+weekly	spent=0 left=100.5 over=false days=1 daily=14.357142857142858
+weekrange	2026-06-07..2026-06-14
+streak	0
+weekly	spent=0 left=1e+21 over=false days=4 daily=142857142857142860000
+weekrange	2024-02-25..2024-03-03
+dailyeq	10
+streak	0
+weekly	spent=100 left=-100 over=false days=7 daily=0
+weekly	spent=0 left=1e+21 over=false days=1 daily=142857142857142860000
+weekrange	2024-02-25..2024-03-03
+recap	exp=-3 inc=1 net=4 n=5 active=4 top=01 topAmt=0
+streak	2
+weekly	spent=NaN left=NaN over=false days=7 daily=142857142857142860000
+dailyeq	142857142857142860000
+streak	1
+dailyeq	1
+weekly	spent=1 left=99.5 over=false days=4 daily=14.357142857142858
+streak	2
+recap	exp=NaN inc=1e+21 net=NaN n=7 active=6 top=food topAmt=1
+streak	0
+recap	exp=100 inc=0 net=-100 n=1 active=1 top=2 topAmt=100
+streak	0
+streak	0
+streak	1
+weekrange	2024-02-25..2024-03-03
+streak	0
+streak	0
+dailyeq	-0.14285714285714285
+streak	0
+dailyeq	-0.14285714285714285
+streak	0
+dailyeq	14.357142857142858
+streak	0
+weekly	spent=0 left=0 over=false days=1 daily=0
+weekly	spent=0 left=70 over=false days=1 daily=10
+weekrange	2026-05-31..2026-06-07
+streak	3
+recap	exp=NaN inc=0 net=NaN n=4 active=4 top=10 topAmt=10.5
+weekly	spent=0 left=100.5 over=false days=6 daily=14.357142857142858
+weekrange	2026-06-07..2026-06-14
+weekrange	2024-02-25..2024-03-03
+recap	exp=NaN inc=0 net=NaN n=5 active=4 top= topAmt=0
+streak	0
+recap	exp=1e+21 inc=-3 net=-1e+21 n=6 active=6 top=10 topAmt=1e+21
+recap	exp=0 inc=0 net=0 n=5 active=5 top=trans topAmt=0
+weekly	spent=100 left=-30 over=true days=6 daily=10
+weekly	spent=NaN left=NaN over=false days=3 daily=NaN
+recap	exp=11.5 inc=-3 net=-14.5 n=6 active=4 top=01 topAmt=10.5
+recap	exp=1e+21 inc=0 net=-1e+21 n=8 active=7 top=01 topAmt=1e+21
+streak	0
+weekly	spent=0 left=100.5 over=false days=1 daily=14.357142857142858
+weekly	spent=0 left=7 over=false days=6 daily=1
+dailyeq	14.357142857142858
+streak	0
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+weekrange	2026-05-31..2026-06-07
+weekrange	2026-06-07..2026-06-14
+recap	exp=0 inc=0 net=0 n=7 active=6 top=2 topAmt=0
+weekly	spent=0 left=100.5 over=false days=4 daily=14.357142857142858
+streak	0
+weekly	spent=1e+21 left=NaN over=false days=6 daily=NaN
+dailyeq	1
+recap	exp=1 inc=0 net=-1 n=2 active=2 top=2 topAmt=1
+recap	exp=NaN inc=NaN net=NaN n=5 active=5 top=food topAmt=1
+weekrange	2026-06-07..2026-06-14
+streak	0
+dailyeq	-0.14285714285714285
+weekly	spent=0 left=NaN over=false days=1 daily=NaN
+streak	0
+streak	2
+weekly	spent=NaN left=NaN over=false days=1 daily=14.357142857142858
+recap	exp=101.1 inc=0 net=-101.1 n=5 active=5 top=10 topAmt=100
+recap	exp=10.5 inc=0 net=-10.5 n=1 active=1 top=trans topAmt=10.5
+dailyeq	-0.14285714285714285
+dailyeq	0
+weekrange	2026-02-22..2026-03-01
+streak	0
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekly	spent=0 left=7 over=false days=6 daily=1
+weekly	spent=0 left=100.5 over=false days=1 daily=14.357142857142858
+dailyeq	10
+streak	1
+dailyeq	14.357142857142858
+weekly	spent=1 left=99.5 over=false days=4 daily=14.357142857142858
+weekly	spent=0 left=0 over=false days=1 daily=0
+dailyeq	0
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=0 over=false days=1 daily=0
+weekly	spent=1e+21 left=-1e+21 over=true days=1 daily=10
+streak	0
+streak	0
+dailyeq	14.357142857142858
+dailyeq	14.357142857142858
+weekly	spent=NaN left=NaN over=false days=3 daily=0
+streak	0
+streak	2
+weekly	spent=100 left=-93 over=true days=1 daily=1
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+recap	exp=1e+21 inc=0 net=-1e+21 n=5 active=5 top=food topAmt=1e+21
+weekrange	2026-05-31..2026-06-07
+streak	0
+recap	exp=8.6 inc=100 net=91.4 n=7 active=6 top=trans topAmt=10.6
+weekly	spent=0 left=70 over=false days=7 daily=10
+weekly	spent=0 left=1e+21 over=false days=3 daily=142857142857142860000
+streak	0
+streak	0
+streak	2
+weekly	spent=0 left=70 over=false days=7 daily=10
+streak	0
+dailyeq	-0.14285714285714285
+weekrange	2026-06-07..2026-06-14
+streak	1
+weekrange	2026-02-01..2026-02-08
+streak	0
+weekly	spent=10.5 left=90 over=false days=7 daily=14.357142857142858
+weekly	spent=1 left=-1 over=false days=7 daily=0
+recap	exp=-3 inc=97 net=100 n=8 active=7 top=rent topAmt=-3
+weekly	spent=1 left=6 over=false days=3 daily=1
+recap	exp=97 inc=0 net=-97 n=4 active=4 top=2 topAmt=100
+weekly	spent=7.6 left=NaN over=false days=1 daily=NaN
+streak	0
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+dailyeq	142857142857142860000
+streak	0
+weekly	spent=110.5 left=NaN over=false days=3 daily=NaN
+dailyeq	142857142857142860000
+weekrange	2026-05-31..2026-06-07
+streak	0
+weekly	spent=0 left=-1 over=false days=4 daily=-0.14285714285714285
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+weekly	spent=NaN left=NaN over=false days=1 daily=-0.14285714285714285
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=7 over=false days=3 daily=1
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+dailyeq	NaN
+streak	1
+dailyeq	10
+streak	1
+weekrange	2026-02-01..2026-02-08
+weekly	spent=0.1 left=100.4 over=false days=6 daily=14.357142857142858
+weekrange	2026-05-31..2026-06-07
+streak	1
+weekly	spent=0.1 left=NaN over=false days=4 daily=NaN
+streak	1
+dailyeq	1
+streak	0
+streak	2
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+weekly	spent=0 left=-1 over=false days=4 daily=-0.14285714285714285
+weekly	spent=0 left=7 over=false days=6 daily=1
+streak	1
+streak	0
+streak	0
+weekly	spent=0 left=7 over=false days=7 daily=1
+streak	1
+dailyeq	142857142857142860000
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+streak	0
+dailyeq	142857142857142860000
+dailyeq	142857142857142860000
+weekly	spent=0 left=7 over=false days=4 daily=1
+streak	3
+streak	0
+streak	0
+streak	1
+weekrange	2026-05-31..2026-06-07
+streak	1
+weekly	spent=0.1 left=1e+21 over=false days=7 daily=142857142857142860000
+weekly	spent=0 left=0 over=false days=3 daily=0
+weekly	spent=0 left=1e+21 over=false days=1 daily=142857142857142860000
+weekly	spent=0 left=0 over=false days=3 daily=0
+weekrange	2026-06-14..2026-06-21
+recap	exp=NaN inc=0 net=NaN n=3 active=3 top=2 topAmt=1
+streak	0
+recap	exp=0 inc=0 net=0 n=2 active=2 top=- topAmt=0
+weekrange	2024-02-25..2024-03-03
+weekrange	2026-02-01..2026-02-08
+dailyeq	1
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+weekly	spent=0 left=100.5 over=false days=6 daily=14.357142857142858
+streak	1
+streak	1
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=7 over=false days=7 daily=1
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=1e+21 over=false days=4 daily=142857142857142860000
+dailyeq	0
+weekrange	2026-06-07..2026-06-14
+recap	exp=NaN inc=0 net=NaN n=2 active=2 top=trans topAmt=0
+streak	0
+recap	exp=1e+21 inc=NaN net=NaN n=8 active=6 top=trans topAmt=1e+21
+weekly	spent=0 left=100.5 over=false days=6 daily=14.357142857142858
+streak	1
+weekly	spent=0 left=NaN over=false days=6 daily=NaN
+streak	0
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+streak	0
+dailyeq	NaN
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+recap	exp=1 inc=0 net=-1 n=3 active=3 top=10 topAmt=1
+dailyeq	-0.14285714285714285
+weekly	spent=1 left=6 over=false days=4 daily=1
+streak	1
+streak	1
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+weekrange	2024-02-25..2024-03-03
+dailyeq	1
+recap	exp=0.1 inc=1 net=0.9 n=4 active=3 top= topAmt=0
+streak	1
+weekrange	2026-02-22..2026-03-01
+streak	1
+recap	exp=0 inc=0 net=0 n=3 active=3 top=- topAmt=0
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+dailyeq	NaN
+dailyeq	142857142857142860000
+recap	exp=NaN inc=0 net=NaN n=8 active=7 top= topAmt=0
+dailyeq	NaN
+streak	0
+weekly	spent=-2 left=2 over=false days=7 daily=0
+streak	2
+streak	0
+recap	exp=NaN inc=NaN net=NaN n=7 active=6 top=10 topAmt=NaN
+streak	0
+streak	0
+streak	4
+weekly	spent=0 left=0 over=false days=7 daily=0
+weekrange	2025-12-28..2026-01-04
+weekly	spent=0 left=1e+21 over=false days=4 daily=142857142857142860000
+dailyeq	1
+recap	exp=NaN inc=0.1 net=NaN n=6 active=6 top=10 topAmt=0.1
+streak	0
+weekly	spent=100 left=-93 over=true days=1 daily=1
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+streak	1
+streak	0
+streak	1
+streak	2
+dailyeq	0
+recap	exp=NaN inc=0 net=NaN n=2 active=2 top=10 topAmt=NaN
+weekly	spent=0 left=0 over=false days=3 daily=0
+recap	exp=0 inc=0 net=0 n=4 active=4 top=trans topAmt=0
+weekly	spent=1e+21 left=0 over=false days=3 daily=142857142857142860000
+recap	exp=122 inc=0 net=-122 n=7 active=6 top=trans topAmt=100
+streak	0
+weekly	spent=0 left=0 over=false days=3 daily=0
+weekrange	2026-03-01..2026-03-08
+weekrange	2026-06-07..2026-06-14
+weekly	spent=2 left=98.5 over=false days=1 daily=14.357142857142858
+streak	0
+dailyeq	0
+streak	3
+streak	0
+weekly	spent=10.5 left=-10.5 over=false days=4 daily=0
+weekrange	2026-06-14..2026-06-21
+dailyeq	0
+weekrange	2026-06-07..2026-06-14
+recap	exp=NaN inc=0 net=NaN n=1 active=1 top=rent topAmt=NaN
+weekly	spent=0 left=70 over=false days=4 daily=10
+streak	0
+recap	exp=NaN inc=10.5 net=NaN n=7 active=5 top=10 topAmt=1
+weekly	spent=1e+21 left=-1e+21 over=false days=1 daily=-0.14285714285714285
+streak	0
+streak	0
+weekrange	2025-12-28..2026-01-04
+weekly	spent=10.6 left=-3.5999999999999996 over=true days=3 daily=1
+dailyeq	142857142857142860000
+recap	exp=4.6 inc=0 net=-4.6 n=7 active=5 top=trans topAmt=10.5
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+weekly	spent=100 left=-30 over=true days=3 daily=10
+weekrange	2026-01-25..2026-02-01
+weekly	spent=0 left=100.5 over=false days=6 daily=14.357142857142858
+streak	0
+streak	1
+weekrange	2026-06-07..2026-06-14
+dailyeq	-0.14285714285714285
+streak	3
+weekly	spent=0 left=7 over=false days=7 daily=1
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+weekrange	2026-05-31..2026-06-07
+dailyeq	10
+streak	0
+streak	0
+weekly	spent=11.5 left=1e+21 over=false days=1 daily=142857142857142860000
+streak	1
+weekrange	2026-06-07..2026-06-14
+dailyeq	14.357142857142858
+recap	exp=0 inc=0 net=0 n=7 active=6 top=- topAmt=0
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=70 over=false days=3 daily=10
+dailyeq	NaN
+weekly	spent=0 left=100.5 over=false days=4 daily=14.357142857142858
+dailyeq	142857142857142860000
+weekrange	2026-02-22..2026-03-01
+weekly	spent=NaN left=NaN over=false days=4 daily=142857142857142860000
+weekly	spent=0 left=-1 over=false days=1 daily=-0.14285714285714285
+dailyeq	-0.14285714285714285
+streak	2
+streak	0
+weekly	spent=1e+21 left=-1e+21 over=false days=1 daily=-0.14285714285714285
+weekly	spent=0 left=70 over=false days=1 daily=10
+weekrange	2026-05-31..2026-06-07
+recap	exp=10.5 inc=0 net=-10.5 n=1 active=1 top=2 topAmt=10.5
+streak	0
+streak	1
+streak	0
+recap	exp=NaN inc=1.1 net=NaN n=7 active=6 top=01 topAmt=1e+21
+recap	exp=0 inc=0 net=0 n=3 active=3 top=- topAmt=0
+weekly	spent=-2.9 left=72.9 over=false days=7 daily=10
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=0 over=false days=6 daily=0
+weekrange	2026-02-01..2026-02-08
+streak	1
+dailyeq	0
+weekly	spent=0 left=NaN over=false days=4 daily=NaN
+recap	exp=101 inc=0 net=-101 n=3 active=2 top=10 topAmt=100
+streak	0
+recap	exp=NaN inc=NaN net=NaN n=5 active=5 top=2 topAmt=-3
+recap	exp=100 inc=0 net=-100 n=3 active=2 top= topAmt=0
+dailyeq	0
+streak	2
+weekly	spent=-2.8 left=2.8 over=false days=7 daily=0
+streak	2
+weekrange	2026-06-07..2026-06-14
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+weekrange	2026-06-14..2026-06-21
+weekrange	2026-06-07..2026-06-14
+weekrange	2026-03-01..2026-03-08
+streak	2
+streak	2
+weekly	spent=10.6 left=-11.6 over=false days=1 daily=-0.14285714285714285
+dailyeq	0
+recap	exp=0 inc=1e+21 net=1e+21 n=2 active=2 top=- topAmt=0
+dailyeq	14.357142857142858
+streak	1
+weekly	spent=0 left=7 over=false days=1 daily=1
+dailyeq	14.357142857142858
+streak	0
+recap	exp=NaN inc=0 net=NaN n=5 active=4 top=2 topAmt=0
+weekrange	2026-05-31..2026-06-07
+weekly	spent=10.5 left=-3.5 over=true days=4 daily=1
+recap	exp=NaN inc=11.5 net=NaN n=4 active=4 top=rent topAmt=0
+weekrange	2026-05-31..2026-06-07
+dailyeq	1
+weekly	spent=0 left=-1 over=false days=1 daily=-0.14285714285714285
+recap	exp=0 inc=0 net=0 n=4 active=4 top=rent topAmt=0
+dailyeq	-0.14285714285714285
+weekly	spent=0 left=0 over=false days=4 daily=0
+streak	0
+streak	0
+weekly	spent=1e+21 left=-1e+21 over=true days=7 daily=14.357142857142858
+weekrange	2026-05-31..2026-06-07
+dailyeq	14.357142857142858
+dailyeq	1
+weekly	spent=NaN left=NaN over=false days=7 daily=-0.14285714285714285
+weekrange	2026-06-14..2026-06-21
+recap	exp=10.5 inc=0 net=-10.5 n=3 active=3 top=10 topAmt=10.5
+recap	exp=1e+21 inc=0 net=-1e+21 n=6 active=5 top=10 topAmt=1e+21
+weekrange	2025-12-28..2026-01-04
+streak	1
+weekly	spent=0.1 left=1e+21 over=false days=7 daily=142857142857142860000
+dailyeq	-0.14285714285714285
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=0 over=false days=7 daily=0
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekly	spent=10.5 left=NaN over=false days=4 daily=NaN
+streak	0
+recap	exp=NaN inc=0 net=NaN n=5 active=5 top=rent topAmt=1e+21
+dailyeq	1
+weekrange	2026-01-25..2026-02-01
+weekrange	2026-06-14..2026-06-21
+recap	exp=-3 inc=0 net=3 n=2 active=2 top=food topAmt=-3
+weekly	spent=100 left=1e+21 over=false days=6 daily=142857142857142860000
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+streak	0
+weekly	spent=0 left=7 over=false days=3 daily=1
+streak	1
+weekly	spent=10.5 left=-3.5 over=true days=7 daily=1
+streak	1
+recap	exp=1 inc=0 net=-1 n=1 active=1 top= topAmt=0
+weekly	spent=-6 left=76 over=false days=7 daily=10
+weekrange	2026-05-31..2026-06-07
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+weekly	spent=0 left=100.5 over=false days=3 daily=14.357142857142858
+dailyeq	142857142857142860000
+streak	0
+recap	exp=1 inc=10.5 net=9.5 n=3 active=3 top=trans topAmt=1
+streak	1
+weekrange	2026-05-31..2026-06-07
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=7 over=false days=6 daily=1
+streak	1
+recap	exp=-3 inc=1e+21 net=1e+21 n=4 active=4 top=10 topAmt=0
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+weekrange	2026-06-07..2026-06-14
+weekrange	2026-02-01..2026-02-08
+streak	1
+streak	2
+streak	1
+dailyeq	142857142857142860000
+streak	0
+streak	0
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+streak	0
+weekly	spent=1 left=NaN over=false days=7 daily=NaN
+streak	0
+weekly	spent=0 left=7 over=false days=7 daily=1
+dailyeq	NaN
+streak	0
+weekrange	2025-12-28..2026-01-04
+streak	0
+weekly	spent=1 left=69 over=false days=1 daily=10
+dailyeq	-0.14285714285714285
+dailyeq	142857142857142860000
+streak	0
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+weekrange	2026-03-01..2026-03-08
+weekrange	2026-06-07..2026-06-14
+dailyeq	0
+streak	0
+recap	exp=21 inc=0 net=-21 n=6 active=6 top=trans topAmt=10.5
+streak	0
+recap	exp=1 inc=0 net=-1 n=2 active=2 top=trans topAmt=1
+weekrange	2026-02-22..2026-03-01
+streak	0
+dailyeq	0
+weekly	spent=0 left=7 over=false days=4 daily=1
+streak	0
+streak	0
+weekly	spent=0 left=100.5 over=false days=6 daily=14.357142857142858
+recap	exp=101 inc=0 net=-101 n=4 active=4 top=01 topAmt=100
+weekly	spent=10.5 left=59.5 over=false days=1 daily=10
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+streak	1
+weekly	spent=0 left=NaN over=false days=1 daily=NaN
+weekly	spent=1e+21 left=NaN over=false days=7 daily=NaN
+dailyeq	1
+streak	0
+streak	1
+recap	exp=-2.7 inc=0.1 net=2.8000000000000003 n=6 active=5 top=01 topAmt=0.1
+recap	exp=1e+21 inc=1e+21 net=0 n=6 active=6 top=food topAmt=1e+21
+weekly	spent=0 left=7 over=false days=7 daily=1
+streak	1
+streak	0
+weekly	spent=0 left=-1 over=false days=6 daily=-0.14285714285714285
+weekly	spent=0 left=1e+21 over=false days=1 daily=142857142857142860000
+streak	0
+streak	0
+weekly	spent=1e+21 left=-1e+21 over=true days=3 daily=10
+weekrange	2026-02-22..2026-03-01
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+dailyeq	0
+weekrange	2026-06-07..2026-06-14
+dailyeq	142857142857142860000
+dailyeq	NaN
+weekly	spent=0 left=7 over=false days=4 daily=1
+weekrange	2026-06-14..2026-06-21
+weekrange	2026-06-07..2026-06-14
+streak	0
+recap	exp=0 inc=1.1 net=1.1 n=5 active=5 top=- topAmt=0
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+weekly	spent=0 left=0 over=false days=6 daily=0
+weekrange	2025-12-28..2026-01-04
+weekly	spent=0 left=-1 over=false days=4 daily=-0.14285714285714285
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+dailyeq	142857142857142860000
+weekly	spent=0 left=7 over=false days=4 daily=1
+streak	0
+recap	exp=2e+21 inc=0.1 net=-2e+21 n=8 active=7 top=rent topAmt=1e+21
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+weekly	spent=0 left=0 over=false days=3 daily=0
+streak	1
+streak	1
+weekly	spent=0 left=0 over=false days=7 daily=0
+streak	0
+weekrange	2026-06-07..2026-06-14
+streak	0
+dailyeq	14.357142857142858
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+weekly	spent=NaN left=NaN over=false days=4 daily=0
+weekrange	2026-06-14..2026-06-21
+weekly	spent=0.1 left=-0.1 over=false days=4 daily=0
+weekly	spent=0 left=100.5 over=false days=3 daily=14.357142857142858
+weekly	spent=0 left=0 over=false days=4 daily=0
+recap	exp=97.1 inc=0.1 net=-97 n=8 active=7 top=trans topAmt=100
+recap	exp=0 inc=100 net=100 n=3 active=2 top=- topAmt=0
+weekly	spent=0 left=0 over=false days=7 daily=0
+weekly	spent=100 left=-93 over=true days=7 daily=1
+streak	0
+weekrange	2026-03-01..2026-03-08
+dailyeq	NaN
+weekly	spent=-3 left=73 over=false days=1 daily=10
+recap	exp=1e+21 inc=-3 net=-1e+21 n=8 active=6 top=food topAmt=1e+21
+streak	2
+recap	exp=1e+21 inc=10.6 net=-1e+21 n=7 active=5 top=01 topAmt=1e+21
+streak	1
+streak	0
+streak	0
+weekly	spent=0 left=0 over=false days=7 daily=0
+streak	1
+weekrange	2026-06-07..2026-06-14
+recap	exp=NaN inc=100 net=NaN n=7 active=6 top=01 topAmt=1e+21
+weekrange	2026-05-31..2026-06-07
+weekly	spent=0 left=NaN over=false days=3 daily=NaN
+weekly	spent=0 left=7 over=false days=4 daily=1
+streak	1
+weekrange	2026-02-01..2026-02-08
+streak	0
+weekly	spent=0 left=0 over=false days=4 daily=0
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+streak	0
+recap	exp=1e+21 inc=1e+21 net=0 n=7 active=6 top=10 topAmt=1e+21
+weekly	spent=0 left=70 over=false days=4 daily=10
+streak	1
+recap	exp=108.5 inc=0 net=-108.5 n=4 active=4 top=rent topAmt=100
+dailyeq	NaN
+weekrange	2026-06-07..2026-06-14
+dailyeq	NaN
+dailyeq	1
+weekrange	2025-12-28..2026-01-04
+streak	1
+weekly	spent=10.5 left=90 over=false days=1 daily=14.357142857142858
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+dailyeq	1
+weekly	spent=NaN left=NaN over=false days=1 daily=10
+streak	0
+recap	exp=1e+21 inc=NaN net=NaN n=2 active=2 top= topAmt=0
+streak	1
+streak	0
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+weekly	spent=10.5 left=NaN over=false days=3 daily=NaN
+streak	0
+weekrange	2026-01-25..2026-02-01
+streak	0
+dailyeq	0
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+weekrange	2026-06-07..2026-06-14
+recap	exp=108.5 inc=0 net=-108.5 n=5 active=4 top= topAmt=0
+weekly	spent=NaN left=NaN over=false days=4 daily=14.357142857142858
+weekly	spent=2 left=1e+21 over=false days=7 daily=142857142857142860000
+streak	0
+streak	1
+streak	0
+weekrange	2026-05-31..2026-06-07
+weekly	spent=1 left=1e+21 over=false days=6 daily=142857142857142860000
+recap	exp=10.6 inc=0.1 net=-10.5 n=8 active=6 top= topAmt=0
+recap	exp=0.2 inc=0 net=-0.2 n=8 active=7 top=rent topAmt=0.2
+dailyeq	1
+dailyeq	1
+weekly	spent=0 left=7 over=false days=6 daily=1
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+streak	0
+recap	exp=NaN inc=-3 net=NaN n=6 active=5 top=trans topAmt=10.5
+streak	1
+streak	0
+weekly	spent=0 left=NaN over=false days=1 daily=NaN
+weekly	spent=100 left=-30 over=true days=6 daily=10
+dailyeq	0
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+dailyeq	NaN
+streak	0
+dailyeq	0
+dailyeq	10
+weekly	spent=0 left=0 over=false days=7 daily=0
+weekrange	2025-12-28..2026-01-04
+dailyeq	NaN
+streak	0
+streak	1
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+streak	1
+weekly	spent=0 left=NaN over=false days=4 daily=NaN
+weekly	spent=0.1 left=-0.1 over=false days=7 daily=0
+dailyeq	0
+recap	exp=1e+21 inc=0.1 net=-1e+21 n=4 active=3 top=food topAmt=1e+21
+weekly	spent=0 left=0 over=false days=4 daily=0
+weekly	spent=0 left=-1 over=false days=4 daily=-0.14285714285714285
+weekly	spent=0 left=100.5 over=false days=3 daily=14.357142857142858
+dailyeq	0
+recap	exp=NaN inc=0.1 net=NaN n=7 active=7 top=rent topAmt=100
+weekrange	2026-02-01..2026-02-08
+weekrange	2026-06-07..2026-06-14
+weekrange	2024-02-25..2024-03-03
+dailyeq	0
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=70 over=false days=6 daily=10
+recap	exp=-1 inc=10.5 net=11.5 n=8 active=7 top=2 topAmt=1
+dailyeq	1
+weekly	spent=0 left=70 over=false days=3 daily=10
+streak	3
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+recap	exp=1e+21 inc=0 net=-1e+21 n=2 active=2 top=trans topAmt=1e+21
+recap	exp=1e+21 inc=100 net=-1e+21 n=7 active=6 top=trans topAmt=1e+21
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+weekly	spent=0 left=0 over=false days=1 daily=0
+weekrange	2026-03-01..2026-03-08
+weekly	spent=0 left=0 over=false days=4 daily=0
+weekly	spent=10.6 left=-3.5999999999999996 over=true days=4 daily=1
+dailyeq	1
+weekly	spent=-3 left=2 over=false days=3 daily=-0.14285714285714285
+streak	1
+weekly	spent=0 left=7 over=false days=3 daily=1
+streak	0
+weekly	spent=0 left=7 over=false days=3 daily=1
+recap	exp=0 inc=0 net=0 n=1 active=1 top=01 topAmt=0
+streak	0
+streak	3
+weekly	spent=0 left=7 over=false days=4 daily=1
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+weekrange	2026-06-14..2026-06-21
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekrange	2026-06-07..2026-06-14
+weekly	spent=100 left=-30 over=true days=4 daily=10
+streak	0
+dailyeq	0
+recap	exp=-3 inc=0 net=3 n=3 active=3 top=01 topAmt=-3
+weekrange	2026-02-01..2026-02-08
+streak	1
+recap	exp=NaN inc=NaN net=NaN n=8 active=7 top=trans topAmt=1e+21
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+weekrange	2026-01-25..2026-02-01
+dailyeq	10
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekrange	2026-02-22..2026-03-01
+weekly	spent=0.1 left=1e+21 over=false days=4 daily=142857142857142860000
+weekrange	2026-01-25..2026-02-01
+dailyeq	142857142857142860000
+streak	0
+weekly	spent=0 left=0 over=false days=6 daily=0
+weekrange	2026-01-25..2026-02-01
+weekrange	2026-05-31..2026-06-07
+dailyeq	1
+streak	0
+dailyeq	1
+weekly	spent=0 left=100.5 over=false days=4 daily=14.357142857142858
+weekly	spent=100 left=-30 over=true days=7 daily=10
+dailyeq	0
+streak	1
+weekrange	2025-12-28..2026-01-04
+weekly	spent=0 left=-1 over=false days=3 daily=-0.14285714285714285
+weekly	spent=1.1 left=-2.1 over=false days=7 daily=-0.14285714285714285
+streak	1
+streak	2
+streak	0
+weekrange	2026-03-01..2026-03-08
+streak	1
+dailyeq	NaN
+streak	0
+recap	exp=0.1 inc=1 net=0.9 n=3 active=3 top= topAmt=0
+weekly	spent=10.5 left=NaN over=false days=1 daily=NaN
+streak	2
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+dailyeq	10
+dailyeq	0
+weekrange	2026-06-07..2026-06-14
+recap	exp=-6 inc=0 net=6 n=3 active=3 top=2 topAmt=-6
+weekly	spent=10.5 left=-11.5 over=false days=1 daily=-0.14285714285714285
+streak	2
+weekly	spent=0 left=7 over=false days=1 daily=1
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+streak	0
+streak	0
+weekrange	2026-01-25..2026-02-01
+streak	0
+weekrange	2026-02-01..2026-02-08
+streak	1
+weekly	spent=0 left=100.5 over=false days=1 daily=14.357142857142858
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+dailyeq	-0.14285714285714285
+dailyeq	142857142857142860000
+dailyeq	14.357142857142858
+streak	0
+streak	0
+streak	0
+dailyeq	10
+streak	0
+streak	1
+recap	exp=21 inc=0 net=-21 n=4 active=3 top=rent topAmt=10.5
+dailyeq	142857142857142860000
+streak	1
+dailyeq	NaN
+streak	0
+weekrange	2026-06-07..2026-06-14
+recap	exp=100 inc=0 net=-100 n=1 active=1 top=01 topAmt=100
+streak	1
+streak	0
+dailyeq	142857142857142860000
+streak	0
+streak	0
+dailyeq	14.357142857142858
+weekrange	2024-02-25..2024-03-03
+weekrange	2024-02-25..2024-03-03
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+weekrange	2024-02-25..2024-03-03
+streak	0
+recap	exp=0 inc=100 net=100 n=3 active=3 top=- topAmt=0
+weekrange	2026-06-14..2026-06-21
+streak	0
+weekly	spent=1e+21 left=-1e+21 over=true days=4 daily=1
+streak	1
+recap	exp=11.5 inc=0 net=-11.5 n=3 active=3 top=food topAmt=10.5
+weekly	spent=1e+21 left=-1e+21 over=false days=1 daily=-0.14285714285714285
+recap	exp=200 inc=0 net=-200 n=2 active=2 top=2 topAmt=100
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+streak	1
+recap	exp=-3 inc=-3 net=0 n=5 active=4 top=10 topAmt=0
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+weekly	spent=0 left=70 over=false days=1 daily=10
+dailyeq	142857142857142860000
+weekly	spent=0 left=7 over=false days=4 daily=1
+streak	2
+weekly	spent=0 left=0 over=false days=7 daily=0
+recap	exp=NaN inc=0 net=NaN n=6 active=5 top=food topAmt=1e+21
+weekly	spent=0 left=0 over=false days=1 daily=0
+streak	0
+weekrange	2026-06-07..2026-06-14
+weekrange	2025-12-28..2026-01-04
+weekly	spent=1 left=1e+21 over=false days=1 daily=142857142857142860000
+weekrange	2026-03-01..2026-03-08
+recap	exp=0 inc=-3 net=-3 n=1 active=1 top=- topAmt=0
+weekly	spent=0 left=1e+21 over=false days=4 daily=142857142857142860000
+weekly	spent=0 left=NaN over=false days=3 daily=NaN
+dailyeq	14.357142857142858
+streak	2
+recap	exp=NaN inc=0 net=NaN n=8 active=6 top=01 topAmt=1
+weekly	spent=0 left=1e+21 over=false days=3 daily=142857142857142860000
+weekrange	2024-02-25..2024-03-03
+recap	exp=NaN inc=1 net=NaN n=7 active=6 top= topAmt=0
+weekly	spent=0.1 left=6.9 over=false days=4 daily=1
+weekrange	2026-06-14..2026-06-21
+streak	0
+streak	1
+weekrange	2026-01-25..2026-02-01
+weekly	spent=0 left=1e+21 over=false days=3 daily=142857142857142860000
+streak	0
+streak	0
+weekrange	2026-02-01..2026-02-08
+dailyeq	14.357142857142858
+dailyeq	NaN
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=1e+21 over=false days=4 daily=142857142857142860000
+weekly	spent=NaN left=NaN over=false days=1 daily=10
+dailyeq	1
+weekrange	2026-01-25..2026-02-01
+weekly	spent=0 left=0 over=false days=7 daily=0
+streak	0
+weekly	spent=0 left=7 over=false days=3 daily=1
+dailyeq	1
+streak	0
+streak	0
+recap	exp=97 inc=NaN net=NaN n=3 active=3 top=10 topAmt=100
+weekly	spent=0 left=1e+21 over=false days=3 daily=142857142857142860000
+streak	0
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+dailyeq	1
+weekly	spent=0 left=70 over=false days=7 daily=10
+streak	0
+streak	2
+streak	0
+weekly	spent=1e+21 left=-1e+21 over=true days=1 daily=1
+weekrange	2026-05-31..2026-06-07
+streak	0
+weekrange	2026-05-31..2026-06-07
+dailyeq	14.357142857142858
+weekly	spent=0 left=70 over=false days=7 daily=10
+streak	0
+weekrange	2024-02-25..2024-03-03
+streak	0
+recap	exp=NaN inc=0 net=NaN n=7 active=5 top=food topAmt=100
+streak	0
+weekrange	2026-06-07..2026-06-14
+streak	0
+weekrange	2026-06-14..2026-06-21
+weekly	spent=-3 left=2 over=false days=1 daily=-0.14285714285714285
+streak	0
+weekly	spent=0 left=1e+21 over=false days=4 daily=142857142857142860000
+streak	0
+streak	0
+recap	exp=1e+21 inc=0 net=-1e+21 n=4 active=4 top=trans topAmt=1e+21
+recap	exp=101 inc=0.1 net=-100.9 n=8 active=6 top=2 topAmt=100
+weekrange	2026-01-25..2026-02-01
+recap	exp=0 inc=0 net=0 n=5 active=4 top=2 topAmt=0
+recap	exp=NaN inc=0 net=NaN n=7 active=5 top=10 topAmt=1
+streak	0
+dailyeq	14.357142857142858
+weekrange	2026-06-07..2026-06-14
+streak	1
+recap	exp=1.1 inc=NaN net=NaN n=8 active=7 top=food topAmt=1
+recap	exp=-6 inc=2 net=8 n=6 active=4 top=2 topAmt=0
+weekrange	2026-06-07..2026-06-14
+dailyeq	1
+streak	0
+weekly	spent=0 left=7 over=false days=3 daily=1
+dailyeq	0
+weekly	spent=0 left=7 over=false days=7 daily=1
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+dailyeq	1
+weekly	spent=100 left=0.5 over=false days=1 daily=14.357142857142858
+streak	1
+weekrange	2026-06-14..2026-06-21
+dailyeq	NaN
+recap	exp=11.5 inc=0 net=-11.5 n=6 active=5 top=01 topAmt=11.5
+streak	4
+weekrange	2025-12-28..2026-01-04
+weekrange	2026-02-01..2026-02-08
+streak	1
+recap	exp=1e+21 inc=NaN net=NaN n=6 active=5 top= topAmt=0
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+streak	0
+weekly	spent=0 left=-1 over=false days=4 daily=-0.14285714285714285
+weekly	spent=100 left=-100 over=false days=3 daily=0
+streak	2
+dailyeq	0
+recap	exp=100.1 inc=0 net=-100.1 n=8 active=8 top=trans topAmt=100
+weekly	spent=0 left=7 over=false days=3 daily=1
+streak	1
+streak	1
+weekrange	2025-12-28..2026-01-04
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+streak	1
+streak	1
+dailyeq	10
+weekly	spent=100 left=NaN over=false days=4 daily=NaN
+recap	exp=10.5 inc=0 net=-10.5 n=1 active=1 top=2 topAmt=10.5
+streak	0
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekly	spent=0 left=0 over=false days=6 daily=0
+dailyeq	14.357142857142858
+dailyeq	0
+streak	1
+weekly	spent=10.5 left=-10.5 over=false days=1 daily=0
+weekly	spent=0 left=NaN over=false days=4 daily=NaN
+streak	2
+weekly	spent=0.1 left=NaN over=false days=1 daily=NaN
+streak	1
+streak	1
+dailyeq	142857142857142860000
+streak	0
+weekrange	2026-02-01..2026-02-08
+streak	1
+dailyeq	14.357142857142858
+recap	exp=101.1 inc=0 net=-101.1 n=6 active=5 top=01 topAmt=100
+weekly	spent=101 left=-102 over=false days=7 daily=-0.14285714285714285
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=100.5 over=false days=6 daily=14.357142857142858
+streak	0
+streak	1
+streak	1
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+weekly	spent=0.1 left=6.9 over=false days=4 daily=1
+weekrange	2026-06-14..2026-06-21
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+streak	1
+weekly	spent=-3 left=2 over=false days=1 daily=-0.14285714285714285
+dailyeq	NaN
+streak	1
+streak	1
+weekrange	2026-06-07..2026-06-14
+weekrange	2025-12-28..2026-01-04
+recap	exp=1e+21 inc=0 net=-1e+21 n=3 active=3 top=trans topAmt=1e+21
+dailyeq	142857142857142860000
+weekrange	2026-02-01..2026-02-08
+weekrange	2024-02-25..2024-03-03
+weekrange	2026-02-22..2026-03-01
+streak	0
+dailyeq	10
+streak	0
+weekly	spent=0 left=70 over=false days=3 daily=10
+weekly	spent=0 left=7 over=false days=7 daily=1
+weekly	spent=11.5 left=89 over=false days=4 daily=14.357142857142858
+streak	2
+streak	0
+streak	1
+weekly	spent=0 left=70 over=false days=7 daily=10
+dailyeq	0
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+streak	1
+weekrange	2024-02-25..2024-03-03
+streak	0
+weekly	spent=-3 left=103.5 over=false days=4 daily=14.357142857142858
+streak	0
+streak	0
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+streak	0
+weekly	spent=0 left=-1 over=false days=6 daily=-0.14285714285714285
+weekly	spent=0 left=70 over=false days=1 daily=10
+dailyeq	0
+streak	0
+dailyeq	1
+weekrange	2026-06-14..2026-06-21
+streak	0
+weekrange	2025-12-28..2026-01-04
+dailyeq	-0.14285714285714285
+recap	exp=1e+21 inc=0 net=-1e+21 n=4 active=3 top=10 topAmt=1e+21
+weekly	spent=0.1 left=100.4 over=false days=7 daily=14.357142857142858
+dailyeq	142857142857142860000
+streak	0
+streak	2
+streak	1
+weekrange	2026-06-07..2026-06-14
+streak	2
+weekly	spent=0.1 left=-0.1 over=false days=7 daily=0
+weekly	spent=1e+21 left=-1e+21 over=true days=4 daily=1
+streak	0
+dailyeq	14.357142857142858
+weekly	spent=0 left=NaN over=false days=3 daily=NaN
+weekly	spent=0 left=70 over=false days=7 daily=10
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+weekly	spent=0 left=0 over=false days=7 daily=0
+dailyeq	142857142857142860000
+weekly	spent=0.1 left=100.4 over=false days=4 daily=14.357142857142858
+weekly	spent=0 left=7 over=false days=4 daily=1
+weekly	spent=1e+21 left=-1e+21 over=true days=7 daily=1
+weekly	spent=0 left=70 over=false days=4 daily=10
+dailyeq	142857142857142860000
+weekly	spent=0 left=0 over=false days=7 daily=0
+weekrange	2026-06-07..2026-06-14
+weekrange	2024-02-25..2024-03-03
+dailyeq	-0.14285714285714285
+streak	1
+weekly	spent=10.5 left=-10.5 over=false days=7 daily=0
+streak	1
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+dailyeq	1
+recap	exp=1e+21 inc=0 net=-1e+21 n=1 active=1 top=2 topAmt=1e+21
+weekrange	2024-02-25..2024-03-03
+recap	exp=NaN inc=110.5 net=NaN n=8 active=5 top= topAmt=0
+weekly	spent=100 left=-101 over=false days=3 daily=-0.14285714285714285
+streak	0
+streak	3
+dailyeq	-0.14285714285714285
+weekly	spent=1e+21 left=NaN over=false days=7 daily=NaN
+weekly	spent=0 left=7 over=false days=7 daily=1
+streak	1
+recap	exp=0 inc=NaN net=NaN n=2 active=2 top=- topAmt=0
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+weekrange	2025-12-28..2026-01-04
+streak	2
+streak	1
+weekrange	2025-12-28..2026-01-04
+streak	0
+weekly	spent=-3 left=NaN over=false days=4 daily=NaN
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+weekly	spent=0 left=70 over=false days=3 daily=10
+recap	exp=100 inc=0 net=-100 n=8 active=7 top=2 topAmt=100
+dailyeq	NaN
+streak	1
+weekly	spent=0 left=NaN over=false days=4 daily=NaN
+streak	1
+weekly	spent=100 left=-100 over=false days=7 daily=0
+weekly	spent=0 left=70 over=false days=1 daily=10
+streak	2
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+streak	1
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=70 over=false days=6 daily=10
+dailyeq	0
+weekly	spent=0 left=1e+21 over=false days=6 daily=142857142857142860000
+weekly	spent=0 left=-1 over=false days=1 daily=-0.14285714285714285
+weekly	spent=0 left=0 over=false days=7 daily=0
+streak	0
+streak	0
+streak	0
+streak	2
+streak	1
+streak	1
+streak	2
+dailyeq	NaN
+weekrange	2026-01-25..2026-02-01
+weekly	spent=0 left=100.5 over=false days=1 daily=14.357142857142858
+dailyeq	142857142857142860000
+weekly	spent=0 left=NaN over=false days=4 daily=NaN
+weekrange	2026-05-31..2026-06-07
+weekly	spent=0 left=0 over=false days=1 daily=0
+recap	exp=1e+21 inc=0 net=-1e+21 n=6 active=6 top=2 topAmt=1e+21
+streak	0
+weekrange	2026-02-22..2026-03-01
+streak	0
+recap	exp=7.5 inc=0 net=-7.5 n=8 active=7 top=trans topAmt=10.5
+recap	exp=NaN inc=0 net=NaN n=2 active=2 top=rent topAmt=NaN
+dailyeq	-0.14285714285714285
+weekly	spent=-2.9 left=2.9 over=false days=3 daily=0
+recap	exp=10.5 inc=0 net=-10.5 n=3 active=3 top=2 topAmt=10.5
+weekly	spent=0 left=0 over=false days=7 daily=0
+weekrange	2026-06-07..2026-06-14
+weekrange	2026-02-01..2026-02-08
+dailyeq	142857142857142860000
+weekrange	2024-02-25..2024-03-03
+weekly	spent=-3 left=73 over=false days=6 daily=10
+streak	3
+weekly	spent=0 left=1e+21 over=false days=6 daily=142857142857142860000
+streak	1
+dailyeq	142857142857142860000
+dailyeq	-0.14285714285714285
+weekly	spent=NaN left=NaN over=false days=3 daily=1
+streak	0
+weekrange	2026-06-07..2026-06-14
+streak	0
+streak	2
+weekly	spent=0 left=7 over=false days=7 daily=1
+streak	0
+recap	exp=NaN inc=2 net=NaN n=4 active=4 top= topAmt=0
+streak	0
+dailyeq	-0.14285714285714285
+dailyeq	14.357142857142858
+recap	exp=-3 inc=10.5 net=13.5 n=4 active=4 top= topAmt=0
+weekrange	2026-06-07..2026-06-14
+weekly	spent=10.5 left=-3.5 over=true days=7 daily=1
+recap	exp=0 inc=10.5 net=10.5 n=1 active=1 top=- topAmt=0
+weekly	spent=100 left=0.5 over=false days=7 daily=14.357142857142858
+recap	exp=1e+21 inc=7.5 net=-1e+21 n=8 active=6 top=food topAmt=1e+21
+weekly	spent=0 left=7 over=false days=3 daily=1
+streak	0
+dailyeq	14.357142857142858
+streak	1
+dailyeq	1
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+recap	exp=NaN inc=0 net=NaN n=3 active=3 top=10 topAmt=NaN
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=7 over=false days=4 daily=1
+weekly	spent=1e+21 left=-1e+21 over=true days=1 daily=1
+weekly	spent=0 left=-1 over=false days=1 daily=-0.14285714285714285
+streak	1
+weekly	spent=0 left=-1 over=false days=6 daily=-0.14285714285714285
+weekly	spent=0 left=0 over=false days=7 daily=0
+streak	0
+weekly	spent=0 left=0 over=false days=1 daily=0
+weekrange	2026-06-07..2026-06-14
+weekrange	2026-02-22..2026-03-01
+weekly	spent=0 left=0 over=false days=4 daily=0
+streak	2
+weekly	spent=0 left=70 over=false days=4 daily=10
+weekrange	2026-06-07..2026-06-14
+streak	2
+weekly	spent=0 left=100.5 over=false days=1 daily=14.357142857142858
+streak	0
+streak	2
+streak	1
+streak	0
+streak	1
+streak	1
+streak	1
+dailyeq	-0.14285714285714285
+dailyeq	1
+streak	0
+recap	exp=0 inc=NaN net=NaN n=1 active=1 top=- topAmt=0
+weekly	spent=0.1 left=NaN over=false days=3 daily=NaN
+weekly	spent=0 left=1e+21 over=false days=4 daily=142857142857142860000
+dailyeq	0
+streak	0
+weekrange	2026-02-01..2026-02-08
+weekrange	2026-06-07..2026-06-14
+weekrange	2026-02-01..2026-02-08
+recap	exp=NaN inc=0 net=NaN n=4 active=4 top=2 topAmt=100
+streak	2
+weekly	spent=1 left=1e+21 over=false days=3 daily=142857142857142860000
+streak	2
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+dailyeq	10
+dailyeq	-0.14285714285714285
+recap	exp=NaN inc=-2.9 net=NaN n=7 active=5 top=2 topAmt=1e+21
+dailyeq	10
+dailyeq	14.357142857142858
+streak	1
+weekly	spent=NaN left=NaN over=false days=7 daily=-0.14285714285714285
+weekrange	2026-02-01..2026-02-08
+weekly	spent=0 left=100.5 over=false days=1 daily=14.357142857142858
+weekly	spent=NaN left=NaN over=false days=4 daily=10
+weekly	spent=0 left=7 over=false days=7 daily=1
+streak	0
+streak	0
+weekrange	2026-06-07..2026-06-14
+weekly	spent=-3 left=2 over=false days=4 daily=-0.14285714285714285
+weekly	spent=NaN left=NaN over=false days=3 daily=NaN
+streak	1
+recap	exp=1 inc=0 net=-1 n=5 active=5 top=food topAmt=1
+weekrange	2026-06-07..2026-06-14
+weekly	spent=1e+21 left=-1e+21 over=false days=1 daily=-0.14285714285714285
+weekrange	2026-01-25..2026-02-01
+streak	0
+weekly	spent=0 left=70 over=false days=1 daily=10
+recap	exp=-2.9 inc=0 net=2.9 n=8 active=5 top= topAmt=0
+streak	1
+streak	1
+dailyeq	10
+dailyeq	-0.14285714285714285
+streak	0
+recap	exp=NaN inc=0 net=NaN n=8 active=5 top=trans topAmt=0
+weekrange	2025-12-28..2026-01-04
+weekrange	2024-02-25..2024-03-03
+dailyeq	NaN
+weekly	spent=0 left=0 over=false days=6 daily=0
+streak	2
+weekrange	2026-06-14..2026-06-21
+weekly	spent=0 left=100.5 over=false days=3 daily=14.357142857142858
+weekrange	2026-02-01..2026-02-08
+weekrange	2025-12-28..2026-01-04
+weekly	spent=1e+21 left=NaN over=false days=1 daily=NaN
+streak	1
+streak	0
+dailyeq	-0.14285714285714285
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+weekrange	2026-02-22..2026-03-01
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+dailyeq	0
+dailyeq	-0.14285714285714285
+streak	1
+streak	1
+streak	0
+dailyeq	142857142857142860000
+weekrange	2026-06-07..2026-06-14
+streak	0
+streak	0
+weekly	spent=0 left=70 over=false days=6 daily=10
+dailyeq	NaN
+dailyeq	NaN
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+dailyeq	14.357142857142858
+dailyeq	142857142857142860000
+weekly	spent=NaN left=NaN over=false days=4 daily=10
+weekly	spent=0 left=7 over=false days=3 daily=1
+recap	exp=4.6 inc=NaN net=NaN n=7 active=5 top= topAmt=0
+streak	0
+recap	exp=110.5 inc=1e+21 net=1e+21 n=8 active=8 top= topAmt=0
+weekly	spent=0 left=-1 over=false days=4 daily=-0.14285714285714285
+recap	exp=0 inc=1 net=1 n=6 active=5 top=- topAmt=0
+weekly	spent=0 left=0 over=false days=4 daily=0
+weekly	spent=10.5 left=1e+21 over=false days=6 daily=142857142857142860000
+streak	0
+weekrange	2026-02-22..2026-03-01
+streak	1
+recap	exp=197 inc=11.5 net=-185.5 n=5 active=4 top=10 topAmt=100
+streak	1
+dailyeq	142857142857142860000
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+weekly	spent=1.1 left=1e+21 over=false days=4 daily=142857142857142860000
+streak	0
+dailyeq	NaN
+weekrange	2024-02-25..2024-03-03
+weekly	spent=NaN left=NaN over=false days=3 daily=1
+weekly	spent=10.5 left=59.5 over=false days=6 daily=10
+weekrange	2026-01-25..2026-02-01
+recap	exp=10.5 inc=NaN net=NaN n=3 active=3 top=rent topAmt=10.5
+streak	1
+recap	exp=10.5 inc=0 net=-10.5 n=1 active=1 top=rent topAmt=10.5
+streak	0
+weekrange	2026-02-22..2026-03-01
+weekrange	2025-12-28..2026-01-04
+streak	0
+weekly	spent=0 left=70 over=false days=7 daily=10
+dailyeq	-0.14285714285714285
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+weekrange	2026-02-01..2026-02-08
+weekly	spent=0 left=-1 over=false days=6 daily=-0.14285714285714285
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+streak	1
+recap	exp=-3 inc=0 net=3 n=8 active=7 top=food topAmt=-3
+streak	0
+weekly	spent=0 left=-1 over=false days=3 daily=-0.14285714285714285
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+streak	0
+streak	1
+weekly	spent=0 left=NaN over=false days=1 daily=NaN
+weekly	spent=0 left=70 over=false days=3 daily=10
+weekly	spent=0 left=70 over=false days=7 daily=10
+streak	0
+weekly	spent=1e+21 left=-1e+21 over=false days=4 daily=-0.14285714285714285
+weekly	spent=1 left=NaN over=false days=4 daily=NaN
+weekly	spent=-3 left=1e+21 over=false days=3 daily=142857142857142860000
+weekrange	2026-06-07..2026-06-14
+weekrange	2026-02-22..2026-03-01
+recap	exp=1.1 inc=100 net=98.9 n=5 active=5 top=10 topAmt=1
+dailyeq	0
+dailyeq	14.357142857142858
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+weekly	spent=0.1 left=69.9 over=false days=7 daily=10
+weekrange	2026-05-31..2026-06-07
+dailyeq	142857142857142860000
+streak	0
+weekly	spent=0 left=NaN over=false days=6 daily=NaN
+recap	exp=100 inc=1 net=-99 n=3 active=3 top=rent topAmt=100
+streak	1
+dailyeq	142857142857142860000
+weekly	spent=NaN left=NaN over=false days=7 daily=10
+streak	1
+streak	0
+streak	0
+recap	exp=1e+21 inc=0 net=-1e+21 n=3 active=3 top=rent topAmt=1e+21
+streak	2
+weekly	spent=0 left=7 over=false days=1 daily=1
+weekly	spent=7.5 left=NaN over=false days=4 daily=NaN
+streak	0
+dailyeq	NaN
+dailyeq	-0.14285714285714285
+weekly	spent=0 left=-1 over=false days=1 daily=-0.14285714285714285
+dailyeq	NaN
+recap	exp=0.1 inc=0 net=-0.1 n=1 active=1 top=rent topAmt=0.1
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekly	spent=0 left=100.5 over=false days=4 daily=14.357142857142858
+dailyeq	-0.14285714285714285
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+streak	1
+weekrange	2026-02-22..2026-03-01
+weekrange	2024-02-25..2024-03-03
+weekly	spent=10.5 left=NaN over=false days=3 daily=NaN
+weekly	spent=0 left=70 over=false days=7 daily=10
+dailyeq	NaN
+streak	5
+weekly	spent=0 left=7 over=false days=7 daily=1
+streak	0
+weekrange	2025-12-28..2026-01-04
+dailyeq	NaN
+recap	exp=197 inc=1 net=-196 n=5 active=3 top=2 topAmt=100
+weekrange	2025-12-28..2026-01-04
+weekly	spent=0 left=0 over=false days=7 daily=0
+dailyeq	14.357142857142858
+weekly	spent=NaN left=NaN over=false days=1 daily=NaN
+dailyeq	-0.14285714285714285
+streak	0
+weekly	spent=0 left=7 over=false days=4 daily=1
+recap	exp=-3 inc=0 net=3 n=2 active=2 top=10 topAmt=0
+weekrange	2026-06-14..2026-06-21
+recap	exp=0.1 inc=0 net=-0.1 n=5 active=5 top= topAmt=0
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+recap	exp=0 inc=97 net=97 n=3 active=3 top=- topAmt=0
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+weekrange	2026-06-07..2026-06-14
+streak	0
+dailyeq	10
+recap	exp=1e+21 inc=0 net=-1e+21 n=6 active=5 top=10 topAmt=1e+21
+weekly	spent=0 left=70 over=false days=4 daily=10
+dailyeq	-0.14285714285714285
+weekly	spent=0 left=-1 over=false days=1 daily=-0.14285714285714285
+weekrange	2024-02-25..2024-03-03
+dailyeq	14.357142857142858
+dailyeq	NaN
+weekrange	2026-02-01..2026-02-08
+streak	1
+dailyeq	14.357142857142858
+recap	exp=1e+21 inc=0 net=-1e+21 n=8 active=7 top= topAmt=0
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=-1 over=false days=3 daily=-0.14285714285714285
+dailyeq	10
+streak	0
+streak	2
+streak	3
+streak	1
+weekly	spent=0 left=7 over=false days=7 daily=1
+streak	3
+dailyeq	142857142857142860000
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=-1 over=false days=4 daily=-0.14285714285714285
+weekly	spent=-3 left=3 over=false days=3 daily=0
+weekrange	2026-06-07..2026-06-14
+recap	exp=1e+21 inc=0 net=-1e+21 n=8 active=6 top=rent topAmt=1e+21
+dailyeq	-0.14285714285714285
+recap	exp=NaN inc=0.1 net=NaN n=5 active=4 top=food topAmt=NaN
+streak	2
+streak	0
+weekly	spent=0 left=0 over=false days=3 daily=0
+weekly	spent=0 left=7 over=false days=7 daily=1
+recap	exp=1e+21 inc=0 net=-1e+21 n=3 active=2 top=rent topAmt=1e+21
+weekly	spent=0 left=NaN over=false days=1 daily=NaN
+weekly	spent=0 left=1e+21 over=false days=6 daily=142857142857142860000
+streak	2
+streak	0
+recap	exp=10.6 inc=0 net=-10.6 n=7 active=7 top=trans topAmt=10.5
+dailyeq	10
+weekly	spent=0 left=100.5 over=false days=3 daily=14.357142857142858
+weekly	spent=0 left=NaN over=false days=6 daily=NaN
+streak	0
+dailyeq	10
+weekly	spent=0 left=-1 over=false days=6 daily=-0.14285714285714285
+streak	1
+streak	2
+dailyeq	142857142857142860000
+weekly	spent=NaN left=NaN over=false days=7 daily=NaN
+dailyeq	0
+recap	exp=1e+21 inc=0 net=-1e+21 n=8 active=7 top=2 topAmt=1e+21
+streak	0
+weekrange	2026-05-31..2026-06-07
+streak	0
+streak	0
+weekly	spent=0 left=100.5 over=false days=1 daily=14.357142857142858
+weekly	spent=10.5 left=90 over=false days=1 daily=14.357142857142858
+streak	1
+dailyeq	-0.14285714285714285
+streak	0
+weekly	spent=0 left=7 over=false days=6 daily=1
+streak	0
+dailyeq	142857142857142860000
+streak	0
+streak	0
+dailyeq	1
+recap	exp=111.5 inc=0 net=-111.5 n=8 active=6 top= topAmt=0
+recap	exp=0 inc=0 net=0 n=2 active=2 top=- topAmt=0
+streak	0
+weekly	spent=0 left=-1 over=false days=6 daily=-0.14285714285714285
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+weekrange	2025-12-28..2026-01-04
+dailyeq	NaN
+weekly	spent=0 left=100.5 over=false days=3 daily=14.357142857142858
+streak	1
+dailyeq	10
+streak	0
+weekly	spent=0 left=70 over=false days=7 daily=10
+weekrange	2026-06-14..2026-06-21
+weekly	spent=NaN left=NaN over=false days=1 daily=14.357142857142858
+weekrange	2026-01-25..2026-02-01
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+weekly	spent=0 left=NaN over=false days=4 daily=NaN
+dailyeq	-0.14285714285714285
+recap	exp=21.200000000000003 inc=0 net=-21.200000000000003 n=4 active=4 top=food topAmt=10.7
+dailyeq	NaN
+weekrange	2026-06-07..2026-06-14
+streak	1
+weekly	spent=0.1 left=100.4 over=false days=1 daily=14.357142857142858
+weekrange	2025-12-28..2026-01-04
+weekly	spent=0 left=-1 over=false days=6 daily=-0.14285714285714285
+weekly	spent=0 left=70 over=false days=7 daily=10
+weekly	spent=0 left=NaN over=false days=6 daily=NaN
+weekrange	2024-02-25..2024-03-03
+streak	0
+weekrange	2025-12-28..2026-01-04
+recap	exp=0 inc=0 net=0 n=2 active=2 top=- topAmt=0
+weekly	spent=100 left=NaN over=false days=6 daily=NaN
+dailyeq	NaN
+streak	1
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+recap	exp=12.5 inc=10.5 net=-2 n=8 active=7 top=trans topAmt=11.5
+dailyeq	0
+recap	exp=NaN inc=NaN net=NaN n=4 active=2 top=trans topAmt=NaN
+weekrange	2024-02-25..2024-03-03
+streak	0
+weekly	spent=0 left=70 over=false days=6 daily=10
+recap	exp=95 inc=0 net=-95 n=6 active=6 top=10 topAmt=100
+streak	0
+streak	0
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekly	spent=0 left=1e+21 over=false days=1 daily=142857142857142860000
+streak	0
+weekrange	2026-02-22..2026-03-01
+weekly	spent=1e+21 left=0 over=false days=7 daily=142857142857142860000
+dailyeq	14.357142857142858
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+recap	exp=-3 inc=0 net=3 n=6 active=5 top=food topAmt=0
+weekly	spent=0 left=0 over=false days=3 daily=0
+streak	1
+streak	0
+dailyeq	1
+recap	exp=107.5 inc=0 net=-107.5 n=8 active=7 top= topAmt=0
+streak	2
+streak	0
+weekrange	2026-06-07..2026-06-14
+weekrange	2026-06-07..2026-06-14
+streak	1
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+streak	1
+weekrange	2026-06-07..2026-06-14
+streak	0
+streak	0
+weekly	spent=0 left=7 over=false days=7 daily=1
+streak	1
+dailyeq	142857142857142860000
+weekly	spent=0 left=-1 over=false days=6 daily=-0.14285714285714285
+streak	0
+weekly	spent=-3 left=1e+21 over=false days=1 daily=142857142857142860000
+weekly	spent=0 left=70 over=false days=7 daily=10
+recap	exp=NaN inc=0 net=NaN n=6 active=6 top=2 topAmt=1e+21
+weekrange	2026-06-07..2026-06-14
+recap	exp=22 inc=10.5 net=-11.5 n=6 active=5 top=2 topAmt=10.5
+weekrange	2026-06-07..2026-06-14
+dailyeq	-0.14285714285714285
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+weekly	spent=100 left=-101 over=false days=6 daily=-0.14285714285714285
+recap	exp=10.5 inc=NaN net=NaN n=5 active=4 top=2 topAmt=10.5
+dailyeq	NaN
+weekrange	2026-02-22..2026-03-01
+weekrange	2026-06-07..2026-06-14
+recap	exp=0 inc=10.5 net=10.5 n=2 active=2 top=- topAmt=0
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+weekly	spent=97 left=-98 over=false days=7 daily=-0.14285714285714285
+streak	0
+weekrange	2026-05-31..2026-06-07
+weekly	spent=0 left=1e+21 over=false days=1 daily=142857142857142860000
+streak	2
+weekly	spent=-3 left=1e+21 over=false days=6 daily=142857142857142860000
+streak	2
+recap	exp=NaN inc=100 net=NaN n=4 active=4 top=rent topAmt=10.5
+weekly	spent=0 left=7 over=false days=7 daily=1
+streak	0
+streak	2
+weekrange	2024-02-25..2024-03-03
+streak	0
+dailyeq	10
+weekrange	2026-05-31..2026-06-07
+weekrange	2026-05-31..2026-06-07
+streak	0
+dailyeq	14.357142857142858
+weekly	spent=0 left=NaN over=false days=6 daily=NaN
+weekrange	2026-06-14..2026-06-21
+weekly	spent=10.5 left=1e+21 over=false days=3 daily=142857142857142860000
+streak	1
+weekly	spent=0 left=7 over=false days=7 daily=1
+streak	0
+weekly	spent=NaN left=NaN over=false days=7 daily=-0.14285714285714285
+streak	2
+streak	0
+dailyeq	0
+weekrange	2026-03-01..2026-03-08
+recap	exp=0 inc=NaN net=NaN n=6 active=6 top=- topAmt=0
+dailyeq	0
+weekrange	2026-06-07..2026-06-14
+dailyeq	0
+weekrange	2024-02-25..2024-03-03
+streak	0
+streak	0
+weekly	spent=NaN left=NaN over=false days=1 daily=-0.14285714285714285
+weekly	spent=1e+21 left=0 over=false days=6 daily=142857142857142860000
+dailyeq	10
+weekly	spent=1e+21 left=-1e+21 over=true days=4 daily=14.357142857142858
+weekly	spent=0 left=0 over=false days=6 daily=0
+streak	1
+streak	0
+streak	1
+dailyeq	10
+weekrange	2026-05-31..2026-06-07
+streak	0
+dailyeq	1
+weekly	spent=0 left=70 over=false days=3 daily=10
+weekly	spent=110.5 left=-111.5 over=false days=4 daily=-0.14285714285714285
+streak	0
+streak	0
+weekrange	2026-06-07..2026-06-14
+weekly	spent=1 left=-1 over=false days=4 daily=0
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekly	spent=0 left=NaN over=false days=4 daily=NaN
+weekly	spent=0 left=7 over=false days=7 daily=1
+weekly	spent=0 left=NaN over=false days=1 daily=NaN
+weekrange	2026-06-07..2026-06-14
+weekly	spent=1e+21 left=NaN over=false days=7 daily=NaN
+weekrange	2026-02-01..2026-02-08
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+recap	exp=NaN inc=1e+21 net=NaN n=8 active=7 top=rent topAmt=100
+streak	0
+weekly	spent=1e+21 left=-1e+21 over=false days=7 daily=-0.14285714285714285
+weekly	spent=-3 left=NaN over=false days=3 daily=NaN
+streak	0
+streak	0
+weekly	spent=0 left=7 over=false days=3 daily=1
+recap	exp=10.5 inc=1e+21 net=1e+21 n=6 active=6 top=food topAmt=10.5
+streak	1
+weekly	spent=0.1 left=100.4 over=false days=4 daily=14.357142857142858
+weekly	spent=NaN left=NaN over=false days=4 daily=-0.14285714285714285
+dailyeq	10
+weekly	spent=0 left=0 over=false days=4 daily=0
+recap	exp=10.5 inc=0 net=-10.5 n=1 active=1 top= topAmt=0
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+streak	0
+weekly	spent=1e+21 left=-1e+21 over=true days=1 daily=14.357142857142858
+dailyeq	-0.14285714285714285
+weekly	spent=0 left=-1 over=false days=4 daily=-0.14285714285714285
+weekrange	2026-02-01..2026-02-08
+streak	0
+weekly	spent=0 left=-1 over=false days=4 daily=-0.14285714285714285
+dailyeq	142857142857142860000
+weekly	spent=0 left=7 over=false days=7 daily=1
+weekrange	2026-02-01..2026-02-08
+weekly	spent=0 left=70 over=false days=1 daily=10
+weekly	spent=0 left=-1 over=false days=4 daily=-0.14285714285714285
+recap	exp=0 inc=0 net=0 n=2 active=2 top=10 topAmt=0
+recap	exp=0 inc=NaN net=NaN n=8 active=7 top=rent topAmt=0
+streak	0
+weekrange	2026-05-31..2026-06-07
+streak	1
+dailyeq	142857142857142860000
+recap	exp=1.1 inc=-3 net=-4.1 n=5 active=4 top=rent topAmt=1
+weekly	spent=0 left=7 over=false days=7 daily=1
+weekly	spent=0 left=70 over=false days=7 daily=10
+weekrange	2026-02-22..2026-03-01
+weekly	spent=0 left=7 over=false days=6 daily=1
+dailyeq	NaN
+dailyeq	14.357142857142858
+weekrange	2026-05-31..2026-06-07
+dailyeq	-0.14285714285714285
+streak	0
+streak	0
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+streak	2
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=0 over=false days=7 daily=0
+streak	1
+streak	0
+weekly	spent=1 left=1e+21 over=false days=4 daily=142857142857142860000
+dailyeq	10
+weekly	spent=0 left=70 over=false days=7 daily=10
+streak	1
+recap	exp=NaN inc=0.1 net=NaN n=8 active=6 top=trans topAmt=10.5
+weekly	spent=0 left=1e+21 over=false days=4 daily=142857142857142860000
+streak	0
+dailyeq	NaN
+weekly	spent=NaN left=NaN over=false days=1 daily=NaN
+weekly	spent=0 left=70 over=false days=1 daily=10
+streak	0
+weekly	spent=NaN left=NaN over=false days=7 daily=-0.14285714285714285
+recap	exp=97 inc=0 net=-97 n=3 active=3 top=rent topAmt=100
+streak	1
+weekly	spent=0 left=0 over=false days=4 daily=0
+dailyeq	10
+weekrange	2026-03-01..2026-03-08
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=0 over=false days=1 daily=0
+weekrange	2026-02-01..2026-02-08
+weekly	spent=-2 left=9 over=false days=6 daily=1
+weekly	spent=0 left=100.5 over=false days=4 daily=14.357142857142858
+dailyeq	0
+recap	exp=NaN inc=0 net=NaN n=4 active=4 top=food topAmt=NaN
+recap	exp=1 inc=2e+21 net=2e+21 n=6 active=5 top= topAmt=0
+dailyeq	14.357142857142858
+streak	1
+streak	0
+recap	exp=1e+21 inc=1e+21 net=0 n=8 active=6 top=01 topAmt=1e+21
+streak	1
+streak	0
+weekly	spent=0 left=100.5 over=false days=4 daily=14.357142857142858
+weekly	spent=100.19999999999999 left=NaN over=false days=7 daily=NaN
+weekly	spent=0 left=0 over=false days=7 daily=0
+dailyeq	142857142857142860000
+weekly	spent=0 left=100.5 over=false days=1 daily=14.357142857142858
+streak	3
+weekly	spent=0 left=NaN over=false days=3 daily=NaN
+recap	exp=10.6 inc=10.5 net=-0.09999999999999964 n=5 active=4 top=trans topAmt=10.6
+streak	1
+weekrange	2026-05-31..2026-06-07
+weekly	spent=0 left=100.5 over=false days=6 daily=14.357142857142858
+weekrange	2026-06-07..2026-06-14
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=0 over=false days=6 daily=0
+weekly	spent=0 left=7 over=false days=6 daily=1
+weekrange	2026-02-22..2026-03-01
+streak	2
+weekly	spent=10.6 left=59.4 over=false days=3 daily=10
+streak	0
+dailyeq	142857142857142860000
+weekly	spent=0 left=NaN over=false days=3 daily=NaN
+streak	0
+dailyeq	10
+dailyeq	1
+streak	0
+dailyeq	10
+streak	1
+streak	0
+streak	2
+recap	exp=100 inc=-2 net=-102 n=6 active=3 top=01 topAmt=100
+recap	exp=NaN inc=100 net=NaN n=8 active=7 top=trans topAmt=2e+21
+recap	exp=-1 inc=0 net=1 n=8 active=8 top=2 topAmt=1
+streak	0
+streak	2
+streak	0
+weekly	spent=0 left=0 over=false days=1 daily=0
+weekly	spent=10.5 left=90 over=false days=1 daily=14.357142857142858
+recap	exp=0 inc=0 net=0 n=2 active=1 top=- topAmt=0
+streak	0
+recap	exp=221.1 inc=97 net=-124.1 n=8 active=6 top=2 topAmt=100
+dailyeq	NaN
+streak	0
+dailyeq	0
+streak	0
+streak	0
+dailyeq	0
+dailyeq	10
+weekrange	2026-02-01..2026-02-08
+streak	1
+weekly	spent=0 left=7 over=false days=7 daily=1
+streak	0
+weekly	spent=0 left=NaN over=false days=4 daily=NaN
+weekrange	2026-06-07..2026-06-14
+streak	0
+weekly	spent=0 left=70 over=false days=4 daily=10
+recap	exp=8.6 inc=110.5 net=101.9 n=8 active=6 top=trans topAmt=10.5
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+weekly	spent=100 left=NaN over=false days=4 daily=NaN
+streak	0
+dailyeq	NaN
+weekly	spent=0 left=0 over=false days=7 daily=0
+streak	0
+streak	0
+weekly	spent=100 left=0.5 over=false days=4 daily=14.357142857142858
+weekrange	2024-02-25..2024-03-03
+weekly	spent=10.5 left=-3.5 over=true days=7 daily=1
+weekrange	2024-02-25..2024-03-03
+dailyeq	NaN
+weekly	spent=0 left=-1 over=false days=1 daily=-0.14285714285714285
+streak	2
+recap	exp=0 inc=1 net=1 n=1 active=1 top=- topAmt=0
+recap	exp=8.5 inc=0 net=-8.5 n=8 active=7 top=food topAmt=10.5
+streak	0
+dailyeq	-0.14285714285714285
+streak	0
+dailyeq	10
+weekly	spent=1e+21 left=-1e+21 over=true days=3 daily=10
+dailyeq	14.357142857142858
+weekly	spent=0 left=1e+21 over=false days=6 daily=142857142857142860000
+weekrange	2026-06-14..2026-06-21
+weekly	spent=0 left=0 over=false days=4 daily=0
+recap	exp=0.1 inc=0 net=-0.1 n=1 active=1 top=01 topAmt=0.1
+streak	0
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+recap	exp=0 inc=0 net=0 n=2 active=2 top=- topAmt=0
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+streak	1
+streak	1
+dailyeq	1
+dailyeq	NaN
+weekly	spent=0 left=100.5 over=false days=1 daily=14.357142857142858
+streak	0
+dailyeq	142857142857142860000
+dailyeq	14.357142857142858
+weekly	spent=0 left=70 over=false days=7 daily=10
+streak	1
+dailyeq	0
+dailyeq	0
+weekrange	2026-02-01..2026-02-08
+weekly	spent=0 left=NaN over=false days=3 daily=NaN
+weekly	spent=0 left=100.5 over=false days=1 daily=14.357142857142858
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+streak	0
+streak	1
+dailyeq	-0.14285714285714285
+dailyeq	142857142857142860000
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+dailyeq	NaN
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+streak	0
+dailyeq	NaN
+recap	exp=NaN inc=1e+21 net=NaN n=4 active=4 top=10 topAmt=NaN
+streak	2
+weekrange	2026-05-31..2026-06-07
+weekly	spent=0 left=NaN over=false days=1 daily=NaN
+dailyeq	0
+streak	0
+recap	exp=NaN inc=NaN net=NaN n=3 active=3 top= topAmt=0
+weekly	spent=1e+21 left=-1e+21 over=true days=7 daily=10
+streak	1
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=0 over=false days=7 daily=0
+recap	exp=1e+21 inc=0 net=-1e+21 n=7 active=4 top=food topAmt=1e+21
+streak	0
+weekly	spent=100 left=-30 over=true days=7 daily=10
+dailyeq	10
+weekly	spent=NaN left=NaN over=false days=1 daily=14.357142857142858
+dailyeq	1
+recap	exp=NaN inc=0 net=NaN n=5 active=3 top=2 topAmt=10.5
+streak	3
+streak	1
+weekrange	2026-06-14..2026-06-21
+recap	exp=1.1 inc=100 net=98.9 n=5 active=4 top=trans topAmt=1
+weekly	spent=0 left=100.5 over=false days=6 daily=14.357142857142858
+weekly	spent=100 left=1e+21 over=false days=4 daily=142857142857142860000
+weekly	spent=10.6 left=89.9 over=false days=1 daily=14.357142857142858
+streak	1
+weekly	spent=100 left=0.5 over=false days=3 daily=14.357142857142858
+recap	exp=1e+21 inc=NaN net=NaN n=3 active=3 top=2 topAmt=1e+21
+recap	exp=-2.9 inc=0 net=2.9 n=3 active=3 top=rent topAmt=0.1
+weekrange	2026-03-01..2026-03-08
+weekly	spent=1e+21 left=0 over=false days=4 daily=142857142857142860000
+streak	1
+dailyeq	14.357142857142858
+weekly	spent=0 left=1e+21 over=false days=3 daily=142857142857142860000
+weekly	spent=0 left=100.5 over=false days=1 daily=14.357142857142858
+weekly	spent=0 left=0 over=false days=7 daily=0
+dailyeq	10
+weekrange	2026-06-07..2026-06-14
+streak	1
+weekly	spent=100 left=-101 over=false days=3 daily=-0.14285714285714285
+streak	0
+weekrange	2024-02-25..2024-03-03
+weekrange	2026-06-07..2026-06-14
+streak	0
+streak	0
+weekrange	2026-02-01..2026-02-08
+weekrange	2026-06-07..2026-06-14
+streak	1
+weekly	spent=11.6 left=-4.6 over=true days=6 daily=1
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+dailyeq	NaN
+streak	1
+streak	0
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+weekly	spent=0 left=7 over=false days=7 daily=1
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+dailyeq	14.357142857142858
+dailyeq	-0.14285714285714285
+weekly	spent=0 left=0 over=false days=7 daily=0
+dailyeq	0
+streak	2
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+weekrange	2026-01-25..2026-02-01
+weekrange	2025-12-28..2026-01-04
+weekrange	2026-02-01..2026-02-08
+dailyeq	1
+weekrange	2026-06-07..2026-06-14
+weekly	spent=-3 left=1e+21 over=false days=3 daily=142857142857142860000
+weekly	spent=0.1 left=-1.1 over=false days=7 daily=-0.14285714285714285
+weekrange	2024-02-25..2024-03-03
+streak	0
+recap	exp=NaN inc=0.1 net=NaN n=8 active=6 top=trans topAmt=-3
+streak	0
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=NaN over=false days=3 daily=NaN
+weekrange	2026-05-31..2026-06-07
+dailyeq	-0.14285714285714285
+streak	0
+weekly	spent=0 left=-1 over=false days=3 daily=-0.14285714285714285
+weekly	spent=22 left=-22 over=false days=7 daily=0
+weekrange	2026-05-31..2026-06-07
+streak	0
+weekly	spent=0 left=70 over=false days=4 daily=10
+weekrange	2026-01-25..2026-02-01
+streak	1
+streak	0
+weekrange	2026-05-31..2026-06-07
+weekly	spent=1e+21 left=-1e+21 over=true days=4 daily=1
+weekrange	2026-06-07..2026-06-14
+dailyeq	142857142857142860000
+weekly	spent=7.5 left=93 over=false days=1 daily=14.357142857142858
+weekly	spent=0 left=100.5 over=false days=1 daily=14.357142857142858
+streak	0
+dailyeq	10
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+dailyeq	142857142857142860000
+weekly	spent=100 left=NaN over=false days=1 daily=NaN
+streak	1
+streak	0
+dailyeq	-0.14285714285714285
+streak	0
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+recap	exp=0 inc=100 net=100 n=2 active=2 top=food topAmt=0
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+streak	0
+weekly	spent=0 left=70 over=false days=1 daily=10
+weekrange	2026-06-07..2026-06-14
+dailyeq	10
+streak	0
+weekly	spent=NaN left=NaN over=false days=1 daily=142857142857142860000
+dailyeq	-0.14285714285714285
+weekly	spent=0 left=7 over=false days=4 daily=1
+dailyeq	NaN
+streak	0
+weekly	spent=0 left=100.5 over=false days=6 daily=14.357142857142858
+streak	0
+dailyeq	0
+weekrange	2025-12-28..2026-01-04
+weekrange	2024-02-25..2024-03-03
+dailyeq	14.357142857142858
+weekrange	2026-05-31..2026-06-07
+streak	0
+weekly	spent=0.1 left=-0.1 over=false days=6 daily=0
+streak	0
+dailyeq	142857142857142860000
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+dailyeq	NaN
+weekly	spent=0 left=70 over=false days=1 daily=10
+streak	2
+recap	exp=0 inc=0 net=0 n=2 active=2 top=- topAmt=0
+weekly	spent=0 left=0 over=false days=4 daily=0
+weekrange	2026-01-25..2026-02-01
+dailyeq	10
+dailyeq	0
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+weekly	spent=0 left=NaN over=false days=4 daily=NaN
+streak	0
+dailyeq	-0.14285714285714285
+dailyeq	1
+weekly	spent=0 left=100.5 over=false days=4 daily=14.357142857142858
+recap	exp=0 inc=0 net=0 n=2 active=2 top=- topAmt=0
+streak	2
+weekly	spent=0 left=1e+21 over=false days=1 daily=142857142857142860000
+weekrange	2026-02-22..2026-03-01
+weekrange	2026-02-22..2026-03-01
+dailyeq	1
+weekrange	2026-01-25..2026-02-01
+weekly	spent=0 left=7 over=false days=4 daily=1
+streak	2
+streak	0
+streak	0
+weekly	spent=0 left=-1 over=false days=6 daily=-0.14285714285714285
+streak	0
+recap	exp=100 inc=1 net=-99 n=3 active=3 top=10 topAmt=100
+weekly	spent=-3 left=3 over=false days=7 daily=0
+streak	0
+streak	1
+streak	0
+streak	3
+dailyeq	10
+recap	exp=-3 inc=0 net=3 n=4 active=3 top=trans topAmt=0
+weekly	spent=0 left=100.5 over=false days=4 daily=14.357142857142858
+recap	exp=10.5 inc=NaN net=NaN n=7 active=5 top=rent topAmt=10.5
+dailyeq	-0.14285714285714285
+weekly	spent=0 left=7 over=false days=7 daily=1
+streak	0
+streak	0
+weekly	spent=0.1 left=69.9 over=false days=4 daily=10
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+weekrange	2024-02-25..2024-03-03
+streak	3
+streak	0
+weekly	spent=100 left=0.5 over=false days=3 daily=14.357142857142858
+recap	exp=1e+21 inc=0 net=-1e+21 n=8 active=7 top=01 topAmt=1e+21
+weekrange	2025-12-28..2026-01-04
+dailyeq	-0.14285714285714285
+dailyeq	10
+recap	exp=1e+21 inc=0 net=-1e+21 n=2 active=2 top= topAmt=0
+weekly	spent=NaN left=NaN over=false days=6 daily=10
+weekly	spent=0 left=0 over=false days=4 daily=0
+weekly	spent=-3 left=2 over=false days=4 daily=-0.14285714285714285
+weekly	spent=0 left=NaN over=false days=1 daily=NaN
+weekrange	2026-05-31..2026-06-07
+streak	0
+streak	0
+recap	exp=1e+21 inc=-3 net=-1e+21 n=6 active=5 top=trans topAmt=1e+21
+streak	0
+recap	exp=0 inc=100 net=100 n=6 active=5 top=10 topAmt=0
+recap	exp=10.5 inc=0 net=-10.5 n=2 active=1 top=rent topAmt=10.5
+weekrange	2026-06-07..2026-06-14
+weekrange	2025-12-28..2026-01-04
+weekly	spent=0 left=1e+21 over=false days=1 daily=142857142857142860000
+weekly	spent=-3 left=NaN over=false days=3 daily=NaN
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+dailyeq	-0.14285714285714285
+weekly	spent=0 left=100.5 over=false days=4 daily=14.357142857142858
+weekly	spent=0 left=70 over=false days=1 daily=10
+weekly	spent=0 left=0 over=false days=7 daily=0
+recap	exp=3 inc=0 net=-3 n=6 active=4 top=10 topAmt=1
+weekly	spent=0 left=7 over=false days=7 daily=1
+dailyeq	10
+recap	exp=NaN inc=-2 net=NaN n=8 active=6 top=10 topAmt=0
+recap	exp=12.5 inc=NaN net=NaN n=7 active=7 top=food topAmt=10.5
+weekly	spent=0 left=70 over=false days=1 daily=10
+weekly	spent=0 left=7 over=false days=3 daily=1
+dailyeq	0
+streak	0
+streak	0
+dailyeq	1
+weekly	spent=10.6 left=1e+21 over=false days=6 daily=142857142857142860000
+recap	exp=1e+21 inc=-3 net=-1e+21 n=6 active=6 top=01 topAmt=1e+21
+weekrange	2026-02-22..2026-03-01
+dailyeq	-0.14285714285714285
+weekrange	2025-12-28..2026-01-04
+streak	1
+streak	2
+dailyeq	14.357142857142858
+recap	exp=101 inc=0.1 net=-100.9 n=6 active=6 top=01 topAmt=100
+weekly	spent=10.5 left=-10.5 over=false days=7 daily=0
+streak	3
+weekrange	2025-12-28..2026-01-04
+weekly	spent=0 left=100.5 over=false days=1 daily=14.357142857142858
+weekly	spent=0.1 left=-0.1 over=false days=7 daily=0
+weekly	spent=10.5 left=-3.5 over=true days=6 daily=1
+streak	2
+recap	exp=1e+21 inc=0 net=-1e+21 n=2 active=2 top= topAmt=0
+weekly	spent=0 left=0 over=false days=1 daily=0
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+recap	exp=0.1 inc=0 net=-0.1 n=2 active=2 top= topAmt=0
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+weekly	spent=0 left=100.5 over=false days=6 daily=14.357142857142858
+weekrange	2025-12-28..2026-01-04
+weekly	spent=0 left=NaN over=false days=1 daily=NaN
+streak	0
+weekrange	2026-06-07..2026-06-14
+recap	exp=NaN inc=0.1 net=NaN n=8 active=8 top=2 topAmt=1e+21
+streak	0
+weekly	spent=0 left=NaN over=false days=6 daily=NaN
+streak	0
+weekly	spent=1 left=6 over=false days=4 daily=1
+weekly	spent=0.1 left=100.4 over=false days=1 daily=14.357142857142858
+weekly	spent=1e+21 left=-1e+21 over=true days=1 daily=14.357142857142858
+dailyeq	142857142857142860000
+recap	exp=NaN inc=0 net=NaN n=8 active=7 top=trans topAmt=1e+21
+weekly	spent=0 left=7 over=false days=7 daily=1
+recap	exp=NaN inc=NaN net=NaN n=3 active=3 top=trans topAmt=100
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=-1 over=false days=1 daily=-0.14285714285714285
+streak	0
+weekrange	2026-05-31..2026-06-07
+weekly	spent=1 left=-1 over=false days=4 daily=0
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=70 over=false days=1 daily=10
+dailyeq	10
+streak	1
+weekly	spent=-3 left=10 over=false days=4 daily=1
+streak	1
+weekly	spent=100 left=NaN over=false days=3 daily=NaN
+dailyeq	1
+weekly	spent=0 left=1e+21 over=false days=1 daily=142857142857142860000
+recap	exp=10.6 inc=0 net=-10.6 n=2 active=2 top= topAmt=0
+recap	exp=-3 inc=10.5 net=13.5 n=2 active=2 top= topAmt=0
+weekly	spent=0 left=7 over=false days=7 daily=1
+recap	exp=-3 inc=0 net=3 n=1 active=1 top=01 topAmt=-3
+streak	0
+weekly	spent=0 left=70 over=false days=3 daily=10
+streak	0
+weekly	spent=0 left=70 over=false days=7 daily=10
+weekly	spent=0 left=70 over=false days=7 daily=10
+streak	0
+dailyeq	10
+weekly	spent=0 left=0 over=false days=1 daily=0
+recap	exp=0 inc=10.6 net=10.6 n=3 active=3 top=- topAmt=0
+streak	0
+weekrange	2026-01-25..2026-02-01
+recap	exp=101 inc=0 net=-101 n=5 active=4 top=food topAmt=100
+recap	exp=NaN inc=1 net=NaN n=7 active=6 top=2 topAmt=1
+streak	1
+weekly	spent=0 left=1e+21 over=false days=6 daily=142857142857142860000
+weekly	spent=0 left=100.5 over=false days=3 daily=14.357142857142858
+recap	exp=7.5 inc=0 net=-7.5 n=5 active=3 top=trans topAmt=10.5
+streak	1
+dailyeq	-0.14285714285714285
+weekly	spent=1 left=69 over=false days=6 daily=10
+weekly	spent=0 left=1e+21 over=false days=1 daily=142857142857142860000
+streak	0
+weekly	spent=97 left=-97 over=false days=3 daily=0
+weekrange	2026-06-07..2026-06-14
+streak	0
+weekly	spent=10.5 left=-3.5 over=true days=7 daily=1
+streak	0
+recap	exp=0 inc=0 net=0 n=2 active=1 top=2 topAmt=0
+dailyeq	14.357142857142858
+weekly	spent=1e+21 left=0 over=false days=1 daily=142857142857142860000
+dailyeq	NaN
+weekly	spent=0 left=7 over=false days=1 daily=1
+recap	exp=NaN inc=0 net=NaN n=6 active=4 top=trans topAmt=1e+21
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+weekly	spent=10.5 left=90 over=false days=6 daily=14.357142857142858
+weekrange	2025-12-28..2026-01-04
+dailyeq	10
+streak	4
+streak	0
+recap	exp=1e+21 inc=1e+21 net=0 n=7 active=6 top=trans topAmt=1e+21
+weekly	spent=100 left=0.5 over=false days=3 daily=14.357142857142858
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+weekrange	2026-01-25..2026-02-01
+streak	3
+weekrange	2024-02-25..2024-03-03
+streak	1
+recap	exp=2e+21 inc=0 net=-2e+21 n=8 active=8 top=2 topAmt=1e+21
+weekrange	2026-05-31..2026-06-07
+weekrange	2026-01-25..2026-02-01
+recap	exp=1e+21 inc=1e+21 net=0 n=8 active=8 top= topAmt=0
+dailyeq	10
+streak	2
+streak	1
+streak	1
+weekrange	2026-05-31..2026-06-07
+weekrange	2026-02-01..2026-02-08
+weekly	spent=0 left=1e+21 over=false days=4 daily=142857142857142860000
+weekly	spent=1e+21 left=-1e+21 over=true days=4 daily=1
+weekly	spent=0.1 left=NaN over=false days=4 daily=NaN
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+weekrange	2026-06-07..2026-06-14
+dailyeq	NaN
+weekly	spent=0 left=70 over=false days=3 daily=10
+weekly	spent=0 left=70 over=false days=7 daily=10
+weekly	spent=10.5 left=-3.5 over=true days=4 daily=1
+dailyeq	0
+weekrange	2026-05-31..2026-06-07
+streak	4
+weekrange	2026-01-25..2026-02-01
+streak	0
+dailyeq	0
+streak	0
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+streak	0
+streak	0
+weekly	spent=0.1 left=-1.1 over=false days=4 daily=-0.14285714285714285
+weekrange	2026-02-22..2026-03-01
+weekly	spent=NaN left=NaN over=false days=4 daily=142857142857142860000
+dailyeq	0
+weekly	spent=NaN left=NaN over=false days=7 daily=-0.14285714285714285
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+weekly	spent=-3 left=73 over=false days=1 daily=10
+streak	2
+dailyeq	10
+streak	0
+recap	exp=10.5 inc=201 net=190.5 n=7 active=7 top=trans topAmt=10.5
+dailyeq	0
+streak	1
+weekly	spent=0 left=-1 over=false days=6 daily=-0.14285714285714285
+weekly	spent=0.1 left=1e+21 over=false days=7 daily=142857142857142860000
+weekrange	2025-12-28..2026-01-04
+recap	exp=0 inc=0 net=0 n=1 active=1 top= topAmt=0
+weekrange	2024-02-25..2024-03-03
+streak	0
+dailyeq	-0.14285714285714285
+recap	exp=NaN inc=0 net=NaN n=7 active=6 top=food topAmt=1
+weekly	spent=1 left=-1 over=false days=7 daily=0
+dailyeq	14.357142857142858
+recap	exp=1.1 inc=0 net=-1.1 n=3 active=3 top=trans topAmt=1
+recap	exp=1 inc=0 net=-1 n=6 active=5 top=trans topAmt=1
+recap	exp=NaN inc=0 net=NaN n=8 active=6 top=2 topAmt=10.5
+weekly	spent=0 left=100.5 over=false days=3 daily=14.357142857142858
+dailyeq	1
+weekly	spent=0 left=0 over=false days=4 daily=0
+weekly	spent=0.1 left=-1.1 over=false days=1 daily=-0.14285714285714285
+streak	0
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekrange	2026-06-07..2026-06-14
+recap	exp=10.5 inc=NaN net=NaN n=3 active=3 top=10 topAmt=10.5
+weekrange	2026-05-31..2026-06-07
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekrange	2026-06-14..2026-06-21
+streak	0
+recap	exp=NaN inc=0 net=NaN n=2 active=2 top=01 topAmt=1e+21
+dailyeq	NaN
+recap	exp=1e+21 inc=1 net=-1e+21 n=5 active=5 top=2 topAmt=1e+21
+streak	0
+weekly	spent=1e+21 left=-1e+21 over=false days=6 daily=0
+weekly	spent=0 left=7 over=false days=6 daily=1
+weekly	spent=0 left=7 over=false days=6 daily=1
+weekly	spent=1e+21 left=-1e+21 over=true days=7 daily=10
+weekly	spent=-3 left=2 over=false days=7 daily=-0.14285714285714285
+streak	0
+weekrange	2024-02-25..2024-03-03
+dailyeq	10
+streak	1
+weekly	spent=0 left=100.5 over=false days=1 daily=14.357142857142858
+weekly	spent=0 left=0 over=false days=3 daily=0
+streak	1
+weekly	spent=1e+21 left=-1e+21 over=true days=1 daily=14.357142857142858
+weekrange	2025-12-28..2026-01-04
+weekrange	2025-12-28..2026-01-04
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+streak	0
+streak	1
+weekrange	2026-03-01..2026-03-08
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=0 over=false days=7 daily=0
+recap	exp=101.1 inc=0 net=-101.1 n=5 active=3 top=rent topAmt=100
+weekly	spent=0 left=100.5 over=false days=3 daily=14.357142857142858
+recap	exp=1 inc=0 net=-1 n=1 active=1 top=01 topAmt=1
+weekly	spent=110.5 left=1e+21 over=false days=7 daily=142857142857142860000
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+streak	1
+weekrange	2026-03-01..2026-03-08
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+streak	1
+weekly	spent=1 left=69 over=false days=6 daily=10
+streak	1
+weekly	spent=0 left=70 over=false days=3 daily=10
+weekrange	2026-05-31..2026-06-07
+dailyeq	1
+weekrange	2026-01-25..2026-02-01
+streak	0
+streak	0
+dailyeq	0
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+weekly	spent=0.1 left=1e+21 over=false days=7 daily=142857142857142860000
+recap	exp=100 inc=1e+21 net=1e+21 n=5 active=5 top=01 topAmt=100
+streak	1
+dailyeq	1
+weekly	spent=0 left=0 over=false days=4 daily=0
+streak	1
+weekly	spent=0 left=1e+21 over=false days=1 daily=142857142857142860000
+recap	exp=NaN inc=0 net=NaN n=7 active=7 top=10 topAmt=10.5
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+weekly	spent=0 left=NaN over=false days=4 daily=NaN
+weekrange	2026-01-25..2026-02-01
+weekly	spent=1e+21 left=NaN over=false days=1 daily=NaN
+dailyeq	1
+recap	exp=NaN inc=0.1 net=NaN n=8 active=6 top=food topAmt=1e+21
+recap	exp=1 inc=NaN net=NaN n=8 active=5 top=rent topAmt=1
+weekly	spent=1 left=1e+21 over=false days=1 daily=142857142857142860000
+weekly	spent=0 left=100.5 over=false days=1 daily=14.357142857142858
+streak	0
+streak	0
+dailyeq	10
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+streak	1
+weekly	spent=0 left=7 over=false days=7 daily=1
+recap	exp=101 inc=10.5 net=-90.5 n=8 active=7 top=food topAmt=100
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+dailyeq	-0.14285714285714285
+recap	exp=NaN inc=0 net=NaN n=7 active=7 top=10 topAmt=100
+recap	exp=1 inc=0 net=-1 n=2 active=2 top=rent topAmt=1
+recap	exp=100.1 inc=1e+21 net=1e+21 n=5 active=5 top=trans topAmt=100
+streak	0
+dailyeq	1
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekly	spent=0 left=70 over=false days=6 daily=10
+streak	0
+recap	exp=1e+21 inc=1 net=-1e+21 n=5 active=5 top=2 topAmt=1e+21
+streak	0
+recap	exp=0 inc=100 net=100 n=2 active=1 top=- topAmt=0
+recap	exp=NaN inc=1e+21 net=NaN n=8 active=7 top=10 topAmt=0
+streak	1
+dailyeq	1
+weekly	spent=0 left=100.5 over=false days=4 daily=14.357142857142858
+weekrange	2026-01-25..2026-02-01
+streak	3
+weekrange	2025-12-28..2026-01-04
+dailyeq	142857142857142860000
+streak	0
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=100.5 over=false days=4 daily=14.357142857142858
+streak	1
+streak	0
+recap	exp=2e+21 inc=0 net=-2e+21 n=5 active=3 top=10 topAmt=2e+21
+weekly	spent=0 left=-1 over=false days=6 daily=-0.14285714285714285
+streak	1
+streak	0
+weekrange	2024-02-25..2024-03-03
+streak	1
+recap	exp=102.1 inc=0 net=-102.1 n=6 active=6 top=01 topAmt=100
+streak	0
+streak	1
+weekly	spent=0 left=0 over=false days=1 daily=0
+recap	exp=NaN inc=0 net=NaN n=6 active=4 top=rent topAmt=1
+dailyeq	NaN
+streak	1
+recap	exp=0 inc=0 net=0 n=1 active=1 top=trans topAmt=0
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0.1 left=69.9 over=false days=3 daily=10
+recap	exp=NaN inc=0 net=NaN n=4 active=4 top= topAmt=0
+dailyeq	14.357142857142858
+weekrange	2026-03-01..2026-03-08
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+streak	1
+dailyeq	142857142857142860000
+streak	0
+streak	1
+weekly	spent=1e+21 left=NaN over=false days=7 daily=NaN
+weekly	spent=0 left=1e+21 over=false days=6 daily=142857142857142860000
+dailyeq	NaN
+weekrange	2024-02-25..2024-03-03
+streak	0
+weekly	spent=0 left=0 over=false days=6 daily=0
+recap	exp=100 inc=1e+21 net=1e+21 n=2 active=2 top=rent topAmt=100
+streak	4
+weekly	spent=100 left=NaN over=false days=3 daily=NaN
+weekrange	2026-01-25..2026-02-01
+weekly	spent=0 left=100.5 over=false days=3 daily=14.357142857142858
+weekrange	2026-05-31..2026-06-07
+recap	exp=0 inc=0 net=0 n=2 active=2 top=- topAmt=0
+dailyeq	-0.14285714285714285
+dailyeq	10
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+dailyeq	10
+weekly	spent=0 left=1e+21 over=false days=6 daily=142857142857142860000
+weekly	spent=0 left=7 over=false days=7 daily=1
+streak	0
+weekrange	2026-06-07..2026-06-14
+dailyeq	1
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekly	spent=0 left=NaN over=false days=1 daily=NaN
+recap	exp=207.6 inc=0 net=-207.6 n=6 active=6 top=01 topAmt=100
+weekly	spent=7.5 left=93 over=false days=1 daily=14.357142857142858
+recap	exp=97.1 inc=0 net=-97.1 n=5 active=5 top=trans topAmt=100
+recap	exp=NaN inc=0 net=NaN n=3 active=3 top=food topAmt=0
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+dailyeq	-0.14285714285714285
+recap	exp=1e+21 inc=0 net=-1e+21 n=2 active=2 top=01 topAmt=1e+21
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+dailyeq	10
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+dailyeq	NaN
+dailyeq	1
+streak	0
+dailyeq	0
+weekly	spent=210.5 left=NaN over=false days=7 daily=NaN
+dailyeq	0
+weekrange	2026-06-07..2026-06-14
+weekrange	2025-12-28..2026-01-04
+weekrange	2026-03-01..2026-03-08
+weekrange	2025-12-28..2026-01-04
+weekly	spent=0 left=0 over=false days=1 daily=0
+weekly	spent=0.1 left=-1.1 over=false days=7 daily=-0.14285714285714285
+weekrange	2026-05-31..2026-06-07
+weekrange	2026-06-07..2026-06-14
+weekly	spent=100 left=-101 over=false days=4 daily=-0.14285714285714285
+weekly	spent=0 left=NaN over=false days=1 daily=NaN
+recap	exp=1e+21 inc=10.5 net=-1e+21 n=5 active=5 top= topAmt=0
+weekrange	2025-12-28..2026-01-04
+weekrange	2025-12-28..2026-01-04
+weekly	spent=0 left=1e+21 over=false days=1 daily=142857142857142860000
+streak	0
+weekly	spent=0 left=NaN over=false days=3 daily=NaN
+weekly	spent=0 left=0 over=false days=7 daily=0
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+streak	3
+streak	0
+recap	exp=NaN inc=0 net=NaN n=6 active=6 top=food topAmt=0
+weekly	spent=101.1 left=NaN over=false days=7 daily=NaN
+weekly	spent=0.1 left=6.9 over=false days=7 daily=1
+weekrange	2024-02-25..2024-03-03
+dailyeq	0
+recap	exp=NaN inc=0 net=NaN n=6 active=5 top=10 topAmt=1
+streak	3
+recap	exp=2e+21 inc=-3 net=-2e+21 n=7 active=4 top=01 topAmt=1e+21
+weekrange	2026-05-31..2026-06-07
+dailyeq	-0.14285714285714285
+recap	exp=21 inc=0.1 net=-20.9 n=5 active=5 top=food topAmt=10.5
+dailyeq	142857142857142860000
+streak	1
+recap	exp=2 inc=0 net=-2 n=3 active=2 top=food topAmt=1
+dailyeq	14.357142857142858
+streak	1
+weekly	spent=0 left=NaN over=false days=4 daily=NaN
+weekly	spent=10.5 left=-11.5 over=false days=6 daily=-0.14285714285714285
+streak	1
+streak	3
+streak	0
+recap	exp=NaN inc=0 net=NaN n=5 active=5 top=2 topAmt=-3
+weekrange	2026-05-31..2026-06-07
+weekly	spent=0 left=0 over=false days=6 daily=0
+weekly	spent=0.1 left=69.9 over=false days=3 daily=10
+streak	1
+streak	1
+weekrange	2026-06-07..2026-06-14
+streak	0
+weekly	spent=0 left=70 over=false days=6 daily=10
+streak	0
+weekrange	2026-06-07..2026-06-14
+recap	exp=1 inc=0 net=-1 n=2 active=2 top=10 topAmt=1
+recap	exp=0 inc=0 net=0 n=1 active=1 top=10 topAmt=0
+weekly	spent=0 left=0 over=false days=7 daily=0
+streak	1
+streak	0
+weekrange	2026-03-01..2026-03-08
+weekrange	2026-06-14..2026-06-21
+weekly	spent=0 left=-1 over=false days=1 daily=-0.14285714285714285
+weekly	spent=0 left=70 over=false days=6 daily=10
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+dailyeq	0
+weekrange	2026-02-01..2026-02-08
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+streak	0
+streak	0
+streak	0
+recap	exp=0 inc=0.1 net=0.1 n=7 active=7 top= topAmt=0
+weekly	spent=1 left=6 over=false days=1 daily=1
+weekly	spent=0 left=70 over=false days=7 daily=10
+recap	exp=NaN inc=1e+21 net=NaN n=6 active=6 top=01 topAmt=1e+21
+weekrange	2026-03-01..2026-03-08
+weekly	spent=10.5 left=-10.5 over=false days=1 daily=0
+weekrange	2026-05-31..2026-06-07
+streak	0
+weekly	spent=1 left=6 over=false days=7 daily=1
+weekly	spent=0 left=70 over=false days=7 daily=10
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+streak	2
+weekrange	2026-03-01..2026-03-08
+weekly	spent=0 left=7 over=false days=7 daily=1
+weekly	spent=0 left=-1 over=false days=4 daily=-0.14285714285714285
+dailyeq	NaN
+weekly	spent=0 left=100.5 over=false days=4 daily=14.357142857142858
+recap	exp=0.1 inc=0 net=-0.1 n=3 active=3 top=01 topAmt=0.1
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+streak	0
+dailyeq	NaN
+streak	1
+weekly	spent=10.5 left=59.5 over=false days=1 daily=10
+weekly	spent=NaN left=NaN over=false days=1 daily=NaN
+weekrange	2026-05-31..2026-06-07
+weekly	spent=0 left=7 over=false days=7 daily=1
+streak	0
+weekrange	2026-02-01..2026-02-08
+weekly	spent=0 left=-1 over=false days=6 daily=-0.14285714285714285
+weekly	spent=0 left=100.5 over=false days=6 daily=14.357142857142858
+weekrange	2026-06-07..2026-06-14
+streak	1
+streak	3
+dailyeq	1
+weekly	spent=1e+21 left=0 over=false days=7 daily=142857142857142860000
+weekly	spent=11.7 left=-4.699999999999999 over=true days=4 daily=1
+streak	0
+dailyeq	142857142857142860000
+dailyeq	NaN
+recap	exp=1e+21 inc=1e+21 net=0 n=7 active=6 top=10 topAmt=1e+21
+weekrange	2026-06-07..2026-06-14
+recap	exp=1e+21 inc=0 net=-1e+21 n=8 active=7 top=01 topAmt=1e+21
+streak	3
+dailyeq	NaN
+weekly	spent=1e+21 left=NaN over=false days=4 daily=NaN
+streak	2
+streak	1
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+recap	exp=0 inc=10.5 net=10.5 n=5 active=5 top=2 topAmt=0
+recap	exp=-3 inc=0 net=3 n=2 active=2 top=01 topAmt=-3
+dailyeq	10
+weekly	spent=0 left=100.5 over=false days=3 daily=14.357142857142858
+streak	4
+weekly	spent=NaN left=NaN over=false days=1 daily=142857142857142860000
+streak	0
+weekly	spent=0 left=0 over=false days=4 daily=0
+streak	1
+streak	1
+weekly	spent=1 left=1e+21 over=false days=7 daily=142857142857142860000
+streak	0
+streak	1
+weekly	spent=10.5 left=90 over=false days=7 daily=14.357142857142858
+dailyeq	-0.14285714285714285
+weekrange	2024-02-25..2024-03-03
+weekrange	2024-02-25..2024-03-03
+weekrange	2026-01-25..2026-02-01
+streak	0
+streak	2
+weekrange	2026-06-07..2026-06-14
+dailyeq	1
+weekly	spent=1 left=69 over=false days=4 daily=10
+weekrange	2024-02-25..2024-03-03
+streak	1
+weekly	spent=0 left=7 over=false days=7 daily=1
+recap	exp=NaN inc=0 net=NaN n=5 active=5 top=10 topAmt=100
+dailyeq	-0.14285714285714285
+streak	2
+weekrange	2026-06-07..2026-06-14
+streak	0
+recap	exp=1e+21 inc=0 net=-1e+21 n=7 active=7 top=trans topAmt=1e+21
+weekly	spent=0 left=100.5 over=false days=3 daily=14.357142857142858
+weekly	spent=NaN left=NaN over=false days=7 daily=1
+dailyeq	NaN
+streak	1
+streak	1
+weekly	spent=0 left=-1 over=false days=4 daily=-0.14285714285714285
+weekrange	2026-02-01..2026-02-08
+weekrange	2026-06-07..2026-06-14
+streak	1
+weekrange	2026-01-25..2026-02-01
+recap	exp=1.1 inc=0 net=-1.1 n=6 active=6 top=food topAmt=1.1
+streak	2
+weekly	spent=100 left=-101 over=false days=1 daily=-0.14285714285714285
+streak	0
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=NaN over=false days=4 daily=NaN
+streak	1
+weekrange	2026-06-07..2026-06-14
+streak	1
+weekly	spent=0 left=7 over=false days=7 daily=1
+streak	0
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+weekly	spent=0 left=7 over=false days=7 daily=1
+dailyeq	14.357142857142858
+dailyeq	0
+recap	exp=-2.9 inc=1e+21 net=1e+21 n=5 active=5 top= topAmt=0
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekly	spent=0 left=-1 over=false days=4 daily=-0.14285714285714285
+recap	exp=NaN inc=0 net=NaN n=2 active=2 top=trans topAmt=10.5
+weekly	spent=0 left=NaN over=false days=1 daily=NaN
+weekrange	2026-03-01..2026-03-08
+weekly	spent=NaN left=NaN over=false days=6 daily=10
+weekrange	2024-02-25..2024-03-03
+weekly	spent=1e+21 left=-1e+21 over=false days=1 daily=0
+recap	exp=0.1 inc=0.1 net=0 n=4 active=4 top=2 topAmt=0.1
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+weekly	spent=0 left=0 over=false days=6 daily=0
+dailyeq	-0.14285714285714285
+streak	0
+recap	exp=NaN inc=0 net=NaN n=6 active=4 top= topAmt=0
+recap	exp=-6 inc=0 net=6 n=2 active=2 top=01 topAmt=-6
+dailyeq	1
+dailyeq	0
+recap	exp=100 inc=0 net=-100 n=1 active=1 top=rent topAmt=100
+streak	0
+weekly	spent=NaN left=NaN over=false days=7 daily=1
+dailyeq	10
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+dailyeq	14.357142857142858
+streak	0
+recap	exp=1e+21 inc=100 net=-1e+21 n=6 active=6 top= topAmt=0
+weekly	spent=0 left=1e+21 over=false days=6 daily=142857142857142860000
+streak	0
+weekly	spent=0 left=0 over=false days=6 daily=0
+recap	exp=10.5 inc=0 net=-10.5 n=2 active=1 top=2 topAmt=10.5
+dailyeq	-0.14285714285714285
+streak	0
+recap	exp=98 inc=0 net=-98 n=5 active=4 top=10 topAmt=97
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+weekrange	2026-06-07..2026-06-14
+dailyeq	1
+weekrange	2026-06-07..2026-06-14
+recap	exp=200 inc=0 net=-200 n=2 active=2 top=10 topAmt=100
+recap	exp=0 inc=2e+21 net=2e+21 n=5 active=5 top= topAmt=0
+weekrange	2026-06-07..2026-06-14
+recap	exp=1 inc=-3 net=-4 n=5 active=5 top=rent topAmt=1
+streak	0
+streak	1
+streak	5
+recap	exp=0.1 inc=0 net=-0.1 n=3 active=3 top= topAmt=0
+streak	2
+dailyeq	1
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+weekly	spent=0 left=NaN over=false days=3 daily=NaN
+streak	2
+recap	exp=12.5 inc=0 net=-12.5 n=6 active=5 top= topAmt=0
+weekly	spent=100 left=1e+21 over=false days=7 daily=142857142857142860000
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+streak	1
+weekrange	2026-05-31..2026-06-07
+recap	exp=NaN inc=10.5 net=NaN n=5 active=4 top=10 topAmt=100
+recap	exp=94 inc=1 net=-93 n=6 active=4 top=rent topAmt=100
+dailyeq	0
+streak	1
+streak	1
+weekly	spent=100 left=-30 over=true days=3 daily=10
+weekly	spent=0 left=1e+21 over=false days=1 daily=142857142857142860000
+dailyeq	10
+weekly	spent=0 left=70 over=false days=4 daily=10
+dailyeq	1
+streak	0
+weekly	spent=0 left=7 over=false days=6 daily=1
+weekrange	2026-01-25..2026-02-01
+streak	0
+streak	0
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+streak	0
+weekrange	2025-12-28..2026-01-04
+weekrange	2026-02-22..2026-03-01
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+recap	exp=1.1 inc=10.5 net=9.4 n=4 active=4 top=2 topAmt=1
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+weekly	spent=0.1 left=100.4 over=false days=6 daily=14.357142857142858
+streak	0
+recap	exp=0 inc=1e+21 net=1e+21 n=1 active=1 top=- topAmt=0
+weekly	spent=0 left=100.5 over=false days=6 daily=14.357142857142858
+streak	1
+dailyeq	0
+dailyeq	-0.14285714285714285
+dailyeq	14.357142857142858
+streak	3
+weekly	spent=0 left=70 over=false days=3 daily=10
+weekrange	2026-02-22..2026-03-01
+weekly	spent=0 left=70 over=false days=7 daily=10
+dailyeq	NaN
+dailyeq	-0.14285714285714285
+recap	exp=100 inc=0 net=-100 n=3 active=3 top=01 topAmt=100
+dailyeq	0
+recap	exp=NaN inc=0.1 net=NaN n=8 active=7 top=food topAmt=10.5
+streak	0
+weekly	spent=0 left=-1 over=false days=4 daily=-0.14285714285714285
+streak	0
+weekly	spent=0 left=0 over=false days=7 daily=0
+weekly	spent=1 left=-2 over=false days=1 daily=-0.14285714285714285
+dailyeq	-0.14285714285714285
+weekly	spent=-3 left=1e+21 over=false days=7 daily=142857142857142860000
+recap	exp=NaN inc=0 net=NaN n=8 active=6 top=rent topAmt=100.1
+weekly	spent=0 left=70 over=false days=7 daily=10
+dailyeq	NaN
+streak	1
+dailyeq	142857142857142860000
+streak	0
+streak	0
+dailyeq	0
+streak	1
+weekrange	2026-06-07..2026-06-14
+recap	exp=NaN inc=0 net=NaN n=8 active=6 top= topAmt=0
+streak	1
+dailyeq	10
+weekly	spent=0 left=7 over=false days=7 daily=1
+streak	1
+streak	1
+weekly	spent=0 left=100.5 over=false days=4 daily=14.357142857142858
+weekly	spent=0 left=NaN over=false days=4 daily=NaN
+weekly	spent=0 left=NaN over=false days=4 daily=NaN
+weekrange	2025-12-28..2026-01-04
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=1e+21 over=false days=3 daily=142857142857142860000
+weekly	spent=1 left=NaN over=false days=7 daily=NaN
+weekly	spent=1 left=99.5 over=false days=3 daily=14.357142857142858
+weekly	spent=0 left=0 over=false days=7 daily=0
+dailyeq	NaN
+weekly	spent=0 left=100.5 over=false days=4 daily=14.357142857142858
+weekrange	2026-06-07..2026-06-14
+streak	0
+weekrange	2024-02-25..2024-03-03
+dailyeq	142857142857142860000
+streak	0
+streak	0
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+weekrange	2026-05-31..2026-06-07
+weekrange	2025-12-28..2026-01-04
+dailyeq	142857142857142860000
+recap	exp=NaN inc=0 net=NaN n=4 active=3 top=food topAmt=NaN
+weekly	spent=1e+21 left=-1e+21 over=true days=4 daily=1
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+weekly	spent=0.1 left=-1.1 over=false days=4 daily=-0.14285714285714285
+weekly	spent=7.5 left=NaN over=false days=4 daily=NaN
+streak	1
+weekly	spent=0 left=-1 over=false days=4 daily=-0.14285714285714285
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+streak	1
+recap	exp=NaN inc=-3 net=NaN n=6 active=5 top=01 topAmt=1
+streak	0
+dailyeq	14.357142857142858
+dailyeq	14.357142857142858
+weekly	spent=100 left=-100 over=false days=4 daily=0
+dailyeq	1
+streak	0
+weekly	spent=-3 left=103.5 over=false days=4 daily=14.357142857142858
+recap	exp=1e+21 inc=0 net=-1e+21 n=1 active=1 top=2 topAmt=1e+21
+streak	0
+weekly	spent=0 left=7 over=false days=7 daily=1
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+dailyeq	14.357142857142858
+streak	1
+streak	0
+streak	2
+weekly	spent=0 left=NaN over=false days=1 daily=NaN
+dailyeq	1
+weekly	spent=0 left=1e+21 over=false days=4 daily=142857142857142860000
+streak	0
+recap	exp=0 inc=1 net=1 n=2 active=2 top=- topAmt=0
+weekly	spent=NaN left=NaN over=false days=6 daily=-0.14285714285714285
+streak	1
+streak	0
+weekrange	2026-06-14..2026-06-21
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+dailyeq	10
+weekly	spent=0 left=-1 over=false days=1 daily=-0.14285714285714285
+dailyeq	NaN
+dailyeq	NaN
+weekrange	2026-06-14..2026-06-21
+recap	exp=-1.9 inc=0 net=1.9 n=4 active=4 top=rent topAmt=1
+streak	0
+streak	0
+dailyeq	1
+streak	0
+dailyeq	-0.14285714285714285
+streak	2
+weekly	spent=0 left=7 over=false days=7 daily=1
+weekly	spent=0.1 left=6.9 over=false days=4 daily=1
+recap	exp=1e+21 inc=10.5 net=-1e+21 n=8 active=4 top=trans topAmt=1e+21
+dailyeq	14.357142857142858
+weekly	spent=0 left=70 over=false days=3 daily=10
+weekrange	2026-05-31..2026-06-07
+weekrange	2026-02-01..2026-02-08
+weekly	spent=0 left=1e+21 over=false days=6 daily=142857142857142860000
+weekly	spent=0 left=1e+21 over=false days=3 daily=142857142857142860000
+streak	0
+weekly	spent=0 left=1e+21 over=false days=6 daily=142857142857142860000
+weekrange	2025-12-28..2026-01-04
+dailyeq	1
+weekly	spent=10.5 left=-11.5 over=false days=4 daily=-0.14285714285714285
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+weekrange	2026-01-25..2026-02-01
+weekly	spent=0 left=0 over=false days=7 daily=0
+dailyeq	NaN
+weekly	spent=0 left=1e+21 over=false days=3 daily=142857142857142860000
+weekly	spent=0 left=7 over=false days=7 daily=1
+recap	exp=-6 inc=0 net=6 n=3 active=2 top=rent topAmt=-3
+weekly	spent=0 left=-1 over=false days=6 daily=-0.14285714285714285
+recap	exp=0.1 inc=0 net=-0.1 n=2 active=2 top=01 topAmt=0.1
+weekly	spent=1 left=1e+21 over=false days=4 daily=142857142857142860000
+streak	0
+weekly	spent=0 left=1e+21 over=false days=4 daily=142857142857142860000
+weekly	spent=0 left=0 over=false days=3 daily=0
+streak	0
+recap	exp=NaN inc=NaN net=NaN n=6 active=6 top=2 topAmt=-3
+weekly	spent=0 left=7 over=false days=7 daily=1
+weekrange	2026-06-14..2026-06-21
+weekrange	2024-02-25..2024-03-03
+weekrange	2024-02-25..2024-03-03
+dailyeq	14.357142857142858
+weekly	spent=0 left=7 over=false days=4 daily=1
+streak	0
+streak	2
+streak	0
+streak	1
+streak	1
+dailyeq	10
+dailyeq	1
+recap	exp=1e+21 inc=0 net=-1e+21 n=7 active=4 top=01 topAmt=1e+21
+weekrange	2026-06-07..2026-06-14
+recap	exp=NaN inc=0 net=NaN n=6 active=5 top=10 topAmt=1e+21
+streak	0
+dailyeq	14.357142857142858
+weekly	spent=0 left=-1 over=false days=6 daily=-0.14285714285714285
+weekly	spent=1e+21 left=-1e+21 over=true days=1 daily=14.357142857142858
+dailyeq	142857142857142860000
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+weekly	spent=0 left=0 over=false days=6 daily=0
+weekly	spent=10.5 left=NaN over=false days=6 daily=NaN
+recap	exp=-2.9 inc=0 net=2.9 n=8 active=6 top=rent topAmt=-2.9
+dailyeq	142857142857142860000
+weekly	spent=0 left=70 over=false days=3 daily=10
+weekly	spent=0 left=7 over=false days=7 daily=1
+dailyeq	14.357142857142858
+recap	exp=0 inc=0 net=0 n=2 active=2 top=10 topAmt=0
+weekly	spent=1 left=NaN over=false days=7 daily=NaN
+dailyeq	1
+weekrange	2026-05-31..2026-06-07
+streak	0
+dailyeq	1
+weekrange	2026-05-31..2026-06-07
+weekrange	2026-06-07..2026-06-14
+dailyeq	10
+streak	0
+weekly	spent=0 left=100.5 over=false days=1 daily=14.357142857142858
+weekly	spent=0 left=7 over=false days=7 daily=1
+weekly	spent=0 left=1e+21 over=false days=3 daily=142857142857142860000
+weekly	spent=0 left=-1 over=false days=6 daily=-0.14285714285714285
+recap	exp=NaN inc=1 net=NaN n=6 active=6 top=01 topAmt=10.5
+weekly	spent=0 left=7 over=false days=7 daily=1
+streak	0
+recap	exp=201 inc=1e+21 net=1e+21 n=5 active=5 top=rent topAmt=200
+dailyeq	NaN
+weekrange	2026-02-01..2026-02-08
+dailyeq	142857142857142860000
+recap	exp=7.699999999999999 inc=NaN net=NaN n=8 active=7 top=trans topAmt=10.5
+streak	0
+weekly	spent=NaN left=NaN over=false days=3 daily=14.357142857142858
+recap	exp=97 inc=10.5 net=-86.5 n=5 active=4 top= topAmt=0
+dailyeq	10
+streak	0
+dailyeq	-0.14285714285714285
+weekly	spent=0 left=7 over=false days=1 daily=1
+weekly	spent=110.5 left=1e+21 over=false days=3 daily=142857142857142860000
+weekrange	2026-06-07..2026-06-14
+recap	exp=0 inc=0 net=0 n=1 active=1 top=01 topAmt=0
+dailyeq	142857142857142860000
+streak	0
+weekly	spent=0 left=7 over=false days=3 daily=1
+weekly	spent=1 left=99.5 over=false days=1 daily=14.357142857142858
+weekly	spent=0.1 left=69.9 over=false days=7 daily=10
+streak	0
+streak	1
+dailyeq	14.357142857142858
+weekrange	2026-05-31..2026-06-07
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=1e+21 over=false days=3 daily=142857142857142860000
+recap	exp=100 inc=-3 net=-103 n=6 active=6 top=food topAmt=100
+streak	3
+weekly	spent=1e+21 left=-1e+21 over=false days=7 daily=0
+weekrange	2026-06-07..2026-06-14
+weekrange	2024-02-25..2024-03-03
+dailyeq	-0.14285714285714285
+recap	exp=0.1 inc=1 net=0.9 n=3 active=2 top=rent topAmt=0.1
+streak	1
+streak	1
+streak	0
+streak	0
+recap	exp=-3 inc=0 net=3 n=3 active=3 top=2 topAmt=-3
+recap	exp=NaN inc=0 net=NaN n=3 active=2 top=food topAmt=0
+streak	0
+recap	exp=-3 inc=0 net=3 n=2 active=2 top= topAmt=0
+recap	exp=NaN inc=0 net=NaN n=7 active=5 top=2 topAmt=10.5
+streak	1
+weekrange	2026-03-01..2026-03-08
+streak	0
+recap	exp=NaN inc=0 net=NaN n=1 active=1 top= topAmt=0
+weekrange	2026-06-07..2026-06-14
+weekly	spent=1e+21 left=-1e+21 over=true days=3 daily=14.357142857142858
+streak	0
+weekly	spent=0 left=0 over=false days=1 daily=0
+dailyeq	0
+streak	0
+weekly	spent=10.5 left=-11.5 over=false days=3 daily=-0.14285714285714285
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+streak	2
+weekly	spent=0 left=-1 over=false days=4 daily=-0.14285714285714285
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+dailyeq	NaN
+weekly	spent=1 left=-1 over=false days=6 daily=0
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+weekly	spent=0 left=-1 over=false days=4 daily=-0.14285714285714285
+streak	0
+weekrange	2026-06-07..2026-06-14
+recap	exp=0 inc=0 net=0 n=2 active=2 top=- topAmt=0
+recap	exp=11.5 inc=NaN net=NaN n=5 active=5 top=10 topAmt=10.5
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=-1 over=false days=4 daily=-0.14285714285714285
+weekly	spent=1e+21 left=-1e+21 over=true days=3 daily=14.357142857142858
+weekly	spent=0 left=-1 over=false days=6 daily=-0.14285714285714285
+dailyeq	10
+weekly	spent=-3 left=10 over=false days=7 daily=1
+streak	0
+streak	2
+streak	0
+streak	0
+streak	1
+dailyeq	142857142857142860000
+weekly	spent=0 left=100.5 over=false days=1 daily=14.357142857142858
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=-1 over=false days=3 daily=-0.14285714285714285
+weekly	spent=0 left=7 over=false days=1 daily=1
+weekly	spent=0 left=1e+21 over=false days=3 daily=142857142857142860000
+dailyeq	10
+streak	1
+weekrange	2026-05-31..2026-06-07
+streak	0
+streak	0
+streak	2
+dailyeq	1
+dailyeq	NaN
+streak	0
+streak	1
+weekrange	2026-02-22..2026-03-01
+recap	exp=NaN inc=-3 net=NaN n=5 active=5 top=2 topAmt=0.1
+streak	0
+weekly	spent=0 left=70 over=false days=6 daily=10
+weekly	spent=0.1 left=1e+21 over=false days=7 daily=142857142857142860000
+streak	1
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+weekly	spent=NaN left=NaN over=false days=3 daily=10
+recap	exp=1e+21 inc=0 net=-1e+21 n=1 active=1 top= topAmt=0
+weekly	spent=0 left=70 over=false days=7 daily=10
+weekrange	2024-02-25..2024-03-03
+weekrange	2024-02-25..2024-03-03
+dailyeq	1
+weekly	spent=0.1 left=-1.1 over=false days=3 daily=-0.14285714285714285
+streak	1
+weekrange	2026-03-01..2026-03-08
+weekrange	2026-02-01..2026-02-08
+weekly	spent=0 left=0 over=false days=4 daily=0
+weekrange	2026-05-31..2026-06-07
+weekrange	2026-06-07..2026-06-14
+streak	0
+weekrange	2026-03-01..2026-03-08
+recap	exp=10.5 inc=0 net=-10.5 n=4 active=3 top=food topAmt=10.5
+weekly	spent=0 left=NaN over=false days=3 daily=NaN
+streak	4
+weekly	spent=0 left=1e+21 over=false days=1 daily=142857142857142860000
+weekrange	2026-06-07..2026-06-14
+recap	exp=0.1 inc=0 net=-0.1 n=2 active=2 top=10 topAmt=0.1
+streak	0
+weekrange	2026-03-01..2026-03-08
+streak	0
+weekly	spent=0 left=0 over=false days=6 daily=0
+streak	0
+weekly	spent=0 left=0 over=false days=1 daily=0
+weekrange	2025-12-28..2026-01-04
+streak	1
+weekly	spent=0 left=1e+21 over=false days=1 daily=142857142857142860000
+recap	exp=NaN inc=10.5 net=NaN n=8 active=7 top=food topAmt=1
+dailyeq	-0.14285714285714285
+weekly	spent=0 left=-1 over=false days=1 daily=-0.14285714285714285
+weekly	spent=0 left=0 over=false days=4 daily=0
+streak	0
+weekrange	2026-06-07..2026-06-14
+dailyeq	14.357142857142858
+streak	1
+recap	exp=NaN inc=100 net=NaN n=7 active=6 top=10 topAmt=10.5
+weekly	spent=0 left=0 over=false days=7 daily=0
+weekly	spent=0 left=7 over=false days=7 daily=1
+streak	1
+dailyeq	0
+dailyeq	14.357142857142858
+streak	1
+streak	0
+weekly	spent=0 left=70 over=false days=4 daily=10
+weekrange	2026-06-07..2026-06-14
+weekrange	2025-12-28..2026-01-04
+weekly	spent=1e+21 left=-1e+21 over=true days=1 daily=1
+weekly	spent=0 left=1e+21 over=false days=1 daily=142857142857142860000
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+weekly	spent=10.5 left=-11.5 over=false days=7 daily=-0.14285714285714285
+weekrange	2026-06-07..2026-06-14
+dailyeq	142857142857142860000
+recap	exp=11.5 inc=0 net=-11.5 n=2 active=2 top=01 topAmt=10.5
+weekrange	2025-12-28..2026-01-04
+recap	exp=1 inc=0 net=-1 n=7 active=5 top=01 topAmt=1
+weekrange	2026-01-25..2026-02-01
+streak	1
+dailyeq	0
+streak	1
+streak	1
+recap	exp=NaN inc=10.5 net=NaN n=5 active=5 top=trans topAmt=NaN
+dailyeq	14.357142857142858
+weekrange	2026-03-01..2026-03-08
+dailyeq	1
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+weekrange	2026-01-25..2026-02-01
+recap	exp=0 inc=100 net=100 n=5 active=5 top=- topAmt=0
+dailyeq	-0.14285714285714285
+dailyeq	-0.14285714285714285
+weekly	spent=300 left=NaN over=false days=1 daily=NaN
+weekrange	2026-06-07..2026-06-14
+weekrange	2026-02-01..2026-02-08
+streak	0
+weekly	spent=0 left=100.5 over=false days=4 daily=14.357142857142858
+weekly	spent=0 left=0 over=false days=7 daily=0
+dailyeq	-0.14285714285714285
+streak	1
+recap	exp=1 inc=0 net=-1 n=4 active=3 top=trans topAmt=1
+streak	0
+dailyeq	10
+dailyeq	142857142857142860000
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+dailyeq	14.357142857142858
+streak	0
+weekrange	2026-06-07..2026-06-14
+weekly	spent=100 left=-100 over=false days=1 daily=0
+weekrange	2026-06-07..2026-06-14
+streak	0
+streak	1
+streak	0
+recap	exp=1 inc=100 net=99 n=4 active=4 top=10 topAmt=1
+weekrange	2024-02-25..2024-03-03
+recap	exp=0 inc=0 net=0 n=4 active=3 top=2 topAmt=0
+weekly	spent=100 left=-93 over=true days=4 daily=1
+streak	0
+streak	0
+streak	1
+dailyeq	10
+recap	exp=0.1 inc=0 net=-0.1 n=8 active=7 top=2 topAmt=0.1
+streak	0
+weekly	spent=10.5 left=-11.5 over=false days=3 daily=-0.14285714285714285
+streak	0
+weekrange	2026-03-01..2026-03-08
+weekly	spent=0 left=100.5 over=false days=1 daily=14.357142857142858
+recap	exp=300.1 inc=100 net=-200.10000000000002 n=8 active=7 top=2 topAmt=100.1
+weekly	spent=NaN left=NaN over=false days=1 daily=0
+weekly	spent=0 left=1e+21 over=false days=3 daily=142857142857142860000
+dailyeq	142857142857142860000
+recap	exp=-3 inc=0 net=3 n=2 active=2 top= topAmt=0
+weekly	spent=NaN left=NaN over=false days=7 daily=0
+weekly	spent=0 left=100.5 over=false days=4 daily=14.357142857142858
+streak	1
+dailyeq	142857142857142860000
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+recap	exp=0 inc=0 net=0 n=2 active=2 top=food topAmt=0
+streak	0
+recap	exp=NaN inc=-3 net=NaN n=8 active=6 top=2 topAmt=100
+streak	0
+streak	0
+streak	3
+dailyeq	14.357142857142858
+dailyeq	-0.14285714285714285
+weekrange	2026-01-25..2026-02-01
+streak	0
+weekly	spent=0 left=NaN over=false days=1 daily=NaN
+streak	0
+dailyeq	0
+streak	0
+streak	1
+weekly	spent=0.1 left=-1.1 over=false days=1 daily=-0.14285714285714285
+weekrange	2026-02-22..2026-03-01
+streak	0
+weekrange	2026-05-31..2026-06-07
+streak	0
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+recap	exp=NaN inc=0 net=NaN n=3 active=3 top=trans topAmt=100
+weekly	spent=100 left=NaN over=false days=7 daily=NaN
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+weekly	spent=NaN left=NaN over=false days=4 daily=142857142857142860000
+streak	0
+recap	exp=1e+21 inc=0 net=-1e+21 n=7 active=6 top= topAmt=0
+weekly	spent=0 left=70 over=false days=6 daily=10
+streak	1
+streak	2
+weekly	spent=0 left=7 over=false days=7 daily=1
+recap	exp=11.5 inc=0 net=-11.5 n=3 active=3 top=food topAmt=10.5
+dailyeq	1
+weekly	spent=0 left=-1 over=false days=6 daily=-0.14285714285714285
+recap	exp=1e+21 inc=NaN net=NaN n=7 active=6 top=rent topAmt=1e+21
+dailyeq	14.357142857142858
+streak	0
+recap	exp=0 inc=-3 net=-3 n=2 active=2 top=- topAmt=0
+weekrange	2026-03-01..2026-03-08
+weekly	spent=0 left=1e+21 over=false days=1 daily=142857142857142860000
+streak	0
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+weekly	spent=0 left=0 over=false days=7 daily=0
+weekly	spent=0 left=7 over=false days=6 daily=1
+recap	exp=0 inc=0 net=0 n=2 active=2 top=rent topAmt=0
+weekly	spent=0 left=0 over=false days=3 daily=0
+recap	exp=NaN inc=1 net=NaN n=8 active=6 top=rent topAmt=1e+21
+weekly	spent=NaN left=NaN over=false days=4 daily=NaN
+weekly	spent=0 left=-1 over=false days=3 daily=-0.14285714285714285
+dailyeq	14.357142857142858
+streak	2
+weekly	spent=1e+21 left=-1e+21 over=true days=7 daily=10
+weekly	spent=0 left=NaN over=false days=4 daily=NaN
+streak	0
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+weekly	spent=100 left=-101 over=false days=1 daily=-0.14285714285714285
+streak	0
+dailyeq	14.357142857142858
+streak	1
+recap	exp=97 inc=NaN net=NaN n=8 active=8 top=trans topAmt=100
+weekly	spent=0 left=NaN over=false days=4 daily=NaN
+weekly	spent=0 left=70 over=false days=3 daily=10
+recap	exp=1e+21 inc=0 net=-1e+21 n=8 active=7 top= topAmt=0
+weekly	spent=0 left=1e+21 over=false days=3 daily=142857142857142860000
+weekrange	2025-12-28..2026-01-04
+streak	1
+recap	exp=NaN inc=1e+21 net=NaN n=2 active=2 top=2 topAmt=NaN
+streak	1
+streak	1
+recap	exp=NaN inc=0 net=NaN n=7 active=5 top=rent topAmt=100
+weekrange	2026-02-01..2026-02-08
+dailyeq	1
+recap	exp=NaN inc=0 net=NaN n=4 active=3 top=trans topAmt=10.5
+streak	1
+recap	exp=97 inc=0.1 net=-96.9 n=5 active=5 top=2 topAmt=100
+dailyeq	NaN
+streak	1
+weekly	spent=-3 left=10 over=false days=7 daily=1
+streak	2
+weekly	spent=0 left=0 over=false days=7 daily=0
+streak	0
+dailyeq	14.357142857142858
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekly	spent=NaN left=NaN over=false days=4 daily=-0.14285714285714285
+weekly	spent=0 left=7 over=false days=7 daily=1
+recap	exp=1e+21 inc=0 net=-1e+21 n=2 active=2 top=10 topAmt=1e+21
+recap	exp=-2.9 inc=0 net=2.9 n=3 active=3 top=2 topAmt=0.1
+weekly	spent=NaN left=NaN over=false days=1 daily=10
+recap	exp=100 inc=0 net=-100 n=1 active=1 top= topAmt=0
+weekly	spent=0 left=-1 over=false days=4 daily=-0.14285714285714285
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+streak	0
+weekly	spent=0 left=70 over=false days=1 daily=10
+weekly	spent=-3 left=103.5 over=false days=3 daily=14.357142857142858
+streak	1
+dailyeq	NaN
+recap	exp=211.5 inc=0 net=-211.5 n=5 active=4 top=10 topAmt=100
+recap	exp=NaN inc=0 net=NaN n=7 active=6 top= topAmt=0
+weekly	spent=0.1 left=1e+21 over=false days=1 daily=142857142857142860000
+recap	exp=2e+21 inc=1e+21 net=-1e+21 n=7 active=7 top=01 topAmt=1e+21
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+recap	exp=111.5 inc=0.1 net=-111.4 n=7 active=5 top=10 topAmt=111.5
+dailyeq	10
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+recap	exp=-2.9 inc=1e+21 net=1e+21 n=3 active=3 top=food topAmt=0.1
+weekly	spent=0 left=100.5 over=false days=3 daily=14.357142857142858
+weekly	spent=0 left=0 over=false days=7 daily=0
+dailyeq	NaN
+streak	1
+weekly	spent=0 left=0 over=false days=1 daily=0
+streak	1
+weekly	spent=10.5 left=1e+21 over=false days=4 daily=142857142857142860000
+weekly	spent=0 left=0 over=false days=3 daily=0
+weekly	spent=0 left=70 over=false days=4 daily=10
+weekly	spent=0 left=0 over=false days=7 daily=0
+streak	0
+weekly	spent=0 left=7 over=false days=7 daily=1
+weekly	spent=10.5 left=NaN over=false days=6 daily=NaN
+weekly	spent=0 left=7 over=false days=4 daily=1
+weekly	spent=0 left=NaN over=false days=3 daily=NaN
+streak	0
+streak	1
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+recap	exp=0.1 inc=0 net=-0.1 n=5 active=4 top= topAmt=0
+weekrange	2026-06-07..2026-06-14
+streak	1
+streak	0
+weekly	spent=-3 left=73 over=false days=1 daily=10
+dailyeq	14.357142857142858
+streak	0
+streak	0
+recap	exp=NaN inc=0 net=NaN n=7 active=6 top=2 topAmt=NaN
+dailyeq	NaN
+recap	exp=1e+21 inc=0 net=-1e+21 n=7 active=6 top=10 topAmt=1e+21
+dailyeq	10
+dailyeq	142857142857142860000
+streak	3
+recap	exp=11.6 inc=0.1 net=-11.5 n=7 active=5 top=trans topAmt=10.5
+weekrange	2026-01-25..2026-02-01
+weekly	spent=0 left=0 over=false days=1 daily=0
+weekrange	2024-02-25..2024-03-03
+streak	0
+streak	0
+streak	0
+dailyeq	10
+weekly	spent=100 left=NaN over=false days=7 daily=NaN
+streak	1
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=0 over=false days=7 daily=0
+weekly	spent=10.6 left=1e+21 over=false days=3 daily=142857142857142860000
+weekrange	2025-12-28..2026-01-04
+streak	2
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+weekly	spent=0 left=100.5 over=false days=3 daily=14.357142857142858
+weekrange	2026-02-01..2026-02-08
+weekly	spent=0 left=1e+21 over=false days=1 daily=142857142857142860000
+dailyeq	142857142857142860000
+weekrange	2025-12-28..2026-01-04
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+weekly	spent=0 left=NaN over=false days=3 daily=NaN
+dailyeq	0
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+dailyeq	142857142857142860000
+weekrange	2025-12-28..2026-01-04
+weekly	spent=0 left=-1 over=false days=4 daily=-0.14285714285714285
+dailyeq	NaN
+weekrange	2026-06-14..2026-06-21
+streak	1
+weekly	spent=1e+21 left=-1e+21 over=false days=4 daily=0
+weekly	spent=100 left=-93 over=true days=1 daily=1
+streak	1
+weekly	spent=0 left=NaN over=false days=6 daily=NaN
+weekly	spent=0 left=7 over=false days=7 daily=1
+streak	0
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekly	spent=10.5 left=1e+21 over=false days=7 daily=142857142857142860000
+weekrange	2026-06-14..2026-06-21
+weekly	spent=1e+21 left=-1e+21 over=true days=1 daily=14.357142857142858
+dailyeq	NaN
+weekly	spent=0 left=1e+21 over=false days=6 daily=142857142857142860000
+streak	2
+weekrange	2024-02-25..2024-03-03
+dailyeq	0
+streak	1
+weekly	spent=0 left=100.5 over=false days=6 daily=14.357142857142858
+recap	exp=NaN inc=0 net=NaN n=8 active=7 top=01 topAmt=1
+weekly	spent=1e+21 left=-1e+21 over=true days=4 daily=1
+streak	0
+dailyeq	NaN
+weekrange	2026-02-22..2026-03-01
+weekly	spent=1e+21 left=NaN over=false days=3 daily=NaN
+streak	2
+streak	1
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=70 over=false days=7 daily=10
+recap	exp=10.5 inc=0.1 net=-10.4 n=5 active=5 top=rent topAmt=10.5
+weekrange	2024-02-25..2024-03-03
+dailyeq	1
+streak	0
+weekrange	2025-12-28..2026-01-04
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+weekly	spent=10.5 left=1e+21 over=false days=4 daily=142857142857142860000
+streak	1
+weekly	spent=NaN left=NaN over=false days=1 daily=142857142857142860000
+recap	exp=NaN inc=0 net=NaN n=4 active=4 top=01 topAmt=0.1
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+weekly	spent=0 left=7 over=false days=4 daily=1
+dailyeq	14.357142857142858
+weekly	spent=0 left=7 over=false days=6 daily=1
+streak	0
+dailyeq	-0.14285714285714285
+weekly	spent=7.5 left=-7.5 over=false days=1 daily=0
+dailyeq	1
+weekly	spent=0 left=7 over=false days=7 daily=1
+weekly	spent=0 left=1e+21 over=false days=6 daily=142857142857142860000
+weekly	spent=-3 left=73 over=false days=7 daily=10
+streak	0
+streak	1
+weekly	spent=1e+21 left=NaN over=false days=1 daily=NaN
+weekly	spent=0 left=1e+21 over=false days=1 daily=142857142857142860000
+weekly	spent=101 left=-94 over=true days=7 daily=1
+weekly	spent=0 left=0 over=false days=4 daily=0
+streak	0
+weekly	spent=0 left=100.5 over=false days=4 daily=14.357142857142858
+recap	exp=NaN inc=NaN net=NaN n=8 active=6 top=2 topAmt=10.5
+streak	0
+weekly	spent=0 left=7 over=false days=7 daily=1
+recap	exp=0 inc=-2.9 net=-2.9 n=3 active=3 top=- topAmt=0
+weekly	spent=0 left=70 over=false days=6 daily=10
+streak	0
+weekrange	2026-02-01..2026-02-08
+dailyeq	10
+dailyeq	14.357142857142858
+weekrange	2026-06-07..2026-06-14
+weekrange	2024-02-25..2024-03-03
+dailyeq	NaN
+weekly	spent=0 left=-1 over=false days=4 daily=-0.14285714285714285
+streak	0
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=7 over=false days=7 daily=1
+streak	1
+recap	exp=1e+21 inc=0 net=-1e+21 n=7 active=7 top=rent topAmt=1e+21
+weekly	spent=NaN left=NaN over=false days=7 daily=14.357142857142858
+recap	exp=1e+21 inc=0 net=-1e+21 n=1 active=1 top=2 topAmt=1e+21
+weekly	spent=0 left=NaN over=false days=4 daily=NaN
+streak	1
+weekly	spent=0 left=-1 over=false days=6 daily=-0.14285714285714285
+weekly	spent=1 left=69 over=false days=4 daily=10
+streak	2
+streak	1
+recap	exp=0.1 inc=0 net=-0.1 n=1 active=1 top=01 topAmt=0.1
+streak	0
+recap	exp=97.1 inc=10.5 net=-86.6 n=6 active=6 top=10 topAmt=100
+streak	1
+dailyeq	-0.14285714285714285
+dailyeq	NaN
+weekrange	2026-02-22..2026-03-01
+weekrange	2026-02-22..2026-03-01
+weekly	spent=0 left=7 over=false days=6 daily=1
+weekly	spent=0 left=70 over=false days=3 daily=10
+weekly	spent=0.1 left=1e+21 over=false days=7 daily=142857142857142860000
+streak	1
+streak	1
+weekrange	2026-01-25..2026-02-01
+recap	exp=0 inc=10.5 net=10.5 n=3 active=3 top=- topAmt=0
+streak	0
+weekrange	2025-12-28..2026-01-04
+weekrange	2026-02-22..2026-03-01
+weekly	spent=NaN left=NaN over=false days=1 daily=-0.14285714285714285
+streak	0
+weekly	spent=1.1 left=99.4 over=false days=4 daily=14.357142857142858
+recap	exp=10.5 inc=0 net=-10.5 n=4 active=4 top=rent topAmt=10.5
+streak	0
+weekly	spent=NaN left=NaN over=false days=3 daily=14.357142857142858
+weekly	spent=1e+21 left=NaN over=false days=3 daily=NaN
+weekly	spent=7.5 left=62.5 over=false days=4 daily=10
+weekly	spent=0 left=-1 over=false days=4 daily=-0.14285714285714285
+streak	0
+dailyeq	14.357142857142858
+weekly	spent=1e+21 left=0 over=false days=1 daily=142857142857142860000
+streak	0
+recap	exp=-3 inc=0 net=3 n=4 active=4 top=2 topAmt=-3
+streak	0
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+dailyeq	-0.14285714285714285
+dailyeq	1
+streak	0
+weekly	spent=0 left=0 over=false days=1 daily=0
+streak	2
+weekly	spent=0 left=-1 over=false days=6 daily=-0.14285714285714285
+weekrange	2026-05-31..2026-06-07
+dailyeq	NaN
+dailyeq	1
+dailyeq	NaN
+recap	exp=98 inc=0 net=-98 n=5 active=4 top=food topAmt=100
+recap	exp=1 inc=0 net=-1 n=1 active=1 top=2 topAmt=1
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+dailyeq	1
+weekrange	2026-06-07..2026-06-14
+dailyeq	1
+streak	2
+weekly	spent=0 left=7 over=false days=3 daily=1
+recap	exp=-2 inc=10.5 net=12.5 n=6 active=6 top=trans topAmt=1
+dailyeq	1
+weekly	spent=0 left=7 over=false days=3 daily=1
+recap	exp=97 inc=0 net=-97 n=2 active=2 top=trans topAmt=100
+streak	0
+weekly	spent=0 left=0 over=false days=7 daily=0
+weekly	spent=10.5 left=59.5 over=false days=4 daily=10
+dailyeq	NaN
+weekly	spent=0 left=100.5 over=false days=3 daily=14.357142857142858
+weekrange	2026-03-01..2026-03-08
+streak	1
+streak	0
+weekly	spent=0 left=70 over=false days=7 daily=10
+recap	exp=11.5 inc=1e+21 net=1e+21 n=8 active=7 top=trans topAmt=10.5
+weekly	spent=0.1 left=-1.1 over=false days=1 daily=-0.14285714285714285
+recap	exp=NaN inc=0 net=NaN n=5 active=5 top=10 topAmt=0.1
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=-1 over=false days=1 daily=-0.14285714285714285
+weekly	spent=10.5 left=59.5 over=false days=4 daily=10
+dailyeq	10
+recap	exp=10.5 inc=NaN net=NaN n=5 active=5 top= topAmt=0
+streak	1
+weekly	spent=0 left=1e+21 over=false days=4 daily=142857142857142860000
+streak	0
+recap	exp=-3 inc=0 net=3 n=3 active=3 top=2 topAmt=-3
+weekly	spent=NaN left=NaN over=false days=4 daily=142857142857142860000
+dailyeq	-0.14285714285714285
+weekly	spent=0 left=7 over=false days=6 daily=1
+streak	1
+weekly	spent=0.2 left=NaN over=false days=7 daily=NaN
+weekly	spent=0 left=7 over=false days=7 daily=1
+recap	exp=NaN inc=0 net=NaN n=8 active=8 top=10 topAmt=-2.9
+streak	0
+weekly	spent=0 left=7 over=false days=4 daily=1
+weekrange	2026-06-07..2026-06-14
+dailyeq	NaN
+streak	0
+recap	exp=10.6 inc=0 net=-10.6 n=2 active=2 top=10 topAmt=10.6
+dailyeq	10
+weekrange	2026-06-07..2026-06-14
+weekly	spent=NaN left=NaN over=false days=1 daily=142857142857142860000
+weekrange	2024-02-25..2024-03-03
+dailyeq	142857142857142860000
+weekrange	2024-02-25..2024-03-03
+streak	0
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+streak	0
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+streak	0
+dailyeq	142857142857142860000
+dailyeq	1
+streak	1
+weekrange	2025-12-28..2026-01-04
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekly	spent=10.5 left=-11.5 over=false days=4 daily=-0.14285714285714285
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+streak	0
+recap	exp=-3 inc=NaN net=NaN n=4 active=3 top=10 topAmt=0
+weekrange	2026-06-07..2026-06-14
+streak	2
+streak	1
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+streak	0
+streak	0
+weekly	spent=-3 left=73 over=false days=7 daily=10
+dailyeq	1
+dailyeq	0
+streak	0
+streak	1
+recap	exp=-3 inc=0 net=3 n=5 active=4 top= topAmt=0
+streak	1
+weekrange	2024-02-25..2024-03-03
+weekly	spent=10.6 left=1e+21 over=false days=7 daily=142857142857142860000
+recap	exp=1e+21 inc=-3 net=-1e+21 n=5 active=4 top=trans topAmt=1e+21
+dailyeq	14.357142857142858
+weekly	spent=0 left=1e+21 over=false days=4 daily=142857142857142860000
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+dailyeq	0
+recap	exp=0 inc=1e+21 net=1e+21 n=3 active=3 top=- topAmt=0
+streak	0
+streak	0
+weekrange	2026-01-25..2026-02-01
+weekrange	2026-06-07..2026-06-14
+dailyeq	0
+weekly	spent=0 left=7 over=false days=1 daily=1
+weekly	spent=100 left=0.5 over=false days=4 daily=14.357142857142858
+weekly	spent=100 left=0.5 over=false days=4 daily=14.357142857142858
+weekly	spent=1 left=99.5 over=false days=4 daily=14.357142857142858
+streak	0
+streak	0
+weekly	spent=0 left=NaN over=false days=4 daily=NaN
+weekrange	2026-01-25..2026-02-01
+recap	exp=0.1 inc=0 net=-0.1 n=1 active=1 top=01 topAmt=0.1
+weekly	spent=0 left=7 over=false days=4 daily=1
+weekrange	2026-06-07..2026-06-14
+streak	1
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=70 over=false days=7 daily=10
+streak	3
+streak	0
+streak	0
+recap	exp=12.6 inc=NaN net=NaN n=8 active=6 top=rent topAmt=10.5
+weekly	spent=0 left=70 over=false days=1 daily=10
+weekrange	2026-01-25..2026-02-01
+streak	0
+recap	exp=1e+21 inc=0 net=-1e+21 n=7 active=7 top= topAmt=0
+weekrange	2025-12-28..2026-01-04
+weekly	spent=0 left=70 over=false days=7 daily=10
+dailyeq	1
+weekrange	2025-12-28..2026-01-04
+streak	0
+weekly	spent=0 left=-1 over=false days=4 daily=-0.14285714285714285
+recap	exp=2.1 inc=NaN net=NaN n=8 active=6 top= topAmt=0
+streak	0
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+weekly	spent=0 left=7 over=false days=7 daily=1
+streak	0
+weekly	spent=NaN left=NaN over=false days=3 daily=NaN
+dailyeq	14.357142857142858
+streak	0
+weekly	spent=0 left=7 over=false days=6 daily=1
+streak	1
+weekly	spent=NaN left=NaN over=false days=7 daily=-0.14285714285714285
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+streak	0
+weekly	spent=1e+21 left=-1e+21 over=false days=1 daily=-0.14285714285714285
+streak	1
+weekly	spent=NaN left=NaN over=false days=3 daily=10
+weekly	spent=10.5 left=-11.5 over=false days=6 daily=-0.14285714285714285
+recap	exp=0 inc=0 net=0 n=5 active=4 top= topAmt=0
+weekrange	2026-03-01..2026-03-08
+dailyeq	NaN
+streak	1
+streak	0
+weekrange	2025-12-28..2026-01-04
+recap	exp=97 inc=0 net=-97 n=4 active=3 top=10 topAmt=100
+recap	exp=1e+21 inc=100 net=-1e+21 n=7 active=7 top=food topAmt=1e+21
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+weekly	spent=0 left=70 over=false days=7 daily=10
+weekly	spent=0 left=NaN over=false days=4 daily=NaN
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekly	spent=0 left=NaN over=false days=1 daily=NaN
+dailyeq	0
+streak	0
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+weekly	spent=7.6 left=92.9 over=false days=1 daily=14.357142857142858
+dailyeq	142857142857142860000
+dailyeq	14.357142857142858
+recap	exp=1e+21 inc=0 net=-1e+21 n=3 active=3 top=trans topAmt=1e+21
+weekly	spent=-3 left=103.5 over=false days=1 daily=14.357142857142858
+streak	0
+dailyeq	NaN
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+recap	exp=12.6 inc=0 net=-12.6 n=5 active=3 top= topAmt=0
+weekrange	2026-06-07..2026-06-14
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+streak	0
+weekly	spent=0.1 left=-1.1 over=false days=1 daily=-0.14285714285714285
+recap	exp=8.5 inc=1 net=-7.5 n=8 active=6 top= topAmt=0
+dailyeq	1
+streak	0
+streak	1
+dailyeq	NaN
+streak	0
+streak	1
+weekly	spent=NaN left=NaN over=false days=4 daily=10
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+streak	0
+recap	exp=1e+21 inc=0 net=-1e+21 n=4 active=3 top=food topAmt=1e+21
+streak	0
+weekrange	2026-06-07..2026-06-14
+streak	0
+dailyeq	0
+streak	0
+weekly	spent=1e+21 left=-1e+21 over=true days=6 daily=1
+streak	0
+streak	1
+dailyeq	1
+weekly	spent=0 left=0 over=false days=6 daily=0
+recap	exp=-3 inc=0 net=3 n=1 active=1 top=2 topAmt=-3
+streak	0
+streak	0
+dailyeq	NaN
+weekrange	2026-01-25..2026-02-01
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+weekly	spent=10.5 left=90 over=false days=7 daily=14.357142857142858
+weekrange	2026-03-01..2026-03-08
+weekrange	2024-02-25..2024-03-03
+streak	0
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+weekly	spent=0 left=-1 over=false days=1 daily=-0.14285714285714285
+weekly	spent=-2 left=102.5 over=false days=6 daily=14.357142857142858
+dailyeq	142857142857142860000
+weekly	spent=10.5 left=-10.5 over=false days=4 daily=0
+weekrange	2026-05-31..2026-06-07
+dailyeq	14.357142857142858
+streak	0
+streak	2
+weekly	spent=0 left=NaN over=false days=3 daily=NaN
+weekrange	2025-12-28..2026-01-04
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+weekrange	2026-05-31..2026-06-07
+weekrange	2026-02-01..2026-02-08
+streak	0
+weekrange	2026-06-07..2026-06-14
+weekly	spent=10.5 left=-10.5 over=false days=7 daily=0
+recap	exp=0 inc=0.1 net=0.1 n=4 active=4 top=- topAmt=0
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+recap	exp=NaN inc=0 net=NaN n=4 active=4 top=food topAmt=-3
+weekrange	2026-03-01..2026-03-08
+streak	0
+dailyeq	-0.14285714285714285
+weekly	spent=0 left=0 over=false days=1 daily=0
+weekrange	2026-02-22..2026-03-01
+dailyeq	0
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+weekly	spent=1 left=-1 over=false days=6 daily=0
+weekrange	2026-06-14..2026-06-21
+recap	exp=1e+21 inc=0 net=-1e+21 n=2 active=2 top=2 topAmt=1e+21
+dailyeq	NaN
+streak	0
+dailyeq	NaN
+streak	1
+weekly	spent=0 left=100.5 over=false days=6 daily=14.357142857142858
+weekly	spent=1e+21 left=-1e+21 over=true days=7 daily=1
+recap	exp=98 inc=0.1 net=-97.9 n=8 active=8 top=rent topAmt=100
+dailyeq	NaN
+dailyeq	14.357142857142858
+weekrange	2026-06-07..2026-06-14
+weekly	spent=-3 left=10 over=false days=7 daily=1
+dailyeq	NaN
+streak	0
+weekly	spent=NaN left=NaN over=false days=4 daily=NaN
+dailyeq	142857142857142860000
+streak	2
+streak	0
+recap	exp=1e+21 inc=0 net=-1e+21 n=6 active=5 top=food topAmt=1e+21
+streak	0
+streak	0
+weekly	spent=NaN left=NaN over=false days=6 daily=10
+dailyeq	14.357142857142858
+streak	0
+dailyeq	NaN
+weekly	spent=0 left=0 over=false days=4 daily=0
+recap	exp=NaN inc=0 net=NaN n=7 active=6 top=2 topAmt=2e+21
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+streak	0
+streak	1
+weekrange	2026-06-14..2026-06-21
+dailyeq	NaN
+recap	exp=1 inc=-2.9 net=-3.9 n=7 active=5 top=food topAmt=1
+dailyeq	0
+streak	0
+streak	1
+weekrange	2026-05-31..2026-06-07
+weekly	spent=0 left=1e+21 over=false days=4 daily=142857142857142860000
+weekrange	2026-06-07..2026-06-14
+streak	1
+dailyeq	NaN
+weekly	spent=0 left=0 over=false days=4 daily=0
+streak	0
+weekly	spent=0 left=0 over=false days=1 daily=0
+recap	exp=1e+21 inc=0 net=-1e+21 n=6 active=5 top=rent topAmt=1e+21
+weekly	spent=0 left=100.5 over=false days=1 daily=14.357142857142858
+streak	0
+weekly	spent=-3 left=10 over=false days=7 daily=1
+weekly	spent=0.1 left=-0.1 over=false days=3 daily=0
+streak	0
+weekrange	2026-06-14..2026-06-21
+weekly	spent=0 left=100.5 over=false days=4 daily=14.357142857142858
+weekly	spent=0 left=7 over=false days=6 daily=1
+dailyeq	NaN
+weekly	spent=-2 left=1 over=false days=3 daily=-0.14285714285714285
+dailyeq	-0.14285714285714285
+weekrange	2025-12-28..2026-01-04
+weekly	spent=-3 left=73 over=false days=3 daily=10
+dailyeq	10
+weekrange	2026-05-31..2026-06-07
+streak	1
+weekly	spent=0 left=1e+21 over=false days=6 daily=142857142857142860000
+streak	1
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+weekly	spent=NaN left=NaN over=false days=4 daily=0
+streak	0
+dailyeq	0
+streak	0
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=70 over=false days=6 daily=10
+weekly	spent=100 left=-101 over=false days=1 daily=-0.14285714285714285
+weekrange	2024-02-25..2024-03-03
+dailyeq	0
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+weekly	spent=0 left=70 over=false days=4 daily=10
+weekly	spent=0.1 left=NaN over=false days=7 daily=NaN
+streak	1
+weekly	spent=0 left=0 over=false days=4 daily=0
+streak	0
+streak	0
+weekly	spent=1 left=-1 over=false days=1 daily=0
+dailyeq	NaN
+streak	1
+weekrange	2026-05-31..2026-06-07
+dailyeq	10
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+weekrange	2025-12-28..2026-01-04
+weekly	spent=NaN left=NaN over=false days=1 daily=-0.14285714285714285
+streak	1
+streak	0
+streak	1
+weekly	spent=1e+21 left=NaN over=false days=3 daily=NaN
+weekrange	2026-03-01..2026-03-08
+weekrange	2026-01-25..2026-02-01
+streak	1
+weekly	spent=0 left=7 over=false days=7 daily=1
+recap	exp=0 inc=1e+21 net=1e+21 n=5 active=4 top=- topAmt=0
+weekly	spent=0 left=7 over=false days=1 daily=1
+streak	0
+recap	exp=0.1 inc=0 net=-0.1 n=3 active=3 top=2 topAmt=0.1
+dailyeq	1
+weekly	spent=100 left=0.5 over=false days=6 daily=14.357142857142858
+recap	exp=1e+21 inc=0 net=-1e+21 n=6 active=5 top=2 topAmt=1e+21
+dailyeq	142857142857142860000
+streak	0
+streak	0
+weekrange	2026-05-31..2026-06-07
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=NaN over=false days=4 daily=NaN
+dailyeq	10
+weekrange	2026-01-25..2026-02-01
+recap	exp=NaN inc=1e+21 net=NaN n=7 active=6 top=food topAmt=10.5
+streak	0
+streak	1
+streak	0
+weekrange	2026-01-25..2026-02-01
+streak	0
+weekly	spent=0 left=0 over=false days=3 daily=0
+weekly	spent=0 left=7 over=false days=6 daily=1
+dailyeq	1
+streak	0
+streak	0
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+streak	1
+recap	exp=1e+21 inc=NaN net=NaN n=8 active=7 top=01 topAmt=1e+21
+weekrange	2026-02-01..2026-02-08
+weekly	spent=0 left=1e+21 over=false days=3 daily=142857142857142860000
+streak	2
+streak	0
+recap	exp=1e+21 inc=21 net=-1e+21 n=5 active=4 top=10 topAmt=1e+21
+dailyeq	NaN
+weekly	spent=NaN left=NaN over=false days=3 daily=14.357142857142858
+streak	0
+weekrange	2026-06-07..2026-06-14
+streak	1
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekly	spent=0 left=100.5 over=false days=3 daily=14.357142857142858
+streak	0
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+streak	0
+weekly	spent=NaN left=NaN over=false days=4 daily=10
+streak	1
+dailyeq	NaN
+weekly	spent=0 left=7 over=false days=7 daily=1
+weekly	spent=NaN left=NaN over=false days=6 daily=1
+dailyeq	142857142857142860000
+weekly	spent=NaN left=NaN over=false days=7 daily=14.357142857142858
+weekly	spent=0 left=7 over=false days=7 daily=1
+dailyeq	0
+dailyeq	0
+dailyeq	NaN
+weekly	spent=0 left=0 over=false days=4 daily=0
+streak	0
+weekly	spent=0 left=0 over=false days=1 daily=0
+streak	1
+recap	exp=1.1 inc=0 net=-1.1 n=3 active=2 top=2 topAmt=1.1
+weekly	spent=0 left=70 over=false days=7 daily=10
+recap	exp=97 inc=2e+21 net=2e+21 n=8 active=7 top=10 topAmt=100
+dailyeq	1
+weekrange	2026-06-07..2026-06-14
+recap	exp=0 inc=0 net=0 n=2 active=2 top=- topAmt=0
+weekrange	2025-12-28..2026-01-04
+recap	exp=2 inc=10.5 net=8.5 n=7 active=7 top=10 topAmt=1
+recap	exp=0 inc=10.5 net=10.5 n=8 active=7 top=10 topAmt=0
+weekly	spent=0 left=0 over=false days=7 daily=0
+dailyeq	1
+streak	0
+dailyeq	14.357142857142858
+dailyeq	142857142857142860000
+dailyeq	-0.14285714285714285
+dailyeq	0
+recap	exp=1e+21 inc=0 net=-1e+21 n=7 active=6 top= topAmt=0
+streak	0
+streak	0
+recap	exp=0 inc=0.1 net=0.1 n=3 active=3 top= topAmt=0
+dailyeq	10
+weekly	spent=0 left=0 over=false days=6 daily=0
+streak	0
+recap	exp=18 inc=0 net=-18 n=5 active=5 top=food topAmt=21
+dailyeq	10
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+dailyeq	142857142857142860000
+weekly	spent=NaN left=NaN over=false days=3 daily=10
+streak	1
+weekrange	2026-01-25..2026-02-01
+streak	0
+dailyeq	10
+dailyeq	NaN
+weekrange	2024-02-25..2024-03-03
+streak	0
+streak	0
+dailyeq	-0.14285714285714285
+streak	1
+recap	exp=1e+21 inc=0 net=-1e+21 n=7 active=7 top=01 topAmt=1e+21
+streak	1
+streak	0
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekly	spent=0 left=100.5 over=false days=4 daily=14.357142857142858
+streak	0
+weekly	spent=10.5 left=NaN over=false days=4 daily=NaN
+streak	0
+dailyeq	0
+weekrange	2026-06-07..2026-06-14
+streak	0
+streak	2
+streak	2
+recap	exp=-3 inc=0 net=3 n=2 active=2 top=10 topAmt=-3
+weekrange	2026-06-14..2026-06-21
+weekrange	2026-01-25..2026-02-01
+weekly	spent=0 left=1e+21 over=false days=4 daily=142857142857142860000
+streak	2
+dailyeq	-0.14285714285714285
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+weekly	spent=0 left=100.5 over=false days=3 daily=14.357142857142858
+weekly	spent=NaN left=NaN over=false days=4 daily=NaN
+recap	exp=NaN inc=0 net=NaN n=8 active=6 top=10 topAmt=107.5
+weekly	spent=NaN left=NaN over=false days=6 daily=1
+dailyeq	14.357142857142858
+recap	exp=-3 inc=1e+21 net=1e+21 n=2 active=2 top=rent topAmt=-3
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+streak	0
+weekly	spent=0.1 left=-1.1 over=false days=1 daily=-0.14285714285714285
+dailyeq	10
+recap	exp=7.5 inc=0 net=-7.5 n=4 active=4 top= topAmt=0
+weekly	spent=10.5 left=-11.5 over=false days=3 daily=-0.14285714285714285
+weekrange	2026-01-25..2026-02-01
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=0 over=false days=7 daily=0
+weekly	spent=0 left=70 over=false days=7 daily=10
+streak	0
+streak	0
+streak	0
+weekly	spent=0.1 left=6.9 over=false days=4 daily=1
+streak	0
+streak	1
+weekrange	2026-06-14..2026-06-21
+streak	2
+streak	1
+dailyeq	NaN
+streak	1
+weekly	spent=-3 left=2 over=false days=1 daily=-0.14285714285714285
+weekly	spent=NaN left=NaN over=false days=1 daily=-0.14285714285714285
+streak	0
+streak	0
+recap	exp=194 inc=0.1 net=-193.9 n=7 active=5 top=food topAmt=200
+weekly	spent=1e+21 left=-1e+21 over=true days=4 daily=14.357142857142858
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+weekly	spent=0 left=0 over=false days=7 daily=0
+streak	0
+recap	exp=NaN inc=1 net=NaN n=8 active=5 top=trans topAmt=0
+streak	0
+dailyeq	NaN
+weekrange	2026-06-07..2026-06-14
+recap	exp=97 inc=0 net=-97 n=3 active=3 top=food topAmt=100
+streak	1
+weekrange	2026-06-07..2026-06-14
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=70 over=false days=7 daily=10
+streak	1
+weekly	spent=0 left=-1 over=false days=3 daily=-0.14285714285714285
+weekly	spent=NaN left=NaN over=false days=7 daily=0
+weekly	spent=1 left=69 over=false days=4 daily=10
+recap	exp=NaN inc=NaN net=NaN n=5 active=4 top=food topAmt=-3
+weekly	spent=0 left=1e+21 over=false days=4 daily=142857142857142860000
+recap	exp=15 inc=0 net=-15 n=8 active=7 top=10 topAmt=10.5
+weekrange	2026-02-01..2026-02-08
+streak	0
+weekrange	2025-12-28..2026-01-04
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+weekly	spent=NaN left=NaN over=false days=4 daily=-0.14285714285714285
+dailyeq	0
+weekly	spent=2e+21 left=-2e+21 over=true days=7 daily=10
+streak	2
+recap	exp=1.1 inc=NaN net=NaN n=8 active=6 top=10 topAmt=1
+streak	0
+dailyeq	10
+weekly	spent=0 left=70 over=false days=7 daily=10
+streak	0
+weekly	spent=0 left=0 over=false days=1 daily=0
+streak	0
+weekly	spent=10.5 left=-11.5 over=false days=6 daily=-0.14285714285714285
+dailyeq	1
+dailyeq	10
+weekrange	2026-03-01..2026-03-08
+weekrange	2024-02-25..2024-03-03
+streak	0
+recap	exp=0 inc=0 net=0 n=2 active=2 top=- topAmt=0
+dailyeq	NaN
+weekly	spent=1e+21 left=-1e+21 over=true days=4 daily=10
+weekly	spent=0 left=0 over=false days=7 daily=0
+streak	0
+streak	2
+weekly	spent=0 left=0 over=false days=4 daily=0
+recap	exp=0 inc=-3 net=-3 n=4 active=4 top=- topAmt=0
+dailyeq	1
+weekly	spent=100 left=1e+21 over=false days=1 daily=142857142857142860000
+streak	0
+recap	exp=0 inc=1 net=1 n=3 active=3 top=rent topAmt=0
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+weekly	spent=0 left=1e+21 over=false days=3 daily=142857142857142860000
+streak	2
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=7 over=false days=7 daily=1
+streak	0
+streak	1
+streak	0
+weekly	spent=0 left=1e+21 over=false days=3 daily=142857142857142860000
+weekly	spent=NaN left=NaN over=false days=1 daily=10
+weekrange	2026-05-31..2026-06-07
+weekly	spent=0 left=NaN over=false days=3 daily=NaN
+recap	exp=0 inc=NaN net=NaN n=4 active=4 top=- topAmt=0
+streak	1
+recap	exp=0 inc=0.1 net=0.1 n=3 active=3 top=trans topAmt=0
+dailyeq	-0.14285714285714285
+recap	exp=0 inc=100 net=100 n=3 active=2 top=rent topAmt=0
+recap	exp=1 inc=0 net=-1 n=3 active=3 top=food topAmt=1
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+streak	0
+recap	exp=NaN inc=0 net=NaN n=7 active=6 top=10 topAmt=1
+streak	0
+recap	exp=1 inc=11.5 net=10.5 n=8 active=7 top=trans topAmt=1
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+recap	exp=0 inc=0 net=0 n=4 active=3 top=10 topAmt=0
+weekly	spent=NaN left=NaN over=false days=6 daily=0
+dailyeq	NaN
+weekrange	2026-02-01..2026-02-08
+weekly	spent=10.5 left=90 over=false days=7 daily=14.357142857142858
+recap	exp=NaN inc=0 net=NaN n=4 active=4 top=food topAmt=1e+21
+weekly	spent=0 left=7 over=false days=1 daily=1
+weekly	spent=NaN left=NaN over=false days=1 daily=-0.14285714285714285
+recap	exp=2e+21 inc=10.5 net=-2e+21 n=8 active=6 top=food topAmt=1e+21
+weekrange	2025-12-28..2026-01-04
+dailyeq	142857142857142860000
+weekly	spent=0 left=70 over=false days=3 daily=10
+dailyeq	-0.14285714285714285
+weekrange	2026-06-07..2026-06-14
+recap	exp=11.5 inc=0 net=-11.5 n=6 active=4 top=01 topAmt=10.5
+weekly	spent=0 left=100.5 over=false days=4 daily=14.357142857142858
+streak	0
+streak	1
+dailyeq	1
+dailyeq	NaN
+weekrange	2026-05-31..2026-06-07
+streak	0
+streak	0
+dailyeq	14.357142857142858
+streak	3
+weekly	spent=0 left=0 over=false days=1 daily=0
+streak	0
+weekrange	2026-03-01..2026-03-08
+streak	0
+weekly	spent=0 left=-1 over=false days=3 daily=-0.14285714285714285
+weekly	spent=0 left=70 over=false days=7 daily=10
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+dailyeq	10
+weekly	spent=0 left=NaN over=false days=4 daily=NaN
+dailyeq	10
+weekly	spent=1e+21 left=0 over=false days=1 daily=142857142857142860000
+streak	0
+recap	exp=1 inc=0.1 net=-0.9 n=8 active=7 top=10 topAmt=1
+dailyeq	10
+dailyeq	0
+weekly	spent=0 left=-1 over=false days=1 daily=-0.14285714285714285
+weekrange	2026-03-01..2026-03-08
+streak	0
+dailyeq	10
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+weekly	spent=0 left=100.5 over=false days=4 daily=14.357142857142858
+weekly	spent=0 left=7 over=false days=7 daily=1
+weekly	spent=0 left=70 over=false days=1 daily=10
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+dailyeq	NaN
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+weekly	spent=-3 left=3 over=false days=7 daily=0
+weekrange	2026-05-31..2026-06-07
+streak	0
+weekly	spent=1 left=-1 over=false days=6 daily=0
+dailyeq	1
+streak	0
+streak	1
+weekrange	2026-06-14..2026-06-21
+weekrange	2024-02-25..2024-03-03
+dailyeq	0
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+dailyeq	142857142857142860000
+streak	0
+dailyeq	14.357142857142858
+dailyeq	NaN
+streak	2
+weekly	spent=0.1 left=6.9 over=false days=4 daily=1
+streak	0
+recap	exp=110.5 inc=0 net=-110.5 n=4 active=4 top=food topAmt=100
+streak	0
+weekly	spent=0 left=1e+21 over=false days=4 daily=142857142857142860000
+streak	0
+weekrange	2026-06-14..2026-06-21
+weekly	spent=0 left=7 over=false days=7 daily=1
+streak	0
+recap	exp=10.5 inc=0 net=-10.5 n=3 active=3 top=2 topAmt=10.5
+weekrange	2026-03-01..2026-03-08
+streak	0
+dailyeq	1
+streak	0
+weekly	spent=0 left=70 over=false days=7 daily=10
+dailyeq	1
+weekly	spent=0 left=70 over=false days=6 daily=10
+weekly	spent=1.1 left=99.4 over=false days=1 daily=14.357142857142858
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=70 over=false days=7 daily=10
+weekly	spent=0 left=NaN over=false days=1 daily=NaN
+streak	0
+recap	exp=1e+21 inc=1e+21 net=0 n=3 active=3 top=01 topAmt=1e+21
+weekly	spent=0 left=-1 over=false days=1 daily=-0.14285714285714285
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+weekrange	2026-02-22..2026-03-01
+weekly	spent=0 left=70 over=false days=7 daily=10
+streak	1
+streak	1
+streak	1
+streak	1
+weekly	spent=0 left=7 over=false days=7 daily=1
+weekly	spent=0 left=1e+21 over=false days=3 daily=142857142857142860000
+dailyeq	1
+streak	0
+weekly	spent=0 left=1e+21 over=false days=4 daily=142857142857142860000
+streak	1
+streak	1
+weekrange	2026-02-01..2026-02-08
+streak	0
+weekly	spent=0 left=1e+21 over=false days=3 daily=142857142857142860000
+weekly	spent=121 left=NaN over=false days=1 daily=NaN
+streak	1
+weekly	spent=-3 left=NaN over=false days=7 daily=NaN
+streak	0
+weekly	spent=NaN left=NaN over=false days=6 daily=142857142857142860000
+weekly	spent=NaN left=NaN over=false days=3 daily=1
+weekly	spent=0 left=-1 over=false days=1 daily=-0.14285714285714285
+streak	0
+dailyeq	0
+streak	0
+streak	0
+dailyeq	1
+weekly	spent=1e+21 left=0 over=false days=3 daily=142857142857142860000
+weekrange	2026-05-31..2026-06-07
+dailyeq	0
+weekly	spent=0 left=70 over=false days=7 daily=10
+streak	0
+weekrange	2026-01-25..2026-02-01
+dailyeq	NaN
+recap	exp=0 inc=0 net=0 n=7 active=5 top=rent topAmt=0
+streak	0
+weekly	spent=1e+21 left=0 over=false days=4 daily=142857142857142860000
+weekrange	2026-06-07..2026-06-14
+weekly	spent=100 left=-100 over=false days=7 daily=0
+streak	1
+recap	exp=-3 inc=NaN net=NaN n=5 active=5 top=rent topAmt=-3
+weekly	spent=0 left=0 over=false days=7 daily=0
+weekly	spent=7.5 left=93 over=false days=4 daily=14.357142857142858
+streak	0
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+streak	0
+weekrange	2026-06-07..2026-06-14
+streak	0
+dailyeq	142857142857142860000
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+streak	0
+streak	0
+weekrange	2026-06-07..2026-06-14
+weekly	spent=NaN left=NaN over=false days=1 daily=0
+weekly	spent=1 left=NaN over=false days=4 daily=NaN
+weekly	spent=0 left=1e+21 over=false days=6 daily=142857142857142860000
+dailyeq	-0.14285714285714285
+streak	0
+recap	exp=NaN inc=0 net=NaN n=6 active=3 top=trans topAmt=1e+21
+streak	0
+recap	exp=101 inc=100 net=-1 n=7 active=5 top=10 topAmt=100
+dailyeq	14.357142857142858
+weekrange	2025-12-28..2026-01-04
+streak	1
+weekrange	2026-02-22..2026-03-01
+dailyeq	NaN
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekly	spent=10.5 left=-3.5 over=true days=6 daily=1
+weekly	spent=1e+21 left=-1e+21 over=false days=1 daily=-0.14285714285714285
+streak	0
+recap	exp=2 inc=1 net=-1 n=8 active=6 top=2 topAmt=1
+streak	1
+recap	exp=1.2000000000000002 inc=-3 net=-4.2 n=7 active=7 top= topAmt=0
+weekly	spent=100 left=NaN over=false days=4 daily=NaN
+streak	2
+recap	exp=NaN inc=0.1 net=NaN n=8 active=6 top=trans topAmt=1e+21
+recap	exp=10.5 inc=0 net=-10.5 n=1 active=1 top=rent topAmt=10.5
+weekly	spent=0 left=7 over=false days=1 daily=1
+weekrange	2026-03-01..2026-03-08
+dailyeq	NaN
+weekrange	2024-02-25..2024-03-03
+recap	exp=NaN inc=0 net=NaN n=4 active=4 top= topAmt=0
+recap	exp=NaN inc=-3 net=NaN n=6 active=5 top=10 topAmt=1e+21
+streak	0
+weekrange	2026-06-07..2026-06-14
+streak	0
+recap	exp=-3 inc=0 net=3 n=2 active=2 top=2 topAmt=-3
+weekly	spent=0 left=7 over=false days=4 daily=1
+weekly	spent=1e+21 left=-1e+21 over=false days=3 daily=-0.14285714285714285
+dailyeq	NaN
+weekly	spent=0 left=1e+21 over=false days=1 daily=142857142857142860000
+streak	1
+recap	exp=7.5 inc=0 net=-7.5 n=2 active=2 top=2 topAmt=10.5
+weekrange	2026-02-01..2026-02-08
+streak	0
+recap	exp=1e+21 inc=101 net=-1e+21 n=7 active=6 top= topAmt=0
+weekly	spent=10.6 left=59.4 over=false days=1 daily=10
+streak	0
+streak	1
+streak	0
+streak	0
+weekly	spent=0 left=7 over=false days=7 daily=1
+weekly	spent=NaN left=NaN over=false days=7 daily=10
+weekly	spent=NaN left=NaN over=false days=4 daily=14.357142857142858
+dailyeq	0
+recap	exp=1e+21 inc=0 net=-1e+21 n=6 active=5 top=trans topAmt=1e+21
+streak	0
+weekly	spent=0 left=7 over=false days=1 daily=1
+weekrange	2026-05-31..2026-06-07
+streak	1
+dailyeq	14.357142857142858
+weekly	spent=0 left=7 over=false days=1 daily=1
+recap	exp=0 inc=0 net=0 n=5 active=5 top=food topAmt=0
+weekrange	2025-12-28..2026-01-04
+recap	exp=0 inc=0 net=0 n=3 active=3 top=- topAmt=0
+dailyeq	10
+weekly	spent=1e+21 left=-1e+21 over=true days=4 daily=14.357142857142858
+weekly	spent=0 left=100.5 over=false days=1 daily=14.357142857142858
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0.1 left=100.4 over=false days=4 daily=14.357142857142858
+dailyeq	0
+weekly	spent=-3 left=103.5 over=false days=1 daily=14.357142857142858
+recap	exp=100 inc=97.1 net=-2.9000000000000057 n=8 active=6 top=2 topAmt=100
+weekrange	2026-05-31..2026-06-07
+weekly	spent=1e+21 left=-1e+21 over=true days=7 daily=14.357142857142858
+weekly	spent=1e+21 left=0 over=false days=4 daily=142857142857142860000
+streak	0
+weekly	spent=0 left=1e+21 over=false days=1 daily=142857142857142860000
+weekrange	2026-02-01..2026-02-08
+streak	2
+dailyeq	14.357142857142858
+weekly	spent=0 left=0 over=false days=7 daily=0
+dailyeq	NaN
+recap	exp=1e+21 inc=1.1 net=-1e+21 n=6 active=5 top=trans topAmt=1e+21
+streak	0
+recap	exp=0.1 inc=-3 net=-3.1 n=8 active=7 top=rent topAmt=0.1
+recap	exp=NaN inc=0 net=NaN n=5 active=4 top=10 topAmt=1
+weekly	spent=0 left=-1 over=false days=4 daily=-0.14285714285714285
+streak	0
+weekrange	2026-02-01..2026-02-08
+dailyeq	-0.14285714285714285
+streak	0
+weekrange	2026-06-07..2026-06-14
+weekrange	2024-02-25..2024-03-03
+dailyeq	NaN
+streak	1
+weekrange	2026-05-31..2026-06-07
+weekly	spent=0 left=0 over=false days=7 daily=0
+weekly	spent=0 left=100.5 over=false days=1 daily=14.357142857142858
+weekly	spent=1 left=-2 over=false days=7 daily=-0.14285714285714285
+streak	1
+recap	exp=NaN inc=-3 net=NaN n=6 active=6 top=10 topAmt=100
+dailyeq	1
+weekly	spent=0 left=NaN over=false days=1 daily=NaN
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+weekrange	2025-12-28..2026-01-04
+streak	0
+weekly	spent=0 left=7 over=false days=7 daily=1
+recap	exp=0 inc=0 net=0 n=3 active=3 top=01 topAmt=0
+streak	0
+weekly	spent=0.1 left=1e+21 over=false days=7 daily=142857142857142860000
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+streak	1
+dailyeq	10
+streak	0
+dailyeq	14.357142857142858
+weekly	spent=0 left=0 over=false days=7 daily=0
+streak	0
+dailyeq	1
+streak	0
+streak	0
+weekrange	2025-12-28..2026-01-04
+streak	1
+weekly	spent=0 left=-1 over=false days=4 daily=-0.14285714285714285
+streak	0
+streak	1
+weekrange	2026-05-31..2026-06-07
+recap	exp=0 inc=0 net=0 n=3 active=3 top=- topAmt=0
+streak	0
+weekrange	2026-01-25..2026-02-01
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+recap	exp=1e+21 inc=0 net=-1e+21 n=4 active=3 top=01 topAmt=1e+21
+streak	0
+dailyeq	0
+weekly	spent=1e+21 left=-1e+21 over=true days=7 daily=10
+streak	1
+streak	1
+recap	exp=0 inc=1 net=1 n=4 active=4 top=- topAmt=0
+streak	0
+streak	0
+weekrange	2026-05-31..2026-06-07
+dailyeq	0
+weekly	spent=NaN left=NaN over=false days=1 daily=14.357142857142858
+dailyeq	-0.14285714285714285
+streak	0
+streak	0
+dailyeq	NaN
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+dailyeq	NaN
+weekly	spent=10.6 left=-10.6 over=false days=4 daily=0
+dailyeq	-0.14285714285714285
+streak	0
+weekly	spent=0.1 left=6.9 over=false days=4 daily=1
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+recap	exp=100 inc=100 net=0 n=6 active=5 top=10 topAmt=100
+dailyeq	NaN
+dailyeq	0
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekrange	2026-05-31..2026-06-07
+recap	exp=NaN inc=NaN net=NaN n=6 active=5 top=food topAmt=1e+21
+weekrange	2025-12-28..2026-01-04
+dailyeq	14.357142857142858
+streak	0
+dailyeq	-0.14285714285714285
+dailyeq	14.357142857142858
+weekrange	2026-06-14..2026-06-21
+weekly	spent=1e+21 left=-1e+21 over=false days=7 daily=0
+streak	0
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+dailyeq	10
+weekly	spent=11.5 left=89 over=false days=1 daily=14.357142857142858
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=1e+21 over=false days=1 daily=142857142857142860000
+recap	exp=1e+21 inc=0.1 net=-1e+21 n=3 active=3 top=trans topAmt=1e+21
+streak	0
+streak	0
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+weekly	spent=100 left=-30 over=true days=7 daily=10
+dailyeq	10
+streak	0
+weekly	spent=0 left=70 over=false days=4 daily=10
+recap	exp=121 inc=0 net=-121 n=4 active=3 top=food topAmt=100
+weekly	spent=1e+21 left=-1e+21 over=true days=3 daily=1
+weekrange	2026-06-07..2026-06-14
+dailyeq	142857142857142860000
+weekrange	2026-06-07..2026-06-14
+weekrange	2025-12-28..2026-01-04
+weekly	spent=-3 left=73 over=false days=7 daily=10
+weekrange	2025-12-28..2026-01-04
+recap	exp=-3 inc=1 net=4 n=3 active=3 top=rent topAmt=-3
+weekly	spent=10.5 left=-11.5 over=false days=4 daily=-0.14285714285714285
+weekly	spent=0 left=7 over=false days=1 daily=1
+weekly	spent=100 left=-30 over=true days=1 daily=10
+recap	exp=100.1 inc=0 net=-100.1 n=6 active=6 top=food topAmt=100
+weekrange	2026-02-01..2026-02-08
+streak	0
+weekly	spent=0 left=1e+21 over=false days=6 daily=142857142857142860000
+weekly	spent=0 left=0 over=false days=7 daily=0
+streak	2
+dailyeq	142857142857142860000
+weekly	spent=100 left=NaN over=false days=3 daily=NaN
+dailyeq	0
+weekly	spent=0 left=-1 over=false days=1 daily=-0.14285714285714285
+weekrange	2026-02-22..2026-03-01
+streak	0
+dailyeq	142857142857142860000
+recap	exp=1e+21 inc=0 net=-1e+21 n=7 active=6 top=01 topAmt=1e+21
+weekly	spent=1 left=NaN over=false days=1 daily=NaN
+streak	0
+dailyeq	0
+streak	0
+streak	0
+dailyeq	NaN
+weekly	spent=-2 left=72 over=false days=6 daily=10
+weekrange	2025-12-28..2026-01-04
+streak	1
+weekly	spent=0 left=7 over=false days=6 daily=1
+recap	exp=NaN inc=110.5 net=NaN n=8 active=6 top=food topAmt=0
+weekrange	2025-12-28..2026-01-04
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+weekly	spent=97 left=-27 over=true days=1 daily=10
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+weekly	spent=0.1 left=NaN over=false days=4 daily=NaN
+recap	exp=0 inc=NaN net=NaN n=1 active=1 top=- topAmt=0
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+weekrange	2026-03-01..2026-03-08
+weekly	spent=10.5 left=NaN over=false days=7 daily=NaN
+weekly	spent=0 left=7 over=false days=6 daily=1
+weekrange	2026-02-22..2026-03-01
+streak	0
+weekly	spent=0 left=0 over=false days=7 daily=0
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekrange	2026-06-07..2026-06-14
+recap	exp=1e+21 inc=0 net=-1e+21 n=5 active=3 top=food topAmt=1e+21
+weekrange	2025-12-28..2026-01-04
+weekly	spent=100 left=-101 over=false days=7 daily=-0.14285714285714285
+weekrange	2025-12-28..2026-01-04
+weekrange	2026-06-07..2026-06-14
+streak	1
+weekly	spent=0.1 left=-0.1 over=false days=3 daily=0
+recap	exp=NaN inc=0 net=NaN n=8 active=7 top=food topAmt=100
+weekly	spent=10.5 left=1e+21 over=false days=1 daily=142857142857142860000
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+weekly	spent=0.1 left=NaN over=false days=1 daily=NaN
+streak	1
+weekrange	2026-02-01..2026-02-08
+weekly	spent=0 left=70 over=false days=7 daily=10
+streak	0
+streak	0
+dailyeq	142857142857142860000
+weekly	spent=0 left=0 over=false days=4 daily=0
+weekly	spent=1 left=6 over=false days=3 daily=1
+weekly	spent=-3 left=73 over=false days=1 daily=10
+weekly	spent=0 left=-1 over=false days=3 daily=-0.14285714285714285
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+streak	0
+streak	1
+streak	2
+recap	exp=NaN inc=1 net=NaN n=8 active=7 top=trans topAmt=1e+21
+streak	0
+streak	0
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+weekrange	2026-06-07..2026-06-14
+recap	exp=NaN inc=0 net=NaN n=8 active=6 top=2 topAmt=0.1
+streak	1
+weekly	spent=0 left=1e+21 over=false days=4 daily=142857142857142860000
+recap	exp=NaN inc=NaN net=NaN n=8 active=6 top=10 topAmt=1e+21
+recap	exp=10.5 inc=0 net=-10.5 n=4 active=3 top=trans topAmt=10.5
+weekly	spent=0 left=0 over=false days=7 daily=0
+weekrange	2024-02-25..2024-03-03
+recap	exp=NaN inc=1e+21 net=NaN n=8 active=6 top=2 topAmt=10.5
+dailyeq	14.357142857142858
+recap	exp=1e+21 inc=0 net=-1e+21 n=2 active=2 top= topAmt=0
+weekly	spent=0 left=7 over=false days=7 daily=1
+streak	3
+weekly	spent=0 left=NaN over=false days=1 daily=NaN
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekly	spent=NaN left=NaN over=false days=1 daily=142857142857142860000
+weekrange	2026-02-22..2026-03-01
+recap	exp=1.2000000000000002 inc=0.1 net=-1.1 n=8 active=7 top= topAmt=0
+streak	0
+dailyeq	NaN
+streak	0
+recap	exp=10.5 inc=7.5 net=-3 n=3 active=3 top=10 topAmt=10.5
+recap	exp=1.1 inc=0 net=-1.1 n=2 active=2 top=food topAmt=1
+streak	0
+streak	1
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+dailyeq	142857142857142860000
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=0 over=false days=4 daily=0
+weekly	spent=0 left=70 over=false days=1 daily=10
+weekly	spent=0 left=70 over=false days=1 daily=10
+weekly	spent=0 left=NaN over=false days=4 daily=NaN
+recap	exp=11.6 inc=1e+21 net=1e+21 n=7 active=6 top=01 topAmt=10.5
+weekly	spent=0 left=7 over=false days=7 daily=1
+weekrange	2026-06-07..2026-06-14
+streak	0
+weekly	spent=-3 left=NaN over=false days=7 daily=NaN
+weekly	spent=1 left=-2 over=false days=7 daily=-0.14285714285714285
+weekrange	2026-06-14..2026-06-21
+recap	exp=NaN inc=0 net=NaN n=5 active=4 top=food topAmt=NaN
+recap	exp=1e+21 inc=0 net=-1e+21 n=2 active=2 top=10 topAmt=1e+21
+weekrange	2025-12-28..2026-01-04
+streak	1
+weekly	spent=-3 left=NaN over=false days=4 daily=NaN
+streak	0
+streak	0
+weekly	spent=0 left=0 over=false days=7 daily=0
+weekrange	2025-12-28..2026-01-04
+dailyeq	14.357142857142858
+weekly	spent=1 left=-1 over=false days=1 daily=0
+weekrange	2026-02-01..2026-02-08
+streak	0
+weekrange	2026-06-07..2026-06-14
+weekrange	2026-05-31..2026-06-07
+weekly	spent=1e+21 left=-1e+21 over=false days=7 daily=0
+weekly	spent=NaN left=NaN over=false days=7 daily=10
+streak	3
+dailyeq	142857142857142860000
+recap	exp=210.6 inc=10.5 net=-200.1 n=6 active=6 top=rent topAmt=110.5
+weekly	spent=0 left=70 over=false days=6 daily=10
+streak	0
+streak	0
+streak	1
+weekly	spent=0 left=-1 over=false days=3 daily=-0.14285714285714285
+weekrange	2026-06-07..2026-06-14
+streak	1
+streak	0
+streak	0
+recap	exp=1e+21 inc=0 net=-1e+21 n=2 active=2 top=rent topAmt=1e+21
+weekly	spent=0 left=NaN over=false days=3 daily=NaN
+weekrange	2026-06-07..2026-06-14
+streak	2
+streak	1
+weekly	spent=0 left=70 over=false days=4 daily=10
+dailyeq	NaN
+weekly	spent=1e+21 left=-1e+21 over=false days=4 daily=0
+dailyeq	-0.14285714285714285
+recap	exp=NaN inc=0 net=NaN n=4 active=4 top= topAmt=0
+weekly	spent=0 left=100.5 over=false days=4 daily=14.357142857142858
+weekrange	2025-12-28..2026-01-04
+weekrange	2026-06-07..2026-06-14
+weekrange	2026-05-31..2026-06-07
+recap	exp=0 inc=0 net=0 n=1 active=1 top=- topAmt=0
+streak	0
+streak	0
+streak	0
+streak	1
+weekrange	2026-06-07..2026-06-14
+dailyeq	-0.14285714285714285
+weekrange	2026-05-31..2026-06-07
+streak	0
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=7 over=false days=3 daily=1
+weekly	spent=0 left=0 over=false days=6 daily=0
+weekly	spent=0 left=1e+21 over=false days=1 daily=142857142857142860000
+weekrange	2026-02-01..2026-02-08
+weekly	spent=0 left=1e+21 over=false days=6 daily=142857142857142860000
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+weekrange	2026-05-31..2026-06-07
+dailyeq	-0.14285714285714285
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+dailyeq	NaN
+streak	1
+streak	1
+weekly	spent=100 left=-100 over=false days=1 daily=0
+dailyeq	142857142857142860000
+weekrange	2026-06-07..2026-06-14
+recap	exp=0 inc=1e+21 net=1e+21 n=7 active=6 top= topAmt=0
+weekly	spent=0 left=70 over=false days=4 daily=10
+weekly	spent=101.1 left=-31.099999999999994 over=true days=3 daily=10
+streak	0
+streak	1
+streak	0
+weekrange	2025-12-28..2026-01-04
+weekly	spent=100.1 left=1e+21 over=false days=4 daily=142857142857142860000
+weekly	spent=10.5 left=-10.5 over=false days=6 daily=0
+weekrange	2026-06-07..2026-06-14
+streak	1
+recap	exp=1e+21 inc=0 net=-1e+21 n=6 active=6 top=2 topAmt=1e+21
+streak	1
+dailyeq	NaN
+recap	exp=7.5 inc=0.1 net=-7.4 n=4 active=4 top= topAmt=0
+recap	exp=10.5 inc=1e+21 net=1e+21 n=4 active=4 top= topAmt=0
+streak	0
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+recap	exp=1e+21 inc=0 net=-1e+21 n=3 active=3 top=01 topAmt=1e+21
+recap	exp=1e+21 inc=-6 net=-1e+21 n=6 active=6 top= topAmt=0
+weekly	spent=NaN left=NaN over=false days=4 daily=142857142857142860000
+dailyeq	10
+streak	1
+streak	0
+streak	1
+streak	0
+weekrange	2026-03-01..2026-03-08
+streak	1
+weekly	spent=0 left=-1 over=false days=6 daily=-0.14285714285714285
+streak	1
+weekly	spent=100 left=0.5 over=false days=4 daily=14.357142857142858
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+streak	0
+weekrange	2025-12-28..2026-01-04
+dailyeq	NaN
+recap	exp=1e+21 inc=0 net=-1e+21 n=6 active=5 top=rent topAmt=1e+21
+weekly	spent=0 left=1e+21 over=false days=7 daily=142857142857142860000
+weekly	spent=0 left=7 over=false days=7 daily=1
+recap	exp=1e+21 inc=0 net=-1e+21 n=6 active=5 top=2 topAmt=1e+21
+weekly	spent=0 left=NaN over=false days=1 daily=NaN
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+weekly	spent=0 left=7 over=false days=1 daily=1
+weekrange	2024-02-25..2024-03-03
+streak	0
+weekrange	2026-05-31..2026-06-07
+streak	2
+dailyeq	-0.14285714285714285
+recap	exp=NaN inc=-3 net=NaN n=6 active=6 top=10 topAmt=0.1
+streak	0
+dailyeq	1
+recap	exp=0.1 inc=0 net=-0.1 n=2 active=2 top=2 topAmt=0.1
+weekly	spent=10.5 left=-11.5 over=false days=7 daily=-0.14285714285714285
+weekly	spent=10.5 left=59.5 over=false days=1 daily=10
+weekly	spent=0.1 left=-0.1 over=false days=1 daily=0
+dailyeq	NaN
+dailyeq	10
+streak	0
+weekly	spent=0 left=NaN over=false days=3 daily=NaN
+dailyeq	0
+weekrange	2026-06-07..2026-06-14
+recap	exp=1e+21 inc=0 net=-1e+21 n=5 active=5 top=01 topAmt=1e+21
+weekrange	2026-06-07..2026-06-14
+weekly	spent=0 left=70 over=false days=6 daily=10
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekrange	2026-05-31..2026-06-07
+streak	1
+weekly	spent=0 left=NaN over=false days=6 daily=NaN
+streak	0
+dailyeq	0
+dailyeq	1
+dailyeq	-0.14285714285714285
+recap	exp=7.5 inc=1.1 net=-6.4 n=8 active=7 top=trans topAmt=10.5
+weekly	spent=NaN left=NaN over=false days=7 daily=142857142857142860000
+streak	3
+weekly	spent=0.1 left=100.4 over=false days=3 daily=14.357142857142858
+streak	1
+weekly	spent=0.1 left=6.9 over=false days=7 daily=1
+weekly	spent=0 left=70 over=false days=4 daily=10
+streak	0
+dailyeq	0
+recap	exp=NaN inc=100 net=NaN n=6 active=5 top=food topAmt=10.5
+streak	2
+streak	1
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+weekly	spent=0 left=0 over=false days=1 daily=0
+weekrange	2026-05-31..2026-06-07
+streak	0
+weekly	spent=0.2 left=6.8 over=false days=4 daily=1
+weekly	spent=0 left=-1 over=false days=1 daily=-0.14285714285714285
+weekly	spent=0 left=-1 over=false days=6 daily=-0.14285714285714285
+dailyeq	NaN
+dailyeq	1
+dailyeq	14.357142857142858
+dailyeq	10
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+streak	0
+weekly	spent=0 left=NaN over=false days=1 daily=NaN
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0.1 left=100.4 over=false days=7 daily=14.357142857142858
+streak	0
+weekly	spent=10.5 left=1e+21 over=false days=1 daily=142857142857142860000
+weekrange	2026-02-01..2026-02-08
+streak	0
+streak	2
+recap	exp=7.5 inc=110.6 net=103.1 n=8 active=5 top=rent topAmt=10.5
+weekly	spent=0 left=-1 over=false days=6 daily=-0.14285714285714285
+weekly	spent=0 left=7 over=false days=4 daily=1
+streak	0
+streak	1
+streak	0
+weekrange	2026-05-31..2026-06-07
+streak	0
+streak	0
+dailyeq	10
+dailyeq	1
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+streak	0
+dailyeq	0
+weekly	spent=NaN left=NaN over=false days=1 daily=-0.14285714285714285
+streak	1
+weekrange	2026-03-01..2026-03-08
+streak	0
+weekly	spent=0 left=7 over=false days=7 daily=1
+weekrange	2026-06-07..2026-06-14
+weekrange	2025-12-28..2026-01-04
+weekrange	2026-03-01..2026-03-08
+weekly	spent=11.5 left=-4.5 over=true days=4 daily=1
+recap	exp=0 inc=0 net=0 n=1 active=1 top=2 topAmt=0
+streak	0
+dailyeq	0
+dailyeq	0
+weekly	spent=NaN left=NaN over=false days=4 daily=10
+streak	0
+recap	exp=100 inc=0 net=-100 n=1 active=1 top=rent topAmt=100
+streak	0
+streak	1
+dailyeq	NaN
+recap	exp=0 inc=0 net=0 n=2 active=2 top=- topAmt=0
+weekly	spent=0 left=NaN over=false days=6 daily=NaN
+recap	exp=NaN inc=0 net=NaN n=7 active=7 top=food topAmt=1e+21
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+weekly	spent=NaN left=NaN over=false days=4 daily=142857142857142860000
+weekly	spent=0 left=7 over=false days=1 daily=1
+streak	0
+dailyeq	-0.14285714285714285
+streak	0
+streak	2
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+streak	1
+weekrange	2024-02-25..2024-03-03
+weekrange	2026-06-07..2026-06-14
+dailyeq	14.357142857142858
+dailyeq	0
+streak	2
+dailyeq	NaN
+weekrange	2026-06-07..2026-06-14
+weekrange	2026-05-31..2026-06-07
+streak	1
+recap	exp=100 inc=100 net=0 n=2 active=2 top=2 topAmt=100
+recap	exp=1 inc=0 net=-1 n=5 active=5 top=food topAmt=1
+weekly	spent=0 left=-1 over=false days=1 daily=-0.14285714285714285
+dailyeq	10
+dailyeq	10
+dailyeq	NaN
+weekrange	2024-02-25..2024-03-03
+recap	exp=-3 inc=0 net=3 n=2 active=2 top=10 topAmt=-3
+weekly	spent=100 left=NaN over=false days=3 daily=NaN
+weekly	spent=0 left=1e+21 over=false days=1 daily=142857142857142860000
+recap	exp=NaN inc=-2.9 net=NaN n=8 active=5 top=2 topAmt=10.5
+recap	exp=0 inc=0 net=0 n=1 active=1 top=2 topAmt=0
+weekrange	2026-05-31..2026-06-07
+weekly	spent=-3 left=2 over=false days=4 daily=-0.14285714285714285
+streak	0
+weekly	spent=NaN left=NaN over=false days=3 daily=14.357142857142858
+dailyeq	NaN
+weekly	spent=11.5 left=-4.5 over=true days=7 daily=1
+weekrange	2026-06-07..2026-06-14
+streak	1
+streak	2
+streak	0
+weekly	spent=0 left=-1 over=false days=7 daily=-0.14285714285714285
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+recap	exp=-3 inc=0 net=3 n=4 active=3 top=rent topAmt=-3
+streak	1
+weekly	spent=1e+21 left=-1e+21 over=true days=1 daily=10
+recap	exp=NaN inc=10.5 net=NaN n=7 active=6 top=2 topAmt=100
+weekly	spent=0 left=70 over=false days=1 daily=10
+recap	exp=NaN inc=0 net=NaN n=7 active=5 top=food topAmt=1e+21
+dailyeq	10
+dailyeq	-0.14285714285714285
+streak	1
+weekly	spent=0 left=0 over=false days=7 daily=0
+recap	exp=10.5 inc=1 net=-9.5 n=2 active=2 top=10 topAmt=10.5
+weekly	spent=0 left=70 over=false days=1 daily=10
+weekly	spent=0 left=1e+21 over=false days=6 daily=142857142857142860000
+streak	1
+weekrange	2024-02-25..2024-03-03
+recap	exp=1e+21 inc=0.1 net=-1e+21 n=8 active=7 top=trans topAmt=1e+21
+recap	exp=0 inc=0 net=0 n=4 active=4 top=10 topAmt=0
+streak	0
+weekrange	2026-06-14..2026-06-21
+weekly	spent=-3 left=2 over=false days=1 daily=-0.14285714285714285
+weekly	spent=0 left=100.5 over=false days=4 daily=14.357142857142858
+weekly	spent=0 left=70 over=false days=7 daily=10
+weekly	spent=0 left=0 over=false days=7 daily=0
+weekrange	2026-06-07..2026-06-14
+dailyeq	14.357142857142858
+recap	exp=1.1 inc=10.5 net=9.4 n=6 active=6 top=01 topAmt=1
+dailyeq	NaN
+streak	0
+weekly	spent=0 left=NaN over=false days=3 daily=NaN
+weekly	spent=NaN left=NaN over=false days=4 daily=14.357142857142858
+weekrange	2026-06-07..2026-06-14
+weekrange	2026-03-01..2026-03-08
+weekly	spent=0 left=1e+21 over=false days=1 daily=142857142857142860000
+recap	exp=NaN inc=1e+21 net=NaN n=8 active=8 top=01 topAmt=100
+weekly	spent=0 left=70 over=false days=6 daily=10
+dailyeq	10
+weekrange	2026-03-01..2026-03-08
+dailyeq	1
+dailyeq	-0.14285714285714285
+weekly	spent=0 left=7 over=false days=7 daily=1
+dailyeq	14.357142857142858
+weekrange	2026-05-31..2026-06-07
+weekrange	2026-05-31..2026-06-07
+streak	0
+weekly	spent=0 left=100.5 over=false days=6 daily=14.357142857142858
+weekly	spent=-3 left=NaN over=false days=1 daily=NaN
+recap	exp=0.1 inc=0 net=-0.1 n=2 active=2 top=trans topAmt=0.1
+streak	0
+weekly	spent=101 left=NaN over=false days=1 daily=NaN
+streak	1
+weekly	spent=NaN left=NaN over=false days=6 daily=-0.14285714285714285
+streak	0
+weekrange	2025-12-28..2026-01-04
+recap	exp=NaN inc=0 net=NaN n=8 active=6 top=2 topAmt=1
+weekly	spent=0 left=-1 over=false days=4 daily=-0.14285714285714285
+weekly	spent=0 left=-1 over=false days=6 daily=-0.14285714285714285
+streak	1
+weekly	spent=0 left=7 over=false days=7 daily=1
+weekrange	2026-01-25..2026-02-01
+weekrange	2026-01-25..2026-02-01
+weekly	spent=0 left=100.5 over=false days=1 daily=14.357142857142858
+streak	2
+recap	exp=NaN inc=0 net=NaN n=3 active=3 top=rent topAmt=0.1
+recap	exp=1e+21 inc=0 net=-1e+21 n=6 active=6 top=rent topAmt=1e+21
+streak	0
+weekrange	2025-12-28..2026-01-04
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+dailyeq	1
+streak	1
+streak	0
+weekly	spent=-3 left=2 over=false days=4 daily=-0.14285714285714285
+recap	exp=100 inc=10.5 net=-89.5 n=3 active=2 top=food topAmt=100
+streak	0
+streak	3
+recap	exp=1e+21 inc=NaN net=NaN n=8 active=6 top=rent topAmt=1e+21
+streak	0
+weekly	spent=110.5 left=1e+21 over=false days=6 daily=142857142857142860000
+dailyeq	14.357142857142858
+dailyeq	142857142857142860000
+weekly	spent=0 left=-1 over=false days=1 daily=-0.14285714285714285
+weekly	spent=0 left=NaN over=false days=4 daily=NaN
+recap	exp=1e+21 inc=0 net=-1e+21 n=3 active=3 top=01 topAmt=1e+21
+dailyeq	1
+weekrange	2026-06-07..2026-06-14
+streak	1
+weekly	spent=0 left=7 over=false days=7 daily=1
+streak	0
+streak	1
+dailyeq	142857142857142860000
+streak	1
+weekly	spent=0 left=-1 over=false days=3 daily=-0.14285714285714285
+streak	0
+streak	0
+dailyeq	NaN
+weekly	spent=0 left=NaN over=false days=7 daily=NaN
+weekly	spent=1e+21 left=NaN over=false days=7 daily=NaN
+recap	exp=NaN inc=0 net=NaN n=2 active=2 top=rent topAmt=1
+dailyeq	0
+weekrange	2024-02-25..2024-03-03
+dailyeq	0
+streak	0
+weekly	spent=-3 left=73 over=false days=6 daily=10
+weekrange	2024-02-25..2024-03-03
+weekly	spent=0 left=100.5 over=false days=7 daily=14.357142857142858
+dailyeq	14.357142857142858
+streak	0
+weekly	spent=0 left=1e+21 over=false days=6 daily=142857142857142860000
+streak	3
+streak	1
+dailyeq	1
+streak	3
+streak	0
+recap	exp=NaN inc=0 net=NaN n=6 active=4 top=10 topAmt=0.1
+streak	0
+streak	0
+weekrange	2026-06-07..2026-06-14
+streak	0
+streak	1
+streak	5
+streak	3
+streak	0
+streak	4
+streak	3
+streak	3
+recap	exp=910 inc=0 net=-910 n=2 active=1 top= topAmt=0
+recap	exp=NaN inc=0 net=NaN n=3 active=1 top=food topAmt=10
+recap	exp=20 inc=0 net=-20 n=2 active=1 top=2 topAmt=10
+recap	exp=0 inc=500 net=500 n=2 active=2 top=- topAmt=0
+recap	exp=0 inc=0 net=0 n=0 active=0 top=- topAmt=0
+weekly	spent=0 left=0 over=false days=7 daily=0
+weekly	spent=0 left=0 over=false days=1 daily=0
+weekly	spent=100 left=0 over=false days=4 daily=14.285714285714286
+weekly	spent=100.01 left=-0.010000000000005116 over=true days=4 daily=14.285714285714286
+weekly	spent=900 left=-900 over=false days=4 daily=0
+weekly	spent=0 left=100 over=false days=4 daily=14.285714285714286
+weekrange	2026-06-28..2026-07-05
+recap	exp=30 inc=0 net=-30 n=3 active=1 top=2 topAmt=10
+recap	exp=20 inc=0 net=-20 n=2 active=1 top=01 topAmt=10
+recap	exp=NaN inc=0 net=NaN n=2 active=1 top=food topAmt=7
+recap	exp=NaN inc=0 net=NaN n=3 active=1 top=food topAmt=10
+recap	exp=NaN inc=0 net=NaN n=3 active=1 top=food topAmt=2
+weekly	spent=7 left=0 over=false days=4 daily=1
+weekly	spent=70 left=0 over=false days=4 daily=10
+weekly	spent=100.5 left=0 over=false days=4 daily=14.357142857142858
+dailyeq	NaN

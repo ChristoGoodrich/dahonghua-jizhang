@@ -1,0 +1,1318 @@
+cat	exp~food~10~0~12^exp~trans~30~0~12^exp~food~5~0~12^inc~salary~900~0~12|exp	trans:30,food:15
+cat	exp~food~10~0~12^exp~trans~30~0~12^exp~food~5~0~12^inc~salary~900~0~12|inc	salary:900
+cat	exp~food~10~0~12^exp~trans~30~0~12^exp~food~5~0~12^inc~salary~900~0~12|xfer	
+cat	exp~food~10~0~12^exp~trans~30~0~12^exp~food~5~0~12^inc~salary~900~0~12|_	trans:30,food:15
+cat	exp~b~10~0~12^exp~a~10~0~12^exp~c~10~0~12|exp	b:10,a:10,c:10
+cat	exp~c~10~0~12^exp~b~10~0~12^exp~a~10~0~12|exp	c:10,b:10,a:10
+cat	exp~a~10~0~12^exp~b~20~0~12^exp~c~10~0~12|exp	b:20,a:10,c:10
+cat	exp~a~0~0~12^exp~b~0~0~12|exp	a:0,b:0
+cat	exp~d~10~0~12^exp~a~10~0~12|exp	d:10,a:10
+cat	exp~a~10~0~12^exp~d~10~0~12|exp	a:10,d:10
+cat	exp~d~10~0~12^exp~a~10~0~12|exp	d:10,a:10
+cat	exp~d~20~0~12^exp~a~10~0~12|exp	d:20,a:10
+cat	exp~d~5~0~12^exp~a~10~0~12^exp~d~5~0~12|exp	d:10,a:10
+cat	exp~d~10~0~12^exp~a~10~0~12^exp~c~10~0~12|exp	d:10,a:10,c:10
+cat	exp~c~10~0~12^exp~a~10~0~12^exp~d~10~0~12|exp	c:10,a:10,d:10
+cat	exp~d~10~0~12^exp~a~10~0~12^exp~c~20~0~12|exp	c:20,d:10,a:10
+cat	exp~d~20~0~12^exp~a~10~0~12^exp~c~20~0~12|exp	d:20,c:20,a:10
+cat	exp~d~5~0~12^exp~a~10~0~12^exp~d~5~0~12|exp	d:10,a:10
+cat	exp~d~10~0~12^exp~a~10~0~12^exp~c~10~0~12^exp~b~10~0~12|exp	d:10,a:10,c:10,b:10
+cat	exp~b~10~0~12^exp~c~10~0~12^exp~a~10~0~12^exp~d~10~0~12|exp	b:10,c:10,a:10,d:10
+cat	exp~d~10~0~12^exp~a~10~0~12^exp~c~20~0~12^exp~b~20~0~12|exp	c:20,b:20,d:10,a:10
+cat	exp~d~20~0~12^exp~a~10~0~12^exp~c~20~0~12^exp~b~10~0~12|exp	d:20,c:20,a:10,b:10
+cat	exp~d~5~0~12^exp~a~10~0~12^exp~d~5~0~12|exp	d:10,a:10
+cat	exp~d~10~0~12^exp~a~10~0~12^exp~c~10~0~12^exp~b~10~0~12^exp~e~10~0~12|exp	d:10,a:10,c:10,b:10,e:10
+cat	exp~e~10~0~12^exp~b~10~0~12^exp~c~10~0~12^exp~a~10~0~12^exp~d~10~0~12|exp	e:10,b:10,c:10,a:10,d:10
+cat	exp~d~10~0~12^exp~a~10~0~12^exp~c~20~0~12^exp~b~20~0~12^exp~e~20~0~12|exp	c:20,b:20,e:20,d:10,a:10
+cat	exp~d~20~0~12^exp~a~10~0~12^exp~c~20~0~12^exp~b~10~0~12^exp~e~20~0~12|exp	d:20,c:20,e:20,a:10,b:10
+cat	exp~d~5~0~12^exp~a~10~0~12^exp~d~5~0~12|exp	d:10,a:10
+cat	exp~z~0~0~12^exp~y~0~0~12^exp~x~0~0~12|exp	z:0,y:0,x:0
+cat	exp~z~10~0~12^exp~y~10~0~12^exp~x~10~0~12|exp	z:10,y:10,x:10
+cat	exp~z~35.5~0~12^exp~y~35.5~0~12^exp~x~35.5~0~12|exp	z:35.5,y:35.5,x:35.5
+cat	exp~z~-5~0~12^exp~y~-5~0~12^exp~x~-5~0~12|exp	z:-5,y:-5,x:-5
+cat	exp~z~0.005~0~12^exp~y~0.005~0~12^exp~x~0.005~0~12|exp	z:0.005,y:0.005,x:0.005
+cat	exp~z~0.1~0~12^exp~y~0.1~0~12^exp~x~0.1~0~12|exp	z:0.1,y:0.1,x:0.1
+cat	exp~z~1e21~0~12^exp~y~1e21~0~12^exp~x~1e21~0~12|exp	z:1e+21,y:1e+21,x:1e+21
+cat	exp~z~1e-7~0~12^exp~y~1e-7~0~12^exp~x~1e-7~0~12|exp	z:1e-7,y:1e-7,x:1e-7
+cat	exp~z~-0~0~12^exp~y~-0~0~12^exp~x~-0~0~12|exp	z:0,y:0,x:0
+cat	exp~z~1000000~0~12^exp~y~1000000~0~12^exp~x~1000000~0~12|exp	z:1000000,y:1000000,x:1000000
+cat	exp~food~0~0~12^exp~z~1~0~12|exp	z:1,food:0
+cat	exp~trans~0~0~12^exp~z~1~0~12|exp	z:1,trans:0
+cat	exp~other~0~0~12^exp~z~1~0~12|exp	z:1,other:0
+cat	exp~~0~0~12^exp~z~1~0~12|exp	z:1,:0
+cat	exp~food~10~0~12^exp~z~1~0~12|exp	food:10,z:1
+cat	exp~trans~10~0~12^exp~z~1~0~12|exp	trans:10,z:1
+cat	exp~other~10~0~12^exp~z~1~0~12|exp	other:10,z:1
+cat	exp~~10~0~12^exp~z~1~0~12|exp	:10,z:1
+cat	exp~food~35.5~0~12^exp~z~1~0~12|exp	food:35.5,z:1
+cat	exp~trans~35.5~0~12^exp~z~1~0~12|exp	trans:35.5,z:1
+cat	exp~other~35.5~0~12^exp~z~1~0~12|exp	other:35.5,z:1
+cat	exp~~35.5~0~12^exp~z~1~0~12|exp	:35.5,z:1
+cat	exp~food~-5~0~12^exp~z~1~0~12|exp	z:1,food:-5
+cat	exp~trans~-5~0~12^exp~z~1~0~12|exp	z:1,trans:-5
+cat	exp~other~-5~0~12^exp~z~1~0~12|exp	z:1,other:-5
+cat	exp~~-5~0~12^exp~z~1~0~12|exp	z:1,:-5
+cat	exp~food~0.005~0~12^exp~z~1~0~12|exp	z:1,food:0.005
+cat	exp~trans~0.005~0~12^exp~z~1~0~12|exp	z:1,trans:0.005
+cat	exp~other~0.005~0~12^exp~z~1~0~12|exp	z:1,other:0.005
+cat	exp~~0.005~0~12^exp~z~1~0~12|exp	z:1,:0.005
+cat	exp~food~0.1~0~12^exp~z~1~0~12|exp	z:1,food:0.1
+cat	exp~trans~0.1~0~12^exp~z~1~0~12|exp	z:1,trans:0.1
+cat	exp~other~0.1~0~12^exp~z~1~0~12|exp	z:1,other:0.1
+cat	exp~~0.1~0~12^exp~z~1~0~12|exp	z:1,:0.1
+cat	exp~food~1e21~0~12^exp~z~1~0~12|exp	food:1e+21,z:1
+cat	exp~trans~1e21~0~12^exp~z~1~0~12|exp	trans:1e+21,z:1
+cat	exp~other~1e21~0~12^exp~z~1~0~12|exp	other:1e+21,z:1
+cat	exp~~1e21~0~12^exp~z~1~0~12|exp	:1e+21,z:1
+cat	exp~food~1e-7~0~12^exp~z~1~0~12|exp	z:1,food:1e-7
+cat	exp~trans~1e-7~0~12^exp~z~1~0~12|exp	z:1,trans:1e-7
+cat	exp~other~1e-7~0~12^exp~z~1~0~12|exp	z:1,other:1e-7
+cat	exp~~1e-7~0~12^exp~z~1~0~12|exp	z:1,:1e-7
+cat	exp~food~-0~0~12^exp~z~1~0~12|exp	z:1,food:0
+cat	exp~trans~-0~0~12^exp~z~1~0~12|exp	z:1,trans:0
+cat	exp~other~-0~0~12^exp~z~1~0~12|exp	z:1,other:0
+cat	exp~~-0~0~12^exp~z~1~0~12|exp	z:1,:0
+cat	exp~food~1000000~0~12^exp~z~1~0~12|exp	food:1000000,z:1
+cat	exp~trans~1000000~0~12^exp~z~1~0~12|exp	trans:1000000,z:1
+cat	exp~other~1000000~0~12^exp~z~1~0~12|exp	other:1000000,z:1
+cat	exp~~1000000~0~12^exp~z~1~0~12|exp	:1000000,z:1
+cat	exp~a~0.1~0~12^exp~a~0.2~0~12|exp	a:0.30000000000000004
+cat	exp~a~0.2~0~12^exp~a~0.1~0~12|exp	a:0.30000000000000004
+cat	exp~a~0.1~0~12^exp~a~0.2~0~12^exp~a~0.3~0~12|exp	a:0.6000000000000001
+cat	|exp	
+cat	inc~x~5~0~12|exp	
+top	exp~c~0~0~12^exp~c~7~0~12^exp~c~1~0~12^exp~c~8~0~12^exp~c~2~0~12^exp~c~9~0~12^exp~c~3~0~12^exp~c~10~0~12|exp,0	
+top	exp~c~0~0~12^exp~c~7~0~12^exp~c~1~0~12^exp~c~8~0~12^exp~c~2~0~12^exp~c~9~0~12^exp~c~3~0~12^exp~c~10~0~12|exp,1	e7:10
+top	exp~c~0~0~12^exp~c~7~0~12^exp~c~1~0~12^exp~c~8~0~12^exp~c~2~0~12^exp~c~9~0~12^exp~c~3~0~12^exp~c~10~0~12|exp,3	e7:10,e5:9,e3:8
+top	exp~c~0~0~12^exp~c~7~0~12^exp~c~1~0~12^exp~c~8~0~12^exp~c~2~0~12^exp~c~9~0~12^exp~c~3~0~12^exp~c~10~0~12|exp,5	e7:10,e5:9,e3:8,e1:7,e6:3
+top	exp~c~0~0~12^exp~c~7~0~12^exp~c~1~0~12^exp~c~8~0~12^exp~c~2~0~12^exp~c~9~0~12^exp~c~3~0~12^exp~c~10~0~12|exp,8	e7:10,e5:9,e3:8,e1:7,e6:3,e4:2,e2:1,e0:0
+top	exp~c~0~0~12^exp~c~7~0~12^exp~c~1~0~12^exp~c~8~0~12^exp~c~2~0~12^exp~c~9~0~12^exp~c~3~0~12^exp~c~10~0~12|exp,99	e7:10,e5:9,e3:8,e1:7,e6:3,e4:2,e2:1,e0:0
+top	exp~c~0~0~12^exp~c~7~0~12^exp~c~1~0~12^exp~c~8~0~12^exp~c~2~0~12^exp~c~9~0~12^exp~c~3~0~12^exp~c~10~0~12^inc~y~50~0~12|exp,5	e7:10,e5:9,e3:8,e1:7,e6:3
+top	exp~c~0~0~12^exp~c~7~0~12^exp~c~1~0~12^exp~c~8~0~12^exp~c~2~0~12^exp~c~9~0~12^exp~c~3~0~12^exp~c~10~0~12^inc~y~50~0~12|inc,5	e8:50
+top	exp~c~0~0~12^exp~c~7~0~12^exp~c~1~0~12^exp~c~8~0~12^exp~c~2~0~12^exp~c~9~0~12^exp~c~3~0~12^exp~c~10~0~12^inc~y~50~0~12|xfer,5	
+top	exp~c~0~0~12^exp~c~7~0~12^exp~c~1~0~12^exp~c~8~0~12^exp~c~2~0~12^exp~c~9~0~12^exp~c~3~0~12^exp~c~10~0~12^inc~y~50~0~12|_,5	e7:10,e5:9,e3:8,e1:7,e6:3
+top	exp~a~10~0~12^exp~b~10~0~12^exp~c~10~0~12|exp,2	e0:10,e1:10
+top	exp~a~10~0~12^exp~b~10~0~12^exp~c~10~0~12|exp,3	e0:10,e1:10,e2:10
+top	|exp,5	
+top	exp~a~0~0~12^exp~b~5~0~12|exp,2	e1:5,e0:0
+top	exp~a~10~0~12^exp~b~5~0~12|exp,2	e0:10,e1:5
+top	exp~a~35.5~0~12^exp~b~5~0~12|exp,2	e0:35.5,e1:5
+top	exp~a~-5~0~12^exp~b~5~0~12|exp,2	e1:5,e0:-5
+top	exp~a~0.005~0~12^exp~b~5~0~12|exp,2	e1:5,e0:0.005
+top	exp~a~0.1~0~12^exp~b~5~0~12|exp,2	e1:5,e0:0.1
+top	exp~a~1e21~0~12^exp~b~5~0~12|exp,2	e0:1e+21,e1:5
+top	exp~a~1e-7~0~12^exp~b~5~0~12|exp,2	e1:5,e0:1e-7
+top	exp~a~-0~0~12^exp~b~5~0~12|exp,2	e1:5,e0:0
+top	exp~a~1000000~0~12^exp~b~5~0~12|exp,2	e0:1000000,e1:5
+over	exp~a~10~0~12|	exp=10 inc=0 bal=-10 n=1
+over	exp~a~10~0~12^exp~b~5~0~12|	exp=15 inc=0 bal=-15 n=2
+over	inc~a~10~0~12|	exp=0 inc=10 bal=10 n=1
+over	inc~a~10~0~12^exp~b~5~0~12|	exp=5 inc=10 bal=5 n=2
+over	xfer~a~10~0~12|	exp=0 inc=0 bal=0 n=1
+over	xfer~a~10~0~12^exp~b~5~0~12|	exp=5 inc=0 bal=-5 n=2
+over	_~a~10~0~12|	exp=0 inc=0 bal=0 n=1
+over	_~a~10~0~12^exp~b~5~0~12|	exp=5 inc=0 bal=-5 n=2
+over	|	exp=0 inc=0 bal=0 n=0
+over	exp~a~35~0~12^inc~b~100~0~12^xfer~transfer~500~0~12|	exp=35 inc=100 bal=65 n=3
+over	exp~a~0~0~12^inc~b~0~0~12|	exp=0 inc=0 bal=0 n=2
+over	exp~a~10~0~12^inc~b~10~0~12|	exp=10 inc=10 bal=0 n=2
+over	exp~a~35.5~0~12^inc~b~35.5~0~12|	exp=35.5 inc=35.5 bal=0 n=2
+over	exp~a~-5~0~12^inc~b~-5~0~12|	exp=-5 inc=-5 bal=0 n=2
+over	exp~a~0.005~0~12^inc~b~0.005~0~12|	exp=0.005 inc=0.005 bal=0 n=2
+over	exp~a~0.1~0~12^inc~b~0.1~0~12|	exp=0.1 inc=0.1 bal=0 n=2
+over	exp~a~1e21~0~12^inc~b~1e21~0~12|	exp=1e+21 inc=1e+21 bal=0 n=2
+over	exp~a~1e-7~0~12^inc~b~1e-7~0~12|	exp=1e-7 inc=1e-7 bal=0 n=2
+over	exp~a~-0~0~12^inc~b~-0~0~12|	exp=0 inc=0 bal=0 n=2
+over	exp~a~1000000~0~12^inc~b~1000000~0~12|	exp=1000000 inc=1000000 bal=0 n=2
+over	exp~x~10~0~12^exp~y~25~0~12|	exp=35 inc=0 bal=-35 n=2
+over	exp~x~10~0~12^exp~y~25~0~12^xfer~z~500~0~12|	exp=35 inc=0 bal=-35 n=3
+over	exp~x~0~0~12^exp~y~0~0~12|	exp=0 inc=0 bal=0 n=2
+over	exp~x~35.5~0~12^exp~y~35.5~0~12|	exp=71 inc=0 bal=-71 n=2
+over	exp~x~-5~0~12^exp~y~-5~0~12|	exp=-10 inc=0 bal=10 n=2
+over	exp~x~10~0~12^inc~y~25~0~12|	exp=10 inc=25 bal=15 n=2
+over	exp~x~10~0~12^inc~y~25~0~12^xfer~z~500~0~12|	exp=10 inc=25 bal=15 n=3
+over	exp~x~0~0~12^inc~y~0~0~12|	exp=0 inc=0 bal=0 n=2
+over	exp~x~35.5~0~12^inc~y~35.5~0~12|	exp=35.5 inc=35.5 bal=0 n=2
+over	exp~x~-5~0~12^inc~y~-5~0~12|	exp=-5 inc=-5 bal=0 n=2
+over	exp~x~10~0~12^xfer~y~25~0~12|	exp=10 inc=0 bal=-10 n=2
+over	exp~x~10~0~12^xfer~y~25~0~12^xfer~z~500~0~12|	exp=10 inc=0 bal=-10 n=3
+over	exp~x~0~0~12^xfer~y~0~0~12|	exp=0 inc=0 bal=0 n=2
+over	exp~x~35.5~0~12^xfer~y~35.5~0~12|	exp=35.5 inc=0 bal=-35.5 n=2
+over	exp~x~-5~0~12^xfer~y~-5~0~12|	exp=-5 inc=0 bal=5 n=2
+over	exp~x~10~0~12^_~y~25~0~12|	exp=10 inc=0 bal=-10 n=2
+over	exp~x~10~0~12^_~y~25~0~12^xfer~z~500~0~12|	exp=10 inc=0 bal=-10 n=3
+over	exp~x~0~0~12^_~y~0~0~12|	exp=0 inc=0 bal=0 n=2
+over	exp~x~35.5~0~12^_~y~35.5~0~12|	exp=35.5 inc=0 bal=-35.5 n=2
+over	exp~x~-5~0~12^_~y~-5~0~12|	exp=-5 inc=0 bal=5 n=2
+over	inc~x~10~0~12^exp~y~25~0~12|	exp=25 inc=10 bal=-15 n=2
+over	inc~x~10~0~12^exp~y~25~0~12^xfer~z~500~0~12|	exp=25 inc=10 bal=-15 n=3
+over	inc~x~0~0~12^exp~y~0~0~12|	exp=0 inc=0 bal=0 n=2
+over	inc~x~35.5~0~12^exp~y~35.5~0~12|	exp=35.5 inc=35.5 bal=0 n=2
+over	inc~x~-5~0~12^exp~y~-5~0~12|	exp=-5 inc=-5 bal=0 n=2
+over	inc~x~10~0~12^inc~y~25~0~12|	exp=0 inc=35 bal=35 n=2
+over	inc~x~10~0~12^inc~y~25~0~12^xfer~z~500~0~12|	exp=0 inc=35 bal=35 n=3
+over	inc~x~0~0~12^inc~y~0~0~12|	exp=0 inc=0 bal=0 n=2
+over	inc~x~35.5~0~12^inc~y~35.5~0~12|	exp=0 inc=71 bal=71 n=2
+over	inc~x~-5~0~12^inc~y~-5~0~12|	exp=0 inc=-10 bal=-10 n=2
+over	inc~x~10~0~12^xfer~y~25~0~12|	exp=0 inc=10 bal=10 n=2
+over	inc~x~10~0~12^xfer~y~25~0~12^xfer~z~500~0~12|	exp=0 inc=10 bal=10 n=3
+over	inc~x~0~0~12^xfer~y~0~0~12|	exp=0 inc=0 bal=0 n=2
+over	inc~x~35.5~0~12^xfer~y~35.5~0~12|	exp=0 inc=35.5 bal=35.5 n=2
+over	inc~x~-5~0~12^xfer~y~-5~0~12|	exp=0 inc=-5 bal=-5 n=2
+over	inc~x~10~0~12^_~y~25~0~12|	exp=0 inc=10 bal=10 n=2
+over	inc~x~10~0~12^_~y~25~0~12^xfer~z~500~0~12|	exp=0 inc=10 bal=10 n=3
+over	inc~x~0~0~12^_~y~0~0~12|	exp=0 inc=0 bal=0 n=2
+over	inc~x~35.5~0~12^_~y~35.5~0~12|	exp=0 inc=35.5 bal=35.5 n=2
+over	inc~x~-5~0~12^_~y~-5~0~12|	exp=0 inc=-5 bal=-5 n=2
+over	xfer~x~10~0~12^exp~y~25~0~12|	exp=25 inc=0 bal=-25 n=2
+over	xfer~x~10~0~12^exp~y~25~0~12^xfer~z~500~0~12|	exp=25 inc=0 bal=-25 n=3
+over	xfer~x~0~0~12^exp~y~0~0~12|	exp=0 inc=0 bal=0 n=2
+over	xfer~x~35.5~0~12^exp~y~35.5~0~12|	exp=35.5 inc=0 bal=-35.5 n=2
+over	xfer~x~-5~0~12^exp~y~-5~0~12|	exp=-5 inc=0 bal=5 n=2
+over	xfer~x~10~0~12^inc~y~25~0~12|	exp=0 inc=25 bal=25 n=2
+over	xfer~x~10~0~12^inc~y~25~0~12^xfer~z~500~0~12|	exp=0 inc=25 bal=25 n=3
+over	xfer~x~0~0~12^inc~y~0~0~12|	exp=0 inc=0 bal=0 n=2
+over	xfer~x~35.5~0~12^inc~y~35.5~0~12|	exp=0 inc=35.5 bal=35.5 n=2
+over	xfer~x~-5~0~12^inc~y~-5~0~12|	exp=0 inc=-5 bal=-5 n=2
+over	xfer~x~10~0~12^xfer~y~25~0~12|	exp=0 inc=0 bal=0 n=2
+over	xfer~x~10~0~12^xfer~y~25~0~12^xfer~z~500~0~12|	exp=0 inc=0 bal=0 n=3
+over	xfer~x~0~0~12^xfer~y~0~0~12|	exp=0 inc=0 bal=0 n=2
+over	xfer~x~35.5~0~12^xfer~y~35.5~0~12|	exp=0 inc=0 bal=0 n=2
+over	xfer~x~-5~0~12^xfer~y~-5~0~12|	exp=0 inc=0 bal=0 n=2
+over	xfer~x~10~0~12^_~y~25~0~12|	exp=0 inc=0 bal=0 n=2
+over	xfer~x~10~0~12^_~y~25~0~12^xfer~z~500~0~12|	exp=0 inc=0 bal=0 n=3
+over	xfer~x~0~0~12^_~y~0~0~12|	exp=0 inc=0 bal=0 n=2
+over	xfer~x~35.5~0~12^_~y~35.5~0~12|	exp=0 inc=0 bal=0 n=2
+over	xfer~x~-5~0~12^_~y~-5~0~12|	exp=0 inc=0 bal=0 n=2
+over	_~x~10~0~12^exp~y~25~0~12|	exp=25 inc=0 bal=-25 n=2
+over	_~x~10~0~12^exp~y~25~0~12^xfer~z~500~0~12|	exp=25 inc=0 bal=-25 n=3
+over	_~x~0~0~12^exp~y~0~0~12|	exp=0 inc=0 bal=0 n=2
+over	_~x~35.5~0~12^exp~y~35.5~0~12|	exp=35.5 inc=0 bal=-35.5 n=2
+over	_~x~-5~0~12^exp~y~-5~0~12|	exp=-5 inc=0 bal=5 n=2
+over	_~x~10~0~12^inc~y~25~0~12|	exp=0 inc=25 bal=25 n=2
+over	_~x~10~0~12^inc~y~25~0~12^xfer~z~500~0~12|	exp=0 inc=25 bal=25 n=3
+over	_~x~0~0~12^inc~y~0~0~12|	exp=0 inc=0 bal=0 n=2
+over	_~x~35.5~0~12^inc~y~35.5~0~12|	exp=0 inc=35.5 bal=35.5 n=2
+over	_~x~-5~0~12^inc~y~-5~0~12|	exp=0 inc=-5 bal=-5 n=2
+over	_~x~10~0~12^xfer~y~25~0~12|	exp=0 inc=0 bal=0 n=2
+over	_~x~10~0~12^xfer~y~25~0~12^xfer~z~500~0~12|	exp=0 inc=0 bal=0 n=3
+over	_~x~0~0~12^xfer~y~0~0~12|	exp=0 inc=0 bal=0 n=2
+over	_~x~35.5~0~12^xfer~y~35.5~0~12|	exp=0 inc=0 bal=0 n=2
+over	_~x~-5~0~12^xfer~y~-5~0~12|	exp=0 inc=0 bal=0 n=2
+over	_~x~10~0~12^_~y~25~0~12|	exp=0 inc=0 bal=0 n=2
+over	_~x~10~0~12^_~y~25~0~12^xfer~z~500~0~12|	exp=0 inc=0 bal=0 n=3
+over	_~x~0~0~12^_~y~0~0~12|	exp=0 inc=0 bal=0 n=2
+over	_~x~35.5~0~12^_~y~35.5~0~12|	exp=0 inc=0 bal=0 n=2
+over	_~x~-5~0~12^_~y~-5~0~12|	exp=0 inc=0 bal=0 n=2
+cat	exp~p~10~0~12^exp~p~20~0~12^exp~q~5~0~12|exp	p:30,q:5
+cat	exp~p~10~0~12^exp~p~20~0~12^exp~q~5~0~12|inc	
+cat	exp~p~10~0~12^exp~p~20~0~12^exp~q~5~0~12|xfer	
+cat	exp~p~10~0~12^inc~p~20~0~12^exp~q~5~0~12|exp	p:10,q:5
+cat	exp~p~10~0~12^inc~p~20~0~12^exp~q~5~0~12|inc	p:20
+cat	exp~p~10~0~12^inc~p~20~0~12^exp~q~5~0~12|xfer	
+cat	exp~p~10~0~12^xfer~p~20~0~12^exp~q~5~0~12|exp	p:10,q:5
+cat	exp~p~10~0~12^xfer~p~20~0~12^exp~q~5~0~12|inc	
+cat	exp~p~10~0~12^xfer~p~20~0~12^exp~q~5~0~12|xfer	p:20
+cat	exp~p~10~0~12^_~p~20~0~12^exp~q~5~0~12|exp	p:10,q:5
+cat	exp~p~10~0~12^_~p~20~0~12^exp~q~5~0~12|inc	
+cat	exp~p~10~0~12^_~p~20~0~12^exp~q~5~0~12|xfer	
+cat	inc~p~10~0~12^exp~p~20~0~12^inc~q~5~0~12|exp	p:20
+cat	inc~p~10~0~12^exp~p~20~0~12^inc~q~5~0~12|inc	p:10,q:5
+cat	inc~p~10~0~12^exp~p~20~0~12^inc~q~5~0~12|xfer	
+cat	inc~p~10~0~12^inc~p~20~0~12^inc~q~5~0~12|exp	
+cat	inc~p~10~0~12^inc~p~20~0~12^inc~q~5~0~12|inc	p:30,q:5
+cat	inc~p~10~0~12^inc~p~20~0~12^inc~q~5~0~12|xfer	
+cat	inc~p~10~0~12^xfer~p~20~0~12^inc~q~5~0~12|exp	
+cat	inc~p~10~0~12^xfer~p~20~0~12^inc~q~5~0~12|inc	p:10,q:5
+cat	inc~p~10~0~12^xfer~p~20~0~12^inc~q~5~0~12|xfer	p:20
+cat	inc~p~10~0~12^_~p~20~0~12^inc~q~5~0~12|exp	
+cat	inc~p~10~0~12^_~p~20~0~12^inc~q~5~0~12|inc	p:10,q:5
+cat	inc~p~10~0~12^_~p~20~0~12^inc~q~5~0~12|xfer	
+cat	xfer~p~10~0~12^exp~p~20~0~12^xfer~q~5~0~12|exp	p:20
+cat	xfer~p~10~0~12^exp~p~20~0~12^xfer~q~5~0~12|inc	
+cat	xfer~p~10~0~12^exp~p~20~0~12^xfer~q~5~0~12|xfer	p:10,q:5
+cat	xfer~p~10~0~12^inc~p~20~0~12^xfer~q~5~0~12|exp	
+cat	xfer~p~10~0~12^inc~p~20~0~12^xfer~q~5~0~12|inc	p:20
+cat	xfer~p~10~0~12^inc~p~20~0~12^xfer~q~5~0~12|xfer	p:10,q:5
+cat	xfer~p~10~0~12^xfer~p~20~0~12^xfer~q~5~0~12|exp	
+cat	xfer~p~10~0~12^xfer~p~20~0~12^xfer~q~5~0~12|inc	
+cat	xfer~p~10~0~12^xfer~p~20~0~12^xfer~q~5~0~12|xfer	p:30,q:5
+cat	xfer~p~10~0~12^_~p~20~0~12^xfer~q~5~0~12|exp	
+cat	xfer~p~10~0~12^_~p~20~0~12^xfer~q~5~0~12|inc	
+cat	xfer~p~10~0~12^_~p~20~0~12^xfer~q~5~0~12|xfer	p:10,q:5
+cat	_~p~10~0~12^exp~p~20~0~12^_~q~5~0~12|exp	p:20
+cat	_~p~10~0~12^exp~p~20~0~12^_~q~5~0~12|inc	
+cat	_~p~10~0~12^exp~p~20~0~12^_~q~5~0~12|xfer	
+cat	_~p~10~0~12^inc~p~20~0~12^_~q~5~0~12|exp	
+cat	_~p~10~0~12^inc~p~20~0~12^_~q~5~0~12|inc	p:20
+cat	_~p~10~0~12^inc~p~20~0~12^_~q~5~0~12|xfer	
+cat	_~p~10~0~12^xfer~p~20~0~12^_~q~5~0~12|exp	
+cat	_~p~10~0~12^xfer~p~20~0~12^_~q~5~0~12|inc	
+cat	_~p~10~0~12^xfer~p~20~0~12^_~q~5~0~12|xfer	p:20
+cat	_~p~10~0~12^_~p~20~0~12^_~q~5~0~12|exp	
+cat	_~p~10~0~12^_~p~20~0~12^_~q~5~0~12|inc	
+cat	_~p~10~0~12^_~p~20~0~12^_~q~5~0~12|xfer	
+cat	exp~p~1~0~12^exp~p~2~0~12|exp	p:3
+cat	exp~q~1~0~12^exp~p~2~0~12|exp	p:2,q:1
+cat	exp~p~1~0~12^exp~p~2~0~12^exp~p~3~0~12|exp	p:6
+cat	exp~q~1~0~12^exp~p~2~0~12^exp~q~3~0~12|exp	q:4,p:2
+cat	exp~p~1~0~12^exp~p~2~0~12^exp~p~3~0~12^exp~p~4~0~12^exp~p~5~0~12|exp	p:15
+cat	exp~q~1~0~12^exp~p~2~0~12^exp~q~3~0~12^exp~p~4~0~12^exp~q~5~0~12|exp	q:9,p:6
+top	|exp,1	
+top	|exp,2	
+top	|exp,5	
+top	|exp,10	
+top	exp~c~0~0~12|exp,1	e0:0
+top	exp~c~0~0~12|exp,2	e0:0
+top	exp~c~0~0~12|exp,5	e0:0
+top	exp~c~0~0~12|exp,10	e0:0
+top	exp~c~0~0~12^exp~c~3~0~12|exp,1	e1:3
+top	exp~c~0~0~12^exp~c~3~0~12|exp,2	e1:3,e0:0
+top	exp~c~0~0~12^exp~c~3~0~12|exp,5	e1:3,e0:0
+top	exp~c~0~0~12^exp~c~3~0~12|exp,10	e1:3,e0:0
+top	exp~c~0~0~12^exp~c~3~0~12^exp~c~6~0~12^exp~c~9~0~12|exp,1	e3:9
+top	exp~c~0~0~12^exp~c~3~0~12^exp~c~6~0~12^exp~c~9~0~12|exp,2	e3:9,e2:6
+top	exp~c~0~0~12^exp~c~3~0~12^exp~c~6~0~12^exp~c~9~0~12|exp,5	e3:9,e2:6,e1:3,e0:0
+top	exp~c~0~0~12^exp~c~3~0~12^exp~c~6~0~12^exp~c~9~0~12|exp,10	e3:9,e2:6,e1:3,e0:0
+top	exp~c~0~0~12^exp~c~3~0~12^exp~c~6~0~12^exp~c~9~0~12^exp~c~1~0~12|exp,1	e3:9
+top	exp~c~0~0~12^exp~c~3~0~12^exp~c~6~0~12^exp~c~9~0~12^exp~c~1~0~12|exp,2	e3:9,e2:6
+top	exp~c~0~0~12^exp~c~3~0~12^exp~c~6~0~12^exp~c~9~0~12^exp~c~1~0~12|exp,5	e3:9,e2:6,e1:3,e4:1,e0:0
+top	exp~c~0~0~12^exp~c~3~0~12^exp~c~6~0~12^exp~c~9~0~12^exp~c~1~0~12|exp,10	e3:9,e2:6,e1:3,e4:1,e0:0
+top	exp~c~0~0~12^exp~c~3~0~12^exp~c~6~0~12^exp~c~9~0~12^exp~c~1~0~12^exp~c~4~0~12|exp,1	e3:9
+top	exp~c~0~0~12^exp~c~3~0~12^exp~c~6~0~12^exp~c~9~0~12^exp~c~1~0~12^exp~c~4~0~12|exp,2	e3:9,e2:6
+top	exp~c~0~0~12^exp~c~3~0~12^exp~c~6~0~12^exp~c~9~0~12^exp~c~1~0~12^exp~c~4~0~12|exp,5	e3:9,e2:6,e5:4,e1:3,e4:1
+top	exp~c~0~0~12^exp~c~3~0~12^exp~c~6~0~12^exp~c~9~0~12^exp~c~1~0~12^exp~c~4~0~12|exp,10	e3:9,e2:6,e5:4,e1:3,e4:1,e0:0
+top	exp~c~0~0~12^exp~c~3~0~12^exp~c~6~0~12^exp~c~9~0~12^exp~c~1~0~12^exp~c~4~0~12^exp~c~7~0~12^exp~c~10~0~12^exp~c~2~0~12|exp,1	e7:10
+top	exp~c~0~0~12^exp~c~3~0~12^exp~c~6~0~12^exp~c~9~0~12^exp~c~1~0~12^exp~c~4~0~12^exp~c~7~0~12^exp~c~10~0~12^exp~c~2~0~12|exp,2	e7:10,e3:9
+top	exp~c~0~0~12^exp~c~3~0~12^exp~c~6~0~12^exp~c~9~0~12^exp~c~1~0~12^exp~c~4~0~12^exp~c~7~0~12^exp~c~10~0~12^exp~c~2~0~12|exp,5	e7:10,e3:9,e6:7,e2:6,e5:4
+top	exp~c~0~0~12^exp~c~3~0~12^exp~c~6~0~12^exp~c~9~0~12^exp~c~1~0~12^exp~c~4~0~12^exp~c~7~0~12^exp~c~10~0~12^exp~c~2~0~12|exp,10	e7:10,e3:9,e6:7,e2:6,e5:4,e1:3,e8:2,e4:1,e0:0
+donut	a:50^b:30^c:20|100	a:0.5:0,b:0.3:0.5,c:0.2:0.8
+donut	a:50^b:30^c:20|0	
+donut	a:50^b:30^c:20|-5	
+donut	a:50^b:30^c:20|3	a:16.666666666666668:0,b:10:16.666666666666668,c:6.666666666666667:26.666666666666668
+donut	a:50^b:30^c:20|1	a:50:0,b:30:50,c:20:80
+donut	a:50^b:30^c:20|1e21	a:5e-20:0,b:3e-20:5e-20,c:2e-20:8.000000000000001e-20
+donut	a:50^b:30^c:20|0.0000001	a:500000000:0,b:300000000:500000000,c:200000000:800000000
+donut	a:1^b:1^c:1|100	a:0.01:0,b:0.01:0.01,c:0.01:0.02
+donut	a:1^b:1^c:1|0	
+donut	a:1^b:1^c:1|-5	
+donut	a:1^b:1^c:1|3	a:0.3333333333333333:0,b:0.3333333333333333:0.3333333333333333,c:0.3333333333333333:0.6666666666666666
+donut	a:1^b:1^c:1|1	a:1:0,b:1:1,c:1:2
+donut	a:1^b:1^c:1|1e21	a:1e-21:0,b:1e-21:1e-21,c:1e-21:2e-21
+donut	a:1^b:1^c:1|0.0000001	a:10000000:0,b:10000000:10000000,c:10000000:20000000
+donut	a:100|100	a:1:0
+donut	a:100|0	
+donut	a:100|-5	
+donut	a:100|3	a:33.333333333333336:0
+donut	a:100|1	a:100:0
+donut	a:100|1e21	a:1e-19:0
+donut	a:100|0.0000001	a:1000000000:0
+donut	a:0^b:0|100	a:0:0,b:0:0
+donut	a:0^b:0|0	
+donut	a:0^b:0|-5	
+donut	a:0^b:0|3	a:0:0,b:0:0
+donut	a:0^b:0|1	a:0:0,b:0:0
+donut	a:0^b:0|1e21	a:0:0,b:0:0
+donut	a:0^b:0|0.0000001	a:0:0,b:0:0
+donut	a:-10^b:20|100	a:-0.1:0,b:0.2:-0.1
+donut	a:-10^b:20|0	
+donut	a:-10^b:20|-5	
+donut	a:-10^b:20|3	a:-3.3333333333333335:0,b:6.666666666666667:-3.3333333333333335
+donut	a:-10^b:20|1	a:-10:0,b:20:-10
+donut	a:-10^b:20|1e21	a:-1e-20:0,b:2e-20:-1e-20
+donut	a:-10^b:20|0.0000001	a:-100000000:0,b:200000000:-100000000
+donut	a:0.1^b:0.2^c:0.3|100	a:0.001:0,b:0.002:0.001,c:0.003:0.003
+donut	a:0.1^b:0.2^c:0.3|0	
+donut	a:0.1^b:0.2^c:0.3|-5	
+donut	a:0.1^b:0.2^c:0.3|3	a:0.03333333333333333:0,b:0.06666666666666667:0.03333333333333333,c:0.09999999999999999:0.1
+donut	a:0.1^b:0.2^c:0.3|1	a:0.1:0,b:0.2:0.1,c:0.3:0.30000000000000004
+donut	a:0.1^b:0.2^c:0.3|1e21	a:1e-22:0,b:2e-22:1e-22,c:3e-22:3e-22
+donut	a:0.1^b:0.2^c:0.3|0.0000001	a:1000000.0000000001:0,b:2000000.0000000002:1000000.0000000001,c:3000000:3000000.0000000005
+donut	a:1e21^b:1|100	a:10000000000000000000:0,b:0.01:10000000000000000000
+donut	a:1e21^b:1|0	
+donut	a:1e21^b:1|-5	
+donut	a:1e21^b:1|3	a:333333333333333300000:0,b:0.3333333333333333:333333333333333300000
+donut	a:1e21^b:1|1	a:1e+21:0,b:1:1e+21
+donut	a:1e21^b:1|1e21	a:1:0,b:1e-21:1
+donut	a:1e21^b:1|0.0000001	a:1e+28:0,b:10000000:1e+28
+donut	a:1e-7^b:1|100	a:9.999999999999999e-10:0,b:0.01:9.999999999999999e-10
+donut	a:1e-7^b:1|0	
+donut	a:1e-7^b:1|-5	
+donut	a:1e-7^b:1|3	a:3.3333333333333334e-8:0,b:0.3333333333333333:3.3333333333333334e-8
+donut	a:1e-7^b:1|1	a:1e-7:0,b:1:1e-7
+donut	a:1e-7^b:1|1e21	a:1e-28:0,b:1e-21:1e-28
+donut	a:1e-7^b:1|0.0000001	a:1:0,b:10000000:1
+donut	|100	
+dow	exp~a~10~0~12|exp	0:10:1,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+dow	exp~a~10~0~12^exp~b~5~0~12|exp	0:15:2,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+dow	inc~a~10~0~12|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+dow	inc~a~10~0~12|inc	0:10:1,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+dow	exp~a~10~1~12|exp	0:0:0,1:10:1,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+dow	exp~a~10~1~12^exp~b~5~1~12|exp	0:0:0,1:15:2,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+dow	inc~a~10~1~12|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+dow	inc~a~10~1~12|inc	0:0:0,1:10:1,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+dow	exp~a~10~2~12|exp	0:0:0,1:0:0,2:10:1,3:0:0,4:0:0,5:0:0,6:0:0
+dow	exp~a~10~2~12^exp~b~5~2~12|exp	0:0:0,1:0:0,2:15:2,3:0:0,4:0:0,5:0:0,6:0:0
+dow	inc~a~10~2~12|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+dow	inc~a~10~2~12|inc	0:0:0,1:0:0,2:10:1,3:0:0,4:0:0,5:0:0,6:0:0
+dow	exp~a~10~3~12|exp	0:0:0,1:0:0,2:0:0,3:10:1,4:0:0,5:0:0,6:0:0
+dow	exp~a~10~3~12^exp~b~5~3~12|exp	0:0:0,1:0:0,2:0:0,3:15:2,4:0:0,5:0:0,6:0:0
+dow	inc~a~10~3~12|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+dow	inc~a~10~3~12|inc	0:0:0,1:0:0,2:0:0,3:10:1,4:0:0,5:0:0,6:0:0
+dow	exp~a~10~4~12|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:10:1,5:0:0,6:0:0
+dow	exp~a~10~4~12^exp~b~5~4~12|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:15:2,5:0:0,6:0:0
+dow	inc~a~10~4~12|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+dow	inc~a~10~4~12|inc	0:0:0,1:0:0,2:0:0,3:0:0,4:10:1,5:0:0,6:0:0
+dow	exp~a~10~5~12|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:10:1,6:0:0
+dow	exp~a~10~5~12^exp~b~5~5~12|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:15:2,6:0:0
+dow	inc~a~10~5~12|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+dow	inc~a~10~5~12|inc	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:10:1,6:0:0
+dow	exp~a~10~6~12|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:10:1
+dow	exp~a~10~6~12^exp~b~5~6~12|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:15:2
+dow	inc~a~10~6~12|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+dow	inc~a~10~6~12|inc	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:10:1
+dow	exp~a~10~0~12^exp~a~20~1~12^exp~a~30~2~12^exp~a~40~3~12^exp~a~50~4~12^exp~a~60~5~12^exp~a~70~6~12|exp	0:10:1,1:20:1,2:30:1,3:40:1,4:50:1,5:60:1,6:70:1
+dow	|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+dow	exp~a~10~3~12^inc~b~20~3~12|exp	0:0:0,1:0:0,2:0:0,3:10:1,4:0:0,5:0:0,6:0:0
+dow	exp~a~10~3~12^inc~b~20~3~12|inc	0:0:0,1:0:0,2:0:0,3:20:1,4:0:0,5:0:0,6:0:0
+dow	exp~a~10~3~12^inc~b~20~3~12|xfer	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+dow	exp~a~10~3~12^inc~b~20~3~12|_	0:0:0,1:0:0,2:0:0,3:10:1,4:0:0,5:0:0,6:0:0
+bucket	0	dawn
+tod	exp~a~10~0~0|exp	dawn:10:1,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+tod	exp~a~10~0~0^exp~b~5~0~0|exp	dawn:15:2,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+bucket	1	dawn
+tod	exp~a~10~0~1|exp	dawn:10:1,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+tod	exp~a~10~0~1^exp~b~5~0~1|exp	dawn:15:2,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+bucket	2	dawn
+tod	exp~a~10~0~2|exp	dawn:10:1,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+tod	exp~a~10~0~2^exp~b~5~0~2|exp	dawn:15:2,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+bucket	3	dawn
+tod	exp~a~10~0~3|exp	dawn:10:1,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+tod	exp~a~10~0~3^exp~b~5~0~3|exp	dawn:15:2,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+bucket	4	dawn
+tod	exp~a~10~0~4|exp	dawn:10:1,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+tod	exp~a~10~0~4^exp~b~5~0~4|exp	dawn:15:2,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+bucket	5	earlyMorning
+tod	exp~a~10~0~5|exp	dawn:0:0,earlyMorning:10:1,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+tod	exp~a~10~0~5^exp~b~5~0~5|exp	dawn:0:0,earlyMorning:15:2,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+bucket	6	earlyMorning
+tod	exp~a~10~0~6|exp	dawn:0:0,earlyMorning:10:1,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+tod	exp~a~10~0~6^exp~b~5~0~6|exp	dawn:0:0,earlyMorning:15:2,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+bucket	7	earlyMorning
+tod	exp~a~10~0~7|exp	dawn:0:0,earlyMorning:10:1,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+tod	exp~a~10~0~7^exp~b~5~0~7|exp	dawn:0:0,earlyMorning:15:2,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+bucket	8	morning
+tod	exp~a~10~0~8|exp	dawn:0:0,earlyMorning:0:0,morning:10:1,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+tod	exp~a~10~0~8^exp~b~5~0~8|exp	dawn:0:0,earlyMorning:0:0,morning:15:2,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+bucket	9	morning
+tod	exp~a~10~0~9|exp	dawn:0:0,earlyMorning:0:0,morning:10:1,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+tod	exp~a~10~0~9^exp~b~5~0~9|exp	dawn:0:0,earlyMorning:0:0,morning:15:2,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+bucket	10	morning
+tod	exp~a~10~0~10|exp	dawn:0:0,earlyMorning:0:0,morning:10:1,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+tod	exp~a~10~0~10^exp~b~5~0~10|exp	dawn:0:0,earlyMorning:0:0,morning:15:2,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+bucket	11	noon
+tod	exp~a~10~0~11|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:10:1,afternoon:0:0,dusk:0:0,night:0:0
+tod	exp~a~10~0~11^exp~b~5~0~11|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:15:2,afternoon:0:0,dusk:0:0,night:0:0
+bucket	12	noon
+tod	exp~a~10~0~12|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:10:1,afternoon:0:0,dusk:0:0,night:0:0
+tod	exp~a~10~0~12^exp~b~5~0~12|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:15:2,afternoon:0:0,dusk:0:0,night:0:0
+bucket	13	afternoon
+tod	exp~a~10~0~13|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:10:1,dusk:0:0,night:0:0
+tod	exp~a~10~0~13^exp~b~5~0~13|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:15:2,dusk:0:0,night:0:0
+bucket	14	afternoon
+tod	exp~a~10~0~14|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:10:1,dusk:0:0,night:0:0
+tod	exp~a~10~0~14^exp~b~5~0~14|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:15:2,dusk:0:0,night:0:0
+bucket	15	afternoon
+tod	exp~a~10~0~15|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:10:1,dusk:0:0,night:0:0
+tod	exp~a~10~0~15^exp~b~5~0~15|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:15:2,dusk:0:0,night:0:0
+bucket	16	afternoon
+tod	exp~a~10~0~16|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:10:1,dusk:0:0,night:0:0
+tod	exp~a~10~0~16^exp~b~5~0~16|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:15:2,dusk:0:0,night:0:0
+bucket	17	dusk
+tod	exp~a~10~0~17|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:10:1,night:0:0
+tod	exp~a~10~0~17^exp~b~5~0~17|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:15:2,night:0:0
+bucket	18	dusk
+tod	exp~a~10~0~18|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:10:1,night:0:0
+tod	exp~a~10~0~18^exp~b~5~0~18|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:15:2,night:0:0
+bucket	19	night
+tod	exp~a~10~0~19|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:10:1
+tod	exp~a~10~0~19^exp~b~5~0~19|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:15:2
+bucket	20	night
+tod	exp~a~10~0~20|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:10:1
+tod	exp~a~10~0~20^exp~b~5~0~20|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:15:2
+bucket	21	night
+tod	exp~a~10~0~21|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:10:1
+tod	exp~a~10~0~21^exp~b~5~0~21|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:15:2
+bucket	22	night
+tod	exp~a~10~0~22|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:10:1
+tod	exp~a~10~0~22^exp~b~5~0~22|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:15:2
+bucket	23	night
+tod	exp~a~10~0~23|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:10:1
+tod	exp~a~10~0~23^exp~b~5~0~23|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:15:2
+bucket	-1	night
+bucket	24	night
+bucket	25	night
+bucket	99	night
+bucket	-99	night
+bucket	-24	night
+bucket	48	night
+bucket	1000	night
+bucket	-1000	night
+tod	exp~a~1~0~0^exp~b~2~0~1|exp	dawn:3:2,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+tod	exp~a~1~0~4^exp~b~2~0~5|exp	dawn:1:1,earlyMorning:2:1,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+tod	exp~a~1~0~5^exp~b~2~0~6|exp	dawn:0:0,earlyMorning:3:2,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+tod	exp~a~1~0~7^exp~b~2~0~8|exp	dawn:0:0,earlyMorning:1:1,morning:2:1,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+tod	exp~a~1~0~8^exp~b~2~0~9|exp	dawn:0:0,earlyMorning:0:0,morning:3:2,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+tod	exp~a~1~0~10^exp~b~2~0~11|exp	dawn:0:0,earlyMorning:0:0,morning:1:1,noon:2:1,afternoon:0:0,dusk:0:0,night:0:0
+tod	exp~a~1~0~11^exp~b~2~0~12|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:3:2,afternoon:0:0,dusk:0:0,night:0:0
+tod	exp~a~1~0~12^exp~b~2~0~13|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:1:1,afternoon:2:1,dusk:0:0,night:0:0
+tod	exp~a~1~0~13^exp~b~2~0~14|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:3:2,dusk:0:0,night:0:0
+tod	exp~a~1~0~16^exp~b~2~0~17|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:1:1,dusk:2:1,night:0:0
+tod	exp~a~1~0~17^exp~b~2~0~18|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:3:2,night:0:0
+tod	exp~a~1~0~18^exp~b~2~0~19|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:1:1,night:2:1
+tod	exp~a~1~0~19^exp~b~2~0~20|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:3:2
+tod	exp~a~1~0~23^exp~b~2~0~0|exp	dawn:2:1,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:1:1
+tod	exp~a~1~0~0^exp~b~2~0~23|exp	dawn:1:1,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:2:1
+tod	exp~a~1~0~1^exp~b~2~0~22|exp	dawn:1:1,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:2:1
+tod	exp~a~1~0~2^exp~b~2~0~21|exp	dawn:1:1,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:2:1
+tod	exp~a~1~0~3^exp~b~2~0~20|exp	dawn:1:1,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:2:1
+tod	exp~a~1~0~4^exp~b~2~0~19|exp	dawn:1:1,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:2:1
+tod	exp~a~1~0~5^exp~b~2~0~18|exp	dawn:0:0,earlyMorning:1:1,morning:0:0,noon:0:0,afternoon:0:0,dusk:2:1,night:0:0
+tod	exp~a~1~0~6^exp~b~2~0~17|exp	dawn:0:0,earlyMorning:1:1,morning:0:0,noon:0:0,afternoon:0:0,dusk:2:1,night:0:0
+tod	exp~a~1~0~7^exp~b~2~0~16|exp	dawn:0:0,earlyMorning:1:1,morning:0:0,noon:0:0,afternoon:2:1,dusk:0:0,night:0:0
+tod	exp~a~1~0~8^exp~b~2~0~15|exp	dawn:0:0,earlyMorning:0:0,morning:1:1,noon:0:0,afternoon:2:1,dusk:0:0,night:0:0
+tod	exp~a~1~0~9^exp~b~2~0~14|exp	dawn:0:0,earlyMorning:0:0,morning:1:1,noon:0:0,afternoon:2:1,dusk:0:0,night:0:0
+tod	exp~a~1~0~10^exp~b~2~0~13|exp	dawn:0:0,earlyMorning:0:0,morning:1:1,noon:0:0,afternoon:2:1,dusk:0:0,night:0:0
+tod	exp~a~1~0~11^exp~b~2~0~12|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:3:2,afternoon:0:0,dusk:0:0,night:0:0
+tod	exp~a~1~0~12^exp~b~2~0~11|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:3:2,afternoon:0:0,dusk:0:0,night:0:0
+tod	exp~a~1~0~13^exp~b~2~0~10|exp	dawn:0:0,earlyMorning:0:0,morning:2:1,noon:0:0,afternoon:1:1,dusk:0:0,night:0:0
+tod	exp~a~1~0~14^exp~b~2~0~9|exp	dawn:0:0,earlyMorning:0:0,morning:2:1,noon:0:0,afternoon:1:1,dusk:0:0,night:0:0
+tod	exp~a~1~0~15^exp~b~2~0~8|exp	dawn:0:0,earlyMorning:0:0,morning:2:1,noon:0:0,afternoon:1:1,dusk:0:0,night:0:0
+tod	exp~a~1~0~16^exp~b~2~0~7|exp	dawn:0:0,earlyMorning:2:1,morning:0:0,noon:0:0,afternoon:1:1,dusk:0:0,night:0:0
+tod	exp~a~1~0~17^exp~b~2~0~6|exp	dawn:0:0,earlyMorning:2:1,morning:0:0,noon:0:0,afternoon:0:0,dusk:1:1,night:0:0
+tod	exp~a~1~0~18^exp~b~2~0~5|exp	dawn:0:0,earlyMorning:2:1,morning:0:0,noon:0:0,afternoon:0:0,dusk:1:1,night:0:0
+tod	exp~a~1~0~19^exp~b~2~0~4|exp	dawn:2:1,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:1:1
+tod	exp~a~1~0~20^exp~b~2~0~3|exp	dawn:2:1,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:1:1
+tod	exp~a~1~0~21^exp~b~2~0~2|exp	dawn:2:1,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:1:1
+tod	exp~a~1~0~22^exp~b~2~0~1|exp	dawn:2:1,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:1:1
+tod	exp~a~1~0~23^exp~b~2~0~0|exp	dawn:2:1,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:1:1
+dow	exp~a~3~0~0|exp	0:3:1,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~0~0|exp	dawn:3:1,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+dow	exp~a~3~0~5|exp	0:3:1,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~0~5|exp	dawn:0:0,earlyMorning:3:1,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+dow	exp~a~3~0~8|exp	0:3:1,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~0~8|exp	dawn:0:0,earlyMorning:0:0,morning:3:1,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+dow	exp~a~3~0~11|exp	0:3:1,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~0~11|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:3:1,afternoon:0:0,dusk:0:0,night:0:0
+dow	exp~a~3~0~13|exp	0:3:1,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~0~13|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:3:1,dusk:0:0,night:0:0
+dow	exp~a~3~0~17|exp	0:3:1,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~0~17|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:3:1,night:0:0
+dow	exp~a~3~0~19|exp	0:3:1,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~0~19|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:3:1
+dow	exp~a~3~0~23|exp	0:3:1,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~0~23|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:3:1
+dow	exp~a~3~1~0|exp	0:0:0,1:3:1,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~1~0|exp	dawn:3:1,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+dow	exp~a~3~1~5|exp	0:0:0,1:3:1,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~1~5|exp	dawn:0:0,earlyMorning:3:1,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+dow	exp~a~3~1~8|exp	0:0:0,1:3:1,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~1~8|exp	dawn:0:0,earlyMorning:0:0,morning:3:1,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+dow	exp~a~3~1~11|exp	0:0:0,1:3:1,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~1~11|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:3:1,afternoon:0:0,dusk:0:0,night:0:0
+dow	exp~a~3~1~13|exp	0:0:0,1:3:1,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~1~13|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:3:1,dusk:0:0,night:0:0
+dow	exp~a~3~1~17|exp	0:0:0,1:3:1,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~1~17|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:3:1,night:0:0
+dow	exp~a~3~1~19|exp	0:0:0,1:3:1,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~1~19|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:3:1
+dow	exp~a~3~1~23|exp	0:0:0,1:3:1,2:0:0,3:0:0,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~1~23|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:3:1
+dow	exp~a~3~2~0|exp	0:0:0,1:0:0,2:3:1,3:0:0,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~2~0|exp	dawn:3:1,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+dow	exp~a~3~2~5|exp	0:0:0,1:0:0,2:3:1,3:0:0,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~2~5|exp	dawn:0:0,earlyMorning:3:1,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+dow	exp~a~3~2~8|exp	0:0:0,1:0:0,2:3:1,3:0:0,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~2~8|exp	dawn:0:0,earlyMorning:0:0,morning:3:1,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+dow	exp~a~3~2~11|exp	0:0:0,1:0:0,2:3:1,3:0:0,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~2~11|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:3:1,afternoon:0:0,dusk:0:0,night:0:0
+dow	exp~a~3~2~13|exp	0:0:0,1:0:0,2:3:1,3:0:0,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~2~13|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:3:1,dusk:0:0,night:0:0
+dow	exp~a~3~2~17|exp	0:0:0,1:0:0,2:3:1,3:0:0,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~2~17|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:3:1,night:0:0
+dow	exp~a~3~2~19|exp	0:0:0,1:0:0,2:3:1,3:0:0,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~2~19|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:3:1
+dow	exp~a~3~2~23|exp	0:0:0,1:0:0,2:3:1,3:0:0,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~2~23|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:3:1
+dow	exp~a~3~3~0|exp	0:0:0,1:0:0,2:0:0,3:3:1,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~3~0|exp	dawn:3:1,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+dow	exp~a~3~3~5|exp	0:0:0,1:0:0,2:0:0,3:3:1,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~3~5|exp	dawn:0:0,earlyMorning:3:1,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+dow	exp~a~3~3~8|exp	0:0:0,1:0:0,2:0:0,3:3:1,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~3~8|exp	dawn:0:0,earlyMorning:0:0,morning:3:1,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+dow	exp~a~3~3~11|exp	0:0:0,1:0:0,2:0:0,3:3:1,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~3~11|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:3:1,afternoon:0:0,dusk:0:0,night:0:0
+dow	exp~a~3~3~13|exp	0:0:0,1:0:0,2:0:0,3:3:1,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~3~13|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:3:1,dusk:0:0,night:0:0
+dow	exp~a~3~3~17|exp	0:0:0,1:0:0,2:0:0,3:3:1,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~3~17|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:3:1,night:0:0
+dow	exp~a~3~3~19|exp	0:0:0,1:0:0,2:0:0,3:3:1,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~3~19|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:3:1
+dow	exp~a~3~3~23|exp	0:0:0,1:0:0,2:0:0,3:3:1,4:0:0,5:0:0,6:0:0
+tod	exp~a~3~3~23|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:3:1
+dow	exp~a~3~4~0|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:3:1,5:0:0,6:0:0
+tod	exp~a~3~4~0|exp	dawn:3:1,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+dow	exp~a~3~4~5|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:3:1,5:0:0,6:0:0
+tod	exp~a~3~4~5|exp	dawn:0:0,earlyMorning:3:1,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+dow	exp~a~3~4~8|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:3:1,5:0:0,6:0:0
+tod	exp~a~3~4~8|exp	dawn:0:0,earlyMorning:0:0,morning:3:1,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+dow	exp~a~3~4~11|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:3:1,5:0:0,6:0:0
+tod	exp~a~3~4~11|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:3:1,afternoon:0:0,dusk:0:0,night:0:0
+dow	exp~a~3~4~13|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:3:1,5:0:0,6:0:0
+tod	exp~a~3~4~13|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:3:1,dusk:0:0,night:0:0
+dow	exp~a~3~4~17|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:3:1,5:0:0,6:0:0
+tod	exp~a~3~4~17|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:3:1,night:0:0
+dow	exp~a~3~4~19|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:3:1,5:0:0,6:0:0
+tod	exp~a~3~4~19|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:3:1
+dow	exp~a~3~4~23|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:3:1,5:0:0,6:0:0
+tod	exp~a~3~4~23|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:3:1
+dow	exp~a~3~5~0|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:3:1,6:0:0
+tod	exp~a~3~5~0|exp	dawn:3:1,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+dow	exp~a~3~5~5|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:3:1,6:0:0
+tod	exp~a~3~5~5|exp	dawn:0:0,earlyMorning:3:1,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+dow	exp~a~3~5~8|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:3:1,6:0:0
+tod	exp~a~3~5~8|exp	dawn:0:0,earlyMorning:0:0,morning:3:1,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+dow	exp~a~3~5~11|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:3:1,6:0:0
+tod	exp~a~3~5~11|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:3:1,afternoon:0:0,dusk:0:0,night:0:0
+dow	exp~a~3~5~13|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:3:1,6:0:0
+tod	exp~a~3~5~13|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:3:1,dusk:0:0,night:0:0
+dow	exp~a~3~5~17|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:3:1,6:0:0
+tod	exp~a~3~5~17|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:3:1,night:0:0
+dow	exp~a~3~5~19|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:3:1,6:0:0
+tod	exp~a~3~5~19|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:3:1
+dow	exp~a~3~5~23|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:3:1,6:0:0
+tod	exp~a~3~5~23|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:3:1
+dow	exp~a~3~6~0|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:3:1
+tod	exp~a~3~6~0|exp	dawn:3:1,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+dow	exp~a~3~6~5|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:3:1
+tod	exp~a~3~6~5|exp	dawn:0:0,earlyMorning:3:1,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+dow	exp~a~3~6~8|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:3:1
+tod	exp~a~3~6~8|exp	dawn:0:0,earlyMorning:0:0,morning:3:1,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+dow	exp~a~3~6~11|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:3:1
+tod	exp~a~3~6~11|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:3:1,afternoon:0:0,dusk:0:0,night:0:0
+dow	exp~a~3~6~13|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:3:1
+tod	exp~a~3~6~13|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:3:1,dusk:0:0,night:0:0
+dow	exp~a~3~6~17|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:3:1
+tod	exp~a~3~6~17|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:3:1,night:0:0
+dow	exp~a~3~6~19|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:3:1
+tod	exp~a~3~6~19|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:3:1
+dow	exp~a~3~6~23|exp	0:0:0,1:0:0,2:0:0,3:0:0,4:0:0,5:0:0,6:3:1
+tod	exp~a~3~6~23|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:3:1
+tod	|exp	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+tod	exp~a~10~0~2^inc~b~20~0~20|exp	dawn:10:1,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+tod	exp~a~10~0~2^inc~b~20~0~20|inc	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:20:1
+tod	exp~a~10~0~2^inc~b~20~0~20|xfer	dawn:0:0,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+tod	exp~a~10~0~2^inc~b~20~0~20|_	dawn:10:1,earlyMorning:0:0,morning:0:0,noon:0:0,afternoon:0:0,dusk:0:0,night:0:0
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,1,1,2026,9,1	today=10 avg=280 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,1,1,2026,9,1	this=[10] last=[0] tt=10 lt=0 days=1
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,4,1,2026,9,4	today=0 avg=70 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,4,1,2026,9,4	this=[10,30,60,60] last=[0,0,0,0] tt=60 lt=0 days=4
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,7,1,2026,9,7	today=0 avg=40 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,7,1,2026,9,7	this=[10,30,60,60,100,100,100] last=[0,0,0,0,0,0,0] tt=100 lt=0 days=7
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,10,1,2026,9,10	today=0 avg=28 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,10,1,2026,9,10	this=[10,30,60,60,100,100,100,150,150,150] last=[0,0,0,0,0,0,0,0,0,0] tt=150 lt=0 days=10
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,13,1,2026,9,13	today=60 avg=21.53846153846154 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,13,1,2026,9,13	this=[10,30,60,60,100,100,100,150,150,150,150,150,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=13
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,16,1,2026,9,16	today=0 avg=17.5 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,16,1,2026,9,16	this=[10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=16
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,19,1,2026,9,19	today=0 avg=14.736842105263158 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,19,1,2026,9,19	this=[10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=19
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,22,1,2026,9,22	today=0 avg=12.727272727272727 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,22,1,2026,9,22	this=[10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=22
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,25,1,2026,9,25	today=0 avg=11.2 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,25,1,2026,9,25	this=[10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280,280,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=25
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,28,1,2026,9,28	today=0 avg=10 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,28,1,2026,9,28	this=[10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280,280,280,280,280,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=28
+trend	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3|2026,9,15,1	2026-4-1:0,2026-5-1:0,2026-6-1:0,2026-7-1:0,2026-8-1:0,2026-9-1:60
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,1,15,2026,9,1	today=10 avg=16.470588235294116 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,1,15,2026,9,1	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=10 lt=0 days=17
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,4,15,2026,9,4	today=0 avg=14 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,4,15,2026,9,4	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,30,60,60] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=60 lt=0 days=20
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,7,15,2026,9,7	today=0 avg=12.173913043478262 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,7,15,2026,9,7	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,30,60,60,100,100,100] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=100 lt=0 days=23
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,10,15,2026,9,10	today=0 avg=10.76923076923077 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,10,15,2026,9,10	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=150 lt=0 days=26
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,13,15,2026,9,13	today=60 avg=9.655172413793103 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,13,15,2026,9,13	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=29
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,16,15,2026,9,16	today=0 avg=140 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,16,15,2026,9,16	this=[0,0] last=[0,0] tt=0 lt=0 days=2
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,19,15,2026,9,19	today=0 avg=56 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,19,15,2026,9,19	this=[0,0,0,0,0] last=[0,0,0,0,0] tt=0 lt=0 days=5
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,22,15,2026,9,22	today=0 avg=35 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,22,15,2026,9,22	this=[0,0,0,0,0,0,70,70] last=[0,0,0,0,0,0,0,0] tt=70 lt=0 days=8
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,25,15,2026,9,25	today=0 avg=25.454545454545453 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,25,15,2026,9,25	this=[0,0,0,0,0,0,70,70,70,70,70] last=[0,0,0,0,0,0,0,0,0,0,0] tt=70 lt=0 days=11
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,28,15,2026,9,28	today=0 avg=20 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,28,15,2026,9,28	this=[0,0,0,0,0,0,70,70,70,70,70,70,70,70] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=70 lt=0 days=14
+trend	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3|2026,9,15,15	2026-4-15:0,2026-5-15:0,2026-6-15:0,2026-7-15:0,2026-8-15:60,2026-9-15:0
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,1,25,2026,9,1	today=10 avg=40 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,1,25,2026,9,1	this=[0,0,0,0,0,0,10] last=[0,0,0,0,0,0,0] tt=10 lt=0 days=7
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,4,25,2026,9,4	today=0 avg=28 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,4,25,2026,9,4	this=[0,0,0,0,0,0,10,30,60,60] last=[0,0,0,0,0,0,0,0,0,0] tt=60 lt=0 days=10
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,7,25,2026,9,7	today=0 avg=21.53846153846154 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,7,25,2026,9,7	this=[0,0,0,0,0,0,10,30,60,60,100,100,100] last=[0,0,0,0,0,0,0,0,0,0,0,0,0] tt=100 lt=0 days=13
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,10,25,2026,9,10	today=0 avg=17.5 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,10,25,2026,9,10	this=[0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=150 lt=0 days=16
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,13,25,2026,9,13	today=60 avg=14.736842105263158 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,13,25,2026,9,13	this=[0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=19
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,16,25,2026,9,16	today=0 avg=12.727272727272727 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,16,25,2026,9,16	this=[0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=22
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,19,25,2026,9,19	today=0 avg=11.2 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,19,25,2026,9,19	this=[0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=25
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,22,25,2026,9,22	today=0 avg=10 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,22,25,2026,9,22	this=[0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=28
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,25,25,2026,9,25	today=0 avg=280 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,25,25,2026,9,25	this=[0] last=[0] tt=0 lt=0 days=1
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,28,25,2026,9,28	today=0 avg=70 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,28,25,2026,9,28	this=[0,0,0,0] last=[0,0,0,0] tt=0 lt=0 days=4
+trend	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3|2026,9,15,25	2026-3-25:0,2026-4-25:0,2026-5-25:0,2026-6-25:0,2026-7-25:0,2026-8-25:60
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,1,28,2026,9,1	today=10 avg=70 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,1,28,2026,9,1	this=[0,0,0,10] last=[0,0,0,0] tt=10 lt=0 days=4
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,4,28,2026,9,4	today=0 avg=40 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,4,28,2026,9,4	this=[0,0,0,10,30,60,60] last=[0,0,0,0,0,0,0] tt=60 lt=0 days=7
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,7,28,2026,9,7	today=0 avg=28 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,7,28,2026,9,7	this=[0,0,0,10,30,60,60,100,100,100] last=[0,0,0,0,0,0,0,0,0,0] tt=100 lt=0 days=10
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,10,28,2026,9,10	today=0 avg=21.53846153846154 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,10,28,2026,9,10	this=[0,0,0,10,30,60,60,100,100,100,150,150,150] last=[0,0,0,0,0,0,0,0,0,0,0,0,0] tt=150 lt=0 days=13
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,13,28,2026,9,13	today=60 avg=17.5 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,13,28,2026,9,13	this=[0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=16
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,16,28,2026,9,16	today=0 avg=14.736842105263158 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,16,28,2026,9,16	this=[0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=19
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,19,28,2026,9,19	today=0 avg=12.727272727272727 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,19,28,2026,9,19	this=[0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=22
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,22,28,2026,9,22	today=0 avg=11.2 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,22,28,2026,9,22	this=[0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=25
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,25,28,2026,9,25	today=0 avg=10 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,25,28,2026,9,25	this=[0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280,280,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=28
+totals	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,28,28,2026,9,28	today=0 avg=280 top=70 n=7
+cmp	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3^exp~c~40~2026~9~5^exp~c~50~2026~9~8^exp~c~60~2026~9~13^exp~c~70~2026~9~21|2026,9,28,28,2026,9,28	this=[0] last=[0] tt=0 lt=0 days=1
+trend	exp~c~10~2026~9~1^exp~c~20~2026~9~2^exp~c~30~2026~9~3|2026,9,15,28	2026-3-28:0,2026-4-28:0,2026-5-28:0,2026-6-28:0,2026-7-28:0,2026-8-28:60
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,1,1,2026,3,1	today=10 avg=280 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,1,1,2026,3,1	this=[10] last=[0] tt=10 lt=0 days=1
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,4,1,2026,3,4	today=0 avg=70 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,4,1,2026,3,4	this=[10,30,60,60] last=[0,0,0,0] tt=60 lt=0 days=4
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,7,1,2026,3,7	today=0 avg=40 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,7,1,2026,3,7	this=[10,30,60,60,100,100,100] last=[0,0,0,0,0,0,0] tt=100 lt=0 days=7
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,10,1,2026,3,10	today=0 avg=28 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,10,1,2026,3,10	this=[10,30,60,60,100,100,100,150,150,150] last=[0,0,0,0,0,0,0,0,0,0] tt=150 lt=0 days=10
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,13,1,2026,3,13	today=60 avg=21.53846153846154 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,13,1,2026,3,13	this=[10,30,60,60,100,100,100,150,150,150,150,150,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=13
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,16,1,2026,3,16	today=0 avg=17.5 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,16,1,2026,3,16	this=[10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=16
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,19,1,2026,3,19	today=0 avg=14.736842105263158 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,19,1,2026,3,19	this=[10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=19
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,22,1,2026,3,22	today=0 avg=12.727272727272727 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,22,1,2026,3,22	this=[10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=22
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,25,1,2026,3,25	today=0 avg=11.2 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,25,1,2026,3,25	this=[10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280,280,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=25
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,28,1,2026,3,28	today=0 avg=10 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,28,1,2026,3,28	this=[10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280,280,280,280,280,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=28
+trend	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3|2026,3,15,1	2025-10-1:0,2025-11-1:0,2026-0-1:0,2026-1-1:0,2026-2-1:0,2026-3-1:60
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,1,15,2026,3,1	today=10 avg=15.555555555555555 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,1,15,2026,3,1	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=10 lt=0 days=18
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,4,15,2026,3,4	today=0 avg=13.333333333333334 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,4,15,2026,3,4	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,30,60,60] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=60 lt=0 days=21
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,7,15,2026,3,7	today=0 avg=11.666666666666666 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,7,15,2026,3,7	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,30,60,60,100,100,100] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=100 lt=0 days=24
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,10,15,2026,3,10	today=0 avg=10.37037037037037 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,10,15,2026,3,10	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=150 lt=0 days=27
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,13,15,2026,3,13	today=60 avg=9.333333333333334 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,13,15,2026,3,13	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=30
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,16,15,2026,3,16	today=0 avg=140 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,16,15,2026,3,16	this=[0,0] last=[0,0] tt=0 lt=0 days=2
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,19,15,2026,3,19	today=0 avg=56 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,19,15,2026,3,19	this=[0,0,0,0,0] last=[0,0,0,0,0] tt=0 lt=0 days=5
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,22,15,2026,3,22	today=0 avg=35 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,22,15,2026,3,22	this=[0,0,0,0,0,0,70,70] last=[0,0,0,0,0,0,0,0] tt=70 lt=0 days=8
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,25,15,2026,3,25	today=0 avg=25.454545454545453 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,25,15,2026,3,25	this=[0,0,0,0,0,0,70,70,70,70,70] last=[0,0,0,0,0,0,0,0,0,0,0] tt=70 lt=0 days=11
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,28,15,2026,3,28	today=0 avg=20 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,28,15,2026,3,28	this=[0,0,0,0,0,0,70,70,70,70,70,70,70,70] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=70 lt=0 days=14
+trend	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3|2026,3,15,15	2025-10-15:0,2025-11-15:0,2026-0-15:0,2026-1-15:0,2026-2-15:60,2026-3-15:0
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,1,25,2026,3,1	today=10 avg=35 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,1,25,2026,3,1	this=[0,0,0,0,0,0,0,10] last=[0,0,0,0,0,0,0,0] tt=10 lt=0 days=8
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,4,25,2026,3,4	today=0 avg=25.454545454545453 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,4,25,2026,3,4	this=[0,0,0,0,0,0,0,10,30,60,60] last=[0,0,0,0,0,0,0,0,0,0,0] tt=60 lt=0 days=11
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,7,25,2026,3,7	today=0 avg=20 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,7,25,2026,3,7	this=[0,0,0,0,0,0,0,10,30,60,60,100,100,100] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=100 lt=0 days=14
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,10,25,2026,3,10	today=0 avg=16.470588235294116 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,10,25,2026,3,10	this=[0,0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=150 lt=0 days=17
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,13,25,2026,3,13	today=60 avg=14 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,13,25,2026,3,13	this=[0,0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=20
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,16,25,2026,3,16	today=0 avg=12.173913043478262 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,16,25,2026,3,16	this=[0,0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=23
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,19,25,2026,3,19	today=0 avg=10.76923076923077 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,19,25,2026,3,19	this=[0,0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=26
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,22,25,2026,3,22	today=0 avg=9.655172413793103 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,22,25,2026,3,22	this=[0,0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=29
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,25,25,2026,3,25	today=0 avg=280 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,25,25,2026,3,25	this=[0] last=[0] tt=0 lt=0 days=1
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,28,25,2026,3,28	today=0 avg=70 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,28,25,2026,3,28	this=[0,0,0,0] last=[0,0,0,0] tt=0 lt=0 days=4
+trend	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3|2026,3,15,25	2025-9-25:0,2025-10-25:0,2025-11-25:0,2026-0-25:0,2026-1-25:0,2026-2-25:60
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,1,28,2026,3,1	today=10 avg=56 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,1,28,2026,3,1	this=[0,0,0,0,10] last=[0,0,0,0,0] tt=10 lt=0 days=5
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,4,28,2026,3,4	today=0 avg=35 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,4,28,2026,3,4	this=[0,0,0,0,10,30,60,60] last=[0,0,0,0,0,0,0,0] tt=60 lt=0 days=8
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,7,28,2026,3,7	today=0 avg=25.454545454545453 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,7,28,2026,3,7	this=[0,0,0,0,10,30,60,60,100,100,100] last=[0,0,0,0,0,0,0,0,0,0,0] tt=100 lt=0 days=11
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,10,28,2026,3,10	today=0 avg=20 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,10,28,2026,3,10	this=[0,0,0,0,10,30,60,60,100,100,100,150,150,150] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=150 lt=0 days=14
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,13,28,2026,3,13	today=60 avg=16.470588235294116 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,13,28,2026,3,13	this=[0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=17
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,16,28,2026,3,16	today=0 avg=14 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,16,28,2026,3,16	this=[0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=20
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,19,28,2026,3,19	today=0 avg=12.173913043478262 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,19,28,2026,3,19	this=[0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=23
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,22,28,2026,3,22	today=0 avg=10.76923076923077 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,22,28,2026,3,22	this=[0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=26
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,25,28,2026,3,25	today=0 avg=9.655172413793103 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,25,28,2026,3,25	this=[0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280,280,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=29
+totals	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,28,28,2026,3,28	today=0 avg=280 top=70 n=7
+cmp	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3^exp~c~40~2026~3~5^exp~c~50~2026~3~8^exp~c~60~2026~3~13^exp~c~70~2026~3~21|2026,3,28,28,2026,3,28	this=[0] last=[0] tt=0 lt=0 days=1
+trend	exp~c~10~2026~3~1^exp~c~20~2026~3~2^exp~c~30~2026~3~3|2026,3,15,28	2025-9-28:0,2025-10-28:0,2025-11-28:0,2026-0-28:0,2026-1-28:0,2026-2-28:60
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,1,1,2026,5,1	today=10 avg=280 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,1,1,2026,5,1	this=[10] last=[0] tt=10 lt=0 days=1
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,4,1,2026,5,4	today=0 avg=70 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,4,1,2026,5,4	this=[10,30,60,60] last=[0,0,0,0] tt=60 lt=0 days=4
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,7,1,2026,5,7	today=0 avg=40 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,7,1,2026,5,7	this=[10,30,60,60,100,100,100] last=[0,0,0,0,0,0,0] tt=100 lt=0 days=7
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,10,1,2026,5,10	today=0 avg=28 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,10,1,2026,5,10	this=[10,30,60,60,100,100,100,150,150,150] last=[0,0,0,0,0,0,0,0,0,0] tt=150 lt=0 days=10
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,13,1,2026,5,13	today=60 avg=21.53846153846154 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,13,1,2026,5,13	this=[10,30,60,60,100,100,100,150,150,150,150,150,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=13
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,16,1,2026,5,16	today=0 avg=17.5 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,16,1,2026,5,16	this=[10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=16
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,19,1,2026,5,19	today=0 avg=14.736842105263158 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,19,1,2026,5,19	this=[10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=19
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,22,1,2026,5,22	today=0 avg=12.727272727272727 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,22,1,2026,5,22	this=[10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=22
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,25,1,2026,5,25	today=0 avg=11.2 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,25,1,2026,5,25	this=[10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280,280,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=25
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,28,1,2026,5,28	today=0 avg=10 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,28,1,2026,5,28	this=[10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280,280,280,280,280,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=28
+trend	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3|2026,5,15,1	2026-0-1:0,2026-1-1:0,2026-2-1:0,2026-3-1:0,2026-4-1:0,2026-5-1:60
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,1,15,2026,5,1	today=10 avg=15.555555555555555 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,1,15,2026,5,1	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=10 lt=0 days=18
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,4,15,2026,5,4	today=0 avg=13.333333333333334 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,4,15,2026,5,4	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,30,60,60] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=60 lt=0 days=21
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,7,15,2026,5,7	today=0 avg=11.666666666666666 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,7,15,2026,5,7	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,30,60,60,100,100,100] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=100 lt=0 days=24
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,10,15,2026,5,10	today=0 avg=10.37037037037037 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,10,15,2026,5,10	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=150 lt=0 days=27
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,13,15,2026,5,13	today=60 avg=9.333333333333334 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,13,15,2026,5,13	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=30
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,16,15,2026,5,16	today=0 avg=140 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,16,15,2026,5,16	this=[0,0] last=[0,0] tt=0 lt=0 days=2
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,19,15,2026,5,19	today=0 avg=56 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,19,15,2026,5,19	this=[0,0,0,0,0] last=[0,0,0,0,0] tt=0 lt=0 days=5
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,22,15,2026,5,22	today=0 avg=35 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,22,15,2026,5,22	this=[0,0,0,0,0,0,70,70] last=[0,0,0,0,0,0,0,0] tt=70 lt=0 days=8
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,25,15,2026,5,25	today=0 avg=25.454545454545453 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,25,15,2026,5,25	this=[0,0,0,0,0,0,70,70,70,70,70] last=[0,0,0,0,0,0,0,0,0,0,0] tt=70 lt=0 days=11
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,28,15,2026,5,28	today=0 avg=20 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,28,15,2026,5,28	this=[0,0,0,0,0,0,70,70,70,70,70,70,70,70] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=70 lt=0 days=14
+trend	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3|2026,5,15,15	2026-0-15:0,2026-1-15:0,2026-2-15:0,2026-3-15:0,2026-4-15:60,2026-5-15:0
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,1,25,2026,5,1	today=10 avg=35 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,1,25,2026,5,1	this=[0,0,0,0,0,0,0,10] last=[0,0,0,0,0,0,0,0] tt=10 lt=0 days=8
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,4,25,2026,5,4	today=0 avg=25.454545454545453 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,4,25,2026,5,4	this=[0,0,0,0,0,0,0,10,30,60,60] last=[0,0,0,0,0,0,0,0,0,0,0] tt=60 lt=0 days=11
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,7,25,2026,5,7	today=0 avg=20 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,7,25,2026,5,7	this=[0,0,0,0,0,0,0,10,30,60,60,100,100,100] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=100 lt=0 days=14
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,10,25,2026,5,10	today=0 avg=16.470588235294116 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,10,25,2026,5,10	this=[0,0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=150 lt=0 days=17
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,13,25,2026,5,13	today=60 avg=14 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,13,25,2026,5,13	this=[0,0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=20
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,16,25,2026,5,16	today=0 avg=12.173913043478262 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,16,25,2026,5,16	this=[0,0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=23
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,19,25,2026,5,19	today=0 avg=10.76923076923077 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,19,25,2026,5,19	this=[0,0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=26
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,22,25,2026,5,22	today=0 avg=9.655172413793103 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,22,25,2026,5,22	this=[0,0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=29
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,25,25,2026,5,25	today=0 avg=280 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,25,25,2026,5,25	this=[0] last=[0] tt=0 lt=0 days=1
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,28,25,2026,5,28	today=0 avg=70 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,28,25,2026,5,28	this=[0,0,0,0] last=[0,0,0,0] tt=0 lt=0 days=4
+trend	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3|2026,5,15,25	2025-11-25:0,2026-0-25:0,2026-1-25:0,2026-2-25:0,2026-3-25:0,2026-4-25:60
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,1,28,2026,5,1	today=10 avg=56 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,1,28,2026,5,1	this=[0,0,0,0,10] last=[0,0,0,0,0] tt=10 lt=0 days=5
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,4,28,2026,5,4	today=0 avg=35 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,4,28,2026,5,4	this=[0,0,0,0,10,30,60,60] last=[0,0,0,0,0,0,0,0] tt=60 lt=0 days=8
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,7,28,2026,5,7	today=0 avg=25.454545454545453 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,7,28,2026,5,7	this=[0,0,0,0,10,30,60,60,100,100,100] last=[0,0,0,0,0,0,0,0,0,0,0] tt=100 lt=0 days=11
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,10,28,2026,5,10	today=0 avg=20 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,10,28,2026,5,10	this=[0,0,0,0,10,30,60,60,100,100,100,150,150,150] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=150 lt=0 days=14
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,13,28,2026,5,13	today=60 avg=16.470588235294116 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,13,28,2026,5,13	this=[0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=17
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,16,28,2026,5,16	today=0 avg=14 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,16,28,2026,5,16	this=[0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=20
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,19,28,2026,5,19	today=0 avg=12.173913043478262 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,19,28,2026,5,19	this=[0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=23
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,22,28,2026,5,22	today=0 avg=10.76923076923077 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,22,28,2026,5,22	this=[0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=26
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,25,28,2026,5,25	today=0 avg=9.655172413793103 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,25,28,2026,5,25	this=[0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280,280,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=29
+totals	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,28,28,2026,5,28	today=0 avg=280 top=70 n=7
+cmp	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3^exp~c~40~2026~5~5^exp~c~50~2026~5~8^exp~c~60~2026~5~13^exp~c~70~2026~5~21|2026,5,28,28,2026,5,28	this=[0] last=[0] tt=0 lt=0 days=1
+trend	exp~c~10~2026~5~1^exp~c~20~2026~5~2^exp~c~30~2026~5~3|2026,5,15,28	2025-11-28:0,2026-0-28:0,2026-1-28:0,2026-2-28:0,2026-3-28:0,2026-4-28:60
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,1,1,2026,1,1	today=10 avg=280 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,1,1,2026,1,1	this=[10] last=[0] tt=10 lt=0 days=1
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,4,1,2026,1,4	today=0 avg=70 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,4,1,2026,1,4	this=[10,30,60,60] last=[0,0,0,0] tt=60 lt=0 days=4
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,7,1,2026,1,7	today=0 avg=40 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,7,1,2026,1,7	this=[10,30,60,60,100,100,100] last=[0,0,0,0,0,0,0] tt=100 lt=0 days=7
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,10,1,2026,1,10	today=0 avg=28 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,10,1,2026,1,10	this=[10,30,60,60,100,100,100,150,150,150] last=[0,0,0,0,0,0,0,0,0,0] tt=150 lt=0 days=10
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,13,1,2026,1,13	today=60 avg=21.53846153846154 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,13,1,2026,1,13	this=[10,30,60,60,100,100,100,150,150,150,150,150,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=13
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,16,1,2026,1,16	today=0 avg=17.5 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,16,1,2026,1,16	this=[10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=16
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,19,1,2026,1,19	today=0 avg=14.736842105263158 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,19,1,2026,1,19	this=[10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=19
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,22,1,2026,1,22	today=0 avg=12.727272727272727 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,22,1,2026,1,22	this=[10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=22
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,25,1,2026,1,25	today=0 avg=11.2 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,25,1,2026,1,25	this=[10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280,280,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=25
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,28,1,2026,1,28	today=0 avg=10 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,28,1,2026,1,28	this=[10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280,280,280,280,280,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=28
+trend	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3|2026,1,15,1	2025-8-1:0,2025-9-1:0,2025-10-1:0,2025-11-1:0,2026-0-1:0,2026-1-1:60
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,1,15,2026,1,1	today=10 avg=15.555555555555555 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,1,15,2026,1,1	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=10 lt=0 days=18
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,4,15,2026,1,4	today=0 avg=13.333333333333334 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,4,15,2026,1,4	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,30,60,60] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=60 lt=0 days=21
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,7,15,2026,1,7	today=0 avg=11.666666666666666 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,7,15,2026,1,7	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,30,60,60,100,100,100] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=100 lt=0 days=24
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,10,15,2026,1,10	today=0 avg=10.37037037037037 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,10,15,2026,1,10	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=150 lt=0 days=27
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,13,15,2026,1,13	today=60 avg=9.333333333333334 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,13,15,2026,1,13	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=30
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,16,15,2026,1,16	today=0 avg=140 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,16,15,2026,1,16	this=[0,0] last=[0,0] tt=0 lt=0 days=2
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,19,15,2026,1,19	today=0 avg=56 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,19,15,2026,1,19	this=[0,0,0,0,0] last=[0,0,0,0,0] tt=0 lt=0 days=5
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,22,15,2026,1,22	today=0 avg=35 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,22,15,2026,1,22	this=[0,0,0,0,0,0,70,70] last=[0,0,0,0,0,0,0,0] tt=70 lt=0 days=8
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,25,15,2026,1,25	today=0 avg=25.454545454545453 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,25,15,2026,1,25	this=[0,0,0,0,0,0,70,70,70,70,70] last=[0,0,0,0,0,0,0,0,0,0,0] tt=70 lt=0 days=11
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,28,15,2026,1,28	today=0 avg=20 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,28,15,2026,1,28	this=[0,0,0,0,0,0,70,70,70,70,70,70,70,70] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=70 lt=0 days=14
+trend	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3|2026,1,15,15	2025-8-15:0,2025-9-15:0,2025-10-15:0,2025-11-15:0,2026-0-15:60,2026-1-15:0
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,1,25,2026,1,1	today=10 avg=35 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,1,25,2026,1,1	this=[0,0,0,0,0,0,0,10] last=[0,0,0,0,0,0,0,0] tt=10 lt=0 days=8
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,4,25,2026,1,4	today=0 avg=25.454545454545453 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,4,25,2026,1,4	this=[0,0,0,0,0,0,0,10,30,60,60] last=[0,0,0,0,0,0,0,0,0,0,0] tt=60 lt=0 days=11
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,7,25,2026,1,7	today=0 avg=20 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,7,25,2026,1,7	this=[0,0,0,0,0,0,0,10,30,60,60,100,100,100] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=100 lt=0 days=14
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,10,25,2026,1,10	today=0 avg=16.470588235294116 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,10,25,2026,1,10	this=[0,0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=150 lt=0 days=17
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,13,25,2026,1,13	today=60 avg=14 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,13,25,2026,1,13	this=[0,0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=20
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,16,25,2026,1,16	today=0 avg=12.173913043478262 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,16,25,2026,1,16	this=[0,0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=23
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,19,25,2026,1,19	today=0 avg=10.76923076923077 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,19,25,2026,1,19	this=[0,0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=26
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,22,25,2026,1,22	today=0 avg=9.655172413793103 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,22,25,2026,1,22	this=[0,0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=29
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,25,25,2026,1,25	today=0 avg=280 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,25,25,2026,1,25	this=[0] last=[0] tt=0 lt=0 days=1
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,28,25,2026,1,28	today=0 avg=70 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,28,25,2026,1,28	this=[0,0,0,0] last=[0,0,0,0] tt=0 lt=0 days=4
+trend	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3|2026,1,15,25	2025-7-25:0,2025-8-25:0,2025-9-25:0,2025-10-25:0,2025-11-25:0,2026-0-25:60
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,1,28,2026,1,1	today=10 avg=56 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,1,28,2026,1,1	this=[0,0,0,0,10] last=[0,0,0,0,0] tt=10 lt=0 days=5
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,4,28,2026,1,4	today=0 avg=35 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,4,28,2026,1,4	this=[0,0,0,0,10,30,60,60] last=[0,0,0,0,0,0,0,0] tt=60 lt=0 days=8
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,7,28,2026,1,7	today=0 avg=25.454545454545453 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,7,28,2026,1,7	this=[0,0,0,0,10,30,60,60,100,100,100] last=[0,0,0,0,0,0,0,0,0,0,0] tt=100 lt=0 days=11
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,10,28,2026,1,10	today=0 avg=20 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,10,28,2026,1,10	this=[0,0,0,0,10,30,60,60,100,100,100,150,150,150] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=150 lt=0 days=14
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,13,28,2026,1,13	today=60 avg=16.470588235294116 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,13,28,2026,1,13	this=[0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=17
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,16,28,2026,1,16	today=0 avg=14 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,16,28,2026,1,16	this=[0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=20
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,19,28,2026,1,19	today=0 avg=12.173913043478262 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,19,28,2026,1,19	this=[0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=23
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,22,28,2026,1,22	today=0 avg=10.76923076923077 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,22,28,2026,1,22	this=[0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=26
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,25,28,2026,1,25	today=0 avg=9.655172413793103 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,25,28,2026,1,25	this=[0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280,280,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=29
+totals	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,28,28,2026,1,28	today=0 avg=280 top=70 n=7
+cmp	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3^exp~c~40~2026~1~5^exp~c~50~2026~1~8^exp~c~60~2026~1~13^exp~c~70~2026~1~21|2026,1,28,28,2026,1,28	this=[0] last=[0] tt=0 lt=0 days=1
+trend	exp~c~10~2026~1~1^exp~c~20~2026~1~2^exp~c~30~2026~1~3|2026,1,15,28	2025-7-28:0,2025-8-28:0,2025-9-28:0,2025-10-28:0,2025-11-28:0,2026-0-28:60
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,1,1,2025,11,1	today=10 avg=280 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,1,1,2025,11,1	this=[10] last=[0] tt=10 lt=0 days=1
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,4,1,2025,11,4	today=0 avg=70 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,4,1,2025,11,4	this=[10,30,60,60] last=[0,0,0,0] tt=60 lt=0 days=4
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,7,1,2025,11,7	today=0 avg=40 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,7,1,2025,11,7	this=[10,30,60,60,100,100,100] last=[0,0,0,0,0,0,0] tt=100 lt=0 days=7
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,10,1,2025,11,10	today=0 avg=28 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,10,1,2025,11,10	this=[10,30,60,60,100,100,100,150,150,150] last=[0,0,0,0,0,0,0,0,0,0] tt=150 lt=0 days=10
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,13,1,2025,11,13	today=60 avg=21.53846153846154 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,13,1,2025,11,13	this=[10,30,60,60,100,100,100,150,150,150,150,150,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=13
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,16,1,2025,11,16	today=0 avg=17.5 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,16,1,2025,11,16	this=[10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=16
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,19,1,2025,11,19	today=0 avg=14.736842105263158 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,19,1,2025,11,19	this=[10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=19
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,22,1,2025,11,22	today=0 avg=12.727272727272727 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,22,1,2025,11,22	this=[10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=22
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,25,1,2025,11,25	today=0 avg=11.2 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,25,1,2025,11,25	this=[10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280,280,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=25
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,28,1,2025,11,28	today=0 avg=10 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,28,1,2025,11,28	this=[10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280,280,280,280,280,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=28
+trend	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3|2025,11,15,1	2025-6-1:0,2025-7-1:0,2025-8-1:0,2025-9-1:0,2025-10-1:0,2025-11-1:60
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,1,15,2025,11,1	today=10 avg=16.470588235294116 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,1,15,2025,11,1	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=10 lt=0 days=17
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,4,15,2025,11,4	today=0 avg=14 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,4,15,2025,11,4	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,30,60,60] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=60 lt=0 days=20
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,7,15,2025,11,7	today=0 avg=12.173913043478262 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,7,15,2025,11,7	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,30,60,60,100,100,100] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=100 lt=0 days=23
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,10,15,2025,11,10	today=0 avg=10.76923076923077 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,10,15,2025,11,10	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=150 lt=0 days=26
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,13,15,2025,11,13	today=60 avg=9.655172413793103 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,13,15,2025,11,13	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=29
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,16,15,2025,11,16	today=0 avg=140 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,16,15,2025,11,16	this=[0,0] last=[0,0] tt=0 lt=0 days=2
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,19,15,2025,11,19	today=0 avg=56 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,19,15,2025,11,19	this=[0,0,0,0,0] last=[0,0,0,0,0] tt=0 lt=0 days=5
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,22,15,2025,11,22	today=0 avg=35 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,22,15,2025,11,22	this=[0,0,0,0,0,0,70,70] last=[0,0,0,0,0,0,0,0] tt=70 lt=0 days=8
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,25,15,2025,11,25	today=0 avg=25.454545454545453 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,25,15,2025,11,25	this=[0,0,0,0,0,0,70,70,70,70,70] last=[0,0,0,0,0,0,0,0,0,0,0] tt=70 lt=0 days=11
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,28,15,2025,11,28	today=0 avg=20 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,28,15,2025,11,28	this=[0,0,0,0,0,0,70,70,70,70,70,70,70,70] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=70 lt=0 days=14
+trend	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3|2025,11,15,15	2025-6-15:0,2025-7-15:0,2025-8-15:0,2025-9-15:0,2025-10-15:60,2025-11-15:0
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,1,25,2025,11,1	today=10 avg=40 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,1,25,2025,11,1	this=[0,0,0,0,0,0,10] last=[0,0,0,0,0,0,0] tt=10 lt=0 days=7
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,4,25,2025,11,4	today=0 avg=28 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,4,25,2025,11,4	this=[0,0,0,0,0,0,10,30,60,60] last=[0,0,0,0,0,0,0,0,0,0] tt=60 lt=0 days=10
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,7,25,2025,11,7	today=0 avg=21.53846153846154 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,7,25,2025,11,7	this=[0,0,0,0,0,0,10,30,60,60,100,100,100] last=[0,0,0,0,0,0,0,0,0,0,0,0,0] tt=100 lt=0 days=13
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,10,25,2025,11,10	today=0 avg=17.5 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,10,25,2025,11,10	this=[0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=150 lt=0 days=16
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,13,25,2025,11,13	today=60 avg=14.736842105263158 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,13,25,2025,11,13	this=[0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=19
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,16,25,2025,11,16	today=0 avg=12.727272727272727 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,16,25,2025,11,16	this=[0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=22
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,19,25,2025,11,19	today=0 avg=11.2 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,19,25,2025,11,19	this=[0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=25
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,22,25,2025,11,22	today=0 avg=10 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,22,25,2025,11,22	this=[0,0,0,0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=28
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,25,25,2025,11,25	today=0 avg=280 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,25,25,2025,11,25	this=[0] last=[0] tt=0 lt=0 days=1
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,28,25,2025,11,28	today=0 avg=70 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,28,25,2025,11,28	this=[0,0,0,0] last=[0,0,0,0] tt=0 lt=0 days=4
+trend	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3|2025,11,15,25	2025-5-25:0,2025-6-25:0,2025-7-25:0,2025-8-25:0,2025-9-25:0,2025-10-25:60
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,1,28,2025,11,1	today=10 avg=70 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,1,28,2025,11,1	this=[0,0,0,10] last=[0,0,0,0] tt=10 lt=0 days=4
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,4,28,2025,11,4	today=0 avg=40 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,4,28,2025,11,4	this=[0,0,0,10,30,60,60] last=[0,0,0,0,0,0,0] tt=60 lt=0 days=7
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,7,28,2025,11,7	today=0 avg=28 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,7,28,2025,11,7	this=[0,0,0,10,30,60,60,100,100,100] last=[0,0,0,0,0,0,0,0,0,0] tt=100 lt=0 days=10
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,10,28,2025,11,10	today=0 avg=21.53846153846154 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,10,28,2025,11,10	this=[0,0,0,10,30,60,60,100,100,100,150,150,150] last=[0,0,0,0,0,0,0,0,0,0,0,0,0] tt=150 lt=0 days=13
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,13,28,2025,11,13	today=60 avg=17.5 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,13,28,2025,11,13	this=[0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=16
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,16,28,2025,11,16	today=0 avg=14.736842105263158 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,16,28,2025,11,16	this=[0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=19
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,19,28,2025,11,19	today=0 avg=12.727272727272727 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,19,28,2025,11,19	this=[0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=210 lt=0 days=22
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,22,28,2025,11,22	today=0 avg=11.2 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,22,28,2025,11,22	this=[0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=25
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,25,28,2025,11,25	today=0 avg=10 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,25,28,2025,11,25	this=[0,0,0,10,30,60,60,100,100,100,150,150,150,150,150,210,210,210,210,210,210,210,210,280,280,280,280,280] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=280 lt=0 days=28
+totals	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,28,28,2025,11,28	today=0 avg=280 top=70 n=7
+cmp	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3^exp~c~40~2025~11~5^exp~c~50~2025~11~8^exp~c~60~2025~11~13^exp~c~70~2025~11~21|2025,11,28,28,2025,11,28	this=[0] last=[0] tt=0 lt=0 days=1
+trend	exp~c~10~2025~11~1^exp~c~20~2025~11~2^exp~c~30~2025~11~3|2025,11,15,28	2025-5-28:0,2025-6-28:0,2025-7-28:0,2025-8-28:0,2025-9-28:0,2025-10-28:60
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,1,1,2026,9,1	today=3 avg=165 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,1,1,2026,9,1	this=[3] last=[0] tt=3 lt=0 days=1
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,2,1,2026,9,2	today=6 avg=82.5 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,2,1,2026,9,2	this=[3,9] last=[0,0] tt=9 lt=0 days=2
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,3,1,2026,9,3	today=9 avg=55 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,3,1,2026,9,3	this=[3,9,18] last=[0,0,0] tt=18 lt=0 days=3
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,4,1,2026,9,4	today=12 avg=41.25 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,4,1,2026,9,4	this=[3,9,18,30] last=[0,0,0,0] tt=30 lt=0 days=4
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,5,1,2026,9,5	today=15 avg=33 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,5,1,2026,9,5	this=[3,9,18,30,45] last=[0,0,0,0,0] tt=45 lt=0 days=5
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,6,1,2026,9,6	today=18 avg=27.5 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,6,1,2026,9,6	this=[3,9,18,30,45,63] last=[0,0,0,0,0,0] tt=63 lt=0 days=6
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,7,1,2026,9,7	today=21 avg=23.571428571428573 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,7,1,2026,9,7	this=[3,9,18,30,45,63,84] last=[0,0,0,0,0,0,0] tt=84 lt=0 days=7
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,8,1,2026,9,8	today=24 avg=20.625 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,8,1,2026,9,8	this=[3,9,18,30,45,63,84,108] last=[0,0,0,0,0,0,0,0] tt=108 lt=0 days=8
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,9,1,2026,9,9	today=27 avg=18.333333333333332 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,9,1,2026,9,9	this=[3,9,18,30,45,63,84,108,135] last=[0,0,0,0,0,0,0,0,0] tt=135 lt=0 days=9
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,10,1,2026,9,10	today=30 avg=16.5 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,10,1,2026,9,10	this=[3,9,18,30,45,63,84,108,135,165] last=[0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=10
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,11,1,2026,9,11	today=0 avg=15 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,11,1,2026,9,11	this=[3,9,18,30,45,63,84,108,135,165,165] last=[0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=11
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,12,1,2026,9,12	today=0 avg=13.75 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,12,1,2026,9,12	this=[3,9,18,30,45,63,84,108,135,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=12
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,13,1,2026,9,13	today=0 avg=12.692307692307692 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,13,1,2026,9,13	this=[3,9,18,30,45,63,84,108,135,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=13
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,14,1,2026,9,14	today=0 avg=11.785714285714286 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,14,1,2026,9,14	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=14
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,15,1,2026,9,15	today=0 avg=11 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,15,1,2026,9,15	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=15
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,16,1,2026,9,16	today=0 avg=10.3125 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,16,1,2026,9,16	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=16
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,17,1,2026,9,17	today=0 avg=9.705882352941176 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,17,1,2026,9,17	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=17
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,18,1,2026,9,18	today=0 avg=9.166666666666666 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,18,1,2026,9,18	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=18
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,19,1,2026,9,19	today=0 avg=8.68421052631579 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,19,1,2026,9,19	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=19
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,20,1,2026,9,20	today=0 avg=8.25 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,20,1,2026,9,20	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=20
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,21,1,2026,9,21	today=0 avg=7.857142857142857 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,21,1,2026,9,21	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=21
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,22,1,2026,9,22	today=0 avg=7.5 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,22,1,2026,9,22	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=22
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,23,1,2026,9,23	today=0 avg=7.173913043478261 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,23,1,2026,9,23	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=23
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,24,1,2026,9,24	today=0 avg=6.875 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,24,1,2026,9,24	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=24
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,25,1,2026,9,25	today=0 avg=6.6 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,25,1,2026,9,25	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=25
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,26,1,2026,9,26	today=0 avg=6.346153846153846 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,26,1,2026,9,26	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=26
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,27,1,2026,9,27	today=0 avg=6.111111111111111 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,27,1,2026,9,27	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=27
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,28,1,2026,9,28	today=0 avg=5.892857142857143 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,28,1,2026,9,28	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=28
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,29,1,2026,9,29	today=0 avg=5.689655172413793 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,29,1,2026,9,29	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=29
+totals	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,30,1,2026,9,30	today=0 avg=5.5 top=30 n=10
+cmp	exp~c~3~2026~9~1^exp~c~6~2026~9~2^exp~c~9~2026~9~3^exp~c~12~2026~9~4^exp~c~15~2026~9~5^exp~c~18~2026~9~6^exp~c~21~2026~9~7^exp~c~24~2026~9~8^exp~c~27~2026~9~9^exp~c~30~2026~9~10|2026,9,30,1,2026,9,30	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=30
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,1,1,2026,3,1	today=3 avg=165 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,1,1,2026,3,1	this=[3] last=[0] tt=3 lt=0 days=1
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,2,1,2026,3,2	today=6 avg=82.5 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,2,1,2026,3,2	this=[3,9] last=[0,0] tt=9 lt=0 days=2
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,3,1,2026,3,3	today=9 avg=55 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,3,1,2026,3,3	this=[3,9,18] last=[0,0,0] tt=18 lt=0 days=3
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,4,1,2026,3,4	today=12 avg=41.25 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,4,1,2026,3,4	this=[3,9,18,30] last=[0,0,0,0] tt=30 lt=0 days=4
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,5,1,2026,3,5	today=15 avg=33 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,5,1,2026,3,5	this=[3,9,18,30,45] last=[0,0,0,0,0] tt=45 lt=0 days=5
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,6,1,2026,3,6	today=18 avg=27.5 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,6,1,2026,3,6	this=[3,9,18,30,45,63] last=[0,0,0,0,0,0] tt=63 lt=0 days=6
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,7,1,2026,3,7	today=21 avg=23.571428571428573 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,7,1,2026,3,7	this=[3,9,18,30,45,63,84] last=[0,0,0,0,0,0,0] tt=84 lt=0 days=7
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,8,1,2026,3,8	today=24 avg=20.625 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,8,1,2026,3,8	this=[3,9,18,30,45,63,84,108] last=[0,0,0,0,0,0,0,0] tt=108 lt=0 days=8
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,9,1,2026,3,9	today=27 avg=18.333333333333332 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,9,1,2026,3,9	this=[3,9,18,30,45,63,84,108,135] last=[0,0,0,0,0,0,0,0,0] tt=135 lt=0 days=9
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,10,1,2026,3,10	today=30 avg=16.5 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,10,1,2026,3,10	this=[3,9,18,30,45,63,84,108,135,165] last=[0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=10
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,11,1,2026,3,11	today=0 avg=15 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,11,1,2026,3,11	this=[3,9,18,30,45,63,84,108,135,165,165] last=[0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=11
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,12,1,2026,3,12	today=0 avg=13.75 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,12,1,2026,3,12	this=[3,9,18,30,45,63,84,108,135,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=12
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,13,1,2026,3,13	today=0 avg=12.692307692307692 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,13,1,2026,3,13	this=[3,9,18,30,45,63,84,108,135,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=13
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,14,1,2026,3,14	today=0 avg=11.785714285714286 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,14,1,2026,3,14	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=14
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,15,1,2026,3,15	today=0 avg=11 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,15,1,2026,3,15	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=15
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,16,1,2026,3,16	today=0 avg=10.3125 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,16,1,2026,3,16	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=16
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,17,1,2026,3,17	today=0 avg=9.705882352941176 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,17,1,2026,3,17	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=17
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,18,1,2026,3,18	today=0 avg=9.166666666666666 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,18,1,2026,3,18	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=18
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,19,1,2026,3,19	today=0 avg=8.68421052631579 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,19,1,2026,3,19	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=19
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,20,1,2026,3,20	today=0 avg=8.25 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,20,1,2026,3,20	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=20
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,21,1,2026,3,21	today=0 avg=7.857142857142857 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,21,1,2026,3,21	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=21
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,22,1,2026,3,22	today=0 avg=7.5 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,22,1,2026,3,22	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=22
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,23,1,2026,3,23	today=0 avg=7.173913043478261 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,23,1,2026,3,23	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=23
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,24,1,2026,3,24	today=0 avg=6.875 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,24,1,2026,3,24	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=24
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,25,1,2026,3,25	today=0 avg=6.6 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,25,1,2026,3,25	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=25
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,26,1,2026,3,26	today=0 avg=6.346153846153846 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,26,1,2026,3,26	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=26
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,27,1,2026,3,27	today=0 avg=6.111111111111111 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,27,1,2026,3,27	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=27
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,28,1,2026,3,28	today=0 avg=5.892857142857143 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,28,1,2026,3,28	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=28
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,29,1,2026,3,29	today=0 avg=5.689655172413793 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,29,1,2026,3,29	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=29
+totals	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,30,1,2026,3,30	today=0 avg=5.5 top=30 n=10
+cmp	exp~c~3~2026~3~1^exp~c~6~2026~3~2^exp~c~9~2026~3~3^exp~c~12~2026~3~4^exp~c~15~2026~3~5^exp~c~18~2026~3~6^exp~c~21~2026~3~7^exp~c~24~2026~3~8^exp~c~27~2026~3~9^exp~c~30~2026~3~10|2026,3,30,1,2026,3,30	this=[3,9,18,30,45,63,84,108,135,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=165 lt=0 days=30
+totals	exp~c~10~2026~5~3|2026,5,10,1,2026,6,20	today=0 avg=0.3333333333333333 top=10 n=1
+cmp	exp~c~10~2026~5~3|2026,5,10,1,2026,6,20	this=[0,0,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=10 lt=0 days=30
+totals	exp~c~10~2026~5~3|2026,5,10,1,2026,4,1	today=0 avg=10 top=10 n=1
+cmp	exp~c~10~2026~5~3|2026,5,10,1,2026,4,1	this=[0] last=[0] tt=0 lt=0 days=1
+totals	exp~c~10~2026~5~3|2026,5,10,1,2027,0,1	today=0 avg=0.3333333333333333 top=10 n=1
+cmp	exp~c~10~2026~5~3|2026,5,10,1,2027,0,1	this=[0,0,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=10 lt=0 days=30
+totals	inc~c~10~2026~5~3|2026,5,10,1,2026,5,10	today=0 avg=0 top=0 n=1
+cmp	inc~c~10~2026~5~3|2026,5,10,1,2026,5,10	this=[0,0,0,0,0,0,0,0,0,0] last=[0,0,0,0,0,0,0,0,0,0] tt=0 lt=0 days=10
+trend	inc~c~10~2026~5~3|2026,5,10,1	2026-0-1:0,2026-1-1:0,2026-2-1:0,2026-3-1:0,2026-4-1:0,2026-5-1:0
+totals	xfer~c~10~2026~5~3|2026,5,10,1,2026,5,10	today=0 avg=0 top=0 n=1
+cmp	xfer~c~10~2026~5~3|2026,5,10,1,2026,5,10	this=[0,0,0,0,0,0,0,0,0,0] last=[0,0,0,0,0,0,0,0,0,0] tt=0 lt=0 days=10
+trend	xfer~c~10~2026~5~3|2026,5,10,1	2026-0-1:0,2026-1-1:0,2026-2-1:0,2026-3-1:0,2026-4-1:0,2026-5-1:0
+totals	_~c~10~2026~5~3|2026,5,10,1,2026,5,10	today=0 avg=0 top=0 n=1
+cmp	_~c~10~2026~5~3|2026,5,10,1,2026,5,10	this=[0,0,0,0,0,0,0,0,0,0] last=[0,0,0,0,0,0,0,0,0,0] tt=0 lt=0 days=10
+trend	_~c~10~2026~5~3|2026,5,10,1	2026-0-1:0,2026-1-1:0,2026-2-1:0,2026-3-1:0,2026-4-1:0,2026-5-1:0
+totals	|2026,5,10,1,2026,5,10	today=0 avg=0 top=0 n=0
+cmp	|2026,5,10,1,2026,5,10	this=[0,0,0,0,0,0,0,0,0,0] last=[0,0,0,0,0,0,0,0,0,0] tt=0 lt=0 days=10
+trend	|2026,5,10,1	2026-0-1:0,2026-1-1:0,2026-2-1:0,2026-3-1:0,2026-4-1:0,2026-5-1:0
+totals	exp~c~0~2026~5~3^exp~c~5~2026~5~4|2026,5,10,1,2026,5,10	today=0 avg=0.5 top=5 n=2
+totals	exp~c~10~2026~5~3^exp~c~5~2026~5~4|2026,5,10,1,2026,5,10	today=0 avg=1.5 top=10 n=2
+totals	exp~c~35.5~2026~5~3^exp~c~5~2026~5~4|2026,5,10,1,2026,5,10	today=0 avg=4.05 top=35.5 n=2
+totals	exp~c~-5~2026~5~3^exp~c~5~2026~5~4|2026,5,10,1,2026,5,10	today=0 avg=0 top=5 n=2
+totals	exp~c~0.005~2026~5~3^exp~c~5~2026~5~4|2026,5,10,1,2026,5,10	today=0 avg=0.5005 top=5 n=2
+totals	exp~c~0.1~2026~5~3^exp~c~5~2026~5~4|2026,5,10,1,2026,5,10	today=0 avg=0.51 top=5 n=2
+totals	exp~c~1e21~2026~5~3^exp~c~5~2026~5~4|2026,5,10,1,2026,5,10	today=0 avg=100000000000000000000 top=1e+21 n=2
+totals	exp~c~1e-7~2026~5~3^exp~c~5~2026~5~4|2026,5,10,1,2026,5,10	today=0 avg=0.50000001 top=5 n=2
+totals	exp~c~-0~2026~5~3^exp~c~5~2026~5~4|2026,5,10,1,2026,5,10	today=0 avg=0.5 top=5 n=2
+totals	exp~c~1000000~2026~5~3^exp~c~5~2026~5~4|2026,5,10,1,2026,5,10	today=0 avg=100000.5 top=1000000 n=2
+totals	exp~c~-5~2026~5~3^exp~c~-2~2026~5~4|2026,5,10,1,2026,5,10	today=0 avg=-0.7 top=-2 n=2
+totals	exp~c~-1~2026~5~3^exp~c~-100~2026~5~4|2026,5,10,1,2026,5,10	today=0 avg=-10.1 top=-1 n=2
+totals	exp~c~-0.5~2026~5~3^exp~c~-0.25~2026~5~4|2026,5,10,1,2026,5,10	today=0 avg=-0.075 top=-0.25 n=2
+totals	exp~c~-1e+21~2026~5~3^exp~c~-1~2026~5~4|2026,5,10,1,2026,5,10	today=0 avg=-100000000000000000000 top=-1 n=2
+totals	exp~c~-1~2026~5~3^exp~c~-1~2026~5~4|2026,5,10,1,2026,5,10	today=0 avg=-0.2 top=-1 n=2
+totals	exp~c~NaN~2026~5~3^exp~c~10~2026~5~4|2026,5,10,1,2026,5,10	today=0 avg=NaN top=NaN n=2
+totals	exp~c~10~2026~5~3^exp~c~NaN~2026~5~4|2026,5,10,1,2026,5,10	today=0 avg=NaN top=NaN n=2
+totals	exp~c~NaN~2026~5~3^exp~c~-5~2026~5~4|2026,5,10,1,2026,5,10	today=0 avg=NaN top=NaN n=2
+totals	exp~c~-5~2026~5~3^exp~c~NaN~2026~5~4|2026,5,10,1,2026,5,10	today=0 avg=NaN top=NaN n=2
+totals	exp~c~NaN~2026~5~3^exp~c~0~2026~5~4|2026,5,10,1,2026,5,10	today=0 avg=NaN top=NaN n=2
+totals	exp~c~0~2026~5~3^exp~c~NaN~2026~5~4|2026,5,10,1,2026,5,10	today=0 avg=NaN top=NaN n=2
+totals	exp~c~NaN~2026~5~3^exp~c~NaN~2026~5~4|2026,5,10,1,2026,5,10	today=0 avg=NaN top=NaN n=2
+totals	exp~c~NaN~2026~5~3^exp~c~NaN~2026~5~4|2026,5,10,1,2026,5,10	today=0 avg=NaN top=NaN n=2
+cmp	exp~c~9~2026~5~1|2026,5,10,1,2026,5,10	this=[9,9,9,9,9,9,9,9,9,9] last=[0,0,0,0,0,0,0,0,0,0] tt=9 lt=0 days=10
+trend	exp~c~9~2026~5~1|2026,5,10,1	2026-0-1:0,2026-1-1:0,2026-2-1:0,2026-3-1:0,2026-4-1:0,2026-5-1:9
+totals	exp~c~9~2026~5~1|2026,5,10,1,2026,5,10	today=0 avg=0.9 top=9 n=1
+cmp	exp~c~9~2026~6~1|2026,5,10,1,2026,5,10	this=[0,0,0,0,0,0,0,0,0,0] last=[0,0,0,0,0,0,0,0,0,0] tt=0 lt=0 days=10
+trend	exp~c~9~2026~6~1|2026,5,10,1	2026-0-1:0,2026-1-1:0,2026-2-1:0,2026-3-1:0,2026-4-1:0,2026-5-1:0
+totals	exp~c~9~2026~6~1|2026,5,10,1,2026,5,10	today=0 avg=0.9 top=9 n=1
+cmp	exp~c~9~2026~6~0|2026,5,10,1,2026,5,10	this=[0,0,0,0,0,0,0,0,0,0] last=[0,0,0,0,0,0,0,0,0,0] tt=0 lt=0 days=10
+trend	exp~c~9~2026~6~0|2026,5,10,1	2026-0-1:0,2026-1-1:0,2026-2-1:0,2026-3-1:0,2026-4-1:0,2026-5-1:9
+totals	exp~c~9~2026~6~0|2026,5,10,1,2026,5,10	today=0 avg=0.9 top=9 n=1
+cmp	exp~c~9~2026~5~0|2026,5,10,1,2026,5,10	this=[0,0,0,0,0,0,0,0,0,0] last=[0,0,0,0,0,0,0,0,0,0] tt=0 lt=0 days=10
+trend	exp~c~9~2026~5~0|2026,5,10,1	2026-0-1:0,2026-1-1:0,2026-2-1:0,2026-3-1:0,2026-4-1:9,2026-5-1:0
+totals	exp~c~9~2026~5~0|2026,5,10,1,2026,5,10	today=0 avg=0.9 top=9 n=1
+cmp	exp~c~9~2026~4~15|2026,5,10,15,2026,5,10	this=[9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=9 lt=0 days=27
+trend	exp~c~9~2026~4~15|2026,5,10,15	2025-11-15:0,2026-0-15:0,2026-1-15:0,2026-2-15:0,2026-3-15:0,2026-4-15:9
+totals	exp~c~9~2026~4~15|2026,5,10,15,2026,5,10	today=0 avg=0.3333333333333333 top=9 n=1
+cmp	exp~c~9~2026~5~15|2026,5,10,15,2026,5,10	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=0 lt=0 days=27
+trend	exp~c~9~2026~5~15|2026,5,10,15	2025-11-15:0,2026-0-15:0,2026-1-15:0,2026-2-15:0,2026-3-15:0,2026-4-15:0
+totals	exp~c~9~2026~5~15|2026,5,10,15,2026,5,10	today=0 avg=0.3333333333333333 top=9 n=1
+cmp	exp~c~9~2026~5~14|2026,5,10,15,2026,5,10	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=0 lt=0 days=27
+trend	exp~c~9~2026~5~14|2026,5,10,15	2025-11-15:0,2026-0-15:0,2026-1-15:0,2026-2-15:0,2026-3-15:0,2026-4-15:9
+totals	exp~c~9~2026~5~14|2026,5,10,15,2026,5,10	today=0 avg=0.3333333333333333 top=9 n=1
+cmp	exp~c~9~2026~4~14|2026,5,10,15,2026,5,10	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=0 lt=0 days=27
+trend	exp~c~9~2026~4~14|2026,5,10,15	2025-11-15:0,2026-0-15:0,2026-1-15:0,2026-2-15:0,2026-3-15:9,2026-4-15:0
+totals	exp~c~9~2026~4~14|2026,5,10,15,2026,5,10	today=0 avg=0.3333333333333333 top=9 n=1
+cmp	exp~c~9~2026~4~25|2026,5,10,25,2026,5,10	this=[9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=9 lt=0 days=17
+trend	exp~c~9~2026~4~25|2026,5,10,25	2025-11-25:0,2026-0-25:0,2026-1-25:0,2026-2-25:0,2026-3-25:0,2026-4-25:9
+totals	exp~c~9~2026~4~25|2026,5,10,25,2026,5,10	today=0 avg=0.5294117647058824 top=9 n=1
+cmp	exp~c~9~2026~5~25|2026,5,10,25,2026,5,10	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=0 lt=0 days=17
+trend	exp~c~9~2026~5~25|2026,5,10,25	2025-11-25:0,2026-0-25:0,2026-1-25:0,2026-2-25:0,2026-3-25:0,2026-4-25:0
+totals	exp~c~9~2026~5~25|2026,5,10,25,2026,5,10	today=0 avg=0.5294117647058824 top=9 n=1
+cmp	exp~c~9~2026~5~24|2026,5,10,25,2026,5,10	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=0 lt=0 days=17
+trend	exp~c~9~2026~5~24|2026,5,10,25	2025-11-25:0,2026-0-25:0,2026-1-25:0,2026-2-25:0,2026-3-25:0,2026-4-25:9
+totals	exp~c~9~2026~5~24|2026,5,10,25,2026,5,10	today=0 avg=0.5294117647058824 top=9 n=1
+cmp	exp~c~9~2026~4~24|2026,5,10,25,2026,5,10	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=0 lt=0 days=17
+trend	exp~c~9~2026~4~24|2026,5,10,25	2025-11-25:0,2026-0-25:0,2026-1-25:0,2026-2-25:0,2026-3-25:9,2026-4-25:0
+totals	exp~c~9~2026~4~24|2026,5,10,25,2026,5,10	today=0 avg=0.5294117647058824 top=9 n=1
+cmp	exp~c~9~2026~2~1|2026,2,10,1,2026,2,10	this=[9,9,9,9,9,9,9,9,9,9] last=[0,0,0,0,0,0,0,0,0,0] tt=9 lt=0 days=10
+cmp	exp~c~9~2026~1~28^exp~c~4~2026~2~1|2026,2,10,1,2026,2,10	this=[4,4,4,4,4,4,4,4,4,4] last=[0,0,0,0,0,0,0,0,0,0] tt=4 lt=0 days=10
+cmp	exp~c~9~2026~2~1|2026,2,20,1,2026,2,20	this=[9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=9 lt=0 days=20
+cmp	exp~c~9~2026~1~28^exp~c~4~2026~2~1|2026,2,20,1,2026,2,20	this=[4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=4 lt=0 days=20
+cmp	exp~c~9~2026~2~1|2026,2,29,1,2026,2,29	this=[9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=9 lt=0 days=29
+cmp	exp~c~9~2026~1~28^exp~c~4~2026~2~1|2026,2,29,1,2026,2,29	this=[4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,9,9] tt=4 lt=9 days=29
+cmp	exp~c~9~2026~2~1|2026,2,31,1,2026,2,31	this=[9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=9 lt=0 days=31
+cmp	exp~c~9~2026~1~28^exp~c~4~2026~2~1|2026,2,31,1,2026,2,31	this=[4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,9,9,9,9] tt=4 lt=9 days=31
+cmp	exp~c~9~2025~2~1|2025,2,10,1,2025,2,10	this=[9,9,9,9,9,9,9,9,9,9] last=[0,0,0,0,0,0,0,0,0,0] tt=9 lt=0 days=10
+cmp	exp~c~9~2024~2~1|2024,2,10,1,2024,2,10	this=[9,9,9,9,9,9,9,9,9,9] last=[0,0,0,0,0,0,0,0,0,0] tt=9 lt=0 days=10
+cmp	exp~c~9~2025~2~1|2025,2,31,1,2025,2,31	this=[9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=9 lt=0 days=31
+cmp	exp~c~9~2024~2~1|2024,2,31,1,2024,2,31	this=[9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=9 lt=0 days=31
+trend	inc~c~50~2026~5~3^exp~c~7~2026~5~4|2026,5,15,1	2026-0-1:0,2026-1-1:0,2026-2-1:0,2026-3-1:0,2026-4-1:0,2026-5-1:7
+trend	xfer~c~50~2026~5~3^exp~c~7~2026~5~4|2026,5,15,1	2026-0-1:0,2026-1-1:0,2026-2-1:0,2026-3-1:0,2026-4-1:0,2026-5-1:7
+trend	inc~c~50~2026~4~3^exp~c~7~2026~4~4|2026,5,15,1	2026-0-1:0,2026-1-1:0,2026-2-1:0,2026-3-1:0,2026-4-1:7,2026-5-1:0
+trend	xfer~c~50~2026~4~3^exp~c~7~2026~4~4|2026,5,15,1	2026-0-1:0,2026-1-1:0,2026-2-1:0,2026-3-1:0,2026-4-1:7,2026-5-1:0
+trend	inc~c~50~2026~3~3^exp~c~7~2026~3~4|2026,5,15,1	2026-0-1:0,2026-1-1:0,2026-2-1:0,2026-3-1:7,2026-4-1:0,2026-5-1:0
+trend	xfer~c~50~2026~3~3^exp~c~7~2026~3~4|2026,5,15,1	2026-0-1:0,2026-1-1:0,2026-2-1:0,2026-3-1:7,2026-4-1:0,2026-5-1:0
+trend	inc~c~50~2026~2~3^exp~c~7~2026~2~4|2026,5,15,1	2026-0-1:0,2026-1-1:0,2026-2-1:7,2026-3-1:0,2026-4-1:0,2026-5-1:0
+trend	xfer~c~50~2026~2~3^exp~c~7~2026~2~4|2026,5,15,1	2026-0-1:0,2026-1-1:0,2026-2-1:7,2026-3-1:0,2026-4-1:0,2026-5-1:0
+trend	inc~c~50~2026~1~3^exp~c~7~2026~1~4|2026,5,15,1	2026-0-1:0,2026-1-1:7,2026-2-1:0,2026-3-1:0,2026-4-1:0,2026-5-1:0
+trend	xfer~c~50~2026~1~3^exp~c~7~2026~1~4|2026,5,15,1	2026-0-1:0,2026-1-1:7,2026-2-1:0,2026-3-1:0,2026-4-1:0,2026-5-1:0
+trend	inc~c~50~2026~0~3^exp~c~7~2026~0~4|2026,5,15,1	2026-0-1:7,2026-1-1:0,2026-2-1:0,2026-3-1:0,2026-4-1:0,2026-5-1:0
+trend	xfer~c~50~2026~0~3^exp~c~7~2026~0~4|2026,5,15,1	2026-0-1:7,2026-1-1:0,2026-2-1:0,2026-3-1:0,2026-4-1:0,2026-5-1:0
+totals	|2026,5,10,1,2026,5,10	today=0 avg=0 top=0 n=0
+totals	inc~c~10~2026~5~10|2026,5,10,1,2026,5,10	today=0 avg=0 top=0 n=1
+totals	|2026,9,10,1,2026,9,10	today=0 avg=0 top=0 n=0
+totals	inc~c~10~2026~9~10|2026,9,10,1,2026,9,10	today=0 avg=0 top=0 n=1
+totals	|2026,3,10,1,2026,3,10	today=0 avg=0 top=0 n=0
+totals	inc~c~10~2026~3~10|2026,3,10,1,2026,3,10	today=0 avg=0 top=0 n=1
+totals	|2026,5,10,15,2026,5,10	today=0 avg=0 top=0 n=0
+totals	inc~c~10~2026~5~10|2026,5,10,15,2026,5,10	today=0 avg=0 top=0 n=1
+totals	|2026,9,10,15,2026,9,10	today=0 avg=0 top=0 n=0
+totals	inc~c~10~2026~9~10|2026,9,10,15,2026,9,10	today=0 avg=0 top=0 n=1
+totals	|2026,3,10,15,2026,3,10	today=0 avg=0 top=0 n=0
+totals	inc~c~10~2026~3~10|2026,3,10,15,2026,3,10	today=0 avg=0 top=0 n=1
+totals	|2026,5,10,25,2026,5,10	today=0 avg=0 top=0 n=0
+totals	inc~c~10~2026~5~10|2026,5,10,25,2026,5,10	today=0 avg=0 top=0 n=1
+totals	|2026,9,10,25,2026,9,10	today=0 avg=0 top=0 n=0
+totals	inc~c~10~2026~9~10|2026,9,10,25,2026,9,10	today=0 avg=0 top=0 n=1
+totals	|2026,3,10,25,2026,3,10	today=0 avg=0 top=0 n=0
+totals	inc~c~10~2026~3~10|2026,3,10,25,2026,3,10	today=0 avg=0 top=0 n=1
+totals	|2026,5,10,28,2026,5,10	today=0 avg=0 top=0 n=0
+totals	inc~c~10~2026~5~10|2026,5,10,28,2026,5,10	today=0 avg=0 top=0 n=1
+totals	|2026,9,10,28,2026,9,10	today=0 avg=0 top=0 n=0
+totals	inc~c~10~2026~9~10|2026,9,10,28,2026,9,10	today=0 avg=0 top=0 n=1
+totals	|2026,3,10,28,2026,3,10	today=0 avg=0 top=0 n=0
+totals	inc~c~10~2026~3~10|2026,3,10,28,2026,3,10	today=0 avg=0 top=0 n=1
+totals	exp~c~10~2026~5~3|2026,5,10,1,2026,6,1	today=0 avg=0.3333333333333333 top=10 n=1
+cmp	exp~c~10~2026~5~3|2026,5,10,1,2026,6,1	this=[0,0,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=10 lt=0 days=30
+totals	exp~c~10~2026~5~3|2026,5,10,1,2026,6,5	today=0 avg=0.3333333333333333 top=10 n=1
+cmp	exp~c~10~2026~5~3|2026,5,10,1,2026,6,5	this=[0,0,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=10 lt=0 days=30
+totals	exp~c~10~2026~5~3|2026,5,10,1,2026,6,40	today=0 avg=0.3333333333333333 top=10 n=1
+cmp	exp~c~10~2026~5~3|2026,5,10,1,2026,6,40	this=[0,0,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=10 lt=0 days=30
+totals	exp~c~10~2026~5~3|2026,5,10,1,2026,6,400	today=0 avg=0.3333333333333333 top=10 n=1
+cmp	exp~c~10~2026~5~3|2026,5,10,1,2026,6,400	this=[0,0,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=10 lt=0 days=30
+totals	exp~c~10~2026~5~3|2026,5,10,15,2026,6,1	today=0 avg=0.3225806451612903 top=10 n=1
+cmp	exp~c~10~2026~5~3|2026,5,10,15,2026,6,1	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,10,10,10,10,10,10,10,10,10,10,10] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=10 lt=0 days=31
+totals	exp~c~10~2026~5~3|2026,5,10,15,2026,6,5	today=0 avg=0.3225806451612903 top=10 n=1
+cmp	exp~c~10~2026~5~3|2026,5,10,15,2026,6,5	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,10,10,10,10,10,10,10,10,10,10,10] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=10 lt=0 days=31
+totals	exp~c~10~2026~5~3|2026,5,10,15,2026,6,40	today=0 avg=0.3225806451612903 top=10 n=1
+cmp	exp~c~10~2026~5~3|2026,5,10,15,2026,6,40	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,10,10,10,10,10,10,10,10,10,10,10] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=10 lt=0 days=31
+totals	exp~c~10~2026~5~3|2026,5,10,15,2026,6,400	today=0 avg=0.3225806451612903 top=10 n=1
+cmp	exp~c~10~2026~5~3|2026,5,10,15,2026,6,400	this=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,10,10,10,10,10,10,10,10,10,10,10] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=10 lt=0 days=31
+totals	exp~c~10~2026~5~3|2026,5,10,25,2026,6,1	today=0 avg=0.3225806451612903 top=10 n=1
+cmp	exp~c~10~2026~5~3|2026,5,10,25,2026,6,1	this=[0,0,0,0,0,0,0,0,0,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=10 lt=0 days=31
+totals	exp~c~10~2026~5~3|2026,5,10,25,2026,6,5	today=0 avg=0.3225806451612903 top=10 n=1
+cmp	exp~c~10~2026~5~3|2026,5,10,25,2026,6,5	this=[0,0,0,0,0,0,0,0,0,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=10 lt=0 days=31
+totals	exp~c~10~2026~5~3|2026,5,10,25,2026,6,40	today=0 avg=0.3225806451612903 top=10 n=1
+cmp	exp~c~10~2026~5~3|2026,5,10,25,2026,6,40	this=[0,0,0,0,0,0,0,0,0,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=10 lt=0 days=31
+totals	exp~c~10~2026~5~3|2026,5,10,25,2026,6,400	today=0 avg=0.3225806451612903 top=10 n=1
+cmp	exp~c~10~2026~5~3|2026,5,10,25,2026,6,400	this=[0,0,0,0,0,0,0,0,0,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=10 lt=0 days=31
+totals	exp~c~10~2026~5~3|2026,5,10,28,2026,6,1	today=0 avg=0.3225806451612903 top=10 n=1
+cmp	exp~c~10~2026~5~3|2026,5,10,28,2026,6,1	this=[0,0,0,0,0,0,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=10 lt=0 days=31
+totals	exp~c~10~2026~5~3|2026,5,10,28,2026,6,5	today=0 avg=0.3225806451612903 top=10 n=1
+cmp	exp~c~10~2026~5~3|2026,5,10,28,2026,6,5	this=[0,0,0,0,0,0,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=10 lt=0 days=31
+totals	exp~c~10~2026~5~3|2026,5,10,28,2026,6,40	today=0 avg=0.3225806451612903 top=10 n=1
+cmp	exp~c~10~2026~5~3|2026,5,10,28,2026,6,40	this=[0,0,0,0,0,0,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=10 lt=0 days=31
+totals	exp~c~10~2026~5~3|2026,5,10,28,2026,6,400	today=0 avg=0.3225806451612903 top=10 n=1
+cmp	exp~c~10~2026~5~3|2026,5,10,28,2026,6,400	this=[0,0,0,0,0,0,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10] last=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] tt=10 lt=0 days=31
+trend	exp~c~10~2026~1~3^exp~c~20~2026~0~3^exp~c~30~2026~-1~3^exp~c~40~2026~-2~3^exp~c~50~2026~-3~3^exp~c~60~2026~-4~3^exp~c~70~2026~-5~3^exp~c~80~2026~-6~3|2026,1,15,1	2025-8-1:60,2025-9-1:50,2025-10-1:40,2025-11-1:30,2026-0-1:20,2026-1-1:10
+trend	exp~c~10~2026~1~3^exp~c~20~2026~0~3^exp~c~30~2026~-1~3^exp~c~40~2026~-2~3^exp~c~50~2026~-3~3^exp~c~60~2026~-4~3^exp~c~70~2026~-5~3^exp~c~80~2026~-6~3|2026,1,15,25	2025-7-25:60,2025-8-25:50,2025-9-25:40,2025-10-25:30,2025-11-25:20,2026-0-25:10
+trend	exp~c~10~2026~0~3^exp~c~20~2026~-1~3^exp~c~30~2026~-2~3^exp~c~40~2026~-3~3^exp~c~50~2026~-4~3^exp~c~60~2026~-5~3^exp~c~70~2026~-6~3^exp~c~80~2026~-7~3|2026,0,15,1	2025-7-1:60,2025-8-1:50,2025-9-1:40,2025-10-1:30,2025-11-1:20,2026-0-1:10
+trend	exp~c~10~2026~0~3^exp~c~20~2026~-1~3^exp~c~30~2026~-2~3^exp~c~40~2026~-3~3^exp~c~50~2026~-4~3^exp~c~60~2026~-5~3^exp~c~70~2026~-6~3^exp~c~80~2026~-7~3|2026,0,15,25	2025-6-25:60,2025-7-25:50,2025-8-25:40,2025-9-25:30,2025-10-25:20,2025-11-25:10
+trend	exp~c~10~2025~11~3^exp~c~20~2025~10~3^exp~c~30~2025~9~3^exp~c~40~2025~8~3^exp~c~50~2025~7~3^exp~c~60~2025~6~3^exp~c~70~2025~5~3^exp~c~80~2025~4~3|2025,11,15,1	2025-6-1:60,2025-7-1:50,2025-8-1:40,2025-9-1:30,2025-10-1:20,2025-11-1:10
+trend	exp~c~10~2025~11~3^exp~c~20~2025~10~3^exp~c~30~2025~9~3^exp~c~40~2025~8~3^exp~c~50~2025~7~3^exp~c~60~2025~6~3^exp~c~70~2025~5~3^exp~c~80~2025~4~3|2025,11,15,25	2025-5-25:60,2025-6-25:50,2025-7-25:40,2025-8-25:30,2025-9-25:20,2025-10-25:10

@@ -1,0 +1,5400 @@
+rows	ec:-12.5 ez:5
+rows	em:1e-9 ea:99.990000001
+rows	eq:12.5
+rows	em:-0.5 ea:-99.99
+rows	
+rows	
+rows	ez:12.5 em:-1
+rows	
+rows	ec:0
+rows	
+rows	
+rows	
+rows	eq:1000000000000000 eb:-0.1 em:12.5 ea:12.5
+rows	
+rows	eb:0.1
+rows	
+rows	
+rows	
+rows	ec:-12.5 ea:-1000000000000000 em:1
+rows	
+rows	
+rows	ez:-99.99
+rows	
+rows	
+rows	ec:5
+rows	em:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	em:3.1 ec:-1 eq:1 ef:-5 ez:-1
+rows	
+rows	em:-0.100000001
+rows	
+rows	
+rows	
+rows	ec:-0.1 ez:-0.1 ea:-99.99
+rows	
+rows	em:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:-12.5 eq:-5 ea:0 ec:5
+rows	em:-0.1
+rows	ec:-5
+rows	
+rows	
+rows	
+rows	ec:0.1
+rows	em:1000000000000001
+rows	ez:-0.6
+rows	ez:0.1
+rows	
+rows	
+rows	em:15.5
+rows	em:-14.5 ez:0
+rows	ec:0
+rows	ec:0
+rows	
+rows	
+rows	ea:-1 em:-1000000000000000 ez:-0.1 ec:-1
+rows	
+rows	eq:0.1
+rows	
+rows	
+rows	
+rows	em:0.1 ez:-99.99 ec:1000000000000000
+rows	eq:-5
+rows	ea:-1000000000000000
+rows	
+rows	
+rows	
+rows	ez:5 ec:1
+rows	ea:0.1
+rows	ea:-0.6
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-12.5
+rows	ec:-1000000000000000
+rows	
+rows	
+rows	em:-0.1 ez:-99.99
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:-0.1 eb:0
+rows	em:1 ef:-12.5 ea:-99.99
+rows	ef:12.500000001
+rows	ez:12.5
+rows	
+rows	
+rows	
+rows	
+rows	ez:-12.5 ea:-5
+rows	
+rows	
+rows	
+rows	
+rows	em:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	em:-12.5 ec:12.5 eq:5 ef:0 ea:-99.99
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	eq:0 em:-99.99
+rows	ea:-0.1 ef:0 ez:-1
+rows	
+rows	ea:0.1 eb:1000000000000000
+rows	
+rows	
+rows	ea:-3
+rows	
+rows	ec:-1000000000000000 em:-1000000000000000
+rows	
+rows	
+rows	
+rows	em:4
+rows	ec:5
+rows	em:-1
+rows	
+rows	
+rows	
+rows	ec:0
+rows	
+rows	em:-99.99
+rows	
+rows	
+rows	
+rows	ef:-1000000000000000 ec:-1 em:-1 ez:-1
+rows	eb:-100.49
+rows	
+rows	eq:-1000000000000000
+rows	
+rows	
+rows	eq:-0.1 ez:-0.1
+rows	
+rows	ec:-99.99 ea:-1
+rows	em:0.1
+rows	
+rows	
+rows	ec:12.5 ez:1
+rows	em:1 ea:-0.1
+rows	em:0
+rows	
+rows	
+rows	
+rows	em:-1.000000001 ec:-1000000000000000 ea:-99.99
+rows	
+rows	
+rows	ez:-0.1
+rows	
+rows	
+rows	em:0
+rows	
+rows	ec:-12.5 ez:1
+rows	ez:-1
+rows	
+rows	
+rows	
+rows	em:-5
+rows	
+rows	
+rows	
+rows	
+rows	ea:-99.99 em:0 ez:0.1
+rows	ec:-12.5
+rows	em:0 ec:12.5
+rows	
+rows	
+rows	
+rows	ez:0 em:1
+rows	ea:-99.99
+rows	
+rows	
+rows	
+rows	
+rows	ec:-5 eq:5 ez:-1000000000000000
+rows	
+rows	ea:-99.99
+rows	
+rows	
+rows	
+rows	
+rows	em:-1
+rows	em:1
+rows	
+rows	
+rows	
+rows	ez:0.1
+rows	em:99.99 ec:1
+rows	ec:-1
+rows	
+rows	
+rows	
+rows	ez:-5 em:-1000000000000000
+rows	ea:1000000000000003
+rows	ec:1e-9
+rows	
+rows	
+rows	
+rows	ec:-1000000000000000 em:0 ez:-12.5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:1000000000000000 ec:-99.99 eq:99.99 ez:-0.1
+rows	eq:-99.99
+rows	
+rows	ea:0
+rows	
+rows	
+rows	ec:1
+rows	em:-1000000000000000 ez:5
+rows	ec:-1
+rows	
+rows	
+rows	
+rows	ec:-1 ez:-1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:5
+rows	
+rows	
+rows	em:-1000000000000000
+rows	
+rows	
+rows	ec:-5 ez:-0.1 em:-12.5
+rows	ea:-1000000000000000
+rows	eq:0
+rows	eq:0
+rows	
+rows	
+rows	
+rows	em:-99.99
+rows	
+rows	
+rows	
+rows	
+rows	em:-0.1
+rows	
+rows	ez:0
+rows	ec:-2
+rows	
+rows	
+rows	
+rows	em:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	ea:-5 ec:-12.5 ez:-12.5
+rows	ea:5
+rows	em:-0.1
+rows	
+rows	
+rows	
+rows	em:5 eq:0
+rows	ez:1 ef:1000000000000000
+rows	
+rows	ea:1000000000000000 ef:-1000000000000000
+rows	
+rows	
+rows	ec:12.5 ez:-99.99
+rows	em:99.99
+rows	
+rows	
+rows	
+rows	
+rows	ez:-99.990000001 ea:99.99 eq:-1
+rows	
+rows	em:0
+rows	
+rows	
+rows	
+rows	ea:-0.1 em:0.100000001
+rows	ef:1000000000000000
+rows	eq:-5
+rows	
+rows	
+rows	
+rows	ez:-0.1 em:1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:1000000000000000 ez:-1000000000000000 ea:1000000000000000 eb:-5
+rows	
+rows	
+rows	ec:-5 eq:-99.99
+rows	
+rows	
+rows	em:5 ez:-1 eb:1
+rows	
+rows	
+rows	ef:-1.5 ec:99.99 ea:-99.990000001
+rows	
+rows	
+rows	em:5 ec:12.5
+rows	
+rows	
+rows	ez:5
+rows	
+rows	
+rows	
+rows	
+rows	ez:-12.5
+rows	ec:1000000000000000
+rows	
+rows	
+rows	ea:1000000000000000 eq:5 eb:0 ec:-0.1
+rows	ef:-1
+rows	em:-1 ez:-1000000000000000
+rows	
+rows	
+rows	
+rows	em:-1
+rows	ea:-0.1
+rows	
+rows	ez:12.5
+rows	
+rows	
+rows	em:-0.1 ec:12.5 eq:99.99 ez:0 ef:-99.99
+rows	ea:-1000000000000000.5
+rows	
+rows	eb:5
+rows	
+rows	
+rows	eq:-0.1
+rows	
+rows	ec:0
+rows	em:-12.5
+rows	
+rows	
+rows	ez:-1000000000000000 ea:-5
+rows	ec:-0.1
+rows	
+rows	eq:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	em:1000000000000000
+rows	ec:-5
+rows	
+rows	
+rows	ez:-0.1 eq:0 em:-1000000000000000 ec:12.5 ea:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ea:5 eq:-14.5 ez:0 ec:5
+rows	
+rows	
+rows	em:-99.99
+rows	
+rows	
+rows	ez:0.1 eq:-0.1 ea:102.99 em:-12.5
+rows	
+rows	ec:-12.5
+rows	em:15.5
+rows	
+rows	
+rows	eq:-5
+rows	
+rows	em:1000000000000000
+rows	ez:0
+rows	
+rows	
+rows	em:-1 ec:5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-99.99
+rows	
+rows	ec:-12.500000001
+rows	ea:0.1 eq:-99.99
+rows	
+rows	
+rows	ea:-5 eq:-1000000000000000 ec:-5 ez:0
+rows	
+rows	em:0
+rows	
+rows	
+rows	
+rows	ec:-12.5 em:-1000000000000000.5
+rows	ea:13.5
+rows	
+rows	ea:-12.5
+rows	
+rows	
+rows	em:-0.1 ea:0 ez:-12.5 eq:1
+rows	
+rows	ec:-0.1
+rows	ef:0
+rows	
+rows	
+rows	em:99.99
+rows	
+rows	ez:99.99 ec:-1
+rows	
+rows	
+rows	
+rows	ez:0 ef:1000000000000000 em:1000000000000000 ec:0
+rows	eq:1000000000000003 ea:1
+rows	ea:0
+rows	eq:-1000000000000002
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-99.99
+rows	
+rows	
+rows	ec:-0.1 ez:-12.5 ea:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:99.99 em:5 ea:99.99
+rows	ec:1
+rows	
+rows	
+rows	
+rows	
+rows	ez:5
+rows	
+rows	ec:-5 eq:99.99
+rows	ea:-99.99 ef:12.5
+rows	
+rows	
+rows	ec:1000000000000000
+rows	
+rows	
+rows	em:-1000000000000000
+rows	
+rows	
+rows	ec:4.999999999
+rows	ec:-5
+rows	
+rows	
+rows	
+rows	
+rows	eq:12.5 ef:5 em:-1000000000000000 ea:0.1
+rows	
+rows	ec:1000000000000000
+rows	
+rows	
+rows	
+rows	ec:12.5 ea:1000000000000000 ez:-12.5
+rows	em:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	eq:1 ec:-1
+rows	ea:0
+rows	ef:0
+rows	ez:-1000000000000000 em:0.1
+rows	
+rows	
+rows	ec:-5 em:0 ez:5
+rows	ea:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	em:12.5 ea:99.990000001 eq:-100.49
+rows	eq:99.99
+rows	ea:-101.99 ef:0.1
+rows	ez:5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:-99.99 em:-12.5 ez:0 eq:-1
+rows	
+rows	ea:-1000000000000000
+rows	ea:1000000000000000
+rows	
+rows	
+rows	em:-1000000000000000
+rows	
+rows	ec:5
+rows	
+rows	
+rows	
+rows	em:0.1
+rows	eq:0
+rows	ec:99.99 ea:-0.1
+rows	eq:0 ez:-99.99 ea:0.1
+rows	
+rows	
+rows	em:0
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:-99.99
+rows	ea:-12.5 em:-1000000000000000
+rows	ez:1
+rows	
+rows	
+rows	em:0 ef:1 eq:0 ez:99.99 ea:-12.5
+rows	ec:99.99 eb:12.5
+rows	
+rows	
+rows	
+rows	
+rows	ef:99.99 ec:-99.99
+rows	eq:-12.5
+rows	
+rows	ea:13.5
+rows	
+rows	
+rows	em:-1 ec:-5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	eq:0 em:1 ea:-1 ez:1000000000000000
+rows	eq:0
+rows	
+rows	
+rows	
+rows	
+rows	em:-0.1
+rows	
+rows	
+rows	ez:-99.99
+rows	
+rows	
+rows	em:99.99 ez:5 ec:0
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ea:5
+rows	em:4.5
+rows	ec:-12.5 eq:-4.999999999
+rows	ez:0
+rows	
+rows	
+rows	em:1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ef:-1 ec:-1000000000000000 ez:-12.5 ea:-99.99
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	eq:-12.5 em:99.99 ec:0 ea:0
+rows	
+rows	
+rows	ez:-1
+rows	
+rows	
+rows	ec:-1000000000000000 em:-1000000000000000 ez:0
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:99.99 em:-1
+rows	
+rows	ec:-99.99
+rows	
+rows	
+rows	
+rows	eb:99.99 ea:-99.99
+rows	ec:-99.99 ef:12.5
+rows	em:-0.1
+rows	ez:-5
+rows	
+rows	
+rows	ez:0
+rows	ea:-1000000000000000.5
+rows	
+rows	ea:1000000000000000 ec:-1
+rows	
+rows	
+rows	ez:-99.99 ef:0 ec:0
+rows	em:1
+rows	ea:5
+rows	eq:-1000000000000000.5
+rows	
+rows	
+rows	ez:99.99
+rows	
+rows	ec:-0.1 em:0
+rows	
+rows	
+rows	
+rows	em:-5
+rows	
+rows	ez:12.5
+rows	ea:-12.5
+rows	
+rows	
+rows	ea:1 ef:-12.5 ec:-0.1
+rows	em:-99.99
+rows	eb:-5
+rows	eq:-99.99
+rows	
+rows	
+rows	em:-1 eq:99.990000001 ec:0
+rows	
+rows	ez:12.5 ea:12.5 eq:-99.99
+rows	
+rows	
+rows	
+rows	ea:-99.99
+rows	ec:-0.5
+rows	em:-12.500000001
+rows	em:12.500000001
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:-12.5 em:0
+rows	
+rows	ec:-1000000000000000
+rows	
+rows	
+rows	
+rows	ec:-1000000000000000 ea:0
+rows	
+rows	
+rows	ez:0
+rows	
+rows	
+rows	ec:1000000000000000 ea:-12.5 eq:0.1 ef:12.5 ez:-0.1
+rows	em:4
+rows	em:-1
+rows	
+rows	
+rows	
+rows	ef:-1000000000000000 ez:99.99 ea:5
+rows	
+rows	
+rows	ec:-0.1
+rows	
+rows	
+rows	ef:1000000000000000 ez:-1000000000000002
+rows	em:5 eq:12.500000001
+rows	ec:0 ea:-1e-9
+rows	ea:0
+rows	
+rows	
+rows	em:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-0.1
+rows	
+rows	ez:5
+rows	
+rows	
+rows	
+rows	ez:-5 eq:0 em:4.999999999
+rows	
+rows	
+rows	ec:1
+rows	
+rows	
+rows	em:99.99 ef:0.1 eq:-5 eb:0.1 ez:-0.1
+rows	ec:99.99
+rows	ea:-12.5
+rows	
+rows	
+rows	
+rows	eq:-1000000000000000 em:5 eb:-0.1 ez:5 ea:-99.99
+rows	
+rows	
+rows	ef:-1000000000000000
+rows	
+rows	
+rows	em:99.99 eq:5
+rows	
+rows	ez:-12.5
+rows	
+rows	
+rows	
+rows	ea:-1000000000000000 ec:-99.99 eq:1
+rows	em:0
+rows	
+rows	
+rows	
+rows	
+rows	ez:-0.1
+rows	
+rows	em:0 ec:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-0.1
+rows	ec:0
+rows	
+rows	
+rows	ez:1
+rows	ec:1000000000000000 em:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	ea:-1 eq:-1000000000000000 eb:-1000000000000000 ec:-1
+rows	em:-0.1 ez:5
+rows	
+rows	ef:0.1
+rows	
+rows	
+rows	ez:5 em:-5
+rows	ez:-5
+rows	ec:0
+rows	
+rows	
+rows	
+rows	
+rows	ez:-0.1
+rows	
+rows	ec:5 em:5
+rows	
+rows	
+rows	
+rows	
+rows	ec:-0.1
+rows	ec:0.1
+rows	
+rows	
+rows	
+rows	em:-1
+rows	em:1
+rows	
+rows	
+rows	
+rows	ec:5
+rows	em:0.1
+rows	
+rows	
+rows	
+rows	
+rows	em:-0.1
+rows	
+rows	
+rows	ec:12.5
+rows	
+rows	
+rows	em:-0.1
+rows	em:1.1
+rows	
+rows	
+rows	
+rows	
+rows	ec:0 em:-99.99
+rows	ez:0
+rows	
+rows	
+rows	
+rows	
+rows	ea:-2 eb:0 em:1000000000000000
+rows	
+rows	ez:-1000000000000000
+rows	ef:12.5 eq:99.99 ec:3
+rows	
+rows	
+rows	em:12.5 ez:0 ea:-1000000000000000
+rows	ea:1000000000000000
+rows	em:-12.5
+rows	ec:-14.5
+rows	
+rows	
+rows	ea:0.1
+rows	em:1e-9 eq:0.1
+rows	
+rows	ec:0 em:-0.5
+rows	
+rows	
+rows	em:-1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	eb:-1000000000000000 em:-99.99 eq:-0.1 ez:1
+rows	ef:-5
+rows	ef:4.999999999 ea:-1000000000000000
+rows	
+rows	
+rows	
+rows	ec:99.99 ez:-1000000000000000 ef:0 em:1 eq:99.99
+rows	
+rows	ea:1 em:-3
+rows	
+rows	
+rows	
+rows	em:-1000000000000000 ec:-1000000000000000
+rows	
+rows	ea:5 ez:3
+rows	ez:0
+rows	
+rows	
+rows	ea:-99.99 ec:0
+rows	
+rows	ez:-1000000000000000
+rows	em:-99.990000001
+rows	
+rows	
+rows	ea:0.1 ez:0.1 ef:5
+rows	ea:-0.6 em:0
+rows	ec:-1000000000000000 eq:-12.5
+rows	
+rows	
+rows	
+rows	ec:-1 ea:0 em:-12.5
+rows	eq:0
+rows	ez:-0.1 ef:99.99
+rows	
+rows	
+rows	
+rows	ec:99.99 ea:-1000000000000000 ez:-1000000000000000
+rows	
+rows	
+rows	em:0
+rows	
+rows	
+rows	ec:-2
+rows	
+rows	em:-12.5 ec:3
+rows	
+rows	
+rows	
+rows	ez:12.5 ec:-99.99 em:0
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ea:0 ec:-5 ef:1000000000000000 eb:0
+rows	em:1
+rows	
+rows	ez:0
+rows	
+rows	
+rows	em:-1 ec:-12.5 ea:0 eq:-99.99
+rows	ez:-1
+rows	
+rows	
+rows	
+rows	
+rows	eq:-12.5 ef:99.99 eb:-5 ea:0
+rows	
+rows	em:5
+rows	
+rows	
+rows	
+rows	ec:12.5
+rows	
+rows	em:1000000000000000 ea:99.990000001
+rows	ez:0
+rows	
+rows	
+rows	ez:-12.5
+rows	
+rows	ec:-12.5 ea:5
+rows	eq:99.99
+rows	
+rows	
+rows	eb:5
+rows	em:-12.5
+rows	ez:0.1 ec:0
+rows	eq:0 ea:0
+rows	
+rows	
+rows	em:5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	eq:-12.500000001 eb:-0.1
+rows	ef:0 ez:-5
+rows	ea:5 ez:5
+rows	em:99.99
+rows	
+rows	
+rows	em:-12.5 ef:-1 eb:-0.1
+rows	eq:-99.99
+rows	ec:5 ez:-99.99 eq:99.990000001
+rows	
+rows	
+rows	
+rows	ef:-1 ec:-1000000000000000 eq:-99.99
+rows	ez:0
+rows	ea:12.5 ez:0
+rows	em:-1
+rows	
+rows	
+rows	ea:-4 eq:-12.5
+rows	ea:5 ez:-0.1
+rows	
+rows	ec:-12.5 ez:0.100000001
+rows	
+rows	
+rows	eb:-0.1
+rows	ec:-99.99 ea:0.1
+rows	
+rows	eq:-0.1
+rows	
+rows	
+rows	em:5 ec:5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ea:-0.1 ec:2 ez:12.5 eq:-1 ef:-12.5
+rows	
+rows	
+rows	ec:-1.5
+rows	
+rows	
+rows	em:-0.1 ec:1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	eq:0.1
+rows	ez:1000000000000000
+rows	ea:0.1 ec:-1
+rows	ef:0.1
+rows	
+rows	
+rows	em:5
+rows	ez:-1
+rows	
+rows	
+rows	
+rows	
+rows	em:-12.5
+rows	
+rows	ea:1 ec:-1
+rows	ea:-3
+rows	
+rows	
+rows	
+rows	ec:-1.000000001
+rows	em:-5 ea:-5
+rows	ez:-1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:-99.99
+rows	
+rows	em:-1e-9
+rows	
+rows	
+rows	
+rows	em:0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:-5 em:0.1
+rows	ez:-0.100000001
+rows	
+rows	
+rows	
+rows	
+rows	ea:1 ec:0.1 eb:-99.99 em:-1 ez:0 ef:1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:5 ec:-99.99 eq:0 ef:0.1 ea:0
+rows	
+rows	
+rows	eb:1 ez:-0.1
+rows	
+rows	
+rows	em:-12.5
+rows	ec:0.1
+rows	
+rows	
+rows	
+rows	
+rows	ec:-0.1 ea:-99.99 ez:-12.5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	eq:-1 em:0 ec:-12.5 ez:99.99
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:99.99
+rows	
+rows	
+rows	ea:-1 eb:5 eq:1000000000000000
+rows	
+rows	
+rows	ec:1 ez:0
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:-1
+rows	
+rows	
+rows	ec:-1 ez:-99.99 eq:-99.99 ef:-12.5 eb:5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ef:-1 eq:0.1 ec:99.99 ez:-1 ea:1
+rows	em:-99.99
+rows	
+rows	
+rows	
+rows	
+rows	ea:0 em:-12.5 eq:0
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-12.5 ec:5
+rows	
+rows	
+rows	ez:1000000000000000
+rows	
+rows	
+rows	ec:1 ez:-1000000000000000 ea:-1
+rows	
+rows	
+rows	em:-13
+rows	
+rows	
+rows	ea:-1 ez:-99.99 ef:-1000000000000000 em:0.1 ec:1000000000000000
+rows	
+rows	eq:12.5
+rows	
+rows	
+rows	
+rows	ez:-99.99 ec:1000000000000000 ea:0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:102.99
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-1000000000000000 ec:-1 ef:5
+rows	
+rows	em:1000000000000000
+rows	ez:-99.99
+rows	
+rows	
+rows	ez:-1000000000000000 eq:-0.1 ec:-1e-9 em:-1
+rows	ec:0
+rows	
+rows	
+rows	
+rows	
+rows	em:-0.1 ec:-0.5
+rows	
+rows	ec:1e-9 ez:-12.5
+rows	
+rows	
+rows	
+rows	em:-99.99
+rows	em:100.99
+rows	
+rows	
+rows	
+rows	
+rows	ea:0 ec:-1000000000000000 ef:-1 em:-1000000000000000
+rows	
+rows	ef:1 eq:12.5
+rows	
+rows	
+rows	
+rows	ec:1 eq:0 ez:-12.5
+rows	
+rows	em:0
+rows	
+rows	
+rows	
+rows	em:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-1 ez:0 ef:-99.99 eb:-1 ea:99.99 eq:0
+rows	
+rows	ec:-0.1
+rows	em:1
+rows	
+rows	
+rows	
+rows	ec:5
+rows	
+rows	em:12.5
+rows	
+rows	
+rows	
+rows	ea:99.99
+rows	ef:0 em:-5 ec:1.1
+rows	ez:12.5 eq:-0.1 ef:0 ec:-0.1
+rows	
+rows	
+rows	eq:0 ec:0 ez:1 eb:-1000000000000000
+rows	em:12.5
+rows	ef:5 em:-12.500000001
+rows	
+rows	
+rows	
+rows	ec:-1000000000000000
+rows	ez:12.5
+rows	em:0
+rows	
+rows	
+rows	
+rows	em:0
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:-0.1 ea:1000000000000000 em:5
+rows	
+rows	ec:99.99
+rows	
+rows	
+rows	
+rows	em:1
+rows	
+rows	ec:-12.5
+rows	
+rows	
+rows	
+rows	ec:0 eq:0 em:5 ea:-1000000000000000
+rows	
+rows	ez:5
+rows	
+rows	
+rows	
+rows	em:0 ec:1000000000000000 ez:5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:1000000000000000
+rows	
+rows	em:-99.99
+rows	em:99.99
+rows	
+rows	
+rows	
+rows	ea:1
+rows	ez:5 em:0.1 ec:5
+rows	
+rows	
+rows	
+rows	ea:12.5 ez:0
+rows	
+rows	
+rows	ec:-1000000000000000.5
+rows	
+rows	
+rows	eb:-12.5 em:1000000000000000 ef:-0.1 ea:-99.99
+rows	
+rows	ez:15.5
+rows	ec:-0.1
+rows	
+rows	
+rows	eq:0 ea:-12.5 ec:5 ez:0 ef:0
+rows	
+rows	
+rows	em:0
+rows	
+rows	
+rows	ec:-12.5 ez:1000000000000000 eb:-1
+rows	ef:0.1
+rows	
+rows	em:-1.5
+rows	
+rows	
+rows	ef:99.99 eq:0
+rows	
+rows	em:12.5 ec:-2.1
+rows	ez:99.99
+rows	
+rows	
+rows	ea:0 ef:-12.5 eb:99.99 em:-1000000000000000 ec:5
+rows	ez:1000000000000000 eq:-0.6
+rows	
+rows	ez:-1000000000000000
+rows	
+rows	
+rows	em:-1e-9
+rows	em:1e-9
+rows	
+rows	
+rows	
+rows	
+rows	em:-1 ea:0 ez:12.5 ec:-1000000000000000
+rows	eq:-0.1
+rows	eq:1.1
+rows	
+rows	
+rows	
+rows	em:1000000000000000 ez:-12.5 eq:0
+rows	
+rows	ec:-12.5
+rows	
+rows	
+rows	
+rows	em:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ea:-5
+rows	ez:-0.1
+rows	ec:0
+rows	
+rows	
+rows	
+rows	ec:-99.99 ef:-0.1 ea:0 em:-1000000000000000
+rows	eq:1
+rows	
+rows	
+rows	
+rows	
+rows	ec:-1000000000000000 ea:-1 em:-1000000000000000
+rows	
+rows	ez:1
+rows	
+rows	
+rows	
+rows	em:12.5 ec:-0.1 ez:-1000000000000000
+rows	ea:5
+rows	
+rows	
+rows	
+rows	
+rows	ez:-99.99 em:-1000000000000000
+rows	ec:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:0.1
+rows	
+rows	
+rows	ea:-1 eb:-0.1 ez:1000000000000001
+rows	eq:5
+rows	
+rows	em:-1000000000000000
+rows	
+rows	
+rows	eq:-0.1 em:5 ec:-1 ef:1000000000000000 ea:5 ez:0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:0
+rows	
+rows	ec:-99.99 ea:-12.5 ez:0
+rows	em:1000000000000003
+rows	
+rows	
+rows	em:-1
+rows	ea:12.5
+rows	
+rows	ec:1000000000000000 ez:-12.5 eq:5
+rows	
+rows	
+rows	ez:-1
+rows	ec:-0.1
+rows	em:1000000000000000
+rows	ea:1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	em:-1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:5
+rows	
+rows	
+rows	ea:-12.5 em:5
+rows	ec:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	em:-99.99 ec:5 ez:0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:5
+rows	
+rows	
+rows	
+rows	
+rows	em:1000000000000000
+rows	
+rows	
+rows	
+rows	em:-5 ea:5 ef:1000000000000000 ez:-5 eq:-12.5
+rows	
+rows	eb:-0.1
+rows	ec:12.5 eq:12.5
+rows	
+rows	
+rows	em:5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:-12.5 ec:0
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:12.5 ea:5 em:0
+rows	eq:0 ez:0.1
+rows	ea:-4.999999999
+rows	
+rows	
+rows	em:4.5 ea:-5 ef:-12.5 ec:1.000000001
+rows	
+rows	eb:12.5 em:-5 ez:1000000000000000 eq:0
+rows	
+rows	
+rows	
+rows	eq:-0.1 em:0.1 ec:-1 ez:5
+rows	ea:-1
+rows	
+rows	
+rows	
+rows	
+rows	ez:5 ea:0 em:5 ec:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ea:4.5 eq:-99.99
+rows	ea:-5 ec:-1 ez:0
+rows	
+rows	
+rows	
+rows	ea:1
+rows	
+rows	ez:-99.990000001 ec:-12.5 em:-12.5
+rows	
+rows	
+rows	
+rows	em:5
+rows	
+rows	
+rows	ec:-0.1
+rows	
+rows	
+rows	em:-5 ec:12.5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-0.1
+rows	
+rows	ec:-1
+rows	ez:4
+rows	
+rows	
+rows	eq:-1 ef:-99.99
+rows	ea:-0.1
+rows	ez:-5
+rows	em:0
+rows	
+rows	
+rows	ec:-99.99 ez:1
+rows	ec:99.99
+rows	
+rows	
+rows	
+rows	
+rows	em:-12.5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-99.99 ez:-5
+rows	ea:-3
+rows	ea:1
+rows	ec:-1
+rows	
+rows	
+rows	em:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-1 ea:5 eq:0
+rows	ez:-0.1
+rows	ez:0.1
+rows	
+rows	
+rows	
+rows	em:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ea:0.1 em:5 eq:0
+rows	
+rows	ec:1000000000000000 eq:1e-9
+rows	ec:-1000000000000000
+rows	
+rows	
+rows	em:-12.5
+rows	
+rows	ea:-0.1
+rows	
+rows	
+rows	
+rows	em:-1 ec:1e-9 ez:-5 eq:12.5 ea:1
+rows	ec:0
+rows	
+rows	
+rows	
+rows	
+rows	ec:-99.99 em:-0.1
+rows	
+rows	ez:-0.1
+rows	
+rows	
+rows	
+rows	ea:-1 ez:0.1
+rows	
+rows	em:-5
+rows	ec:102.99
+rows	
+rows	
+rows	em:-99.99
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ef:-1000000000000000 ec:99.99 eq:-0.1 eb:0.1
+rows	
+rows	ec:-100.49 em:5
+rows	ez:-12.5
+rows	
+rows	
+rows	ez:-99.99 em:-1000000000000000 ec:-1
+rows	
+rows	
+rows	eq:-1 ea:5
+rows	
+rows	
+rows	ez:-12.5 em:4.999999999 ec:-99.99
+rows	ef:-0.1 eq:-99.99
+rows	ea:99.99 em:-5
+rows	
+rows	
+rows	
+rows	em:-99.99 ea:0
+rows	
+rows	ez:12.5
+rows	
+rows	
+rows	
+rows	em:-1000000000000000 ez:-1000000000000000 ec:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-0.1 ec:99.99 eq:5 ea:1e-9
+rows	ez:1
+rows	ec:-99.99 ea:-1e-9
+rows	
+rows	
+rows	
+rows	em:99.99
+rows	ez:1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	ea:-2
+rows	
+rows	ea:4.999999999
+rows	
+rows	
+rows	
+rows	ea:-12.5 ec:-1
+rows	ef:0
+rows	em:-1
+rows	
+rows	
+rows	
+rows	em:-0.1
+rows	
+rows	
+rows	em:3.1
+rows	
+rows	
+rows	ec:5 eq:-1000000000000000
+rows	em:-1000000000000000 ez:0
+rows	
+rows	ez:0
+rows	
+rows	
+rows	em:-1 ec:-99.99 ez:-12.5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ea:1 eq:1000000000000000 ec:12.5 ef:0 eb:1
+rows	ez:-1
+rows	em:12.5
+rows	ec:-12.5 eb:-1
+rows	
+rows	
+rows	
+rows	em:13.5
+rows	
+rows	
+rows	
+rows	
+rows	ec:-0.1 ea:5
+rows	ez:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	em:0 ec:1 ea:0 eq:-1 ez:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-99.99 ez:-0.6
+rows	ec:-0.1
+rows	
+rows	ez:3.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	eq:0 em:12.5 ec:-1
+rows	ez:4.999999999
+rows	
+rows	ef:-1
+rows	
+rows	
+rows	eq:1 em:0 ea:-1000000000000000
+rows	ec:0 ez:-99.99
+rows	ez:102.99
+rows	
+rows	
+rows	
+rows	ec:0 em:-1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:-99.99
+rows	em:0.1
+rows	
+rows	
+rows	
+rows	ez:-99.99 em:0 ec:-99.99 ea:12.5
+rows	ef:-2
+rows	
+rows	eq:-99.99
+rows	
+rows	
+rows	em:5 ec:12.5
+rows	
+rows	ez:0
+rows	ea:1 ec:-12.5
+rows	
+rows	
+rows	ec:0 eq:5 em:1
+rows	ez:0
+rows	ea:1000000000000000
+rows	
+rows	
+rows	
+rows	em:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:99.99
+rows	ez:0
+rows	em:0 ez:0
+rows	
+rows	
+rows	
+rows	ef:-5 em:5 eq:5
+rows	ea:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:-1 em:-1
+rows	
+rows	ec:99.99
+rows	
+rows	
+rows	
+rows	em:1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:0.1
+rows	
+rows	ec:-99.99
+rows	
+rows	
+rows	
+rows	ea:-1 em:0
+rows	ef:-5 ez:-4
+rows	ec:0
+rows	
+rows	
+rows	
+rows	em:1 ea:-99.99
+rows	ez:-99.99
+rows	ez:99.99
+rows	ec:12.5
+rows	
+rows	
+rows	ea:0 eq:1
+rows	ec:-12.5
+rows	eq:-1
+rows	em:-12.5 ez:-99.99
+rows	
+rows	
+rows	em:-99.99
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:-12.5 em:0.1 eb:-1.5 ec:1000000000000000
+rows	ea:1 eq:99.99
+rows	ea:0 ef:5
+rows	
+rows	
+rows	
+rows	em:5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-1 ec:-12.5 ez:-99.99 ea:-2.1 eb:0
+rows	ef:0
+rows	
+rows	eq:-1
+rows	
+rows	
+rows	ec:-1000000000000000 em:-0.1 eq:12.5
+rows	ez:0.1 ef:-14.5
+rows	ea:-99.99 em:3.1
+rows	
+rows	
+rows	
+rows	ec:5 ef:-1000000000000000.5
+rows	em:-99.99 ez:-5
+rows	
+rows	ea:-12.5
+rows	
+rows	
+rows	ec:-12.5
+rows	
+rows	em:0
+rows	
+rows	
+rows	
+rows	em:5 ea:-1 ez:5
+rows	ef:-99.99
+rows	ec:13.5 eq:-5 eb:-0.1
+rows	ez:-5
+rows	
+rows	
+rows	ez:100.99 eq:-0.1 ec:-12.5 ef:-0.1 em:-99.99
+rows	ez:-99.99
+rows	
+rows	ea:-99.990000001
+rows	
+rows	
+rows	ea:-1000000000000000 em:0 ec:-1
+rows	
+rows	
+rows	ez:99.99
+rows	
+rows	
+rows	ef:-99.99 eb:-99.99 em:0 ec:-1000000000000000 ez:5
+rows	
+rows	eq:1
+rows	
+rows	
+rows	
+rows	ec:5
+rows	em:-5 ea:0
+rows	
+rows	ez:1000000000000000 em:5
+rows	
+rows	
+rows	ez:99.99 em:1000000000000000 ef:-99.99 ec:0
+rows	
+rows	eq:-1
+rows	ef:99.990000001
+rows	
+rows	
+rows	ea:-1000000000000000 em:0.1 eq:-1 eb:1000000000000000 ec:-12.5 ef:99.99
+rows	ez:1000000000000000
+rows	
+rows	ea:1000000000000000
+rows	
+rows	
+rows	ea:5 eq:1
+rows	
+rows	
+rows	em:0.1 ez:5 ef:-1000000000000000 ec:-1
+rows	
+rows	
+rows	em:-99.99
+rows	ec:-12.5 ea:0
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:99.99
+rows	
+rows	
+rows	
+rows	em:-1000000000000000 ea:-99.99
+rows	ec:0
+rows	
+rows	ec:-1e-9
+rows	
+rows	
+rows	ec:-12.5 em:12.5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:12.5
+rows	ez:-1000000000000002
+rows	
+rows	em:-5
+rows	
+rows	
+rows	ez:-0.1 ec:1 em:-5
+rows	
+rows	
+rows	eq:0 ef:-1000000000000000
+rows	
+rows	
+rows	ea:1 ec:-0.1
+rows	
+rows	em:-1
+rows	ez:-1
+rows	
+rows	
+rows	
+rows	em:-5
+rows	
+rows	
+rows	
+rows	
+rows	em:-12.5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:-99.99
+rows	em:5
+rows	
+rows	
+rows	
+rows	
+rows	ea:0 em:99.99 eq:-5
+rows	ec:0.1
+rows	ef:1
+rows	
+rows	
+rows	
+rows	em:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:0
+rows	
+rows	
+rows	ec:-12.5
+rows	
+rows	
+rows	
+rows	
+rows	em:0
+rows	
+rows	
+rows	
+rows	ec:0.1 em:-99.99 eq:-12.5
+rows	ez:-2 ea:-1
+rows	ez:0
+rows	
+rows	
+rows	
+rows	em:0
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:0.1 ea:1 ec:-99.99 ef:1 ez:-0.1
+rows	
+rows	
+rows	ec:0
+rows	
+rows	
+rows	em:13.5
+rows	
+rows	
+rows	ea:-1
+rows	ez:0
+rows	em:-0.1 eq:-12.5
+rows	ec:-1000000000000000
+rows	
+rows	
+rows	
+rows	em:102.99 ec:-12.5
+rows	ez:-99.99
+rows	em:-99.99
+rows	
+rows	
+rows	em:-0.1 ez:-5 ec:0.1
+rows	
+rows	ea:-1000000000000000
+rows	
+rows	
+rows	
+rows	em:-1 ec:1000000000000000 ea:-1
+rows	
+rows	
+rows	ez:-99.99
+rows	
+rows	
+rows	ea:-12.5 ef:-99.99 ec:1
+rows	eq:4.5 eb:-99.99
+rows	
+rows	
+rows	
+rows	
+rows	em:-1
+rows	
+rows	em:1.000000001
+rows	
+rows	
+rows	
+rows	em:5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-1
+rows	ez:12.5
+rows	ea:-1000000000000000
+rows	ec:-1000000000000000
+rows	
+rows	
+rows	em:5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:0 ec:1 ez:-12.5 eq:0 eb:-5
+rows	eq:0
+rows	em:1 ea:-5 ef:5
+rows	ea:5
+rows	
+rows	
+rows	ea:-0.1 eq:5 em:5 ez:-12.5 ef:-99.99
+rows	ec:4
+rows	ec:-1
+rows	
+rows	
+rows	
+rows	em:1.000000001
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:0 ef:-5 ec:-12.5 ea:1
+rows	ez:15.5
+rows	
+rows	eq:-99.99
+rows	
+rows	
+rows	em:0
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-12.5 ea:-5 eq:1000000000000000 ef:-1
+rows	ez:-99.99
+rows	
+rows	ec:12.5
+rows	
+rows	
+rows	ez:-12.5
+rows	em:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	ec:-12.5 em:-1 ez:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-12.5 ec:0 ea:1000000000000000 eq:-12.5 ez:0
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:0.1
+rows	
+rows	em:-14.5
+rows	
+rows	
+rows	
+rows	ez:-0.1 ef:1000000000000000 ec:-1 ea:-99.99 eq:-99.99 eb:0
+rows	em:-12.5
+rows	
+rows	em:13.5
+rows	
+rows	
+rows	eq:-12.5
+rows	em:1e-9 ec:0
+rows	
+rows	
+rows	
+rows	
+rows	em:99.99
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:-99.99 ec:-1e-9 em:-5 ea:-0.1
+rows	eq:-1000000000000000
+rows	
+rows	ec:3
+rows	
+rows	
+rows	ec:1 ef:-1 eq:-5 eb:-1
+rows	
+rows	em:0 ea:-0.1
+rows	ez:-5
+rows	
+rows	
+rows	ec:99.99
+rows	ez:5
+rows	eq:-99.99
+rows	
+rows	
+rows	
+rows	ec:99.99 ea:5 eq:0 em:-0.100000001 ef:0
+rows	eb:-1000000000000000
+rows	eb:1000000000000000
+rows	
+rows	
+rows	
+rows	ef:5 em:5
+rows	ea:99.99
+rows	ec:-0.1
+rows	ec:0.1
+rows	
+rows	
+rows	
+rows	
+rows	em:5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-1
+rows	em:1
+rows	
+rows	
+rows	
+rows	
+rows	em:4.999999999
+rows	ez:0
+rows	
+rows	
+rows	ea:-1
+rows	ec:0
+rows	
+rows	ez:0.100000001
+rows	
+rows	
+rows	em:5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ea:-12.5
+rows	
+rows	ec:12.5 ez:-5
+rows	eq:-1 ec:-12.5
+rows	
+rows	
+rows	em:5 ez:-1 ec:-5
+rows	ea:1
+rows	eq:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	eq:0 ec:5
+rows	
+rows	ef:-0.1
+rows	em:-99.99
+rows	
+rows	
+rows	ez:-1000000000000000 ec:-99.99 em:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-12.5 ec:0
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:5 ez:0.1 ea:-0.1
+rows	em:-5 ef:5
+rows	ec:1000000000000000 eb:12.5
+rows	eq:1
+rows	
+rows	
+rows	ec:-12.5 ef:-5 em:-5
+rows	ea:-99.99
+rows	ef:5
+rows	
+rows	
+rows	
+rows	em:-99.99 ec:99.99
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:0 ec:-1 eq:-12.5
+rows	
+rows	eb:-99.99 ez:1
+rows	
+rows	
+rows	
+rows	em:5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:5
+rows	ec:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	ec:-0.1 ea:0
+rows	em:0.1
+rows	
+rows	
+rows	
+rows	
+rows	ez:5
+rows	
+rows	ec:-4.999999999
+rows	ec:5 em:0.1
+rows	
+rows	
+rows	ez:5 em:0.1 eq:12.5 ef:-12.5 ea:-5
+rows	ec:4
+rows	
+rows	eb:1
+rows	
+rows	
+rows	em:12.5
+rows	ec:-0.1
+rows	ez:12.5
+rows	em:-12.5
+rows	
+rows	
+rows	em:5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ea:-100.49 ec:12.5
+rows	
+rows	ez:-12.5
+rows	em:0
+rows	
+rows	
+rows	ec:-0.1 ez:1
+rows	
+rows	em:0
+rows	
+rows	
+rows	
+rows	ea:-12.5 em:0 eq:-5
+rows	ez:12.5
+rows	ec:-12.5
+rows	
+rows	
+rows	
+rows	
+rows	em:-99.99
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:0
+rows	
+rows	
+rows	
+rows	em:0.1
+rows	ec:12.5 ez:99.99
+rows	
+rows	
+rows	
+rows	
+rows	ec:5 ez:0
+rows	em:1.1
+rows	em:-2.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:5
+rows	
+rows	
+rows	
+rows	ec:-1 ez:0 ef:-1000000000000000 ea:1 em:-1000000000000000
+rows	
+rows	eq:5
+rows	
+rows	
+rows	
+rows	em:0 ez:-12.5
+rows	
+rows	ec:-99.99
+rows	
+rows	
+rows	
+rows	
+rows	em:-12.5
+rows	
+rows	
+rows	
+rows	
+rows	ea:-1000000000000000 ef:-12.5
+rows	ez:0
+rows	ec:-0.1 eq:0.1
+rows	em:-99.99
+rows	
+rows	
+rows	ec:99.99 eq:-1000000000000000
+rows	
+rows	em:99.99
+rows	ef:0.1 ea:-99.99
+rows	
+rows	
+rows	ec:-99.99 ez:-99.99 em:-1000000000000000 ea:-99.99
+rows	
+rows	ef:12.5
+rows	eq:-13
+rows	
+rows	
+rows	em:-1000000000000000
+rows	ec:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	em:-1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:-1000000000000000 ez:-12.5 em:-12.5
+rows	
+rows	eq:-1
+rows	
+rows	
+rows	
+rows	ec:99.99 em:-1000000000000000
+rows	ea:-99.99
+rows	
+rows	ez:-1000000000000000
+rows	
+rows	
+rows	ec:0.1 em:-1000000000000000
+rows	
+rows	ez:12.5
+rows	
+rows	
+rows	
+rows	ec:0 ez:0.1 em:-0.1 ea:-5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:-99.99 em:5
+rows	ea:1 ec:-1
+rows	
+rows	ea:-1 eq:1000000000000000
+rows	
+rows	
+rows	ec:-12.5
+rows	
+rows	ez:0.1
+rows	
+rows	
+rows	
+rows	em:5 ec:-1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-99.99
+rows	
+rows	
+rows	eq:-1000000000000000 ef:5 eb:0 em:-99.99 ec:0 ez:-1000000000000000
+rows	
+rows	ea:1e-9
+rows	ea:-0.5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:0 ec:-1e-9
+rows	
+rows	
+rows	em:5 ec:-1
+rows	
+rows	
+rows	ez:-12.500000001
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:12.5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-1000000000000000.5
+rows	
+rows	
+rows	ec:0
+rows	em:-1
+rows	
+rows	
+rows	
+rows	
+rows	ez:-0.1
+rows	
+rows	ec:-99.99
+rows	em:99.99
+rows	
+rows	
+rows	em:-12.5 eb:0.1 ec:5 ez:-12.5 ea:0
+rows	ef:-1
+rows	
+rows	
+rows	
+rows	
+rows	ec:0.1 eq:-99.99
+rows	eq:99.99
+rows	em:-0.1 ea:-5
+rows	ef:12.5
+rows	
+rows	
+rows	ec:0 ea:-12.500000001 eq:5
+rows	
+rows	ef:-101.99
+rows	ea:15.5
+rows	
+rows	
+rows	ez:1 eq:12.5 ea:-5 em:-12.5
+rows	
+rows	
+rows	eq:-13 ec:5
+rows	
+rows	
+rows	
+rows	
+rows	em:-1
+rows	
+rows	
+rows	
+rows	
+rows	em:1000000000000000
+rows	em:-1000000000000002
+rows	
+rows	
+rows	
+rows	
+rows	ec:13.5 ez:-12.5
+rows	
+rows	em:0
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-1.000000001
+rows	em:2
+rows	
+rows	
+rows	em:5
+rows	
+rows	
+rows	em:-5
+rows	
+rows	
+rows	em:5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:5 ea:-99.99 eq:-5
+rows	
+rows	
+rows	ec:-1
+rows	
+rows	
+rows	ez:-12.5 em:-1
+rows	ec:12.5 ea:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	eq:5 ec:5
+rows	
+rows	em:-12.5
+rows	ea:-12.5 ez:-12.5
+rows	
+rows	
+rows	em:-14.5 ea:-1000000000000000 ez:-99.99 ef:-12.5
+rows	em:13.5
+rows	ec:12.500000001
+rows	
+rows	
+rows	
+rows	ez:0 ea:-1
+rows	
+rows	
+rows	ec:0
+rows	
+rows	
+rows	ez:-1000000000000000 ea:-4.999999999 em:-5
+rows	ec:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	ec:-1
+rows	em:-3
+rows	ea:-12.5 em:1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-12.5
+rows	
+rows	
+rows	ea:-1 eq:-1000000000000000 eb:12.5 ez:-5 ef:0.1
+rows	em:-12.5 ec:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	ec:-1 ez:0.1
+rows	ea:-101.99
+rows	ef:-100.49
+rows	ef:99.99 em:5
+rows	
+rows	
+rows	em:0
+rows	ec:0
+rows	ez:1000000000000000
+rows	
+rows	
+rows	
+rows	ec:-0.1
+rows	
+rows	ez:-1000000000000000
+rows	
+rows	
+rows	
+rows	em:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ea:-14.5
+rows	ea:12.5
+rows	em:12.5 eq:12.5
+rows	ez:-13
+rows	
+rows	
+rows	ez:-0.1 em:99.99
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:2
+rows	em:-1
+rows	ez:-1000000000000000
+rows	ec:0
+rows	
+rows	
+rows	em:0
+rows	
+rows	ez:0.1
+rows	ea:99.99
+rows	
+rows	
+rows	ec:-5 ea:5 ez:1000000000000000 ef:5
+rows	
+rows	
+rows	em:0.1 eq:-5
+rows	
+rows	
+rows	em:0.1 ec:-99.99 ea:-0.1 eq:0
+rows	
+rows	ef:0 ez:-0.1
+rows	
+rows	
+rows	
+rows	ez:-1000000000000000 em:0
+rows	ea:5
+rows	ec:1000000000000000
+rows	eq:1.1
+rows	
+rows	
+rows	ez:-1
+rows	em:-99.99
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-0.1
+rows	
+rows	
+rows	ec:0 eq:-99.99
+rows	ea:-0.1
+rows	
+rows	em:-12.5 ez:-1
+rows	
+rows	
+rows	eq:-1000000000000000 em:0 ez:99.99
+rows	ec:99.99 ea:0
+rows	ef:0.1 ez:-99.990000001
+rows	
+rows	
+rows	
+rows	
+rows	em:-12.5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:102.99
+rows	em:-99.99
+rows	
+rows	
+rows	
+rows	
+rows	ec:-99.99
+rows	em:0
+rows	
+rows	
+rows	
+rows	ea:-1000000000000000 em:1 ez:0
+rows	ec:-5
+rows	
+rows	
+rows	
+rows	
+rows	ez:5 ec:12.5
+rows	
+rows	
+rows	em:0
+rows	
+rows	
+rows	
+rows	ec:1 ez:-5
+rows	em:1000000000000000 ea:-1
+rows	
+rows	
+rows	
+rows	em:-0.1 ez:-1000000000000000 eb:1000000000000000
+rows	eb:-1000000000000000
+rows	eq:5 ef:-2.1
+rows	ec:0
+rows	
+rows	
+rows	em:-99.99
+rows	
+rows	
+rows	em:99.99
+rows	
+rows	
+rows	ec:-99.99 eq:-99.99 em:-99.99
+rows	ef:12.5
+rows	ef:-13
+rows	ea:-1000000000000000.5 ez:0
+rows	
+rows	
+rows	ec:0 ef:-99.99
+rows	ez:-12.5
+rows	em:-0.6
+rows	eb:-5
+rows	
+rows	
+rows	em:0
+rows	
+rows	ec:0
+rows	
+rows	
+rows	
+rows	ef:0 eq:0
+rows	ec:-0.1
+rows	ez:-0.1
+rows	
+rows	
+rows	
+rows	em:99.99
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:-99.99 ea:5 em:1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ea:5
+rows	eq:-1000000000000000 em:0
+rows	eq:1000000000000000
+rows	ec:-12.5 ez:0
+rows	
+rows	
+rows	em:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-12.5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:1 ec:-1 ez:1000000000000000
+rows	
+rows	ez:-1000000000000000 eq:-0.1
+rows	ea:12.5
+rows	
+rows	
+rows	em:-1000000000000000 ef:-1000000000000000 ez:5
+rows	em:1000000000000000 ea:-0.1
+rows	eq:-2
+rows	eq:0 ea:3.1
+rows	
+rows	
+rows	eq:-5 ec:-1000000000000000 ef:5
+rows	ez:-99.99
+rows	
+rows	em:-0.1
+rows	
+rows	
+rows	em:-2.1 ez:-1000000000000000
+rows	
+rows	em:0.100000001
+rows	ec:12.500000001
+rows	
+rows	
+rows	em:-12.5 ec:2
+rows	ec:-1
+rows	
+rows	
+rows	
+rows	
+rows	em:1000000000000000 eb:5 ec:0 ef:0 ez:1000000000000001
+rows	ea:-0.1
+rows	
+rows	eq:5 ez:-1000000000000002
+rows	
+rows	
+rows	ef:0 eb:5 ez:5 eq:-1 ec:-0.1
+rows	
+rows	ea:12.5
+rows	em:-0.1
+rows	
+rows	
+rows	em:-12.5 ez:12.5 eq:-12.5 ec:99.99
+rows	
+rows	ef:-99.990000001
+rows	ef:100.99
+rows	
+rows	
+rows	ec:-1000000000000000 em:5
+rows	ez:0.100000001
+rows	
+rows	
+rows	
+rows	
+rows	ez:5
+rows	ec:-99.99 ea:5
+rows	em:-1000000000000000 eq:-1
+rows	
+rows	
+rows	
+rows	em:-99.99 ec:-1000000000000000
+rows	ea:5
+rows	
+rows	ez:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ea:0 ez:0
+rows	eb:1000000000000000
+rows	
+rows	eb:-1000000000000000 eq:-5 ec:0
+rows	
+rows	
+rows	ec:-0.1 eq:-1 ez:0 em:-0.1
+rows	eb:-0.1 ea:1000000000000001 ef:-0.1
+rows	ef:0.1
+rows	
+rows	
+rows	
+rows	ea:12.5 eq:-12.5 ec:-99.99 em:-1
+rows	
+rows	ez:1000000000000001
+rows	
+rows	
+rows	
+rows	ec:0 ez:1
+rows	ea:-1
+rows	
+rows	
+rows	
+rows	
+rows	ea:12.5
+rows	ez:1000000000000000
+rows	
+rows	ec:99.99 em:-5
+rows	
+rows	
+rows	
+rows	
+rows	em:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	em:0
+rows	ec:100.99
+rows	
+rows	
+rows	
+rows	
+rows	ec:1000000000000000
+rows	ez:0
+rows	
+rows	
+rows	
+rows	em:0 ec:-5 ez:-1000000000000000
+rows	
+rows	
+rows	ez:1000000000000000
+rows	
+rows	
+rows	ec:0
+rows	em:-5
+rows	
+rows	
+rows	
+rows	
+rows	ec:0.1 ez:-99.99
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:0
+rows	ea:0 em:1
+rows	ez:0.1
+rows	em:-1
+rows	
+rows	
+rows	ec:0 ea:-1
+rows	em:-0.1
+rows	ec:0 ez:1000000000000000
+rows	
+rows	
+rows	
+rows	em:-5
+rows	
+rows	
+rows	ec:-1
+rows	
+rows	
+rows	em:-1000000000000000
+rows	ec:-99.99
+rows	
+rows	
+rows	
+rows	
+rows	em:99.99 ez:1000000000000000 ec:-1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:-12.5
+rows	em:-12.5
+rows	
+rows	
+rows	
+rows	ef:-12.5 ec:1 eb:-1000000000000000
+rows	eq:0
+rows	ea:-5 em:0
+rows	eq:1e-9 em:0
+rows	
+rows	
+rows	eq:1000000000000001 ez:12.5
+rows	
+rows	ea:0.1
+rows	em:-5 ec:0 eq:-1000000000000000
+rows	
+rows	
+rows	em:-12.5
+rows	
+rows	
+rows	ec:-5
+rows	
+rows	
+rows	em:-99.99
+rows	ec:-99.99
+rows	
+rows	
+rows	
+rows	
+rows	em:99.99 ea:-5 eq:5 eb:99.99
+rows	ez:-99.99
+rows	eq:-2 ec:-0.1
+rows	ef:-0.1 ez:99.99
+rows	
+rows	
+rows	em:-0.1 eb:-1000000000000000.5
+rows	ec:-1
+rows	ef:12.5 eb:1000000000000001
+rows	ea:99.99
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	eq:-1
+rows	ea:0.1
+rows	em:-1000000000000000
+rows	eb:0
+rows	
+rows	
+rows	ea:99.990000001 ec:0.1 em:0
+rows	ea:-99.99
+rows	
+rows	ez:5
+rows	
+rows	
+rows	ez:0.1 ec:-12.5
+rows	em:5
+rows	
+rows	
+rows	
+rows	
+rows	ec:-12.5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:1000000000000000 ez:2
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ea:12.5 ec:-1000000000000000 ez:15.5 em:-12.5
+rows	eq:99.99 ez:-12.5
+rows	
+rows	
+rows	
+rows	
+rows	em:5
+rows	em:-5
+rows	ec:99.99
+rows	ez:5
+rows	
+rows	
+rows	em:-5 ec:-1000000000000000 ef:12.5 ez:-99.99 eq:0
+rows	
+rows	
+rows	ez:99.99
+rows	
+rows	
+rows	ez:12.5 em:-5 ea:-1
+rows	
+rows	
+rows	eq:5
+rows	
+rows	
+rows	ef:-12.5 em:-1 ez:0
+rows	ea:5
+rows	eq:-1000000000000000
+rows	ec:0
+rows	
+rows	
+rows	eq:-12.5 ez:-5 ea:0 em:-12.5
+rows	
+rows	
+rows	ec:0.1
+rows	
+rows	
+rows	em:-1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:-1000000000000000
+rows	
+rows	em:1.1
+rows	
+rows	
+rows	
+rows	em:99.99 ec:100.99
+rows	ec:-99.990000001
+rows	
+rows	
+rows	
+rows	
+rows	ec:-1000000000000000
+rows	
+rows	em:-12.5
+rows	
+rows	
+rows	
+rows	ec:-99.99
+rows	ea:12.5
+rows	
+rows	ez:-1000000000000000
+rows	
+rows	
+rows	ea:-1000000000000000 ez:-1000000000000000 eq:0
+rows	em:-1
+rows	
+rows	
+rows	
+rows	
+rows	ec:-1 em:1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:1 ec:5
+rows	
+rows	
+rows	em:12.5
+rows	
+rows	
+rows	em:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-1 ec:99.99 ez:5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:-1 ec:-1 ea:99.99 em:99.99
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:99.99 ec:1
+rows	
+rows	
+rows	em:1000000000000000
+rows	
+rows	
+rows	em:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:0
+rows	ec:1 ez:0
+rows	
+rows	em:-99.99
+rows	
+rows	
+rows	em:-5
+rows	ec:-1.5
+rows	
+rows	ec:1 ez:-1
+rows	
+rows	
+rows	ez:5
+rows	ec:5
+rows	
+rows	
+rows	
+rows	
+rows	em:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:0
+rows	
+rows	
+rows	em:1
+rows	
+rows	
+rows	em:-1 ea:12.5
+rows	ec:-0.1 ez:0
+rows	
+rows	
+rows	
+rows	
+rows	em:0 ef:-12.5 ec:-99.99 ea:-12.5
+rows	ez:1000000000000000
+rows	ez:-1000000000000000
+rows	eq:1.1 ea:12.5
+rows	
+rows	
+rows	em:-1000000000000000
+rows	
+rows	ec:102.99
+rows	ec:-99.99
+rows	
+rows	
+rows	eb:0 ea:-99.99 em:4.999999999 eq:12.5 ef:-5 ec:-0.1
+rows	
+rows	em:-5
+rows	eb:0 ez:0
+rows	
+rows	
+rows	ec:5
+rows	
+rows	
+rows	em:-1
+rows	
+rows	
+rows	ea:-1 ef:1000000000000000 eq:-99.99
+rows	
+rows	ez:1 eb:-1000000000000000
+rows	ez:-1.5 em:-0.1 ec:-1e-9
+rows	
+rows	
+rows	em:1000000000000000
+rows	
+rows	ec:-5
+rows	ec:3
+rows	
+rows	
+rows	em:5 eq:-0.1 ez:-0.1 ea:99.99
+rows	
+rows	ec:-0.1
+rows	ea:-101.99
+rows	
+rows	
+rows	em:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:5
+rows	
+rows	
+rows	
+rows	
+rows	ec:0.1 eq:0 em:-12.5
+rows	ef:-99.99
+rows	
+rows	ea:-5
+rows	
+rows	
+rows	ez:-0.1
+rows	ec:-100.49
+rows	ec:99.99
+rows	em:0.1
+rows	
+rows	
+rows	ez:5
+rows	em:-1000000000000000 ec:1
+rows	
+rows	
+rows	
+rows	
+rows	em:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:0 em:-1000000000000000
+rows	ea:1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:0
+rows	
+rows	
+rows	
+rows	eq:12.5 ef:-0.1 ez:-12.5 em:5 ec:0
+rows	ea:-12.5 eb:-99.99
+rows	
+rows	
+rows	
+rows	
+rows	em:13.5 ec:12.5
+rows	
+rows	em:-12.500000001
+rows	
+rows	
+rows	
+rows	em:99.99 ea:-1.5 eq:-12.5 ez:-1000000000000000
+rows	
+rows	ec:1000000000000000
+rows	
+rows	
+rows	
+rows	em:1000000000000000 ez:-1 ec:-99.99
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:0.1 ea:5
+rows	eb:5 eq:0
+rows	
+rows	ef:-13 ec:-1000000000000000
+rows	
+rows	
+rows	ea:1 em:0.1 ez:-99.99
+rows	ec:0
+rows	ez:99.99
+rows	eq:12.500000001
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:5
+rows	
+rows	
+rows	eq:0.1
+rows	ea:-99.99
+rows	
+rows	ec:0
+rows	
+rows	
+rows	em:1000000000000000 eb:-99.99 ec:-1.000000001 eq:-0.1 ez:-0.1 ef:1
+rows	ea:-0.1
+rows	
+rows	ec:1.000000001
+rows	
+rows	
+rows	ea:5 ef:12.5 ec:1000000000000000 em:1000000000000000
+rows	eb:-0.1
+rows	ez:-99.99
+rows	eq:0
+rows	
+rows	
+rows	ez:0.1
+rows	em:0
+rows	ec:0.1
+rows	ea:-1
+rows	
+rows	
+rows	ec:-0.1 ea:-5
+rows	
+rows	ez:99.99 ea:5
+rows	em:-99.99
+rows	
+rows	
+rows	em:1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	eq:0.1
+rows	
+rows	ea:-5
+rows	ef:-12.5 ec:0.1 ez:1000000000000000
+rows	
+rows	
+rows	
+rows	ec:0
+rows	em:5
+rows	ez:1
+rows	
+rows	
+rows	em:99.99 ea:99.99 eq:1 ec:-99.99
+rows	
+rows	
+rows	ez:-1000000000000002
+rows	
+rows	
+rows	ec:-0.1 em:-1000000000000000 ea:1
+rows	
+rows	
+rows	ez:-0.1
+rows	
+rows	
+rows	ec:-12.5 em:5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:12.5 ec:5
+rows	
+rows	ea:-99.99 ez:-99.99
+rows	
+rows	
+rows	
+rows	em:-1000000000000000 ef:5 ec:12.5 ea:0 ez:1000000000000000
+rows	
+rows	
+rows	ec:-12.5
+rows	
+rows	
+rows	ez:-0.1 em:-0.1 ec:0
+rows	
+rows	
+rows	eq:0
+rows	
+rows	
+rows	em:-12.5
+rows	
+rows	ec:0
+rows	
+rows	
+rows	
+rows	ez:-99.99
+rows	em:12.5
+rows	em:-14.5
+rows	
+rows	
+rows	
+rows	ez:-12.5 em:99.99
+rows	
+rows	ea:1000000000000000 eq:99.99 ec:0
+rows	ec:-2
+rows	
+rows	
+rows	eb:5 ez:0.1 ea:1
+rows	
+rows	em:0 eq:-1000000000000000
+rows	ec:-5 ef:5 em:0 eq:1000000000000000
+rows	
+rows	
+rows	ef:5 em:0.1
+rows	
+rows	ec:-12.5 ea:-12.5 eq:-1
+rows	
+rows	
+rows	
+rows	ea:-5
+rows	ec:-0.1
+rows	em:-1000000000000000 ez:-0.1
+rows	
+rows	
+rows	
+rows	ea:-1000000000000000 ec:1000000000000000 em:-1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-5 ec:-0.1 ez:-99.99
+rows	
+rows	ea:-12.5 eq:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-1000000000000000 ec:-0.1
+rows	
+rows	
+rows	em:-1 ec:1 eq:-1 ez:0
+rows	
+rows	
+rows	ea:1
+rows	
+rows	
+rows	ec:-1000000000000000
+rows	em:-1 ea:1e-9
+rows	
+rows	ea:-0.5
+rows	
+rows	
+rows	eq:1 ec:-1000000000000000
+rows	ez:0 em:-1
+rows	
+rows	ea:1
+rows	
+rows	
+rows	ea:-1000000000000000 ec:-0.1 ez:-1000000000000000
+rows	
+rows	em:0
+rows	
+rows	
+rows	
+rows	
+rows	em:1000000000000003
+rows	
+rows	ec:-99.99
+rows	
+rows	
+rows	em:0
+rows	ec:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	em:-5 ec:-12.5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:5 ea:-12.5 em:12.5
+rows	ec:99.99
+rows	
+rows	
+rows	
+rows	
+rows	ea:-1 ez:1
+rows	ec:-1
+rows	em:-12.5
+rows	ec:1 em:12.5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:-1.000000001 em:0.1 ec:1000000000000000 ef:0.1
+rows	
+rows	
+rows	ea:-0.1
+rows	
+rows	
+rows	ec:0 em:0
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	eq:1 ec:5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:0
+rows	
+rows	
+rows	
+rows	ec:1 em:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	eq:1000000000000000 ez:-0.1
+rows	em:1
+rows	ef:-12.5
+rows	ea:-12.5 eb:0
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:-99.99
+rows	ea:0.1
+rows	ec:-0.1 em:-1
+rows	
+rows	
+rows	ez:-12.5
+rows	ec:-1
+rows	
+rows	ec:1 ea:-0.1
+rows	
+rows	
+rows	em:0
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:-1000000000000000 ec:0
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:-99.99 em:-5
+rows	eq:-99.99
+rows	
+rows	ea:0
+rows	
+rows	
+rows	em:-5 ec:-1 eq:0.1 ea:0 ez:1
+rows	ef:-1e-9
+rows	
+rows	eb:-12.5
+rows	
+rows	
+rows	ec:-99.99 ez:12.5 ef:-5 eq:0.1
+rows	
+rows	em:1
+rows	
+rows	
+rows	
+rows	ea:0
+rows	
+rows	ec:99.99
+rows	ez:12.5
+rows	
+rows	
+rows	ea:-12.5 ez:0
+rows	
+rows	em:1000000000000000
+rows	ec:1000000000000000
+rows	
+rows	
+rows	eq:-1 eb:5 ef:-1 ez:1000000000000000 ea:-0.1 em:0
+rows	ec:1000000000000000
+rows	
+rows	ec:-1000000000000000
+rows	
+rows	
+rows	eb:1000000000000000 em:0 ea:-99.99 ec:0.1
+rows	ef:5
+rows	ef:-5
+rows	ez:1
+rows	
+rows	
+rows	em:-99.99 ez:5 ea:-1000000000000000 ec:-1
+rows	ef:-12.5 eq:5
+rows	ef:12.5
+rows	
+rows	
+rows	
+rows	ec:0 em:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-99.99
+rows	
+rows	
+rows	
+rows	ec:1000000000000000 em:-1000000000000000
+rows	
+rows	
+rows	ez:-1
+rows	
+rows	
+rows	em:-1 eb:-1000000000000000 ec:5
+rows	
+rows	ef:-0.1
+rows	ez:-1
+rows	
+rows	
+rows	ea:-0.1 ec:0
+rows	ez:-1000000000000000
+rows	em:99.99
+rows	ez:1000000000000003
+rows	
+rows	
+rows	em:-1000000000000000 ec:12.5 eq:0
+rows	ea:99.99
+rows	ez:-0.1
+rows	em:1000000000000003 ef:5
+rows	
+rows	
+rows	em:0
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ef:0 ea:0 ez:-99.99 eq:-0.1
+rows	
+rows	em:4.999999999
+rows	ec:99.99
+rows	
+rows	
+rows	
+rows	ez:99.99 em:-1000000000000000 ec:-1
+rows	
+rows	
+rows	
+rows	
+rows	ef:-1000000000000000 eq:1 em:-1000000000000000 ec:1
+rows	ea:3.1
+rows	
+rows	ez:-12.500000001
+rows	
+rows	
+rows	ec:12.5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	eq:0
+rows	ez:1000000000000000
+rows	
+rows	ec:0 em:4.999999999
+rows	
+rows	
+rows	ec:-1 ea:-0.1 em:-1000000000000000 eq:-0.1
+rows	ez:-12.5 ef:-99.99
+rows	ez:13.5 ef:102.99
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-99.99
+rows	
+rows	
+rows	ec:5 ea:-0.1 eb:1
+rows	ez:-99.99 ef:-101.99
+rows	em:-0.5
+rows	ef:99.99
+rows	
+rows	
+rows	em:-12.5 eq:-1 ec:-1000000000000000 ea:-99.99
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:0 ef:12.5 eq:-1 ec:-5
+rows	
+rows	
+rows	ez:99.99 ea:0.1
+rows	
+rows	
+rows	ez:-1 ec:-1000000000000000
+rows	
+rows	
+rows	em:-5
+rows	
+rows	
+rows	
+rows	em:0
+rows	
+rows	
+rows	
+rows	
+rows	em:5 ea:99.99
+rows	ez:5
+rows	
+rows	
+rows	
+rows	
+rows	em:1
+rows	ec:100.99
+rows	
+rows	ec:-99.99
+rows	
+rows	
+rows	ec:-1 em:-1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:5 eq:0 ea:1e-9
+rows	ea:0
+rows	ec:0 em:-5 ef:0
+rows	
+rows	
+rows	
+rows	eq:0 ef:5 ec:0 ea:-0.1
+rows	
+rows	
+rows	em:5
+rows	
+rows	
+rows	ez:5 em:12.5 eq:-99.99
+rows	ef:-5 ea:-12.5
+rows	
+rows	
+rows	
+rows	
+rows	em:1
+rows	
+rows	
+rows	ec:-1000000000000002
+rows	
+rows	
+rows	em:-1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:13.5 em:0
+rows	
+rows	ez:-12.5
+rows	ec:1
+rows	
+rows	
+rows	em:5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:99.99 ea:5 ez:-99.99 ef:-1
+rows	
+rows	eq:-2 em:-12.5
+rows	em:12.5
+rows	
+rows	
+rows	em:0
+rows	
+rows	ec:-5
+rows	ec:5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:-0.1
+rows	ez:1
+rows	
+rows	ea:5
+rows	
+rows	
+rows	em:0 ec:1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ef:2 eb:-99.99 em:-12.5 ea:0
+rows	ef:-3
+rows	ec:-1000000000000000
+rows	eq:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	em:-4.999999999
+rows	
+rows	
+rows	
+rows	eq:-1000000000000000 ec:0
+rows	
+rows	ea:5
+rows	ea:-5 ez:99.99
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:3
+rows	
+rows	
+rows	
+rows	em:1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	ec:-0.1 eq:-99.99
+rows	em:-0.1
+rows	ea:-1
+rows	ez:1
+rows	
+rows	
+rows	
+rows	
+rows	em:5
+rows	
+rows	
+rows	
+rows	em:-12.5
+rows	ec:102.99
+rows	
+rows	
+rows	
+rows	
+rows	ec:5 em:-5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:5 ec:-1 ez:-12.5
+rows	
+rows	em:-2
+rows	ea:12.5
+rows	
+rows	
+rows	em:-0.1 ec:0.1
+rows	
+rows	ez:5
+rows	
+rows	
+rows	
+rows	eq:-1 ez:0
+rows	em:0 ef:-99.99
+rows	ea:99.99
+rows	
+rows	
+rows	
+rows	ec:1000000000000000 ez:-5
+rows	em:99.99
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:0.1
+rows	ec:-0.5 em:12.5
+rows	
+rows	
+rows	
+rows	ec:-99.99 eb:1 em:-1
+rows	eq:99.99 ea:99.99 ef:-1
+rows	ez:99.99
+rows	
+rows	
+rows	
+rows	em:5 ec:-5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:5 ec:5 ez:5
+rows	ef:-0.1
+rows	ea:12.5
+rows	eq:12.5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	eq:0 ec:-1000000000000000 ef:-99.99
+rows	ez:-12.5 ef:99.990000001
+rows	ez:15.5
+rows	ea:-1.5 em:-12.5
+rows	
+rows	
+rows	em:-12.5 ec:-12.5
+rows	
+rows	ez:-12.5
+rows	
+rows	
+rows	
+rows	
+rows	em:-12.5
+rows	ez:12.5
+rows	
+rows	
+rows	
+rows	ef:-1 em:-99.99 ez:1000000000000000 ec:-1000000000000000 eb:-99.99
+rows	eq:-1000000000000000
+rows	ea:-5
+rows	
+rows	
+rows	
+rows	em:-5 ec:12.5
+rows	em:3
+rows	
+rows	
+rows	
+rows	
+rows	ez:-12.5 em:1 ec:-0.1 eq:0
+rows	ea:4.5
+rows	ef:-0.100000001
+rows	ef:1.1
+rows	
+rows	
+rows	ez:-12.5 ec:0.1 em:5 eq:5
+rows	ea:-99.99
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-1.5
+rows	
+rows	
+rows	
+rows	
+rows	ec:0.1 ez:5 eq:5 eb:-12.5 em:-0.1
+rows	ea:-5
+rows	ea:4.5
+rows	ef:-1000000000000000
+rows	
+rows	
+rows	em:-12.5 ec:-1000000000000000.5
+rows	ez:99.99
+rows	
+rows	
+rows	
+rows	
+rows	ec:-14.5
+rows	
+rows	ea:0 ez:-1
+rows	em:1
+rows	
+rows	
+rows	em:-0.1 ez:0 eq:0.1
+rows	
+rows	ea:1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	em:5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:1
+rows	
+rows	
+rows	
+rows	ec:-0.1 em:-99.99
+rows	ez:0
+rows	em:99.99 ef:-0.1
+rows	
+rows	
+rows	
+rows	ez:-1 em:1000000000000000 ec:5 eq:1
+rows	ea:-1
+rows	ea:4
+rows	
+rows	
+rows	
+rows	eb:1 ez:-1000000000000000 eq:-0.1 ef:1 ea:5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:0
+rows	
+rows	em:-12.5
+rows	
+rows	
+rows	
+rows	ez:0
+rows	
+rows	ec:12.5
+rows	em:3.1
+rows	
+rows	
+rows	em:0 ec:-1 ez:-12.5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:-12.5 ec:1000000000000000
+rows	em:-4.999999999 eq:-12.5
+rows	em:5
+rows	
+rows	
+rows	
+rows	ec:12.5 em:0 ea:-12.5 eq:-1000000000000000
+rows	ez:1
+rows	ez:-1e-9
+rows	
+rows	
+rows	
+rows	ea:99.99 ez:-99.99
+rows	ec:12.5
+rows	
+rows	em:-99.99
+rows	
+rows	
+rows	em:-1
+rows	
+rows	
+rows	ec:-1000000000000000 ez:-0.1
+rows	
+rows	
+rows	ez:1000000000000000
+rows	
+rows	ec:-12.5 em:0
+rows	
+rows	
+rows	
+rows	ec:12.5 eq:-1000000000000000 eb:-0.1 ez:0 ef:-99.99
+rows	em:0
+rows	
+rows	em:1e-9
+rows	
+rows	
+rows	eq:99.99 em:1000000000000000 ef:-99.99
+rows	
+rows	ec:0
+rows	
+rows	
+rows	
+rows	ez:99.99 ea:0
+rows	ea:0
+rows	eq:1
+rows	eq:-1.000000001
+rows	
+rows	
+rows	ec:-1 eq:0
+rows	
+rows	ef:1000000000000000 ea:-1 eb:12.5 em:5
+rows	ez:-5
+rows	
+rows	
+rows	ea:-99.99 ef:12.5
+rows	ec:-13 eb:-1 em:-1000000000000000 ez:0
+rows	
+rows	ez:0
+rows	
+rows	
+rows	ec:1
+rows	eq:-1
+rows	ez:1e-9 ea:-12.5 em:-0.1
+rows	
+rows	
+rows	
+rows	ec:-1 eq:-1 ea:-12.5 ef:-99.99
+rows	
+rows	
+rows	ez:5
+rows	
+rows	
+rows	ec:-1
+rows	
+rows	em:0
+rows	
+rows	
+rows	
+rows	ec:-99.99 em:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-99.99
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:-12.5 ez:0 em:-1
+rows	ea:-0.1
+rows	
+rows	
+rows	ec:5 ez:12.5 eq:5
+rows	ea:1
+rows	
+rows	ea:-1
+rows	
+rows	
+rows	ea:-0.1 eq:12.5 em:-1
+rows	ec:-0.1
+rows	ec:1.1
+rows	ez:1000000000000000
+rows	
+rows	
+rows	ea:-0.1 ez:-1000000000000000
+rows	
+rows	
+rows	em:99.99 ec:-5
+rows	
+rows	
+rows	
+rows	
+rows	em:-1000000000000000
+rows	
+rows	
+rows	
+rows	em:-12.5 ec:-1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ea:0 ef:-99.99 eb:1 ez:-1000000000000000
+rows	
+rows	ec:-1000000000000000
+rows	
+rows	
+rows	
+rows	em:-12.5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:0
+rows	ec:5
+rows	
+rows	
+rows	
+rows	
+rows	em:5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:4.999999999 ec:-99.99 ez:99.99
+rows	ec:99.99
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-1000000000000000
+rows	
+rows	
+rows	
+rows	em:-5
+rows	
+rows	
+rows	ec:-3
+rows	
+rows	
+rows	em:1000000000000000 ea:-12.5
+rows	ec:-1
+rows	ec:1 ez:-99.99
+rows	
+rows	
+rows	
+rows	em:-1 ec:3.1
+rows	ea:1
+rows	
+rows	ec:-2.1 ez:-0.1
+rows	
+rows	
+rows	ec:-1
+rows	
+rows	
+rows	em:1
+rows	
+rows	
+rows	ez:-99.99 em:0.1
+rows	
+rows	
+rows	ec:1000000000000000
+rows	
+rows	
+rows	em:-1 ez:0
+rows	eq:-0.1
+rows	eq:0.1
+rows	ec:-99.99
+rows	
+rows	
+rows	em:5 ef:-0.1 ea:-99.99
+rows	
+rows	eq:-1
+rows	ez:5
+rows	
+rows	
+rows	em:0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ea:1 ez:-12.5 em:12.5
+rows	
+rows	ea:-1
+rows	ec:-0.1 ef:-14.5
+rows	
+rows	
+rows	ef:-12.5 ec:-12.5 eq:-12.5 ez:5 eb:-1
+rows	
+rows	ea:-2 em:1000000000000003
+rows	
+rows	
+rows	
+rows	ec:-99.99 em:1000000000000000 ef:0 eq:-12.5 ea:-1000000000000000
+rows	ez:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	ez:-1000000000000000 ea:13.5 em:-0.1
+rows	
+rows	em:0.100000001
+rows	ea:-12.5
+rows	
+rows	
+rows	ec:-0.1
+rows	ez:-12.5
+rows	
+rows	em:-99.99
+rows	
+rows	
+rows	em:-99.99 ec:1000000000000000
+rows	ec:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	eq:-1000000000000000 ec:-4.999999999
+rows	ea:-1.000000001 ec:4.999999999
+rows	
+rows	
+rows	
+rows	
+rows	em:0 ec:0 ez:1000000000000000 ea:-2.1
+rows	eq:99.99 ea:0.100000001
+rows	
+rows	
+rows	
+rows	
+rows	ec:1 em:0
+rows	
+rows	
+rows	ez:99.99
+rows	
+rows	
+rows	ec:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ea:0 ef:0 eb:0
+rows	ea:1 em:0.1 ez:0 ec:-99.99
+rows	
+rows	eq:0.1
+rows	
+rows	
+rows	ez:-1 ec:-1000000000000000 ea:-12.5
+rows	
+rows	
+rows	em:-1000000000000000
+rows	
+rows	
+rows	em:-12.5 ez:1000000000000000 eq:-99.99 eb:1.1 ef:1 ea:-1
+rows	em:12.5 ec:0
+rows	
+rows	eb:-0.1
+rows	
+rows	
+rows	em:-12.5 eq:0.1 ea:5 eb:-12.5
+rows	ez:0
+rows	
+rows	ef:0.1
+rows	
+rows	
+rows	em:0
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:-12.5
+rows	em:-1000000000000000
+rows	
+rows	
+rows	em:-99.99
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:-1 eq:5 em:1
+rows	ef:-5
+rows	ec:0
+rows	ea:5
+rows	
+rows	
+rows	ef:0 ea:-1000000000000000
+rows	ez:-0.1 ec:0
+rows	eb:99.99 em:3 eq:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-1
+rows	
+rows	
+rows	
+rows	em:5 ez:-99.99 eb:0.1 ef:-1000000000000000 ea:-1
+rows	
+rows	
+rows	eq:-99.99
+rows	
+rows	
+rows	ec:0 ez:-5 ea:-1
+rows	
+rows	em:-1.000000001
+rows	em:1 ez:5
+rows	
+rows	
+rows	em:-1000000000000000
+rows	
+rows	ec:0
+rows	
+rows	
+rows	
+rows	eq:12.5
+rows	ez:-1 em:-99.99
+rows	ea:-1000000000000000 ec:-99.99
+rows	
+rows	
+rows	
+rows	ea:-12.5 ez:-12.5 eq:0
+rows	ec:-12.500000001
+rows	
+rows	ec:13.5
+rows	
+rows	
+rows	ec:-5 em:12.5 ez:1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:-1
+rows	ec:-1
+rows	ez:4
+rows	em:12.5
+rows	
+rows	
+rows	ea:-0.100000001 eq:-1 ec:0 ef:-5
+rows	em:-5
+rows	ea:0.1 ez:-12.5
+rows	
+rows	
+rows	
+rows	ea:1000000000000000 eq:0 ef:-99.99 ec:-99.99
+rows	
+rows	
+rows	em:12.5
+rows	
+rows	
+rows	ez:-1000000000000000 ea:-5 eq:-12.5 eb:-99.99
+rows	em:0
+rows	em:0 ec:-99.99
+rows	
+rows	
+rows	
+rows	em:0
+rows	ec:0
+rows	
+rows	
+rows	
+rows	
+rows	ea:-12.5 ez:1000000000000000
+rows	ec:1000000000000000
+rows	eq:5
+rows	em:-12.5
+rows	
+rows	
+rows	em:-0.1
+rows	ec:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	ec:-1 ez:0.1 ef:-1000000000000000
+rows	ec:1 ea:-0.1
+rows	em:1
+rows	
+rows	
+rows	
+rows	em:1 ec:-1
+rows	ec:4
+rows	ez:-99.99
+rows	ez:102.99
+rows	
+rows	
+rows	ez:-0.1 eb:0 ea:-99.99 ef:99.99
+rows	eq:-3
+rows	eq:2 em:102.99
+rows	eb:0 em:-101.99
+rows	
+rows	
+rows	ez:1000000000000000
+rows	
+rows	
+rows	ec:-0.1
+rows	
+rows	
+rows	em:99.99 ef:-12.5 ec:-1000000000000000
+rows	
+rows	ez:-1 eq:-5 ea:-0.1
+rows	
+rows	
+rows	
+rows	eb:-0.6 em:-1 ez:1 eq:5 ec:0 ef:1
+rows	eb:3.1
+rows	ea:-1000000000000000
+rows	
+rows	
+rows	
+rows	ec:-5
+rows	ea:4.5
+rows	em:5
+rows	ez:-100.49
+rows	
+rows	
+rows	ez:1000000000000000 ec:-1000000000000000
+rows	
+rows	
+rows	em:-99.99
+rows	
+rows	
+rows	em:0 ea:0 ec:0 ez:12.5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:12.5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:0.1
+rows	
+rows	em:-0.1
+rows	
+rows	
+rows	em:-1 eq:-1 ez:-3
+rows	
+rows	ea:-5 ec:5
+rows	ec:-2
+rows	
+rows	
+rows	em:-1
+rows	ec:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	ez:5 ec:0 ea:0
+rows	eq:1000000000000003
+rows	eq:-1000000000000002
+rows	em:-0.1
+rows	
+rows	
+rows	ec:0 ef:-12.5 em:0 eq:5
+rows	
+rows	
+rows	ez:0
+rows	
+rows	
+rows	em:99.99 ec:-99.99 ez:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:-5
+rows	
+rows	em:-99.99
+rows	
+rows	
+rows	
+rows	ec:0 em:-1000000000000000 ez:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-1000000000000000
+rows	
+rows	ec:1000000000000000
+rows	
+rows	
+rows	
+rows	ez:1000000000000000
+rows	
+rows	em:0.1
+rows	ec:-0.1
+rows	
+rows	
+rows	eq:99.99
+rows	
+rows	
+rows	ez:-99.99
+rows	
+rows	
+rows	em:-99.99 ez:12.5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:12.5
+rows	ez:-1000000000000000
+rows	
+rows	em:-1
+rows	
+rows	
+rows	ez:-5 ec:-1
+rows	ea:-12.5 ef:0
+rows	em:-1000000000000000 eq:-99.99
+rows	eq:102.99
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:5
+rows	
+rows	
+rows	eb:-99.99 eq:1000000000000000
+rows	
+rows	ec:-5 ea:0
+rows	ec:5 em:5
+rows	
+rows	
+rows	em:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:99.99 ez:-1000000000000000
+rows	ea:-1000000000000000
+rows	ec:5
+rows	
+rows	
+rows	
+rows	em:1000000000000000 ez:-1000000000000000 eq:-12.5 ef:12.5 ea:1 ec:1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:4.999999999
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:12.5 em:-1000000000000000 ez:-99.99
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ea:5 eb:0.1 ef:-12.5 eq:-1000000000000000
+rows	ez:0
+rows	em:-1
+rows	ez:1 em:1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-1
+rows	
+rows	
+rows	ez:12.5 ea:0.1 ec:0
+rows	ez:-12.500000001
+rows	em:-13
+rows	
+rows	
+rows	
+rows	ea:-1000000000000000 ec:3
+rows	ez:-1000000000000000
+rows	ec:0
+rows	em:-99.99
+rows	
+rows	
+rows	em:1000000000000000
+rows	
+rows	ec:-12.5 ea:0
+rows	
+rows	
+rows	
+rows	em:-12.5 eq:0 ea:1000000000000000
+rows	
+rows	ef:0
+rows	ec:0
+rows	
+rows	
+rows	ec:-1000000000000000 em:5 ez:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-99.99
+rows	
+rows	em:99.99
+rows	ec:0 ez:5
+rows	
+rows	
+rows	em:5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-1
+rows	ec:99.99
+rows	
+rows	
+rows	
+rows	
+rows	ec:1000000000000000 ez:1000000000000000 em:-1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:0
+rows	em:-5
+rows	ez:-99.99
+rows	
+rows	
+rows	
+rows	ez:0.1 ec:1000000000000000 eq:1
+rows	
+rows	em:-1 ef:-0.1
+rows	
+rows	
+rows	
+rows	ez:-12.5 ec:-1000000000000000 em:-0.1
+rows	
+rows	
+rows	eq:-0.1 ea:0
+rows	
+rows	
+rows	em:0 ef:-0.5
+rows	
+rows	ec:-1 ea:99.99
+rows	ez:1000000000000000
+rows	
+rows	
+rows	ec:-1
+rows	em:-12.5 ez:0.1
+rows	em:12.5
+rows	
+rows	
+rows	
+rows	ec:1 ef:12.5 ez:-1 ea:5
+rows	
+rows	
+rows	em:0
+rows	
+rows	
+rows	em:-12.5
+rows	em:12.5
+rows	
+rows	
+rows	
+rows	
+rows	ec:-1000000000000000 em:0
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:12.5
+rows	
+rows	em:-1000000000000000
+rows	
+rows	
+rows	
+rows	ez:99.99 eb:12.5 ea:1000000000000000 ef:-12.5 ec:1
+rows	em:0 ec:-2
+rows	eq:-1000000000000000 ef:13.5
+rows	eq:1000000000000000
+rows	
+rows	
+rows	ea:-99.99 ec:5 eb:1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ea:-99.99 ec:-99.99
+rows	
+rows	
+rows	ez:0 em:-99.99
+rows	
+rows	
+rows	ez:-1000000000000000
+rows	em:99.99
+rows	
+rows	
+rows	
+rows	
+rows	ez:0.1
+rows	em:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	ef:-5 ez:-5
+rows	
+rows	em:-5
+rows	ea:-0.5 eq:1000000000000000
+rows	
+rows	
+rows	ec:-1000000000000000 ez:0
+rows	
+rows	ec:1000000000000001
+rows	
+rows	
+rows	
+rows	em:1 ez:12.5
+rows	
+rows	
+rows	ea:-1
+rows	
+rows	
+rows	em:5
+rows	
+rows	ec:0
+rows	
+rows	
+rows	
+rows	
+rows	em:-1
+rows	em:1
+rows	
+rows	
+rows	
+rows	em:-0.1 ec:-12.5
+rows	
+rows	ez:12.5
+rows	
+rows	
+rows	
+rows	em:5 ec:-0.1 ea:0
+rows	
+rows	eq:5 ez:12.5
+rows	
+rows	
+rows	
+rows	em:-1
+rows	ec:1000000000000000 ea:-1
+rows	
+rows	
+rows	
+rows	
+rows	ec:-1000000000000000 ef:-5 em:-12.5
+rows	ez:-5
+rows	ea:-1
+rows	eq:0.1 ea:1
+rows	
+rows	
+rows	em:0
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:0
+rows	ec:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	ea:-99.99 em:-12.5 ec:-1000000000000000
+rows	
+rows	
+rows	ez:4.999999999
+rows	
+rows	
+rows	ea:-12.5 em:5 eq:-0.1
+rows	
+rows	ec:-99.99
+rows	ez:-1000000000000000
+rows	
+rows	
+rows	eq:-5 ec:5 ef:0 ez:0 ea:-1
+rows	
+rows	ea:4
+rows	em:1000000000000000
+rows	
+rows	
+rows	ez:5 eb:-0.1 ec:-99.99 ea:-12.5
+rows	eq:99.99
+rows	ef:99.99 em:0.1
+rows	
+rows	
+rows	
+rows	em:-0.1
+rows	ea:1
+rows	ec:-0.1 ez:0 eq:5
+rows	eq:-5
+rows	
+rows	
+rows	ec:-5 ea:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	eq:-1000000000000000 ez:-99.99 ea:1000000000000000 em:-0.1
+rows	
+rows	ec:12.5 ef:-99.99
+rows	
+rows	
+rows	
+rows	ez:-1
+rows	ec:1000000000000000
+rows	em:-5
+rows	
+rows	
+rows	
+rows	ez:-1
+rows	
+rows	ec:-1000000000000000
+rows	em:0 ec:1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-1000000000000000
+rows	
+rows	
+rows	ec:-99.99
+rows	em:-1
+rows	
+rows	ez:5 ea:-12.5
+rows	
+rows	
+rows	ec:1000000000000003 em:-5 ef:0.1 ea:-0.1
+rows	
+rows	ez:0
+rows	
+rows	
+rows	
+rows	ec:5
+rows	
+rows	
+rows	ea:0 ez:0
+rows	
+rows	
+rows	ez:-1000000000000000 em:-1 ec:-0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:99.990000001 ea:-0.1
+rows	ez:1
+rows	
+rows	ec:1
+rows	
+rows	
+rows	ez:-5 ec:-99.99 ea:5 em:0
+rows	ef:-2
+rows	eq:1 ef:0
+rows	
+rows	
+rows	
+rows	em:-12.5
+rows	ea:-13
+rows	ec:-5 ef:-1
+rows	ea:15.5 eq:-12.5
+rows	
+rows	
+rows	eq:0 ec:-12.5 ea:-12.5 em:-99.99
+rows	
+rows	
+rows	ez:-12.5
+rows	
+rows	
+rows	em:0
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:1 ez:-1
+rows	
+rows	
+rows	em:-5
+rows	
+rows	
+rows	ec:-0.1
+rows	em:1000000000000000
+rows	
+rows	em:-1000000000000002
+rows	
+rows	
+rows	ez:-12.5
+rows	ec:-12.5
+rows	
+rows	ea:5 em:-12.5
+rows	
+rows	
+rows	em:-99.99 ec:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	eq:-1
+rows	ea:-12.5
+rows	ez:1 ec:15.5
+rows	em:0
+rows	
+rows	
+rows	ez:-1 ec:-1
+rows	ef:12.5 em:-12.5
+rows	ea:-12.5 eq:-5
+rows	
+rows	
+rows	
+rows	em:-1 ec:0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:-99.99
+rows	
+rows	em:-1
+rows	ec:-1000000000000000
+rows	
+rows	
+rows	em:12.5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:5 ez:0 ea:-1 eq:-1000000000000000
+rows	
+rows	
+rows	em:1 eb:-1000000000000000 ef:1
+rows	
+rows	
+rows	em:5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:-1000000000000000 ef:1 em:-1000000000000000 ea:-1000000000000000 ez:5
+rows	
+rows	eq:-1 em:1000000000000000
+rows	
+rows	
+rows	
+rows	em:-99.99 ec:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-5 ec:-14.5 ez:-1000000000000000
+rows	
+rows	
+rows	ez:1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:0
+rows	
+rows	
+rows	em:-1 ez:5
+rows	
+rows	
+rows	ec:0
+rows	
+rows	
+rows	em:12.5 ec:0 ez:0
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	eb:-12.5 em:5
+rows	ec:1 ea:-1 eq:-5 ef:1
+rows	
+rows	ec:-1
+rows	
+rows	
+rows	ec:-12.5
+rows	
+rows	em:-5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-99.99 ez:-1 ea:5
+rows	
+rows	ec:-1
+rows	
+rows	
+rows	
+rows	em:-12.5 ec:12.5
+rows	
+rows	eq:-14.5 ez:-12.5 ea:12.5
+rows	em:12.5
+rows	
+rows	
+rows	eq:-5 ea:0 ec:99.99 em:0.1 ez:-1
+rows	
+rows	
+rows	eb:5 ef:-5
+rows	
+rows	
+rows	em:-12.5 ec:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-0.1 ec:1000000000000000 ef:-1 ez:12.5 eq:-1
+rows	
+rows	ea:-99.99
+rows	
+rows	
+rows	
+rows	em:-99.99 ec:0 eq:0 ea:0
+rows	ef:0
+rows	
+rows	eq:0
+rows	
+rows	
+rows	em:-1000000000000000 ef:0 ez:5 eq:-1
+rows	ec:-0.1
+rows	ec:1.1
+rows	ea:-0.1
+rows	
+rows	
+rows	
+rows	em:0
+rows	
+rows	
+rows	
+rows	
+rows	em:-99.99
+rows	
+rows	
+rows	ec:5
+rows	
+rows	
+rows	em:-0.5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:12.5
+rows	
+rows	ec:1000000000000000
+rows	
+rows	
+rows	
+rows	ec:0 ez:5
+rows	
+rows	ea:-0.1 ef:12.5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:5
+rows	ec:1000000000000000 em:5
+rows	
+rows	
+rows	
+rows	
+rows	em:-2 ec:5
+rows	
+rows	ez:99.99
+rows	
+rows	
+rows	
+rows	ea:1.1 em:5 ec:-5
+rows	ef:-1 ez:100.99 ea:-0.1
+rows	ef:1
+rows	ez:-99.990000001
+rows	
+rows	
+rows	ec:-0.1
+rows	em:-12.5
+rows	
+rows	eq:-1 em:12.500000001
+rows	
+rows	
+rows	em:-99.99 eq:-12.5
+rows	eb:0 ef:-5
+rows	ea:-12.5
+rows	ec:-99.99
+rows	
+rows	
+rows	ec:5
+rows	
+rows	em:-1000000000000000
+rows	
+rows	
+rows	
+rows	em:-1000000000000000 ez:-12.5 ec:-0.1 ea:1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:4
+rows	ec:-3
+rows	
+rows	em:0
+rows	
+rows	
+rows	ec:5 eq:-12.5 eb:5
+rows	
+rows	
+rows	ef:-1 ez:0 ea:-1
+rows	
+rows	
+rows	em:12.5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-12.5 eq:5 ef:2 ez:12.5 ec:-12.5
+rows	ef:-1
+rows	ea:0
+rows	ea:0
+rows	
+rows	
+rows	ea:12.5 em:-12.5 eq:1e-9
+rows	ez:-1 eq:0
+rows	ec:5
+rows	
+rows	
+rows	
+rows	em:-0.1 eq:1000000000000000 ez:1 ea:0 ec:-5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	em:-0.1 ef:-0.1 ez:-99.99 eb:1 ea:0 eq:-5
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:1000000000000000 em:-1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ec:-99.99
+rows	
+rows	em:99.99 ez:2
+rows	ea:0 em:-100.49 ez:-1.5
+rows	
+rows	
+rows	ea:-99.99
+rows	
+rows	em:1000000000000000
+rows	
+rows	
+rows	
+rows	em:0 ez:-1
+rows	ea:-1.5 ec:-12.5
+rows	
+rows	
+rows	
+rows	
+rows	ef:0 em:0.1 ez:-5 ec:-1000000000000000
+rows	
+rows	ef:0 eb:-1
+rows	ea:-1000000000000000
+rows	
+rows	
+rows	ec:-12.5 ea:12.5 em:0
+rows	ez:-1
+rows	ez:2
+rows	eq:-0.1
+rows	
+rows	
+rows	em:12.5
+rows	ec:-1000000000000000
+rows	
+rows	
+rows	
+rows	
+rows	ec:-1 em:0.1
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:-12.500000001 em:0
+rows	ea:1000000000000001
+rows	ea:-1000000000000000
+rows	eq:-12.5 ez:12.5
+rows	
+rows	
+rows	em:1000000000000000 ea:-0.1 ec:-0.1
+rows	ez:-1000000000000000
+rows	ec:0.100000001
+rows	
+rows	
+rows	
+rows	ef:-5 eq:-12.5 ea:-12.500000001
+rows	ec:-99.99 ea:12.5
+rows	
+rows	
+rows	
+rows	
+rows	ea:-5 ez:-1
+rows	em:0
+rows	ea:4.999999999
+rows	
+rows	
+rows	
+rows	em:-99.99
+rows	
+rows	
+rows	
+rows	
+rows	
+rows	ez:1000000000000000
+rows	ea:1000000000000000
+rows	
+rows	em:0
+rows	
+rows	
+rows	
+rows	
+rows	ez:0
+rows	em:-14.5 ec:-0.100000001
+rows	
+rows	
+rows	em:-0.1
+rows	
+rows	
+rows	ec:-12.5
+rows	
+rows	
+rows	em:-0.1 ec:1000000000000000 ef:-0.1 ez:0.1
+rows	
+rows	eq:-5
+rows	eq:5
+rows	
+rows	
+rows	em:1000000000000000 ec:-5
+rows	ez:99.99
+rows	
+rows	
+rows	
+rows	
+rows	em:0.1 ec:0 ef:0 ez:0.1
+rows	ea:0
+rows	eq:-5
+rows	
+rows	
+rows	
+rows	em:-1000000000000000 ec:0
+rows	
+rows	
+rows	
+rows	
+rows	

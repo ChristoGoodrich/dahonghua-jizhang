@@ -1,0 +1,4618 @@
+copyzh	ok
+copyen	ok
+credit	null
+insight	🔍|%a is your biggest spend at NaN%.|
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 0%。|
+insight	🪻|Other is over its category budget (0/-1).|
+insight	🔍|这个月 其他 花得最多，占了 91%。|
+insight	🪻|其他 超出分类预算了（100/30）。|
+insight	🪻|Other is over its category budget (26/-1).|
+insight	🔍|Custom is your biggest spend at NaN%.|
+insight	🔍|Transit is your biggest spend at 87%.|
+credit	null
+insight	⏳|今天花超了，超出 8。|
+insight	null
+insight	🔍|这个月 %a 花得最多，占了 62%。|
+insight	null
+insight	null
+credit	null
+credit	null
+insight	null
+credit	null
+insight	null
+credit	null
+insight	🪻|Transit is over its category budget (0/-1).|
+credit	null
+credit	null
+insight	🪻|%d is over its category budget (0/-1).|
+credit	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	null
+insight	🪻|交通 超出分类预算了（100/30）。|
+insight	null
+credit	null
+insight	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	null
+insight	null
+insight	🔍|Transit is your biggest spend at NaN%.|
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+credit	null
+credit	💳|卡c2 逾期 1 天还款，待还 ￥100|c2
+insight	null
+insight	null
+insight	🔍|这个月 购物 花得最多，占了 79%。|
+insight	null
+credit	null
+insight	null
+credit	null
+insight	null
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	null
+insight	🔍|Other is your biggest spend at 42%.|
+insight	🪻|购物 超出分类预算了（0/-1）。|
+insight	null
+credit	💳|卡c1 due 11d overdue · $100 to repay|c1
+insight	null
+insight	🪻|餐饮 超出分类预算了（0/-1）。|
+insight	🪻|%a 超出分类预算了（1/-1）。|
+insight	🔍|Other is your biggest spend at NaN%.|
+credit	null
+credit	null
+credit	null
+insight	null
+credit	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+credit	null
+insight	null
+insight	🪻|餐饮 超出分类预算了（0/-1）。|
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+credit	💳|卡c2 逾期 3 天还款，待还 ￥100|c2
+insight	🪻|Other is over its category budget (33/30).|
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at 65%.|
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	null
+credit	null
+credit	null
+credit	💳|卡c2 due 1d overdue · $100 to repay|c2
+insight	⏳|Over today's budget by 95.|
+insight	null
+credit	null
+credit	null
+insight	null
+insight	null
+insight	null
+insight	null
+credit	null
+insight	null
+insight	⏳|今天花超了，超出 45。|
+credit	null
+insight	null
+insight	null
+insight	null
+insight	🪻|Shopping is over its category budget (33/30).|
+insight	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	⏳|Over today's budget by 109.|
+insight	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 70%。|
+insight	null
+insight	null
+credit	null
+insight	null
+insight	⏳|Over today's budget by 83.|
+insight	🪻|购物 超出分类预算了（0/-1）。|
+insight	null
+insight	null
+insight	null
+credit	null
+credit	null
+insight	null
+insight	🪻|Other is over its category budget (1/-1).|
+insight	null
+insight	null
+credit	💳|卡c1 今天还款，待还 ￥100|c1
+credit	null
+credit	null
+insight	🪻|购物 超出分类预算了（2/0）。|
+credit	null
+credit	💳|卡c2 逾期 12 天还款，待还 ￥100|c2
+insight	null
+insight	🪻|自定义 超出分类预算了（26/0）。|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+credit	null
+credit	null
+insight	null
+insight	null
+credit	💳|卡c1 逾期 22 天还款，待还 ￥100|c1
+credit	null
+credit	💳|卡c1 due 6d overdue · $104 to repay|c1
+insight	null
+credit	null
+insight	🌼|预算用了 92%，省着点就能让花开满。|
+insight	null
+credit	null
+credit	null
+insight	null
+insight	null
+insight	🪻|Shopping is over its category budget (1/0).|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 Infinity%。|
+insight	⏳|今天花超了，超出 60。|
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	⏳|Over today's budget by 39.|
+credit	null
+credit	null
+insight	null
+insight	null
+insight	null
+credit	💳|卡c1 今天还款，待还 ￥95|c1
+insight	null
+insight	null
+insight	🪻|%a 超出分类预算了（100/0）。|
+insight	null
+insight	⏳|Over today's budget by 151.|
+insight	🪻|Shopping is over its category budget (100/10).|
+credit	💳|卡c1 due 8d overdue · $100 to repay|c1
+insight	null
+credit	null
+insight	null
+insight	null
+insight	null
+insight	null
+credit	💳|卡c1 逾期 5 天还款，待还 ￥5|c1
+credit	💳|卡c2 逾期 7 天还款，待还 ￥100|c2
+insight	null
+credit	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	null
+credit	null
+insight	null
+insight	⏳|Over today's budget by 50.|
+insight	null
+credit	null
+insight	null
+credit	null
+insight	🔍|Shopping is your biggest spend at 69%.|
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	null
+credit	💳|卡c2 due 8d overdue · $100 to repay|c2
+insight	null
+insight	🔍|这个月 购物 花得最多，占了 -13%。|
+insight	🔍|这个月 %b 花得最多，占了 NaN%。|
+credit	null
+credit	null
+credit	null
+insight	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+credit	null
+insight	null
+credit	null
+credit	💳|Card c2 due 3d overdue · $100 to repay|c2
+insight	null
+credit	💳|卡c1 今天还款，待还 ￥100|c1
+insight	null
+insight	🔍|Food is your biggest spend at NaN%.|
+insight	🔍|这个月 餐饮 花得最多，占了 80%。|
+insight	⏳|今天花超了，超出 60。|
+insight	⏳|今天花超了，超出 7。|
+credit	null
+credit	null
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+insight	🪻|Other is over its category budget (5/1).|
+credit	💳|卡c1 due 16d overdue · $90 to repay|c1
+credit	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+credit	null
+insight	null
+credit	💳|卡c1 逾期 5 天还款，待还 ￥100|c1
+insight	🔍|Other is your biggest spend at 95%.|
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+credit	null
+insight	🪻|其他 超出分类预算了（26/1）。|
+credit	null
+insight	null
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 66%。|
+insight	🔍|这个月 交通 花得最多，占了 NaN%。|
+insight	null
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 85%。|
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	null
+credit	null
+insight	🪻|Other is over its category budget (0/-1).|
+insight	null
+credit	null
+insight	null
+insight	null
+insight	null
+insight	🔍|Custom is your biggest spend at NaN%.|
+insight	🔍|这个月 其他 花得最多，占了 83%。|
+insight	🪻|%d is over its category budget (33/-1).|
+insight	null
+insight	⏳|Over today's budget by 139.|
+insight	🪻|其他 超出分类预算了（100/-1）。|
+credit	💳|卡c2 逾期 7 天还款，待还 ￥100|c2
+insight	null
+credit	💳|卡c1 due 6d overdue · $100 to repay|c1
+credit	null
+insight	null
+credit	null
+insight	null
+credit	null
+credit	null
+insight	🔍|这个月 交通 花得最多，占了 103%。|
+insight	null
+credit	null
+insight	🪻|%a is over its category budget (0/-1).|
+insight	🔍|这个月 餐饮 花得最多，占了 90%。|
+insight	🔍|Food is your biggest spend at 87%.|
+credit	null
+credit	null
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+insight	🔍|Food is your biggest spend at NaN%.|
+insight	null
+credit	null
+insight	null
+credit	null
+insight	🔍|Transit is your biggest spend at NaN%.|
+credit	null
+insight	null
+insight	⏳|Over today's budget by 16.|
+insight	null
+insight	null
+insight	null
+insight	null
+insight	🪻|Other is over its category budget (33/-1).|
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+credit	💳|卡c2 due 21d overdue · $100 to repay|c2
+insight	🔍|%d is your biggest spend at 99%.|
+credit	null
+insight	null
+insight	🔍|这个月 购物 花得最多，占了 42%。|
+insight	🔍|这个月 交通 花得最多，占了 76%。|
+insight	⏳|Over today's budget by 40.|
+insight	null
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	🔍|这个月 自定义 花得最多，占了 NaN%。|
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+insight	🪻|Other is over its category budget (0/-1).|
+insight	null
+credit	💳|卡c1 due 7d overdue · $100 to repay|c1
+insight	🪻|交通 超出分类预算了（0/-1）。|
+insight	null
+credit	null
+credit	null
+insight	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+credit	null
+insight	null
+insight	null
+insight	🔍|这个月 交通 花得最多，占了 75%。|
+insight	🪻|购物 超出分类预算了（0/-1）。|
+insight	⏳|今天花超了，超出 7。|
+insight	🪻|购物 超出分类预算了（1/-1）。|
+insight	null
+insight	null
+insight	🪻|Other is over its category budget (0/-1).|
+credit	null
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+insight	null
+insight	null
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+insight	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	⏳|今天花超了，超出 73。|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+credit	null
+credit	💳|Card c2 due 11d overdue · $100 to repay|c2
+insight	🔍|Transit is your biggest spend at 119%.|
+insight	null
+credit	null
+insight	null
+credit	💳|卡c2 due 8d overdue · $100 to repay|c2
+credit	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+credit	💳|卡c1 due 12d overdue · $100 to repay|c1
+credit	null
+insight	🪻|购物 超出分类预算了（33/30）。|
+insight	null
+insight	null
+credit	null
+credit	null
+insight	🔍|Shopping is your biggest spend at 62%.|
+insight	null
+insight	🪻|其他 超出分类预算了（33/1）。|
+insight	null
+insight	null
+insight	null
+credit	null
+credit	null
+insight	null
+credit	null
+insight	null
+insight	null
+insight	🪻|Other is over its category budget (0/-1).|
+insight	🔍|Food is your biggest spend at 79%.|
+insight	🔍|这个月 其他 花得最多，占了 104%。|
+insight	null
+insight	🪻|Other is over its category budget (0/-1).|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🔍|这个月 交通 花得最多，占了 NaN%。|
+insight	🔍|Transit is your biggest spend at NaN%.|
+credit	null
+insight	null
+insight	🔍|Transit is your biggest spend at 48%.|
+insight	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+credit	null
+insight	null
+insight	null
+insight	null
+insight	🪻|Shopping is over its category budget (26/-1).|
+insight	🔍|这个月 交通 花得最多，占了 25%。|
+credit	💳|Card c2 due today · $100 to repay|c2
+insight	null
+credit	null
+credit	null
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+insight	🔍|Other is your biggest spend at 63%.|
+insight	🔍|Other is your biggest spend at NaN%.|
+credit	null
+insight	🔍|Other is your biggest spend at NaN%.|
+credit	💳|卡c2 逾期 6 天还款，待还 ￥100|c2
+credit	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+insight	🔍|Other is your biggest spend at 62%.|
+insight	⏳|Over today's budget by 14.|
+insight	null
+insight	🔍|Food is your biggest spend at 69%.|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	⏳|今天花超了，超出 76。|
+insight	🔍|Other is your biggest spend at NaN%.|
+credit	null
+insight	null
+credit	null
+insight	null
+insight	null
+insight	null
+credit	null
+insight	null
+credit	null
+credit	null
+insight	null
+insight	🪻|Other is over its category budget (21/1).|
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+credit	null
+credit	null
+insight	⏳|今天花超了，超出 141。|
+insight	null
+insight	🪻|Other is over its category budget (0/-1).|
+insight	🔍|这个月 交通 花得最多，占了 NaN%。|
+insight	null
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🪻|Food is over its category budget (33/10).|
+insight	⏳|Over today's budget by 4.|
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+credit	💳|卡c1 逾期 7 天还款，待还 ￥100|c1
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 68%。|
+insight	🔍|Food is your biggest spend at NaN%.|
+insight	null
+credit	null
+credit	null
+credit	null
+credit	null
+insight	🪻|餐饮 超出分类预算了（26/10）。|
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 77%。|
+credit	null
+credit	null
+credit	null
+insight	⏳|今天花超了，超出 10。|
+insight	null
+credit	null
+insight	🪻|Other is over its category budget (100/1).|
+insight	null
+insight	🪻|Other is over its category budget (0/-1).|
+insight	🔍|这个月 交通 花得最多，占了 100%。|
+credit	null
+insight	🔍|Other is your biggest spend at 100%.|
+insight	🔍|Other is your biggest spend at NaN%.|
+credit	null
+credit	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+insight	🪻|交通 超出分类预算了（11/0）。|
+credit	💳|卡c1 due 5d overdue · $101 to repay|c1
+insight	null
+credit	null
+credit	null
+insight	🔍|Transit is your biggest spend at NaN%.|
+insight	null
+insight	null
+insight	null
+credit	💳|卡c2 due 16d overdue · $100 to repay|c2
+insight	null
+credit	null
+insight	null
+credit	💳|卡c2 due 5d overdue · $100 to repay|c2
+insight	🔍|Custom is your biggest spend at NaN%.|
+credit	null
+insight	null
+credit	null
+insight	⏳|今天花超了，超出 75。|
+credit	null
+insight	null
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+insight	null
+credit	null
+insight	🔍|Other is your biggest spend at NaN%.|
+credit	null
+insight	🔍|Food is your biggest spend at 100%.|
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+credit	null
+insight	null
+credit	null
+insight	null
+insight	null
+insight	null
+credit	null
+insight	🔍|这个月 交通 花得最多，占了 91%。|
+insight	null
+insight	null
+credit	null
+insight	🔍|Other is your biggest spend at 44%.|
+credit	null
+insight	🪻|购物 超出分类预算了（36/10）。|
+insight	🪻|购物 超出分类预算了（26/1）。|
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	null
+insight	null
+insight	🔍|这个月 购物 花得最多，占了 95%。|
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+insight	null
+insight	null
+insight	null
+credit	null
+insight	null
+credit	null
+insight	null
+insight	null
+insight	🔍|Custom is your biggest spend at 96%.|
+insight	🪻|其他 超出分类预算了（100/1）。|
+insight	⏳|Over today's budget by 14.|
+insight	null
+insight	null
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+insight	🔍|这个月 自定义 花得最多，占了 NaN%。|
+credit	null
+insight	🔍|Other is your biggest spend at 39%.|
+insight	🪻|%d is over its category budget (0/-1).|
+credit	null
+insight	⏳|今天花超了，超出 17。|
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at 100%.|
+credit	null
+insight	null
+credit	null
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+credit	null
+insight	🔍|Transit is your biggest spend at 87%.|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+insight	null
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	null
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🪻|Other is over its category budget (1/0).|
+insight	null
+insight	🪻|Other is over its category budget (33/30).|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	🪻|Other is over its category budget (0/-1).|
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 99%。|
+credit	null
+insight	🪻|餐饮 超出分类预算了（101/-1）。|
+credit	null
+insight	null
+credit	null
+insight	🔍|Shopping is your biggest spend at 82%.|
+insight	🪻|Food is over its category budget (26/0).|
+insight	null
+insight	null
+insight	null
+credit	💳|卡c1 逾期 7 天还款，待还 ￥99|c1
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	null
+insight	🪻|餐饮 超出分类预算了（0/-1）。|
+insight	null
+credit	null
+credit	null
+insight	null
+credit	null
+credit	null
+insight	null
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at 74%.|
+insight	null
+insight	🪻|自定义 超出分类预算了（33/-1）。|
+insight	null
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+credit	null
+insight	null
+credit	null
+insight	null
+credit	null
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+insight	⏳|Over today's budget by 117.|
+insight	🔍|Transit is your biggest spend at NaN%.|
+insight	null
+insight	🪻|Other is over its category budget (210/0).|
+insight	null
+insight	null
+credit	null
+insight	null
+insight	⏳|Over today's budget by 40.|
+insight	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 105%。|
+insight	null
+credit	null
+insight	null
+credit	null
+insight	null
+insight	🔍|这个月 %a 花得最多，占了 NaN%。|
+insight	🪻|Other is over its category budget (100/-1).|
+insight	null
+credit	null
+insight	🪻|交通 超出分类预算了（100/-1）。|
+insight	null
+credit	null
+insight	🔍|Food is your biggest spend at NaN%.|
+insight	🔍|这个月 交通 花得最多，占了 NaN%。|
+credit	💳|卡c1 今天还款，待还 ￥5|c1
+insight	🔍|这个月 餐饮 花得最多，占了 99%。|
+insight	🔍|这个月 其他 花得最多，占了 100%。|
+insight	null
+credit	null
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at 77%.|
+insight	⏳|Over today's budget by 83.|
+credit	💳|Card c2 due 11d overdue · $100 to repay|c2
+credit	null
+insight	⏳|今天花超了，超出 108。|
+insight	null
+insight	null
+insight	null
+insight	null
+insight	🪻|餐饮 超出分类预算了（10/0）。|
+insight	null
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	⏳|Over today's budget by 18.|
+insight	null
+credit	null
+insight	null
+insight	🔍|Shopping is your biggest spend at NaN%.|
+insight	null
+insight	🔍|Food is your biggest spend at NaN%.|
+insight	⏳|今天花超了，超出 25。|
+insight	🪻|其他 超出分类预算了（43/1）。|
+insight	null
+insight	🪻|%a is over its category budget (0/-1).|
+insight	🔍|这个月 其他 花得最多，占了 133%。|
+insight	🔍|Food is your biggest spend at 47%.|
+insight	null
+insight	null
+insight	null
+insight	null
+credit	💳|卡c1 逾期 3 天还款，待还 ￥100|c1
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at 66%.|
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+insight	🔍|这个月 %a 花得最多，占了 NaN%。|
+credit	null
+insight	null
+credit	💳|卡c1 due 8d overdue · $100 to repay|c1
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 91%。|
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	🔍|Transit is your biggest spend at 86%.|
+insight	null
+credit	null
+insight	null
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at 53%.|
+credit	💳|卡c1 逾期 6 天还款，待还 ￥100|c1
+credit	null
+credit	null
+insight	null
+credit	null
+insight	null
+insight	null
+insight	🔍|这个月 交通 花得最多，占了 NaN%。|
+insight	null
+credit	null
+insight	null
+credit	null
+insight	🔍|Other is your biggest spend at 118%.|
+insight	🔍|Other is your biggest spend at 57%.|
+credit	null
+insight	null
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+credit	null
+insight	🪻|%d is over its category budget (0/-1).|
+insight	null
+insight	null
+insight	🔍|Transit is your biggest spend at 82%.|
+insight	🌼|85% of budget used — ease up to keep it blooming.|
+credit	null
+insight	null
+credit	null
+insight	🪻|Other is over its category budget (0/-1).|
+insight	⏳|今天花超了，超出 40。|
+insight	null
+credit	null
+insight	⏳|今天花超了，超出 80。|
+credit	null
+insight	null
+insight	null
+insight	null
+credit	null
+credit	💳|卡c1 due today · $100 to repay|c1
+insight	null
+credit	null
+insight	null
+insight	🪻|交通 超出分类预算了（33/10）。|
+insight	null
+insight	null
+insight	⏳|Over today's budget by 77.|
+credit	💳|卡c2 逾期 21 天还款，待还 ￥100|c2
+credit	null
+insight	⏳|今天花超了，超出 85。|
+credit	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	null
+insight	null
+credit	null
+credit	null
+insight	null
+credit	null
+insight	🪻|购物 超出分类预算了（36/0）。|
+insight	🔍|Other is your biggest spend at NaN%.|
+credit	null
+insight	🌼|96% of budget used — ease up to keep it blooming.|
+insight	null
+insight	null
+credit	null
+insight	🪻|其他 超出分类预算了（33/1）。|
+insight	🪻|Shopping is over its category budget (0/-1).|
+insight	🪻|%d is over its category budget (20/0).|
+insight	null
+insight	🪻|Other is over its category budget (0/-1).|
+insight	null
+insight	⏳|Over today's budget by 24.|
+insight	null
+insight	null
+insight	🪻|%b 超出分类预算了（0/-1）。|
+insight	null
+credit	null
+insight	null
+insight	null
+credit	null
+insight	🪻|自定义 超出分类预算了（11/10）。|
+credit	null
+insight	null
+credit	null
+insight	🪻|%a 超出分类预算了（100/10）。|
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+insight	null
+insight	🔍|这个月 交通 花得最多，占了 56%。|
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+insight	🌼|83% of budget used — ease up to keep it blooming.|
+insight	🔍|这个月 其他 花得最多，占了 72%。|
+insight	null
+insight	null
+insight	🔍|这个月 %b 花得最多，占了 NaN%。|
+insight	🪻|其他 超出分类预算了（10/0）。|
+insight	🔍|这个月 交通 花得最多，占了 NaN%。|
+insight	⏳|Over today's budget by 7.|
+credit	null
+insight	⏳|今天花超了，超出 52。|
+credit	null
+credit	null
+insight	null
+insight	🌼|88% of budget used — ease up to keep it blooming.|
+insight	🔍|这个月 交通 花得最多，占了 63%。|
+insight	⏳|今天花超了，超出 14。|
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🪻|其他 超出分类预算了（0/-1）。|
+credit	null
+insight	null
+credit	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+insight	🪻|自定义 超出分类预算了（26/0）。|
+insight	🔍|这个月 其他 花得最多，占了 50%。|
+insight	null
+insight	null
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+insight	null
+insight	🔍|Food is your biggest spend at 62%.|
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+credit	null
+insight	⏳|今天花超了，超出 32。|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+insight	null
+insight	🪻|交通 超出分类预算了（0/-1）。|
+insight	🔍|这个月 %b 花得最多，占了 79%。|
+credit	null
+insight	🪻|Food is over its category budget (0/-1).|
+insight	🔍|这个月 购物 花得最多，占了 105%。|
+insight	🪻|Custom is over its category budget (0/-1).|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🔍|这个月 其他 花得最多，占了 59%。|
+insight	null
+insight	null
+insight	🪻|Shopping is over its category budget (0/-1).|
+insight	🔍|这个月 交通 花得最多，占了 NaN%。|
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+insight	null
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	🪻|交通 超出分类预算了（0/-1）。|
+insight	null
+insight	null
+insight	null
+insight	null
+insight	🔍|Transit is your biggest spend at NaN%.|
+credit	null
+insight	🔍|这个月 %a 花得最多，占了 96%。|
+insight	null
+insight	null
+insight	null
+insight	🔍|Transit is your biggest spend at NaN%.|
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at -3%.|
+insight	null
+insight	null
+insight	null
+insight	null
+insight	🪻|Other is over its category budget (1/0).|
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🔍|Other is your biggest spend at NaN%.|
+credit	null
+credit	null
+insight	null
+credit	💳|卡c2 逾期 7 天还款，待还 ￥100|c2
+credit	null
+insight	null
+insight	null
+credit	null
+insight	🪻|Other is over its category budget (100/1).|
+insight	🪻|%d is over its category budget (10/-1).|
+insight	⏳|今天花超了，超出 26。|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🔍|这个月 购物 花得最多，占了 200%。|
+insight	🪻|Other is over its category budget (33/10).|
+insight	🔍|Other is your biggest spend at 94%.|
+insight	null
+credit	null
+insight	null
+insight	null
+insight	🪻|%d is over its category budget (10/1).|
+credit	null
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+insight	null
+credit	null
+insight	🪻|Other is over its category budget (100/-1).|
+insight	null
+insight	null
+insight	🪻|Other is over its category budget (10/0).|
+insight	🪻|餐饮 超出分类预算了（0/-1）。|
+insight	null
+insight	🔍|Food is your biggest spend at NaN%.|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 -25%。|
+credit	null
+credit	null
+credit	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 98%。|
+insight	🪻|Custom is over its category budget (100/30).|
+insight	🔍|Other is your biggest spend at 70%.|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🪻|Custom is over its category budget (26/0).|
+insight	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	null
+insight	null
+insight	🔍|%d is your biggest spend at NaN%.|
+credit	null
+insight	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	🔍|%a is your biggest spend at 99%.|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+credit	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+credit	null
+credit	null
+credit	null
+insight	🔍|这个月 购物 花得最多，占了 100%。|
+insight	null
+credit	null
+insight	🪻|Other is over its category budget (0/-1).|
+insight	null
+insight	null
+credit	null
+insight	🪻|Other is over its category budget (0/-1).|
+insight	null
+credit	null
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at 84%.|
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🔍|Custom is your biggest spend at NaN%.|
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+insight	null
+insight	null
+credit	null
+insight	🔍|这个月 %a 花得最多，占了 NaN%。|
+insight	null
+insight	null
+credit	null
+insight	⏳|今天花超了，超出 203。|
+insight	null
+insight	null
+credit	💳|卡c1 逾期 12 天还款，待还 ￥100|c1
+credit	null
+credit	💳|Card c2 due 3d overdue · $100 to repay|c2
+insight	null
+insight	null
+insight	null
+credit	null
+insight	🔍|这个月 餐饮 花得最多，占了 79%。|
+insight	🔍|这个月 其他 花得最多，占了 87%。|
+insight	🪻|购物 超出分类预算了（1/0）。|
+credit	null
+insight	null
+insight	⏳|今天花超了，超出 90。|
+insight	🪻|其他 超出分类预算了（0/-1）。|
+credit	null
+insight	null
+credit	null
+insight	⏳|今天花超了，超出 180。|
+insight	🔍|Custom is your biggest spend at NaN%.|
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	🔍|Other is your biggest spend at 90%.|
+insight	🔍|这个月 自定义 花得最多，占了 NaN%。|
+insight	null
+insight	🪻|Other is over its category budget (2/-1).|
+credit	null
+credit	null
+insight	🪻|购物 超出分类预算了（0/-1）。|
+credit	null
+insight	🪻|Other is over its category budget (0/-1).|
+insight	null
+credit	💳|卡c1 due 11d overdue · $100 to repay|c1
+insight	🔍|这个月 %b 花得最多，占了 99%。|
+insight	🪻|Other is over its category budget (0/-1).|
+insight	null
+credit	null
+credit	💳|Card c2 due 11d overdue · $100 to repay|c2
+insight	🪻|Other is over its category budget (100/1).|
+insight	null
+insight	null
+insight	null
+insight	null
+insight	🪻|Other is over its category budget (1/0).|
+credit	💳|卡c1 due 3d overdue · $100 to repay|c1
+insight	🔍|%d is your biggest spend at 124%.|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🪻|交通 超出分类预算了（1/-1）。|
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+insight	🔍|Other is your biggest spend at 60%.|
+insight	null
+insight	null
+insight	null
+credit	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+insight	🔍|Food is your biggest spend at NaN%.|
+insight	🔍|Other is your biggest spend at NaN%.|
+credit	💳|卡c1 逾期 12 天还款，待还 ￥100|c1
+insight	🪻|其他 超出分类预算了（100/1）。|
+insight	null
+insight	null
+insight	🔍|Transit is your biggest spend at 105%.|
+insight	null
+insight	🔍|Shopping is your biggest spend at -25%.|
+insight	null
+insight	🪻|餐饮 超出分类预算了（100/10）。|
+credit	💳|卡c1 逾期 11 天还款，待还 ￥100|c1
+insight	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	null
+insight	🪻|Other is over its category budget (33/-1).|
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	null
+insight	⏳|Over today's budget by 60.|
+credit	💳|卡c1 逾期 16 天还款，待还 ￥5|c1
+credit	null
+credit	null
+insight	🔍|这个月 购物 花得最多，占了 91%。|
+insight	null
+insight	⏳|Over today's budget by 108.|
+insight	🔍|Food is your biggest spend at NaN%.|
+insight	🔍|Other is your biggest spend at NaN%.|
+credit	null
+credit	💳|卡c1 逾期 12 天还款，待还 ￥100|c1
+insight	🪻|Other is over its category budget (26/0).|
+credit	💳|卡c1 逾期 12 天还款，待还 ￥99|c1
+insight	null
+credit	null
+insight	null
+insight	null
+credit	null
+insight	⏳|Over today's budget by 47.|
+insight	null
+insight	🪻|%b 超出分类预算了（33/0）。|
+credit	null
+insight	null
+insight	null
+insight	🔍|这个月 自定义 花得最多，占了 NaN%。|
+insight	🪻|购物 超出分类预算了（33/1）。|
+insight	null
+insight	null
+insight	null
+insight	🪻|Food is over its category budget (0/-1).|
+insight	🔍|Other is your biggest spend at 100%.|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	⏳|Over today's budget by 51.|
+credit	null
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🔍|Shopping is your biggest spend at NaN%.|
+insight	null
+insight	🪻|%b 超出分类预算了（1/-1）。|
+insight	🔍|Transit is your biggest spend at 79%.|
+insight	🪻|Other is over its category budget (26/10).|
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+insight	🪻|Shopping is over its category budget (0/-1).|
+insight	null
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	⏳|Over today's budget by 71.|
+insight	🔍|Other is your biggest spend at 100%.|
+insight	null
+insight	null
+credit	null
+credit	null
+insight	null
+insight	🔍|%a is your biggest spend at -14%.|
+insight	null
+credit	null
+insight	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🪻|Other is over its category budget (100/30).|
+insight	null
+insight	🌼|88% of budget used — ease up to keep it blooming.|
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 -12%。|
+credit	null
+insight	🔍|这个月 交通 花得最多，占了 95%。|
+insight	null
+insight	🪻|Transit is over its category budget (10/0).|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 98%。|
+credit	null
+credit	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	⏳|今天花超了，超出 131。|
+insight	🪻|购物 超出分类预算了（126/1）。|
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	null
+insight	null
+insight	🔍|Transit is your biggest spend at -33%.|
+insight	🪻|其他 超出分类预算了（100/0）。|
+insight	🪻|Other is over its category budget (0/-1).|
+insight	null
+insight	null
+credit	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+credit	null
+insight	null
+insight	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+credit	null
+insight	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	null
+insight	null
+insight	null
+insight	null
+insight	null
+insight	🪻|其他 超出分类预算了（26/10）。|
+insight	🪻|Shopping is over its category budget (10/-1).|
+insight	null
+insight	null
+insight	null
+insight	🔍|这个月 %a 花得最多，占了 NaN%。|
+insight	null
+credit	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	null
+credit	null
+insight	null
+insight	🔍|这个月 交通 花得最多，占了 NaN%。|
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at -13%.|
+insight	null
+credit	null
+insight	null
+insight	null
+credit	null
+insight	🔍|Custom is your biggest spend at 54%.|
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+insight	🪻|交通 超出分类预算了（1/0）。|
+insight	⏳|Over today's budget by 231.|
+credit	null
+insight	🪻|Other is over its category budget (26/1).|
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	🪻|其他 超出分类预算了（1/0）。|
+credit	null
+insight	🪻|餐饮 超出分类预算了（10/1）。|
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+insight	null
+insight	⏳|Over today's budget by 109.|
+insight	null
+insight	null
+insight	null
+credit	null
+insight	null
+insight	🪻|Other is over its category budget (26/10).|
+credit	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🪻|自定义 超出分类预算了（0/-1）。|
+insight	null
+insight	null
+credit	null
+insight	null
+insight	null
+credit	null
+credit	null
+insight	null
+credit	null
+insight	null
+credit	null
+insight	null
+insight	null
+insight	null
+credit	💳|Card c1 due 8d overdue · $100 to repay|c1
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 70%。|
+insight	null
+credit	null
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+credit	💳|卡c1 逾期 17 天还款，待还 ￥100|c1
+insight	🌼|96% of budget used — ease up to keep it blooming.|
+insight	🪻|自定义 超出分类预算了（100/0）。|
+insight	⏳|Over today's budget by 14.|
+insight	null
+credit	null
+insight	null
+insight	🪻|Shopping is over its category budget (1/-1).|
+insight	null
+insight	null
+insight	🔍|Transit is your biggest spend at 117%.|
+insight	🪻|Transit is over its category budget (100/1).|
+insight	🔍|Food is your biggest spend at 94%.|
+insight	🪻|Other is over its category budget (0/-1).|
+insight	null
+insight	null
+insight	null
+insight	🔍|这个月 交通 花得最多，占了 72%。|
+insight	null
+credit	null
+credit	null
+insight	🔍|%a is your biggest spend at 62%.|
+credit	null
+credit	null
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	null
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+credit	💳|卡c1 due 12d overdue · $67 to repay|c1
+credit	null
+insight	🪻|Other is over its category budget (33/10).|
+insight	null
+insight	null
+insight	null
+credit	null
+insight	null
+credit	null
+credit	null
+credit	💳|Card c1 due 6d overdue · $100 to repay|c1
+credit	null
+credit	null
+credit	null
+credit	null
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+credit	null
+credit	null
+credit	null
+credit	💳|卡c1 逾期 6 天还款，待还 ￥75|c1
+credit	null
+insight	null
+insight	🔍|这个月 %a 花得最多，占了 NaN%。|
+insight	🔍|这个月 交通 花得最多，占了 NaN%。|
+credit	null
+credit	null
+insight	null
+credit	null
+insight	null
+insight	null
+insight	null
+insight	🪻|Other is over its category budget (31/0).|
+insight	null
+credit	💳|卡c1 逾期 11 天还款，待还 ￥100|c1
+insight	null
+insight	null
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+insight	null
+credit	null
+insight	🪻|购物 超出分类预算了（10/-1）。|
+credit	null
+credit	null
+insight	🔍|Other is your biggest spend at NaN%.|
+credit	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	null
+insight	null
+credit	null
+insight	null
+credit	null
+insight	null
+insight	🪻|Shopping is over its category budget (26/-1).|
+credit	null
+credit	null
+insight	🔍|Food is your biggest spend at 108%.|
+insight	null
+insight	🔍|这个月 交通 花得最多，占了 NaN%。|
+insight	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	null
+insight	null
+insight	null
+insight	null
+insight	null
+credit	💳|卡c1 逾期 7 天还款，待还 ￥100|c1
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+insight	🔍|这个月 交通 花得最多，占了 NaN%。|
+credit	null
+insight	🪻|Other is over its category budget (36/1).|
+insight	🔍|这个月 其他 花得最多，占了 0%。|
+insight	🔍|Shopping is your biggest spend at NaN%.|
+insight	null
+insight	🪻|Other is over its category budget (100/1).|
+insight	null
+insight	🔍|这个月 自定义 花得最多，占了 NaN%。|
+insight	null
+insight	🪻|交通 超出分类预算了（10/0）。|
+credit	null
+insight	null
+insight	🔍|Shopping is your biggest spend at 95%.|
+credit	💳|卡c2 逾期 17 天还款，待还 ￥100|c2
+insight	⏳|今天花超了，超出 116。|
+insight	🔍|Transit is your biggest spend at NaN%.|
+insight	null
+credit	null
+credit	null
+insight	null
+credit	null
+insight	null
+credit	💳|卡c1 逾期 11 天还款，待还 ￥100|c1
+insight	🔍|Transit is your biggest spend at 114%.|
+insight	null
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	null
+insight	🪻|其他 超出分类预算了（100/-1）。|
+insight	⏳|Over today's budget by 6.|
+insight	🔍|Food is your biggest spend at NaN%.|
+insight	🪻|交通 超出分类预算了（26/1）。|
+insight	null
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	🔍|Shopping is your biggest spend at NaN%.|
+insight	null
+credit	null
+insight	🔍|Shopping is your biggest spend at 33%.|
+insight	🔍|Other is your biggest spend at 98%.|
+insight	🪻|餐饮 超出分类预算了（0/-1）。|
+insight	🔍|Other is your biggest spend at -11%.|
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	null
+insight	null
+credit	null
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+credit	💳|卡c1 due 22d overdue · $105 to repay|c1
+insight	🔍|这个月 餐饮 花得最多，占了 75%。|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	⏳|今天花超了，超出 55。|
+credit	null
+insight	null
+credit	null
+insight	null
+insight	null
+insight	🪻|购物 超出分类预算了（0/-1）。|
+insight	🌼|93% of budget used — ease up to keep it blooming.|
+insight	null
+insight	null
+insight	⏳|今天花超了，超出 59。|
+insight	null
+credit	null
+insight	null
+insight	🔍|这个月 %a 花得最多，占了 NaN%。|
+credit	null
+insight	🪻|Other is over its category budget (0/-1).|
+insight	null
+insight	🔍|Other is your biggest spend at -33%.|
+insight	null
+insight	⏳|Over today's budget by 13.|
+insight	🔍|Other is your biggest spend at NaN%.|
+credit	null
+insight	null
+insight	null
+insight	🌼|96% of budget used — ease up to keep it blooming.|
+credit	null
+insight	null
+insight	null
+insight	🪻|其他 超出分类预算了（26/0）。|
+insight	null
+credit	💳|卡c1 逾期 7 天还款，待还 ￥5|c1
+credit	null
+insight	null
+insight	null
+insight	🔍|这个月 %a 花得最多，占了 NaN%。|
+insight	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	null
+credit	null
+insight	null
+insight	🔍|Shopping is your biggest spend at 52%.|
+insight	⏳|今天花超了，超出 14。|
+insight	null
+insight	🪻|自定义 超出分类预算了（0/-1）。|
+insight	null
+insight	🔍|这个月 购物 花得最多，占了 61%。|
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+credit	💳|卡c1 逾期 11 天还款，待还 ￥100|c1
+insight	null
+insight	🪻|购物 超出分类预算了（0/-1）。|
+credit	null
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+insight	null
+credit	💳|卡c1 今天还款，待还 ￥151|c1
+credit	null
+insight	🔍|这个月 交通 花得最多，占了 72%。|
+insight	⏳|Over today's budget by 6.|
+insight	null
+credit	💳|卡c1 今天还款，待还 ￥100|c1
+insight	null
+insight	null
+credit	null
+insight	null
+insight	null
+insight	🔍|Transit is your biggest spend at 116%.|
+credit	null
+credit	null
+credit	null
+insight	null
+insight	🪻|Transit is over its category budget (0/-1).|
+insight	🔍|Other is your biggest spend at 43%.|
+credit	null
+insight	🪻|%b 超出分类预算了（33/10）。|
+insight	🪻|Transit is over its category budget (43/10).|
+insight	null
+insight	🪻|餐饮 超出分类预算了（1/-1）。|
+insight	null
+credit	null
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+insight	null
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🔍|Other is your biggest spend at 104%.|
+credit	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 85%。|
+credit	null
+credit	null
+insight	🔍|Food is your biggest spend at 60%.|
+insight	🔍|Transit is your biggest spend at 50%.|
+insight	null
+insight	null
+credit	💳|卡c1 due 12d overdue · $100 to repay|c1
+insight	null
+insight	🪻|其他 超出分类预算了（1/-1）。|
+insight	null
+credit	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+credit	💳|Card c1 due 3d overdue · $1 to repay|c1
+insight	null
+insight	null
+insight	⏳|Over today's budget by 50.|
+insight	null
+insight	🪻|其他 超出分类预算了（110/30）。|
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 200%。|
+insight	🔍|Food is your biggest spend at 56%.|
+insight	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🪻|自定义 超出分类预算了（1/-1）。|
+insight	null
+credit	💳|卡c1 due 6d overdue · $100 to repay|c1
+credit	💳|卡c1 逾期 11 天还款，待还 ￥100|c1
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+credit	null
+insight	🔍|Other is your biggest spend at 105%.|
+insight	null
+credit	null
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	null
+insight	null
+insight	null
+insight	🔍|这个月 自定义 花得最多，占了 NaN%。|
+insight	🔍|Custom is your biggest spend at 50%.|
+insight	null
+credit	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🔍|Transit is your biggest spend at NaN%.|
+insight	🪻|Shopping is over its category budget (1/-1).|
+insight	null
+insight	🔍|Custom is your biggest spend at NaN%.|
+insight	null
+insight	⏳|今天花超了，超出 50。|
+credit	null
+insight	null
+insight	null
+insight	🪻|Other is over its category budget (0/-1).|
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	null
+insight	⏳|Over today's budget by 106.|
+insight	🔍|Custom is your biggest spend at 86%.|
+insight	null
+insight	🔍|Shopping is your biggest spend at 70%.|
+insight	null
+insight	🔍|Custom is your biggest spend at 77%.|
+insight	🪻|其他 超出分类预算了（11/0）。|
+credit	null
+insight	🪻|%d is over its category budget (0/-1).|
+insight	null
+insight	null
+credit	null
+credit	null
+insight	null
+credit	💳|卡c2 due 3d overdue · $100 to repay|c2
+insight	null
+credit	null
+insight	⏳|今天花超了，超出 7。|
+insight	⏳|今天花超了，超出 75。|
+insight	🔍|Other is your biggest spend at 39%.|
+credit	null
+credit	null
+insight	null
+insight	🪻|Other is over its category budget (10/-1).|
+insight	⏳|今天花超了，超出 51。|
+insight	🪻|Other is over its category budget (0/-1).|
+credit	null
+credit	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 50%。|
+insight	🔍|这个月 交通 花得最多，占了 98%。|
+credit	null
+insight	⏳|今天花超了，超出 81。|
+insight	null
+credit	null
+insight	null
+credit	null
+insight	🔍|Other is your biggest spend at 48%.|
+insight	null
+insight	🪻|Other is over its category budget (100/1).|
+insight	null
+credit	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+insight	🔍|这个月 %a 花得最多，占了 39%。|
+insight	null
+credit	null
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+credit	💳|卡c1 今天还款，待还 ￥100|c1
+insight	🔍|Shopping is your biggest spend at 83%.|
+insight	🪻|购物 超出分类预算了（100/0）。|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🔍|%d is your biggest spend at NaN%.|
+insight	null
+credit	null
+insight	null
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 55%。|
+credit	💳|卡c1 逾期 3 天还款，待还 ￥105|c1
+credit	null
+insight	🪻|%d is over its category budget (0/-1).|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+credit	null
+credit	null
+insight	🪻|Transit is over its category budget (0/-1).|
+insight	🔍|Food is your biggest spend at NaN%.|
+insight	null
+insight	🪻|Shopping is over its category budget (100/1).|
+insight	🔍|这个月 其他 花得最多，占了 104%。|
+credit	💳|卡c2 due 12d overdue · $100 to repay|c2
+insight	🔍|这个月 其他 花得最多，占了 -29%。|
+insight	null
+insight	null
+insight	null
+credit	null
+credit	null
+insight	🔍|Other is your biggest spend at -11%.|
+credit	💳|卡c1 due 5d overdue · $100 to repay|c1
+insight	🪻|Other is over its category budget (0/-1).|
+insight	null
+insight	🪻|自定义 超出分类预算了（0/-1）。|
+insight	null
+insight	null
+insight	null
+insight	null
+credit	null
+insight	🪻|其他 超出分类预算了（28/10）。|
+credit	null
+credit	null
+insight	🔍|这个月 购物 花得最多，占了 49%。|
+insight	null
+insight	null
+insight	🪻|交通 超出分类预算了（0/-1）。|
+insight	🔍|Shopping is your biggest spend at NaN%.|
+insight	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+credit	null
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+credit	💳|卡c1 逾期 3 天还款，待还 ￥99|c1
+insight	🔍|%d is your biggest spend at 106%.|
+insight	null
+insight	null
+insight	null
+credit	null
+insight	null
+insight	null
+insight	null
+credit	null
+insight	⏳|今天花超了，超出 17。|
+insight	null
+insight	🔍|Food is your biggest spend at 52%.|
+insight	null
+insight	null
+credit	null
+insight	null
+insight	null
+insight	null
+credit	null
+insight	🔍|这个月 %b 花得最多，占了 NaN%。|
+insight	null
+insight	null
+insight	null
+credit	💳|卡c1 逾期 3 天还款，待还 ￥100|c1
+insight	🪻|Other is over its category budget (0/-1).|
+credit	null
+insight	null
+credit	null
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	null
+insight	null
+insight	null
+credit	null
+insight	null
+insight	🔍|%d is your biggest spend at NaN%.|
+credit	null
+insight	null
+insight	null
+credit	💳|Card c2 due 12d overdue · $100 to repay|c2
+insight	null
+insight	🔍|Transit is your biggest spend at 82%.|
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	⏳|Over today's budget by 8.|
+insight	null
+insight	null
+insight	null
+insight	null
+insight	🔍|这个月 自定义 花得最多，占了 NaN%。|
+insight	null
+insight	🔍|Transit is your biggest spend at 50%.|
+insight	null
+insight	null
+insight	null
+insight	🪻|Other is over its category budget (10/0).|
+insight	🔍|这个月 交通 花得最多，占了 NaN%。|
+insight	null
+insight	null
+insight	null
+insight	🔍|这个月 交通 花得最多，占了 94%。|
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🌼|预算用了 85%，省着点就能让花开满。|
+insight	null
+insight	null
+insight	null
+insight	null
+insight	🌼|预算用了 96%，省着点就能让花开满。|
+insight	null
+insight	null
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 91%。|
+credit	null
+credit	null
+insight	null
+credit	null
+insight	null
+credit	null
+insight	🪻|餐饮 超出分类预算了（100/-1）。|
+credit	null
+credit	null
+insight	🔍|这个月 交通 花得最多，占了 NaN%。|
+insight	🪻|其他 超出分类预算了（1/0）。|
+insight	null
+insight	🪻|%a is over its category budget (59/0).|
+insight	🔍|这个月 %a 花得最多，占了 NaN%。|
+insight	🪻|Shopping is over its category budget (26/0).|
+credit	null
+insight	null
+insight	🔍|这个月 交通 花得最多，占了 NaN%。|
+insight	null
+insight	🪻|其他 超出分类预算了（10/1）。|
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at 119%.|
+insight	🪻|餐饮 超出分类预算了（0/-1）。|
+credit	null
+insight	🔍|Transit is your biggest spend at 38%.|
+insight	⏳|Over today's budget by 31.|
+insight	null
+credit	null
+insight	null
+insight	🔍|这个月 %b 花得最多，占了 61%。|
+credit	null
+insight	null
+insight	⏳|今天花超了，超出 91。|
+insight	null
+insight	🔍|Food is your biggest spend at 74%.|
+credit	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🔍|这个月 其他 花得最多，占了 -33%。|
+insight	null
+insight	🪻|交通 超出分类预算了（11/10）。|
+insight	🔍|Shopping is your biggest spend at NaN%.|
+insight	⏳|Over today's budget by 27.|
+credit	null
+insight	null
+insight	null
+insight	null
+insight	null
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	null
+credit	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+credit	💳|Card c1 due 1d overdue · $136 to repay|c1
+insight	🔍|这个月 %b 花得最多，占了 71%。|
+insight	🔍|这个月 交通 花得最多，占了 93%。|
+insight	null
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🔍|这个月 交通 花得最多，占了 121%。|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+credit	null
+insight	null
+insight	null
+insight	null
+insight	🪻|其他 超出分类预算了（26/10）。|
+insight	🪻|其他 超出分类预算了（100/10）。|
+credit	null
+insight	🔍|Other is your biggest spend at 113%.|
+insight	null
+insight	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+insight	null
+insight	🪻|Other is over its category budget (1/-1).|
+insight	null
+insight	null
+insight	null
+insight	🪻|Shopping is over its category budget (1/-1).|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🔍|这个月 其他 花得最多，占了 48%。|
+insight	null
+insight	⏳|Over today's budget by 16.|
+insight	⏳|今天花超了，超出 181。|
+insight	🔍|这个月 自定义 花得最多，占了 NaN%。|
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	null
+insight	null
+insight	null
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	🔍|这个月 自定义 花得最多，占了 41%。|
+insight	null
+insight	🔍|%d is your biggest spend at 93%.|
+credit	null
+credit	null
+insight	🪻|Other is over its category budget (200/0).|
+credit	null
+insight	null
+credit	null
+insight	null
+insight	🔍|Other is your biggest spend at 50%.|
+insight	null
+credit	null
+insight	null
+insight	null
+insight	null
+insight	null
+insight	🔍|这个月 自定义 花得最多，占了 -5%。|
+insight	null
+insight	🔍|Custom is your biggest spend at -14%.|
+insight	null
+insight	🪻|Other is over its category budget (0/-1).|
+insight	null
+credit	💳|卡c1 逾期 6 天还款，待还 ￥75|c1
+insight	null
+insight	🔍|这个月 %a 花得最多，占了 96%。|
+credit	null
+insight	⏳|今天花超了，超出 81。|
+insight	null
+insight	🔍|这个月 %a 花得最多，占了 82%。|
+credit	null
+insight	null
+insight	null
+insight	🔍|这个月 交通 花得最多，占了 NaN%。|
+credit	null
+insight	🪻|Food is over its category budget (33/0).|
+insight	null
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 110%。|
+insight	🪻|Shopping is over its category budget (33/0).|
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 110%。|
+insight	null
+insight	🪻|Other is over its category budget (0/-1).|
+insight	null
+credit	null
+insight	🔍|%a is your biggest spend at NaN%.|
+insight	null
+insight	⏳|今天花超了，超出 80。|
+credit	null
+credit	null
+credit	null
+insight	🔍|Other is your biggest spend at 72%.|
+insight	🪻|其他 超出分类预算了（100/-1）。|
+insight	null
+insight	null
+insight	🪻|Other is over its category budget (0/-1).|
+insight	null
+insight	null
+insight	🔍|Food is your biggest spend at NaN%.|
+credit	null
+insight	null
+insight	🪻|Other is over its category budget (33/1).|
+insight	null
+insight	🪻|购物 超出分类预算了（26/-1）。|
+insight	null
+insight	null
+insight	null
+insight	🪻|交通 超出分类预算了（11/0）。|
+insight	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	🔍|Shopping is your biggest spend at 100%.|
+insight	null
+insight	🪻|交通 超出分类预算了（0/-1）。|
+insight	null
+insight	null
+insight	🔍|Shopping is your biggest spend at NaN%.|
+insight	🪻|Other is over its category budget (1/0).|
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	🪻|Shopping is over its category budget (100/1).|
+insight	null
+insight	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	null
+insight	🔍|%d is your biggest spend at 90%.|
+credit	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	🔍|Transit is your biggest spend at NaN%.|
+insight	null
+insight	null
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+insight	null
+insight	null
+insight	🪻|其他 超出分类预算了（26/-1）。|
+insight	🔍|Transit is your biggest spend at 105%.|
+insight	null
+insight	🔍|Other is your biggest spend at -5%.|
+insight	null
+insight	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	null
+credit	null
+insight	null
+insight	null
+insight	🔍|%a is your biggest spend at NaN%.|
+insight	null
+insight	null
+insight	null
+credit	null
+insight	🪻|交通 超出分类预算了（100/0）。|
+insight	🔍|这个月 其他 花得最多，占了 71%。|
+insight	🔍|这个月 %a 花得最多，占了 NaN%。|
+insight	null
+insight	🔍|Transit is your biggest spend at 90%.|
+credit	null
+insight	⏳|今天花超了，超出 9。|
+insight	🔍|Other is your biggest spend at 50%.|
+insight	null
+insight	🔍|Custom is your biggest spend at NaN%.|
+insight	null
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	⏳|今天花超了，超出 101。|
+insight	null
+credit	💳|卡c1 逾期 6 天还款，待还 ￥100|c1
+insight	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	⏳|今天花超了，超出 81。|
+insight	⏳|Over today's budget by 18.|
+insight	null
+insight	null
+insight	🪻|Food is over its category budget (0/-1).|
+insight	null
+credit	null
+insight	null
+credit	💳|卡c2 due today · $100 to repay|c2
+insight	🪻|Other is over its category budget (27/-1).|
+insight	null
+insight	null
+insight	null
+credit	null
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🪻|Shopping is over its category budget (10/1).|
+insight	null
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	null
+credit	null
+insight	null
+insight	🔍|Food is your biggest spend at 48%.|
+insight	null
+insight	🔍|这个月 自定义 花得最多，占了 NaN%。|
+insight	null
+insight	null
+insight	🪻|Other is over its category budget (11/0).|
+insight	null
+insight	null
+insight	🪻|其他 超出分类预算了（10/-1）。|
+credit	null
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 70%。|
+credit	null
+credit	null
+credit	null
+credit	null
+insight	⏳|今天花超了，超出 75。|
+insight	⏳|今天花超了，超出 166。|
+insight	⏳|Over today's budget by 251.|
+insight	null
+insight	🪻|购物 超出分类预算了（10/-1）。|
+insight	🔍|Custom is your biggest spend at 107%.|
+credit	null
+insight	⏳|Over today's budget by 47.|
+insight	🪻|Transit is over its category budget (33/1).|
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+insight	🔍|这个月 自定义 花得最多，占了 NaN%。|
+insight	null
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 97%。|
+insight	null
+insight	⏳|今天花超了，超出 109。|
+insight	null
+insight	⏳|今天花超了，超出 107。|
+insight	null
+insight	null
+credit	💳|卡c2 逾期 21 天还款，待还 ￥100|c2
+credit	💳|卡c2 今天还款，待还 ￥100|c2
+insight	🔍|Other is your biggest spend at NaN%.|
+credit	💳|卡c1 逾期 1 天还款，待还 ￥110|c1
+credit	null
+insight	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	null
+credit	null
+insight	null
+credit	null
+credit	💳|卡c2 逾期 12 天还款，待还 ￥100|c2
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+credit	null
+credit	null
+insight	null
+insight	🔍|Shopping is your biggest spend at 94%.|
+credit	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	null
+insight	null
+insight	null
+insight	null
+credit	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	🪻|其他 超出分类预算了（1/-1）。|
+insight	🔍|Transit is your biggest spend at NaN%.|
+insight	🪻|Transit is over its category budget (1/-1).|
+insight	🔍|这个月 其他 花得最多，占了 56%。|
+credit	null
+insight	null
+insight	🪻|餐饮 超出分类预算了（26/1）。|
+insight	null
+insight	🪻|Shopping is over its category budget (10/1).|
+credit	💳|卡c2 due 22d overdue · $100 to repay|c2
+insight	null
+credit	💳|卡c1 逾期 16 天还款，待还 ￥133|c1
+insight	null
+credit	null
+credit	null
+insight	🔍|Other is your biggest spend at 100%.|
+credit	null
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	null
+insight	🔍|Custom is your biggest spend at 104%.|
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	🪻|其他 超出分类预算了（100/10）。|
+credit	null
+insight	🪻|Transit is over its category budget (26/-1).|
+insight	⏳|Over today's budget by 76.|
+insight	null
+insight	null
+insight	🔍|%d is your biggest spend at NaN%.|
+insight	null
+insight	🪻|Other is over its category budget (10/0).|
+insight	null
+credit	null
+credit	null
+insight	🔍|Other is your biggest spend at 53%.|
+insight	🔍|Other is your biggest spend at 98%.|
+insight	🌼|预算用了 97%，省着点就能让花开满。|
+credit	null
+insight	🔍|这个月 %a 花得最多，占了 67%。|
+insight	🪻|其他 超出分类预算了（10/0）。|
+insight	null
+insight	🪻|%b 超出分类预算了（26/0）。|
+credit	null
+insight	🔍|Food is your biggest spend at NaN%.|
+insight	null
+insight	null
+insight	🔍|这个月 %a 花得最多，占了 NaN%。|
+insight	🔍|Other is your biggest spend at 78%.|
+insight	🔍|这个月 其他 花得最多，占了 100%。|
+insight	🔍|Food is your biggest spend at 33%.|
+credit	null
+insight	null
+insight	⏳|今天花超了，超出 50。|
+insight	null
+insight	null
+credit	💳|Card c2 due 8d overdue · $100 to repay|c2
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🔍|Transit is your biggest spend at NaN%.|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+insight	null
+insight	🪻|Transit is over its category budget (33/10).|
+insight	🔍|这个月 其他 花得最多，占了 98%。|
+credit	null
+credit	null
+credit	null
+credit	null
+insight	null
+insight	null
+credit	💳|卡c1 逾期 11 天还款，待还 ￥67|c1
+insight	🔍|Other is your biggest spend at 67%.|
+insight	🔍|这个月 其他 花得最多，占了 37%。|
+insight	null
+insight	🔍|Other is your biggest spend at -25%.|
+credit	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	🪻|%a 超出分类预算了（210/30）。|
+insight	null
+credit	null
+insight	🪻|其他 超出分类预算了（10/-1）。|
+insight	null
+credit	💳|卡c2 今天还款，待还 ￥100|c2
+insight	null
+insight	🪻|Custom is over its category budget (26/-1).|
+insight	null
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+insight	null
+credit	null
+credit	null
+insight	🪻|其他 超出分类预算了（34/1）。|
+credit	null
+insight	🪻|购物 超出分类预算了（10/0）。|
+insight	null
+credit	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 119%。|
+credit	null
+insight	🔍|Shopping is your biggest spend at NaN%.|
+insight	🔍|Transit is your biggest spend at 105%.|
+insight	null
+insight	🔍|这个月 自定义 花得最多，占了 105%。|
+credit	null
+insight	null
+insight	null
+insight	🔍|Transit is your biggest spend at NaN%.|
+credit	null
+insight	🪻|其他 超出分类预算了（100/10）。|
+insight	null
+insight	🪻|自定义 超出分类预算了（5/0）。|
+insight	🔍|这个月 交通 花得最多，占了 NaN%。|
+credit	null
+insight	null
+credit	null
+credit	null
+insight	🔍|这个月 餐饮 花得最多，占了 79%。|
+insight	null
+insight	null
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+insight	null
+insight	🔍|这个月 %b 花得最多，占了 NaN%。|
+insight	🪻|其他 超出分类预算了（10/-1）。|
+insight	null
+insight	🪻|%a is over its category budget (0/-1).|
+insight	null
+insight	🔍|这个月 自定义 花得最多，占了 36%。|
+credit	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+credit	null
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+insight	null
+credit	null
+insight	⏳|Over today's budget by 91.|
+insight	🪻|Other is over its category budget (100/30).|
+insight	🔍|%d is your biggest spend at 121%.|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+credit	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 65%。|
+insight	🪻|其他 超出分类预算了（26/10）。|
+insight	⏳|Over today's budget by 39.|
+insight	null
+insight	null
+insight	🪻|其他 超出分类预算了（33/1）。|
+credit	null
+credit	null
+credit	💳|卡c2 逾期 11 天还款，待还 ￥100|c2
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 100%。|
+credit	null
+insight	⏳|今天花超了，超出 76。|
+insight	null
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	⏳|Over today's budget by 39.|
+insight	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	⏳|Over today's budget by 61.|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+insight	null
+insight	null
+insight	null
+insight	null
+credit	null
+insight	null
+insight	null
+insight	🪻|其他 超出分类预算了（59/30）。|
+credit	null
+insight	null
+insight	🔍|Custom is your biggest spend at 65%.|
+insight	null
+insight	null
+insight	🪻|Other is over its category budget (26/-1).|
+credit	💳|卡c1 due 8d overdue · $100 to repay|c1
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🪻|其他 超出分类预算了（26/-1）。|
+insight	🔍|Other is your biggest spend at NaN%.|
+credit	💳|卡c1 逾期 5 天还款，待还 ￥101|c1
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+insight	🔍|Food is your biggest spend at NaN%.|
+insight	🪻|%a 超出分类预算了（11/10）。|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 53%。|
+insight	null
+insight	null
+credit	💳|卡c1 今天还款，待还 ￥5|c1
+insight	🪻|%a 超出分类预算了（100/30）。|
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 36%。|
+insight	🪻|餐饮 超出分类预算了（10/0）。|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🔍|Shopping is your biggest spend at NaN%.|
+insight	null
+insight	🔍|Other is your biggest spend at 100%.|
+credit	null
+insight	null
+credit	null
+insight	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 100%。|
+insight	🔍|这个月 %a 花得最多，占了 51%。|
+credit	null
+insight	null
+insight	null
+insight	null
+insight	🔍|Transit is your biggest spend at NaN%.|
+insight	🪻|购物 超出分类预算了（0/-1）。|
+insight	null
+credit	null
+insight	🔍|这个月 交通 花得最多，占了 50%。|
+insight	null
+insight	🪻|交通 超出分类预算了（0/-1）。|
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+credit	💳|Card c2 due 8d overdue · $100 to repay|c2
+credit	null
+insight	🔍|这个月 交通 花得最多，占了 85%。|
+insight	🪻|Other is over its category budget (0/-1).|
+credit	null
+credit	null
+insight	null
+insight	null
+insight	⏳|Over today's budget by 180.|
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+insight	null
+insight	🔍|这个月 交通 花得最多，占了 NaN%。|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🪻|Shopping is over its category budget (33/10).|
+insight	⏳|Over today's budget by 4.|
+insight	null
+insight	🔍|Shopping is your biggest spend at 99%.|
+insight	🔍|这个月 交通 花得最多，占了 75%。|
+credit	null
+insight	🪻|Other is over its category budget (2/0).|
+insight	null
+insight	null
+insight	null
+insight	🔍|这个月 交通 花得最多，占了 60%。|
+insight	🪻|Other is over its category budget (0/-1).|
+insight	🪻|Transit is over its category budget (0/-1).|
+insight	null
+credit	null
+insight	🔍|%d is your biggest spend at 81%.|
+insight	🔍|这个月 其他 花得最多，占了 110%。|
+insight	🪻|交通 超出分类预算了（33/0）。|
+insight	null
+insight	null
+insight	🔍|这个月 交通 花得最多，占了 NaN%。|
+insight	null
+insight	null
+insight	🔍|这个月 %b 花得最多，占了 -11%。|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 82%。|
+insight	null
+insight	null
+insight	🪻|其他 超出分类预算了（33/-1）。|
+insight	null
+insight	⏳|今天花超了，超出 30。|
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	⏳|今天花超了，超出 62。|
+insight	null
+insight	null
+insight	🔍|这个月 %a 花得最多，占了 NaN%。|
+insight	null
+insight	null
+insight	null
+credit	💳|Card c1 due 22d overdue · $26 to repay|c1
+insight	⏳|Over today's budget by 18.|
+insight	null
+insight	null
+credit	null
+credit	null
+insight	🔍|Transit is your biggest spend at 39%.|
+insight	🪻|餐饮 超出分类预算了（0/-1）。|
+insight	🪻|其他 超出分类预算了（0/-1）。|
+credit	null
+insight	null
+insight	🪻|餐饮 超出分类预算了（10/-1）。|
+insight	null
+insight	null
+insight	🔍|Transit is your biggest spend at NaN%.|
+insight	🔍|Shopping is your biggest spend at -12%.|
+insight	null
+insight	🔍|Other is your biggest spend at 100%.|
+credit	null
+insight	⏳|今天花超了，超出 181。|
+insight	🔍|Food is your biggest spend at 100%.|
+credit	null
+insight	null
+insight	null
+insight	null
+insight	null
+insight	null
+insight	null
+insight	null
+credit	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	⏳|今天花超了，超出 13。|
+insight	🔍|这个月 交通 花得最多，占了 97%。|
+insight	⏳|今天花超了，超出 51。|
+credit	null
+insight	🪻|餐饮 超出分类预算了（126/30）。|
+credit	null
+insight	null
+insight	🔍|这个月 购物 花得最多，占了 1000%。|
+credit	null
+insight	🌼|90% of budget used — ease up to keep it blooming.|
+insight	null
+insight	null
+credit	null
+insight	null
+insight	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	null
+insight	null
+credit	null
+insight	🪻|其他 超出分类预算了（26/1）。|
+insight	null
+credit	null
+insight	null
+credit	💳|卡c1 逾期 1 天还款，待还 ￥100|c1
+insight	null
+credit	💳|卡c1 due 8d overdue · $100 to repay|c1
+credit	null
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🪻|Shopping is over its category budget (0/-1).|
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+insight	🔍|Shopping is your biggest spend at NaN%.|
+insight	null
+insight	null
+insight	null
+insight	null
+credit	null
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+credit	💳|卡c1 逾期 5 天还款，待还 ￥100|c1
+credit	💳|卡c1 逾期 5 天还款，待还 ￥101|c1
+insight	🪻|%a is over its category budget (10/-1).|
+insight	null
+credit	null
+insight	🔍|Other is your biggest spend at 90%.|
+credit	💳|卡c1 due 16d overdue · $167 to repay|c1
+credit	null
+insight	null
+insight	null
+insight	null
+insight	🌼|预算用了 82%，省着点就能让花开满。|
+insight	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🌼|预算用了 95%，省着点就能让花开满。|
+insight	🔍|这个月 交通 花得最多，占了 100%。|
+credit	null
+insight	🔍|Shopping is your biggest spend at NaN%.|
+credit	null
+insight	⏳|Over today's budget by 102.|
+insight	null
+insight	null
+credit	💳|卡c1 逾期 7 天还款，待还 ￥100|c1
+insight	🔍|Shopping is your biggest spend at 72%.|
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+insight	🔍|这个月 其他 花得最多，占了 57%。|
+insight	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🔍|这个月 餐饮 花得最多，占了 79%。|
+insight	🔍|Other is your biggest spend at 91%.|
+insight	null
+insight	null
+insight	🪻|交通 超出分类预算了（0/-1）。|
+insight	🪻|Other is over its category budget (26/10).|
+insight	null
+credit	💳|卡c2 due 6d overdue · $100 to repay|c2
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+insight	null
+insight	null
+insight	null
+insight	null
+insight	🔍|%a is your biggest spend at 77%.|
+insight	🪻|购物 超出分类预算了（0/-1）。|
+insight	null
+insight	null
+insight	🪻|Other is over its category budget (10/0).|
+insight	null
+insight	null
+insight	🪻|Food is over its category budget (26/1).|
+credit	null
+credit	null
+credit	null
+insight	null
+credit	null
+insight	null
+credit	💳|卡c2 逾期 8 天还款，待还 ￥100|c2
+insight	null
+insight	null
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+credit	null
+insight	🪻|餐饮 超出分类预算了（26/-1）。|
+insight	null
+credit	💳|卡c1 逾期 6 天还款，待还 ￥100|c1
+insight	🪻|Shopping is over its category budget (26/1).|
+credit	null
+credit	null
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	null
+credit	null
+insight	null
+credit	null
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 100%。|
+insight	🪻|其他 超出分类预算了（101/30）。|
+insight	null
+insight	null
+insight	🪻|其他 超出分类预算了（33/30）。|
+insight	null
+insight	🔍|Food is your biggest spend at 67%.|
+insight	null
+credit	null
+insight	null
+insight	null
+insight	null
+insight	null
+insight	null
+insight	🔍|Food is your biggest spend at NaN%.|
+insight	null
+credit	null
+insight	🔍|Other is your biggest spend at NaN%.|
+credit	null
+credit	null
+credit	null
+insight	🪻|其他 超出分类预算了（33/0）。|
+insight	null
+insight	null
+insight	🔍|这个月 交通 花得最多，占了 NaN%。|
+insight	🔍|Transit is your biggest spend at NaN%.|
+credit	null
+insight	null
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+credit	null
+credit	null
+insight	🔍|这个月 自定义 花得最多，占了 NaN%。|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 40%。|
+credit	null
+insight	null
+insight	null
+insight	null
+insight	null
+credit	💳|卡c1 今天还款，待还 ￥95|c1
+insight	🔍|%d is your biggest spend at 108%.|
+insight	null
+insight	null
+insight	🔍|这个月 购物 花得最多，占了 53%。|
+insight	🔍|%d is your biggest spend at 116%.|
+insight	null
+insight	🌼|97% of budget used — ease up to keep it blooming.|
+insight	null
+credit	null
+insight	null
+credit	null
+insight	null
+insight	null
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🔍|这个月 购物 花得最多，占了 77%。|
+insight	null
+insight	null
+insight	🪻|Shopping is over its category budget (33/-1).|
+insight	null
+credit	💳|卡c1 due 5d overdue · $100 to repay|c1
+insight	null
+credit	null
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+insight	🪻|Other is over its category budget (11/0).|
+insight	🔍|Shopping is your biggest spend at 56%.|
+insight	🔍|这个月 交通 花得最多，占了 NaN%。|
+insight	🌼|预算用了 83%，省着点就能让花开满。|
+credit	null
+credit	null
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+credit	💳|卡c1 今天还款，待还 ￥100|c1
+credit	null
+insight	null
+insight	🪻|其他 超出分类预算了（1/-1）。|
+insight	🔍|Food is your biggest spend at 100%.|
+insight	🪻|Food is over its category budget (0/-1).|
+credit	null
+insight	null
+insight	null
+insight	🪻|购物 超出分类预算了（1/-1）。|
+insight	null
+insight	null
+insight	🔍|Shopping is your biggest spend at NaN%.|
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+insight	🪻|Shopping is over its category budget (200/1).|
+credit	null
+insight	🪻|餐饮 超出分类预算了（0/-1）。|
+insight	🔍|这个月 %a 花得最多，占了 -60%。|
+insight	🔍|Custom is your biggest spend at NaN%.|
+insight	🔍|%d is your biggest spend at NaN%.|
+credit	null
+insight	null
+credit	null
+insight	null
+insight	null
+insight	⏳|Over today's budget by 39.|
+credit	null
+insight	null
+insight	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+credit	null
+insight	null
+insight	null
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	null
+insight	🪻|Other is over its category budget (26/0).|
+insight	⏳|Over today's budget by 16.|
+insight	null
+insight	null
+credit	💳|卡c1 今天还款，待还 ￥5|c1
+insight	⏳|今天花超了，超出 42。|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 96%。|
+credit	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+credit	null
+insight	🪻|交通 超出分类预算了（0/-1）。|
+insight	🪻|其他 超出分类预算了（1/-1）。|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+insight	🪻|购物 超出分类预算了（133/10）。|
+insight	null
+insight	⏳|Over today's budget by 108.|
+insight	null
+insight	🔍|%d is your biggest spend at 94%.|
+insight	🔍|Custom is your biggest spend at -29%.|
+insight	null
+insight	null
+credit	null
+credit	💳|卡c1 due today · $26 to repay|c1
+insight	null
+insight	🪻|Other is over its category budget (26/1).|
+insight	🔍|这个月 其他 花得最多，占了 75%。|
+insight	null
+insight	null
+insight	🪻|其他 超出分类预算了（1/-1）。|
+credit	null
+credit	💳|卡c1 due 1d overdue · $100 to repay|c1
+insight	null
+insight	🔍|%a is your biggest spend at 105%.|
+insight	null
+insight	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+credit	null
+credit	null
+credit	null
+insight	🪻|Other is over its category budget (33/10).|
+credit	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	⏳|Over today's budget by 108.|
+credit	null
+insight	null
+insight	null
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+credit	💳|卡c1 due today · $100 to repay|c1
+insight	🔍|这个月 交通 花得最多，占了 NaN%。|
+credit	null
+insight	🔍|Other is your biggest spend at NaN%.|
+credit	null
+insight	🔍|Other is your biggest spend at NaN%.|
+credit	null
+insight	null
+insight	🔍|Other is your biggest spend at 72%.|
+insight	🔍|Shopping is your biggest spend at 35%.|
+insight	null
+credit	💳|卡c1 逾期 8 天还款，待还 ￥100|c1
+insight	🪻|Other is over its category budget (100/0).|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 99%。|
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🔍|Shopping is your biggest spend at NaN%.|
+insight	null
+credit	💳|卡c1 due 1d overdue · $6 to repay|c1
+insight	null
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+insight	null
+insight	null
+insight	null
+credit	null
+insight	null
+insight	null
+insight	🪻|Other is over its category budget (0/-1).|
+insight	null
+insight	🔍|Other is your biggest spend at 118%.|
+insight	null
+insight	null
+insight	null
+insight	null
+insight	null
+insight	null
+insight	null
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 50%。|
+insight	🔍|这个月 交通 花得最多，占了 50%。|
+insight	🔍|Food is your biggest spend at NaN%.|
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	🪻|Food is over its category budget (36/1).|
+credit	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	null
+insight	⏳|Over today's budget by 50.|
+insight	null
+insight	🔍|%d is your biggest spend at 114%.|
+insight	null
+credit	null
+insight	null
+insight	🔍|这个月 交通 花得最多，占了 NaN%。|
+insight	null
+credit	null
+insight	🪻|Other is over its category budget (0/-1).|
+credit	null
+credit	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	🪻|Food is over its category budget (10/-1).|
+insight	🔍|Transit is your biggest spend at NaN%.|
+insight	🔍|Custom is your biggest spend at NaN%.|
+credit	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	🔍|Other is your biggest spend at 83%.|
+credit	null
+insight	🔍|Other is your biggest spend at 45%.|
+credit	null
+insight	null
+insight	null
+insight	null
+insight	🪻|购物 超出分类预算了（33/10）。|
+insight	🔍|这个月 交通 花得最多，占了 NaN%。|
+insight	null
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+credit	null
+insight	null
+credit	null
+insight	🪻|Transit is over its category budget (21/0).|
+insight	🔍|这个月 餐饮 花得最多，占了 87%。|
+credit	null
+insight	null
+credit	null
+credit	💳|卡c2 逾期 22 天还款，待还 ￥100|c2
+insight	null
+insight	null
+insight	null
+insight	⏳|Over today's budget by 76.|
+insight	null
+credit	null
+insight	🔍|这个月 %a 花得最多，占了 NaN%。|
+credit	null
+credit	null
+credit	null
+credit	null
+credit	null
+insight	⏳|Over today's budget by 75.|
+insight	null
+credit	null
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at 48%.|
+credit	null
+insight	null
+insight	null
+insight	🪻|%a is over its category budget (20/1).|
+insight	🔍|Shopping is your biggest spend at NaN%.|
+insight	⏳|Over today's budget by 49.|
+insight	null
+insight	⏳|Over today's budget by 190.|
+insight	⏳|今天花超了，超出 11。|
+credit	null
+insight	null
+credit	💳|卡c1 due 16d overdue · $100 to repay|c1
+insight	🔍|这个月 餐饮 花得最多，占了 84%。|
+insight	⏳|今天花超了，超出 84。|
+credit	null
+credit	null
+insight	null
+credit	null
+insight	🔍|Food is your biggest spend at 96%.|
+insight	null
+insight	null
+insight	⏳|今天花超了，超出 14。|
+insight	null
+credit	null
+credit	null
+insight	null
+credit	null
+credit	null
+insight	null
+insight	🔍|Custom is your biggest spend at NaN%.|
+insight	🪻|Food is over its category budget (33/0).|
+credit	null
+insight	🪻|Other is over its category budget (100/10).|
+insight	🔍|Custom is your biggest spend at NaN%.|
+credit	null
+credit	null
+insight	🔍|Other is your biggest spend at 85%.|
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+credit	null
+insight	⏳|今天花超了，超出 114。|
+insight	null
+insight	null
+insight	null
+credit	💳|卡c1 逾期 11 天还款，待还 ￥100|c1
+insight	null
+insight	null
+insight	null
+insight	null
+insight	null
+insight	🔍|Custom is your biggest spend at NaN%.|
+insight	🔍|Other is your biggest spend at 91%.|
+insight	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	null
+insight	🔍|Other is your biggest spend at 118%.|
+insight	null
+insight	null
+insight	⏳|今天花超了，超出 6。|
+insight	null
+insight	🔍|这个月 %a 花得最多，占了 NaN%。|
+insight	🪻|餐饮 超出分类预算了（100/1）。|
+insight	null
+insight	null
+insight	null
+insight	null
+credit	null
+insight	null
+insight	null
+insight	⏳|今天花超了，超出 45。|
+insight	🌼|92% of budget used — ease up to keep it blooming.|
+insight	⏳|今天花超了，超出 1。|
+insight	null
+insight	null
+insight	null
+credit	null
+insight	🪻|其他 超出分类预算了（1/0）。|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🪻|Other is over its category budget (33/1).|
+insight	🪻|%a 超出分类预算了（0/-1）。|
+insight	null
+insight	null
+credit	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+credit	null
+credit	null
+credit	null
+insight	null
+insight	🔍|这个月 %a 花得最多，占了 NaN%。|
+insight	🔍|%a is your biggest spend at 99%.|
+insight	null
+credit	💳|卡c1 逾期 17 天还款，待还 ￥100|c1
+insight	null
+credit	null
+insight	🔍|这个月 %b 花得最多，占了 91%。|
+insight	null
+credit	null
+credit	null
+credit	null
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🪻|其他 超出分类预算了（100/1）。|
+insight	null
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at 78%.|
+insight	null
+insight	🪻|%b 超出分类预算了（0/-1）。|
+insight	null
+credit	💳|Card c2 due 7d overdue · $100 to repay|c2
+insight	🔍|Other is your biggest spend at 43%.|
+insight	null
+credit	null
+insight	null
+insight	🔍|Transit is your biggest spend at 50%.|
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 33%。|
+credit	null
+credit	null
+insight	null
+insight	⏳|Over today's budget by 215.|
+insight	⏳|Over today's budget by 181.|
+insight	null
+insight	🔍|Transit is your biggest spend at NaN%.|
+credit	null
+credit	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	null
+insight	null
+insight	null
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 68%。|
+credit	null
+credit	null
+insight	⏳|Over today's budget by 141.|
+insight	🔍|%d is your biggest spend at 44%.|
+insight	🪻|Shopping is over its category budget (0/-1).|
+insight	null
+insight	null
+insight	null
+credit	null
+insight	🪻|Other is over its category budget (1/0).|
+insight	null
+insight	null
+insight	null
+insight	null
+insight	null
+credit	null
+insight	🪻|Other is over its category budget (100/10).|
+insight	🔍|Food is your biggest spend at NaN%.|
+credit	null
+insight	⏳|Over today's budget by 13.|
+insight	🔍|Food is your biggest spend at 75%.|
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+credit	null
+insight	null
+credit	null
+credit	null
+insight	🪻|Other is over its category budget (26/10).|
+credit	null
+insight	🪻|其他 超出分类预算了（26/1）。|
+insight	🔍|这个月 其他 花得最多，占了 77%。|
+insight	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 105%。|
+insight	null
+insight	null
+insight	⏳|今天花超了，超出 51。|
+insight	🔍|%d is your biggest spend at NaN%.|
+insight	🔍|这个月 其他 花得最多，占了 60%。|
+insight	null
+insight	🪻|其他 超出分类预算了（33/1）。|
+credit	null
+insight	🔍|Shopping is your biggest spend at 121%.|
+insight	🪻|Other is over its category budget (0/-1).|
+credit	null
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 60%。|
+insight	🪻|Transit is over its category budget (10/1).|
+insight	null
+credit	💳|卡c1 逾期 12 天还款，待还 ￥100|c1
+insight	🪻|Other is over its category budget (100/10).|
+insight	⏳|Over today's budget by 47.|
+insight	🔍|这个月 其他 花得最多，占了 90%。|
+insight	⏳|Over today's budget by 60.|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+credit	null
+credit	null
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 57%。|
+credit	💳|卡c1 逾期 6 天还款，待还 ￥100|c1
+insight	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+credit	null
+insight	null
+insight	null
+credit	null
+credit	null
+insight	null
+credit	null
+insight	null
+credit	null
+insight	🌼|98% of budget used — ease up to keep it blooming.|
+insight	null
+insight	null
+insight	🔍|Food is your biggest spend at 96%.|
+insight	null
+credit	💳|卡c2 due 12d overdue · $100 to repay|c2
+insight	🪻|其他 超出分类预算了（33/1）。|
+insight	null
+insight	null
+credit	null
+credit	null
+credit	💳|卡c2 due 12d overdue · $100 to repay|c2
+insight	🔍|Food is your biggest spend at NaN%.|
+credit	null
+credit	null
+insight	⏳|Over today's budget by 80.|
+insight	null
+insight	null
+credit	null
+credit	null
+insight	🔍|%d is your biggest spend at 112%.|
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 87%。|
+insight	🌼|84% of budget used — ease up to keep it blooming.|
+insight	null
+credit	null
+insight	null
+credit	null
+insight	🔍|Transit is your biggest spend at NaN%.|
+insight	null
+insight	null
+insight	🪻|%a is over its category budget (33/-1).|
+insight	null
+insight	null
+insight	null
+insight	null
+insight	null
+credit	null
+credit	null
+insight	⏳|Over today's budget by 8.|
+insight	🪻|Transit is over its category budget (33/10).|
+insight	🪻|Transit is over its category budget (0/-1).|
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+insight	null
+insight	null
+credit	null
+insight	🪻|购物 超出分类预算了（11/10）。|
+insight	null
+insight	null
+insight	null
+insight	🪻|Other is over its category budget (1/-1).|
+insight	🪻|餐饮 超出分类预算了（0/-1）。|
+insight	null
+insight	null
+insight	🪻|交通 超出分类预算了（27/0）。|
+credit	null
+credit	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🔍|Other is your biggest spend at NaN%.|
+credit	null
+insight	⏳|Over today's budget by 2.|
+insight	null
+insight	⏳|Over today's budget by 4.|
+credit	null
+insight	null
+insight	null
+credit	null
+credit	null
+insight	🪻|交通 超出分类预算了（33/-1）。|
+insight	🔍|Food is your biggest spend at NaN%.|
+insight	null
+credit	💳|卡c2 逾期 6 天还款，待还 ￥100|c2
+insight	null
+insight	null
+credit	null
+insight	null
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+credit	null
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+credit	null
+insight	🔍|这个月 自定义 花得最多，占了 NaN%。|
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	🔍|Other is your biggest spend at 100%.|
+credit	null
+insight	🔍|这个月 交通 花得最多，占了 95%。|
+insight	null
+credit	💳|卡c1 逾期 7 天还款，待还 ￥100|c1
+insight	null
+insight	🔍|Custom is your biggest spend at 116%.|
+insight	null
+credit	null
+credit	null
+credit	null
+insight	null
+insight	null
+insight	null
+insight	🔍|Food is your biggest spend at 100%.|
+insight	⏳|Over today's budget by 13.|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 49%。|
+insight	null
+insight	🔍|Transit is your biggest spend at -5%.|
+insight	🔍|这个月 %b 花得最多，占了 49%。|
+insight	⏳|Over today's budget by 75.|
+credit	null
+insight	null
+insight	⏳|今天花超了，超出 76。|
+insight	null
+insight	null
+insight	🪻|Food is over its category budget (0/-1).|
+insight	null
+insight	null
+insight	🪻|Food is over its category budget (33/1).|
+insight	🔍|这个月 其他 花得最多，占了 121%。|
+credit	null
+insight	null
+credit	💳|卡c1 due 5d overdue · $100 to repay|c1
+credit	null
+insight	null
+insight	🔍|Shopping is your biggest spend at NaN%.|
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 50%。|
+insight	null
+credit	null
+insight	⏳|Over today's budget by 26.|
+insight	🔍|这个月 交通 花得最多，占了 NaN%。|
+insight	null
+insight	null
+credit	null
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+insight	null
+insight	null
+insight	🔍|Transit is your biggest spend at 48%.|
+insight	null
+insight	🪻|Other is over its category budget (1/-1).|
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 103%。|
+insight	null
+insight	null
+insight	null
+insight	null
+insight	🔍|Transit is your biggest spend at NaN%.|
+insight	🔍|Transit is your biggest spend at 75%.|
+insight	⏳|今天花超了，超出 81。|
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🔍|Other is your biggest spend at 83%.|
+insight	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🪻|Shopping is over its category budget (33/0).|
+credit	null
+insight	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	null
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+insight	null
+insight	🪻|Other is over its category budget (0/-1).|
+credit	null
+insight	🪻|Other is over its category budget (0/-1).|
+insight	⏳|今天花超了，超出 75。|
+insight	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	🪻|餐饮 超出分类预算了（1/-1）。|
+insight	🔍|这个月 其他 花得最多，占了 186%。|
+insight	🪻|Shopping is over its category budget (26/10).|
+insight	🪻|Shopping is over its category budget (0/-1).|
+insight	⏳|今天花超了，超出 172。|
+insight	🪻|餐饮 超出分类预算了（33/0）。|
+credit	💳|卡c1 due today · $95 to repay|c1
+credit	null
+insight	null
+insight	🔍|这个月 %a 花得最多，占了 -11%。|
+insight	null
+insight	null
+insight	null
+credit	💳|卡c1 due 7d overdue · $100 to repay|c1
+insight	null
+insight	🪻|Other is over its category budget (100/0).|
+credit	💳|卡c1 due today · $100 to repay|c1
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	null
+credit	null
+insight	🪻|购物 超出分类预算了（0/-1）。|
+insight	null
+insight	🌼|预算用了 80%，省着点就能让花开满。|
+insight	null
+insight	🪻|Transit is over its category budget (33/1).|
+credit	null
+insight	null
+credit	null
+credit	null
+insight	null
+insight	🔍|Shopping is your biggest spend at 105%.|
+insight	null
+insight	🔍|这个月 交通 花得最多，占了 -12%。|
+credit	null
+credit	💳|卡c1 due today · $100 to repay|c1
+insight	null
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 50%。|
+credit	null
+insight	null
+credit	💳|Card c2 due today · $100 to repay|c2
+credit	💳|Card c2 due 7d overdue · $100 to repay|c2
+insight	⏳|Over today's budget by 6.|
+insight	🔍|这个月 餐饮 花得最多，占了 100%。|
+insight	null
+insight	🪻|其他 超出分类预算了（100/10）。|
+insight	🔍|Transit is your biggest spend at 78%.|
+insight	🔍|这个月 其他 花得最多，占了 50%。|
+credit	null
+credit	💳|卡c1 逾期 3 天还款，待还 ￥100|c1
+insight	null
+credit	null
+credit	null
+insight	null
+insight	⏳|Over today's budget by 47.|
+insight	🪻|Food is over its category budget (33/30).|
+insight	null
+credit	null
+insight	🔍|Transit is your biggest spend at 98%.|
+credit	null
+insight	null
+insight	null
+insight	⏳|今天花超了，超出 176。|
+insight	🪻|其他 超出分类预算了（110/0）。|
+insight	null
+credit	null
+credit	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	🪻|Custom is over its category budget (27/1).|
+insight	⏳|今天花超了，超出 6。|
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🪻|其他 超出分类预算了（0/-1）。|
+credit	null
+credit	null
+insight	null
+insight	🪻|餐饮 超出分类预算了（101/30）。|
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	null
+credit	💳|卡c2 due today · $100 to repay|c2
+insight	🔍|这个月 %a 花得最多，占了 63%。|
+credit	💳|卡c1 逾期 7 天还款，待还 ￥100|c1
+insight	⏳|今天花超了，超出 80。|
+insight	🔍|这个月 其他 花得最多，占了 69%。|
+credit	null
+credit	null
+insight	null
+credit	null
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+insight	null
+insight	null
+credit	null
+insight	🔍|这个月 自定义 花得最多，占了 NaN%。|
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🪻|%a is over its category budget (100/30).|
+credit	null
+insight	null
+insight	🪻|其他 超出分类预算了（1/-1）。|
+insight	null
+insight	null
+insight	🪻|%a 超出分类预算了（0/-1）。|
+credit	💳|Card c1 due 7d overdue · $100 to repay|c1
+credit	null
+credit	null
+insight	null
+insight	null
+insight	null
+insight	null
+insight	🔍|这个月 %b 花得最多，占了 NaN%。|
+insight	null
+insight	null
+credit	null
+insight	🪻|%b 超出分类预算了（0/-1）。|
+insight	null
+insight	null
+insight	🔍|Custom is your biggest spend at NaN%.|
+insight	🔍|Shopping is your biggest spend at NaN%.|
+credit	💳|Card c1 due 17d overdue · $100 to repay|c1
+credit	null
+insight	🔍|Transit is your biggest spend at NaN%.|
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	null
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🪻|Other is over its category budget (0/-1).|
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+insight	null
+credit	null
+insight	null
+insight	null
+insight	null
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+credit	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	🔍|Other is your biggest spend at 51%.|
+insight	null
+insight	null
+insight	🔍|Custom is your biggest spend at 0%.|
+insight	🪻|餐饮 超出分类预算了（1/-1）。|
+insight	null
+insight	null
+insight	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+credit	null
+insight	⏳|Over today's budget by 49.|
+insight	🔍|Shopping is your biggest spend at NaN%.|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+insight	null
+credit	null
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+credit	null
+insight	null
+insight	🔍|这个月 自定义 花得最多，占了 NaN%。|
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+insight	null
+insight	null
+insight	🔍|Shopping is your biggest spend at NaN%.|
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 83%。|
+insight	null
+insight	null
+credit	💳|卡c1 逾期 22 天还款，待还 ￥100|c1
+credit	null
+insight	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 39%。|
+insight	null
+insight	🪻|Other is over its category budget (0/-1).|
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+credit	💳|Card c2 due 16d overdue · $100 to repay|c2
+credit	null
+insight	🪻|交通 超出分类预算了（126/1）。|
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+insight	null
+insight	null
+insight	🪻|Shopping is over its category budget (0/-1).|
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+insight	⏳|Over today's budget by 1.|
+insight	🔍|这个月 交通 花得最多，占了 50%。|
+insight	null
+insight	null
+insight	null
+credit	null
+insight	null
+credit	null
+insight	null
+insight	🪻|%a is over its category budget (0/-1).|
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+insight	🔍|这个月 其他 花得最多，占了 99%。|
+insight	🪻|交通 超出分类预算了（0/-1）。|
+credit	null
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+credit	null
+credit	null
+insight	null
+credit	null
+insight	🔍|%a is your biggest spend at 1000%.|
+credit	💳|卡c1 逾期 8 天还款，待还 ￥100|c1
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	null
+insight	🪻|Other is over its category budget (0/-1).|
+credit	null
+insight	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+credit	💳|卡c1 逾期 5 天还款，待还 ￥100|c1
+insight	🔍|这个月 其他 花得最多，占了 63%。|
+credit	null
+insight	null
+insight	null
+insight	🪻|Other is over its category budget (0/-1).|
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🪻|其他 超出分类预算了（26/10）。|
+insight	🪻|购物 超出分类预算了（33/-1）。|
+insight	null
+credit	null
+insight	⏳|今天花超了，超出 100。|
+insight	null
+insight	null
+credit	null
+insight	null
+insight	null
+insight	null
+credit	💳|卡c1 逾期 5 天还款，待还 ￥100|c1
+insight	🔍|这个月 自定义 花得最多，占了 115%。|
+insight	null
+insight	null
+insight	null
+credit	null
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+insight	🔍|Shopping is your biggest spend at 45%.|
+insight	null
+insight	⏳|今天花超了，超出 13。|
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🔍|Shopping is your biggest spend at -12%.|
+insight	null
+insight	null
+insight	null
+insight	🪻|Other is over its category budget (0/-1).|
+insight	null
+credit	null
+insight	🪻|%a 超出分类预算了（33/0）。|
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	null
+insight	🪻|自定义 超出分类预算了（1/0）。|
+insight	null
+insight	null
+insight	null
+insight	⏳|今天花超了，超出 180。|
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🔍|这个月 %b 花得最多，占了 NaN%。|
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	null
+insight	🪻|%a is over its category budget (102/0).|
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+insight	🪻|Other is over its category budget (26/1).|
+insight	null
+insight	⏳|今天花超了，超出 7。|
+credit	null
+insight	null
+insight	null
+insight	null
+insight	🔍|Transit is your biggest spend at 57%.|
+insight	🔍|Other is your biggest spend at NaN%.|
+credit	null
+insight	null
+credit	null
+insight	null
+insight	🪻|其他 超出分类预算了（1/0）。|
+credit	null
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 96%。|
+insight	null
+insight	null
+insight	null
+insight	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+credit	null
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🪻|Other is over its category budget (0/-1).|
+credit	💳|卡c1 due today · $100 to repay|c1
+insight	null
+insight	🔍|Custom is your biggest spend at NaN%.|
+insight	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+credit	null
+credit	💳|卡c2 due 21d overdue · $100 to repay|c2
+insight	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+credit	null
+insight	⏳|Over today's budget by 9.|
+insight	🪻|餐饮 超出分类预算了（33/10）。|
+insight	🔍|Other is your biggest spend at 74%.|
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+insight	🌼|85% of budget used — ease up to keep it blooming.|
+insight	⏳|今天花超了，超出 6。|
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🔍|Food is your biggest spend at 90%.|
+insight	null
+insight	null
+insight	null
+insight	⏳|Over today's budget by 217.|
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	null
+insight	⏳|今天花超了，超出 19。|
+insight	🪻|其他 超出分类预算了（33/30）。|
+credit	null
+credit	null
+insight	null
+credit	null
+credit	null
+credit	null
+insight	null
+credit	💳|卡c1 逾期 5 天还款，待还 ￥1|c1
+insight	🪻|其他 超出分类预算了（0/-1）。|
+credit	null
+insight	null
+insight	⏳|Over today's budget by 81.|
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	⏳|今天花超了，超出 14。|
+insight	🔍|这个月 其他 花得最多，占了 79%。|
+insight	🔍|这个月 其他 花得最多，占了 119%。|
+credit	null
+insight	null
+insight	null
+credit	null
+insight	🪻|交通 超出分类预算了（10/-1）。|
+credit	💳|卡c1 due 12d overdue · $100 to repay|c1
+insight	null
+insight	null
+credit	null
+credit	null
+insight	🪻|购物 超出分类预算了（0/-1）。|
+insight	🔍|Shopping is your biggest spend at 91%.|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 54%。|
+credit	null
+insight	null
+credit	null
+insight	null
+insight	null
+insight	null
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+insight	🪻|其他 超出分类预算了（21/10）。|
+insight	null
+insight	null
+insight	🪻|Other is over its category budget (1/-1).|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 100%。|
+insight	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+insight	null
+insight	⏳|今天花超了，超出 47。|
+insight	⏳|Over today's budget by 113.|
+credit	null
+insight	🪻|购物 超出分类预算了（211/1）。|
+insight	null
+insight	🔍|Other is your biggest spend at 60%.|
+credit	null
+insight	🪻|Transit is over its category budget (0/-1).|
+insight	🌼|84% of budget used — ease up to keep it blooming.|
+insight	null
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+credit	null
+insight	null
+insight	null
+credit	null
+insight	🪻|Transit is over its category budget (26/0).|
+credit	null
+credit	💳|卡c2 due 5d overdue · $100 to repay|c2
+insight	🔍|这个月 其他 花得最多，占了 68%。|
+insight	null
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at 77%.|
+insight	null
+credit	null
+insight	🔍|这个月 餐饮 花得最多，占了 80%。|
+credit	null
+insight	🔍|Transit is your biggest spend at NaN%.|
+insight	null
+credit	null
+insight	⏳|Over today's budget by 47.|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🔍|Shopping is your biggest spend at 65%.|
+insight	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 61%。|
+insight	🔍|Other is your biggest spend at 74%.|
+insight	null
+insight	null
+insight	null
+insight	🪻|Other is over its category budget (26/0).|
+insight	🔍|这个月 其他 花得最多，占了 119%。|
+insight	null
+credit	null
+credit	null
+insight	null
+insight	🪻|购物 超出分类预算了（26/10）。|
+insight	null
+insight	null
+insight	null
+insight	null
+credit	null
+insight	null
+insight	null
+insight	🔍|Transit is your biggest spend at -11%.|
+insight	null
+insight	🔍|这个月 %b 花得最多，占了 72%。|
+credit	💳|卡c1 due 8d overdue · $100 to repay|c1
+credit	null
+credit	null
+credit	null
+credit	null
+credit	null
+insight	null
+insight	null
+insight	null
+insight	null
+credit	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 70%。|
+insight	🔍|Transit is your biggest spend at NaN%.|
+insight	🔍|这个月 交通 花得最多，占了 43%。|
+credit	null
+credit	null
+credit	null
+credit	null
+insight	🔍|Shopping is your biggest spend at NaN%.|
+insight	🪻|%a 超出分类预算了（10/0）。|
+insight	⏳|Over today's budget by 114.|
+insight	null
+insight	🪻|Custom is over its category budget (0/-1).|
+insight	🔍|Other is your biggest spend at 100%.|
+insight	null
+insight	🔍|Food is your biggest spend at NaN%.|
+insight	⏳|今天花超了，超出 23。|
+insight	null
+credit	null
+insight	null
+insight	🪻|Transit is over its category budget (10/0).|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+credit	null
+insight	null
+insight	🪻|%d is over its category budget (0/-1).|
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🔍|这个月 自定义 花得最多，占了 74%。|
+credit	null
+insight	🔍|%a is your biggest spend at NaN%.|
+insight	null
+credit	null
+insight	🪻|%b 超出分类预算了（133/30）。|
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+credit	💳|Card c1 due 8d overdue · $100 to repay|c1
+credit	null
+insight	🪻|Shopping is over its category budget (0/-1).|
+credit	null
+insight	🔍|Other is your biggest spend at NaN%.|
+credit	null
+credit	null
+credit	null
+insight	🔍|Food is your biggest spend at 87%.|
+insight	🌼|94% of budget used — ease up to keep it blooming.|
+credit	null
+insight	null
+insight	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+credit	💳|卡c2 due today · $100 to repay|c2
+insight	🔍|这个月 %b 花得最多，占了 104%。|
+insight	null
+insight	null
+insight	🪻|其他 超出分类预算了（1/0）。|
+insight	null
+insight	🔍|Transit is your biggest spend at NaN%.|
+insight	null
+insight	null
+insight	null
+insight	🔍|Custom is your biggest spend at 65%.|
+insight	null
+insight	null
+insight	🔍|Shopping is your biggest spend at 105%.|
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+insight	🔍|这个月 餐饮 花得最多，占了 62%。|
+insight	🪻|餐饮 超出分类预算了（36/1）。|
+insight	🌼|92% of budget used — ease up to keep it blooming.|
+credit	null
+credit	null
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 -33%。|
+credit	💳|卡c1 due 6d overdue · $100 to repay|c1
+insight	null
+insight	🪻|Other is over its category budget (0/-1).|
+credit	null
+insight	null
+insight	🪻|Shopping is over its category budget (0/-1).|
+credit	null
+insight	null
+insight	null
+insight	null
+credit	💳|卡c1 逾期 12 天还款，待还 ￥100|c1
+insight	null
+insight	🔍|Custom is your biggest spend at NaN%.|
+credit	null
+insight	null
+insight	null
+credit	null
+insight	🔍|Other is your biggest spend at -12%.|
+insight	🔍|Other is your biggest spend at 99%.|
+insight	🔍|Shopping is your biggest spend at NaN%.|
+insight	null
+insight	null
+credit	null
+credit	null
+credit	null
+credit	null
+credit	💳|卡c2 due 16d overdue · $100 to repay|c2
+credit	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+credit	null
+credit	null
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+insight	🔍|Food is your biggest spend at 70%.|
+insight	🔍|Other is your biggest spend at 57%.|
+insight	null
+credit	null
+insight	null
+credit	null
+insight	null
+insight	null
+insight	null
+insight	null
+credit	💳|卡c2 due 16d overdue · $100 to repay|c2
+insight	🔍|这个月 餐饮 花得最多，占了 -67%。|
+credit	null
+insight	null
+insight	⏳|今天花超了，超出 6。|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+insight	null
+insight	null
+insight	null
+insight	null
+credit	null
+credit	null
+insight	🪻|其他 超出分类预算了（11/1）。|
+insight	null
+insight	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	null
+insight	null
+insight	🪻|Custom is over its category budget (0/-1).|
+insight	🪻|购物 超出分类预算了（134/10）。|
+insight	🪻|Other is over its category budget (100/0).|
+credit	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 82%。|
+insight	🔍|这个月 交通 花得最多，占了 52%。|
+credit	null
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 49%。|
+insight	null
+credit	null
+insight	null
+insight	null
+insight	⏳|今天花超了，超出 1。|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+insight	null
+insight	🔍|Food is your biggest spend at 49%.|
+insight	null
+insight	🔍|Shopping is your biggest spend at NaN%.|
+insight	🌼|预算用了 97%，省着点就能让花开满。|
+insight	🔍|这个月 %a 花得最多，占了 NaN%。|
+insight	🔍|%a is your biggest spend at 98%.|
+insight	null
+insight	🔍|Shopping is your biggest spend at NaN%.|
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🌼|预算用了 93%，省着点就能让花开满。|
+insight	null
+insight	🪻|Other is over its category budget (0/-1).|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 56%。|
+credit	null
+credit	null
+insight	🪻|Shopping is over its category budget (33/30).|
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+credit	null
+credit	💳|卡c1 due 12d overdue · $100 to repay|c1
+insight	⏳|Over today's budget by 81.|
+insight	null
+insight	🔍|Other is your biggest spend at 80%.|
+insight	🪻|购物 超出分类预算了（10/0）。|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 75%。|
+insight	🪻|Shopping is over its category budget (27/10).|
+credit	null
+insight	🪻|%b 超出分类预算了（33/-1）。|
+credit	💳|卡c1 逾期 8 天还款，待还 ￥110|c1
+credit	💳|卡c1 due 7d overdue · $100 to repay|c1
+insight	🪻|餐饮 超出分类预算了（100/30）。|
+insight	🪻|购物 超出分类预算了（11/10）。|
+insight	🪻|Other is over its category budget (0/-1).|
+credit	null
+insight	null
+credit	null
+insight	🪻|%a 超出分类预算了（0/-1）。|
+credit	null
+credit	null
+insight	null
+insight	null
+insight	🔍|这个月 自定义 花得最多，占了 NaN%。|
+insight	🪻|%a is over its category budget (0/-1).|
+credit	null
+insight	🪻|Other is over its category budget (1/-1).|
+credit	null
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+credit	💳|卡c1 逾期 3 天还款，待还 ￥100|c1
+credit	null
+credit	null
+insight	🪻|Other is over its category budget (26/1).|
+insight	null
+credit	null
+insight	null
+insight	🪻|%d is over its category budget (1/-1).|
+insight	🪻|其他 超出分类预算了（33/0）。|
+insight	⏳|今天花超了，超出 1。|
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	null
+insight	🔍|Other is your biggest spend at -67%.|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+credit	null
+credit	null
+insight	null
+credit	null
+credit	null
+insight	🔍|%a is your biggest spend at 73%.|
+insight	null
+credit	null
+insight	🔍|Other is your biggest spend at NaN%.|
+credit	💳|卡c1 今天还款，待还 ￥100|c1
+insight	null
+credit	null
+credit	null
+insight	null
+insight	🪻|%b 超出分类预算了（0/-1）。|
+insight	null
+insight	null
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🪻|购物 超出分类预算了（1/0）。|
+insight	null
+insight	null
+insight	null
+insight	🔍|%d is your biggest spend at NaN%.|
+insight	null
+insight	null
+insight	🪻|其他 超出分类预算了（59/-1）。|
+insight	null
+credit	null
+credit	💳|卡c2 due 12d overdue · $100 to repay|c2
+insight	🔍|Other is your biggest spend at 124%.|
+credit	💳|Card c1 due 6d overdue · $5 to repay|c1
+insight	null
+insight	null
+insight	🪻|其他 超出分类预算了（1/-1）。|
+insight	🪻|餐饮 超出分类预算了（0/-1）。|
+credit	null
+credit	💳|Card c1 due 7d overdue · $100 to repay|c1
+insight	null
+credit	💳|卡c1 due 3d overdue · $5 to repay|c1
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 200%。|
+insight	🔍|%a is your biggest spend at NaN%.|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+credit	null
+insight	🪻|Transit is over its category budget (27/10).|
+insight	null
+insight	null
+insight	🌼|92% of budget used — ease up to keep it blooming.|
+insight	null
+credit	null
+insight	null
+insight	🔍|这个月 交通 花得最多，占了 NaN%。|
+insight	🔍|Other is your biggest spend at 100%.|
+credit	💳|Card c1 due today · $110 to repay|c1
+insight	🌼|预算用了 99%，省着点就能让花开满。|
+insight	null
+insight	🪻|Other is over its category budget (0/-1).|
+insight	🔍|%d is your biggest spend at NaN%.|
+insight	🔍|这个月 其他 花得最多，占了 119%。|
+insight	null
+credit	null
+insight	null
+insight	null
+credit	null
+credit	💳|卡c1 逾期 5 天还款，待还 ￥95|c1
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🪻|Other is over its category budget (0/-1).|
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	null
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+credit	null
+insight	🪻|%a 超出分类预算了（26/10）。|
+insight	null
+insight	null
+credit	null
+credit	null
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+credit	null
+insight	null
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 48%。|
+insight	🔍|%d is your biggest spend at NaN%.|
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+insight	null
+credit	null
+insight	⏳|今天花超了，超出 150。|
+credit	null
+insight	🔍|Other is your biggest spend at 100%.|
+credit	null
+insight	null
+credit	💳|Card c1 due 1d overdue · $100 to repay|c1
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+credit	null
+insight	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	🪻|Transit is over its category budget (0/-1).|
+credit	null
+insight	🪻|购物 超出分类预算了（33/30）。|
+insight	🔍|Shopping is your biggest spend at NaN%.|
+insight	null
+insight	🔍|%d is your biggest spend at NaN%.|
+credit	null
+insight	⏳|Over today's budget by 100.|
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	null
+credit	💳|卡c2 今天还款，待还 ￥100|c2
+insight	null
+credit	💳|卡c2 今天还款，待还 ￥100|c2
+credit	null
+insight	null
+insight	null
+insight	🪻|Other is over its category budget (26/-1).|
+credit	null
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+insight	🔍|Other is your biggest spend at 90%.|
+insight	🔍|这个月 %a 花得最多，占了 140%。|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+credit	null
+insight	null
+insight	null
+insight	null
+insight	null
+insight	⏳|今天花超了，超出 6。|
+insight	null
+insight	🔍|这个月 交通 花得最多，占了 118%。|
+credit	null
+insight	🔍|Shopping is your biggest spend at NaN%.|
+insight	🪻|其他 超出分类预算了（133/10）。|
+insight	🪻|购物 超出分类预算了（26/0）。|
+credit	null
+insight	null
+credit	null
+insight	⏳|Over today's budget by 80.|
+insight	null
+credit	null
+insight	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	null
+credit	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 100%。|
+credit	null
+insight	null
+credit	null
+credit	💳|卡c2 due today · $100 to repay|c2
+insight	null
+insight	null
+insight	null
+insight	🪻|Other is over its category budget (67/10).|
+insight	null
+credit	null
+insight	null
+insight	🔍|Other is your biggest spend at -5%.|
+insight	🪻|交通 超出分类预算了（101/0）。|
+credit	null
+insight	🔍|Shopping is your biggest spend at 105%.|
+insight	🔍|Food is your biggest spend at NaN%.|
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🪻|Other is over its category budget (33/0).|
+insight	🪻|%d is over its category budget (100/30).|
+insight	🪻|%a 超出分类预算了（26/1）。|
+insight	null
+insight	null
+insight	null
+insight	🪻|%a is over its category budget (0/-1).|
+credit	null
+credit	💳|卡c2 due 8d overdue · $100 to repay|c2
+insight	⏳|Over today's budget by 15.|
+insight	🪻|餐饮 超出分类预算了（26/1）。|
+credit	null
+insight	🔍|Other is your biggest spend at -25%.|
+credit	null
+insight	🔍|Food is your biggest spend at NaN%.|
+credit	null
+insight	🔍|这个月 购物 花得最多，占了 67%。|
+insight	null
+insight	null
+credit	null
+insight	🪻|Transit is over its category budget (1/-1).|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🪻|其他 超出分类预算了（126/30）。|
+insight	null
+insight	null
+insight	🪻|Food is over its category budget (0/-1).|
+insight	null
+insight	null
+insight	null
+insight	null
+credit	null
+insight	🪻|其他 超出分类预算了（67/0）。|
+insight	null
+insight	null
+insight	null
+insight	null
+credit	null
+insight	🔍|Other is your biggest spend at 95%.|
+insight	⏳|今天花超了，超出 80。|
+insight	null
+insight	🪻|Other is over its category budget (0/-1).|
+credit	null
+insight	🪻|其他 超出分类预算了（33/0）。|
+insight	null
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🪻|Transit is over its category budget (67/1).|
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+credit	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+credit	null
+insight	🔍|Food is your biggest spend at NaN%.|
+insight	null
+insight	null
+insight	🪻|其他 超出分类预算了（10/1）。|
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+credit	null
+credit	null
+insight	null
+credit	null
+insight	null
+insight	🪻|Food is over its category budget (100/0).|
+credit	null
+insight	null
+insight	null
+insight	🔍|Transit is your biggest spend at NaN%.|
+insight	🔍|这个月 餐饮 花得最多，占了 66%。|
+insight	null
+credit	null
+insight	⏳|今天花超了，超出 51。|
+insight	null
+insight	🔍|这个月 交通 花得最多，占了 56%。|
+insight	null
+credit	null
+insight	🪻|Shopping is over its category budget (26/0).|
+insight	null
+credit	null
+insight	🔍|%d is your biggest spend at NaN%.|
+insight	🪻|Food is over its category budget (0/-1).|
+insight	🪻|餐饮 超出分类预算了（10/0）。|
+insight	null
+insight	🪻|Shopping is over its category budget (21/-1).|
+insight	null
+insight	🔍|%d is your biggest spend at 75%.|
+credit	null
+insight	🔍|Food is your biggest spend at 117%.|
+credit	💳|卡c1 due 16d overdue · $100 to repay|c1
+credit	null
+insight	🔍|Other is your biggest spend at 116%.|
+insight	null
+insight	null
+insight	null
+credit	null
+insight	🔍|Shopping is your biggest spend at 97%.|
+insight	null
+insight	🔍|Shopping is your biggest spend at NaN%.|
+insight	null
+credit	null
+insight	null
+credit	null
+insight	🪻|其他 超出分类预算了（100/30）。|
+insight	🪻|Other is over its category budget (1/-1).|
+insight	🪻|餐饮 超出分类预算了（10/1）。|
+credit	null
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at -5%.|
+insight	🔍|%a is your biggest spend at 75%.|
+insight	null
+insight	null
+insight	🔍|Food is your biggest spend at NaN%.|
+insight	🌼|预算用了 92%，省着点就能让花开满。|
+insight	null
+insight	🔍|这个月 交通 花得最多，占了 NaN%。|
+insight	🔍|Transit is your biggest spend at 91%.|
+credit	null
+insight	🪻|其他 超出分类预算了（10/1）。|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🪻|自定义 超出分类预算了（101/100）。|
+insight	null
+insight	null
+credit	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 54%。|
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at 42%.|
+insight	⏳|今天花超了，超出 45。|
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	null
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+insight	⏳|Over today's budget by 34.|
+credit	💳|Card c1 due 12d overdue · $100 to repay|c1
+insight	🪻|%b 超出分类预算了（26/0）。|
+insight	null
+credit	null
+insight	⏳|今天花超了，超出 24。|
+credit	null
+credit	💳|卡c1 今天还款，待还 ￥100|c1
+insight	null
+insight	null
+credit	💳|卡c1 今天还款，待还 ￥100|c1
+insight	🪻|%a 超出分类预算了（2/0）。|
+insight	null
+insight	🪻|Other is over its category budget (0/-1).|
+insight	🪻|Other is over its category budget (0/-1).|
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	null
+insight	null
+credit	null
+insight	🪻|自定义 超出分类预算了（0/-1）。|
+insight	null
+credit	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+credit	💳|卡c1 今天还款，待还 ￥33|c1
+insight	🔍|Other is your biggest spend at -67%.|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 87%。|
+insight	⏳|今天花超了，超出 23。|
+credit	null
+credit	null
+insight	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 116%。|
+insight	🔍|Other is your biggest spend at Infinity%.|
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at 57%.|
+insight	null
+insight	🔍|这个月 购物 花得最多，占了 29%。|
+credit	null
+insight	🪻|Transit is over its category budget (100/1).|
+insight	null
+insight	null
+credit	💳|卡c1 逾期 17 天还款，待还 ￥100|c1
+credit	null
+insight	null
+credit	null
+insight	🔍|这个月 交通 花得最多，占了 100%。|
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+insight	🪻|其他 超出分类预算了（1/0）。|
+insight	null
+credit	💳|卡c1 due today · $100 to repay|c1
+insight	null
+credit	null
+insight	⏳|今天花超了，超出 51。|
+insight	🔍|这个月 其他 花得最多，占了 45%。|
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+credit	null
+insight	null
+insight	null
+insight	🔍|这个月 交通 花得最多，占了 33%。|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🔍|Shopping is your biggest spend at 51%.|
+insight	null
+credit	null
+credit	null
+insight	🪻|Food is over its category budget (100/30).|
+insight	null
+insight	null
+credit	null
+insight	🔍|%d is your biggest spend at 100%.|
+insight	🔍|这个月 %b 花得最多，占了 NaN%。|
+credit	null
+insight	null
+credit	null
+insight	🪻|Food is over its category budget (100/10).|
+insight	🔍|Food is your biggest spend at 67%.|
+insight	🔍|Food is your biggest spend at NaN%.|
+insight	🔍|Other is your biggest spend at 200%.|
+insight	🪻|购物 超出分类预算了（120/10）。|
+insight	null
+credit	💳|卡c1 due 3d overdue · $100 to repay|c1
+insight	🔍|这个月 %a 花得最多，占了 NaN%。|
+credit	null
+insight	🔍|Food is your biggest spend at 119%.|
+insight	null
+insight	🪻|Other is over its category budget (10/-1).|
+insight	null
+insight	null
+credit	null
+insight	⏳|今天花超了，超出 61。|
+insight	🔍|这个月 交通 花得最多，占了 54%。|
+insight	null
+credit	💳|Card c1 due 1d overdue · $100 to repay|c1
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	null
+insight	🪻|%b 超出分类预算了（0/-1）。|
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	🪻|Other is over its category budget (133/10).|
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🪻|Other is over its category budget (0/-1).|
+credit	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+credit	💳|卡c2 due 3d overdue · $100 to repay|c2
+insight	null
+credit	null
+credit	null
+insight	null
+insight	🔍|Custom is your biggest spend at 84%.|
+insight	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	null
+insight	null
+credit	💳|卡c2 due 3d overdue · $100 to repay|c2
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 118%。|
+insight	⏳|今天花超了，超出 150。|
+insight	null
+insight	🔍|Shopping is your biggest spend at NaN%.|
+insight	null
+insight	🔍|Other is your biggest spend at -12%.|
+insight	null
+credit	null
+insight	🪻|Other is over its category budget (100/30).|
+credit	💳|卡c1 逾期 12 天还款，待还 ￥100|c1
+insight	null
+credit	null
+insight	null
+insight	🔍|Transit is your biggest spend at 87%.|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🔍|这个月 其他 花得最多，占了 100%。|
+insight	⏳|Over today's budget by 81.|
+insight	null
+insight	null
+insight	null
+credit	null
+insight	null
+insight	null
+insight	null
+insight	null
+insight	🪻|Other is over its category budget (10/1).|
+credit	💳|Card c1 due 3d overdue · $100 to repay|c1
+insight	null
+insight	🔍|这个月 购物 花得最多，占了 NaN%。|
+insight	null
+credit	null
+credit	null
+insight	null
+insight	🔍|这个月 交通 花得最多，占了 94%。|
+credit	null
+credit	null
+insight	⏳|今天花超了，超出 33。|
+credit	null
+insight	null
+insight	🔍|Other is your biggest spend at 76%.|
+insight	🪻|购物 超出分类预算了（110/10）。|
+credit	null
+insight	⏳|Over today's budget by 31.|
+credit	null
+insight	null
+credit	null
+insight	🪻|其他 超出分类预算了（10/1）。|
+credit	null
+insight	🔍|这个月 交通 花得最多，占了 NaN%。|
+insight	🔍|这个月 %b 花得最多，占了 NaN%。|
+insight	null
+credit	💳|卡c1 逾期 3 天还款，待还 ￥100|c1
+credit	null
+credit	💳|卡c1 due 12d overdue · $100 to repay|c1
+insight	null
+credit	null
+credit	💳|卡c2 逾期 8 天还款，待还 ￥100|c2
+insight	null
+credit	null
+insight	null
+credit	null
+credit	null
+insight	null
+insight	null
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	⏳|今天花超了，超出 6。|
+insight	null
+insight	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	null
+insight	🔍|Food is your biggest spend at 65%.|
+credit	null
+insight	null
+insight	null
+insight	null
+insight	null
+insight	null
+credit	null
+credit	null
+insight	🔍|%a is your biggest spend at NaN%.|
+insight	🔍|这个月 其他 花得最多，占了 62%。|
+insight	🔍|这个月 餐饮 花得最多，占了 43%。|
+insight	🔍|这个月 购物 花得最多，占了 41%。|
+insight	🪻|Other is over its category budget (100/1).|
+insight	null
+credit	null
+insight	null
+insight	🪻|自定义 超出分类预算了（33/30）。|
+credit	💳|Card c1 due 5d overdue · $100 to repay|c1
+insight	null
+insight	null
+credit	💳|卡c1 逾期 17 天还款，待还 ￥100|c1
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at 65%.|
+insight	🪻|Food is over its category budget (0/-1).|
+insight	null
+credit	null
+insight	null
+credit	null
+credit	null
+insight	🪻|Other is over its category budget (26/-1).|
+credit	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+insight	🪻|%a 超出分类预算了（0/-1）。|
+credit	null
+insight	null
+insight	🪻|其他 超出分类预算了（126/10）。|
+insight	null
+insight	null
+insight	null
+insight	null
+credit	null
+credit	null
+insight	null
+insight	🔍|Transit is your biggest spend at NaN%.|
+insight	null
+insight	🪻|Other is over its category budget (0/-1).|
+insight	null
+insight	null
+insight	null
+credit	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+insight	null
+insight	null
+credit	null
+credit	💳|Card c2 due 5d overdue · $100 to repay|c2
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+insight	null
+credit	💳|卡c2 逾期 8 天还款，待还 ￥100|c2
+credit	💳|卡c1 逾期 7 天还款，待还 ￥100|c1
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🪻|%d is over its category budget (33/-1).|
+insight	🪻|购物 超出分类预算了（33/30）。|
+insight	null
+insight	null
+insight	🔍|Other is your biggest spend at 51%.|
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+credit	null
+insight	null
+insight	⏳|Over today's budget by 50.|
+credit	null
+insight	🪻|Other is over its category budget (0/-1).|
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	⏳|Over today's budget by 81.|
+insight	null
+credit	null
+insight	🪻|Food is over its category budget (10/0).|
+insight	🔍|这个月 其他 花得最多，占了 84%。|
+insight	null
+insight	null
+insight	null
+insight	🪻|交通 超出分类预算了（1/-1）。|
+insight	⏳|今天花超了，超出 98。|
+insight	null
+insight	null
+credit	null
+insight	null
+insight	⏳|Over today's budget by 55.|
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	🔍|Other is your biggest spend at 200%.|
+insight	🪻|其他 超出分类预算了（100/0）。|
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+insight	🪻|Other is over its category budget (26/0).|
+insight	🪻|%b 超出分类预算了（26/0）。|
+insight	null
+credit	💳|卡c1 逾期 3 天还款，待还 ￥100|c1
+credit	null
+insight	null
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	🪻|Food is over its category budget (110/10).|
+insight	null
+credit	null
+credit	null
+insight	🪻|交通 超出分类预算了（100/0）。|
+credit	💳|Card c2 due 12d overdue · $100 to repay|c2
+credit	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 95%。|
+insight	null
+insight	🔍|Food is your biggest spend at NaN%.|
+insight	⏳|今天花超了，超出 50。|
+credit	null
+insight	🔍|%d is your biggest spend at NaN%.|
+insight	null
+credit	null
+insight	⏳|Over today's budget by 27.|
+credit	null
+insight	null
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	null
+insight	🪻|Transit is over its category budget (0/-1).|
+insight	🪻|自定义 超出分类预算了（43/10）。|
+insight	🔍|这个月 交通 花得最多，占了 111%。|
+insight	null
+insight	null
+credit	null
+credit	null
+credit	null
+insight	null
+credit	null
+insight	🔍|这个月 %a 花得最多，占了 50%。|
+insight	null
+insight	🪻|交通 超出分类预算了（100/0）。|
+insight	null
+insight	null
+insight	null
+insight	null
+insight	null
+insight	⏳|今天花超了，超出 2。|
+insight	🔍|这个月 %b 花得最多，占了 NaN%。|
+insight	🪻|Food is over its category budget (26/10).|
+insight	🔍|这个月 交通 花得最多，占了 67%。|
+insight	null
+insight	null
+insight	null
+insight	🪻|其他 超出分类预算了（100/-1）。|
+credit	null
+insight	⏳|Over today's budget by 4.|
+insight	null
+insight	🌼|96% of budget used — ease up to keep it blooming.|
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+credit	null
+insight	🔍|Shopping is your biggest spend at NaN%.|
+insight	🪻|Transit is over its category budget (10/1).|
+insight	🔍|Shopping is your biggest spend at NaN%.|
+insight	🔍|这个月 交通 花得最多，占了 61%。|
+insight	🪻|%b 超出分类预算了（100/1）。|
+credit	💳|卡c1 due 7d overdue · $100 to repay|c1
+insight	null
+credit	null
+insight	null
+insight	🪻|%d is over its category budget (0/-1).|
+credit	null
+insight	null
+insight	null
+insight	🔍|Food is your biggest spend at NaN%.|
+credit	null
+insight	🔍|%a is your biggest spend at 87%.|
+insight	null
+insight	⏳|Over today's budget by 108.|
+credit	💳|卡c1 due today · $100 to repay|c1
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+credit	null
+insight	null
+insight	🔍|这个月 餐饮 花得最多，占了 Infinity%。|
+insight	null
+credit	null
+insight	null
+credit	null
+insight	🪻|%b 超出分类预算了（33/-1）。|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+insight	⏳|Over today's budget by 57.|
+insight	null
+credit	null
+insight	🔍|这个月 %a 花得最多，占了 NaN%。|
+insight	🪻|Custom is over its category budget (0/-1).|
+credit	null
+credit	null
+insight	🪻|Shopping is over its category budget (0/-1).|
+insight	null
+insight	🔍|这个月 购物 花得最多，占了 49%。|
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+insight	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	null
+credit	null
+insight	null
+insight	null
+credit	null
+insight	⏳|今天花超了，超出 51。|
+insight	null
+insight	🪻|餐饮 超出分类预算了（33/-1）。|
+insight	null
+insight	🪻|其他 超出分类预算了（0/-1）。|
+credit	null
+insight	null
+credit	null
+insight	⏳|今天花超了，超出 139。|
+insight	null
+insight	🔍|Other is your biggest spend at NaN%.|
+credit	null
+credit	null
+insight	⏳|今天花超了，超出 52。|
+insight	🔍|这个月 自定义 花得最多，占了 -40%。|
+credit	null
+credit	null
+credit	null
+insight	⏳|今天花超了，超出 24。|
+insight	null
+credit	null
+insight	🪻|其他 超出分类预算了（1/0）。|
+insight	🔍|Food is your biggest spend at 97%.|
+insight	🔍|Food is your biggest spend at 81%.|
+insight	null
+insight	🔍|这个月 交通 花得最多，占了 NaN%。|
+credit	💳|卡c2 今天还款，待还 ￥100|c2
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	null
+insight	null
+insight	null
+insight	null
+insight	🔍|Shopping is your biggest spend at 119%.|
+credit	null
+insight	null
+insight	⏳|今天花超了，超出 10。|
+credit	null
+credit	💳|卡c1 逾期 7 天还款，待还 ￥105|c1
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	null
+insight	🪻|Shopping is over its category budget (33/30).|
+insight	null
+credit	null
+insight	🔍|%d is your biggest spend at 95%.|
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+credit	null
+insight	null
+insight	null
+insight	🔍|Shopping is your biggest spend at NaN%.|
+credit	null
+insight	null
+insight	🔍|这个月 %b 花得最多，占了 NaN%。|
+credit	💳|卡c2 due today · $100 to repay|c2
+credit	null
+credit	null
+insight	null
+credit	null
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+insight	null
+insight	null
+insight	🔍|Transit is your biggest spend at 50%.|
+credit	null
+insight	⏳|Over today's budget by 71.|
+insight	null
+insight	🔍|这个月 交通 花得最多，占了 NaN%。|
+credit	null
+insight	🔍|Other is your biggest spend at NaN%.|
+insight	🔍|这个月 餐饮 花得最多，占了 NaN%。|
+insight	🔍|Food is your biggest spend at 50%.|
+insight	null
+insight	null
+credit	null
+credit	null
+insight	null
+insight	⏳|今天花超了，超出 109。|
+insight	null
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+credit	null
+credit	null
+insight	🔍|Shopping is your biggest spend at NaN%.|
+insight	🔍|Other is your biggest spend at -25%.|
+insight	⏳|Over today's budget by 8.|
+insight	null
+insight	⏳|Over today's budget by 6.|
+insight	null
+insight	null
+insight	null
+insight	🪻|Shopping is over its category budget (10/1).|
+credit	null
+insight	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🌼|预算用了 83%，省着点就能让花开满。|
+credit	null
+credit	null
+insight	null
+credit	null
+insight	null
+credit	null
+insight	🔍|Other is your biggest spend at NaN%.|
+credit	null
+insight	🔍|Other is your biggest spend at NaN%.|
+credit	null
+insight	🔍|Transit is your biggest spend at 70%.|
+insight	null
+insight	null
+insight	null
+insight	🪻|%b 超出分类预算了（0/-1）。|
+insight	🔍|这个月 购物 花得最多，占了 43%。|
+credit	null
+insight	null
+insight	🪻|购物 超出分类预算了（26/0）。|
+insight	null
+insight	null
+credit	null
+insight	null
+insight	null
+credit	null
+insight	🪻|%b 超出分类预算了（133/100）。|
+credit	null
+insight	⏳|今天花超了，超出 6。|
+insight	🔍|Custom is your biggest spend at NaN%.|
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 NaN%。|
+insight	🪻|自定义 超出分类预算了（5/0）。|
+insight	null
+insight	null
+insight	null
+insight	🪻|Other is over its category budget (33/-1).|
+insight	🔍|这个月 自定义 花得最多，占了 99%。|
+insight	🪻|餐饮 超出分类预算了（1/0）。|
+credit	null
+credit	null
+insight	null
+credit	💳|卡c1 逾期 6 天还款，待还 ￥100|c1
+credit	null
+credit	null
+insight	🔍|Shopping is your biggest spend at NaN%.|
+credit	null
+insight	null
+insight	null
+insight	null
+credit	null
+credit	null
+insight	🪻|Custom is over its category budget (0/-1).|
+insight	🔍|这个月 其他 花得最多，占了 83%。|
+insight	🪻|其他 超出分类预算了（100/1）。|
+insight	null
+insight	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	null
+credit	null
+insight	null
+credit	null
+insight	null
+insight	null
+insight	null
+insight	🪻|其他 超出分类预算了（26/10）。|
+credit	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	null
+insight	🔍|Other is your biggest spend at 96%.|
+credit	null
+insight	🔍|这个月 %b 花得最多，占了 95%。|
+insight	⏳|今天花超了，超出 49。|
+credit	null
+insight	null
+insight	🔍|Transit is your biggest spend at NaN%.|
+insight	null
+insight	null
+insight	🔍|这个月 其他 花得最多，占了 62%。|
+insight	null
+insight	🔍|Transit is your biggest spend at 91%.|
+insight	null
+insight	🥀|这月预算花超了，花有点蔫了。下个月重新种 🌱|
+insight	🌼|86% of budget used — ease up to keep it blooming.|
+insight	🪻|其他 超出分类预算了（50/10）。|
+insight	🪻|Other is over its category budget (50/10).|
+credit	null
+credit	null
+credit	💳|卡一 今天还款，待还 ￥100|c1
+credit	💳|卡一 逾期 3 天还款，待还 ￥100|c1
+credit	null
+credit	💳|One due in 5d · $100 to repay|c1
+credit	💳|Two due in 5d · $50 to repay|c2
+insight	🥀|Over budget this cycle — the pot wilted. Replant next month 🌱|
+insight	🌼|80% of budget used — ease up to keep it blooming.|
+insight	🔍|Food is your biggest spend at 100%.|
+insight	🪻|%a 超出分类预算了（51/10）。|

@@ -1,0 +1,5229 @@
+close	2025-12-25
+summary	close=2024-02-10 billed=0 over=1e+21 unbilled=0 debt=0 due=2024-02-15 days=-14
+bal	c1:-1000.1,c2:-1e+21
+bal	c1:-128.32999999999998
+due	2026-07-15
+total	1e+21
+soon	
+due	2024-02-01
+close	2025-12-15
+net	asset=NaN liab=0.2 net=NaN
+due	2026-07-28
+close	2025-12-05
+soon	c1:1e+21:21
+summary	close=2026-05-31 billed=55 over=0 unbilled=1e+21 debt=1e+21 due=2026-06-15 days=5
+summary	close=2026-05-15 billed=0 over=100 unbilled=0 debt=0 due=2026-05-25 days=-16
+due	2026-04-25
+summary	none
+summary	close=2026-06-15 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+close	2026-06-10
+due	2026-01-01
+one	-1e+21
+total	NaN
+total	2e+21
+soon	
+summary	close=2026-02-25 billed=0 over=0 unbilled=0 debt=0 due=2026-03-15 days=14
+summary	close=2026-01-28 billed=0 over=0 unbilled=0 debt=0 due=2026-02-05 days=4
+close	2026-02-01
+summary	close=2026-04-28 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+close	2026-02-28
+summary	close=2026-06-10 billed=4.9 over=0 unbilled=0 debt=4.9 due=2026-06-15 days=5
+bal	c1:NaN,c2:-100,a1:NaN
+summary	close=2026-04-05 billed=0 over=1e+21 unbilled=1e+21 debt=0 due=2026-04-20 days=-10
+due	2026-01-31
+close	2026-02-01
+soon	c1:50:-13
+soon	
+close	2024-02-05
+summary	close=2024-02-25 billed=0 over=1e+21 unbilled=0 debt=0 due=- days=-
+summary	none
+close	2026-02-28
+total	1e+21
+soon	
+bal	c1:-1e+21,c2:-60,a1:-60
+due	2026-06-29
+soon	
+soon	a1:900:-11
+soon	
+one	100
+close	2026-01-01
+summary	close=2025-12-10 billed=1000 over=0 unbilled=0 debt=1000 due=2026-01-10 days=10
+close	2026-05-28
+due	2024-03-31
+due	2026-01-31
+bal	c1:0,c2:100.1
+one	0
+close	2026-03-01
+bal	c1:0.1,c2:100
+summary	close=2026-06-10 billed=900 over=0 unbilled=0 debt=900 due=2026-06-20 days=5
+due	2026-04-25
+close	2026-01-10
+total	1e+21
+summary	close=2024-02-15 billed=0 over=0.1 unbilled=0 debt=0 due=2024-03-10 days=10
+summary	close=2026-01-10 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+due	2026-03-30
+summary	close=2026-06-29 billed=1028.33 over=0 unbilled=0 debt=1028.33 due=- days=-
+close	2026-01-31
+summary	close=2026-01-28 billed=0 over=0.1 unbilled=0 debt=0 due=2026-02-15 days=14
+total	NaN
+due	2026-08-01
+due	2026-02-28
+close	2026-03-31
+due	2026-05-15
+due	2026-06-30
+close	2025-12-25
+summary	close=2026-06-25 billed=0 over=0 unbilled=0 debt=0 due=2026-07-15 days=20
+summary	close=2026-01-10 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+due	2026-01-28
+soon	
+soon	default:10:-11,c1:50:-6
+close	2026-05-28
+summary	close=2026-01-31 billed=0 over=0 unbilled=0 debt=0 due=2026-02-15 days=15
+due	2024-04-15
+close	2025-11-30
+summary	close=2026-06-10 billed=0 over=0.1 unbilled=1e+21 debt=1e+21 due=2026-06-25 days=-6
+due	2026-01-29
+one	1e+21
+net	asset=NaN liab=NaN net=NaN
+net	asset=NaN liab=1e+21 net=NaN
+net	asset=NaN liab=0 net=NaN
+net	asset=NaN liab=0 net=NaN
+total	-999.8
+due	2026-03-25
+summary	close=2025-12-10 billed=998.5 over=0 unbilled=0 debt=998.5 due=2026-01-10 days=10
+net	asset=NaN liab=5 net=NaN
+summary	close=2026-03-10 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-03-15 days=-16
+soon	c1:1e+21:-6
+summary	close=2026-02-25 billed=0 over=5 unbilled=0 debt=0 due=2026-03-10 days=10
+summary	close=2024-02-15 billed=0 over=5 unbilled=NaN debt=0 due=2024-03-10 days=10
+one	100
+close	2025-11-30
+soon	
+net	asset=NaN liab=0.1 net=NaN
+due	2025-12-25
+soon	a1:50:-16
+bal	c1:0.1,c2:NaN
+close	2026-03-25
+due	2024-04-01
+due	2026-06-10
+soon	
+net	asset=1e+21 liab=0 net=1e+21
+close	2025-12-01
+due	2026-04-15
+total	1e+21
+summary	none
+soon	
+net	asset=-990 liab=1000 net=-1990
+soon	
+bal	c1:100,c2:-1110,a1:0,default:NaN
+bal	c1:38.33,c2:0,a1:1e+21,default:100
+one	-99.9
+summary	close=2024-02-25 billed=0 over=0 unbilled=0 debt=0 due=2024-03-25 days=25
+net	asset=1e+21 liab=50 net=1e+21
+summary	close=2026-05-15 billed=0 over=100 unbilled=0 debt=0 due=2026-06-10 days=10
+summary	close=2026-05-31 billed=0 over=100 unbilled=0 debt=0 due=2026-06-10 days=10
+bal	c1:0.1,c2:0
+soon	
+due	2026-04-05
+one	0
+bal	c1:1e+21
+total	0
+total	100
+due	2026-02-15
+net	asset=300 liab=0 net=300
+one	-33.43
+one	1e+21
+net	asset=NaN liab=1e+21 net=NaN
+close	2026-03-25
+summary	none
+one	NaN
+bal	c1:-1000,c2:0.1,a1:0,default:-50
+summary	close=2026-06-30 billed=0 over=100 unbilled=0 debt=0 due=- days=-
+summary	close=2024-02-10 billed=0 over=0 unbilled=0 debt=0 due=2024-03-10 days=10
+bal	c1:1e+21,c2:95,a1:0,default:NaN
+summary	close=2024-02-29 billed=2e+21 over=0 unbilled=0 debt=2e+21 due=2024-03-25 days=25
+bal	c1:0.1,c2:-1.5,a1:0,default:40
+summary	none
+summary	close=2026-02-28 billed=0 over=0.1 unbilled=0 debt=0 due=2026-03-20 days=19
+soon	c2:50:-5
+close	2026-06-05
+due	2026-06-30
+one	0
+due	2026-05-15
+net	asset=-99.80000000000001 liab=10 net=-109.80000000000001
+total	1e+21
+summary	close=2024-02-15 billed=0 over=0 unbilled=0 debt=0 due=2024-02-20 days=-9
+total	NaN
+net	asset=NaN liab=NaN net=NaN
+net	asset=NaN liab=0 net=NaN
+total	NaN
+summary	none
+bal	c1:-33.23
+summary	close=2025-12-05 billed=1005 over=0 unbilled=43.33 debt=1048.33 due=2025-12-10 days=-22
+due	2026-06-15
+summary	close=2026-02-28 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-03-20 days=20
+bal	c1:0.1
+close	2026-03-31
+due	2025-12-05
+net	asset=1e+21 liab=NaN net=NaN
+due	2026-03-15
+summary	close=2024-02-10 billed=0 over=0.1 unbilled=0 debt=0 due=- days=-
+due	2025-12-05
+bal	c1:-50,c2:100
+bal	c1:0.1,c2:5,a1:66.67,default:1e+21
+soon	c2:1000:-15
+summary	close=2026-01-15 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-01-25 days=-6
+total	0
+summary	close=2024-02-10 billed=1000 over=0 unbilled=100 debt=1100 due=2024-02-20 days=-9
+close	2026-06-01
+total	1e+21
+net	asset=NaN liab=33.33 net=NaN
+due	2026-08-05
+summary	close=2024-02-29 billed=0 over=100 unbilled=0 debt=0 due=2024-03-20 days=19
+summary	close=2026-02-28 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+due	2026-06-30
+close	2026-05-15
+total	NaN
+summary	close=2026-02-15 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+due	2026-06-30
+net	asset=NaN liab=NaN net=NaN
+close	2025-12-05
+summary	close=2026-06-10 billed=0 over=0 unbilled=0 debt=0 due=2026-06-20 days=-11
+close	2026-02-15
+due	2024-03-10
+summary	close=2026-05-25 billed=0 over=0.1 unbilled=0 debt=0 due=- days=-
+summary	close=2026-01-15 billed=0 over=100 unbilled=0 debt=0 due=2026-02-10 days=9
+one	0.1
+close	2026-01-01
+due	2026-06-28
+net	asset=NaN liab=NaN net=NaN
+close	2026-02-01
+total	0
+bal	c1:0
+soon	
+close	2026-04-01
+summary	none
+summary	close=2024-02-10 billed=1000 over=0 unbilled=0 debt=1000 due=- days=-
+summary	close=2025-12-10 billed=0 over=100 unbilled=NaN debt=0 due=2025-12-15 days=-10
+soon	
+one	0.1
+close	2026-02-28
+summary	close=2026-05-31 billed=50 over=0 unbilled=0 debt=50 due=2026-06-20 days=5
+summary	none
+summary	close=2026-01-15 billed=0 over=0 unbilled=0 debt=0 due=2026-02-10 days=10
+one	0
+net	asset=-1e+21 liab=0 net=-1e+21
+bal	c1:100,c2:0,a1:-50,default:0
+due	2026-06-29
+summary	close=2025-11-28 billed=0 over=0.1 unbilled=NaN debt=0 due=2025-12-10 days=-15
+total	NaN
+one	100
+due	2026-03-29
+summary	close=2026-06-10 billed=1e+21 over=0 unbilled=0 debt=1e+21 due=2026-07-10 days=15
+net	asset=NaN liab=0 net=NaN
+close	2025-12-10
+close	2026-06-15
+close	2025-11-29
+net	asset=0.1 liab=1e+21 net=-1e+21
+bal	c1:100,c2:-1000,a1:0
+close	2024-02-29
+summary	close=2026-02-28 billed=0 over=0.09999999999999432 unbilled=0 debt=0 due=2026-03-10 days=10
+total	1e+21
+bal	c1:NaN
+close	2026-01-30
+net	asset=1e+21 liab=0 net=1e+21
+total	90
+summary	close=2026-03-25 billed=0 over=0.2 unbilled=0 debt=0 due=2026-04-20 days=20
+total	NaN
+one	0
+one	-1e+21
+net	asset=1e+21 liab=0 net=1e+21
+close	2026-05-31
+due	2026-02-28
+net	asset=NaN liab=0 net=NaN
+close	2026-03-01
+soon	
+summary	close=2026-06-25 billed=1000.2 over=0 unbilled=0 debt=1000.2 due=2026-07-20 days=19
+total	NaN
+one	0
+close	2025-12-01
+bal	c1:-1000,c2:0,a1:-50,default:0
+summary	close=2025-12-10 billed=50 over=0 unbilled=33.33 debt=83.33 due=2025-12-25 days=0
+net	asset=-1050 liab=0 net=-1050
+soon	
+one	90
+close	2026-06-01
+net	asset=NaN liab=105 net=NaN
+total	NaN
+close	2024-03-01
+due	2026-01-01
+close	2024-03-01
+close	2025-12-31
+bal	c1:0,c2:0,a1:-1e+21,default:-5
+net	asset=NaN liab=1010 net=NaN
+close	2026-06-10
+due	2026-04-29
+soon	
+close	2026-06-25
+summary	close=2026-02-28 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-03-10 days=9
+due	2024-03-31
+due	2026-07-30
+one	NaN
+due	2026-03-01
+total	1e+21
+summary	close=2025-12-25 billed=0 over=1e+21 unbilled=0 debt=0 due=- days=-
+summary	close=2025-12-28 billed=1000 over=0 unbilled=0 debt=1000 due=2026-01-20 days=19
+bal	c1:-1e+21,c2:0.1
+summary	close=2026-05-25 billed=0 over=0 unbilled=0 debt=0 due=2026-06-25 days=15
+soon	
+due	2026-03-28
+bal	c1:0,c2:100,a1:1e+21,default:-1e+21
+close	2026-04-01
+summary	close=2026-05-31 billed=0 over=0 unbilled=0 debt=0 due=2026-06-10 days=10
+summary	close=2024-02-29 billed=60 over=0 unbilled=0 debt=60 due=2024-03-25 days=24
+total	1e+21
+due	2026-06-01
+close	2026-01-31
+summary	close=2026-01-05 billed=0 over=0.1 unbilled=0 debt=0 due=2026-01-10 days=-21
+net	asset=100 liab=NaN net=NaN
+one	-1000
+due	2026-06-25
+bal	c1:100,c2:100
+one	100
+close	2026-03-31
+due	2026-02-10
+one	0
+one	-1000
+close	2026-05-15
+one	0.1
+summary	close=2026-06-05 billed=0 over=0 unbilled=0 debt=0 due=2026-06-10 days=0
+summary	none
+net	asset=0.1 liab=0 net=0.1
+net	asset=0.1 liab=0 net=0.1
+one	NaN
+soon	
+net	asset=10 liab=2e+21 net=-2e+21
+bal	c1:0,c2:-50,a1:100,default:0.1
+close	2026-05-10
+one	0
+soon	
+soon	
+summary	close=2026-01-10 billed=0 over=0 unbilled=0 debt=0 due=2026-01-20 days=-12
+summary	close=2024-02-10 billed=0 over=1.7000000000000002 unbilled=0 debt=0 due=2024-03-10 days=9
+soon	
+summary	close=2026-02-15 billed=0 over=5 unbilled=0 debt=0 due=2026-03-15 days=14
+one	-4.9
+close	2026-05-25
+bal	c1:100,c2:-100
+soon	
+soon	
+close	2026-05-29
+due	2026-07-01
+close	2026-01-30
+one	0
+total	-1e+21
+due	2026-03-28
+total	-1900
+due	2026-07-01
+due	2026-07-05
+summary	none
+due	2024-04-05
+summary	none
+close	2026-03-01
+summary	close=2025-11-30 billed=0 over=0 unbilled=1e+21 debt=2e+21 due=2025-12-15 days=-10
+summary	close=2026-05-31 billed=53.4 over=0 unbilled=NaN debt=0 due=2026-06-15 days=5
+soon	
+close	2025-12-25
+due	2026-01-29
+soon	
+total	NaN
+one	0.1
+due	2026-06-28
+close	2026-01-01
+bal	c1:-1e+21,c2:0,a1:0,default:0.1
+bal	c1:-0.1,c2:33.43,a1:-99.9,default:-55
+summary	close=2025-12-15 billed=0 over=0 unbilled=0 debt=0 due=2026-01-15 days=14
+summary	close=2025-12-10 billed=49.9 over=0 unbilled=0 debt=49.9 due=2025-12-15 days=-16
+summary	none
+due	2026-01-01
+soon	c1:0.1:-6
+summary	close=2026-06-28 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-07-10 days=9
+bal	c1:100,c2:2e+21,a1:0,default:-45
+one	1e+21
+summary	close=2026-05-31 billed=0 over=0 unbilled=0 debt=0 due=2026-06-20 days=-5
+summary	none
+soon	
+due	2026-05-30
+soon	
+soon	
+bal	c1:1e+21,c2:0.1
+summary	close=2025-12-15 billed=0 over=0 unbilled=0 debt=0 due=2025-12-20 days=-5
+total	NaN
+net	asset=NaN liab=NaN net=NaN
+due	2026-02-05
+close	2026-02-15
+due	2026-07-29
+close	2025-11-28
+close	2026-04-25
+summary	close=2026-04-28 billed=1e+21 over=0 unbilled=0 debt=1e+21 due=2026-05-15 days=15
+summary	close=2026-05-10 billed=0 over=1.5 unbilled=0 debt=0 due=- days=-
+one	0.1
+close	2026-03-10
+summary	close=2026-01-05 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-01-10 days=-22
+soon	
+soon	
+summary	close=2026-01-28 billed=50.1 over=0 unbilled=0 debt=50.1 due=2026-02-25 days=24
+summary	close=2026-02-10 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-02-15 days=-13
+total	-1995
+total	49.900000000000006
+due	2026-04-05
+close	2026-02-28
+summary	close=2025-12-25 billed=0 over=0 unbilled=0 debt=0 due=2026-01-10 days=16
+one	6.5
+soon	c1:1e+21:0
+due	2024-03-05
+summary	close=2026-05-10 billed=0 over=1e+21 unbilled=0 debt=0 due=- days=-
+net	asset=NaN liab=1e+21 net=NaN
+due	2026-04-29
+close	2026-05-31
+one	-1000
+summary	close=2024-02-25 billed=40 over=0 unbilled=NaN debt=0 due=2024-03-25 days=24
+due	2026-04-30
+one	0
+net	asset=200.1 liab=NaN net=NaN
+due	2026-07-01
+due	2026-02-01
+net	asset=NaN liab=200 net=NaN
+close	2026-05-31
+soon	
+summary	close=2024-02-28 billed=40 over=0 unbilled=0 debt=40 due=2024-03-20 days=20
+close	2024-02-29
+summary	close=2026-01-31 billed=0 over=0 unbilled=0 debt=0 due=2026-02-20 days=20
+close	2026-02-05
+net	asset=99.9 liab=NaN net=NaN
+due	2026-06-30
+soon	c1:50:-4
+bal	c1:0
+one	1e+21
+net	asset=NaN liab=NaN net=NaN
+net	asset=NaN liab=1000 net=NaN
+total	NaN
+summary	close=2025-12-31 billed=0 over=100 unbilled=0 debt=0 due=- days=-
+summary	close=2026-04-30 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-05-10 days=10
+close	2026-02-28
+summary	close=2026-02-10 billed=0 over=0.1 unbilled=0 debt=0 due=- days=-
+summary	close=2026-01-25 billed=0 over=100 unbilled=0 debt=0 due=2026-02-20 days=19
+summary	close=2025-12-25 billed=0 over=0 unbilled=33.33 debt=33.33 due=2026-01-20 days=26
+bal	c1:0,c2:0,a1:-1000
+total	-66.66
+due	2026-07-05
+summary	close=2026-05-28 billed=1000 over=0 unbilled=0 debt=1000 due=- days=-
+close	2026-05-10
+due	2026-01-31
+close	2024-02-29
+soon	
+due	2026-01-28
+close	2026-05-29
+close	2025-12-15
+summary	close=2026-06-10 billed=0 over=100 unbilled=0 debt=0 due=2026-06-15 days=-10
+close	2026-04-15
+one	1e+21
+soon	c1:1000:-11
+close	2026-03-01
+summary	close=2026-06-10 billed=50 over=0 unbilled=0 debt=50 due=2026-07-10 days=25
+summary	none
+net	asset=3e+21 liab=0 net=3e+21
+net	asset=1e+21 liab=1e+21 net=0
+total	100
+summary	close=2025-12-25 billed=0 over=0.1 unbilled=0 debt=0 due=- days=-
+close	2026-01-31
+close	2026-06-05
+bal	c1:100,c2:-1000,a1:1e+21,default:-1000
+soon	
+one	100
+summary	close=2026-02-10 billed=0 over=0 unbilled=NaN debt=0 due=- days=-
+net	asset=NaN liab=1e+21 net=NaN
+net	asset=-955 liab=128.32999999999998 net=-1083.33
+due	2024-02-29
+bal	c1:-1033.33,c2:10.1,a1:0.1,default:0.1
+close	2026-05-31
+summary	close=2026-05-31 billed=0 over=0.1 unbilled=0 debt=99.9 due=2026-06-25 days=15
+due	2026-02-10
+close	2025-11-30
+summary	close=2026-01-31 billed=140.1 over=0 unbilled=0 debt=140.1 due=2026-02-10 days=9
+summary	close=2026-06-10 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-06-15 days=-16
+net	asset=NaN liab=1000.1 net=NaN
+net	asset=NaN liab=NaN net=NaN
+close	2026-01-30
+soon	c1:33.33:10
+close	2026-03-25
+summary	close=2025-12-05 billed=0 over=0.1 unbilled=33.23 debt=33.129999999999995 due=- days=-
+soon	
+soon	
+due	2026-03-05
+due	2026-07-29
+close	2026-05-01
+close	2026-05-30
+due	2026-07-28
+close	2026-01-01
+summary	close=2026-06-05 billed=5 over=0 unbilled=0 debt=101.5 due=2026-06-15 days=5
+net	asset=NaN liab=110 net=NaN
+due	2026-07-25
+net	asset=NaN liab=1000 net=NaN
+soon	
+summary	none
+bal	c1:NaN
+net	asset=0 liab=2e+21 net=-2e+21
+due	2026-01-30
+close	2024-02-10
+due	2026-06-28
+net	asset=NaN liab=1010 net=NaN
+close	2026-04-29
+due	2026-08-01
+due	2026-06-29
+summary	close=2024-02-28 billed=0 over=0 unbilled=0 debt=0 due=2024-03-25 days=24
+close	2026-04-30
+bal	c1:1e+21,c2:0
+net	asset=NaN liab=0 net=NaN
+bal	c1:-1000,c2:NaN,a1:1e+21,default:NaN
+soon	c2:50:-10
+total	NaN
+summary	close=2025-12-15 billed=0 over=0 unbilled=0 debt=0 due=2026-01-05 days=5
+close	2026-07-01
+net	asset=1e+21 liab=33.33 net=1e+21
+bal	c1:-100,c2:0,a1:-1000,default:NaN
+summary	close=2026-01-10 billed=0 over=100 unbilled=0 debt=0 due=2026-01-25 days=-7
+summary	close=2024-02-28 billed=1e+21 over=0 unbilled=0 debt=1e+21 due=- days=-
+due	2024-03-31
+close	2026-04-10
+total	2e+21
+net	asset=1e+21 liab=1000 net=1e+21
+close	2026-02-28
+due	2024-02-29
+total	-1000
+close	2026-06-15
+net	asset=NaN liab=NaN net=NaN
+due	2026-08-15
+summary	close=2024-02-10 billed=0 over=0 unbilled=0 debt=0 due=2024-03-10 days=9
+summary	close=2026-04-15 billed=50 over=0 unbilled=0 debt=50 due=2026-04-25 days=-5
+close	2026-01-31
+due	2026-03-31
+summary	close=2026-06-25 billed=0 over=0 unbilled=0 debt=0 due=2026-07-15 days=14
+total	NaN
+summary	close=2025-12-28 billed=0 over=0 unbilled=0 debt=0 due=2026-01-15 days=14
+close	2026-05-28
+summary	close=2026-03-10 billed=0 over=0 unbilled=100 debt=100 due=2026-03-15 days=-16
+one	-50
+summary	close=2025-12-10 billed=10 over=0 unbilled=0 debt=10 due=- days=-
+close	2024-02-01
+net	asset=NaN liab=28.33 net=NaN
+one	0
+summary	close=2026-02-25 billed=0 over=0 unbilled=0 debt=0 due=2026-03-25 days=25
+due	2026-01-30
+summary	close=2026-06-10 billed=100 over=0 unbilled=0 debt=100 due=2026-06-25 days=10
+total	168.17000000000002
+soon	
+summary	close=2026-05-15 billed=0 over=0 unbilled=0 debt=0 due=2026-05-20 days=-11
+soon	
+net	asset=NaN liab=NaN net=NaN
+summary	close=2026-06-15 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+summary	close=2024-02-05 billed=0 over=0 unbilled=1e+21 debt=1e+21 due=2024-02-25 days=-4
+soon	
+summary	none
+total	0.1
+total	NaN
+close	2026-06-10
+summary	close=2025-12-15 billed=0 over=0 unbilled=0 debt=0 due=2026-01-10 days=9
+due	2026-02-28
+total	0
+soon	c1:38.5:-11
+due	2026-01-01
+one	0
+bal	c1:0,c2:NaN
+summary	none
+net	asset=NaN liab=0.1 net=NaN
+summary	close=2025-12-15 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+bal	c1:0,c2:0,a1:0.1
+soon	
+due	2026-05-15
+close	2024-02-29
+bal	c1:0,c2:0.1
+due	2026-07-25
+summary	close=2026-02-15 billed=0 over=100 unbilled=0 debt=0 due=2026-03-10 days=10
+due	2026-07-01
+summary	close=2025-12-28 billed=1010 over=0 unbilled=0 debt=1010 due=2026-01-15 days=15
+due	2026-06-30
+summary	close=2024-02-28 billed=0 over=0.1 unbilled=0 debt=0 due=2024-03-25 days=24
+one	-1e+21
+due	2026-07-10
+soon	
+total	1e+21
+close	2026-03-15
+due	2026-03-01
+net	asset=NaN liab=NaN net=NaN
+summary	close=2026-06-10 billed=0 over=0 unbilled=0 debt=0 due=2026-06-15 days=-10
+summary	close=2025-12-31 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-01-15 days=15
+summary	close=2026-06-10 billed=0 over=100 unbilled=0 debt=0 due=2026-06-20 days=5
+close	2026-06-15
+summary	close=2026-05-10 billed=NaN over=0 unbilled=NaN debt=0 due=2026-05-15 days=-16
+close	2026-01-01
+total	NaN
+summary	close=2026-06-10 billed=998.5 over=0 unbilled=1.5 debt=1000 due=2026-07-10 days=15
+total	NaN
+summary	close=2026-06-30 billed=50 over=0 unbilled=0 debt=50 due=2026-07-10 days=9
+total	NaN
+summary	close=2025-12-15 billed=50 over=0 unbilled=0 debt=50 due=2025-12-31 days=6
+soon	
+due	2026-08-01
+due	2026-07-01
+summary	close=2024-02-15 billed=1000.1 over=0 unbilled=0 debt=995.1 due=2024-02-20 days=-10
+due	2024-03-01
+close	2026-03-31
+one	0
+summary	close=2026-04-15 billed=10 over=0 unbilled=0 debt=10 due=2026-05-10 days=10
+bal	c1:0.1,c2:0,a1:0.1,default:0.1
+summary	close=2026-05-28 billed=0 over=0 unbilled=100.1 debt=100.1 due=2026-06-20 days=-5
+summary	close=2026-01-10 billed=0 over=100 unbilled=0 debt=0 due=- days=-
+bal	c1:100,c2:NaN,a1:-1000
+total	NaN
+close	2025-12-01
+total	-88.33
+soon	c1:1000:-10
+bal	c1:0,c2:-1000
+bal	c1:NaN,c2:0.1,a1:-999.9,default:-1000
+due	2024-03-15
+close	2026-02-28
+close	2026-03-29
+summary	close=2026-05-31 billed=50 over=0 unbilled=0.1 debt=50.1 due=2026-06-25 days=10
+due	2026-07-31
+net	asset=NaN liab=0 net=NaN
+soon	
+due	2026-04-30
+due	2026-05-01
+due	2026-02-10
+soon	
+due	2024-03-25
+summary	close=2026-06-10 billed=50 over=0 unbilled=0 debt=50 due=2026-07-10 days=9
+total	-9.8
+net	asset=-1050 liab=NaN net=NaN
+due	2024-03-05
+soon	default:1e+21:20
+summary	close=2026-01-10 billed=0 over=66.57000000000001 unbilled=0 debt=0 due=2026-01-15 days=-17
+due	2026-01-05
+due	2024-03-01
+due	2026-01-05
+net	asset=-1e+21 liab=5 net=-1e+21
+due	2026-01-01
+summary	none
+net	asset=NaN liab=1000.1 net=NaN
+one	5
+summary	close=2026-05-25 billed=0 over=0.1 unbilled=0 debt=0 due=2026-06-10 days=-5
+due	2025-12-15
+summary	close=2026-01-31 billed=0 over=0 unbilled=0 debt=0 due=2026-02-25 days=24
+soon	
+total	1e+21
+summary	close=2026-03-10 billed=0 over=110 unbilled=0 debt=0 due=- days=-
+close	2026-02-15
+one	0
+net	asset=5.2 liab=1e+21 net=-1e+21
+close	2026-01-10
+close	2025-12-01
+bal	c1:-50
+total	1e+21
+summary	none
+summary	close=2024-02-28 billed=0 over=0 unbilled=0 debt=0 due=2024-03-20 days=19
+summary	none
+total	NaN
+due	2026-06-01
+summary	close=2026-02-10 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+due	2026-02-28
+soon	
+net	asset=NaN liab=1e+21 net=NaN
+summary	none
+net	asset=NaN liab=NaN net=NaN
+bal	c1:1e+21,c2:0.1,a1:-50,default:0
+summary	none
+due	2026-03-28
+summary	none
+close	2025-12-25
+total	-109.9
+soon	
+soon	c1:133.23000000000002:-6
+summary	close=2026-05-28 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+one	1e+21
+soon	c2:1000:-10
+total	NaN
+net	asset=NaN liab=NaN net=NaN
+due	2026-02-28
+close	2026-02-05
+summary	close=2026-02-15 billed=0 over=0 unbilled=0 debt=0 due=2026-03-10 days=10
+close	2026-01-01
+summary	close=2026-01-31 billed=50 over=0 unbilled=0.1 debt=50.1 due=2026-02-25 days=25
+summary	close=2024-02-10 billed=50 over=0 unbilled=0 debt=50 due=2024-02-15 days=-14
+soon	default:1e+21:5,c1:1e+21:15
+summary	close=2026-06-10 billed=0 over=0.1 unbilled=33.33 debt=33.23 due=2026-06-15 days=0
+soon	c2:1000:0
+summary	close=2026-05-15 billed=0 over=0 unbilled=0 debt=0 due=2026-05-25 days=-16
+summary	close=2026-06-25 billed=1043.33 over=0 unbilled=0 debt=1043.33 due=2026-07-15 days=14
+close	2025-12-15
+close	2026-01-30
+net	asset=38.529999999999994 liab=60 net=-21.470000000000006
+close	2026-05-30
+net	asset=NaN liab=1e+21 net=NaN
+summary	close=2024-02-15 billed=0 over=0.1 unbilled=33.33 debt=33.23 due=2024-02-20 days=-9
+due	2026-07-05
+close	2026-05-30
+close	2025-12-01
+summary	close=2026-02-15 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-02-25 days=-4
+summary	close=2026-02-28 billed=1e+21 over=0 unbilled=0 debt=1e+21 due=- days=-
+close	2026-06-05
+soon	
+close	2026-07-01
+summary	none
+bal	c1:100,c2:-1000,a1:0.1
+summary	close=2026-01-15 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-02-15 days=14
+due	2026-05-05
+soon	
+close	2026-01-01
+summary	close=2025-12-15 billed=1012.0999999999999 over=0 unbilled=NaN debt=0 due=2025-12-25 days=-7
+summary	close=2026-05-28 billed=50 over=0 unbilled=0 debt=50 due=- days=-
+close	2026-01-28
+close	2026-05-31
+due	2024-03-05
+due	2024-03-15
+close	2026-05-31
+summary	close=2025-12-05 billed=1000 over=0 unbilled=0.1 debt=1000.1 due=2025-12-10 days=-22
+summary	close=2024-02-05 billed=0 over=0.1 unbilled=0 debt=0 due=- days=-
+summary	close=2026-02-10 billed=0.1 over=0 unbilled=0 debt=0.1 due=- days=-
+due	2024-02-29
+summary	close=2026-02-15 billed=0 over=0 unbilled=0 debt=0 due=2026-02-25 days=-3
+bal	c1:0,c2:100,a1:-50,default:-1033.33
+summary	close=2024-02-28 billed=0 over=0 unbilled=NaN debt=0 due=- days=-
+total	2e+21
+close	2025-11-30
+due	2026-01-25
+summary	close=2025-12-05 billed=0 over=1e+21 unbilled=0 debt=0 due=2025-12-20 days=-11
+summary	close=2026-02-10 billed=99.9 over=0 unbilled=33.33 debt=133.23000000000002 due=2026-03-10 days=10
+one	0.1
+summary	close=2026-06-10 billed=0 over=0.1 unbilled=0 debt=0 due=2026-06-15 days=0
+due	2025-12-10
+due	2026-06-30
+due	2026-04-25
+summary	close=2025-12-28 billed=1000 over=0 unbilled=0 debt=1000 due=- days=-
+soon	
+one	-50
+one	-50
+summary	close=2026-05-28 billed=0 over=100 unbilled=0 debt=0 due=2026-06-10 days=0
+summary	none
+summary	close=2025-12-15 billed=0 over=0 unbilled=0 debt=0 due=2025-12-25 days=0
+one	0
+due	2026-07-05
+summary	close=2026-02-05 billed=0 over=0 unbilled=0 debt=0 due=2026-02-10 days=-18
+one	100
+one	0
+due	2026-03-29
+soon	
+soon	
+due	2026-03-01
+due	2026-01-31
+summary	close=2026-03-25 billed=0 over=0 unbilled=0 debt=0 due=2026-04-25 days=25
+total	0
+summary	close=2026-01-25 billed=0 over=0 unbilled=0 debt=0 due=2026-02-15 days=15
+due	2025-12-31
+bal	c1:-1000,c2:-50
+one	-10
+total	-2000
+total	-900.1
+close	2026-06-10
+soon	
+soon	
+total	2e+21
+total	NaN
+summary	close=2026-05-15 billed=0 over=0 unbilled=0 debt=0 due=2026-06-10 days=10
+close	2026-02-25
+total	1e+21
+one	-1000
+summary	close=2026-05-31 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-06-25 days=15
+soon	
+one	100
+one	0
+summary	close=2026-05-25 billed=0 over=99.9 unbilled=0 debt=0 due=2026-06-20 days=5
+due	2026-01-25
+soon	
+bal	c1:0,c2:9.9,a1:NaN
+summary	close=2024-02-10 billed=0 over=0 unbilled=0.1 debt=0.1 due=2024-03-10 days=9
+summary	none
+close	2025-12-01
+one	NaN
+one	0
+soon	a1:50.1:19
+one	100
+summary	close=2026-06-10 billed=0 over=1e+21 unbilled=33.33 debt=33.43 due=2026-06-20 days=5
+summary	close=2026-04-10 billed=990 over=0 unbilled=0 debt=990 due=2026-04-25 days=-5
+close	2026-01-31
+total	-899.9
+due	2024-03-31
+bal	c1:0,c2:0,a1:-1000
+close	2025-12-15
+summary	none
+total	1e+21
+total	-925
+bal	c1:0,c2:0,a1:0,default:-1000
+close	2025-12-15
+due	2024-04-30
+close	2026-02-28
+due	2026-08-05
+close	2026-01-30
+one	0
+summary	close=2026-01-10 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-01-20 days=-12
+close	2026-06-01
+due	2026-06-30
+soon	
+summary	close=2026-06-15 billed=0 over=0 unbilled=0 debt=0 due=2026-06-25 days=-6
+summary	close=2026-06-10 billed=0 over=1e+21 unbilled=NaN debt=0 due=2026-06-15 days=-10
+summary	close=2025-12-10 billed=50 over=0 unbilled=0 debt=50 due=2025-12-25 days=-7
+close	2024-02-25
+soon	
+summary	close=2026-06-05 billed=0 over=100 unbilled=NaN debt=0 due=2026-06-10 days=-21
+due	2026-02-15
+due	2026-04-15
+close	2024-02-10
+net	asset=NaN liab=50 net=NaN
+net	asset=NaN liab=10.1 net=NaN
+soon	
+due	2026-03-15
+net	asset=NaN liab=0 net=NaN
+due	2026-03-05
+one	0
+close	2026-04-30
+close	2026-02-15
+bal	c1:NaN
+due	2026-06-30
+due	2026-02-01
+net	asset=NaN liab=NaN net=NaN
+due	2026-03-28
+bal	c1:NaN,c2:NaN
+due	2026-01-01
+close	2026-03-01
+bal	c1:100,c2:100,a1:0
+soon	c1:1000:-16
+close	2026-04-05
+bal	c1:0,c2:100,a1:-50
+summary	none
+one	0
+net	asset=-949.9 liab=0 net=-949.9
+close	2026-03-01
+summary	close=2026-05-10 billed=NaN over=0 unbilled=NaN debt=0 due=- days=-
+due	2026-06-15
+total	1e+21
+close	2025-12-01
+one	NaN
+one	0
+total	-140
+soon	
+soon	
+net	asset=1e+21 liab=NaN net=NaN
+close	2026-05-31
+due	2026-04-15
+due	2026-01-05
+close	2025-11-29
+bal	c1:NaN
+close	2026-06-05
+total	1e+21
+soon	c2:1000:5
+summary	close=2026-06-05 billed=0 over=0 unbilled=10 debt=10 due=2026-06-15 days=-10
+summary	close=2026-06-10 billed=0 over=0 unbilled=0 debt=0 due=2026-06-25 days=10
+summary	close=2024-02-25 billed=50.1 over=0 unbilled=0 debt=50.1 due=2024-03-25 days=24
+net	asset=1e+21 liab=0 net=1e+21
+close	2026-01-05
+close	2026-06-01
+due	2026-04-28
+due	2026-08-15
+bal	c1:-105
+bal	c1:0.1,c2:100,a1:0,default:-1e+21
+soon	c1:2e+21:-5
+summary	close=2025-12-10 billed=0 over=0 unbilled=0 debt=0 due=2025-12-20 days=-12
+summary	close=2026-02-25 billed=50 over=0 unbilled=0 debt=50 due=- days=-
+close	2026-05-30
+summary	close=2024-02-25 billed=0 over=0 unbilled=0 debt=0 due=2024-03-20 days=19
+total	0.1
+due	2024-03-01
+bal	c1:1e+21
+one	0
+net	asset=NaN liab=NaN net=NaN
+summary	none
+close	2025-12-31
+close	2026-05-29
+summary	close=2026-02-15 billed=0 over=0 unbilled=100 debt=0 due=2026-02-20 days=-8
+due	2026-04-15
+due	2026-02-28
+close	2024-02-29
+one	0
+one	-5
+summary	close=2026-02-10 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-02-15 days=-14
+bal	c1:100,c2:-1000,a1:1e+21,default:-1000
+total	1e+21
+due	2026-04-10
+close	2026-06-01
+soon	
+due	2026-06-30
+total	1e+21
+total	-1050.1
+due	2024-02-28
+close	2025-11-30
+net	asset=NaN liab=NaN net=NaN
+due	2026-06-25
+total	NaN
+close	2026-01-15
+close	2026-06-05
+summary	none
+total	1e+21
+soon	
+summary	none
+close	2026-05-25
+net	asset=NaN liab=NaN net=NaN
+one	-50
+summary	close=2025-12-10 billed=0 over=1e+21 unbilled=0 debt=0 due=2025-12-15 days=-16
+due	2026-02-01
+due	2026-07-10
+due	2026-04-29
+net	asset=NaN liab=NaN net=NaN
+due	2026-07-01
+summary	close=2025-12-10 billed=0 over=0 unbilled=0 debt=0 due=2025-12-25 days=-6
+net	asset=-49.9 liab=NaN net=NaN
+net	asset=NaN liab=10 net=NaN
+due	2024-02-29
+due	2026-05-05
+summary	close=2026-05-05 billed=900 over=0 unbilled=110.1 debt=1010.1 due=- days=-
+close	2026-06-01
+summary	close=2026-05-28 billed=50 over=0 unbilled=0 debt=50 due=- days=-
+one	-50
+summary	close=2025-12-25 billed=0 over=100 unbilled=0 debt=0 due=2026-01-25 days=24
+summary	none
+due	2026-03-25
+summary	close=2026-02-25 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+due	2026-07-31
+summary	close=2026-05-15 billed=NaN over=105 unbilled=NaN debt=0 due=2026-05-20 days=-21
+due	2024-03-28
+close	2025-12-01
+close	2026-05-28
+one	-1000
+summary	none
+summary	close=2026-05-15 billed=123.22999999999999 over=0 unbilled=0 debt=123.22999999999999 due=2026-06-10 days=10
+close	2025-12-05
+close	2024-02-15
+close	2026-04-01
+close	2026-06-10
+summary	none
+summary	close=2025-12-31 billed=0 over=1e+21 unbilled=0 debt=0 due=- days=-
+total	2e+21
+close	2026-05-29
+summary	close=2026-06-10 billed=0 over=90 unbilled=0 debt=0 due=2026-06-25 days=10
+summary	close=2026-01-15 billed=0 over=0 unbilled=0 debt=0 due=2026-01-25 days=-7
+due	2024-04-01
+summary	close=2025-11-28 billed=0 over=0 unbilled=NaN debt=0 due=2025-12-28 days=3
+summary	close=2026-06-10 billed=NaN over=0 unbilled=NaN debt=0 due=2026-06-20 days=-11
+close	2026-03-29
+close	2026-04-10
+close	2024-02-29
+summary	close=2026-02-25 billed=0 over=0 unbilled=0 debt=0 due=2026-03-15 days=14
+close	2024-02-29
+close	2024-03-01
+summary	close=2025-12-05 billed=0 over=0 unbilled=0.1 debt=0.1 due=2025-12-20 days=-12
+net	asset=NaN liab=166.66 net=NaN
+summary	close=2026-05-15 billed=50 over=0 unbilled=0 debt=50 due=2026-06-15 days=15
+close	2026-03-30
+soon	
+soon	
+summary	close=2026-06-10 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+total	5.1
+one	NaN
+due	2026-07-01
+net	asset=NaN liab=NaN net=NaN
+net	asset=2e+21 liab=83.33 net=2e+21
+close	2026-05-31
+total	-50
+one	NaN
+one	0
+due	2024-02-29
+soon	
+soon	
+soon	
+bal	c1:NaN,c2:-49.9
+summary	close=2026-01-31 billed=0 over=0 unbilled=0 debt=0 due=2026-02-25 days=25
+due	2026-04-25
+close	2024-02-29
+net	asset=NaN liab=0 net=NaN
+close	2026-06-01
+summary	none
+one	-1000
+close	2025-12-25
+total	NaN
+due	2024-04-15
+total	1e+21
+close	2026-01-29
+total	NaN
+due	2026-06-30
+total	NaN
+bal	c1:-1000,c2:100,a1:-1000,default:10
+due	2026-02-25
+summary	none
+bal	c1:0
+close	2026-04-01
+due	2026-02-25
+net	asset=100 liab=34.730000000000004 net=65.27
+due	2024-04-28
+one	1e+21
+due	2025-12-25
+soon	
+close	2025-12-30
+summary	close=2026-04-15 billed=50.1 over=0 unbilled=0 debt=50.1 due=2026-05-10 days=10
+close	2026-03-30
+due	2026-03-05
+net	asset=0 liab=NaN net=NaN
+summary	close=2026-05-25 billed=1000 over=0 unbilled=0 debt=1000 due=2026-06-20 days=20
+close	2026-06-10
+due	2026-01-01
+close	2026-03-28
+bal	c1:0,c2:-0.1,a1:NaN,default:0.1
+net	asset=NaN liab=NaN net=NaN
+soon	
+net	asset=NaN liab=NaN net=NaN
+total	-899.8999999999999
+close	2024-03-01
+close	2026-05-31
+bal	c1:-83.33,c2:0,a1:1e+21
+due	2026-08-01
+close	2025-11-30
+summary	none
+summary	close=2026-02-10 billed=1000 over=0 unbilled=NaN debt=0 due=2026-03-10 days=9
+soon	
+close	2026-01-05
+summary	close=2026-05-28 billed=NaN over=0 unbilled=NaN debt=0 due=2026-06-10 days=-5
+due	2024-03-25
+net	asset=1.5 liab=-5 net=6.5
+bal	c1:0,c2:0.1,a1:100
+close	2026-02-05
+one	-5
+close	2026-01-01
+one	98.5
+due	2026-06-15
+soon	
+bal	c1:-1e+21
+close	2026-01-01
+due	2026-01-31
+bal	c1:0
+due	2026-07-15
+due	2026-04-30
+due	2026-02-28
+net	asset=-1e+21 liab=100 net=-1e+21
+summary	close=2026-04-30 billed=0 over=0 unbilled=0 debt=0 due=2026-05-10 days=10
+net	asset=NaN liab=1e+21 net=NaN
+bal	c1:0,c2:0.1,a1:-10
+summary	none
+total	-955
+due	2026-06-30
+close	2026-05-28
+net	asset=-926.8299999999999 liab=NaN net=NaN
+soon	
+close	2024-02-29
+one	0.1
+bal	c1:NaN,c2:-50,a1:10.1,default:0
+close	2026-02-28
+bal	c1:0,c2:0,a1:10,default:-33.33
+due	2024-02-29
+total	200
+summary	none
+total	140
+due	2026-02-01
+summary	none
+bal	c1:0,c2:-1000,a1:0
+soon	c1:10:5
+close	2026-05-15
+close	2024-02-05
+summary	close=2026-03-28 billed=0 over=0 unbilled=0 debt=0 due=2026-04-25 days=25
+summary	none
+net	asset=2e+21 liab=0 net=2e+21
+net	asset=-95.1 liab=0 net=-95.1
+summary	close=2026-04-10 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+one	NaN
+summary	close=2026-03-28 billed=0 over=5 unbilled=0 debt=0 due=2026-04-15 days=15
+summary	close=2025-12-10 billed=0 over=5 unbilled=0 debt=0 due=2026-01-10 days=10
+bal	c1:NaN,c2:1e+21,a1:90
+net	asset=NaN liab=43.43 net=NaN
+summary	close=2026-02-25 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-03-10 days=10
+close	2026-05-28
+close	2026-06-05
+bal	c1:1e+21,c2:-1e+21,a1:100,default:33.43
+total	-1e+21
+summary	close=2025-12-31 billed=0 over=0 unbilled=0 debt=0 due=2026-01-15 days=14
+summary	close=2026-04-10 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-05-10 days=10
+summary	close=2026-05-28 billed=0 over=0.1 unbilled=0 debt=0 due=2026-06-10 days=-15
+net	asset=NaN liab=0 net=NaN
+one	0.1
+summary	close=2025-11-28 billed=0 over=0 unbilled=0 debt=0 due=2025-12-15 days=-10
+due	2026-01-01
+soon	c1:50:-6
+soon	c2:33.43:-6
+one	1e+21
+summary	close=2026-04-15 billed=0 over=0 unbilled=0 debt=0 due=2026-04-20 days=-10
+summary	close=2025-12-10 billed=0 over=0.1 unbilled=0 debt=0 due=2026-01-10 days=9
+net	asset=NaN liab=28.33 net=NaN
+due	2026-02-28
+due	2024-02-29
+total	1e+21
+due	2026-03-15
+summary	close=2024-02-29 billed=33.33 over=0 unbilled=0 debt=33.33 due=2024-03-10 days=10
+summary	close=2026-05-28 billed=1000 over=0 unbilled=2e+21 debt=2e+21 due=2026-06-25 days=10
+one	0
+due	2026-08-01
+close	2026-02-28
+one	NaN
+summary	close=2026-02-28 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-03-25 days=25
+summary	close=2025-12-15 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-01-15 days=15
+due	2026-02-10
+summary	close=2026-03-31 billed=100 over=0 unbilled=0 debt=100 due=2026-04-25 days=25
+net	asset=1e+21 liab=999.9 net=1e+21
+close	2026-02-28
+summary	none
+one	0
+total	-1010.1
+due	2026-01-25
+summary	close=2026-06-25 billed=0 over=0 unbilled=0 debt=0 due=2026-07-10 days=15
+summary	close=2026-01-25 billed=0 over=0 unbilled=0 debt=0 due=2026-02-15 days=15
+close	2026-06-05
+summary	close=2026-06-01 billed=0 over=0 unbilled=0 debt=0 due=2026-06-29 days=14
+total	-1e+21
+one	NaN
+total	55.1
+summary	none
+summary	close=2026-02-28 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+due	2026-01-29
+bal	c1:0,c2:NaN,a1:90,default:1e+21
+due	2026-02-28
+close	2026-06-05
+one	5.1
+summary	close=2024-02-29 billed=0 over=1e+21 unbilled=0 debt=0 due=2024-03-20 days=19
+due	2026-03-31
+one	0
+summary	close=2026-06-30 billed=5 over=0 unbilled=0 debt=5 due=2026-07-25 days=24
+due	2026-02-25
+summary	none
+summary	close=2025-12-10 billed=50 over=0 unbilled=0 debt=50 due=- days=-
+total	-1e+21
+close	2025-12-25
+bal	c1:-0.1,c2:100.1,a1:1e+21,default:0.1
+summary	close=2024-02-05 billed=0 over=0.1 unbilled=0 debt=0 due=2024-02-15 days=-14
+close	2026-06-15
+close	2026-02-05
+summary	close=2024-02-29 billed=1e+21 over=0 unbilled=0 debt=1e+21 due=2024-03-01 days=0
+due	2026-01-01
+summary	close=2026-02-10 billed=0 over=100 unbilled=0 debt=0 due=- days=-
+due	2026-06-01
+close	2026-05-15
+due	2026-07-01
+summary	close=2026-03-10 billed=0 over=0 unbilled=0 debt=0 due=2026-03-20 days=-11
+summary	close=2026-02-10 billed=0 over=0 unbilled=NaN debt=0 due=2026-02-20 days=-8
+total	-2e+21
+close	2026-02-28
+close	2025-12-15
+total	NaN
+summary	close=2026-03-10 billed=0 over=0 unbilled=0 debt=0 due=2026-03-15 days=-16
+net	asset=33.33 liab=0 net=33.33
+close	2026-01-15
+close	2026-01-25
+due	2026-06-28
+close	2026-01-30
+summary	close=2026-04-28 billed=0 over=100 unbilled=0 debt=0 due=2026-04-30 days=0
+summary	close=2026-05-15 billed=0 over=1e+21 unbilled=100 debt=0 due=2026-05-20 days=-21
+net	asset=NaN liab=NaN net=NaN
+net	asset=100 liab=NaN net=NaN
+summary	close=2026-01-25 billed=60 over=0 unbilled=0 debt=60 due=2026-02-10 days=9
+summary	close=2026-02-15 billed=0 over=0 unbilled=0 debt=0 due=2026-03-15 days=15
+due	2024-03-28
+summary	close=2026-01-10 billed=0 over=1e+21 unbilled=NaN debt=0 due=2026-02-10 days=10
+summary	close=2024-02-05 billed=NaN over=100 unbilled=NaN debt=0 due=2024-02-10 days=-19
+summary	close=2026-02-10 billed=0 over=0 unbilled=0 debt=0 due=2026-02-28 days=-1
+summary	close=2026-05-15 billed=0 over=0 unbilled=100 debt=100 due=2026-05-20 days=-21
+summary	close=2026-01-10 billed=0 over=0.1 unbilled=0 debt=0 due=2026-02-10 days=10
+soon	default:1000:-22
+due	2026-01-31
+due	2026-08-28
+summary	close=2025-11-28 billed=1000 over=0 unbilled=0 debt=1000 due=2025-12-10 days=-15
+net	asset=NaN liab=1e+21 net=NaN
+close	2026-06-10
+soon	
+close	2026-01-05
+summary	close=2025-12-10 billed=50 over=0 unbilled=NaN debt=0 due=2025-12-15 days=-17
+due	2026-06-05
+summary	close=2026-06-10 billed=1000 over=0 unbilled=0 debt=1000 due=2026-07-10 days=30
+due	2026-05-15
+net	asset=1e+21 liab=NaN net=NaN
+summary	close=2026-02-25 billed=0 over=5 unbilled=0 debt=0 due=2026-03-25 days=24
+soon	
+close	2025-12-05
+close	2026-05-25
+soon	
+bal	c1:0,c2:-50,a1:0,default:0
+net	asset=190.2 liab=-5 net=195.2
+due	2026-03-31
+soon	
+due	2026-01-01
+total	NaN
+bal	c1:0.1,c2:-50,a1:16.659999999999997
+close	2025-12-31
+one	-0.1
+close	2026-02-05
+close	2026-01-05
+close	2026-03-05
+close	2026-06-30
+net	asset=NaN liab=1e+21 net=NaN
+due	2026-03-29
+total	NaN
+due	2026-03-29
+summary	none
+soon	
+summary	close=2024-02-28 billed=1000 over=0 unbilled=0 debt=1000 due=2024-03-25 days=24
+soon	
+close	2026-04-29
+close	2026-05-28
+one	-50
+summary	close=2026-04-28 billed=0 over=0 unbilled=0 debt=0 due=2026-05-20 days=20
+summary	close=2025-12-25 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-01-10 days=16
+due	2026-01-28
+close	2025-12-05
+summary	close=2026-02-28 billed=1000 over=0 unbilled=0 debt=1000 due=2026-03-20 days=19
+due	2026-04-10
+one	NaN
+soon	
+close	2025-11-30
+close	2024-02-29
+summary	none
+close	2026-05-31
+soon	c1:5:-5
+net	asset=NaN liab=0 net=NaN
+close	2024-02-05
+summary	none
+bal	c1:-1000,c2:0.1,a1:-1010
+close	2026-05-31
+one	0
+summary	close=2024-03-01 billed=0 over=1e+21 unbilled=0 debt=0 due=- days=-
+summary	close=2026-06-10 billed=1000 over=0 unbilled=0 debt=1000 due=2026-06-20 days=10
+summary	none
+close	2026-05-31
+close	2026-06-05
+net	asset=-956.4699999999999 liab=0 net=-956.4699999999999
+due	2026-07-15
+bal	c1:105
+one	-1e+21
+summary	close=2026-02-15 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+due	2026-07-01
+net	asset=-94.9 liab=995 net=-1089.9
+one	0
+due	2026-01-01
+net	asset=NaN liab=0 net=NaN
+close	2026-05-25
+total	NaN
+close	2026-06-15
+summary	close=2026-01-10 billed=0 over=0 unbilled=0 debt=0 due=2026-01-20 days=-11
+due	2026-06-05
+bal	c1:-1000
+summary	close=2024-02-15 billed=0 over=0 unbilled=0 debt=0 due=2024-02-20 days=-9
+bal	c1:0,c2:0,a1:0,default:-50
+soon	
+net	asset=1e+21 liab=NaN net=NaN
+summary	close=2026-06-05 billed=50 over=0 unbilled=0 debt=50 due=2026-06-25 days=0
+summary	close=2026-01-15 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+due	2024-03-10
+close	2024-02-15
+close	2026-03-01
+summary	close=2024-02-10 billed=50 over=0 unbilled=10 debt=60 due=- days=-
+summary	none
+due	2026-01-01
+summary	close=2026-06-28 billed=0 over=0 unbilled=0 debt=0 due=2026-07-10 days=9
+soon	
+net	asset=-1e+21 liab=0 net=-1e+21
+soon	c1:1000:-11
+bal	c1:-995
+due	2026-04-01
+net	asset=1e+21 liab=33.33 net=1e+21
+total	NaN
+soon	
+close	2026-01-31
+bal	c1:0,c2:0,a1:NaN,default:-1000
+close	2026-05-29
+summary	close=2026-05-31 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-06-20 days=10
+soon	
+close	2026-01-01
+one	-50
+summary	close=2025-12-15 billed=0 over=0 unbilled=0 debt=0 due=2025-12-25 days=-7
+close	2026-06-30
+total	16.67
+soon	
+bal	c1:0,c2:0,a1:0.1
+summary	close=2026-05-28 billed=0 over=0 unbilled=0.1 debt=0 due=- days=-
+net	asset=NaN liab=43.33 net=NaN
+close	2026-05-30
+summary	close=2026-06-10 billed=0 over=100 unbilled=NaN debt=0 due=- days=-
+total	1e+21
+bal	c1:0,c2:-1000
+summary	none
+summary	close=2026-02-10 billed=1000 over=0 unbilled=0 debt=1000 due=2026-02-25 days=-4
+total	100
+summary	close=2026-01-10 billed=0 over=100 unbilled=0 debt=0 due=- days=-
+total	1e+21
+summary	none
+summary	close=2026-05-28 billed=0 over=0 unbilled=0 debt=0 due=2026-06-20 days=5
+due	2025-12-28
+one	NaN
+close	2024-02-28
+soon	
+due	2026-04-01
+close	2026-01-31
+summary	close=2026-01-10 billed=0 over=100 unbilled=0 debt=0 due=2026-02-10 days=10
+net	asset=NaN liab=1e+21 net=NaN
+summary	close=2026-02-25 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+one	-1e+21
+summary	close=2025-12-28 billed=50 over=0 unbilled=0 debt=50 due=2026-01-20 days=20
+net	asset=NaN liab=1e+21 net=NaN
+due	2026-07-01
+soon	c1:1000:-10
+summary	close=2026-05-31 billed=0 over=0 unbilled=0.1 debt=0.1 due=- days=-
+soon	c2:5:0
+close	2025-12-30
+close	2026-01-01
+soon	
+close	2026-02-01
+due	2026-06-30
+close	2026-06-10
+close	2026-05-01
+summary	close=2026-06-10 billed=0 over=0 unbilled=0 debt=0 due=2026-06-20 days=-5
+close	2026-02-01
+soon	default:900:-5,a1:50:5
+close	2026-03-01
+soon	
+due	2026-06-01
+one	-10
+due	2026-08-05
+summary	none
+total	-1e+21
+close	2026-01-28
+one	-50
+summary	close=2026-05-31 billed=0 over=0.1 unbilled=NaN debt=0 due=- days=-
+due	2026-03-05
+summary	close=2026-06-10 billed=0 over=0 unbilled=33.33 debt=33.33 due=2026-07-10 days=15
+close	2026-02-28
+bal	c1:0,c2:0,a1:0.1,default:-50
+summary	close=2026-05-25 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-06-20 days=10
+summary	close=2026-05-31 billed=1000 over=0 unbilled=0 debt=1000 due=2026-06-25 days=10
+total	-150
+due	2024-03-05
+soon	c1:1033.33:-1
+one	100
+summary	none
+total	NaN
+soon	
+bal	c1:0
+summary	close=2026-02-15 billed=1e+21 over=0 unbilled=NaN debt=0 due=- days=-
+net	asset=NaN liab=0 net=NaN
+total	-900
+one	-1033.33
+summary	close=2026-02-01 billed=0 over=0.09999999999999964 unbilled=0 debt=0 due=- days=-
+bal	c1:NaN
+close	2026-01-15
+summary	close=2026-02-10 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-02-15 days=-13
+total	-254.99
+summary	close=2026-06-05 billed=0 over=0 unbilled=100 debt=100 due=2026-06-20 days=5
+summary	close=2026-01-31 billed=100 over=0 unbilled=NaN debt=0 due=2026-02-28 days=27
+bal	c1:-998.5,c2:-1010,a1:-50
+due	2024-03-01
+due	2026-01-05
+bal	c1:-1000
+summary	close=2025-12-05 billed=NaN over=0 unbilled=NaN debt=0 due=2025-12-25 days=-7
+soon	
+due	2024-02-29
+due	2026-02-01
+due	2026-01-15
+one	0
+due	2025-12-31
+close	2026-06-10
+net	asset=NaN liab=100 net=NaN
+due	2026-02-15
+net	asset=1e+21 liab=100.1 net=1e+21
+summary	close=2026-03-28 billed=0 over=0 unbilled=0 debt=0 due=2026-04-25 days=25
+close	2026-02-01
+close	2025-12-15
+summary	none
+close	2024-02-15
+close	2026-07-01
+summary	close=2026-06-10 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-06-15 days=-10
+soon	
+one	101.6
+total	-999.9
+due	2026-01-01
+close	2026-05-01
+one	-1000
+close	2026-01-10
+bal	c1:0,c2:NaN,a1:0,default:100
+summary	close=2026-06-10 billed=0 over=0 unbilled=0 debt=0 due=2026-07-10 days=30
+one	NaN
+summary	none
+one	100
+summary	close=2026-05-28 billed=51.5 over=0 unbilled=0 debt=51.5 due=2026-06-10 days=-15
+net	asset=NaN liab=0 net=NaN
+close	2026-06-01
+total	NaN
+summary	close=2026-06-10 billed=0 over=0 unbilled=0 debt=0 due=2026-06-15 days=-16
+bal	c1:100,c2:1e+21,a1:-83.33,default:-50
+one	-50
+close	2024-02-05
+net	asset=-1e+21 liab=NaN net=NaN
+summary	close=2025-12-31 billed=0 over=0 unbilled=0 debt=0 due=2026-01-10 days=9
+total	NaN
+soon	
+close	2025-12-01
+close	2026-05-31
+bal	c1:1e+21,c2:-1e+21,a1:-16.67,default:-84.83
+soon	
+soon	
+summary	close=2026-01-15 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-01-25 days=-7
+due	2026-07-28
+soon	default:1000:-16
+summary	close=2026-05-25 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-06-25 days=15
+soon	
+due	2026-01-31
+summary	close=2026-06-05 billed=1000 over=0 unbilled=0 debt=1000 due=2026-06-10 days=-5
+one	0.1
+total	NaN
+due	2024-04-01
+due	2024-03-05
+bal	c1:-28.33,c2:0
+bal	c1:100,c2:0,a1:-50,default:1e+21
+due	2026-01-15
+summary	close=2025-12-28 billed=0 over=0 unbilled=1e+21 debt=0 due=2026-01-15 days=15
+summary	none
+due	2026-03-29
+close	2024-02-29
+total	100
+due	2024-04-10
+one	1e+21
+summary	close=2025-11-30 billed=0 over=0 unbilled=0 debt=5 due=- days=-
+bal	c1:-0.1
+summary	close=2025-12-10 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+summary	close=2025-12-15 billed=1e+21 over=0 unbilled=0 debt=1e+21 due=2026-01-15 days=15
+bal	c1:-23.33,c2:-1000.1,a1:0.1,default:100
+summary	none
+total	NaN
+summary	close=2024-02-05 billed=NaN over=0 unbilled=NaN debt=0 due=2024-02-25 days=-4
+total	NaN
+close	2025-12-15
+due	2026-04-25
+summary	close=2025-12-05 billed=0 over=1e+21 unbilled=33.33 debt=0 due=2025-12-20 days=-11
+soon	
+close	2026-05-29
+bal	c1:0,c2:0,a1:100
+due	2026-06-28
+soon	c1:1000:-6
+net	asset=1e+21 liab=223.43 net=1e+21
+summary	close=2026-02-05 billed=0.1 over=0 unbilled=0 debt=0 due=2026-02-10 days=-19
+close	2026-01-25
+close	2026-05-30
+close	2024-03-01
+summary	none
+close	2026-03-29
+total	NaN
+close	2026-06-01
+net	asset=NaN liab=0 net=NaN
+bal	c1:1e+21,c2:-50,a1:-60,default:-998.5
+net	asset=0.1 liab=0 net=0.1
+one	1e+21
+due	2026-04-01
+close	2024-02-25
+due	2024-03-01
+one	50
+due	2026-01-31
+summary	close=2024-02-10 billed=NaN over=0 unbilled=NaN debt=0 due=2024-02-25 days=-4
+close	2026-01-10
+due	2026-04-30
+net	asset=NaN liab=-5 net=NaN
+summary	close=2026-01-10 billed=0 over=1e+21 unbilled=90 debt=0 due=2026-01-20 days=-11
+net	asset=100 liab=1e+21 net=-1e+21
+summary	close=2026-04-28 billed=0 over=0.1 unbilled=0 debt=0 due=2026-05-15 days=15
+summary	close=2026-01-10 billed=1000 over=0 unbilled=0 debt=1000 due=2026-01-20 days=-11
+one	0
+net	asset=1e+21 liab=1e+21 net=0
+summary	close=2025-12-15 billed=NaN over=0 unbilled=NaN debt=0 due=2025-12-25 days=-7
+close	2025-12-31
+summary	none
+summary	close=2026-06-10 billed=50 over=0 unbilled=0 debt=45 due=2026-07-10 days=9
+summary	close=2024-02-05 billed=0 over=1e+21 unbilled=1e+21 debt=33.33 due=2024-02-20 days=-10
+bal	c1:1e+21,c2:100,a1:0.1,default:0
+summary	close=2026-05-31 billed=1e+21 over=0 unbilled=10 debt=1e+21 due=- days=-
+close	2026-02-28
+bal	c1:1e+21,c2:0
+total	1e+21
+summary	close=2026-01-10 billed=50 over=0 unbilled=0 debt=50 due=2026-01-15 days=-16
+one	-50
+summary	close=2026-03-10 billed=0 over=0 unbilled=0 debt=0 due=2026-03-15 days=-16
+summary	none
+due	2026-02-28
+due	2026-01-29
+bal	c1:-1000,c2:-50,a1:100,default:0
+summary	none
+due	2026-05-30
+soon	default:50:10,c2:50:20
+total	-50
+summary	close=2026-06-05 billed=40 over=0 unbilled=0 debt=40 due=2026-06-25 days=15
+total	NaN
+summary	none
+one	-50
+due	2026-06-30
+due	2026-01-30
+summary	close=2024-02-10 billed=0 over=0 unbilled=0 debt=0 due=2024-03-10 days=10
+bal	c1:0,c2:100
+due	2026-02-28
+summary	close=2026-01-15 billed=0 over=1e+21 unbilled=NaN debt=0 due=- days=-
+one	NaN
+close	2026-05-31
+close	2025-11-30
+due	2026-07-15
+summary	close=2026-05-25 billed=0 over=100 unbilled=0.1 debt=0 due=2026-06-20 days=10
+summary	close=2026-02-10 billed=0 over=28.33 unbilled=0 debt=0 due=2026-02-25 days=-4
+due	2026-07-15
+soon	
+due	2026-02-25
+summary	close=2026-06-15 billed=0 over=0.1 unbilled=0 debt=0 due=2026-06-25 days=0
+soon	
+close	2025-12-31
+summary	close=2025-11-30 billed=0 over=1e+21 unbilled=NaN debt=0 due=- days=-
+due	2026-01-15
+net	asset=100.1 liab=1e+21 net=-1e+21
+summary	none
+soon	
+close	2025-12-01
+summary	close=2026-05-15 billed=0 over=0.1 unbilled=0 debt=0 due=2026-06-15 days=15
+summary	close=2026-06-10 billed=0 over=100 unbilled=0 debt=0 due=2026-07-10 days=15
+total	NaN
+due	2025-12-28
+soon	c2:50:0
+close	2026-02-28
+bal	c1:-50,c2:1e+21
+summary	none
+due	2026-04-29
+due	2026-06-15
+net	asset=1e+21 liab=NaN net=NaN
+soon	
+one	0
+summary	close=2026-01-25 billed=0 over=0 unbilled=0 debt=0 due=2026-02-25 days=25
+close	2026-06-05
+bal	c1:-1000,c2:NaN,a1:-50,default:0
+soon	
+soon	
+bal	c1:NaN
+total	NaN
+one	0
+net	asset=28.63 liab=0 net=28.63
+summary	close=2026-06-10 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-06-15 days=-16
+one	0
+close	2026-02-01
+close	2026-05-30
+due	2026-02-05
+total	NaN
+due	2024-02-29
+total	NaN
+close	2026-06-30
+summary	close=2026-02-28 billed=0 over=0 unbilled=0 debt=0 due=2026-03-25 days=25
+soon	
+summary	none
+bal	c1:0,c2:1e+21
+total	1e+21
+one	NaN
+due	2026-05-28
+summary	close=2026-01-28 billed=0 over=0.1 unbilled=0 debt=0 due=2026-01-31 days=0
+summary	close=2026-04-05 billed=0 over=100 unbilled=100 debt=0 due=2026-04-25 days=-5
+close	2026-05-25
+one	100
+one	-50
+due	2024-03-15
+summary	close=2025-11-28 billed=0 over=0 unbilled=0 debt=0 due=2025-12-20 days=-5
+total	1e+21
+due	2025-12-25
+summary	close=2026-06-05 billed=0 over=0 unbilled=0 debt=0 due=2026-06-20 days=-11
+net	asset=-1000 liab=0.1 net=-1000.1
+summary	close=2026-02-28 billed=5 over=5.1 unbilled=0 debt=0 due=2026-03-20 days=19
+net	asset=NaN liab=0 net=NaN
+one	-1e+21
+bal	c1:-50,c2:0,a1:-1000
+total	1e+21
+summary	close=2026-01-28 billed=0 over=0 unbilled=0 debt=0 due=2026-02-25 days=24
+summary	close=2026-02-28 billed=0 over=0 unbilled=0 debt=0 due=2026-03-25 days=24
+due	2026-02-01
+soon	c2:1000:-21
+summary	none
+due	2026-03-10
+one	NaN
+close	2026-01-01
+close	2026-06-01
+net	asset=1e+21 liab=0 net=1e+21
+close	2026-02-15
+summary	close=2026-06-10 billed=NaN over=0 unbilled=NaN debt=0 due=2026-07-10 days=15
+due	2026-03-05
+close	2024-02-05
+summary	none
+close	2025-12-10
+close	2025-11-30
+due	2026-01-28
+summary	none
+summary	close=2024-02-28 billed=10 over=0 unbilled=0 debt=10 due=- days=-
+close	2026-02-25
+bal	c1:0
+total	NaN
+one	-1000
+net	asset=-10 liab=0 net=-10
+summary	close=2024-02-28 billed=33.23 over=0 unbilled=100 debt=133.23000000000002 due=2024-03-20 days=19
+soon	c1:1000:-11
+soon	
+bal	c1:0,c2:-33.23,a1:-1000,default:0.1
+summary	none
+due	2026-08-01
+net	asset=NaN liab=33.33 net=NaN
+soon	
+due	2026-04-30
+net	asset=3e+21 liab=NaN net=NaN
+net	asset=NaN liab=105 net=NaN
+one	0
+net	asset=NaN liab=0 net=NaN
+summary	close=2025-12-05 billed=50 over=0 unbilled=0 debt=50 due=2025-12-25 days=-6
+summary	none
+summary	close=2024-02-25 billed=0 over=1e+21 unbilled=0 debt=0 due=2024-03-15 days=15
+total	1e+21
+soon	
+summary	close=2026-02-25 billed=0 over=0.1 unbilled=0 debt=0 due=2026-03-15 days=14
+soon	c2:990:-6
+summary	none
+due	2024-03-31
+due	2026-06-01
+one	0
+net	asset=NaN liab=NaN net=NaN
+soon	
+one	0
+bal	c1:-33.33,c2:NaN
+due	2026-06-30
+summary	close=2026-04-05 billed=0 over=0 unbilled=0 debt=9.9 due=- days=-
+due	2026-07-01
+due	2026-01-29
+one	-100
+due	2024-04-28
+close	2025-12-31
+due	2026-02-01
+close	2025-11-30
+due	2026-01-31
+bal	c1:-50,c2:NaN,a1:NaN
+summary	close=2026-04-15 billed=0 over=0 unbilled=0 debt=0 due=2026-05-10 days=10
+close	2025-12-05
+total	NaN
+soon	
+summary	close=2026-03-05 billed=0 over=0.1 unbilled=0 debt=0 due=2026-03-25 days=-6
+one	-33.33
+summary	close=2026-05-28 billed=0 over=0 unbilled=0 debt=0 due=2026-06-10 days=10
+one	0
+bal	c1:-1000,c2:0,a1:-50,default:-1000
+close	2026-04-05
+net	asset=NaN liab=-4.9 net=NaN
+total	NaN
+one	0
+soon	
+total	NaN
+close	2026-05-01
+due	2026-03-31
+summary	close=2026-02-25 billed=0 over=1e+21 unbilled=100 debt=0 due=2026-03-25 days=24
+bal	c1:-50,c2:1e+21,a1:NaN,default:-50
+one	NaN
+summary	close=2026-05-28 billed=0 over=0.1 unbilled=0 debt=0 due=2026-06-25 days=0
+due	2026-07-30
+close	2026-02-15
+summary	close=2026-01-28 billed=0 over=0 unbilled=0 debt=0 due=2026-02-10 days=10
+total	NaN
+one	-0.1
+due	2026-06-29
+summary	none
+summary	close=2026-05-31 billed=1e+21 over=0 unbilled=0 debt=1e+21 due=2026-06-25 days=10
+one	0
+close	2024-02-01
+summary	close=2025-12-31 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-01-25 days=24
+soon	c1:33.23:14
+close	2026-02-10
+net	asset=NaN liab=NaN net=NaN
+total	NaN
+due	2026-04-01
+summary	close=2026-02-28 billed=0 over=0 unbilled=NaN debt=0 due=- days=-
+bal	c1:0,c2:0.1,a1:-1000
+due	2026-04-01
+net	asset=NaN liab=NaN net=NaN
+soon	
+net	asset=-895 liab=1000 net=-1895
+close	2026-05-29
+due	2026-04-10
+summary	close=2024-02-28 billed=1000 over=0 unbilled=0 debt=1000 due=2024-03-10 days=9
+summary	close=2026-06-28 billed=0 over=100 unbilled=0 debt=0 due=2026-07-15 days=14
+due	2026-08-01
+summary	close=2025-12-31 billed=1000 over=0 unbilled=0 debt=1000 due=2026-01-20 days=19
+net	asset=1e+21 liab=0 net=1e+21
+due	2026-01-31
+net	asset=NaN liab=1000 net=NaN
+close	2024-02-29
+summary	close=2025-12-31 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-01-25 days=25
+bal	c1:-33.23
+close	2026-04-05
+total	-2050
+due	2026-02-28
+soon	
+soon	c2:10:-11
+one	100
+one	-50
+due	2026-07-29
+summary	close=2026-05-28 billed=50 over=0 unbilled=0 debt=0 due=2026-06-25 days=10
+soon	
+soon	c1:105:-17
+bal	c1:NaN,c2:NaN,a1:-1010
+net	asset=NaN liab=0 net=NaN
+bal	c1:-1100,c2:-1000,a1:0,default:1e+21
+total	1e+21
+close	2026-03-31
+due	2026-03-30
+summary	close=2026-06-28 billed=0 over=1e+21 unbilled=0 debt=0 due=- days=-
+one	-1000.1
+summary	close=2025-12-10 billed=5 over=0 unbilled=0 debt=38.33 due=2026-01-10 days=9
+due	2024-04-01
+summary	close=2024-02-29 billed=0 over=0 unbilled=0 debt=0 due=2024-03-25 days=25
+bal	c1:-100,c2:-966.67,a1:100,default:100
+summary	close=2025-12-15 billed=150 over=0 unbilled=0 debt=150 due=2025-12-25 days=0
+one	0
+one	NaN
+total	94.7
+summary	close=2026-03-25 billed=5 over=0.1 unbilled=0 debt=4.9 due=2026-04-20 days=20
+soon	
+due	2026-06-05
+one	-1000
+close	2026-05-15
+close	2025-12-10
+close	2026-01-28
+summary	close=2026-05-31 billed=0 over=100 unbilled=0 debt=0 due=2026-06-10 days=10
+net	asset=0 liab=0 net=0
+soon	
+summary	close=2026-01-25 billed=0 over=66.67 unbilled=0 debt=0 due=2026-02-15 days=15
+close	2025-11-29
+soon	
+summary	close=2025-12-05 billed=0 over=1e+21 unbilled=0 debt=0 due=2025-12-15 days=-16
+summary	close=2026-03-31 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-04-30 days=30
+summary	close=2026-05-15 billed=0 over=0 unbilled=45.099999999999994 debt=45.1 due=2026-05-25 days=-16
+one	1e+21
+net	asset=NaN liab=1e+21 net=NaN
+total	NaN
+summary	none
+summary	close=2026-05-05 billed=50 over=0 unbilled=0 debt=50 due=2026-05-15 days=-16
+due	2026-06-01
+net	asset=NaN liab=0 net=NaN
+total	2e+21
+one	1e+21
+one	-1000
+due	2026-02-28
+soon	
+summary	close=2026-04-30 billed=10 over=0 unbilled=0 debt=5 due=- days=-
+close	2026-06-01
+summary	close=2026-01-10 billed=49.9 over=0 unbilled=0.1 debt=50 due=2026-01-15 days=-16
+summary	none
+bal	c1:100,c2:100,a1:0,default:100
+summary	none
+close	2026-04-05
+close	2026-02-28
+one	1e+21
+close	2026-01-30
+summary	none
+close	2026-01-28
+close	2026-05-25
+summary	close=2026-03-28 billed=50.1 over=0 unbilled=0 debt=50.1 due=2026-04-10 days=10
+soon	
+summary	close=2026-02-28 billed=0 over=100 unbilled=0 debt=0 due=2026-03-15 days=15
+summary	close=2026-05-15 billed=1000 over=0 unbilled=0 debt=1000 due=2026-06-10 days=10
+due	2025-12-30
+due	2026-04-30
+due	2026-06-01
+summary	none
+summary	close=2026-06-10 billed=0 over=0 unbilled=0 debt=0 due=2026-07-10 days=30
+due	2026-01-01
+summary	close=2026-06-10 billed=0 over=0 unbilled=0 debt=0 due=2026-06-15 days=0
+net	asset=NaN liab=NaN net=NaN
+summary	close=2026-06-05 billed=0 over=1e+21 unbilled=0 debt=0 due=- days=-
+bal	c1:-1e+21,c2:-100,a1:-50
+total	1e+21
+due	2026-07-01
+summary	close=2026-06-10 billed=0 over=0 unbilled=0.1 debt=0 due=2026-06-15 days=5
+due	2026-07-31
+close	2026-06-05
+summary	close=2026-06-10 billed=0 over=0 unbilled=0 debt=0 due=2026-06-20 days=10
+summary	close=2025-12-25 billed=1000 over=0 unbilled=0 debt=1000 due=2026-01-25 days=31
+due	2026-06-25
+due	2026-06-29
+close	2026-01-25
+total	NaN
+close	2026-03-01
+due	2026-01-29
+due	2026-03-31
+total	0
+summary	none
+close	2025-12-01
+close	2026-04-30
+due	2026-01-01
+close	2026-02-01
+summary	close=2026-01-10 billed=0 over=0 unbilled=100 debt=0 due=2026-01-25 days=-6
+net	asset=NaN liab=50.1 net=NaN
+summary	close=2026-05-25 billed=0 over=90 unbilled=NaN debt=0 due=2026-06-20 days=5
+total	1e+21
+close	2026-05-31
+due	2025-12-31
+total	-199.9
+net	asset=NaN liab=0 net=NaN
+bal	c1:0.1
+due	2026-01-29
+soon	
+soon	
+due	2026-02-28
+summary	none
+close	2026-02-28
+total	-1000
+total	1e+21
+close	2026-06-01
+summary	close=2024-02-25 billed=0 over=0 unbilled=0 debt=0 due=2024-03-10 days=10
+net	asset=NaN liab=0 net=NaN
+total	NaN
+due	2026-03-25
+bal	c1:0,c2:-1000
+due	2026-07-28
+summary	close=2026-01-28 billed=1e+21 over=0 unbilled=0 debt=1e+21 due=2026-02-25 days=25
+due	2024-03-28
+close	2026-01-28
+bal	c1:-33.23,c2:-50,a1:1e+21
+close	2026-05-15
+due	2026-01-29
+close	2026-04-25
+summary	none
+summary	close=2026-05-10 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-05-20 days=-11
+soon	
+summary	close=2026-05-28 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+due	2026-03-31
+summary	none
+summary	none
+one	-1000
+due	2026-07-25
+close	2026-02-10
+summary	none
+due	2026-02-01
+total	0.1
+due	2026-03-05
+due	2026-02-25
+summary	close=2025-11-28 billed=NaN over=0 unbilled=NaN debt=0 due=2025-12-20 days=-5
+close	2024-02-01
+due	2026-02-28
+summary	none
+summary	close=2026-05-15 billed=0 over=0.1 unbilled=0 debt=0 due=- days=-
+summary	close=2026-01-10 billed=0 over=0 unbilled=0 debt=0 due=2026-01-25 days=-7
+summary	close=2026-05-15 billed=0 over=100 unbilled=0 debt=0 due=2026-05-25 days=-6
+one	0
+soon	
+close	2026-01-29
+due	2026-03-29
+total	-1000
+summary	close=2025-12-28 billed=0 over=0 unbilled=0 debt=0 due=2026-01-25 days=24
+net	asset=1e+21 liab=43.33 net=1e+21
+one	-38.43
+one	1e+21
+one	1e+21
+net	asset=-1e+21 liab=1e+21 net=-2e+21
+one	0.1
+one	-150
+summary	none
+close	2025-12-10
+close	2026-01-15
+summary	close=2026-05-10 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+summary	close=2026-05-28 billed=1000 over=0 unbilled=10 debt=0 due=2026-06-20 days=5
+close	2026-05-15
+one	1e+21
+net	asset=NaN liab=0 net=NaN
+net	asset=NaN liab=NaN net=NaN
+summary	none
+soon	
+soon	
+close	2026-02-28
+bal	c1:0
+due	2026-08-05
+summary	close=2026-02-28 billed=0 over=0.1 unbilled=0 debt=0 due=- days=-
+close	2026-05-31
+summary	close=2026-01-15 billed=0 over=100 unbilled=0 debt=0 due=2026-02-15 days=15
+bal	c1:99.9,c2:0,a1:-1010
+soon	c1:1e+21:-11
+net	asset=-1e+21 liab=NaN net=NaN
+summary	close=2026-04-30 billed=0 over=0 unbilled=0 debt=0 due=2026-05-10 days=10
+total	NaN
+summary	close=2025-12-29 billed=1000 over=0 unbilled=0 debt=1000 due=2026-01-29 days=29
+one	-51.5
+close	2026-05-31
+summary	close=2025-12-28 billed=NaN over=0 unbilled=NaN debt=0 due=2026-01-15 days=15
+summary	close=2024-02-10 billed=0 over=1e+21 unbilled=0 debt=0 due=- days=-
+close	2026-03-01
+net	asset=NaN liab=NaN net=NaN
+close	2026-02-28
+close	2024-02-15
+bal	c1:-999.9,c2:-1e+21,a1:5
+summary	close=2026-02-28 billed=0 over=200 unbilled=0 debt=0 due=2026-03-10 days=10
+close	2026-01-01
+due	2026-04-01
+due	2026-01-10
+net	asset=NaN liab=NaN net=NaN
+summary	close=2026-06-10 billed=0 over=0 unbilled=0 debt=0 due=2026-06-25 days=10
+summary	close=2026-05-10 billed=133.32999999999998 over=0 unbilled=0 debt=133.32999999999998 due=2026-05-25 days=-6
+total	1e+21
+one	NaN
+due	2024-03-10
+one	0.09999999999999964
+summary	close=2026-04-15 billed=0 over=1e+21 unbilled=0 debt=0 due=- days=-
+total	0.1
+due	2026-01-01
+net	asset=NaN liab=998.4 net=NaN
+summary	close=2026-02-10 billed=50 over=0 unbilled=0 debt=50 due=- days=-
+bal	c1:NaN
+close	2026-05-15
+one	-1000
+due	2024-03-15
+net	asset=100.1 liab=0 net=100.1
+soon	
+one	NaN
+summary	none
+total	211.57
+soon	
+close	2026-02-01
+summary	close=2024-02-28 billed=45.1 over=0 unbilled=0 debt=45.1 due=2024-03-20 days=19
+close	2026-04-30
+close	2026-02-10
+due	2026-01-25
+close	2026-06-30
+bal	c1:-0.1,c2:-1100,a1:NaN
+summary	close=2026-05-10 billed=1e+21 over=0 unbilled=0 debt=1e+21 due=2026-05-25 days=-6
+due	2026-02-05
+close	2026-02-10
+soon	default:50:-7
+close	2025-12-10
+summary	close=2025-12-15 billed=0 over=0 unbilled=0 debt=0 due=2025-12-25 days=-7
+net	asset=90 liab=78.33 net=11.670000000000002
+summary	none
+close	2026-02-01
+net	asset=NaN liab=10 net=NaN
+due	2026-01-05
+due	2026-06-01
+summary	close=2025-12-25 billed=0 over=0.1 unbilled=0 debt=0 due=2026-01-25 days=31
+summary	close=2024-02-28 billed=0 over=0 unbilled=0 debt=0 due=2024-03-15 days=14
+summary	none
+close	2026-03-05
+due	2024-02-15
+due	2026-01-01
+summary	close=2026-05-31 billed=0 over=0 unbilled=0 debt=0 due=2026-06-25 days=25
+summary	close=2026-06-15 billed=1000.1 over=0 unbilled=0 debt=1000.1 due=2026-07-15 days=14
+bal	c1:100,c2:100,a1:NaN,default:0
+close	2026-05-29
+summary	close=2026-05-10 billed=NaN over=10 unbilled=NaN debt=0 due=2026-06-10 days=10
+summary	close=2026-06-25 billed=0 over=40 unbilled=0 debt=0 due=2026-07-15 days=20
+close	2026-01-25
+summary	close=2026-01-31 billed=21.729999999999997 over=0 unbilled=0 debt=21.729999999999997 due=2026-02-10 days=9
+summary	none
+bal	c1:-100,c2:0.1,a1:-1000,default:0
+summary	close=2025-12-28 billed=1000 over=0 unbilled=0 debt=1000 due=2026-01-25 days=24
+due	2026-02-01
+summary	close=2025-12-25 billed=50 over=0 unbilled=0 debt=1e+21 due=2026-01-15 days=21
+due	2026-06-10
+summary	close=2026-05-31 billed=0 over=1e+21 unbilled=1e+21 debt=0 due=- days=-
+due	2026-06-30
+close	2026-06-01
+summary	close=2026-02-05 billed=0 over=0 unbilled=0.1 debt=10.1 due=2026-02-10 days=-18
+due	2026-03-31
+net	asset=NaN liab=0.1 net=NaN
+bal	c1:NaN,c2:0.1
+close	2026-04-30
+summary	close=2026-01-15 billed=15 over=0 unbilled=0 debt=15 due=2026-01-20 days=-12
+summary	close=2026-06-28 billed=0 over=2e+21 unbilled=0 debt=0 due=2026-07-25 days=24
+due	2026-07-05
+one	0
+close	2026-02-28
+bal	c1:0.1,c2:-1000.1,a1:100,default:0.1
+soon	c1:1000:14
+bal	c1:1e+21,c2:0.1,a1:100,default:NaN
+close	2026-01-01
+summary	none
+summary	close=2025-12-25 billed=0 over=1e+21 unbilled=0 debt=0 due=- days=-
+close	2026-02-28
+close	2026-01-29
+bal	c1:90,c2:1e+21,a1:NaN,default:-43.6
+due	2024-02-29
+due	2024-03-01
+summary	close=2026-04-10 billed=0 over=0 unbilled=0 debt=0 due=2026-04-20 days=-10
+total	NaN
+soon	
+close	2026-02-01
+due	2026-07-25
+close	2024-02-15
+due	2026-01-05
+summary	close=2026-02-05 billed=0 over=0 unbilled=0 debt=0 due=2026-02-20 days=-8
+soon	c1:33.33:-6
+close	2024-02-29
+total	-35
+due	2026-02-28
+summary	close=2026-05-15 billed=1000 over=0 unbilled=0 debt=1000 due=2026-05-20 days=-11
+bal	c1:0.1,c2:-33.23,a1:NaN,default:1e+21
+summary	close=2025-12-25 billed=0 over=0 unbilled=0 debt=0 due=2026-01-25 days=24
+summary	none
+net	asset=6.699999999999999 liab=1e+21 net=-1e+21
+close	2026-01-01
+one	0
+total	NaN
+total	NaN
+summary	close=2026-06-28 billed=0 over=0 unbilled=0 debt=0 due=2026-07-10 days=9
+total	1e+21
+summary	close=2026-05-28 billed=0.1 over=0 unbilled=10 debt=10.1 due=2026-06-10 days=0
+one	0
+due	2026-04-01
+bal	c1:5,c2:-50,a1:-1006.4999999999999
+due	2026-08-05
+net	asset=2e+21 liab=0 net=2e+21
+close	2026-03-30
+summary	close=2026-06-10 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+one	-1e+21
+soon	c1:50:-16,c2:1000:-11
+due	2026-05-10
+due	2026-03-28
+total	NaN
+due	2026-06-29
+close	2024-02-01
+due	2026-03-28
+due	2026-04-29
+close	2026-06-30
+summary	none
+summary	close=2026-06-10 billed=0 over=0 unbilled=0 debt=0 due=2026-06-15 days=-16
+one	0.1
+soon	
+close	2024-02-25
+due	2026-07-25
+summary	close=2026-01-15 billed=0 over=0 unbilled=0 debt=0 due=2026-01-25 days=-6
+due	2026-07-01
+bal	c1:-33.33,c2:-1000,a1:-1000,default:100
+soon	c1:50:-9,default:0.1:-9
+bal	c1:-50
+due	2026-01-25
+summary	close=2025-12-10 billed=1000 over=0 unbilled=0 debt=1000 due=2025-12-20 days=-5
+net	asset=NaN liab=NaN net=NaN
+summary	close=2025-12-10 billed=50 over=0 unbilled=0 debt=150 due=2025-12-15 days=-16
+summary	close=2026-01-10 billed=0 over=0 unbilled=0 debt=0 due=2026-01-20 days=-11
+close	2026-06-30
+due	2026-07-01
+summary	close=2025-12-25 billed=0 over=0.1 unbilled=0 debt=0 due=2026-01-20 days=20
+due	2026-02-28
+summary	close=2025-12-05 billed=0 over=0 unbilled=0 debt=0 due=2025-12-10 days=-21
+total	NaN
+summary	close=2026-02-28 billed=1e+21 over=0 unbilled=0 debt=1e+21 due=2026-03-20 days=20
+due	2026-05-30
+soon	
+summary	close=2025-12-10 billed=93.33 over=0 unbilled=0 debt=93.33 due=2025-12-20 days=-12
+due	2026-07-01
+summary	none
+total	-50
+close	2025-12-29
+summary	close=2026-01-10 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+total	-10
+total	5.1
+total	-1e+21
+total	NaN
+summary	close=2026-02-28 billed=0 over=5.1 unbilled=0 debt=0 due=2026-03-25 days=25
+due	2025-12-05
+net	asset=100.1 liab=0 net=100.1
+bal	c1:0.1,c2:0,a1:1e+21
+net	asset=1e+21 liab=83.33 net=1e+21
+one	-50
+total	NaN
+close	2026-02-25
+close	2026-05-31
+summary	close=2026-03-30 billed=0 over=0.1 unbilled=0 debt=0 due=- days=-
+summary	close=2026-06-10 billed=0 over=100 unbilled=10 debt=0 due=2026-06-15 days=-16
+due	2024-04-15
+due	2026-01-29
+due	2026-03-31
+summary	close=2026-06-10 billed=0 over=90 unbilled=1e+21 debt=1e+21 due=2026-06-15 days=-16
+summary	close=2026-05-15 billed=0 over=100 unbilled=0 debt=0 due=2026-05-25 days=-16
+close	2024-02-29
+close	2025-12-05
+summary	close=2026-04-25 billed=995 over=0 unbilled=0 debt=995 due=2026-05-15 days=15
+bal	c1:0,c2:1e+21,a1:1e+21,default:-1000
+soon	
+one	0
+summary	close=2026-02-28 billed=0 over=100 unbilled=0 debt=0 due=- days=-
+summary	close=2025-11-28 billed=0 over=1e+21 unbilled=0 debt=0 due=2025-12-15 days=-10
+summary	close=2026-03-05 billed=0 over=0.1 unbilled=100 debt=99.9 due=2026-03-15 days=-16
+summary	close=2026-01-10 billed=1000 over=0 unbilled=0 debt=1000 due=2026-01-15 days=-17
+due	2026-01-01
+total	-1e+21
+bal	c1:2e+21,c2:-50,a1:100,default:0
+due	2026-04-30
+soon	default:50:-8
+net	asset=NaN liab=0 net=NaN
+soon	
+net	asset=1e+21 liab=NaN net=NaN
+summary	close=2024-02-29 billed=0 over=101.5 unbilled=0 debt=0 due=2024-03-10 days=10
+summary	close=2026-05-15 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-05-25 days=-16
+summary	close=2026-06-05 billed=60 over=0 unbilled=0 debt=60 due=2026-06-20 days=-11
+summary	close=2025-12-15 billed=0 over=0.1 unbilled=0 debt=0 due=2025-12-28 days=3
+summary	close=2026-06-10 billed=5 over=0 unbilled=0 debt=0 due=2026-06-25 days=0
+soon	
+one	NaN
+soon	
+bal	c1:5.1
+summary	close=2026-03-05 billed=1000 over=0 unbilled=0 debt=1000 due=2026-03-10 days=-21
+close	2024-02-01
+due	2026-03-31
+bal	c1:-1e+21,c2:0,a1:0,default:1e+21
+close	2024-02-01
+one	-1000
+close	2026-06-01
+due	2024-03-29
+soon	
+summary	close=2026-02-15 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-03-10 days=9
+summary	close=2026-02-28 billed=0 over=1.5 unbilled=0 debt=0 due=2026-03-10 days=9
+bal	c1:-1000,c2:100
+soon	
+summary	close=2025-12-05 billed=966.67 over=0 unbilled=0 debt=966.67 due=2025-12-20 days=-5
+net	asset=-2000 liab=0.1 net=-2000.1
+net	asset=NaN liab=0 net=NaN
+close	2026-05-28
+due	2024-03-01
+summary	none
+net	asset=NaN liab=NaN net=NaN
+summary	close=2026-06-30 billed=50 over=0 unbilled=0 debt=50 due=2026-07-25 days=24
+close	2026-05-01
+summary	close=2026-02-28 billed=0 over=0.1 unbilled=0 debt=0 due=2026-03-10 days=9
+one	NaN
+one	NaN
+summary	close=2026-01-10 billed=50 over=0 unbilled=0 debt=50 due=- days=-
+close	2025-11-30
+due	2026-07-01
+soon	
+due	2026-05-01
+net	asset=NaN liab=1e+21 net=NaN
+summary	close=2026-01-05 billed=0 over=0 unbilled=NaN debt=0 due=- days=-
+due	2026-06-01
+due	2026-07-15
+bal	c1:0,c2:1e+21,a1:0
+summary	close=2024-02-15 billed=0 over=0 unbilled=0 debt=0 due=2024-03-10 days=9
+summary	none
+soon	
+summary	close=2026-01-15 billed=0 over=0.1 unbilled=0 debt=0 due=2026-02-15 days=14
+one	-1000
+net	asset=-49.9 liab=100.1 net=-150
+net	asset=1e+21 liab=NaN net=NaN
+due	2024-02-29
+total	16.769999999999996
+total	1e+21
+summary	none
+due	2026-01-25
+close	2026-06-01
+soon	
+summary	close=2025-12-15 billed=55 over=0 unbilled=0 debt=55 due=2025-12-25 days=0
+one	NaN
+one	-10
+summary	none
+due	2026-02-01
+summary	close=2025-12-25 billed=0 over=0 unbilled=0 debt=0 due=2026-01-10 days=10
+due	2026-04-01
+total	-1e+21
+close	2026-04-01
+summary	close=2025-12-28 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+summary	close=2026-01-10 billed=0 over=0 unbilled=0 debt=0 due=2026-01-25 days=-6
+net	asset=1e+21 liab=0 net=1e+21
+one	NaN
+soon	
+summary	close=2026-05-10 billed=50 over=0 unbilled=0 debt=50 due=- days=-
+summary	close=2026-02-28 billed=1000 over=0 unbilled=0 debt=1000 due=2026-03-20 days=20
+summary	close=2026-02-10 billed=10 over=0 unbilled=0 debt=10 due=2026-02-20 days=-8
+summary	close=2024-02-10 billed=0 over=100 unbilled=0 debt=0 due=2024-02-20 days=-9
+total	NaN
+summary	close=2025-12-15 billed=0 over=100 unbilled=0 debt=0 due=2025-12-20 days=-5
+close	2026-02-28
+net	asset=NaN liab=NaN net=NaN
+bal	c1:NaN,c2:-50
+bal	c1:100,c2:0,a1:-1e+21,default:0
+close	2026-06-05
+total	-83.33
+summary	close=2024-02-10 billed=966.67 over=0 unbilled=0 debt=966.67 due=2024-02-20 days=-10
+due	2026-01-05
+total	NaN
+summary	close=2026-06-15 billed=10 over=0 unbilled=0 debt=10 due=2026-06-25 days=0
+one	0
+net	asset=NaN liab=10 net=NaN
+net	asset=1e+21 liab=303.33000000000004 net=1e+21
+one	-1000
+one	-150
+one	NaN
+close	2026-02-15
+due	2026-07-10
+due	2024-03-05
+one	-1e+21
+close	2025-11-28
+summary	close=2026-06-05 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-06-20 days=5
+summary	close=2025-12-15 billed=50 over=0 unbilled=0 debt=50 due=2025-12-25 days=-7
+net	asset=NaN liab=NaN net=NaN
+bal	c1:0
+summary	close=2025-12-05 billed=0 over=0 unbilled=51.5 debt=51.5 due=2025-12-20 days=-11
+soon	
+due	2024-04-10
+one	-50
+soon	
+close	2026-05-05
+summary	close=2026-01-25 billed=0 over=0 unbilled=0 debt=0 due=2026-02-15 days=15
+total	0
+due	2026-02-28
+one	0
+soon	
+soon	
+close	2026-01-30
+close	2026-04-29
+summary	close=2025-12-28 billed=50 over=0 unbilled=0 debt=50 due=2026-01-10 days=9
+bal	c1:1e+21,c2:1e+21,a1:1e+21,default:100
+summary	close=2025-11-28 billed=5 over=0.1 unbilled=0 debt=0 due=- days=-
+bal	c1:0,c2:0,a1:NaN
+due	2026-06-15
+summary	close=2026-02-10 billed=0 over=0 unbilled=33.42999999999999 debt=33.43000000000001 due=2026-02-25 days=-3
+summary	close=2024-02-05 billed=50 over=0 unbilled=NaN debt=0 due=2024-02-20 days=-9
+due	2024-02-25
+total	NaN
+close	2025-12-05
+summary	close=2025-12-25 billed=0 over=0 unbilled=0 debt=0 due=2026-01-10 days=9
+due	2025-12-28
+one	-1000
+close	2026-06-01
+close	2026-05-30
+total	NaN
+total	NaN
+due	2026-06-15
+summary	none
+due	2026-02-15
+due	2026-07-01
+due	2024-03-29
+summary	close=2026-06-01 billed=148.5 over=0 unbilled=0 debt=148.5 due=2026-06-29 days=4
+one	5
+due	2026-06-10
+net	asset=NaN liab=NaN net=NaN
+close	2025-12-15
+bal	c1:0,c2:-99.9
+close	2026-03-30
+summary	close=2026-01-28 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-01-31 days=0
+close	2026-05-31
+summary	none
+close	2025-12-25
+close	2024-02-01
+net	asset=NaN liab=0 net=NaN
+due	2026-03-01
+close	2026-03-30
+close	2026-02-25
+net	asset=1e+21 liab=10 net=1e+21
+net	asset=NaN liab=100 net=NaN
+close	2026-05-28
+one	0.1
+bal	c1:1e+21,c2:95,a1:0,default:0
+close	2024-02-15
+summary	none
+due	2026-02-28
+due	2026-03-25
+soon	c1:50:-11
+close	2026-06-10
+summary	close=2026-02-28 billed=0 over=0 unbilled=0 debt=0 due=2026-03-25 days=25
+net	asset=NaN liab=0 net=NaN
+close	2026-06-01
+total	NaN
+net	asset=-50 liab=99.9 net=-149.9
+summary	none
+summary	none
+summary	close=2025-12-15 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-01-10 days=9
+summary	close=2026-01-10 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-01-25 days=-6
+due	2026-05-31
+close	2026-04-05
+bal	c1:-5
+bal	c1:0.1
+soon	c1:50:-21
+summary	close=2025-12-28 billed=1e+21 over=0 unbilled=0 debt=1e+21 due=2026-01-10 days=10
+one	-50
+close	2026-06-05
+net	asset=1e+21 liab=0 net=1e+21
+close	2026-01-05
+bal	c1:NaN,c2:-1000
+due	2026-03-15
+due	2026-07-10
+summary	close=2026-03-10 billed=0 over=0 unbilled=0 debt=0 due=2026-03-25 days=-6
+bal	c1:NaN,c2:89.9,a1:10.1
+soon	
+close	2026-03-31
+summary	close=2026-02-28 billed=0 over=71.67 unbilled=0 debt=0 due=- days=-
+due	2026-02-25
+close	2025-12-05
+due	2026-08-05
+summary	close=2026-06-10 billed=895 over=0 unbilled=0 debt=995 due=- days=-
+summary	none
+due	2026-06-30
+soon	
+total	-1933.43
+due	2024-03-31
+due	2026-01-05
+one	0.1
+total	NaN
+one	1e+21
+due	2025-12-15
+close	2026-04-15
+bal	c1:0,c2:0,a1:0,default:0
+close	2026-01-25
+summary	close=2024-02-25 billed=10 over=0 unbilled=0 debt=10 due=2024-03-10 days=10
+bal	c1:100,c2:-1000
+due	2026-01-30
+net	asset=95 liab=1010 net=-915
+due	2026-04-01
+total	NaN
+due	2026-04-25
+net	asset=-68.25999999999999 liab=100 net=-168.26
+total	65.07000000000001
+close	2026-06-10
+due	2026-01-30
+due	2026-06-10
+soon	
+one	1e+21
+total	NaN
+one	100
+one	0.1
+summary	close=2026-05-31 billed=0 over=100 unbilled=0 debt=0 due=- days=-
+bal	c1:-2e+21,c2:-49.9,a1:0,default:100
+close	2026-02-28
+due	2026-02-01
+net	asset=NaN liab=50 net=NaN
+bal	c1:0,c2:100,a1:-50,default:-1000
+bal	c1:-50,c2:-998.5,a1:1e+21,default:100
+summary	close=2025-11-30 billed=0 over=100 unbilled=33.33 debt=0 due=2025-12-10 days=-15
+soon	a1:5:-4
+summary	none
+due	2025-12-15
+summary	close=2026-02-10 billed=0 over=100 unbilled=0 debt=0 due=2026-02-25 days=-3
+net	asset=NaN liab=0.1 net=NaN
+summary	close=2026-05-10 billed=66.67 over=0 unbilled=0 debt=66.67 due=2026-06-10 days=10
+close	2026-06-15
+due	2026-02-01
+soon	
+net	asset=100.1 liab=2e+21 net=-2e+21
+bal	c1:NaN,c2:-1000,a1:200
+net	asset=1e+21 liab=-4.9 net=1e+21
+close	2026-03-01
+summary	close=2026-06-10 billed=0 over=0 unbilled=0 debt=0 due=2026-06-20 days=5
+summary	close=2026-05-28 billed=0 over=0 unbilled=NaN debt=0 due=2026-06-20 days=5
+summary	close=2026-02-10 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-02-25 days=-3
+one	-1000
+bal	c1:1e+21,c2:-133.32999999999998
+total	NaN
+close	2026-03-28
+close	2026-04-30
+soon	
+bal	c1:-1.5
+close	2025-12-01
+summary	close=2026-01-30 billed=0 over=61.67 unbilled=0 debt=0 due=2026-02-28 days=27
+summary	close=2026-01-05 billed=0 over=0 unbilled=0 debt=0 due=2026-01-15 days=-17
+summary	close=2024-02-25 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+close	2026-06-01
+close	2026-02-28
+close	2026-05-31
+due	2026-04-30
+summary	close=2026-05-05 billed=0 over=0.1 unbilled=0 debt=0 due=- days=-
+due	2026-03-31
+summary	close=2026-06-25 billed=0 over=0 unbilled=0 debt=0 due=2026-07-10 days=9
+due	2026-03-01
+one	1e+21
+net	asset=1.6000000000000014 liab=28.33 net=-26.729999999999997
+due	2026-04-28
+bal	c1:100,c2:-1000,a1:0
+close	2024-02-29
+close	2026-02-28
+net	asset=NaN liab=1e+21 net=NaN
+summary	close=2026-01-31 billed=0 over=0 unbilled=0 debt=0 due=2026-02-20 days=20
+total	1e+21
+one	0
+summary	close=2026-01-10 billed=100 over=0 unbilled=0 debt=100 due=2026-02-10 days=9
+summary	close=2026-01-10 billed=0 over=0 unbilled=0 debt=0 due=2026-01-20 days=-11
+total	10
+summary	none
+summary	close=2026-03-25 billed=0 over=0.1 unbilled=0 debt=0 due=2026-04-25 days=25
+summary	close=2024-02-05 billed=50 over=0 unbilled=0 debt=50 due=2024-02-20 days=-10
+summary	close=2025-12-31 billed=0 over=0 unbilled=100 debt=0 due=2026-01-25 days=24
+total	NaN
+close	2024-02-29
+soon	
+due	2026-06-05
+close	2026-06-01
+soon	
+due	2026-05-25
+close	2026-01-25
+due	2026-07-28
+summary	close=2025-12-25 billed=1e+21 over=0 unbilled=0 debt=1e+21 due=2026-01-10 days=9
+net	asset=1e+21 liab=33.33 net=1e+21
+bal	c1:0,c2:0,a1:1e+21
+due	2026-06-30
+net	asset=NaN liab=NaN net=NaN
+total	50
+soon	c2:1000:0
+summary	close=2026-03-31 billed=0 over=0 unbilled=0 debt=0 due=2026-04-25 days=25
+close	2025-12-31
+net	asset=NaN liab=0 net=NaN
+total	-899.8
+summary	none
+summary	close=2026-03-28 billed=50 over=0 unbilled=0 debt=50 due=2026-04-20 days=20
+summary	close=2024-02-25 billed=0 over=1e+21 unbilled=0 debt=0 due=2024-03-15 days=15
+soon	
+due	2026-06-30
+summary	close=2026-05-28 billed=0 over=100 unbilled=100 debt=0 due=2026-06-20 days=-5
+close	2024-02-29
+close	2026-01-30
+summary	close=2026-01-10 billed=0 over=0 unbilled=0 debt=33.33 due=2026-01-25 days=-6
+bal	c1:100,c2:0,a1:0
+due	2026-02-01
+due	2025-12-30
+bal	c1:NaN
+one	0
+total	0.1
+summary	close=2026-02-10 billed=100 over=0 unbilled=0 debt=100 due=2026-02-15 days=-14
+net	asset=NaN liab=NaN net=NaN
+net	asset=-955.17 liab=NaN net=NaN
+summary	close=2026-02-15 billed=0 over=0 unbilled=0 debt=0 due=2026-02-25 days=-4
+summary	none
+one	1e+21
+close	2026-01-30
+close	2024-02-29
+close	2024-02-29
+close	2024-03-01
+summary	close=2026-02-28 billed=0 over=9.9 unbilled=0 debt=0 due=2026-03-10 days=9
+soon	
+soon	c2:1e+21:-8
+due	2026-06-30
+summary	close=2026-06-10 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-07-10 days=15
+bal	c1:1e+21,c2:1e+21,a1:-1038.33
+due	2026-01-25
+close	2025-12-01
+summary	none
+close	2024-03-01
+summary	close=2026-01-25 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-02-15 days=14
+due	2026-08-01
+due	2026-07-31
+close	2026-06-15
+due	2026-01-28
+total	0.1
+due	2026-04-01
+due	2026-01-01
+summary	close=2024-02-29 billed=0 over=0 unbilled=0 debt=0 due=2024-03-25 days=25
+summary	close=2024-02-10 billed=50 over=0 unbilled=0 debt=50 due=2024-03-10 days=10
+due	2024-03-28
+summary	close=2026-03-31 billed=1000 over=0 unbilled=0 debt=1000 due=- days=-
+soon	
+close	2026-01-15
+bal	c1:NaN,c2:-1000
+close	2026-02-01
+due	2024-03-30
+close	2024-02-01
+summary	close=2026-06-30 billed=0 over=0 unbilled=0 debt=0 due=2026-07-15 days=14
+total	-1.2999999999999998
+summary	none
+summary	none
+soon	c2:68.17:24
+close	2025-12-28
+close	2026-05-25
+close	2026-05-29
+summary	close=2026-02-05 billed=0 over=0 unbilled=NaN debt=0 due=2026-02-10 days=-18
+summary	close=2026-06-30 billed=0 over=100 unbilled=0 debt=0 due=- days=-
+close	2026-04-29
+summary	close=2025-12-05 billed=0 over=0 unbilled=1e+21 debt=1e+21 due=2025-12-15 days=-17
+close	2026-05-28
+close	2026-02-05
+summary	close=2026-01-15 billed=0 over=0 unbilled=0 debt=0 due=2026-01-25 days=-6
+one	0
+net	asset=NaN liab=0.1 net=NaN
+close	2026-02-25
+close	2026-04-01
+summary	close=2026-05-30 billed=NaN over=0 unbilled=NaN debt=0 due=2026-06-28 days=3
+due	2026-02-28
+one	-1e+21
+total	0.1
+summary	close=2024-02-05 billed=0 over=100 unbilled=0 debt=0 due=- days=-
+due	2024-03-01
+summary	close=2026-01-10 billed=50 over=0 unbilled=43.33 debt=126.66 due=2026-02-10 days=10
+soon	
+total	NaN
+due	2026-07-01
+summary	close=2026-02-28 billed=0 over=0.1 unbilled=10 debt=9.9 due=2026-03-15 days=14
+summary	close=2024-02-15 billed=0 over=0 unbilled=0 debt=0 due=2024-03-15 days=15
+due	2024-03-01
+net	asset=NaN liab=0 net=NaN
+summary	close=2026-03-25 billed=33.33 over=0 unbilled=0 debt=33.33 due=2026-04-15 days=15
+close	2026-02-28
+net	asset=1e+21 liab=83.33 net=1e+21
+total	1e+21
+net	asset=NaN liab=1e+21 net=NaN
+close	2026-05-28
+soon	c2:995:-10
+bal	c1:0,c2:0,a1:110,default:0
+close	2026-01-15
+bal	c1:0,c2:1e+21,a1:100,default:0.1
+one	-50
+one	0
+close	2026-02-01
+close	2026-05-29
+summary	close=2026-01-25 billed=0 over=0 unbilled=33.33 debt=0 due=- days=-
+net	asset=1e+21 liab=1e+21 net=0
+net	asset=NaN liab=95 net=NaN
+net	asset=2e+21 liab=1e+21 net=1e+21
+net	asset=2e+21 liab=1e+21 net=1e+21
+summary	close=2026-02-15 billed=0 over=0 unbilled=0 debt=0 due=2026-02-20 days=-9
+summary	close=2025-12-28 billed=0 over=0 unbilled=0 debt=0 due=2026-01-15 days=15
+one	-1038.33
+due	2026-06-30
+close	2025-12-31
+net	asset=1e+21 liab=50 net=1e+21
+one	-50
+soon	a1:995:0
+due	2026-06-30
+bal	c1:0.1,c2:-50,a1:NaN,default:100.1
+bal	c1:33.33,c2:1e+21,a1:-93.33
+summary	close=2026-03-30 billed=0 over=0 unbilled=0 debt=0 due=2026-04-28 days=28
+bal	c1:1e+21,c2:0,a1:0
+summary	close=2025-12-10 billed=5 over=0 unbilled=NaN debt=0 due=2025-12-25 days=-7
+summary	close=2026-02-25 billed=50 over=0 unbilled=0 debt=50 due=2026-03-10 days=9
+summary	close=2024-02-10 billed=1e+21 over=0 unbilled=1e+21 debt=2e+21 due=2024-02-15 days=-15
+summary	close=2024-02-15 billed=0 over=100 unbilled=0 debt=0 due=2024-03-10 days=9
+summary	close=2026-02-15 billed=1000 over=0 unbilled=0 debt=1000 due=2026-03-10 days=10
+summary	close=2024-02-10 billed=0 over=0 unbilled=0 debt=0 due=2024-03-10 days=10
+summary	none
+total	1e+21
+bal	c1:-60.1
+soon	
+net	asset=NaN liab=10.2 net=NaN
+one	0.1
+net	asset=110 liab=NaN net=NaN
+net	asset=105 liab=5 net=100
+summary	none
+summary	close=2026-01-31 billed=83.33 over=0 unbilled=0 debt=83.33 due=2026-02-25 days=25
+summary	close=2026-02-28 billed=0 over=0 unbilled=0 debt=0 due=2026-03-20 days=20
+soon	
+total	-99.9
+summary	close=2026-06-25 billed=0 over=66.67 unbilled=0 debt=0 due=2026-07-10 days=15
+due	2026-08-01
+one	-16.67
+bal	c1:105,c2:0,a1:NaN
+due	2025-12-31
+total	0
+summary	close=2026-01-15 billed=0 over=0 unbilled=0 debt=0 due=2026-01-25 days=-6
+bal	c1:0,c2:0,a1:0.1
+one	0
+due	2026-02-28
+soon	
+summary	close=2026-01-31 billed=0.1 over=0 unbilled=0 debt=0.1 due=- days=-
+close	2025-12-01
+one	23.33
+soon	a1:1000:-6
+due	2025-12-01
+soon	
+bal	c1:1e+21,c2:0.1,a1:100,default:0.1
+summary	close=2026-06-10 billed=0 over=0 unbilled=0 debt=0 due=2026-06-15 days=5
+close	2025-12-25
+due	2024-02-29
+summary	close=2026-04-10 billed=0 over=0.1 unbilled=0 debt=0 due=2026-04-15 days=-15
+soon	
+bal	c1:0.1,c2:-1000,a1:1e+21
+net	asset=NaN liab=1033.33 net=NaN
+total	1e+21
+bal	c1:-1100,c2:-99.9,a1:0,default:-1000
+one	-50
+bal	c1:1e+21,c2:-5,a1:-10,default:NaN
+one	NaN
+due	2026-07-01
+summary	close=2026-01-25 billed=0 over=0.1 unbilled=0 debt=0 due=2026-02-20 days=20
+close	2025-12-05
+due	2026-06-30
+one	100
+bal	c1:-50,c2:-50,a1:-1000
+summary	close=2024-02-29 billed=0 over=0.1 unbilled=0 debt=0 due=2024-03-25 days=24
+due	2026-05-31
+summary	close=2026-03-10 billed=990 over=0 unbilled=0 debt=990 due=2026-04-10 days=10
+net	asset=NaN liab=0 net=NaN
+one	1e+21
+one	133.32999999999998
+summary	close=2026-05-28 billed=0 over=100 unbilled=0 debt=0 due=2026-06-10 days=0
+due	2024-04-29
+close	2026-02-05
+net	asset=NaN liab=-5 net=NaN
+due	2026-05-31
+close	2026-06-30
+due	2025-12-31
+one	0
+summary	close=2026-06-10 billed=0 over=100 unbilled=0 debt=0 due=2026-07-10 days=9
+total	NaN
+bal	c1:1e+21,c2:100
+one	-10
+close	2026-01-01
+bal	c1:-1000
+summary	close=2026-01-01 billed=1000 over=0 unbilled=0 debt=1000 due=2026-01-31 days=0
+net	asset=NaN liab=150.1 net=NaN
+one	-0.1
+total	1e+21
+summary	close=2026-06-25 billed=1e+21 over=0 unbilled=0 debt=1e+21 due=2026-06-30 days=5
+summary	none
+summary	close=2026-04-05 billed=0 over=0.1 unbilled=0 debt=0 due=2026-04-10 days=-20
+summary	close=2026-06-25 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-07-15 days=14
+total	5
+bal	c1:-50,c2:0,a1:0
+net	asset=NaN liab=1e+21 net=NaN
+summary	close=2025-12-25 billed=966.67 over=0 unbilled=0 debt=966.67 due=2026-01-10 days=16
+total	NaN
+total	NaN
+due	2026-05-10
+summary	close=2026-01-31 billed=1000 over=0 unbilled=0 debt=1000 due=2026-02-10 days=10
+summary	close=2026-05-28 billed=50 over=0 unbilled=0 debt=50.1 due=2026-06-20 days=20
+bal	c1:-1000
+one	-50
+bal	c1:-40,c2:95,a1:1e+21,default:99.9
+net	asset=NaN liab=NaN net=NaN
+bal	c1:0,c2:100.1,a1:0
+close	2026-06-30
+bal	c1:NaN,c2:-104.9
+net	asset=-1016.67 liab=50 net=-1066.67
+bal	c1:96.5,c2:-995,a1:-50,default:NaN
+bal	c1:100,c2:1e+21,a1:-50
+summary	close=2026-06-10 billed=1100 over=0 unbilled=1e+21 debt=1e+21 due=2026-06-20 days=-5
+due	2026-05-01
+one	-33.33
+soon	
+total	1e+21
+one	0
+bal	c1:-1000,c2:1e+21,a1:0,default:0
+due	2025-12-15
+total	-1e+21
+one	100
+one	100
+due	2026-07-01
+soon	default:50:-10
+bal	c1:0.1,c2:-1000,a1:1e+21,default:1e+21
+close	2024-02-29
+summary	none
+close	2026-01-01
+due	2026-06-30
+net	asset=NaN liab=100.1 net=NaN
+due	2026-03-30
+one	NaN
+due	2026-06-30
+due	2026-05-31
+one	1e+21
+soon	
+due	2026-01-05
+total	NaN
+bal	c1:1e+21,c2:-50,a1:100
+net	asset=NaN liab=0 net=NaN
+bal	c1:NaN,c2:0,a1:NaN
+soon	
+net	asset=NaN liab=10 net=NaN
+close	2026-02-01
+soon	c2:1000:-15
+summary	close=2026-02-25 billed=140 over=0 unbilled=0 debt=140 due=2026-03-25 days=25
+one	NaN
+net	asset=100.1 liab=NaN net=NaN
+net	asset=0.1 liab=NaN net=NaN
+due	2026-01-15
+summary	close=2026-05-15 billed=0 over=0 unbilled=0 debt=0 due=2026-06-15 days=15
+one	-50
+due	2024-04-01
+close	2026-03-05
+due	2026-04-01
+one	100
+due	2026-01-15
+close	2026-05-31
+total	1e+21
+close	2026-06-05
+bal	c1:0,c2:0.1,a1:-50,default:0
+summary	close=2026-06-05 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-06-10 days=-15
+one	1e+21
+one	0
+soon	
+one	1e+21
+summary	close=2024-02-10 billed=NaN over=0 unbilled=NaN debt=0 due=2024-03-10 days=10
+summary	none
+close	2025-11-30
+bal	c1:-0.1,c2:-60
+one	NaN
+summary	close=2026-02-15 billed=0.1 over=0 unbilled=0 debt=0.1 due=2026-03-10 days=9
+net	asset=-990 liab=NaN net=NaN
+summary	close=2026-05-31 billed=0 over=10 unbilled=NaN debt=0 due=2026-06-10 days=-5
+one	0
+close	2025-12-05
+summary	close=2025-12-31 billed=33.43 over=0 unbilled=0 debt=33.43 due=2026-01-25 days=24
+total	NaN
+net	asset=NaN liab=0 net=NaN
+close	2026-04-30
+one	0
+soon	
+net	asset=NaN liab=NaN net=NaN
+close	2025-11-29
+summary	none
+summary	close=2024-02-28 billed=1e+21 over=0 unbilled=0 debt=1e+21 due=- days=-
+close	2026-05-25
+due	2026-07-15
+bal	c1:-1e+21,c2:0,a1:0,default:1e+21
+close	2025-12-25
+net	asset=1e+21 liab=33.33 net=1e+21
+total	NaN
+summary	close=2026-04-28 billed=0 over=0 unbilled=0 debt=0 due=2026-05-15 days=15
+due	2024-03-01
+soon	default:50:-10
+bal	c1:66.67
+due	2026-01-30
+soon	default:1000:-20
+one	-10
+summary	close=2025-12-30 billed=0 over=0.1 unbilled=0 debt=0 due=2026-01-15 days=14
+total	-950
+summary	close=2026-01-25 billed=99.9 over=0 unbilled=0 debt=99.9 due=- days=-
+summary	close=2026-06-05 billed=1000 over=0 unbilled=0 debt=1000 due=2026-06-15 days=-16
+total	NaN
+due	2026-01-01
+close	2025-12-31
+one	90
+summary	close=2026-06-30 billed=0 over=0 unbilled=0 debt=0 due=2026-07-20 days=19
+summary	none
+summary	close=2025-12-10 billed=0 over=0.1 unbilled=0 debt=0 due=2025-12-20 days=-12
+one	100
+close	2026-03-25
+net	asset=NaN liab=83.33 net=NaN
+due	2025-12-31
+bal	c1:0.1,c2:-33.33
+net	asset=NaN liab=33.33 net=NaN
+net	asset=10.099999999999994 liab=133.32999999999998 net=-123.22999999999999
+summary	close=2024-02-05 billed=0 over=0 unbilled=NaN debt=0 due=2024-02-25 days=-4
+summary	close=2024-02-29 billed=50 over=0 unbilled=0 debt=50 due=2024-03-01 days=1
+soon	c1:1e+21:-16
+close	2026-06-10
+one	-966.67
+one	0
+net	asset=NaN liab=0 net=NaN
+close	2026-05-31
+one	99.9
+close	2026-03-01
+summary	close=2026-05-31 billed=1010 over=0 unbilled=0 debt=1010 due=2026-06-10 days=10
+net	asset=-800 liab=0.1 net=-800.1
+soon	
+close	2025-12-25
+due	2026-03-25
+due	2026-02-28
+bal	c1:0
+due	2024-04-15
+bal	c1:NaN,c2:-1000,a1:-50,default:33.23
+summary	close=2026-05-31 billed=0 over=0 unbilled=0.1 debt=0.1 due=2026-06-15 days=5
+due	2026-05-30
+summary	none
+due	2026-07-01
+total	NaN
+soon	c1:1000:-6
+summary	close=2026-01-15 billed=0 over=0.1 unbilled=0 debt=0 due=2026-01-25 days=-7
+due	2026-08-05
+one	NaN
+due	2026-02-28
+one	-50
+summary	close=2026-03-10 billed=50 over=0 unbilled=0 debt=50 due=2026-03-15 days=-16
+total	-50
+summary	close=2026-06-05 billed=1000 over=0 unbilled=1.5 debt=1034.83 due=2026-06-15 days=-16
+total	-50
+total	NaN
+close	2024-02-28
+close	2026-06-01
+total	1e+21
+close	2024-03-01
+summary	close=2026-05-31 billed=50 over=0 unbilled=0 debt=150 due=- days=-
+close	2026-06-01
+summary	close=2026-01-05 billed=0 over=100 unbilled=0 debt=0 due=2026-01-10 days=-22
+summary	close=2026-05-31 billed=0 over=0.1 unbilled=0.1 debt=0 due=2026-06-10 days=0
+due	2026-06-30
+one	1e+21
+net	asset=-1899.9 liab=0 net=-1899.9
+summary	close=2024-02-25 billed=0 over=0 unbilled=33.33 debt=33.33 due=- days=-
+due	2026-02-01
+summary	close=2026-06-25 billed=1e+21 over=0 unbilled=0 debt=1e+21 due=2026-07-20 days=19
+summary	close=2026-05-10 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-05-20 days=-11
+close	2026-02-28
+net	asset=48.129999999999995 liab=133.32999999999998 net=-85.19999999999999
+soon	c2:49.9:-5
+summary	close=2026-04-10 billed=NaN over=0 unbilled=NaN debt=0 due=- days=-
+summary	close=2025-12-31 billed=0 over=8.6 unbilled=33.33 debt=24.729999999999997 due=2026-01-15 days=14
+due	2026-01-25
+due	2026-02-28
+bal	c1:-50,c2:0,a1:0
+one	0
+soon	c2:1e+21:-16
+summary	close=2024-02-15 billed=0 over=5 unbilled=0.1 debt=0 due=2024-02-20 days=-9
+summary	close=2026-02-28 billed=1000 over=0 unbilled=0 debt=1000 due=2026-03-25 days=24
+summary	close=2025-12-05 billed=0 over=0 unbilled=90 debt=90 due=2025-12-20 days=-12
+bal	c1:1e+21,c2:0,a1:NaN
+soon	
+summary	close=2024-02-15 billed=50 over=0 unbilled=0 debt=50 due=2024-02-25 days=-4
+total	-50
+due	2025-12-15
+net	asset=-145.1 liab=0 net=-145.1
+summary	close=2025-12-10 billed=0 over=200 unbilled=NaN debt=0 due=2025-12-15 days=-16
+due	2026-02-28
+summary	none
+one	0
+one	100
+net	asset=NaN liab=NaN net=NaN
+total	-1e+21
+close	2026-05-31
+close	2026-02-25
+close	2024-02-15
+bal	c1:-1010,c2:-33.33
+summary	none
+close	2026-05-28
+due	2026-01-15
+summary	none
+due	2026-02-01
+total	1e+21
+soon	
+net	asset=NaN liab=NaN net=NaN
+close	2026-02-28
+net	asset=-144.8 liab=0 net=-144.8
+total	-1100
+due	2026-02-28
+bal	c1:0,c2:0,a1:0.1,default:0.1
+net	asset=83.33 liab=NaN net=NaN
+summary	close=2026-06-28 billed=0 over=10.1 unbilled=0 debt=0 due=- days=-
+summary	close=2024-02-10 billed=0 over=0 unbilled=0 debt=0 due=2024-02-25 days=-4
+summary	none
+close	2026-02-28
+close	2026-05-25
+summary	none
+one	-1000
+due	2026-04-25
+summary	none
+due	2026-03-25
+one	-5
+due	2026-01-25
+summary	close=2026-03-10 billed=50 over=0 unbilled=0 debt=50 due=2026-03-15 days=-16
+total	-1001.5
+bal	c1:NaN
+summary	close=2026-03-28 billed=999.9 over=0 unbilled=0 debt=999.9 due=- days=-
+due	2026-01-28
+due	2026-07-01
+summary	close=2026-06-28 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+total	NaN
+total	-93.22999999999999
+bal	c1:100,c2:NaN,a1:-66.66,default:-5
+due	2026-07-25
+summary	close=2026-01-28 billed=100 over=0 unbilled=0 debt=100 due=2026-02-10 days=10
+net	asset=NaN liab=NaN net=NaN
+bal	c1:-50
+due	2024-03-31
+soon	
+summary	close=2026-01-25 billed=0 over=0 unbilled=0 debt=0 due=2026-02-20 days=19
+summary	close=2026-05-28 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-06-20 days=-5
+summary	close=2025-12-15 billed=0 over=0 unbilled=0 debt=0 due=2025-12-25 days=-7
+net	asset=0 liab=0 net=0
+due	2026-01-25
+summary	close=2026-01-28 billed=0 over=0 unbilled=0 debt=0 due=2026-02-20 days=19
+net	asset=1e+21 liab=0 net=1e+21
+bal	c1:-1101.5,c2:-1e+21,a1:100,default:NaN
+bal	c1:0,c2:5,a1:61.67
+one	0
+close	2026-06-29
+soon	
+summary	close=2026-06-10 billed=45 over=0 unbilled=0 debt=45 due=2026-06-20 days=5
+close	2026-06-30
+due	2025-12-15
+due	2026-02-01
+bal	c1:-5,c2:100,a1:0
+total	NaN
+bal	c1:0.1,c2:0,a1:1e+21
+soon	
+due	2026-02-01
+summary	close=2024-02-29 billed=50 over=0 unbilled=0 debt=50 due=2024-03-20 days=20
+summary	close=2026-02-05 billed=0 over=100 unbilled=NaN debt=0 due=2026-02-10 days=-19
+due	2024-03-01
+bal	c1:1e+21,c2:0
+summary	close=2026-05-25 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-06-10 days=10
+close	2026-01-10
+close	2026-04-05
+summary	close=2026-05-28 billed=1000 over=0 unbilled=0 debt=1000 due=2026-06-25 days=25
+summary	close=2026-05-31 billed=0 over=100 unbilled=0 debt=0 due=2026-06-10 days=-15
+total	-33.33
+one	0
+total	1e+21
+net	asset=-0.09999999999999432 liab=NaN net=NaN
+bal	c1:-151.6,c2:1e+21,a1:1e+21,default:0
+one	0
+summary	close=2026-06-10 billed=0 over=100 unbilled=0 debt=0 due=2026-06-20 days=5
+one	0
+soon	
+total	0
+due	2024-03-31
+net	asset=NaN liab=0 net=NaN
+close	2025-12-30
+total	-900
+due	2024-03-15
+bal	c1:0,c2:100,a1:1e+21,default:1e+21
+summary	close=2026-06-25 billed=0 over=100 unbilled=0 debt=0 due=2026-07-20 days=25
+one	0
+due	2026-01-15
+bal	c1:-1e+21
+soon	c2:50:-9
+close	2026-05-31
+close	2026-02-10
+soon	
+summary	close=2025-12-05 billed=0 over=1e+21 unbilled=0 debt=0 due=- days=-
+summary	none
+due	2026-01-28
+net	asset=0.1 liab=0 net=0.1
+total	1e+21
+net	asset=NaN liab=0 net=NaN
+close	2024-02-29
+net	asset=2e+21 liab=1e+21 net=1e+21
+summary	close=2026-03-31 billed=0 over=100 unbilled=1e+21 debt=1e+21 due=2026-04-15 days=15
+bal	c1:NaN
+soon	
+summary	close=2024-02-10 billed=0 over=1e+21 unbilled=0 debt=0 due=2024-02-25 days=-5
+summary	close=2026-02-10 billed=40 over=0 unbilled=0 debt=40 due=- days=-
+summary	close=2026-03-25 billed=0 over=0 unbilled=0 debt=0 due=2026-04-20 days=20
+summary	close=2026-06-05 billed=0 over=0 unbilled=0 debt=0 due=2026-06-25 days=0
+soon	
+soon	
+summary	close=2026-01-05 billed=0 over=0 unbilled=NaN debt=0 due=2026-01-25 days=-7
+close	2026-01-28
+summary	close=2026-05-10 billed=0 over=100 unbilled=0 debt=0 due=2026-06-10 days=10
+net	asset=43.17000000000001 liab=NaN net=NaN
+summary	close=2025-12-28 billed=0 over=100 unbilled=0 debt=0 due=2026-01-20 days=20
+due	2026-05-31
+due	2026-03-01
+total	0
+summary	close=2026-01-15 billed=999.9 over=0 unbilled=10 debt=1009.9 due=2026-02-15 days=15
+summary	close=2026-03-05 billed=0 over=1e+21 unbilled=100 debt=0 due=2026-03-25 days=-6
+summary	close=2026-01-28 billed=0 over=0 unbilled=0 debt=0 due=2026-02-15 days=14
+summary	none
+soon	c1:5:10
+net	asset=-2e+21 liab=3.5 net=-2e+21
+net	asset=NaN liab=0 net=NaN
+summary	none
+net	asset=1e+21 liab=10.1 net=1e+21
+bal	c1:NaN
+one	1e+21
+due	2026-06-15
+summary	none
+net	asset=-600.1 liab=1e+21 net=-1e+21
+bal	c1:0,c2:-1000,a1:1e+21
+due	2026-01-01
+net	asset=NaN liab=1000.1 net=NaN
+due	2026-05-31
+summary	none
+due	2026-02-05
+summary	close=2026-02-28 billed=1000 over=0 unbilled=0 debt=1000 due=2026-03-29 days=28
+summary	close=2026-03-15 billed=1e+21 over=0 unbilled=0 debt=1e+21 due=2026-03-25 days=-6
+due	2024-02-29
+due	2026-05-01
+close	2026-05-25
+close	2026-01-31
+due	2024-03-05
+summary	close=2026-02-28 billed=0 over=0.1 unbilled=0 debt=0 due=2026-03-15 days=14
+bal	c1:0,c2:-50,a1:0.1,default:1e+21
+close	2025-12-10
+summary	close=2026-06-25 billed=50 over=0 unbilled=0 debt=50 due=- days=-
+bal	c1:NaN,c2:0
+due	2024-04-29
+bal	c1:NaN,c2:1e+21
+bal	c1:-1e+21,c2:0,a1:0,default:-83.33
+net	asset=1e+21 liab=50 net=1e+21
+bal	c1:NaN,c2:NaN
+one	1e+21
+bal	c1:-100
+summary	close=2026-03-05 billed=0 over=0 unbilled=0 debt=0.1 due=2026-03-10 days=-21
+net	asset=NaN liab=100 net=NaN
+one	100
+net	asset=1e+21 liab=0 net=1e+21
+due	2024-02-28
+summary	close=2024-02-10 billed=50 over=0 unbilled=0 debt=50 due=2024-03-10 days=10
+one	0
+bal	c1:0.1,c2:NaN,a1:0,default:NaN
+one	-1095.1
+soon	
+soon	c1:1e+21:-7
+summary	close=2026-02-28 billed=0 over=5 unbilled=0 debt=0 due=2026-03-20 days=20
+summary	close=2026-06-10 billed=0 over=0.1 unbilled=0 debt=0 due=2026-07-10 days=15
+net	asset=0 liab=0 net=0
+summary	none
+summary	close=2025-11-28 billed=1000 over=0 unbilled=0 debt=1000 due=- days=-
+summary	none
+close	2024-02-05
+summary	none
+close	2026-06-15
+bal	c1:-1000,c2:0
+summary	close=2026-06-15 billed=0 over=0 unbilled=0 debt=0 due=2026-07-15 days=20
+one	5
+bal	c1:NaN,c2:100
+close	2024-02-29
+due	2026-07-05
+soon	
+total	2e+21
+due	2026-03-28
+due	2026-03-25
+one	NaN
+summary	none
+due	2026-08-15
+close	2026-05-25
+soon	
+net	asset=0 liab=0 net=0
+net	asset=1e+21 liab=NaN net=NaN
+one	100
+close	2024-02-28
+summary	close=2025-11-30 billed=0 over=0.1 unbilled=0 debt=0 due=2025-12-15 days=-10
+one	0
+due	2024-02-28
+total	NaN
+close	2026-01-30
+summary	close=2025-12-05 billed=NaN over=0 unbilled=NaN debt=0 due=- days=-
+close	2026-05-30
+soon	
+close	2026-07-01
+soon	
+net	asset=NaN liab=-5 net=NaN
+close	2025-12-31
+summary	close=2026-01-31 billed=0 over=0 unbilled=33.33 debt=0 due=2026-02-10 days=10
+close	2024-02-29
+bal	c1:100,c2:-0.1
+due	2026-04-29
+soon	
+soon	
+net	asset=-1109.9 liab=0 net=-1109.9
+summary	close=2026-01-15 billed=0 over=0.1 unbilled=0 debt=0 due=2026-01-31 days=-1
+close	2026-01-31
+total	1e+21
+bal	c1:-50,c2:NaN,a1:0,default:33.33
+summary	close=2026-06-10 billed=0 over=5.1 unbilled=0 debt=0 due=- days=-
+total	1e+21
+summary	close=2026-05-31 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-06-25 days=25
+summary	none
+summary	none
+close	2025-12-10
+due	2024-04-01
+total	1e+21
+summary	none
+due	2026-07-30
+total	NaN
+total	-99.9
+summary	close=2025-12-28 billed=1e+21 over=0 unbilled=0 debt=1e+21 due=2026-01-20 days=20
+close	2026-01-01
+summary	none
+net	asset=0.1 liab=108.33 net=-108.23
+summary	close=2024-02-29 billed=0 over=105 unbilled=NaN debt=0 due=2024-03-25 days=24
+close	2026-04-30
+soon	c1:50:-16
+net	asset=1e+21 liab=0 net=1e+21
+close	2026-04-30
+summary	none
+due	2026-07-01
+summary	close=2026-05-30 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+close	2026-04-28
+soon	
+bal	c1:-33.33,c2:NaN
+close	2024-02-29
+close	2026-06-01
+summary	none
+total	NaN
+close	2026-05-31
+bal	c1:-9.9,c2:0
+summary	close=2026-01-05 billed=0 over=0.1 unbilled=0 debt=0 due=2026-01-20 days=-12
+total	NaN
+soon	c2:50:-15
+close	2026-04-25
+due	2026-02-28
+summary	none
+soon	a1:900:-8
+soon	
+summary	close=2025-12-28 billed=150 over=0 unbilled=0 debt=150 due=2026-01-20 days=19
+soon	
+close	2025-12-31
+summary	close=2025-12-25 billed=0 over=0 unbilled=0 debt=0 due=2026-01-15 days=21
+due	2026-02-10
+due	2024-03-10
+due	2026-07-15
+summary	none
+total	NaN
+due	2024-03-05
+due	2025-12-28
+total	-1e+21
+summary	none
+one	-1000
+close	2025-12-28
+due	2026-04-01
+close	2025-12-28
+total	-70
+total	0
+one	1e+21
+summary	close=2025-12-05 billed=49.9 over=0 unbilled=0 debt=1e+21 due=2025-12-15 days=-16
+one	0
+summary	close=2025-12-25 billed=0 over=0 unbilled=0 debt=0 due=2026-01-10 days=10
+net	asset=-866.6700000000001 liab=33.33 net=-900.0000000000001
+bal	c1:1e+21,c2:-16.770000000000003,a1:-1e+21,default:100
+summary	close=2026-02-05 billed=NaN over=0 unbilled=NaN debt=0 due=- days=-
+summary	close=2025-12-05 billed=0 over=0.1 unbilled=0.1 debt=0 due=2025-12-10 days=-22
+close	2024-02-01
+summary	none
+due	2026-03-01
+due	2026-03-31
+close	2026-02-01
+close	2025-12-10
+summary	close=2026-03-31 billed=0.1 over=0 unbilled=0 debt=0.1 due=- days=-
+bal	c1:0,c2:0
+summary	none
+total	NaN
+close	2026-04-15
+total	1e+21
+summary	close=2026-05-15 billed=45 over=0 unbilled=0 debt=40.1 due=- days=-
+net	asset=NaN liab=50 net=NaN
+soon	
+total	0
+bal	c1:NaN,c2:-0.1,a1:0,default:2e+21
+bal	c1:-204.9
+due	2026-02-25
+one	0
+due	2024-02-10
+close	2026-04-30
+bal	c1:0,c2:-0.1,a1:100,default:1e+21
+soon	
+close	2026-05-30
+due	2026-07-01
+summary	none
+summary	close=2024-02-28 billed=0 over=0 unbilled=NaN debt=0 due=2024-03-10 days=10
+due	2026-06-30
+net	asset=NaN liab=10 net=NaN
+summary	none
+due	2026-04-01
+summary	close=2025-12-15 billed=50 over=0 unbilled=0 debt=50 due=2025-12-25 days=-6
+due	2026-04-28
+net	asset=1e+21 liab=56.86 net=1e+21
+due	2026-08-01
+summary	close=2026-03-05 billed=1000 over=0 unbilled=0 debt=1000 due=2026-03-20 days=-11
+summary	close=2024-02-15 billed=1000 over=0 unbilled=0 debt=1000 due=2024-03-10 days=9
+due	2026-06-30
+bal	c1:-50
+close	2025-12-31
+total	1e+21
+close	2026-05-28
+total	100
+due	2026-07-01
+close	2026-02-28
+summary	close=2024-02-05 billed=NaN over=0 unbilled=NaN debt=0 due=2024-02-15 days=-15
+due	2026-07-28
+summary	close=2025-12-10 billed=0 over=100 unbilled=0 debt=0 due=2025-12-20 days=-5
+due	2026-02-01
+close	2026-04-01
+summary	close=2026-05-28 billed=0 over=0 unbilled=0 debt=0 due=2026-06-15 days=-10
+close	2025-11-28
+one	-10
+close	2026-04-30
+summary	close=2024-02-15 billed=1000 over=0 unbilled=0 debt=1000 due=2024-03-15 days=15
+one	0.1
+total	100.1
+due	2024-02-15
+one	0
+bal	c1:NaN,c2:NaN,a1:-1e+21,default:101.6
+one	0
+one	-1000
+soon	c1:34.83:0
+net	asset=1e+21 liab=28.43 net=1e+21
+due	2026-07-30
+summary	close=2026-06-05 billed=0 over=0 unbilled=0 debt=0 due=2026-06-10 days=0
+summary	close=2026-03-15 billed=0 over=53 unbilled=0 debt=0 due=- days=-
+net	asset=-1045 liab=0.1 net=-1045.1
+close	2026-06-25
+net	asset=95.1 liab=0 net=95.1
+close	2026-02-01
+summary	close=2026-02-10 billed=0 over=0 unbilled=0 debt=0 due=2026-03-10 days=9
+close	2026-03-25
+due	2024-02-29
+one	NaN
+close	2025-12-01
+bal	c1:2e+21
+close	2026-06-05
+due	2024-03-01
+close	2026-02-28
+due	2026-02-10
+one	-1000
+close	2025-11-30
+soon	c1:5:-5
+soon	
+one	-40
+due	2026-04-05
+bal	c1:-1000,c2:NaN,a1:-50
+close	2026-03-01
+due	2026-06-05
+net	asset=1e+21 liab=0 net=1e+21
+net	asset=100 liab=1e+21 net=-1e+21
+close	2026-01-31
+bal	c1:100,c2:200,a1:-101.5,default:1e+21
+summary	close=2025-12-15 billed=1e+21 over=0 unbilled=0 debt=1e+21 due=2026-01-10 days=9
+summary	close=2026-06-15 billed=0 over=1e+21 unbilled=0 debt=0 due=- days=-
+one	0
+summary	close=2026-06-28 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-07-25 days=24
+summary	close=2026-06-05 billed=0 over=98.5 unbilled=NaN debt=0 due=2026-06-20 days=-5
+summary	none
+close	2026-02-01
+net	asset=166.65999999999997 liab=1e+21 net=-1e+21
+summary	close=2026-05-28 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+summary	close=2026-05-31 billed=0 over=0 unbilled=1e+21 debt=1e+21 due=2026-06-10 days=0
+soon	
+due	2026-03-01
+summary	close=2024-02-25 billed=0 over=0 unbilled=0 debt=0 due=2024-03-25 days=24
+one	-33.33
+total	NaN
+net	asset=0 liab=2100.1 net=-2100.1
+due	2025-12-29
+one	-1000
+close	2025-12-10
+close	2025-12-31
+summary	close=2025-12-05 billed=0 over=1e+21 unbilled=1e+21 debt=0 due=- days=-
+due	2026-01-29
+summary	close=2024-02-05 billed=0 over=1e+21 unbilled=0 debt=0 due=2024-02-10 days=-19
+close	2025-12-25
+net	asset=1e+21 liab=10 net=1e+21
+close	2026-03-01
+due	2026-03-15
+due	2026-08-29
+total	-83.32999999999998
+total	-1e+21
+due	2026-06-29
+one	10
+one	NaN
+summary	close=2026-02-28 billed=0 over=0 unbilled=0 debt=0 due=2026-03-20 days=19
+summary	close=2026-06-25 billed=0 over=2e+21 unbilled=0 debt=0 due=2026-07-10 days=15
+one	0
+one	-990
+summary	close=2025-12-28 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+summary	close=2026-02-10 billed=50 over=0 unbilled=0 debt=50 due=2026-02-15 days=-14
+due	2026-02-05
+close	2025-12-29
+due	2026-07-25
+summary	close=2026-04-10 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-04-25 days=-5
+summary	close=2026-05-31 billed=0 over=0 unbilled=0 debt=0 due=2026-06-30 days=30
+bal	c1:0.1
+total	NaN
+bal	c1:0
+due	2026-03-01
+net	asset=16.77000000000001 liab=0 net=16.77000000000001
+soon	
+close	2026-06-25
+close	2024-02-10
+due	2026-01-29
+close	2024-02-29
+one	1e+21
+bal	c1:-50,c2:66.77000000000001,a1:1e+21,default:-1000
+bal	c1:-33.33,c2:0
+due	2026-06-25
+close	2026-03-25
+due	2026-04-29
+net	asset=1e+21 liab=NaN net=NaN
+summary	close=2024-02-25 billed=0 over=1e+21 unbilled=0 debt=0 due=2024-03-15 days=14
+summary	close=2026-01-05 billed=0 over=0.1 unbilled=NaN debt=0 due=- days=-
+total	1e+21
+soon	
+summary	close=2025-12-05 billed=NaN over=0 unbilled=NaN debt=0 due=2025-12-10 days=-15
+net	asset=50.1 liab=NaN net=NaN
+close	2024-02-29
+one	0
+soon	
+net	asset=NaN liab=66.66 net=NaN
+one	1e+21
+bal	c1:0.1,c2:0,a1:-50,default:1e+21
+due	2026-01-31
+close	2025-12-05
+total	1e+21
+soon	
+close	2025-11-28
+due	2026-03-31
+soon	
+total	-1028.33
+due	2026-03-31
+net	asset=1e+21 liab=NaN net=NaN
+net	asset=NaN liab=0 net=NaN
+soon	
+bal	c1:11.6,c2:0,a1:88.5,default:NaN
+total	-43.43
+soon	
+close	2026-02-28
+due	2026-06-01
+due	2025-12-15
+net	asset=NaN liab=10 net=NaN
+close	2025-12-30
+due	2026-02-05
+close	2025-12-15
+close	2025-12-25
+summary	close=2026-06-10 billed=45 over=0 unbilled=0 debt=45 due=2026-06-15 days=0
+summary	close=2025-12-10 billed=0 over=0 unbilled=0 debt=0 due=2025-12-15 days=-16
+due	2026-01-05
+summary	none
+due	2026-02-05
+summary	close=2025-11-28 billed=0 over=0 unbilled=0 debt=0 due=2025-12-25 days=0
+summary	close=2024-02-25 billed=0 over=0 unbilled=0 debt=0 due=2024-03-25 days=24
+due	2026-01-31
+close	2026-05-31
+bal	c1:0,c2:NaN,a1:NaN
+summary	close=2026-04-10 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-05-10 days=10
+summary	close=2025-12-10 billed=1000 over=0 unbilled=0 debt=1000 due=2025-12-20 days=-11
+total	2e+21
+summary	close=2025-12-25 billed=0 over=0 unbilled=0 debt=0 due=2026-01-25 days=31
+close	2026-05-25
+net	asset=-50 liab=0 net=-50
+total	-1155
+due	2026-03-28
+due	2026-07-30
+bal	c1:5,c2:100
+due	2026-01-10
+bal	c1:0
+summary	close=2026-02-10 billed=1e+21 over=0 unbilled=0 debt=1e+21 due=2026-02-25 days=-3
+summary	close=2025-12-05 billed=50 over=0 unbilled=0 debt=50 due=2025-12-15 days=-10
+due	2026-07-25
+total	NaN
+one	1e+21
+summary	none
+one	-1e+21
+summary	close=2026-06-10 billed=0 over=71.67 unbilled=0 debt=0 due=- days=-
+due	2026-02-01
+close	2025-12-10
+due	2026-07-01
+summary	close=2024-02-25 billed=0 over=0 unbilled=0 debt=0 due=2024-03-25 days=24
+net	asset=0 liab=0 net=0
+summary	close=2026-05-31 billed=0 over=0 unbilled=0 debt=0 due=2026-06-15 days=5
+total	1e+21
+summary	close=2025-11-28 billed=50 over=0 unbilled=0 debt=45 due=2025-12-15 days=-10
+bal	c1:0.1,c2:1e+21,a1:-55,default:0.1
+close	2026-01-28
+total	NaN
+soon	
+total	NaN
+one	0
+net	asset=-23.33 liab=0 net=-23.33
+soon	c1:50.1:-11
+bal	c1:0,c2:0,a1:-1000
+net	asset=33.33 liab=0 net=33.33
+due	2026-04-30
+due	2026-08-15
+soon	
+close	2026-05-29
+soon	
+summary	close=2024-02-10 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+soon	
+bal	c1:-50,c2:0,a1:100,default:0
+close	2026-06-01
+net	asset=NaN liab=33.33 net=NaN
+summary	close=2026-04-10 billed=1000 over=0 unbilled=0 debt=1000 due=2026-04-25 days=-5
+due	2026-05-01
+soon	a1:1e+21:-12
+summary	none
+bal	c1:1e+21,c2:-1000,a1:-995,default:-50.1
+due	2026-07-30
+due	2026-02-01
+bal	c1:100,c2:-1000
+summary	close=2026-01-25 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-02-25 days=25
+summary	none
+bal	c1:100,c2:1e+21,a1:-10
+close	2026-06-30
+soon	
+summary	none
+close	2026-01-01
+summary	close=2026-06-28 billed=0 over=0.1 unbilled=0 debt=0 due=2026-07-10 days=9
+bal	c1:-10,c2:0,a1:50,default:0
+close	2026-05-30
+due	2026-04-01
+summary	close=2025-12-05 billed=0 over=1e+21 unbilled=0 debt=0 due=2025-12-15 days=-10
+due	2024-04-29
+summary	close=2024-02-25 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+summary	close=2026-06-15 billed=0 over=0 unbilled=0 debt=0 due=2026-07-10 days=25
+summary	close=2026-01-31 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+bal	c1:5,c2:-98.5
+due	2026-02-05
+close	2026-05-31
+bal	c1:-0.1,c2:0.1
+summary	none
+due	2026-02-15
+total	NaN
+close	2026-06-01
+one	NaN
+close	2024-02-29
+soon	
+total	100
+summary	none
+close	2026-01-10
+summary	close=2026-01-31 billed=1000 over=0 unbilled=0 debt=1000 due=- days=-
+soon	
+close	2024-03-01
+total	323.33
+due	2024-03-31
+net	asset=0 liab=NaN net=NaN
+bal	c1:NaN
+one	1e+21
+due	2026-01-05
+summary	close=2024-02-10 billed=0 over=1e+21 unbilled=0 debt=0 due=2024-02-20 days=-10
+total	-999.9
+close	2026-05-28
+soon	
+summary	none
+soon	
+one	0
+bal	c1:-1000
+net	asset=NaN liab=1e+21 net=NaN
+summary	close=2026-03-10 billed=0 over=0 unbilled=0 debt=1e+21 due=2026-03-31 days=0
+summary	close=2026-06-30 billed=0 over=33.43 unbilled=0 debt=0 due=2026-07-20 days=19
+total	0
+due	2026-01-28
+one	5
+close	2026-05-31
+close	2026-06-01
+summary	close=2026-03-05 billed=0 over=0 unbilled=NaN debt=0 due=- days=-
+due	2026-04-25
+summary	close=2026-02-15 billed=0 over=100 unbilled=0 debt=0 due=2026-02-20 days=-9
+total	0
+due	2025-12-05
+summary	close=2024-02-10 billed=0 over=0 unbilled=100 debt=100 due=2024-02-15 days=-15
+net	asset=NaN liab=50.1 net=NaN
+summary	close=2026-02-10 billed=0 over=0 unbilled=0 debt=0 due=2026-03-10 days=10
+soon	c2:33.43:-11,default:50:-11
+one	-9.9
+close	2024-02-10
+soon	
+summary	close=2026-02-28 billed=0 over=0 unbilled=0 debt=0 due=2026-03-10 days=9
+close	2026-05-29
+total	1e+21
+close	2025-12-10
+close	2026-04-05
+soon	
+close	2024-02-28
+due	2026-06-30
+bal	c1:-50,c2:-1000
+summary	none
+close	2025-11-30
+net	asset=NaN liab=0 net=NaN
+due	2026-05-29
+net	asset=2e+21 liab=1e+21 net=1e+21
+due	2026-03-31
+one	0.1
+summary	close=2026-06-10 billed=0 over=0 unbilled=0 debt=0 due=2026-06-20 days=5
+bal	c1:NaN
+summary	close=2026-04-10 billed=1000 over=0 unbilled=0 debt=1000 due=- days=-
+total	NaN
+soon	
+total	1e+21
+one	NaN
+summary	close=2026-02-10 billed=0 over=0 unbilled=33.33 debt=0 due=2026-02-15 days=-13
+net	asset=NaN liab=33.33 net=NaN
+soon	a1:50:0
+soon	c1:100:5
+summary	close=2024-02-10 billed=0 over=0 unbilled=10 debt=10 due=2024-02-15 days=-14
+total	1e+21
+net	asset=1e+21 liab=0 net=1e+21
+summary	close=2025-12-05 billed=0 over=100 unbilled=33.33 debt=0 due=2025-12-10 days=-15
+bal	c1:-100,c2:100,a1:-1e+21,default:-995
+summary	close=2026-05-28 billed=0 over=0 unbilled=0 debt=0 due=2026-06-25 days=25
+due	2026-01-29
+total	10
+summary	none
+due	2026-03-30
+one	0
+summary	none
+summary	close=2024-02-10 billed=0 over=0 unbilled=0 debt=0 due=2024-02-20 days=-9
+due	2025-12-28
+one	-1e+21
+close	2024-02-01
+bal	c1:NaN,c2:0.1,a1:5
+bal	c1:0,c2:100,a1:0,default:0
+close	2026-02-05
+summary	close=2024-02-10 billed=0 over=0 unbilled=100 debt=100 due=- days=-
+one	0
+total	-1e+21
+soon	c1:1.5:20
+summary	close=2026-06-10 billed=0 over=100 unbilled=0 debt=0 due=2026-06-20 days=10
+close	2026-03-01
+bal	c1:0,c2:0.1,a1:-9.9,default:0.1
+soon	
+summary	close=2026-06-30 billed=0 over=1e+21 unbilled=0 debt=0 due=- days=-
+close	2026-01-28
+summary	close=2025-11-28 billed=0 over=0 unbilled=0 debt=100 due=- days=-
+due	2026-05-29
+due	2026-02-28
+summary	close=2026-01-25 billed=0 over=0.1 unbilled=0 debt=33.23 due=2026-02-10 days=10
+bal	c1:0,c2:-1e+21,a1:1e+21,default:100
+due	2026-03-01
+close	2026-04-15
+summary	close=2026-06-30 billed=0.1 over=0 unbilled=0 debt=0.1 due=2026-07-20 days=19
+summary	close=2026-05-31 billed=0 over=100 unbilled=10 debt=10 due=2026-06-25 days=15
+summary	none
+due	2026-01-15
+due	2026-08-05
+total	NaN
+close	2025-12-30
+summary	close=2024-02-15 billed=0 over=0 unbilled=0 debt=0 due=2024-02-25 days=-5
+summary	close=2026-03-15 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-04-15 days=15
+bal	c1:-101.6,c2:60,a1:100.1,default:5
+summary	none
+bal	c1:-1010
+soon	
+summary	none
+one	-1000
+due	2026-06-01
+soon	
+summary	none
+summary	close=2025-12-10 billed=50 over=0 unbilled=1e+21 debt=1e+21 due=2025-12-25 days=-6
+close	2024-02-15
+net	asset=NaN liab=0.1 net=NaN
+bal	c1:0,c2:1e+21,a1:0,default:-1033.33
+bal	c1:1e+21,c2:0,a1:0,default:1e+21
+bal	c1:100,c2:-9.9,a1:-50
+summary	close=2026-05-28 billed=0 over=0 unbilled=0 debt=0 due=2026-06-20 days=20
+net	asset=2e+21 liab=110 net=2e+21
+bal	c1:NaN,c2:1e+21
+close	2026-01-25
+close	2026-03-01
+one	0
+total	NaN
+one	-1000
+total	-1109.9
+bal	c1:0.1,c2:0,a1:-1000,default:NaN
+close	2026-02-01
+summary	close=2026-06-05 billed=0 over=0 unbilled=0 debt=0 due=2026-06-20 days=5
+summary	close=2025-12-15 billed=0 over=0 unbilled=0 debt=0 due=2025-12-25 days=0
+summary	close=2025-12-25 billed=0 over=1e+21 unbilled=NaN debt=0 due=2026-01-20 days=26
+close	2026-02-01
+due	2026-04-01
+due	2026-02-28
+close	2026-05-15
+total	-956.67
+summary	close=2025-12-25 billed=0 over=0 unbilled=0 debt=0 due=2026-01-25 days=31
+summary	close=2026-05-28 billed=0 over=100 unbilled=1e+21 debt=1e+21 due=2026-06-20 days=10
+summary	close=2025-12-10 billed=50 over=0 unbilled=0 debt=50 due=2025-12-20 days=-11
+summary	close=2024-02-28 billed=0 over=0 unbilled=0 debt=0 due=2024-03-15 days=15
+bal	c1:100,c2:0.1,a1:0,default:0.1
+bal	c1:-50,c2:0,a1:0,default:100
+summary	close=2026-04-28 billed=100 over=0 unbilled=0 debt=100 due=2026-05-10 days=10
+due	2026-07-01
+net	asset=-966.5699999999999 liab=1e+21 net=-1e+21
+soon	
+due	2026-07-01
+one	-999.9
+one	0
+summary	close=2026-06-05 billed=0 over=0.1 unbilled=0 debt=0 due=2026-06-20 days=-5
+close	2026-02-10
+summary	close=2026-05-31 billed=0 over=0 unbilled=0 debt=0 due=2026-06-15 days=0
+net	asset=NaN liab=100 net=NaN
+due	2026-03-31
+due	2026-07-01
+summary	none
+due	2026-06-30
+close	2026-04-30
+due	2026-01-31
+soon	
+total	-1e+21
+summary	none
+soon	
+close	2026-03-28
+bal	c1:1e+21,c2:0,a1:0,default:0
+close	2026-06-15
+due	2026-07-15
+due	2026-03-10
+summary	close=2026-05-10 billed=1e+21 over=0 unbilled=10 debt=1e+21 due=2026-05-15 days=-16
+close	2024-02-10
+due	2026-03-29
+close	2026-02-28
+total	-49.8
+soon	
+due	2026-02-01
+close	2026-03-01
+summary	close=2026-02-10 billed=50 over=0 unbilled=0 debt=45 due=- days=-
+close	2026-05-15
+soon	
+summary	close=2025-12-31 billed=0 over=0 unbilled=0 debt=0 due=2026-01-20 days=19
+summary	none
+due	2026-01-29
+bal	c1:NaN,c2:98.5
+due	2026-01-25
+soon	
+summary	none
+net	asset=0 liab=1e+21 net=-1e+21
+summary	none
+due	2026-03-31
+soon	
+soon	
+due	2024-02-29
+total	-45
+one	1e+21
+one	0
+total	NaN
+close	2025-12-25
+close	2024-02-01
+due	2026-06-29
+bal	c1:NaN,c2:1e+21,a1:0
+due	2026-07-25
+one	1e+21
+soon	
+bal	c1:1e+21
+due	2026-03-28
+summary	close=2024-02-15 billed=0 over=1e+21 unbilled=0 debt=0 due=2024-03-15 days=15
+net	asset=NaN liab=NaN net=NaN
+total	NaN
+summary	none
+soon	c2:50:-10
+close	2026-01-01
+due	2026-05-10
+soon	default:1000:-6
+net	asset=-999.9 liab=0 net=-999.9
+due	2026-02-28
+summary	close=2026-03-28 billed=0 over=0 unbilled=0 debt=0 due=2026-04-25 days=25
+net	asset=0.1 liab=NaN net=NaN
+due	2026-01-25
+close	2024-02-29
+net	asset=NaN liab=60 net=NaN
+one	NaN
+summary	close=2024-02-29 billed=0 over=0 unbilled=0.1 debt=0 due=2024-03-25 days=24
+close	2026-01-15
+summary	close=2025-12-25 billed=0 over=0 unbilled=0 debt=0 due=2026-01-20 days=26
+due	2026-05-28
+soon	
+close	2026-01-10
+summary	close=2026-06-25 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+close	2026-02-28
+net	asset=NaN liab=1000 net=NaN
+close	2026-02-28
+close	2026-03-31
+due	2026-01-05
+one	40
+due	2026-03-15
+summary	close=2026-06-25 billed=0 over=0 unbilled=0 debt=0 due=2026-07-15 days=20
+one	0
+summary	close=2024-02-15 billed=0 over=0 unbilled=0 debt=0 due=2024-02-20 days=-9
+close	2026-03-01
+summary	close=2025-12-15 billed=0 over=0 unbilled=0 debt=0 due=2025-12-20 days=-11
+summary	close=2025-12-31 billed=0 over=50 unbilled=0 debt=0 due=2026-01-20 days=20
+due	2026-08-15
+net	asset=NaN liab=NaN net=NaN
+soon	
+summary	close=2026-02-15 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-02-25 days=-4
+due	2026-05-15
+one	-99.9
+summary	close=2025-12-25 billed=0.1 over=0 unbilled=0 debt=0.1 due=2026-01-15 days=15
+close	2025-12-28
+close	2026-01-31
+close	2025-12-15
+due	2026-04-10
+close	2026-04-15
+summary	none
+total	-999.9
+summary	close=2026-02-28 billed=0 over=0 unbilled=0 debt=0 due=2026-03-10 days=10
+summary	close=2025-12-15 billed=0 over=5.1 unbilled=0 debt=0 due=2025-12-20 days=-5
+total	1e+21
+close	2026-02-01
+summary	none
+total	-105
+one	100
+total	NaN
+total	NaN
+due	2026-03-15
+due	2026-02-28
+total	1e+21
+bal	c1:NaN,c2:-0.1,a1:NaN,default:NaN
+due	2026-05-29
+summary	close=2026-02-15 billed=0.1 over=0 unbilled=0 debt=0.1 due=- days=-
+one	NaN
+summary	close=2025-12-25 billed=0 over=0 unbilled=0 debt=0 due=2026-01-25 days=31
+summary	close=2025-11-30 billed=0 over=1e+21 unbilled=0 debt=0 due=2025-12-10 days=-15
+total	-1000
+due	2024-02-29
+bal	c1:100,c2:-60,a1:NaN,default:11.5
+summary	close=2026-05-31 billed=50 over=0 unbilled=0 debt=50 due=- days=-
+bal	c1:-50
+net	asset=0 liab=2000 net=-2000
+one	-1e+21
+net	asset=NaN liab=NaN net=NaN
+close	2024-02-15
+summary	close=2026-04-15 billed=0 over=0.1 unbilled=0 debt=0 due=2026-05-15 days=15
+close	2026-05-15
+close	2026-04-01
+summary	close=2025-12-28 billed=33.33 over=0 unbilled=0 debt=28.33 due=- days=-
+summary	close=2026-06-10 billed=50 over=0 unbilled=10 debt=60 due=2026-06-20 days=5
+summary	close=2025-12-28 billed=50 over=0 unbilled=0 debt=50 due=2026-01-15 days=14
+total	NaN
+summary	none
+bal	c1:1e+21
+bal	c1:1e+21,c2:-50
+summary	close=2024-02-15 billed=1000 over=0 unbilled=0 debt=0 due=2024-03-10 days=10
+close	2026-01-05
+due	2026-07-15
+bal	c1:15,c2:1e+21,a1:1e+21
+due	2026-08-31
+total	-950.1
+summary	close=2025-12-28 billed=50 over=0 unbilled=0 debt=50 due=2026-01-25 days=24
+due	2026-04-30
+close	2025-12-05
+summary	close=2026-01-15 billed=0 over=1e+21 unbilled=1e+21 debt=0 due=2026-01-25 days=-6
+close	2026-05-31
+close	2026-03-25
+due	2024-02-15
+due	2026-06-30
+close	2026-05-31
+close	2026-01-10
+due	2024-03-30
+soon	
+net	asset=NaN liab=0 net=NaN
+summary	close=2026-02-28 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+summary	none
+total	100.19999999999999
+soon	
+due	2025-12-25
+bal	c1:NaN
+due	2026-06-30
+total	NaN
+close	2026-02-01
+one	-1000
+due	2026-01-01
+total	NaN
+total	NaN
+summary	close=2026-01-05 billed=5 over=100 unbilled=NaN debt=0 due=2026-01-10 days=-22
+due	2026-08-29
+soon	
+due	2026-07-25
+due	2026-02-28
+due	2026-02-01
+due	2026-01-01
+bal	c1:100,c2:0,a1:100
+one	100
+summary	close=2026-05-31 billed=0 over=0 unbilled=0 debt=0 due=2026-06-20 days=-5
+bal	c1:0,c2:0
+bal	c1:1e+21,c2:0,a1:100,default:0
+summary	close=2026-06-10 billed=1000 over=0 unbilled=0 debt=1000 due=2026-06-15 days=-16
+net	asset=NaN liab=NaN net=NaN
+summary	close=2026-06-05 billed=5 over=0 unbilled=0 debt=5 due=2026-06-10 days=-15
+due	2026-01-01
+bal	c1:0,c2:0.1,a1:1e+21,default:1e+21
+summary	none
+total	0
+summary	close=2026-02-05 billed=0 over=0.1 unbilled=1e+21 debt=1e+21 due=2026-02-10 days=-18
+total	-1e+21
+one	-100
+close	2025-12-28
+summary	none
+summary	close=2026-06-10 billed=0 over=0 unbilled=0 debt=0 due=2026-06-20 days=-11
+due	2026-02-28
+total	105
+summary	close=2026-02-10 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+summary	close=2026-05-28 billed=NaN over=100 unbilled=NaN debt=0 due=2026-06-10 days=-5
+summary	close=2025-12-01 billed=0 over=0 unbilled=0 debt=0 due=2025-12-10 days=-21
+close	2026-02-28
+summary	close=2026-02-28 billed=0 over=0 unbilled=33.33 debt=66.66 due=2026-03-25 days=25
+due	2026-04-30
+summary	none
+soon	c1:1000:-21
+due	2026-01-30
+due	2026-02-28
+one	0
+bal	c1:100,c2:0.1,a1:0,default:0
+total	NaN
+summary	none
+close	2025-12-15
+bal	c1:96.5,c2:1e+21
+summary	close=2025-12-10 billed=50 over=0 unbilled=0 debt=50 due=2025-12-20 days=-11
+due	2026-01-01
+due	2026-04-01
+bal	c1:1e+21,c2:0,a1:-33.33,default:2e+21
+close	2026-05-25
+due	2026-05-10
+soon	
+bal	c1:NaN,c2:-988.5,a1:0
+close	2026-01-01
+summary	close=2024-02-05 billed=NaN over=0 unbilled=NaN debt=0 due=2024-02-15 days=-14
+summary	close=2024-02-10 billed=155 over=0 unbilled=0 debt=155 due=2024-02-20 days=-9
+summary	close=2026-06-15 billed=0 over=0 unbilled=0 debt=0 due=2026-07-15 days=30
+close	2024-02-01
+summary	close=2026-04-15 billed=0 over=0 unbilled=0 debt=0 due=2026-05-10 days=10
+soon	
+bal	c1:1e+21,c2:90,a1:-1e+21
+close	2025-12-25
+close	2026-02-28
+summary	close=2026-04-30 billed=26.67 over=0 unbilled=33.33 debt=60 due=- days=-
+close	2024-02-01
+close	2026-06-10
+soon	
+summary	close=2026-02-10 billed=0 over=0 unbilled=0 debt=0 due=2026-02-28 days=-1
+due	2026-01-28
+due	2026-07-30
+due	2026-07-05
+one	-100
+soon	
+total	-100
+net	asset=NaN liab=NaN net=NaN
+summary	close=2026-05-28 billed=NaN over=0 unbilled=NaN debt=0 due=2026-06-20 days=-5
+summary	close=2026-02-10 billed=0 over=2e+21 unbilled=NaN debt=0 due=2026-03-10 days=9
+due	2026-06-01
+one	1e+21
+summary	close=2026-03-28 billed=0 over=0 unbilled=0 debt=0 due=2026-04-15 days=15
+due	2026-02-15
+soon	
+close	2026-01-01
+soon	
+bal	c1:-1000,c2:-1e+21
+close	2026-05-31
+summary	close=2025-12-05 billed=0 over=0 unbilled=0 debt=0 due=2025-12-15 days=-17
+close	2026-05-05
+close	2026-06-15
+due	2025-12-28
+close	2026-06-01
+soon	
+bal	c1:0.1,c2:0,a1:100,default:-1000
+summary	close=2024-02-28 billed=50 over=0 unbilled=0 debt=50 due=2024-03-10 days=9
+summary	close=2026-01-28 billed=33.23 over=0 unbilled=0 debt=33.23 due=2026-02-10 days=9
+summary	close=2026-05-28 billed=0 over=0 unbilled=0 debt=0 due=2026-06-20 days=5
+bal	c1:NaN,c2:NaN,a1:NaN
+summary	close=2026-01-28 billed=0 over=0.1 unbilled=0 debt=0 due=2026-02-20 days=20
+bal	c1:NaN
+bal	c1:0,c2:1e+21
+close	2026-05-30
+close	2024-03-01
+soon	
+soon	
+summary	close=2025-12-15 billed=1e+21 over=0 unbilled=0 debt=1e+21 due=2026-01-10 days=16
+close	2025-11-30
+bal	c1:-1000,c2:0,a1:0,default:-1000
+summary	close=2026-02-28 billed=1e+21 over=0 unbilled=0 debt=1e+21 due=2026-03-15 days=14
+close	2025-12-25
+net	asset=NaN liab=100.1 net=NaN
+bal	c1:0,c2:1e+21,a1:-50
+net	asset=1e+21 liab=100 net=1e+21
+summary	close=2026-02-10 billed=0 over=0.1 unbilled=0 debt=0 due=2026-03-10 days=9
+close	2026-01-31
+summary	close=2025-12-10 billed=0 over=0 unbilled=0 debt=0 due=2025-12-15 days=-17
+summary	close=2026-05-31 billed=988.5 over=0 unbilled=0 debt=988.5 due=2026-06-25 days=10
+close	2024-02-29
+close	2024-02-29
+summary	close=2025-12-25 billed=0 over=0 unbilled=0 debt=0 due=2026-01-25 days=31
+soon	
+summary	close=2026-01-10 billed=1000 over=0 unbilled=0 debt=1000 due=2026-01-25 days=-6
+due	2026-01-30
+bal	c1:0,c2:-99.9,a1:NaN
+summary	close=2026-06-10 billed=0 over=100 unbilled=NaN debt=0 due=2026-06-20 days=10
+close	2026-05-29
+one	0.1
+one	0.1
+net	asset=NaN liab=0 net=NaN
+due	2026-06-30
+soon	
+one	-50
+close	2026-06-01
+total	NaN
+summary	close=2026-01-10 billed=0 over=0.1 unbilled=0 debt=0 due=2026-01-25 days=-7
+summary	close=2026-02-25 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-03-25 days=25
+net	asset=1e+21 liab=50 net=1e+21
+soon	
+net	asset=NaN liab=100 net=NaN
+net	asset=-1126.67 liab=150 net=-1276.67
+total	NaN
+due	2026-03-28
+summary	close=2026-04-10 billed=0 over=0.10000000000000142 unbilled=0 debt=0 due=2026-04-25 days=-5
+due	2026-01-10
+due	2026-03-01
+summary	close=2026-03-31 billed=33.23 over=0 unbilled=0 debt=33.23 due=2026-04-10 days=10
+soon	
+net	asset=NaN liab=0 net=NaN
+soon	a1:50:-10
+close	2026-01-28
+due	2026-02-28
+soon	
+soon	
+due	2025-12-28
+due	2025-12-25
+summary	close=2026-05-31 billed=NaN over=100 unbilled=NaN debt=0 due=2026-06-20 days=-5
+close	2026-03-29
+one	0.1
+summary	close=2026-06-10 billed=50 over=0 unbilled=0 debt=83.32999999999998 due=2026-06-15 days=0
+due	2026-04-15
+summary	close=2026-05-31 billed=0 over=100 unbilled=0 debt=0 due=- days=-
+summary	close=2024-02-15 billed=0 over=100 unbilled=0 debt=0 due=2024-03-10 days=9
+total	-154.8
+close	2026-06-15
+soon	
+close	2026-06-25
+net	asset=NaN liab=10.1 net=NaN
+bal	c1:-11.4,c2:-40
+due	2026-07-25
+total	1e+21
+total	-900
+one	-1000
+close	2026-06-01
+close	2024-03-01
+due	2026-04-01
+summary	close=2026-06-05 billed=1000 over=0 unbilled=0 debt=1000 due=2026-06-10 days=-21
+bal	c1:5,c2:1e+21
+net	asset=NaN liab=0 net=NaN
+summary	close=2024-02-10 billed=0 over=0 unbilled=0.1 debt=0.1 due=2024-03-10 days=10
+bal	c1:0,c2:0,a1:0,default:0
+close	2026-04-15
+summary	close=2026-06-05 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+summary	close=2026-01-25 billed=1000 over=0 unbilled=0 debt=1000 due=- days=-
+due	2026-01-28
+total	1e+21
+soon	
+close	2026-05-10
+one	-50
+due	2026-07-01
+due	2026-06-30
+close	2025-12-10
+summary	none
+due	2026-02-28
+soon	
+due	2026-04-01
+close	2026-05-01
+summary	close=2025-12-05 billed=0 over=1e+21 unbilled=0 debt=0 due=2025-12-25 days=0
+due	2026-08-01
+summary	close=2026-05-31 billed=50 over=0 unbilled=0 debt=50 due=2026-06-10 days=0
+net	asset=1e+21 liab=1083.33 net=1e+21
+one	0.1
+bal	c1:0,c2:-1000,a1:1e+21,default:100
+close	2026-02-10
+summary	close=2025-11-30 billed=0 over=0 unbilled=10 debt=0 due=2025-12-15 days=-10
+net	asset=NaN liab=0 net=NaN
+close	2026-06-30
+one	0
+close	2024-02-28
+summary	close=2026-02-05 billed=0 over=1e+21 unbilled=10 debt=0 due=2026-02-20 days=-8
+one	NaN
+bal	c1:-1010,c2:10.1,a1:-10,default:-50
+summary	close=2025-12-05 billed=0 over=1e+21 unbilled=1e+21 debt=0 due=- days=-
+close	2024-02-15
+one	-31.829999999999984
+due	2026-03-10
+close	2026-02-15
+due	2026-08-01
+close	2025-12-28
+net	asset=NaN liab=33.43 net=NaN
+summary	close=2026-02-28 billed=0 over=0.09999999999999964 unbilled=0 debt=0 due=2026-03-10 days=9
+one	-1000
+close	2026-02-28
+bal	c1:-50,c2:0,a1:0
+due	2025-12-29
+summary	close=2026-02-28 billed=0 over=100 unbilled=0 debt=0 due=2026-03-20 days=20
+due	2026-01-01
+total	-100
+close	2025-12-31
+due	2024-03-15
+bal	c1:0,c2:33.43,a1:0
+close	2026-07-01
+net	asset=NaN liab=33.33 net=NaN
+bal	c1:0,c2:1e+21,a1:100,default:0.1
+total	NaN
+due	2024-03-01
+close	2026-02-25
+close	2026-01-29
+summary	close=2026-03-28 billed=1.5 over=0 unbilled=0 debt=1.5 due=2026-04-10 days=10
+summary	close=2025-12-10 billed=1000 over=0 unbilled=0 debt=1000 due=- days=-
+due	2026-04-15
+summary	close=2026-05-10 billed=0 over=0 unbilled=0 debt=0 due=2026-05-15 days=-16
+due	2026-07-29
+summary	none
+summary	close=2026-01-05 billed=50 over=0 unbilled=0 debt=50 due=2026-01-15 days=-16
+close	2025-12-01
+due	2026-01-05
+total	1e+21
+due	2026-05-31
+bal	c1:-1000,c2:10.1,a1:-1000,default:0
+bal	c1:100,c2:0.1,a1:-1000,default:0
+total	0
+one	-1000
+due	2024-03-29
+total	-1045
+net	asset=-1e+21 liab=1e+21 net=-2e+21
+total	0.2
+net	asset=NaN liab=NaN net=NaN
+summary	close=2025-12-05 billed=0 over=1e+21 unbilled=43.33 debt=0 due=- days=-
+total	NaN
+due	2024-02-15
+total	1e+21
+one	-1000
+bal	c1:NaN,c2:-50,a1:-50
+total	NaN
+due	2025-12-01
+bal	c1:NaN,c2:NaN,a1:0.1
+close	2026-06-15
+total	-99.7
+net	asset=1e+21 liab=-5 net=1e+21
+summary	close=2026-05-15 billed=0 over=0 unbilled=0 debt=0 due=2026-06-10 days=10
+bal	c1:-1000,c2:1e+21
+bal	c1:0,c2:1e+21,a1:0
+summary	close=2026-03-05 billed=0 over=1e+21 unbilled=0 debt=0 due=- days=-
+bal	c1:0,c2:0,a1:0,default:0.1
+close	2026-04-30
+summary	close=2025-12-28 billed=0 over=0 unbilled=0 debt=0 due=2026-01-15 days=14
+due	2026-07-10
+summary	close=2026-06-25 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+net	asset=NaN liab=NaN net=NaN
+close	2026-05-05
+one	0.1
+soon	
+bal	c1:-66.66
+soon	
+summary	close=2026-01-05 billed=0 over=0 unbilled=0 debt=0 due=2026-01-31 days=0
+soon	
+close	2025-11-28
+due	2026-01-31
+net	asset=-51.5 liab=10 net=-61.5
+close	2024-02-01
+net	asset=NaN liab=1000 net=NaN
+summary	close=2025-12-05 billed=0 over=0 unbilled=100.1 debt=100.3 due=2025-12-15 days=-10
+close	2025-12-31
+summary	close=2024-02-10 billed=0 over=0 unbilled=43.33 debt=43.33 due=- days=-
+summary	close=2026-01-25 billed=0 over=0.1 unbilled=0 debt=0 due=2026-02-15 days=14
+due	2026-03-25
+due	2026-08-10
+one	1e+21
+summary	close=2026-06-10 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-07-10 days=9
+one	0
+close	2026-06-10
+summary	close=2025-12-10 billed=0 over=0 unbilled=0 debt=0 due=2026-01-10 days=9
+total	1e+21
+close	2026-05-28
+summary	close=2026-02-25 billed=0 over=199.9 unbilled=0 debt=0 due=2026-03-10 days=10
+summary	none
+due	2026-07-01
+summary	close=2026-05-10 billed=1e+21 over=0 unbilled=NaN debt=0 due=2026-05-20 days=-11
+close	2026-01-10
+close	2026-04-01
+total	0
+summary	close=2024-02-28 billed=0 over=100 unbilled=0 debt=0 due=2024-03-15 days=15
+summary	close=2026-03-15 billed=0.30000000000000004 over=0 unbilled=0 debt=0.30000000000000004 due=2026-03-20 days=-11
+net	asset=1e+21 liab=NaN net=NaN
+due	2026-07-01
+bal	c1:100,c2:-50,a1:1e+21,default:1e+21
+due	2025-12-30
+summary	close=2026-01-15 billed=1000 over=0 unbilled=0 debt=1000 due=2026-01-20 days=-12
+close	2026-05-29
+summary	none
+summary	close=2025-12-28 billed=0 over=10 unbilled=0 debt=0 due=2026-01-15 days=14
+due	2026-03-25
+one	0
+summary	close=2026-02-05 billed=5 over=0 unbilled=0 debt=0 due=2026-02-20 days=-8
+due	2026-03-31
+summary	close=2025-12-10 billed=0 over=100 unbilled=NaN debt=0 due=2025-12-15 days=-17
+net	asset=-1e+21 liab=0.1 net=-1e+21
+due	2026-06-29
+close	2026-02-05
+summary	none
+close	2026-05-31
+total	50.1
+total	0
+close	2025-12-28
+due	2026-06-01
+close	2026-06-05
+close	2026-06-01
+summary	close=2026-05-31 billed=45.1 over=0 unbilled=0 debt=45.1 due=2026-06-10 days=-15
+summary	none
+total	NaN
+bal	c1:0
+due	2026-04-10
+total	-5
+close	2025-12-15
+net	asset=-1e+21 liab=NaN net=NaN
+one	100
+close	2026-01-25
+close	2026-02-28
+close	2026-01-01
+total	-995
+one	-5
+total	NaN
+summary	close=2026-01-15 billed=0 over=0.1 unbilled=0 debt=0 due=- days=-
+summary	none
+summary	close=2024-02-10 billed=1000 over=0 unbilled=0 debt=1000 due=2024-03-10 days=10
+total	2e+21
+summary	close=2025-12-25 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+total	NaN
+summary	close=2026-05-10 billed=0 over=100 unbilled=0 debt=0 due=2026-05-25 days=-6
+close	2026-02-10
+net	asset=NaN liab=10 net=NaN
+close	2026-01-01
+close	2024-02-29
+close	2026-02-01
+soon	
+due	2026-03-31
+soon	
+soon	
+summary	none
+summary	close=2024-02-15 billed=0 over=0 unbilled=0 debt=0 due=2024-03-10 days=9
+due	2024-03-15
+due	2026-02-10
+close	2026-05-29
+due	2026-04-28
+summary	close=2026-06-01 billed=0 over=100 unbilled=0 debt=0 due=2026-06-28 days=3
+bal	c1:100,c2:-1000,a1:-50,default:-50
+summary	none
+bal	c1:100,c2:1e+21,a1:-1000,default:-1e+21
+one	-1000
+net	asset=NaN liab=NaN net=NaN
+due	2026-03-25
+summary	close=2025-12-05 billed=0 over=0 unbilled=0 debt=0 due=2025-12-25 days=0
+net	asset=NaN liab=0.1 net=NaN
+bal	c1:0
+due	2026-03-25
+soon	
+total	0.1
+summary	close=2026-01-28 billed=0 over=100 unbilled=0 debt=0 due=- days=-
+summary	close=2026-02-28 billed=0 over=0 unbilled=0 debt=0 due=2026-03-10 days=10
+close	2026-05-30
+due	2026-01-15
+close	2026-07-01
+close	2025-12-01
+total	1e+21
+one	-150
+one	0
+summary	close=2026-06-15 billed=50 over=0 unbilled=0 debt=50 due=2026-06-20 days=-11
+soon	a1:1000:-1,c2:33.23:15
+bal	c1:-33.23,c2:-50,a1:-100,default:0
+close	2026-07-01
+summary	close=2024-02-10 billed=NaN over=100 unbilled=NaN debt=0 due=- days=-
+one	NaN
+soon	c2:1000:0
+due	2026-05-31
+close	2026-06-15
+summary	close=2025-12-10 billed=0 over=0.1 unbilled=0 debt=0 due=2025-12-20 days=-12
+due	2026-02-25
+close	2026-04-15
+bal	c1:NaN
+due	2026-06-01
+close	2025-11-30
+soon	
+due	2026-03-31
+summary	close=2026-02-10 billed=0 over=0 unbilled=NaN debt=0 due=- days=-
+summary	none
+net	asset=-1e+21 liab=1e+21 net=-2e+21
+net	asset=NaN liab=0 net=NaN
+due	2026-04-30
+total	90
+close	2026-06-15
+one	0
+net	asset=NaN liab=33.33 net=NaN
+one	100
+total	-1e+21
+summary	close=2026-03-05 billed=0 over=0 unbilled=0 debt=0 due=2026-03-15 days=-16
+net	asset=1e+21 liab=20 net=1e+21
+close	2026-05-28
+total	-953.4
+summary	close=2025-12-25 billed=0 over=0 unbilled=0 debt=0 due=2026-01-20 days=20
+summary	close=2026-04-15 billed=0 over=0 unbilled=0 debt=0 due=2026-05-10 days=10
+total	1.7000000000000002
+summary	close=2026-02-05 billed=NaN over=1e+21 unbilled=NaN debt=0 due=2026-02-10 days=-18
+close	2026-05-05
+soon	
+due	2026-06-28
+bal	c1:-33.33
+summary	close=2026-04-15 billed=1e+21 over=0 unbilled=0 debt=0 due=2026-05-15 days=15
+summary	close=2026-05-15 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-06-10 days=0
+due	2026-04-28
+due	2026-07-01
+bal	c1:0
+close	2026-03-10
+soon	
+due	2026-01-30
+close	2026-01-01
+total	1e+21
+summary	none
+soon	
+due	2024-03-01
+net	asset=NaN liab=100 net=NaN
+due	2026-03-30
+summary	close=2026-01-10 billed=0 over=100 unbilled=0 debt=0 due=2026-01-15 days=-17
+summary	none
+due	2026-01-31
+due	2026-07-01
+summary	close=2025-12-10 billed=0 over=0 unbilled=0 debt=0 due=2026-01-10 days=9
+close	2026-01-29
+total	NaN
+close	2026-05-01
+total	2e+21
+one	0
+summary	close=2025-12-10 billed=16.67 over=0 unbilled=33.33 debt=50 due=2025-12-25 days=-7
+close	2026-06-10
+close	2026-01-30
+close	2026-02-28
+bal	c1:0.1,c2:-1000,a1:100,default:0.1
+close	2026-05-29
+summary	close=2026-02-10 billed=0 over=100 unbilled=0 debt=0 due=2026-02-25 days=-3
+due	2024-04-01
+close	2024-02-05
+one	0.1
+summary	close=2026-06-05 billed=0 over=100 unbilled=0 debt=0 due=- days=-
+summary	close=2026-02-28 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-03-15 days=14
+due	2026-01-29
+soon	
+total	NaN
+bal	c1:101.4
+summary	close=2024-02-05 billed=1000 over=0 unbilled=0 debt=1000 due=- days=-
+soon	
+summary	close=2026-06-15 billed=0 over=0 unbilled=0 debt=0 due=2026-06-30 days=5
+summary	close=2026-01-28 billed=0 over=1e+21 unbilled=0 debt=0 due=- days=-
+summary	close=2024-02-28 billed=1033.33 over=0 unbilled=0 debt=1033.33 due=2024-03-15 days=14
+close	2026-02-01
+summary	close=2026-05-28 billed=0 over=0 unbilled=0 debt=0 due=2026-06-15 days=0
+due	2026-04-15
+due	2026-07-15
+soon	
+due	2024-02-29
+total	0
+net	asset=NaN liab=1e+21 net=NaN
+close	2025-12-01
+net	asset=-766.67 liab=NaN net=NaN
+close	2026-05-31
+due	2026-06-30
+close	2026-03-01
+soon	
+close	2026-06-05
+close	2026-02-15
+one	-1000
+close	2026-05-31
+summary	close=2026-04-15 billed=1000 over=0 unbilled=0 debt=1000 due=2026-05-01 days=1
+total	NaN
+due	2026-01-29
+due	2024-02-29
+close	2026-03-15
+close	2026-02-28
+summary	close=2026-06-05 billed=0 over=1e+21 unbilled=100 debt=0 due=2026-06-10 days=-21
+net	asset=1e+21 liab=0 net=1e+21
+due	2026-03-30
+bal	c1:1e+21,c2:0,a1:-1000,default:0
+summary	close=2025-12-25 billed=100 over=0 unbilled=0 debt=100 due=2026-01-10 days=16
+bal	c1:1e+21
+due	2026-04-01
+summary	close=2026-03-30 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+close	2025-12-10
+summary	close=2026-02-28 billed=0 over=100 unbilled=0 debt=0 due=2026-03-10 days=10
+net	asset=34.94 liab=0 net=34.94
+due	2026-02-10
+bal	c1:-9.9
+due	2026-03-28
+summary	close=2025-12-05 billed=1000 over=0 unbilled=0 debt=1000 due=2025-12-20 days=-11
+bal	c1:0
+one	-1.5
+summary	close=2026-06-05 billed=0 over=1e+21 unbilled=NaN debt=0 due=2026-06-10 days=-21
+summary	close=2026-01-31 billed=0 over=0 unbilled=0 debt=0 due=2026-02-15 days=14
+due	2026-07-31
+due	2026-02-28
+summary	none
+one	-15
+total	-1060
+total	NaN
+summary	close=2025-12-31 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+close	2026-06-10
+close	2026-04-05
+close	2026-05-30
+total	-1000
+one	-1011.5
+bal	c1:166.65999999999997,c2:-33.33
+summary	close=2026-06-15 billed=NaN over=0 unbilled=NaN debt=0 due=2026-06-30 days=-1
+close	2026-01-29
+summary	none
+close	2026-03-30
+soon	
+summary	close=2026-02-28 billed=0 over=0 unbilled=0 debt=0 due=2026-03-25 days=24
+soon	
+summary	none
+total	-150
+summary	close=2026-06-30 billed=1000 over=0 unbilled=0 debt=1000 due=- days=-
+one	0
+due	2026-05-01
+total	-100.1
+soon	c1:50:-6
+close	2026-05-31
+summary	none
+due	2026-08-28
+one	0
+bal	c1:NaN,c2:89.9
+summary	close=2026-05-25 billed=0 over=0.1 unbilled=0 debt=0 due=- days=-
+summary	close=2026-05-25 billed=50 over=0 unbilled=0 debt=50 due=2026-06-15 days=15
+bal	c1:1e+21,c2:66.67,a1:-10,default:NaN
+summary	close=2026-06-05 billed=0 over=0 unbilled=0 debt=0 due=2026-06-10 days=0
+due	2026-06-30
+bal	c1:1e+21,c2:1e+21
+bal	c1:NaN
+one	NaN
+summary	close=2026-01-10 billed=0 over=0.1 unbilled=0 debt=0 due=2026-01-25 days=-6
+close	2025-12-25
+due	2025-12-10
+close	2026-03-01
+bal	c1:0,c2:0.2,a1:-50.1,default:0.1
+bal	c1:0
+one	0
+total	-990.1
+summary	close=2026-06-15 billed=0 over=0.1 unbilled=0 debt=0 due=- days=-
+close	2026-03-25
+bal	c1:NaN,c2:-50,a1:0
+due	2026-07-01
+due	2026-02-28
+summary	close=2026-05-25 billed=0 over=0.1 unbilled=0 debt=0 due=2026-06-20 days=20
+net	asset=NaN liab=NaN net=NaN
+summary	none
+one	0
+net	asset=NaN liab=33.33 net=NaN
+soon	c1:33.33:0,c2:50:20
+soon	
+due	2024-04-10
+bal	c1:0,c2:0.1,a1:-1000
+soon	
+close	2025-12-28
+soon	a1:1000:0
+bal	c1:1e+21,c2:-50,a1:0,default:100
+close	2024-02-10
+close	2026-02-05
+summary	close=2026-06-05 billed=0 over=0.1 unbilled=0 debt=0 due=2026-06-10 days=-15
+bal	c1:-94.9,c2:NaN
+due	2026-04-30
+summary	close=2026-01-05 billed=1000 over=0 unbilled=0 debt=995 due=2026-01-10 days=-22
+soon	c2:116.67:-22
+summary	close=2024-02-29 billed=0 over=0 unbilled=1e+21 debt=1e+21 due=- days=-
+bal	c1:100,c2:100,a1:1e+21,default:1e+21
+due	2026-07-01
+bal	c1:1e+21,c2:1e+21,a1:1e+21,default:0.1
+due	2026-07-01
+total	NaN
+bal	c1:NaN,c2:-10,a1:0
+one	-100
+due	2024-04-05
+close	2026-03-01
+soon	
+due	2026-07-01
+soon	
+close	2026-06-29
+total	76.67
+due	2026-06-29
+bal	c1:0,c2:0.1,a1:NaN
+summary	close=2024-02-10 billed=9.9 over=0 unbilled=0 debt=9.9 due=2024-02-15 days=-15
+net	asset=NaN liab=NaN net=NaN
+summary	none
+close	2026-02-28
+soon	
+soon	
+soon	
+summary	close=2025-11-29 billed=0 over=0 unbilled=0 debt=0 due=2025-12-28 days=3
+total	66.67
+due	2024-03-01
+summary	close=2024-02-15 billed=915 over=0 unbilled=0 debt=915 due=2024-02-20 days=-10
+summary	none
+summary	close=2026-04-10 billed=95 over=0 unbilled=10 debt=0 due=2026-05-10 days=10
+summary	close=2026-01-28 billed=0 over=0 unbilled=0 debt=0 due=2026-02-15 days=14
+soon	
+net	asset=101.6 liab=NaN net=NaN
+close	2025-12-05
+close	2026-04-25
+bal	c1:0,c2:1e+21,a1:0,default:-150
+bal	c1:0,c2:-50,a1:1e+21
+summary	close=2024-02-29 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+close	2026-06-15
+close	2026-03-25
+close	2026-05-31
+close	2026-01-10
+summary	close=2026-01-10 billed=10 over=0 unbilled=0 debt=10 due=- days=-
+total	NaN
+close	2024-02-29
+summary	close=2026-01-25 billed=0 over=0 unbilled=10 debt=10 due=2026-02-10 days=9
+close	2026-01-10
+net	asset=0 liab=-5 net=5
+soon	
+summary	close=2026-06-05 billed=0 over=100 unbilled=0 debt=0 due=2026-06-25 days=-6
+total	NaN
+soon	
+summary	close=2025-12-10 billed=0 over=1e+21 unbilled=0 debt=0 due=2025-12-20 days=-5
+due	2026-01-01
+close	2026-03-01
+due	2024-03-31
+one	-1000
+close	2025-12-29
+total	NaN
+summary	close=2026-06-05 billed=0 over=0.1 unbilled=0 debt=0 due=2026-06-10 days=0
+summary	close=2025-12-05 billed=NaN over=0 unbilled=NaN debt=0 due=2025-12-15 days=-10
+net	asset=1e+21 liab=0 net=1e+21
+total	NaN
+one	0
+net	asset=100.1 liab=1143.33 net=-1043.23
+summary	none
+close	2026-06-01
+summary	close=2024-02-29 billed=0 over=18.229999999999997 unbilled=0 debt=0 due=- days=-
+close	2024-02-28
+due	2026-07-10
+one	0
+close	2026-04-01
+summary	close=2026-06-10 billed=0 over=0 unbilled=10 debt=0 due=2026-06-15 days=5
+due	2026-06-01
+due	2024-03-25
+one	0.1
+total	-1e+21
+summary	none
+total	-100
+total	NaN
+close	2025-12-15
+net	asset=NaN liab=1e+21 net=NaN
+total	23.43
+close	2026-04-25
+summary	close=2026-03-10 billed=0 over=0 unbilled=0 debt=0 due=2026-04-10 days=10
+bal	c1:-1e+21
+net	asset=266.56 liab=NaN net=NaN
+one	NaN
+one	1e+21
+close	2026-02-05
+total	NaN
+close	2025-12-15
+soon	
+soon	
+net	asset=-50 liab=0 net=-50
+close	2025-12-25
+summary	none
+close	2026-01-31
+one	0
+one	-1e+21
+bal	c1:100,c2:1e+21,a1:0,default:0
+net	asset=NaN liab=10 net=NaN
+due	2026-07-10
+net	asset=NaN liab=NaN net=NaN
+soon	
+due	2024-04-05
+total	NaN
+close	2026-01-29
+net	asset=NaN liab=NaN net=NaN
+soon	
+total	NaN
+summary	close=2024-02-28 billed=0 over=0.1 unbilled=0 debt=0 due=- days=-
+summary	close=2026-05-31 billed=0 over=0 unbilled=0 debt=0 due=2026-06-15 days=5
+summary	none
+summary	none
+summary	close=2026-01-31 billed=1000 over=0 unbilled=0 debt=1000 due=- days=-
+soon	
+close	2026-02-01
+close	2026-06-10
+summary	none
+due	2026-01-31
+bal	c1:-1000,c2:NaN,a1:1e+21
+summary	none
+due	2024-04-30
+close	2026-01-01
+summary	close=2026-06-05 billed=0 over=0.1 unbilled=NaN debt=0 due=2026-06-10 days=-15
+close	2026-02-28
+one	-98.4
+soon	default:1000:-24
+summary	close=2025-12-31 billed=1000 over=0 unbilled=0 debt=1000 due=2026-01-20 days=20
+summary	close=2026-06-10 billed=0 over=0 unbilled=0 debt=0 due=2026-06-20 days=-5
+soon	a1:1000:-11
+one	-50
+bal	c1:0,c2:0,a1:0,default:0
+due	2024-03-01
+one	0
+summary	close=2024-02-15 billed=0 over=0 unbilled=0 debt=0 due=2024-03-15 days=14
+close	2026-06-05
+due	2026-02-28
+due	2026-04-15
+net	asset=50 liab=NaN net=NaN
+summary	close=2025-12-05 billed=0 over=1e+21 unbilled=1e+21 debt=0 due=2025-12-15 days=-17
+close	2026-02-01
+one	0
+total	1e+21
+close	2026-03-25
+bal	c1:NaN,c2:-1e+21
+close	2026-05-25
+due	2026-03-01
+summary	close=2026-05-15 billed=0 over=0 unbilled=0.1 debt=0.1 due=2026-05-20 days=-21
+soon	
+summary	close=2026-06-10 billed=NaN over=0 unbilled=NaN debt=0 due=2026-07-10 days=15
+bal	c1:0.1,c2:0.1,a1:100
+due	2026-04-25
+close	2026-06-30
+total	128.42999999999998
+summary	close=2026-05-15 billed=15.170000000000002 over=0 unbilled=0 debt=15.170000000000002 due=- days=-
+close	2026-05-29
+due	2026-05-25
+one	-1000
+due	2026-02-28
+total	1e+21
+close	2026-03-31
+summary	none
+net	asset=95.1 liab=1050 net=-954.9
+soon	c1:1000:-17
+summary	close=2026-03-28 billed=0 over=33.33 unbilled=0 debt=0 due=2026-04-10 days=10
+close	2026-05-15
+bal	c1:-1000,c2:1e+21,a1:NaN
+net	asset=10 liab=259.9 net=-249.89999999999998
+soon	c2:50:-11
+bal	c1:-1000,c2:-999.9,a1:0,default:NaN
+net	asset=NaN liab=NaN net=NaN
+one	-8.5
+close	2024-02-10
+one	-50
+close	2026-04-01
+one	-1000
+summary	none
+total	NaN
+due	2026-02-28
+close	2024-02-29
+due	2026-01-10
+soon	c1:1.5:-16
+total	-1900
+one	-50
+summary	close=2026-02-05 billed=0 over=100 unbilled=0 debt=0 due=2026-02-28 days=-1
+net	asset=-1e+21 liab=NaN net=NaN
+soon	
+total	NaN
+net	asset=NaN liab=0.1 net=NaN
+bal	c1:-50,c2:-1000,a1:0
+bal	c1:100,c2:0
+summary	none
+summary	close=2026-02-15 billed=0 over=200 unbilled=0 debt=0 due=2026-02-20 days=-8
+soon	
+one	0
+due	2026-04-01
+summary	close=2026-06-10 billed=0 over=0 unbilled=0 debt=0 due=2026-06-20 days=-5
+bal	c1:0,c2:5,a1:100,default:NaN
+summary	close=2025-12-10 billed=50 over=0 unbilled=0 debt=50 due=2026-01-01 days=1
+summary	none
+summary	close=2026-06-05 billed=1000 over=0 unbilled=33.33 debt=1033.33 due=- days=-
+summary	close=2026-02-05 billed=50 over=0 unbilled=0 debt=50 due=2026-02-10 days=-19
+net	asset=-771.67 liab=NaN net=NaN
+summary	close=2026-04-28 billed=0 over=0 unbilled=0 debt=0 due=2026-05-15 days=15
+summary	none
+due	2024-02-29
+total	-800
+one	-199.9
+summary	close=2026-06-10 billed=0 over=0.1 unbilled=0 debt=0 due=2026-06-25 days=15
+due	2026-07-01
+summary	none
+one	0
+close	2026-06-01
+soon	c1:1006.5:10,c2:5:20
+total	-899.9
+soon	
+due	2026-02-28
+bal	c1:1e+21,c2:-50,a1:0.1,default:-50
+due	2026-04-01
+due	2026-07-10
+bal	c1:85,c2:0.1,a1:NaN,default:-0.1
+soon	
+summary	close=2025-12-10 billed=0 over=0 unbilled=0 debt=0 due=2025-12-25 days=-6
+summary	close=2025-11-30 billed=0 over=100 unbilled=0 debt=0 due=2025-12-30 days=5
+summary	close=2024-02-10 billed=0 over=0.1 unbilled=0 debt=0 due=2024-02-15 days=-14
+summary	close=2026-02-05 billed=0 over=0 unbilled=0 debt=100 due=2026-02-15 days=-13
+close	2026-01-31
+due	2025-12-30
+close	2026-01-10
+due	2026-04-01
+close	2026-04-01
+bal	c1:0,c2:100,a1:-1000
+due	2026-04-05
+due	2026-03-28
+summary	close=2025-12-25 billed=50 over=0 unbilled=0 debt=50 due=2026-01-15 days=14
+due	2025-12-31
+close	2026-01-01
+summary	none
+close	2025-12-01
+due	2024-03-31
+due	2026-06-29
+close	2024-02-29
+soon	c1:5:-7
+one	0.1
+close	2026-02-05
+summary	close=2024-02-10 billed=0 over=1e+21 unbilled=0 debt=0 due=2024-03-10 days=9
+summary	close=2026-06-25 billed=0 over=1e+21 unbilled=0 debt=0 due=- days=-
+total	100
+bal	c1:-6.670000000000002,c2:0,a1:90,default:-1e+21
+bal	c1:0,c2:0
+summary	close=2024-02-28 billed=1e+21 over=0 unbilled=0 debt=1e+21 due=2024-03-15 days=15
+bal	c1:0,c2:-1e+21
+summary	close=2025-12-28 billed=0.1 over=0 unbilled=0 debt=0.1 due=2026-01-20 days=19
+due	2026-07-05
+due	2026-07-05
+close	2026-06-05
+due	2026-06-30
+summary	close=2026-05-10 billed=0 over=0 unbilled=0 debt=0 due=2026-05-15 days=-16
+summary	close=2026-01-05 billed=0 over=100 unbilled=0 debt=0 due=2026-01-25 days=-6
+close	2026-01-28
+bal	c1:-50,c2:0
+summary	close=2026-06-15 billed=0 over=0 unbilled=0 debt=0 due=2026-06-25 days=10
+summary	close=2026-05-15 billed=0 over=0.2 unbilled=NaN debt=0 due=2026-05-20 days=-11
+close	2026-03-01
+close	2024-03-01
+due	2026-01-05
+bal	c1:-50,c2:0.1,a1:0,default:0
+due	2026-03-30
+one	-1000
+close	2026-03-01
+due	2026-04-28
+soon	
+one	-50
+soon	
+one	-1005
+summary	close=2025-12-05 billed=0 over=0.1 unbilled=0 debt=0 due=2025-12-10 days=-22
+soon	c1:1000.1:-12
+soon	
+total	98.5
+due	2026-01-15
+close	2025-12-25
+summary	close=2026-02-28 billed=0 over=14.8 unbilled=0 debt=0 due=2026-03-20 days=20
+bal	c1:1e+21,c2:-50,a1:138.32999999999998,default:-5
+summary	close=2026-02-25 billed=0 over=0 unbilled=0 debt=0 due=2026-03-25 days=25
+close	2024-02-10
+soon	
+one	NaN
+net	asset=NaN liab=1e+21 net=NaN
+close	2026-04-15
+net	asset=NaN liab=NaN net=NaN
+bal	c1:NaN
+bal	c1:0,c2:100,a1:-1000,default:0
+bal	c1:100,c2:0,a1:-1000
+one	0.1
+total	NaN
+summary	close=2026-06-10 billed=0 over=0 unbilled=0 debt=0 due=2026-07-10 days=30
+total	-55
+one	-1e+21
+total	-1899.9
+summary	close=2026-01-15 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+close	2026-01-01
+one	0
+soon	
+total	2e+21
+close	2024-02-29
+net	asset=NaN liab=0 net=NaN
+close	2026-02-25
+bal	c1:1e+21,c2:0.1,a1:100,default:0.1
+close	2025-12-01
+one	-1e+21
+net	asset=NaN liab=50.1 net=NaN
+net	asset=1e+21 liab=33.33 net=1e+21
+close	2026-05-30
+bal	c1:-1000,c2:99.9,a1:0,default:-1e+21
+due	2024-03-31
+one	-1000
+summary	close=2025-12-31 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+close	2026-03-28
+due	2026-02-05
+due	2026-01-30
+summary	close=2026-04-30 billed=0 over=0 unbilled=0 debt=0 due=2026-05-15 days=15
+close	2026-05-28
+due	2025-12-29
+close	2024-02-10
+due	2026-08-05
+due	2026-02-05
+summary	close=2026-01-28 billed=0 over=0 unbilled=0 debt=0 due=2026-02-10 days=10
+due	2026-04-05
+net	asset=1e+21 liab=0 net=1e+21
+soon	
+soon	
+summary	close=2026-02-28 billed=100 over=0 unbilled=0 debt=100 due=- days=-
+net	asset=50 liab=NaN net=NaN
+one	-49.9
+total	1e+21
+close	2026-02-01
+due	2026-05-01
+close	2026-04-30
+one	-1000
+close	2024-02-15
+net	asset=NaN liab=NaN net=NaN
+close	2025-12-28
+close	2025-11-30
+one	-115
+net	asset=NaN liab=1e+21 net=NaN
+one	0
+one	99.9
+one	0
+one	0
+net	asset=165.17000000000002 liab=0 net=165.17000000000002
+soon	
+summary	close=2024-02-05 billed=1000 over=0 unbilled=0 debt=1005 due=2024-02-15 days=-15
+close	2026-05-01
+net	asset=NaN liab=NaN net=NaN
+total	100
+summary	close=2026-05-28 billed=0 over=0 unbilled=0 debt=0 due=2026-06-20 days=10
+soon	c1:50:-5
+bal	c1:0,c2:1e+21,a1:100,default:0
+due	2026-08-01
+due	2026-07-10
+due	2026-04-01
+summary	close=2026-02-25 billed=0 over=1e+21 unbilled=0 debt=0 due=- days=-
+due	2026-02-28
+summary	close=2024-02-29 billed=0 over=0 unbilled=0 debt=0 due=2024-03-25 days=24
+soon	
+soon	
+due	2024-02-28
+net	asset=NaN liab=NaN net=NaN
+due	2024-03-29
+net	asset=NaN liab=0 net=NaN
+due	2024-03-01
+close	2026-05-15
+summary	close=2025-11-28 billed=1000 over=0 unbilled=0 debt=1005 due=- days=-
+close	2026-05-31
+due	2026-02-28
+close	2025-12-31
+soon	
+close	2026-07-01
+net	asset=NaN liab=0 net=NaN
+summary	close=2024-02-25 billed=0 over=1e+21 unbilled=0.1 debt=0 due=2024-03-25 days=25
+bal	c1:-50,c2:1e+21,a1:100,default:-50
+summary	close=2026-03-15 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+one	NaN
+summary	none
+net	asset=1e+21 liab=NaN net=NaN
+summary	close=2024-02-25 billed=50 over=0 unbilled=0 debt=50 due=2024-03-10 days=10
+summary	none
+summary	close=2026-06-15 billed=1003.5 over=0 unbilled=0 debt=1003.5 due=2026-06-20 days=-5
+net	asset=NaN liab=33.33 net=NaN
+summary	close=2025-12-15 billed=0 over=1e+21 unbilled=0 debt=0 due=2025-12-31 days=-1
+one	NaN
+close	2026-06-05
+summary	close=2026-02-28 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-03-01 days=1
+close	2026-02-28
+bal	c1:0,c2:0,a1:0,default:100
+close	2024-02-29
+one	5
+summary	close=2026-05-05 billed=0 over=0 unbilled=33.33 debt=33.33 due=- days=-
+soon	c1:1000:15
+summary	close=2026-04-28 billed=0 over=100 unbilled=0 debt=0 due=2026-05-10 days=10
+close	2024-02-01
+close	2026-05-31
+one	1e+21
+bal	c1:-1000,c2:0
+close	2025-12-05
+close	2024-02-29
+close	2026-05-01
+bal	c1:NaN
+summary	close=2026-01-25 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-02-20 days=19
+close	2026-05-30
+due	2026-06-10
+summary	none
+due	2026-02-28
+soon	
+one	1e+21
+one	0
+due	2026-02-28
+total	71.67
+summary	none
+summary	close=2024-02-25 billed=0 over=100 unbilled=0 debt=0 due=2024-03-20 days=19
+one	0.1
+net	asset=NaN liab=10 net=NaN
+bal	c1:100,c2:0.1,a1:100,default:0
+net	asset=NaN liab=100 net=NaN
+due	2024-03-01
+summary	close=2025-12-10 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-01-10 days=16
+soon	
+summary	close=2026-01-05 billed=0 over=1e+21 unbilled=0 debt=0 due=- days=-
+soon	
+summary	close=2025-12-25 billed=0 over=0 unbilled=0 debt=0 due=2026-01-20 days=19
+summary	close=2026-02-10 billed=0 over=0 unbilled=0 debt=0 due=2026-02-20 days=-9
+summary	close=2026-02-25 billed=0 over=0 unbilled=1e+21 debt=0 due=2026-03-20 days=20
+summary	close=2024-02-10 billed=0 over=0 unbilled=0 debt=0 due=2024-03-10 days=10
+close	2026-02-25
+summary	none
+close	2026-01-05
+due	2025-12-31
+bal	c1:NaN,c2:1e+21,a1:-50,default:NaN
+net	asset=NaN liab=33.33 net=NaN
+one	0
+summary	close=2026-04-15 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-04-20 days=-10
+close	2026-02-01
+summary	close=2026-02-10 billed=NaN over=0 unbilled=NaN debt=0 due=2026-03-10 days=9
+summary	none
+net	asset=1e+21 liab=NaN net=NaN
+close	2025-12-25
+summary	close=2025-12-31 billed=50.1 over=0 unbilled=0 debt=50.1 due=- days=-
+close	2026-06-25
+close	2026-02-01
+net	asset=105 liab=NaN net=NaN
+close	2026-07-01
+net	asset=NaN liab=150 net=NaN
+due	2026-07-28
+due	2026-03-05
+summary	close=2026-01-25 billed=0 over=0 unbilled=0 debt=0 due=2026-02-10 days=9
+one	-5
+bal	c1:NaN
+soon	
+summary	none
+bal	c1:NaN,c2:NaN,a1:0
+net	asset=1e+21 liab=NaN net=NaN
+close	2026-06-01
+total	0.09999999999999432
+summary	close=2025-12-05 billed=0 over=0 unbilled=1e+21 debt=1e+21 due=2025-12-25 days=0
+summary	close=2024-02-10 billed=NaN over=110 unbilled=NaN debt=0 due=2024-02-15 days=-15
+close	2026-04-30
+close	2026-01-05
+one	1e+21
+due	2025-12-01
+soon	c1:33.23:-10
+due	2024-03-01
+close	2026-02-15
+bal	c1:0.1,c2:0,a1:90.2,default:100
+summary	close=2025-12-10 billed=0 over=1e+21 unbilled=10 debt=0 due=2025-12-15 days=-10
+due	2026-06-30
+one	0
+close	2026-01-31
+close	2026-05-29
+due	2026-07-01
+close	2026-06-15
+bal	c1:NaN,c2:100,a1:1e+21,default:NaN
+net	asset=NaN liab=0 net=NaN
+due	2026-01-15
+net	asset=1e+21 liab=0 net=1e+21
+one	100
+one	0
+net	asset=1e+21 liab=0 net=1e+21
+close	2025-11-30
+summary	none
+summary	close=2024-02-25 billed=0 over=100 unbilled=0 debt=0 due=2024-03-15 days=14
+summary	close=2026-01-25 billed=1e+21 over=0 unbilled=0 debt=1e+21 due=- days=-
+one	-1000
+due	2026-03-01
+close	2026-02-01
+summary	close=2024-02-28 billed=1000 over=0 unbilled=0 debt=1000 due=2024-03-10 days=10
+summary	close=2025-12-15 billed=0 over=0 unbilled=0 debt=0 due=2026-01-15 days=15
+summary	close=2026-06-25 billed=0 over=0.1 unbilled=0 debt=0 due=2026-07-15 days=20
+total	0
+due	2026-01-01
+summary	close=2025-12-05 billed=1000 over=0 unbilled=0 debt=1000 due=2025-12-20 days=-5
+net	asset=NaN liab=50.1 net=NaN
+due	2026-07-05
+close	2026-05-31
+close	2026-03-25
+close	2026-03-01
+close	2026-01-29
+due	2026-03-31
+bal	c1:1e+21,c2:100
+summary	close=2026-02-28 billed=50 over=0 unbilled=0 debt=50 due=- days=-
+soon	
+total	1e+21
+summary	close=2026-06-10 billed=85 over=0 unbilled=10 debt=95 due=2026-06-20 days=-11
+close	2026-02-10
+due	2026-02-10
+summary	close=2026-02-05 billed=0 over=0 unbilled=0 debt=0 due=2026-02-15 days=-13
+close	2026-01-30
+due	2026-06-01
+soon	
+due	2026-02-01
+due	2026-03-30
+close	2026-06-01
+due	2026-02-01
+summary	none
+due	2026-02-10
+soon	c2:990:-19
+bal	c1:1e+21,c2:-1000,a1:1e+21,default:1e+21
+one	1e+21
+total	-1e+21
+summary	close=2024-02-15 billed=1000 over=0 unbilled=0 debt=1000 due=2024-02-25 days=-4
+one	0
+total	-1100
+summary	close=2026-01-15 billed=0 over=0 unbilled=0 debt=0 due=2026-02-05 days=5
+due	2026-06-05
+one	-83.33
+due	2026-03-10
+one	0
+total	NaN
+close	2026-05-29
+soon	c2:1e+21:-14
+one	23.33
+one	-50
+one	0.1
+soon	c2:50:-1
+bal	c1:-1e+21
+close	2026-05-31
+close	2026-02-28
+due	2026-01-31
+summary	none
+summary	close=2026-01-10 billed=0 over=0 unbilled=0 debt=0 due=2026-01-25 days=-7
+due	2026-08-05
+close	2026-02-01
+summary	none
+summary	close=2026-05-15 billed=0 over=0 unbilled=0 debt=0 due=2026-06-15 days=5
+summary	close=2024-02-29 billed=0 over=100 unbilled=0 debt=0 due=2024-03-25 days=25
+due	2026-07-10
+soon	
+net	asset=-59.9 liab=0 net=-59.9
+summary	close=2024-02-15 billed=0 over=0 unbilled=0 debt=0 due=2024-03-15 days=14
+summary	close=2024-02-15 billed=0 over=0 unbilled=0 debt=0 due=2024-02-20 days=-9
+summary	close=2024-02-28 billed=0 over=1e+21 unbilled=0 debt=0 due=- days=-
+soon	c1:1000:-16
+summary	close=2024-02-10 billed=50 over=0 unbilled=0 debt=50 due=2024-02-15 days=-15
+due	2026-06-28
+summary	close=2026-01-05 billed=50 over=0 unbilled=0 debt=50 due=2026-01-10 days=-22
+one	0.1
+summary	close=2026-01-10 billed=0 over=100 unbilled=0 debt=0 due=- days=-
+due	2026-07-01
+summary	close=2026-06-15 billed=995 over=0 unbilled=0 debt=995 due=2026-07-10 days=9
+due	2026-07-25
+soon	
+due	2026-04-05
+total	100
+net	asset=-950 liab=0.1 net=-950.1
+due	2026-01-25
+bal	c1:-1000,c2:0.1,a1:0.1,default:-50
+due	2024-04-29
+summary	close=2026-01-30 billed=998.5 over=0 unbilled=0 debt=998.5 due=2026-01-31 days=-1
+close	2026-03-01
+one	100
+summary	close=2025-12-28 billed=0 over=0 unbilled=0 debt=0 due=2026-01-25 days=24
+bal	c1:100
+summary	close=2026-06-05 billed=900 over=0 unbilled=0 debt=933.33 due=2026-06-10 days=-5
+due	2026-02-01
+summary	close=2026-06-30 billed=10 over=0 unbilled=0 debt=10 due=2026-07-28 days=27
+net	asset=1e+21 liab=0 net=1e+21
+total	-890
+summary	close=2026-01-10 billed=0 over=100 unbilled=0 debt=0 due=2026-01-15 days=-16
+soon	
+close	2026-05-28
+due	2026-03-25
+summary	close=2025-12-31 billed=0 over=0 unbilled=0 debt=0 due=2026-01-25 days=25
+close	2026-02-05
+summary	close=2026-05-28 billed=0 over=0 unbilled=0 debt=0 due=2026-05-31 days=-15
+net	asset=NaN liab=0 net=NaN
+close	2026-04-15
+soon	
+one	0
+one	0
+due	2026-05-05
+summary	close=2026-01-25 billed=83.33 over=0 unbilled=0 debt=83.33 due=2026-02-25 days=25
+one	1e+21
+soon	default:33.33:24
+soon	
+due	2026-07-25
+close	2026-05-15
+close	2026-01-25
+close	2025-12-15
+summary	close=2024-02-10 billed=0 over=0 unbilled=0 debt=0 due=2024-02-25 days=-5
+close	2026-06-01
+total	NaN
+close	2024-02-28
+summary	close=2026-02-25 billed=0 over=1e+21 unbilled=10 debt=0 due=2026-03-15 days=14
+summary	close=2025-12-15 billed=0 over=100 unbilled=0 debt=0 due=- days=-
+net	asset=-966.5699999999999 liab=0.1 net=-966.67
+bal	c1:0
+due	2026-07-28
+close	2026-06-10
+due	2026-02-25
+bal	c1:1e+21
+due	2026-03-01
+summary	close=2026-02-28 billed=38.33 over=0 unbilled=0 debt=38.33 due=2026-03-15 days=14
+summary	close=2024-02-10 billed=0 over=0 unbilled=0 debt=0 due=2024-03-10 days=10
+close	2026-01-31
+due	2026-01-01
+close	2026-01-28
+summary	close=2026-02-15 billed=0 over=0.09999999999999964 unbilled=0 debt=0 due=2026-02-28 days=0
+close	2025-11-29
+due	2026-06-30
+net	asset=1e+21 liab=1e+21 net=0
+due	2025-12-31
+bal	c1:100,c2:-1000
+soon	
+due	2026-01-01
+close	2025-12-15
+summary	none
+total	-10.1
+summary	close=2026-02-05 billed=1000 over=0 unbilled=0 debt=1000 due=2026-02-20 days=-9
+summary	none
+net	asset=1e+21 liab=1e+21 net=0
+soon	
+soon	c1:50:-21
+summary	close=2026-06-10 billed=0 over=100 unbilled=0 debt=0 due=2026-06-20 days=-5
+soon	
+soon	
+soon	c1:50:-17
+total	NaN
+one	0
+due	2026-08-28
+total	1e+21
+close	2026-06-28
+one	1e+21
+summary	close=2026-02-10 billed=0 over=0 unbilled=0 debt=0 due=2026-02-25 days=-4
+total	NaN
+one	0
+due	2026-01-31
+bal	c1:NaN,c2:0
+soon	
+summary	close=2025-12-25 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-01-20 days=26
+due	2024-03-30
+close	2026-01-30
+one	NaN
+close	2026-05-29
+bal	c1:100,c2:0,a1:0.1
+total	0.1
+soon	
+summary	none
+summary	close=2024-02-28 billed=83.33 over=0 unbilled=0 debt=83.33 due=- days=-
+close	2026-01-01
+soon	
+due	2026-05-05
+close	2024-02-28
+close	2024-02-29
+one	-1e+21
+net	asset=-73.33 liab=50 net=-123.33
+one	-0.1
+total	NaN
+summary	close=2026-06-25 billed=0 over=0 unbilled=0 debt=0 due=2026-07-15 days=20
+summary	close=2026-06-10 billed=0 over=0.1 unbilled=0 debt=0 due=2026-06-20 days=5
+net	asset=-33.33 liab=0 net=-33.33
+bal	c1:95
+close	2026-01-29
+soon	
+close	2026-01-30
+close	2025-11-30
+summary	close=2026-04-10 billed=0 over=0.1 unbilled=0 debt=0 due=2026-04-15 days=-15
+total	1e+21
+due	2024-03-29
+close	2026-03-10
+due	2026-06-25
+one	-99.9
+one	-1e+21
+summary	close=2026-05-28 billed=0 over=1e+21 unbilled=0 debt=0 due=- days=-
+summary	none
+summary	none
+close	2026-05-25
+total	-1050
+net	asset=NaN liab=NaN net=NaN
+summary	close=2026-03-15 billed=0 over=5 unbilled=0 debt=0 due=2026-03-25 days=-6
+one	0.1
+due	2024-04-10
+close	2026-03-01
+due	2026-01-15
+due	2026-02-10
+close	2026-01-29
+summary	close=2026-02-15 billed=0.1 over=0 unbilled=0 debt=0.1 due=2026-03-15 days=15
+summary	close=2024-02-05 billed=0 over=0 unbilled=110 debt=110 due=- days=-
+due	2026-01-31
+summary	close=2024-02-05 billed=NaN over=0 unbilled=NaN debt=0 due=2024-02-15 days=-14
+net	asset=-100 liab=110 net=-210
+close	2026-02-01
+soon	a1:0.1:-12,c2:50:-7
+summary	close=2024-02-10 billed=33.33 over=0 unbilled=0 debt=33.33 due=2024-02-20 days=-10
+close	2026-06-10
+close	2026-01-25
+one	1e+21
+close	2026-02-01
+summary	close=2025-12-10 billed=0 over=1e+21 unbilled=0 debt=0 due=2025-12-25 days=0
+summary	close=2025-12-15 billed=40.1 over=0 unbilled=0 debt=40.1 due=2026-01-15 days=21
+summary	close=2026-03-31 billed=0 over=0 unbilled=0 debt=0 due=2026-04-25 days=25
+close	2026-04-30
+summary	none
+close	2024-02-05
+close	2026-06-10
+total	-50
+close	2026-06-05
+close	2026-03-10
+close	2026-07-01
+summary	close=2026-06-28 billed=0 over=0 unbilled=0 debt=0 due=2026-07-25 days=24
+summary	close=2026-01-10 billed=0 over=100 unbilled=1e+21 debt=1e+21 due=2026-02-10 days=9
+net	asset=NaN liab=1005.1 net=NaN
+bal	c1:1e+21,c2:-1000,a1:-1e+21,default:-33.33
+close	2026-01-01
+summary	close=2026-06-10 billed=0 over=1e+21 unbilled=100 debt=0 due=2026-06-25 days=0
+close	2026-05-29
+summary	close=2026-06-15 billed=0 over=1e+21 unbilled=0 debt=0 due=2026-07-10 days=25
+summary	none
+due	2026-06-30
+net	asset=-1e+21 liab=NaN net=NaN
+summary	close=2026-06-10 billed=0 over=0 unbilled=0 debt=0 due=- days=-
+net	asset=2e+21 liab=65.17 net=2e+21
+close	2026-01-31
+total	NaN
+due	2026-02-28
+net	asset=NaN liab=0 net=NaN
+close	2026-03-15
+due	2026-06-28
+bal	c1:NaN
+summary	close=2026-03-10 billed=0 over=0 unbilled=0 debt=0 due=2026-03-15 days=-16
+bal	c1:100,c2:0,a1:-50,default:0
+one	NaN
+summary	none
+summary	close=2024-02-29 billed=10 over=0 unbilled=0 debt=10 due=2024-03-25 days=24
+close	2026-02-10
+summary	close=2026-02-28 billed=0 over=0 unbilled=0 debt=0 due=2026-03-20 days=20
+summary	close=2025-12-15 billed=0 over=0 unbilled=0 debt=0 due=2025-12-20 days=-5
+due	2026-02-01
+total	-50
+summary	none
+summary	close=2026-04-30 billed=33.33 over=0 unbilled=0 debt=33.33 due=2026-05-10 days=10
+one	NaN
+summary	close=2024-02-28 billed=50 over=0 unbilled=0 debt=50 due=2024-03-25 days=25
+close	2026-02-01
+one	NaN
+bal	c1:33.33,c2:0,a1:-109.9
+net	asset=1e+21 liab=28.33 net=1e+21
+soon	
+due	2026-03-15
+soon	
+due	2026-05-01
+close	2025-12-01
+net	asset=1e+21 liab=1000 net=1e+21
+summary	close=2026-05-31 billed=0 over=0 unbilled=33.33 debt=33.33 due=2026-06-15 days=0
+one	1e+21
+close	2026-03-05
+summary	close=2026-02-28 billed=0 over=1e+21 unbilled=0 debt=0 due=- days=-
+close	2026-06-01
+bal	c1:-50,c2:0,a1:0,default:NaN
+due	2026-03-31
+one	-50
+one	0
+close	2025-12-01
+due	2024-02-29
+summary	close=2024-02-10 billed=0 over=0 unbilled=0 debt=0 due=2024-02-15 days=-14
+close	2026-02-28
+net	asset=NaN liab=0 net=NaN
+soon	
+total	0
+due	2024-03-10
+due	2026-01-01
+due	2026-04-30
+soon	
+summary	close=2026-04-30 billed=50 over=0 unbilled=0 debt=50 due=2026-04-30 days=0
+summary	close=2026-04-15 billed=0 over=0 unbilled=0.1 debt=0 due=2026-05-10 days=10
+due	2024-04-01
+due	2026-02-10
+one	0
+one	0
+one	100
+summary	close=2026-06-15 billed=0 over=0 unbilled=0 debt=0 due=2026-06-25 days=10
+summary	close=2026-02-05 billed=0 over=0.1 unbilled=0 debt=1e+21 due=2026-02-25 days=-4
+bal	c1:-49.9
+total	NaN
+soon	
+bal	c1:0,c2:0
+bal	c1:0,c2:-33.33,a1:-50,default:0
+close	2025-12-29
+close	2025-12-10
+one	-55
+soon	
+one	-1000
+summary	close=2026-05-31 billed=0 over=0 unbilled=0 debt=0 due=2026-06-20 days=-5
+due	2026-04-10
+due	2026-06-28
+bal	c1:NaN,c2:0.1,a1:0
+net	asset=NaN liab=100 net=NaN
+close	2024-02-15
+net	asset=-871.67 liab=0 net=-871.67
+close	2026-01-10
+summary	close=2026-03-25 billed=33.33 over=0 unbilled=0 debt=33.33 due=2026-04-25 days=25
+bal	c1:0,c2:-100,a1:0,default:0
+summary	close=2025-12-01 billed=989.8 over=0 unbilled=10.1 debt=1033.23 due=2025-12-29 days=-2
+summary	close=2026-01-28 billed=966.77 over=0 unbilled=0 debt=966.77 due=- days=-
+due	2026-02-15
+bal	c1:-1e+21,c2:1e+21
+close	2026-06-10
+bal	c1:-50.1
+summary	close=2026-06-10 billed=0 over=0 unbilled=0 debt=0 due=2026-06-15 days=-10
+close	2026-05-01
+bal	c1:-1000
+close	2024-02-29
+summary	close=2026-06-10 billed=0 over=0 unbilled=0 debt=0 due=2026-07-10 days=9
+close	2026-01-01
+summary	close=2025-12-10 billed=50 over=0 unbilled=0 debt=50 due=2025-12-15 days=-10
+one	0.1
+bal	c1:-795,c2:-50
+soon	
+due	2026-02-28
+summary	close=2026-01-05 billed=0 over=1e+21 unbilled=NaN debt=0 due=- days=-
+bal	c1:-50,c2:0,a1:0.1,default:0.1
+total	NaN
+close	2026-01-25
+summary	none
+soon	
+close	2026-02-28
+summary	close=2026-04-10 billed=0 over=0 unbilled=0 debt=0 due=2026-04-15 days=-15
+net	asset=NaN liab=NaN net=NaN
+summary	close=2026-02-15 billed=0 over=0 unbilled=0 debt=0 due=2026-02-25 days=-4
+soon	
+total	-50.1
+summary	close=2026-04-05 billed=0 over=0 unbilled=NaN debt=0 due=2026-04-15 days=-15
+summary	close=2024-02-25 billed=0 over=0.1 unbilled=0 debt=0 due=2024-03-10 days=10
+bal	c1:NaN,c2:11.5,a1:4.9
+summary	close=2026-06-10 billed=0 over=0 unbilled=0 debt=0 due=2026-06-15 days=-16
+net	asset=NaN liab=NaN net=NaN
+due	2026-06-01
+summary	close=2026-01-31 billed=0 over=0.1 unbilled=NaN debt=0 due=2026-02-15 days=14
+summary	none
+total	NaN
+summary	close=2026-03-31 billed=1000 over=0 unbilled=0 debt=1000 due=2026-04-25 days=25
+net	asset=-138.13 liab=0 net=-138.13
+close	2026-05-29
+close	2026-06-01
+total	100
+soon	
+one	0
+bal	c1:90,c2:-1000
+total	100
+total	NaN
+net	asset=NaN liab=0 net=NaN
+summary	close=2025-12-15 billed=0 over=0.1 unbilled=0 debt=0 due=2026-01-15 days=14
+net	asset=NaN liab=1e+21 net=NaN
+one	NaN
+summary	close=2025-12-25 billed=10 over=0 unbilled=0 debt=10 due=2025-12-31 days=-1
+close	2026-06-01
+summary	close=2026-06-15 billed=0 over=100 unbilled=0 debt=0 due=2026-06-25 days=-6
+bal	c1:0,c2:0,a1:1e+21,default:-10
+close	2026-04-01
+close	2026-05-31
+total	-133.13
+bal	c1:NaN,c2:NaN,a1:NaN,default:-100
+close	2026-06-10
+summary	close=2026-05-28 billed=0 over=0 unbilled=1e+21 debt=1e+21 due=2026-06-25 days=0
+summary	none
+close	2025-12-01
+summary	close=2026-06-15 billed=0 over=50 unbilled=0 debt=0 due=2026-06-25 days=-6
+summary	close=2024-02-05 billed=0 over=0 unbilled=0 debt=0 due=2024-02-25 days=-4
+bal	c1:0,c2:-1e+21
+due	2026-07-01
+one	-1000
+one	5
+summary	close=2026-06-05 billed=0 over=0 unbilled=0 debt=0 due=2026-06-15 days=0
+summary	none
+due	2026-05-31
+due	2025-12-01
+total	-45.1
+close	2024-02-28
+one	100
+soon	
+one	0
+due	2026-07-01
+due	2026-07-30
+one	NaN
+total	NaN
+one	-50
+summary	close=2024-02-25 billed=1e+21 over=0 unbilled=0 debt=1e+21 due=2024-03-25 days=25
+summary	close=2026-06-05 billed=0 over=0 unbilled=0 debt=0 due=2026-06-20 days=10
+close	2026-02-28
+close	2024-02-29
+close	2025-12-20
+due	2026-02-28
+due	2026-03-29
+due	2027-01-10
+summary	close=2026-06-10 billed=100 over=0 unbilled=0 debt=100 due=2026-06-25 days=10
+summary	close=2026-06-10 billed=0 over=0 unbilled=10 debt=10 due=2026-06-25 days=10
+summary	close=2026-06-10 billed=0 over=0 unbilled=0 debt=0 due=2026-06-25 days=10
+summary	none
+summary	none
+bal	a1:0
+bal	a1:0
+bal	a1:0
+net	asset=NaN liab=0 net=NaN
+soon	c1:100:6,c2:50:6
+summary	close=2026-06-10 billed=58 over=0 unbilled=23 debt=81 due=2026-06-25 days=10
+summary	close=2026-06-10 billed=90 over=0 unbilled=0 debt=90 due=2026-06-25 days=10
+bal	a1:-10
+one	-10
+one	0
+soon	c1:100:0
+soon	
+soon	c1:100:1
+soon	
+soon	c1:100:5
+soon	
+soon	c1:100:7
+soon	
