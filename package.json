@@ -90,6 +90,9 @@
     "rust:test": "cargo test --manifest-path rust/Cargo.toml",
     "rust:fmt": "cargo fmt --manifest-path rust/Cargo.toml --check",
     "rust:clippy": "cargo clippy --manifest-path rust/Cargo.toml --all-targets -- -D warnings",
+    "bridge:fmt": "cargo fmt --manifest-path flutter_app/rust_bridge/Cargo.toml --check",
+    "bridge:clippy": "cargo clippy --manifest-path flutter_app/rust_bridge/Cargo.toml --all-targets -- -D warnings",
+    "tests:check": "node scripts/gen-all-tests.js --check",
     "parity": "node scripts/parity.js"
   },
   "private": true

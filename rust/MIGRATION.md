@@ -3357,3 +3357,12 @@ once, and the 601-test suite passes under the new package.
   done.
 - `cargo clippy -- -D warnings` and `cargo fmt --check` gate CI alongside the
   existing lint/typecheck/test jobs.
+- **The bridge crate and the Flutter app gate CI too**, which they did not for
+  most of this migration. `rust:clippy` runs against `rust/Cargo.toml`, and the
+  bridge is its own cargo project outside that workspace — so two thousand
+  lines of Rust were checked only by whoever remembered to check them. The
+  Flutter app was not checked at all. Both now run on every push, along with
+  `gen-all-tests.js --check`, because a test file that silently stopped being
+  imported is worse than one that fails.
+- The integration suite runs on an emulator in CI, which is affordable only
+  because it is one build rather than thirty-three.
