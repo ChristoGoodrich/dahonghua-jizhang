@@ -23,6 +23,7 @@ import 'package:flutter/services.dart';
 import 'assets_screen.dart';
 import 'backup_screen.dart';
 import 'budget_screen.dart';
+import 'budget_widget.dart';
 import 'currency_screen.dart';
 import 'entry_list.dart';
 import 'library_screen.dart';
@@ -205,13 +206,23 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     if (state == AppLifecycleState.resumed) unawaited(_drain());
   }
 
+  /// The home-screen widget shows the budget, and the budget is a function of
+  /// the ledger and the settings — so every path that changes either pushes it.
+  /// Not awaited: a home screen redrawing is not something a tap should wait
+  /// on, and a failure there is handled by leaving the widget stale.
+  void _pushWidget() {
+    unawaited(refreshWidget(zh: _zh));
+  }
+
   void _entriesChanged() {
     widget.store?.touchEntries();
+    _pushWidget();
     setState(() => _listVersion++);
   }
 
   void _configChanged() {
     widget.store?.touchConfig();
+    _pushWidget();
     setState(() {
       _zh = store.language() != 'en';
       _listVersion++;
@@ -226,6 +237,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   void _bothChanged() {
     widget.store?.touchEntries();
     widget.store?.touchConfig();
+    _pushWidget();
     setState(() => _listVersion++);
   }
 

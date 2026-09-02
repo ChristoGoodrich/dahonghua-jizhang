@@ -17,6 +17,7 @@ import 'package:flutter_app/src/rust/frb_generated.dart';
 import 'package:flutter_app/stats_screen.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'rust_init.dart';
 
 String day(DateTime d) => '${d.year}-${d.month}-${d.day}';
 
@@ -41,7 +42,7 @@ Future<void> show(WidgetTester tester, {bool zh = true}) async {
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-  setUpAll(() async => await RustLib.init());
+  setUpAll(ensureRust);
   setUp(() => store.reset());
 
   group('the windows', () {

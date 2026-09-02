@@ -51,6 +51,24 @@
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
+        <!--
+          The home-screen widget. Exported because the launcher is what binds
+          it, from another process; there is no permission to gate that with,
+          which is why the receiver holds no data of its own and reads only
+          what the app has already written to its own preferences.
+        -->
+        <receiver
+            android:name="com.dahonghua.flutter_app.widget.BudgetWidgetProvider"
+            android:exported="true"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_budget_info" />
+        </receiver>
+
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

@@ -23,6 +23,7 @@ import 'package:flutter_app/src/rust/frb_generated.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'dart:typed_data';
+import 'rust_init.dart';
 
 int get now => DateTime.now().millisecondsSinceEpoch;
 
@@ -45,7 +46,7 @@ String textOf(WidgetTester tester, String key) =>
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-  setUpAll(() async => await RustLib.init());
+  setUpAll(ensureRust);
   setUp(() => store.reset());
 
   group('the table', () {

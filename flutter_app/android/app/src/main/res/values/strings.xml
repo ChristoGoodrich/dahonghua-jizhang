@@ -8,4 +8,9 @@
 <resources>
     <string name="app_name">大红花记账</string>
     <string name="notif_service_name">大红花记账 · 自动记账</string>
+    <!--
+      Shown in the launcher's widget picker. Android reads it before the app
+      has run, so it cannot come from the app's own locale handling either.
+    -->
+    <string name="widget_description">这个月的预算还剩多少</string>
 </resources>
