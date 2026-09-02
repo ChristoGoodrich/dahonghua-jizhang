@@ -3324,15 +3324,28 @@ screen is worse than a large one that does not.
 iOS is not built. The user has no iOS device to test on, and shipping a binary
 nobody has run is not shipping.
 
-`debug` gets no `applicationIdSuffix`, which is a decision with a shelf life.
-Today every build here is signed with the debug key, so the release APK and the
-integration suite's debug APK replace each other cleanly. The day a real
-keystore exists that stops being true — same package name, two signatures, and
-the second install fails. The fix is one line, `applicationIdSuffix = ".debug"`,
-and it is not written yet because it moves the package name the notification
-listener is granted under, which would silently un-grant notification access on
-every device the suite runs on. Worth doing deliberately, with the grant
-re-checked, rather than as a footnote to a packaging commit.
+`debug` now carries `applicationIdSuffix = ".debug"`, which was deferred out of
+the packaging commit and done on its own.
+
+What it buys is larger than it looks. Without it, a debug build and the release
+build share `com.dahonghua.app` — so running the integration suite on a real
+phone **uninstalls the app that phone's owner is using**, and once a real
+keystore exists the two signatures differ and the install fails outright
+instead.
+
+The cost is that a notification listener is granted per ComponentName, and the
+package is half of one, so the debug build needs its own grant. That is a
+one-time tap, and the app already reports missing access rather than showing an
+empty queue as "no payments today".
+
+Nothing had hardcoded the package name — the two places that use it,
+`notification.packageName == packageName` and the widget's `RemoteViews`, both
+read it at runtime — and the manifest had already been changed to
+fully-qualified class names when `applicationId` and `namespace` first
+diverged, so relative-name resolution was never at risk. Verified rather than
+assumed: `aapt` reports `com.dahonghua.app.debug` for the debug APK and
+`com.dahonghua.app` for the release one, both are installed on the emulator at
+once, and the 601-test suite passes under the new package.
 
 ## Rules while both trees exist
 

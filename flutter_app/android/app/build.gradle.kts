@@ -64,6 +64,23 @@ android {
     }
 
     buildTypes {
+        debug {
+            // A debug build installs alongside the real app instead of
+            // replacing it.
+            //
+            // Without this they share `com.dahonghua.app`, so running the
+            // integration suite on a phone uninstalls the app the phone's
+            // owner is actually using — and once a real keystore exists the
+            // two signatures differ and the install fails outright.
+            //
+            // The cost is that the notification listener is granted per
+            // ComponentName, and the package is half of one: the debug build
+            // needs its own grant. That is a one-time tap in system settings,
+            // and the app already says when access is missing rather than
+            // reporting an empty queue as "no payments today".
+            applicationIdSuffix = ".debug"
+        }
+
         release {
             signingConfig = if (hasReleaseKey) {
                 signingConfigs.getByName("release")
