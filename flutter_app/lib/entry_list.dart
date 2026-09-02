@@ -368,6 +368,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
             amt: e.amt,
             isPending: e.rb == 'pending',
             zh: zh,
+            onDelete: () => _delete(e, zh),
           );
           if (changed) widget.onChanged?.call();
         },

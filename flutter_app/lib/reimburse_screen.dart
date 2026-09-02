@@ -239,6 +239,7 @@ Future<bool> showEntryActions(
   required double amt,
   required bool isPending,
   bool zh = true,
+  VoidCallback? onDelete,
 }) async {
   final action = await showModalBottomSheet<String>(
     context: context,
@@ -269,11 +270,36 @@ Future<bool> showEntryActions(
             ),
             onTap: () => Navigator.pop(ctx, 'refund'),
           ),
+          if (onDelete != null) ...[
+            Divider(height: 1, color: palette.line),
+            // Deleting is a swipe as well, which is how the shipping app did
+            // it and still works. It is here too because a gesture with no
+            // visible affordance is a gesture that has to be known about
+            // already, and the menu is where someone looks when it is not.
+            ListTile(
+              key: const Key('action-delete'),
+              leading: Icon(Icons.delete_outline, color: palette.hibiscus),
+              title: Text(zh ? '删除' : 'Delete',
+                  style: TextStyle(fontSize: 15, color: palette.ink)),
+              subtitle: Text(
+                zh ? '可以撤销' : 'Can be undone',
+                style: TextStyle(fontSize: 12, color: palette.inkSoft),
+              ),
+              onTap: () => Navigator.pop(ctx, 'delete'),
+            ),
+          ],
         ],
       ),
     ),
   );
   if (action == null || !context.mounted) return false;
+
+  if (action == 'delete') {
+    // The caller owns the deletion, because it owns the undo: the snackbar has
+    // to outlive this sheet, and the list is what can put the row back.
+    onDelete?.call();
+    return false;
+  }
 
   final now = DateTime.now().millisecondsSinceEpoch;
   if (action == 'reimburse') {

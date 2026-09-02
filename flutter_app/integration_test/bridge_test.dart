@@ -7,6 +7,7 @@
 // boundary problem rather than a logic one.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/glass.dart';
 import 'package:flutter_app/main.dart';
 import 'package:flutter_app/src/rust/api/calc.dart' as calc;
 import 'package:flutter_app/src/rust/api/glass.dart' as glass;
@@ -128,20 +129,70 @@ void main() {
     });
   });
 
-  group('the screen builds on top of it', () {
-    testWidgets('the record sheet renders with Rust-computed colour', (tester) async {
-      await tester.pumpWidget(const MaterialApp(home: MaterialProbe()));
+  group('the material is drawn, not just computed', () {
+    // For most of the port `glass.rs` had 1,281 parity cases and no consumer:
+    // the only caller was a probe screen no route pointed at. These are here
+    // so that cannot quietly become true again.
+
+    testWidgets('a Glass surface renders', (tester) async {
+      await tester.pumpWidget(const MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: Glass(
+              key: Key('probe-glass'),
+              child: SizedBox(width: 100, height: 100),
+            ),
+          ),
+        ),
+      ));
       await tester.pumpAndSettle();
-      expect(find.text('记一笔'), findsOneWidget);
-      expect(find.text('读回：「」 长度 0'), findsOneWidget);
+      expect(find.byKey(const Key('probe-glass')), findsOneWidget);
     });
 
-    testWidgets('a keypress goes through Rust and back to the screen', (tester) async {
-      await tester.pumpWidget(const MaterialApp(home: MaterialProbe()));
+    testWidgets('it blurs what is behind it', (tester) async {
+      await tester.pumpWidget(const MaterialApp(
+        home: Scaffold(
+          body: Stack(
+            children: [
+              Positioned.fill(child: ColoredBox(color: Color(0xFF123456))),
+              Center(
+                child: Glass(
+                  key: Key('probe-glass'),
+                  child: SizedBox(width: 100, height: 100),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('7'));
+
+      // A BackdropFilter is the difference between glass and a translucent
+      // rectangle, and it is the part that was missing.
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('probe-glass')),
+          matching: find.byType(BackdropFilter),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('the tab bar is made of it and floats', (tester) async {
+      await tester.pumpWidget(MaterialApp(home: Home()));
       await tester.pumpAndSettle();
-      expect(find.text('7'), findsWidgets);
+
+      final bar = find.byKey(const Key('tab-bar'));
+      expect(bar, findsOneWidget);
+      expect(tester.widget(bar), isA<Glass>(),
+          reason: 'the bar is a glass surface, not a painted strip');
+
+      // Floating: held clear of the bottom edge rather than pinned to it.
+      final box = tester.getRect(bar);
+      final screen = tester.getSize(find.byType(MaterialApp));
+      expect(box.bottom, lessThan(screen.height),
+          reason: 'a bar flush with the bottom is not floating');
+      expect(box.left, greaterThan(0));
     });
   });
 }

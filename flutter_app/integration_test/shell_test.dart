@@ -104,7 +104,12 @@ Future<void> backToHub(WidgetTester tester) async {
 
 Future<void> tapMeRow(WidgetTester tester, String key) async {
   final f = find.byKey(Key(key));
-  await tester.ensureVisible(f);
+  // Centred, not merely revealed. `tester.ensureVisible` scrolls the minimum
+  // needed to bring a row inside the viewport — and since the bar started
+  // floating, the viewport runs BEHIND it, so "inside" can mean "under the
+  // bar" and the tap lands on the bar instead. A user hits this too and
+  // scrolls a little further; the test has to do the same thing.
+  await Scrollable.ensureVisible(tester.element(f), alignment: 0.5);
   await tester.pumpAndSettle();
   await tester.tap(f);
   await tester.pumpAndSettle();

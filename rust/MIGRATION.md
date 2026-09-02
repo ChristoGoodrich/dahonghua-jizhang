@@ -3391,6 +3391,55 @@ Each was checked against the source rather than assumed, and they are now
 listed under "Not in this build" with why. A README that quietly drops a
 feature is worse than one that says it went.
 
+## The material was ported and never drawn
+
+Found by the first person to actually use the app, which is the only way this
+one was going to be found.
+
+`core::glass` has decided the blur intensity, the wash a surface paints over
+the room behind it, the specular sheen and the readability alpha since early in
+the port — 1,281 parity cases. Its only consumer was a `MaterialProbe` screen
+that **no route pointed at**. There was not one `BackdropFilter` in the app.
+
+That is this project's usual failure run backwards. The rule everything here
+rests on is that the core decides and the platform draws; the danger it guards
+against is a screen deciding for itself. This was the other half of the same
+mistake — the core decided and no screen listened — and no amount of parity
+would ever have caught it, because every one of those 1,281 answers was
+correct. They were computed for a widget nobody could reach.
+
+`lib/glass.dart` renders it now, composed in the order `Glass.tsx` used: the
+backdrop blur, then the wash, then the sheen. The bar is a floating glass pill
+at the shipping app's geometry — radius 26, held clear of the bottom rather
+than pinned to it — and `extendBody: true`, which is not cosmetic: a bar in the
+`bottomNavigationBar` slot has only the scaffold's background behind it, and
+blurring a flat colour produces a flat colour.
+
+### The bug the change introduced
+
+`Glass` put both the content and the sheen in a `Stack` as positioned children.
+A Stack with no unpositioned child has nothing to size itself from, so it takes
+the largest size its constraints allow — **the bar filled the screen** and
+swallowed every tap on it. Seven tests failed in three unrelated screens, all
+of them "tapped a row, nothing opened".
+
+The instructive part is how long it took to find. The failures looked like the
+floating bar covering the bottom of lists, which is a real hazard and was the
+wrong answer; two rounds of adjusting how far the tests scrolled made it worse
+rather than better. What identified it was reading the hit-test dump instead of
+reasoning about it: the tap at y=322 — the middle of the screen — landed on
+`RenderBackdropFilter`. A bar cannot be in the middle of the screen, and that
+one line said what an hour of plausible theories had not.
+
+### Delete, on the long press
+
+Deleting an entry was a left swipe, which is what the React Native app did, and
+still is. It is in the long-press menu too now. Not a port defect — the menu
+there offered reimburse and refund and no delete either — but a gesture with no
+visible affordance is a gesture you have to already know about, and the menu is
+where someone looks when they do not. The undo stays with the list, because the
+snackbar has to outlive the sheet.
+
 ## Rules while both trees exist
 
 - The TypeScript app stays shippable and green the entire time. It is the

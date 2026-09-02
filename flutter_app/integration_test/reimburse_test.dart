@@ -266,6 +266,40 @@ void main() {
       expect(find.byKey(const Key('action-refund')), findsOneWidget);
     });
 
+    testWidgets('offers delete, which the swipe alone did not advertise',
+        (tester) async {
+      // Deleting has always been a left swipe and still is. It is in the menu
+      // too because a gesture with no visible affordance is a gesture you have
+      // to already know about, and the menu is where someone looks when they
+      // do not.
+      spend('e1', 120, note: '打车');
+      await showList(tester);
+
+      await tester.longPress(find.text('打车'));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('action-delete')), findsOneWidget);
+    });
+
+    testWidgets('deleting from the menu removes the row and can be undone',
+        (tester) async {
+      spend('e1', 120, note: '打车');
+      await showList(tester);
+
+      await tester.longPress(find.text('打车'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('action-delete')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('打车'), findsNothing);
+      expect(store.liveEntries(), isEmpty);
+
+      // The undo has to outlive the sheet, which is why the list owns it and
+      // not the menu.
+      await tester.tap(find.text('撤销'));
+      await tester.pumpAndSettle();
+      expect(store.liveEntries().length, 1);
+    });
+
     testWidgets('marks the entry for reimbursement', (tester) async {
       spend('e1', 120, note: '打车');
       await showList(tester);
