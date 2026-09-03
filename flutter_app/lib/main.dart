@@ -22,6 +22,7 @@ import 'package:flutter/services.dart';
 
 import 'assets_screen.dart';
 import 'backup_screen.dart';
+import 'bottom_nav.dart';
 import 'budget_screen.dart';
 import 'budget_widget.dart';
 import 'currency_screen.dart';
@@ -436,117 +437,16 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     ];
   }
 
-  /// Material 3's default NavigationBar paints itself lavender, which against
-  /// this palette's warm paper reads as a different application's chrome. The
-  /// colours are the theme's, not the framework's.
+  /// The bar and the record button beside it: see bottom_nav.dart.
   ///
-  /// The record button sits beside the bar rather than inside it: the bar stays
-  /// one uninterrupted surface, and the primary action gets its own weight.
-  /// The floating glass bar.
-  ///
-  /// Geometry from the shipping app: 64 tall, radius 26, 8 of horizontal
-  /// padding, held clear of the bottom inset rather than pinned to it. The
-  /// shadow sits on a wrapper rather than on the glass itself — a shadow on
-  /// the blurred surface is clipped by the same rounding that makes it round.
-  Widget _bar() => SafeArea(
-    top: false,
-    child: Padding(
-      padding: const EdgeInsets.fromLTRB(12, 0, 12, 10),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(26),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: palette.isDark ? 0.4 : 0.12),
-              blurRadius: 18,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Glass(
-          key: const Key('tab-bar'),
-          level: glass.GlassLevel.chrome,
-          // Chrome carries icons and short labels rather than dense content,
-          // so it can stay more transparent than a card.
-          density: 0.45,
-          radius: 26,
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: SizedBox(
-            height: 64,
-            child: Row(
-              children: [
-                _tabItem(0, Icons.receipt_long, _zh ? '明细' : 'Entries'),
-                _tabItem(1, Icons.pie_chart_outline, _zh ? '统计' : 'Stats'),
-                _recordButton(),
-                _tabItem(2, Icons.account_balance_wallet_outlined,
-                    _zh ? '资产' : 'Assets'),
-                _tabItem(3, Icons.person_outline, _zh ? '我的' : 'Me'),
-              ],
-            ),
-          ),
-        ),
-      ),
-    ),
-  );
-
-  Widget _tabItem(int i, IconData icon, String label) {
-    final on = _tab == i;
-    return Expanded(
-      child: InkWell(
-        key: Key('tab-$label'),
-        onTap: () {
-          HapticFeedback.selectionClick();
-          setState(() => _tab = i);
-        },
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 22, color: on ? palette.hibiscus : palette.inkSoft),
-            const SizedBox(height: 3),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: on ? palette.hibiscus : palette.inkSoft,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _recordButton() => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 6),
-    child: Semantics(
-      button: true,
-      label: _zh ? '记一笔' : 'Record',
-      child: GestureDetector(
-        key: const Key('record-button'),
-        onTap: () {
-          HapticFeedback.selectionClick();
-          _record();
-        },
-        child: Container(
-          width: 52,
-          height: 52,
-          decoration: BoxDecoration(
-            color: palette.hibiscus,
-            borderRadius: BorderRadius.circular(Rad.md),
-          ),
-          child: const Icon(Icons.add, color: Colors.white, size: 26),
-        ),
-      ),
-    ),
+  /// Nothing about how it looks is decided here. What lives in this class is
+  /// which tab is showing and what the record button does.
+  Widget _bar() => BottomNav(
+    active: _tab,
+    onChange: (i) => setState(() => _tab = i),
+    onAdd: () => _record(),
+    labels: _zh
+        ? const ['明细', '统计', '资产', '我的']
+        : const ['Entries', 'Stats', 'Assets', 'Me'],
   );
 }
-
-/// The throwaway prototype, kept.
-///
-/// It is not a screen the app uses any more — the real record sheet is
-/// record_sheet.dart. This is what answered the three questions the
-/// architecture had to settle on a device before Flutter was chosen: does a
-/// Chinese IME compose, does 柔光玻璃 render, do accessibility labels reach
-/// Android. It still demonstrates the fourth: every colour on it is computed in
-/// Rust. Renamed because two classes called RecordSheet is one too many.

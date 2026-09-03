@@ -57,6 +57,15 @@ class Palette {
   Color get hibiscus => parseHex(_t.hibiscus);
   Color get hibiscusDeep => parseHex(_t.hibiscusDeep);
 
+  /// The record button's fill. A gradient rather than a flat accent, which is
+  /// what keeps it reading as its own object next to the glass bar.
+  Color get gradFrom => parseHex(_t.gradFrom);
+  Color get gradTo => parseHex(_t.gradTo);
+
+  /// Shadow colours, as the theme states them.
+  String get shadowHex => _t.shadow;
+  String get glowHex => _t.glow;
+
   bool get isDark => _t.isDark;
 }
 

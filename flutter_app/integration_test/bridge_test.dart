@@ -178,6 +178,37 @@ void main() {
       );
     });
 
+    testWidgets('the record button is beside the bar, not inside it',
+        (tester) async {
+      // The shape the first attempt got wrong. The bar is one uninterrupted
+      // glass slab and the primary action is a separate object next to it —
+      // not a fifth tab notched into the middle.
+      await tester.pumpWidget(MaterialApp(home: Home()));
+      await tester.pumpAndSettle();
+
+      final bar = find.byKey(const Key('tab-bar'));
+      final add = find.byKey(const Key('record-button'));
+      expect(bar, findsOneWidget);
+      expect(add, findsOneWidget);
+
+      expect(find.descendant(of: bar, matching: add), findsNothing,
+          reason: 'the button is a sibling of the bar, not a child');
+      expect(tester.getRect(add).left,
+          greaterThanOrEqualTo(tester.getRect(bar).right),
+          reason: 'and it sits to the right of it');
+    });
+
+    testWidgets('the bar is sized to its content, not to the screen',
+        (tester) async {
+      await tester.pumpWidget(MaterialApp(home: Home()));
+      await tester.pumpAndSettle();
+
+      final row = tester.getRect(find.byKey(const Key('tab-bar')));
+      final screen = tester.getSize(find.byType(MaterialApp));
+      expect(row.width, lessThan(screen.width - 40),
+          reason: 'a bar stretched to the edges is not a floating pill');
+    });
+
     testWidgets('the tab bar is made of it and floats', (tester) async {
       await tester.pumpWidget(MaterialApp(home: Home()));
       await tester.pumpAndSettle();

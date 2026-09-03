@@ -46,6 +46,8 @@ class Glass extends StatelessWidget {
     this.edge = true,
     this.sheen = true,
     this.padding = EdgeInsets.zero,
+    this.touch = 0,
+    this.surface,
   });
 
   final Widget child;
@@ -62,6 +64,20 @@ class Glass extends StatelessWidget {
   final bool edge;
   final bool sheen;
   final EdgeInsets padding;
+
+  /// 点按有光. 0..1, driven by whatever is animating the press.
+  ///
+  /// HyperOS 4 names this as one of the material's three behaviours — "点按有
+  /// 光，操作有回应" — alongside blending toward what is under it and answering
+  /// how dense the content is. The other two were here from the start and this
+  /// one was not, which is most of why the surface read as a translucent panel
+  /// rather than as glass: glass answers being touched.
+  final double touch;
+
+  /// The material's own colour before it picks up the room. Defaults to the
+  /// card; a dark chrome surface passes ink so it stays dark glass rather than
+  /// becoming a light panel that white text falls off.
+  final String? surface;
 
   @override
   Widget build(BuildContext context) {
@@ -91,6 +107,7 @@ class Glass extends StatelessWidget {
       level: level,
       under: under ?? p.paperHex,
       alpha: alpha,
+      surface: surface,
     ));
 
     final hairline = 1 / MediaQuery.devicePixelRatioOf(context);
@@ -106,6 +123,22 @@ class Glass extends StatelessWidget {
       padding: padding,
       child: child,
     );
+
+    if (touch > 0) {
+      body = Stack(
+        children: [
+          body,
+          Positioned.fill(
+            child: IgnorePointer(
+              child: ColoredBox(
+                color: parseRgba(g.touchLightColor(isDark: p.isDark))
+                    .withValues(alpha: touch.clamp(0.0, 1.0)),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
 
     if (sheen && spec.sheen > 0) {
       body = Stack(
