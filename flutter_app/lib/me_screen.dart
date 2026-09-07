@@ -12,6 +12,7 @@
 
 import 'package:flutter/material.dart';
 
+import 'tap.dart';
 import 'theme.dart';
 
 /// One destination.
@@ -125,10 +126,10 @@ class MeScreen extends StatelessWidget {
         ),
       );
 
-  Widget _row(MeRow r) => InkWell(
+  Widget _row(MeRow r) => Tap(
         key: r.id == null ? null : Key('me-${r.id}'),
         onTap: r.onTap,
-        borderRadius: BorderRadius.circular(Rad.lg),
+        radius: Rad.lg,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           child: Row(

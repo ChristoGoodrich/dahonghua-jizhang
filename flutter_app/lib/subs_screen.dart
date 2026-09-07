@@ -19,6 +19,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge.dart' show Int64List;
 import 'src/rust/api/catalog.dart' as catalog;
 import 'src/rust/api/money.dart' as money;
 import 'src/rust/api/subscriptions.dart' as subs;
+import 'tap.dart';
 import 'theme.dart';
 
 /// `YYYY-M-D` with a **0-indexed** month, inherited from v7 — the encoding the
@@ -118,8 +119,10 @@ class _SubsScreenState extends State<SubsScreen> {
       builder: (ctx) => AlertDialog(
         key: const Key('sub-delete-dialog'),
         backgroundColor: palette.card,
-        title: Text(zh ? '删除订阅' : 'Delete subscription',
-            style: TextStyle(fontSize: 16, color: palette.ink)),
+        title: Text(
+          zh ? '删除订阅' : 'Delete subscription',
+          style: TextStyle(fontSize: 16, color: palette.ink),
+        ),
         content: Text(
           zh
               ? '「${s.name}」以后不再自动记账。已经记下的不受影响。'
@@ -155,9 +158,14 @@ class _SubsScreenState extends State<SubsScreen> {
       appBar: AppBar(
         backgroundColor: palette.paper,
         surfaceTintColor: Colors.transparent,
-        title: Text(zh ? '订阅' : 'Subscriptions',
-            style: TextStyle(
-                color: palette.ink, fontSize: 20, fontWeight: FontWeight.w700)),
+        title: Text(
+          zh ? '订阅' : 'Subscriptions',
+          style: TextStyle(
+            color: palette.ink,
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
         actions: [
           IconButton(
             key: const Key('add-sub'),
@@ -185,7 +193,8 @@ class _SubsScreenState extends State<SubsScreen> {
     final today = DateTime.now();
     final due = subs.subNextDue(id: s.id, from: encodeDay(today));
     final dueDate = due == null ? null : decodeDay(due);
-    final isToday = dueDate != null &&
+    final isToday =
+        dueDate != null &&
         dueDate.year == today.year &&
         dueDate.month == today.month &&
         dueDate.day == today.day;
@@ -193,19 +202,19 @@ class _SubsScreenState extends State<SubsScreen> {
     // done, however many times it has fired
     final done = s.periods != null && s.charged >= s.periods!;
 
-    final freqLabel = s.freq == 'yearly' ? (zh ? '每年' : 'Yearly') : (zh ? '每月' : 'Monthly');
+    final freqLabel = s.freq == 'yearly'
+        ? (zh ? '每年' : 'Yearly')
+        : (zh ? '每月' : 'Monthly');
     final dueLabel = done
         ? (zh ? '已付清' : 'Paid off')
         : isToday
-            ? (zh ? '今天扣款' : 'Charges today')
-            : dueDate == null
-                ? '—'
-                : (zh
-                    ? '下次 ${dueDate.month}月${dueDate.day}日'
-                    : 'Next ${dueDate.month}/${dueDate.day}');
-    final plan = s.periods == null
-        ? ''
-        : '${s.charged}/${s.periods} · ';
+        ? (zh ? '今天扣款' : 'Charges today')
+        : dueDate == null
+        ? '—'
+        : (zh
+              ? '下次 ${dueDate.month}月${dueDate.day}日'
+              : 'Next ${dueDate.month}/${dueDate.day}');
+    final plan = s.periods == null ? '' : '${s.charged}/${s.periods} · ';
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
@@ -226,20 +235,25 @@ class _SubsScreenState extends State<SubsScreen> {
                 color: palette.paperWarm,
                 borderRadius: BorderRadius.circular(Rad.sm),
               ),
-              child: Text(s.emoji.isEmpty ? '🔁' : s.emoji,
-                  style: const TextStyle(fontSize: 18)),
+              child: Text(
+                s.emoji.isEmpty ? '🔁' : s.emoji,
+                style: const TextStyle(fontSize: 18),
+              ),
             ),
             const SizedBox(width: 11),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(s.name,
-                      key: Key('sub-${s.id}-name'),
-                      style: TextStyle(
-                          fontSize: 14.5,
-                          fontWeight: FontWeight.w600,
-                          color: palette.ink)),
+                  Text(
+                    s.name,
+                    key: Key('sub-${s.id}-name'),
+                    style: TextStyle(
+                      fontSize: 14.5,
+                      fontWeight: FontWeight.w600,
+                      color: palette.ink,
+                    ),
+                  ),
                   const SizedBox(height: 2),
                   Text(
                     '$plan$freqLabel · $dueLabel',
@@ -249,8 +263,8 @@ class _SubsScreenState extends State<SubsScreen> {
                       color: done
                           ? palette.leafDeep
                           : isToday
-                              ? palette.hibiscus
-                              : palette.inkSoft,
+                          ? palette.hibiscus
+                          : palette.inkSoft,
                     ),
                   ),
                 ],
@@ -269,7 +283,11 @@ class _SubsScreenState extends State<SubsScreen> {
             IconButton(
               key: Key('sub-${s.id}-delete'),
               tooltip: zh ? '删除' : 'Delete',
-              icon: Icon(Icons.delete_outline, size: 20, color: palette.hibiscus),
+              icon: Icon(
+                Icons.delete_outline,
+                size: 20,
+                color: palette.hibiscus,
+              ),
               onPressed: () => _confirmDelete(s),
             ),
           ],
@@ -334,13 +352,13 @@ class _NewSubDialogState extends State<_NewSubDialog> {
   }
 
   InputDecoration _field(String label) => InputDecoration(
-        labelText: label,
-        labelStyle: TextStyle(color: palette.inkSoft),
-        floatingLabelStyle: TextStyle(color: palette.stamen),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: palette.stamen, width: 2),
-        ),
-      );
+    labelText: label,
+    labelStyle: TextStyle(color: palette.inkSoft),
+    floatingLabelStyle: TextStyle(color: palette.stamen),
+    focusedBorder: UnderlineInputBorder(
+      borderSide: BorderSide(color: palette.stamen, width: 2),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -349,8 +367,10 @@ class _NewSubDialogState extends State<_NewSubDialog> {
     return AlertDialog(
       key: const Key('new-sub-dialog'),
       backgroundColor: palette.card,
-      title: Text(zh ? '新建订阅' : 'New subscription',
-          style: TextStyle(fontSize: 16, color: palette.ink)),
+      title: Text(
+        zh ? '新建订阅' : 'New subscription',
+        style: TextStyle(fontSize: 16, color: palette.ink),
+      ),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -366,53 +386,66 @@ class _NewSubDialogState extends State<_NewSubDialog> {
             TextField(
               key: const Key('sub-amt'),
               controller: _amt,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               cursorColor: palette.stamen,
               decoration: _field(zh ? '金额' : 'Amount'),
             ),
             const SizedBox(height: 14),
-            Wrap(spacing: 6, children: [
-              for (final f in ['monthly', 'yearly'])
-                _chip(
-                  key: 'freq-$f',
-                  label: f == 'yearly' ? (zh ? '每年' : 'Yearly') : (zh ? '每月' : 'Monthly'),
-                  on: _freq == f,
-                  onTap: () => setState(() => _freq = f),
-                ),
-            ]),
+            Wrap(
+              spacing: 6,
+              children: [
+                for (final f in ['monthly', 'yearly'])
+                  _chip(
+                    key: 'freq-$f',
+                    label: f == 'yearly'
+                        ? (zh ? '每年' : 'Yearly')
+                        : (zh ? '每月' : 'Monthly'),
+                    on: _freq == f,
+                    onTap: () => setState(() => _freq = f),
+                  ),
+              ],
+            ),
             const SizedBox(height: 10),
-            Row(children: [
-              SizedBox(
-                width: 70,
-                child: TextField(
-                  key: const Key('sub-day'),
-                  controller: _day,
-                  keyboardType: TextInputType.number,
-                  cursorColor: palette.stamen,
-                  decoration: _field(zh ? '日' : 'Day'),
+            Row(
+              children: [
+                SizedBox(
+                  width: 70,
+                  child: TextField(
+                    key: const Key('sub-day'),
+                    controller: _day,
+                    keyboardType: TextInputType.number,
+                    cursorColor: palette.stamen,
+                    decoration: _field(zh ? '日' : 'Day'),
+                  ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: TextField(
-                  key: const Key('sub-periods'),
-                  controller: _periods,
-                  keyboardType: TextInputType.number,
-                  cursorColor: palette.stamen,
-                  decoration: _field(zh ? '分期数(可空)' : 'Instalments'),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextField(
+                    key: const Key('sub-periods'),
+                    controller: _periods,
+                    keyboardType: TextInputType.number,
+                    cursorColor: palette.stamen,
+                    decoration: _field(zh ? '分期数(可空)' : 'Instalments'),
+                  ),
                 ),
-              ),
-            ]),
+              ],
+            ),
             const SizedBox(height: 14),
-            Wrap(spacing: 6, runSpacing: 6, children: [
-              for (final c in cats.take(6))
-                _chip(
-                  key: 'sub-cat-${c.k}',
-                  label: '${c.e} ${catalog.catName(cat: c, zh: zh)}',
-                  on: _cat == c.k,
-                  onTap: () => setState(() => _cat = c.k),
-                ),
-            ]),
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: [
+                for (final c in cats.take(6))
+                  _chip(
+                    key: 'sub-cat-${c.k}',
+                    label: '${c.e} ${catalog.catName(cat: c, zh: zh)}',
+                    on: _cat == c.k,
+                    onTap: () => setState(() => _cat = c.k),
+                  ),
+              ],
+            ),
           ],
         ),
       ),
@@ -438,18 +471,18 @@ class _NewSubDialogState extends State<_NewSubDialog> {
     required String label,
     required bool on,
     required VoidCallback onTap,
-  }) =>
-      GestureDetector(
-        key: Key(key),
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          decoration: BoxDecoration(
-            color: on ? palette.stamen.withValues(alpha: 0.18) : Colors.transparent,
-            borderRadius: BorderRadius.circular(Rad.pill),
-            border: Border.all(color: on ? palette.stamen : palette.line),
-          ),
-          child: Text(label, style: TextStyle(fontSize: 12, color: palette.ink)),
-        ),
-      );
+  }) => Tap(
+    radius: Rad.pill,
+    key: Key(key),
+    onTap: onTap,
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: on ? palette.stamen.withValues(alpha: 0.18) : Colors.transparent,
+        borderRadius: BorderRadius.circular(Rad.pill),
+        border: Border.all(color: on ? palette.stamen : palette.line),
+      ),
+      child: Text(label, style: TextStyle(fontSize: 12, color: palette.ink)),
+    ),
+  );
 }

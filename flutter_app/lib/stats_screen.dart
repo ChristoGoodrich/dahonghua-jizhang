@@ -18,6 +18,7 @@ import 'src/rust/api/money.dart' as money;
 import 'src/rust/api/period.dart' as period;
 import 'src/rust/api/stats.dart' as stats;
 import 'src/rust/api/store.dart' as store;
+import 'tap.dart';
 import 'theme.dart';
 
 /// `y-m-d` for a local calendar day — the one conversion that needs a timezone,
@@ -72,14 +73,12 @@ class _StatsScreenState extends State<StatsScreen> {
     // to the totals and the donut — which is what this screen used to do — made
     // them say something different from the chart above them.
     final inWin = period
-        .idsInPeriod(
-          ids: ids,
-          daysOf: days,
-          anchor: _anchor,
-          period: _period,
-        )
+        .idsInPeriod(ids: ids, daysOf: days, anchor: _anchor, period: _period)
         .toSet();
-    final kept = [for (var i = 0; i < ids.length; i++) if (inWin.contains(ids[i])) i];
+    final kept = [
+      for (var i = 0; i < ids.length; i++)
+        if (inWin.contains(ids[i])) i,
+    ];
     final winIds = [for (final i in kept) ids[i]];
     final winDays = [for (final i in kept) days[i]];
 
@@ -107,8 +106,13 @@ class _StatsScreenState extends State<StatsScreen> {
   }
 
   void _step(int dir) {
-    setState(() => _anchor =
-        period.stepPeriod(anchor: _anchor, period: _period, dir: dir));
+    setState(
+      () => _anchor = period.stepPeriod(
+        anchor: _anchor,
+        period: _period,
+        dir: dir,
+      ),
+    );
     _reload();
   }
 
@@ -175,9 +179,14 @@ class _StatsScreenState extends State<StatsScreen> {
       appBar: AppBar(
         backgroundColor: palette.paper,
         surfaceTintColor: Colors.transparent,
-        title: Text(zh ? '统计' : 'Stats',
-            style: TextStyle(
-                color: palette.ink, fontSize: 20, fontWeight: FontWeight.w700)),
+        title: Text(
+          zh ? '统计' : 'Stats',
+          style: TextStyle(
+            color: palette.ink,
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(22, 6, 22, 120),
@@ -201,22 +210,24 @@ class _StatsScreenState extends State<StatsScreen> {
     // keyed: the same amount can legitimately appear in the donut legend below,
     // and a finder that goes by text cannot say which one it means
     Widget cell(String key, String label, double v, Color c) => Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(label,
-                  style: TextStyle(fontSize: 12, color: palette.inkSoft)),
-              const SizedBox(height: 3),
-              Text(money.fmt(n: v, symbol: sym),
-                  key: Key('total-$key'),
-                  style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w700,
-                      fontFeatures: tabular,
-                      color: c)),
-            ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: TextStyle(fontSize: 12, color: palette.inkSoft)),
+          const SizedBox(height: 3),
+          Text(
+            money.fmt(n: v, symbol: sym),
+            key: Key('total-$key'),
+            style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
+              fontFeatures: tabular,
+              color: c,
+            ),
           ),
-        );
+        ],
+      ),
+    );
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
@@ -224,115 +235,126 @@ class _StatsScreenState extends State<StatsScreen> {
         borderRadius: BorderRadius.circular(Rad.lg),
         border: Border.all(color: palette.line),
       ),
-      child: Row(children: [
-        cell('exp', zh ? '支出' : 'Expense', _overview.exp, palette.hibiscus),
-        cell('inc', zh ? '收入' : 'Income', _overview.inc, palette.leafDeep),
-        cell('bal', zh ? '结余' : 'Balance', _overview.balance, palette.ink),
-      ]),
+      child: Row(
+        children: [
+          cell('exp', zh ? '支出' : 'Expense', _overview.exp, palette.hibiscus),
+          cell('inc', zh ? '收入' : 'Income', _overview.inc, palette.leafDeep),
+          cell('bal', zh ? '结余' : 'Balance', _overview.balance, palette.ink),
+        ],
+      ),
     );
   }
 
   static const _periods = ['day', 'week', 'month', 'halfyear', 'year'];
 
   String _periodName(String p, bool zh) => switch (p) {
-        'day' => zh ? '日' : 'Day',
-        'week' => zh ? '周' : 'Week',
-        'halfyear' => zh ? '半年' : 'Half',
-        'year' => zh ? '年' : 'Year',
-        _ => zh ? '月' : 'Month',
-      };
+    'day' => zh ? '日' : 'Day',
+    'week' => zh ? '周' : 'Week',
+    'halfyear' => zh ? '半年' : 'Half',
+    'year' => zh ? '年' : 'Year',
+    _ => zh ? '月' : 'Month',
+  };
 
   Widget _windowPicker(bool zh) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Wrap(
+        spacing: 8,
+        runSpacing: 6,
         children: [
-          Wrap(
-            spacing: 8,
-            runSpacing: 6,
-            children: [
-              for (final p in _periods)
-                GestureDetector(
-                  key: Key('period-$p'),
-                  onTap: () => _setPeriod(p),
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 13, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: _period == p ? palette.card : Colors.transparent,
-                      borderRadius: BorderRadius.circular(Rad.pill),
-                      border: Border.all(
-                          color: _period == p ? palette.stamen : palette.line),
-                    ),
-                    child: Text(_periodName(p, zh),
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight:
-                              _period == p ? FontWeight.w700 : FontWeight.w500,
-                          color: palette.ink,
-                        )),
+          for (final p in _periods)
+            Tap(
+              radius: Rad.pill,
+              key: Key('period-$p'),
+              onTap: () => _setPeriod(p),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 13,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: _period == p ? palette.card : Colors.transparent,
+                  borderRadius: BorderRadius.circular(Rad.pill),
+                  border: Border.all(
+                    color: _period == p ? palette.stamen : palette.line,
                   ),
                 ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(children: [
-            IconButton(
-              key: const Key('period-prev'),
-              visualDensity: VisualDensity.compact,
-              icon: Icon(Icons.chevron_left, color: palette.inkSoft, size: 20),
-              onPressed: () => _step(-1),
-            ),
-            Expanded(
-              child: Text(
-                _windowLabel(zh),
-                key: const Key('period-label'),
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 13, color: palette.ink),
-              ),
-            ),
-            IconButton(
-              key: const Key('period-next'),
-              visualDensity: VisualDensity.compact,
-              icon: Icon(Icons.chevron_right, color: palette.inkSoft, size: 20),
-              onPressed: () => _step(1),
-            ),
-          ]),
-        ],
-      );
-
-  Widget _trendCard(bool zh) => Container(
-        padding: const EdgeInsets.fromLTRB(6, 12, 6, 8),
-        decoration: BoxDecoration(
-          color: palette.card,
-          borderRadius: BorderRadius.circular(Rad.lg),
-          border: Border.all(color: palette.line),
-        ),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 120,
-              child: CustomPaint(
-                key: const Key('trend'),
-                size: Size.infinite,
-                painter: _TrendPainter(
-                  chart: _chart,
-                  expColor: palette.hibiscus,
-                  incColor: palette.leafDeep,
+                child: Text(
+                  _periodName(p, zh),
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: _period == p
+                        ? FontWeight.w700
+                        : FontWeight.w500,
+                    color: palette.ink,
+                  ),
                 ),
               ),
             ),
-            _axis(),
-            const SizedBox(height: 6),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _legend(palette.hibiscus, zh ? '支出' : 'Expense'),
-                const SizedBox(width: 16),
-                _legend(palette.leafDeep, zh ? '收入' : 'Income'),
-              ],
+        ],
+      ),
+      const SizedBox(height: 8),
+      Row(
+        children: [
+          IconButton(
+            key: const Key('period-prev'),
+            visualDensity: VisualDensity.compact,
+            icon: Icon(Icons.chevron_left, color: palette.inkSoft, size: 20),
+            onPressed: () => _step(-1),
+          ),
+          Expanded(
+            child: Text(
+              _windowLabel(zh),
+              key: const Key('period-label'),
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 13, color: palette.ink),
             ),
+          ),
+          IconButton(
+            key: const Key('period-next'),
+            visualDensity: VisualDensity.compact,
+            icon: Icon(Icons.chevron_right, color: palette.inkSoft, size: 20),
+            onPressed: () => _step(1),
+          ),
+        ],
+      ),
+    ],
+  );
+
+  Widget _trendCard(bool zh) => Container(
+    padding: const EdgeInsets.fromLTRB(6, 12, 6, 8),
+    decoration: BoxDecoration(
+      color: palette.card,
+      borderRadius: BorderRadius.circular(Rad.lg),
+      border: Border.all(color: palette.line),
+    ),
+    child: Column(
+      children: [
+        SizedBox(
+          height: 120,
+          child: CustomPaint(
+            key: const Key('trend'),
+            size: Size.infinite,
+            painter: _TrendPainter(
+              chart: _chart,
+              expColor: palette.hibiscus,
+              incColor: palette.leafDeep,
+            ),
+          ),
+        ),
+        _axis(),
+        const SizedBox(height: 6),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _legend(palette.hibiscus, zh ? '支出' : 'Expense'),
+            const SizedBox(width: 16),
+            _legend(palette.leafDeep, zh ? '收入' : 'Income'),
           ],
         ),
-      );
+      ],
+    ),
+  );
 
   /// The ends of the range, and nothing between them.
   ///
@@ -352,64 +374,73 @@ class _StatsScreenState extends State<StatsScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(md(_points.first.day),
-              key: const Key('axis-first'),
-              style: TextStyle(
-                  fontSize: 10, fontFeatures: tabular, color: palette.inkSoft)),
-          Text(md(_points.last.day),
-              key: const Key('axis-last'),
-              style: TextStyle(
-                  fontSize: 10, fontFeatures: tabular, color: palette.inkSoft)),
+          Text(
+            md(_points.first.day),
+            key: const Key('axis-first'),
+            style: TextStyle(
+              fontSize: 10,
+              fontFeatures: tabular,
+              color: palette.inkSoft,
+            ),
+          ),
+          Text(
+            md(_points.last.day),
+            key: const Key('axis-last'),
+            style: TextStyle(
+              fontSize: 10,
+              fontFeatures: tabular,
+              color: palette.inkSoft,
+            ),
+          ),
         ],
       ),
     );
   }
 
   Widget _legend(Color c, String label) => Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(width: 14, height: 3, color: c),
-          const SizedBox(width: 5),
-          Text(label, style: TextStyle(fontSize: 11, color: palette.inkSoft)),
-        ],
-      );
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Container(width: 14, height: 3, color: c),
+      const SizedBox(width: 5),
+      Text(label, style: TextStyle(fontSize: 11, color: palette.inkSoft)),
+    ],
+  );
 
   Widget _directionPicker(bool zh) => Row(
-        children: [
-          for (final io in ['exp', 'inc'])
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: GestureDetector(
-                key: Key('io-$io'),
-                onTap: () {
-                  setState(() => _io = io);
-                  _reload();
-                },
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 13, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: _io == io ? palette.card : Colors.transparent,
-                    borderRadius: BorderRadius.circular(Rad.pill),
-                    border: Border.all(
-                        color: _io == io ? palette.stamen : palette.line),
-                  ),
-                  child: Text(
-                    io == 'exp'
-                        ? (zh ? '支出构成' : 'Expense')
-                        : (zh ? '收入构成' : 'Income'),
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight:
-                          _io == io ? FontWeight.w700 : FontWeight.w500,
-                      color: palette.ink,
-                    ),
-                  ),
+    children: [
+      for (final io in ['exp', 'inc'])
+        Padding(
+          padding: const EdgeInsets.only(right: 8),
+          child: GestureDetector(
+            key: Key('io-$io'),
+            onTap: () {
+              setState(() => _io = io);
+              _reload();
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 6),
+              decoration: BoxDecoration(
+                color: _io == io ? palette.card : Colors.transparent,
+                borderRadius: BorderRadius.circular(Rad.pill),
+                border: Border.all(
+                  color: _io == io ? palette.stamen : palette.line,
+                ),
+              ),
+              child: Text(
+                io == 'exp'
+                    ? (zh ? '支出构成' : 'Expense')
+                    : (zh ? '收入构成' : 'Income'),
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: _io == io ? FontWeight.w700 : FontWeight.w500,
+                  color: palette.ink,
                 ),
               ),
             ),
-        ],
-      );
+          ),
+        ),
+    ],
+  );
 
   Widget _donutCard(bool zh) {
     if (_slices.isEmpty) {
@@ -421,9 +452,11 @@ class _StatsScreenState extends State<StatsScreen> {
           borderRadius: BorderRadius.circular(Rad.lg),
           border: Border.all(color: palette.line),
         ),
-        child: Text(zh ? '这段时间没有记录' : 'Nothing in this range',
-            key: const Key('donut-empty'),
-            style: TextStyle(fontSize: 13, color: palette.inkSoft)),
+        child: Text(
+          zh ? '这段时间没有记录' : 'Nothing in this range',
+          key: const Key('donut-empty'),
+          style: TextStyle(fontSize: 13, color: palette.inkSoft),
+        ),
       );
     }
     final sym = zh ? '￥' : '\$';
@@ -454,24 +487,34 @@ class _StatsScreenState extends State<StatsScreen> {
                     width: 9,
                     height: 9,
                     decoration: BoxDecoration(
-                        color: parseHex(sl.color), shape: BoxShape.circle),
+                      color: parseHex(sl.color),
+                      shape: BoxShape.circle,
+                    ),
                   ),
                   const SizedBox(width: 8),
-                  Text('${sl.emoji} ${sl.name}',
-                      style: TextStyle(fontSize: 13, color: palette.ink)),
+                  Text(
+                    '${sl.emoji} ${sl.name}',
+                    style: TextStyle(fontSize: 13, color: palette.ink),
+                  ),
                   const Spacer(),
-                  Text('${(sl.frac * 100).round()}%',
-                      style: TextStyle(
-                          fontSize: 12,
-                          fontFeatures: tabular,
-                          color: palette.inkSoft)),
+                  Text(
+                    '${(sl.frac * 100).round()}%',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontFeatures: tabular,
+                      color: palette.inkSoft,
+                    ),
+                  ),
                   const SizedBox(width: 10),
-                  Text(money.fmt(n: sl.amt, symbol: sym),
-                      style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          fontFeatures: tabular,
-                          color: palette.ink)),
+                  Text(
+                    money.fmt(n: sl.amt, symbol: sym),
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      fontFeatures: tabular,
+                      color: palette.ink,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -522,8 +565,7 @@ class _TrendPainter extends CustomPainter {
           ..color = c,
       );
       for (final p in pts) {
-        canvas.drawCircle(
-            Offset(p.x * sx, p.y * sy), 2.6, Paint()..color = c);
+        canvas.drawCircle(Offset(p.x * sx, p.y * sy), 2.6, Paint()..color = c);
       }
     }
 

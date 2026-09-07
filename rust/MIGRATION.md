@@ -3440,6 +3440,38 @@ visible affordance is a gesture you have to already know about, and the menu is
 where someone looks when they do not. The undo stays with the list, because the
 snackbar has to outlive the sheet.
 
+## 23 pressables with no feedback
+
+Reported from use: tapping a row in 明细 showed nothing, so a tap that landed
+looked exactly like one that missed.
+
+`src/components/ui/Tap.tsx` is the component every pressable in the shipping
+app went through, and nothing in this build went through anything. There were
+23 bare `GestureDetector`s: they fire and they are silent. The rest were
+Material widgets whose ripple is feedback, but not this app's.
+
+Two behaviours, and the original says why they differ. Filled surfaces — rows,
+cards, chips, keys — take an **ink veil at 0.07** following their own corner
+radius. Bare icons and text with no background **dim to 0.5** instead, because
+"a tint rectangle around a naked glyph reads as a stray shadow". Scaling is
+opt-in rather than default: shrinking a shadowed card drags its shadow with it.
+
+This is 点按有光 at the scale of a row, and it is the same gap `Glass` had — the
+material answers a touch with a specular bloom, an opaque surface answers with
+the veil, and neither was implemented. Both were named on the HyperOS 4 page as
+one of the material's three behaviours.
+
+The radius matters and is the way a mechanical sweep gets this wrong: a square
+veil inside a pill-shaped chip is worse than no veil. Each of the sixteen
+conversions took its radius from the widget underneath it rather than from a
+default.
+
+One test needed changing, and what it needed says something. `meRowKeys`
+enumerated the hub by `find.byType(InkWell)`, so converting those rows made it
+find nothing. Enumerating by widget type is exactly what makes that test find
+rows nobody told it about — which is the property worth keeping — and the cost
+is that it names the widget. Now it names `Tap`.
+
 ## Rules while both trees exist
 
 - The TypeScript app stays shippable and green the entire time. It is the

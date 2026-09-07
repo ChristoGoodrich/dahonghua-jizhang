@@ -23,6 +23,7 @@ import 'src/rust/api/remind.dart' as remind;
 import 'src/rust/api/store.dart' as store;
 import 'src/rust/api/theme.dart' as theme;
 import 'reminders.dart';
+import 'tap.dart';
 import 'theme.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -64,16 +65,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
   /// Hand the operating system whatever is switched on, and say so if it
   /// refuses. A switch left on that schedules nothing is worse than no switch.
   Future<void> _syncReminders() async {
-    final ok = await syncReminders(
-      zh: widget.zh,
-      notifier: widget.notifier,
-    );
+    final ok = await syncReminders(zh: widget.zh, notifier: widget.notifier);
     if (!mounted) return;
-    setState(() => _flash = ok
-        ? null
-        : (widget.zh
-            ? '系统没给通知权限，提醒发不出来'
-            : 'Notifications are not permitted, so nothing will arrive'));
+    setState(
+      () => _flash = ok
+          ? null
+          : (widget.zh
+                ? '系统没给通知权限，提醒发不出来'
+                : 'Notifications are not permitted, so nothing will arrive'),
+    );
     widget.onChanged?.call();
   }
 
@@ -89,6 +89,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
     widget.onChanged?.call();
   }
+
   bool _busy = false;
   String? _flash;
 
@@ -116,7 +117,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       );
       final dir = await getTemporaryDirectory();
       final stamp = DateTime.now();
-      final name = 'dahonghua-${stamp.year}'
+      final name =
+          'dahonghua-${stamp.year}'
           '${stamp.month.toString().padLeft(2, '0')}'
           '${stamp.day.toString().padLeft(2, '0')}.csv';
       final file = File('${dir.path}/$name');
@@ -130,13 +132,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
         );
       }
       if (mounted) {
-        setState(() => _flash =
-            widget.zh ? '已导出 ${live.length} 条' : 'Exported ${live.length}');
+        setState(
+          () => _flash = widget.zh
+              ? '已导出 ${live.length} 条'
+              : 'Exported ${live.length}',
+        );
       }
     } catch (_) {
       if (mounted) {
-        setState(() =>
-            _flash = widget.zh ? '导出失败了' : 'The export did not go through');
+        setState(
+          () => _flash = widget.zh ? '导出失败了' : 'The export did not go through',
+        );
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -182,30 +188,37 @@ class _SettingsScreenState extends State<SettingsScreen> {
       appBar: AppBar(
         backgroundColor: palette.paper,
         surfaceTintColor: Colors.transparent,
-        title: Text(zh ? '设置' : 'Settings',
-            style: TextStyle(
-                color: palette.ink, fontSize: 20, fontWeight: FontWeight.w700)),
+        title: Text(
+          zh ? '设置' : 'Settings',
+          style: TextStyle(
+            color: palette.ink,
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(22, 6, 22, 120),
         children: [
           _group(zh ? '语言' : 'Language', [
-            Row(children: [
-              for (final l in const ['zh', 'en'])
-                Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: _chip(
-                    key: 'lang-$l',
-                    label: l == 'zh' ? '中文' : 'English',
-                    on: lang == l,
-                    onTap: () {
-                      store.setLanguage(lang: l);
-                      widget.onChanged?.call();
-                      setState(() {});
-                    },
+            Row(
+              children: [
+                for (final l in const ['zh', 'en'])
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: _chip(
+                      key: 'lang-$l',
+                      label: l == 'zh' ? '中文' : 'English',
+                      on: lang == l,
+                      onTap: () {
+                        store.setLanguage(lang: l);
+                        widget.onChanged?.call();
+                        setState(() {});
+                      },
+                    ),
                   ),
-                ),
-            ]),
+              ],
+            ),
           ]),
           const SizedBox(height: 20),
           _group(zh ? '主题' : 'Theme', [
@@ -213,7 +226,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               zh
                   ? '七种花，各有白天和夜里。颜色都是算出来的，不是写死在界面里的。'
                   : 'Seven flowers, each with a day and a night. The colours '
-                      'are computed, not written into the screens.',
+                        'are computed, not written into the screens.',
               style: TextStyle(fontSize: 12, color: palette.inkSoft),
             ),
             const SizedBox(height: 12),
@@ -249,30 +262,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
             // A row rather than a `SwitchListTile`: a ListTile inside a
             // decorated box cannot paint its own ink, and Flutter says so
             // loudly. The rest of this screen is rows and chips anyway.
-            Row(children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(zh ? '夜间模式' : 'Dark',
-                        style: TextStyle(fontSize: 15, color: palette.ink)),
-                    Text(
-                      zh
-                          ? '花还是那朵花，只是灯关了'
-                          : 'The flower keeps its colour; the room does not',
-                      style:
-                          TextStyle(fontSize: 12, color: palette.inkSoft),
-                    ),
-                  ],
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        zh ? '夜间模式' : 'Dark',
+                        style: TextStyle(fontSize: 15, color: palette.ink),
+                      ),
+                      Text(
+                        zh
+                            ? '花还是那朵花，只是灯关了'
+                            : 'The flower keeps its colour; the room does not',
+                        style: TextStyle(fontSize: 12, color: palette.inkSoft),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Switch(
-                key: const Key('dark-toggle'),
-                value: _dark,
-                onChanged: (v) => _setTheme(_themeKey, v),
-                activeThumbColor: palette.hibiscus,
-              ),
-            ]),
+                Switch(
+                  key: const Key('dark-toggle'),
+                  value: _dark,
+                  onChanged: (v) => _setTheme(_themeKey, v),
+                  activeThumbColor: palette.hibiscus,
+                ),
+              ],
+            ),
           ]),
           const SizedBox(height: 20),
           _group(zh ? '提醒' : 'Reminders', [
@@ -280,49 +296,60 @@ class _SettingsScreenState extends State<SettingsScreen> {
               zh
                   ? '每天一次，加上周报和月报。时间是手机的本地时间，跟着手机走。'
                   : 'A daily nudge, plus a weekly and a monthly summary. The '
-                      'times are this phone\u2019s local time and travel with it.',
+                        'times are this phone\u2019s local time and travel with it.',
               style: TextStyle(fontSize: 12, color: palette.inkSoft),
             ),
             const SizedBox(height: 12),
-            Row(children: [
-              Text(zh ? '每日提醒' : 'Daily',
-                  style: TextStyle(fontSize: 15, color: palette.ink)),
-              const Spacer(),
-              // Off is a real state, so the row of times includes a way back to
-              // it: tapping the chosen one again turns the reminder off.
-              Wrap(
-                spacing: 6,
-                children: [
-                  for (final t in const ['08:00', '12:00', '21:00', '22:00'])
-                    GestureDetector(
-                      key: Key('remind-$t'),
-                      onTap: () async {
-                        final next = _remindAt == t ? '' : t;
-                        remind.setDailyReminder(at: next);
-                        setState(() => _remindAt = remind.dailyReminderAt());
-                        await _syncReminders();
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 9, vertical: 5),
-                        decoration: BoxDecoration(
-                          color: _remindAt == t
-                              ? palette.stamen.withValues(alpha: 0.18)
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.circular(Rad.pill),
-                          border: Border.all(
+            Row(
+              children: [
+                Text(
+                  zh ? '每日提醒' : 'Daily',
+                  style: TextStyle(fontSize: 15, color: palette.ink),
+                ),
+                const Spacer(),
+                // Off is a real state, so the row of times includes a way back to
+                // it: tapping the chosen one again turns the reminder off.
+                Wrap(
+                  spacing: 6,
+                  children: [
+                    for (final t in const ['08:00', '12:00', '21:00', '22:00'])
+                      GestureDetector(
+                        key: Key('remind-$t'),
+                        onTap: () async {
+                          final next = _remindAt == t ? '' : t;
+                          remind.setDailyReminder(at: next);
+                          setState(() => _remindAt = remind.dailyReminderAt());
+                          await _syncReminders();
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 9,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _remindAt == t
+                                ? palette.stamen.withValues(alpha: 0.18)
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(Rad.pill),
+                            border: Border.all(
                               color: _remindAt == t
                                   ? palette.stamen
-                                  : palette.line),
-                        ),
-                        child: Text(t,
+                                  : palette.line,
+                            ),
+                          ),
+                          child: Text(
+                            t,
                             style: TextStyle(
-                                fontSize: 11.5, color: palette.ink)),
+                              fontSize: 11.5,
+                              color: palette.ink,
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                ],
-              ),
-            ]),
+                  ],
+                ),
+              ],
+            ),
             const SizedBox(height: 6),
             Text(
               _remindAt.isEmpty
@@ -332,146 +359,152 @@ class _SettingsScreenState extends State<SettingsScreen> {
               style: TextStyle(fontSize: 12, color: palette.inkSoft),
             ),
             const SizedBox(height: 10),
-            Row(children: [
-              Expanded(
-                child: Text(zh ? '周报（周日晚上）' : 'Weekly report (Sunday evening)',
-                    style: TextStyle(fontSize: 14, color: palette.ink)),
-              ),
-              Switch(
-                key: const Key('weekly-toggle'),
-                value: _weekly,
-                onChanged: (v) async {
-                  remind.setWeeklyReport(enabled: v);
-                  setState(() => _weekly = v);
-                  await _syncReminders();
-                },
-                activeThumbColor: palette.hibiscus,
-              ),
-            ]),
-            Row(children: [
-              Expanded(
-                child: Text(zh ? '月报（1 号早上）' : 'Monthly report (1st, morning)',
-                    style: TextStyle(fontSize: 14, color: palette.ink)),
-              ),
-              Switch(
-                key: const Key('monthly-toggle'),
-                value: _monthly,
-                onChanged: (v) async {
-                  remind.setMonthlyReport(enabled: v);
-                  setState(() => _monthly = v);
-                  await _syncReminders();
-                },
-                activeThumbColor: palette.hibiscus,
-              ),
-            ]),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    zh ? '周报（周日晚上）' : 'Weekly report (Sunday evening)',
+                    style: TextStyle(fontSize: 14, color: palette.ink),
+                  ),
+                ),
+                Switch(
+                  key: const Key('weekly-toggle'),
+                  value: _weekly,
+                  onChanged: (v) async {
+                    remind.setWeeklyReport(enabled: v);
+                    setState(() => _weekly = v);
+                    await _syncReminders();
+                  },
+                  activeThumbColor: palette.hibiscus,
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    zh ? '月报（1 号早上）' : 'Monthly report (1st, morning)',
+                    style: TextStyle(fontSize: 14, color: palette.ink),
+                  ),
+                ),
+                Switch(
+                  key: const Key('monthly-toggle'),
+                  value: _monthly,
+                  onChanged: (v) async {
+                    remind.setMonthlyReport(enabled: v);
+                    setState(() => _monthly = v);
+                    await _syncReminders();
+                  },
+                  activeThumbColor: palette.hibiscus,
+                ),
+              ],
+            ),
           ]),
           const SizedBox(height: 20),
           _group(zh ? '安全' : 'Security', [
-            Row(children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(zh ? '打开时验证' : 'Lock the app',
-                        style: TextStyle(fontSize: 15, color: palette.ink)),
-                    Text(
-                      zh
-                          ? '用手机自己的指纹或密码。没设过的手机不会被挡在门外。'
-                          : "Uses the phone's own fingerprint or passcode. A "
-                              'phone with neither set is not shut out.',
-                      style:
-                          TextStyle(fontSize: 12, color: palette.inkSoft),
-                    ),
-                  ],
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        zh ? '打开时验证' : 'Lock the app',
+                        style: TextStyle(fontSize: 15, color: palette.ink),
+                      ),
+                      Text(
+                        zh
+                            ? '用手机自己的指纹或密码。没设过的手机不会被挡在门外。'
+                            : "Uses the phone's own fingerprint or passcode. A "
+                                  'phone with neither set is not shut out.',
+                        style: TextStyle(fontSize: 12, color: palette.inkSoft),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Switch(
-                key: const Key('lock-toggle'),
-                value: _lock,
-                onChanged: (v) {
-                  lock.lockSetEnabled(enabled: v);
-                  setState(() => _lock = v);
-                  widget.onChanged?.call();
-                },
-                activeThumbColor: palette.hibiscus,
-              ),
-            ]),
+                Switch(
+                  key: const Key('lock-toggle'),
+                  value: _lock,
+                  onChanged: (v) {
+                    lock.lockSetEnabled(enabled: v);
+                    setState(() => _lock = v);
+                    widget.onChanged?.call();
+                  },
+                  activeThumbColor: palette.hibiscus,
+                ),
+              ],
+            ),
           ]),
           const SizedBox(height: 20),
-          _group(
-            zh ? '账单周期' : 'Budget cycle',
-            [
-              Text(
-                zh
-                    ? '每月从这一天翻页。周期不是自然月 — 从 15 号起算的周期跑 15 号到 14 号。'
-                    : 'The cycle turns over on this day. It is not the calendar '
+          _group(zh ? '账单周期' : 'Budget cycle', [
+            Text(
+              zh
+                  ? '每月从这一天翻页。周期不是自然月 — 从 15 号起算的周期跑 15 号到 14 号。'
+                  : 'The cycle turns over on this day. It is not the calendar '
                         'month: one starting on the 15th runs the 15th to the 14th.',
-                style: TextStyle(fontSize: 12, color: palette.inkSoft),
-              ),
-              const SizedBox(height: 12),
-              Wrap(
-                spacing: 6,
-                runSpacing: 6,
-                children: [
-                  // 1..28 and no further: the months that have no 29th, 30th or
-                  // 31st would skip a cycle entirely.
-                  for (final d in const [1, 5, 10, 15, 20, 25, 28])
-                    _chip(
-                      key: 'cycle-$d',
-                      label: '$d',
-                      on: _cycleStart == d,
-                      onTap: () => _setCycle(d),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                zh ? '当前:$_cycleStart 号' : 'Currently: day $_cycleStart',
-                key: const Key('cycle-current'),
-                style: TextStyle(fontSize: 12.5, color: palette.inkSoft),
-              ),
-            ],
-          ),
+              style: TextStyle(fontSize: 12, color: palette.inkSoft),
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: [
+                // 1..28 and no further: the months that have no 29th, 30th or
+                // 31st would skip a cycle entirely.
+                for (final d in const [1, 5, 10, 15, 20, 25, 28])
+                  _chip(
+                    key: 'cycle-$d',
+                    label: '$d',
+                    on: _cycleStart == d,
+                    onTap: () => _setCycle(d),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              zh ? '当前:$_cycleStart 号' : 'Currently: day $_cycleStart',
+              key: const Key('cycle-current'),
+              style: TextStyle(fontSize: 12.5, color: palette.inkSoft),
+            ),
+          ]),
           const SizedBox(height: 20),
-          _group(
-            zh ? '数据' : 'Data',
-            [
-              Text(
-                zh
-                    ? '导出成 CSV,Excel 和别的记账 app 都读得了。日期是本机的日期,不是格林威治的。'
-                    : 'Export as CSV, which Excel and other ledgers can read. '
+          _group(zh ? '数据' : 'Data', [
+            Text(
+              zh
+                  ? '导出成 CSV,Excel 和别的记账 app 都读得了。日期是本机的日期,不是格林威治的。'
+                  : 'Export as CSV, which Excel and other ledgers can read. '
                         'The dates are the ones this phone shows, not UTC.',
-                style: TextStyle(fontSize: 12, color: palette.inkSoft),
+              style: TextStyle(fontSize: 12, color: palette.inkSoft),
+            ),
+            const SizedBox(height: 12),
+            FilledButton.icon(
+              key: const Key('export-csv'),
+              onPressed: _busy ? null : _export,
+              icon: const Icon(Icons.ios_share, size: 18),
+              style: FilledButton.styleFrom(
+                backgroundColor: palette.hibiscus,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 12),
               ),
-              const SizedBox(height: 12),
-              FilledButton.icon(
-                key: const Key('export-csv'),
-                onPressed: _busy ? null : _export,
-                icon: const Icon(Icons.ios_share, size: 18),
-                style: FilledButton.styleFrom(
-                  backgroundColor: palette.hibiscus,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+              label: Text(zh ? '导出 CSV' : 'Export CSV'),
+            ),
+            if (_flash != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Text(
+                  _flash!,
+                  key: const Key('export-flash'),
+                  style: TextStyle(fontSize: 12.5, color: palette.leafDeep),
                 ),
-                label: Text(zh ? '导出 CSV' : 'Export CSV'),
               ),
-              if (_flash != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Text(_flash!,
-                      key: const Key('export-flash'),
-                      style:
-                          TextStyle(fontSize: 12.5, color: palette.leafDeep)),
-                ),
-            ],
-          ),
+          ]),
           const SizedBox(height: 24),
           Text(
             zh
                 ? '表格导出（xlsx）不做 — CSV 表格软件都认得，而写 xlsx 要给核心加一堆依赖。'
                 : 'Spreadsheet (xlsx) export is deliberately absent: CSV opens '
-                    'in every spreadsheet, and writing xlsx would cost the core '
-                    'a pile of dependencies.',
+                      'in every spreadsheet, and writing xlsx would cost the core '
+                      'a pile of dependencies.',
             key: const Key('settings-note'),
             style: TextStyle(fontSize: 11.5, color: palette.inkSoft),
           ),
@@ -481,51 +514,59 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _group(String title, List<Widget> children) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 2, bottom: 10),
-            child: Text(title,
-                style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: palette.inkSoft)),
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Padding(
+        padding: const EdgeInsets.only(left: 2, bottom: 10),
+        child: Text(
+          title,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: palette.inkSoft,
           ),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            decoration: BoxDecoration(
-              color: palette.card,
-              borderRadius: BorderRadius.circular(Rad.lg),
-              border: Border.all(color: palette.line),
-            ),
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start, children: children),
-          ),
-        ],
-      );
+        ),
+      ),
+      Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: palette.card,
+          borderRadius: BorderRadius.circular(Rad.lg),
+          border: Border.all(color: palette.line),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: children,
+        ),
+      ),
+    ],
+  );
 
   Widget _chip({
     required String key,
     required String label,
     required bool on,
     required VoidCallback onTap,
-  }) =>
-      GestureDetector(
-        key: Key(key),
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
-          decoration: BoxDecoration(
-            color: on ? palette.stamen.withValues(alpha: 0.18) : Colors.transparent,
-            borderRadius: BorderRadius.circular(Rad.pill),
-            border: Border.all(color: on ? palette.stamen : palette.line),
-          ),
-          child: Text(label,
-              style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: on ? FontWeight.w700 : FontWeight.w500,
-                  color: palette.ink)),
+  }) => Tap(
+    radius: Rad.pill,
+    key: Key(key),
+    onTap: onTap,
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
+      decoration: BoxDecoration(
+        color: on ? palette.stamen.withValues(alpha: 0.18) : Colors.transparent,
+        borderRadius: BorderRadius.circular(Rad.pill),
+        border: Border.all(color: on ? palette.stamen : palette.line),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 13,
+          fontWeight: on ? FontWeight.w700 : FontWeight.w500,
+          color: palette.ink,
         ),
-      );
+      ),
+    ),
+  );
 }

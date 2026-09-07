@@ -18,6 +18,7 @@ import 'src/rust/api/money.dart' as money;
 import 'src/rust/api/statement.dart' as statement;
 import 'src/rust/api/store.dart' as store;
 import 'account_detail_screen.dart';
+import 'tap.dart';
 import 'theme.dart';
 
 class AccountsScreen extends StatefulWidget {
@@ -356,9 +357,9 @@ class _AccountsScreenState extends State<AccountsScreen> {
     };
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
-      child: InkWell(
+      child: Tap(
         key: Key('acct-${a.id}-open'),
-        borderRadius: BorderRadius.circular(Rad.md),
+        radius: Rad.md,
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) => AccountDetailScreen(id: a.id, zh: zh),

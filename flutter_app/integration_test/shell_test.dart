@@ -15,6 +15,7 @@ import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'rust_init.dart';
+import 'package:flutter_app/tap.dart';
 
 int get now => DateTime.now().millisecondsSinceEpoch;
 
@@ -51,7 +52,11 @@ Future<List<String>> meRowKeys(WidgetTester tester) async {
   final seen = <String>[];
 
   void collect() {
-    for (final w in tester.widgetList<InkWell>(find.byType(InkWell))) {
+    // `Tap`, not `InkWell`: the hub rows moved onto the app's own press
+    // feedback. Enumerating by widget type is what made this need touching —
+    // but it is also what makes the test find rows it was never told about,
+    // which is the property worth keeping.
+    for (final w in tester.widgetList<Tap>(find.byType(Tap))) {
       final k = w.key;
       if (k is ValueKey<String> &&
           k.value.startsWith('me-') &&

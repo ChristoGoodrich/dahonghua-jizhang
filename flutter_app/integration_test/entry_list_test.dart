@@ -163,4 +163,63 @@ void main() {
     expect(find.byType(ListView), findsOneWidget);
     expect(store.entryCount(), 100);
   });
+
+  group('press feedback', () {
+    // The complaint that produced `tap.dart`: rows fired but showed nothing,
+    // so a tap that landed looked exactly like one that missed. There were 23
+    // bare `GestureDetector`s in the app and every one of them was silent.
+
+    testWidgets('a row lights while it is held', (tester) async {
+      store.addEntry(
+        entry: store.NewEntry(
+            io: 'exp', cat: 'food', amt: 35.5, note: '午饭', ts: now),
+        id: 'e1',
+        now: now,
+      );
+      await show(tester);
+
+      final row = find.byKey(const Key('row-e1'));
+      double veilOf() => tester
+          .widgetList<AnimatedOpacity>(
+              find.descendant(of: row, matching: find.byType(AnimatedOpacity)))
+          .map((w) => w.opacity)
+          .fold(0.0, (a, b) => a > b ? a : b);
+
+      expect(veilOf(), 0, reason: 'nothing is pressed yet');
+
+      final press = await tester.startGesture(tester.getCenter(row));
+      await tester.pump(const Duration(milliseconds: 200));
+      expect(veilOf(), 1, reason: 'the veil is up while the finger is down');
+
+      await press.up();
+      await tester.pumpAndSettle();
+      expect(veilOf(), 0, reason: 'and gone when it lifts');
+    });
+
+    testWidgets('a cancelled press puts the light back', (tester) async {
+      // Dragging off a row is how a swipe starts, and a row left lit after the
+      // finger has gone somewhere else is worse than one that never lit.
+      store.addEntry(
+        entry: store.NewEntry(
+            io: 'exp', cat: 'food', amt: 35.5, note: '午饭', ts: now),
+        id: 'e1',
+        now: now,
+      );
+      await show(tester);
+
+      final row = find.byKey(const Key('row-e1'));
+      final press = await tester.startGesture(tester.getCenter(row));
+      await tester.pump(const Duration(milliseconds: 200));
+      await press.moveBy(const Offset(200, 0));
+      await press.up();
+      await tester.pumpAndSettle();
+
+      final lit = tester
+          .widgetList<AnimatedOpacity>(
+              find.descendant(of: row, matching: find.byType(AnimatedOpacity)))
+          .map((w) => w.opacity)
+          .fold(0.0, (a, b) => a > b ? a : b);
+      expect(lit, 0);
+    });
+  });
 }

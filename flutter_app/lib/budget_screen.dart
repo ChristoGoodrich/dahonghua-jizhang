@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'src/rust/api/budget.dart' as budget;
 import 'src/rust/api/money.dart' as money;
 import 'src/rust/api/store.dart' as store;
+import 'tap.dart';
 import 'theme.dart';
 
 String _day(DateTime d) => '${d.year}-${d.month}-${d.day}';
@@ -194,7 +195,8 @@ class _BudgetScreenState extends State<BudgetScreen> {
     // over is its own colour; under is the leaf, because a budget you are
     // inside is not a warning
     final tone = tier.over ? palette.hibiscus : palette.leafDeep;
-    return GestureDetector(
+    return Tap(
+      radius: Rad.lg,
       key: Key('tier-$key'),
       onTap: onTap,
       child: Container(

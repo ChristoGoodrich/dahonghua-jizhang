@@ -21,6 +21,7 @@ import 'rate_fetch.dart';
 import 'src/rust/api/currency.dart' as cur;
 import 'src/rust/api/history.dart' as history;
 import 'src/rust/api/rates.dart' as rates;
+import 'tap.dart';
 import 'theme.dart';
 
 /// The refusals `validate_form` can answer, spelled.
@@ -110,7 +111,8 @@ class RecordSheet extends StatefulWidget {
     required String today,
     required int nowMinutes,
     double? cached,
-  })? fetchRate;
+  })?
+  fetchRate;
 
   @override
   State<RecordSheet> createState() => _RecordSheetState();
@@ -326,7 +328,8 @@ class _RecordSheetState extends State<RecordSheet> {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(right: 8),
-              child: GestureDetector(
+              child: Tap(
+                radius: Rad.sm,
                 onTap: () => _pick(io),
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 10),
@@ -399,7 +402,8 @@ class _RecordSheetState extends State<RecordSheet> {
       runSpacing: 8,
       children: [
         for (final c in cats)
-          GestureDetector(
+          Tap(
+            radius: Rad.pill,
             onTap: () => setState(() => _form = _form.copyWith(cat: c.k)),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
@@ -552,9 +556,11 @@ class _RecordSheetState extends State<RecordSheet> {
           itemBuilder: (_, i) {
             final t = list[i];
             final c = catalog.catOf(io: t.io, key: t.cat, custom: const []);
-            final label =
-                t.name.isEmpty ? catalog.catName(cat: c, zh: zh) : t.name;
-            return GestureDetector(
+            final label = t.name.isEmpty
+                ? catalog.catName(cat: c, zh: zh)
+                : t.name;
+            return Tap(
+              radius: Rad.pill,
               key: Key('tpl-chip-${t.id}'),
               onTap: () => _applyTemplate(t.id),
               child: Container(
@@ -565,11 +571,14 @@ class _RecordSheetState extends State<RecordSheet> {
                   borderRadius: BorderRadius.circular(Rad.pill),
                   border: Border.all(color: parseHex(c.c, opacity: 0.45)),
                 ),
-                child: Text('${c.e} $label',
-                    style: TextStyle(
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.w600,
-                        color: palette.ink)),
+                child: Text(
+                  '${c.e} $label',
+                  style: TextStyle(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w600,
+                    color: palette.ink,
+                  ),
+                ),
               ),
             );
           },
@@ -642,8 +651,10 @@ class _RecordSheetState extends State<RecordSheet> {
             width: 40,
             child: Padding(
               padding: const EdgeInsets.only(top: 7),
-              child: Text(zh ? '账本' : 'Book',
-                  style: TextStyle(fontSize: 12.5, color: palette.inkSoft)),
+              child: Text(
+                zh ? '账本' : 'Book',
+                style: TextStyle(fontSize: 12.5, color: palette.inkSoft),
+              ),
             ),
           ),
           Expanded(
@@ -659,7 +670,8 @@ class _RecordSheetState extends State<RecordSheet> {
                     accent: accent,
                     onTap: () => setState(() {
                       _form = _form.copyWith(
-                          ledger: _form.ledger == l ? '' : l);
+                        ledger: _form.ledger == l ? '' : l,
+                      );
                       _flash = null;
                     }),
                   ),
@@ -677,24 +689,27 @@ class _RecordSheetState extends State<RecordSheet> {
     required bool on,
     required Color accent,
     required VoidCallback onTap,
-  }) =>
-      GestureDetector(
-        key: Key(key),
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
-          decoration: BoxDecoration(
-            color: on ? accent.withValues(alpha: 0.14) : palette.card,
-            borderRadius: BorderRadius.circular(Rad.pill),
-            border: Border.all(color: on ? accent : palette.line),
-          ),
-          child: Text(label,
-              style: TextStyle(
-                  fontSize: 12.5,
-                  fontWeight: on ? FontWeight.w700 : FontWeight.w500,
-                  color: palette.ink)),
+  }) => Tap(
+    radius: Rad.pill,
+    key: Key(key),
+    onTap: onTap,
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
+      decoration: BoxDecoration(
+        color: on ? accent.withValues(alpha: 0.14) : palette.card,
+        borderRadius: BorderRadius.circular(Rad.pill),
+        border: Border.all(color: on ? accent : palette.line),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 12.5,
+          fontWeight: on ? FontWeight.w700 : FontWeight.w500,
+          color: palette.ink,
         ),
-      );
+      ),
+    ),
+  );
 
   /// Pin what is on the sheet as a template.
   ///
@@ -739,44 +754,59 @@ class _RecordSheetState extends State<RecordSheet> {
   /// that carries a statement day nothing can set.
   List<Widget> _currencyRow(bool zh, Color accent) {
     final base = record.baseCurrency();
-    final codes = [base, ...cur.rates().map((r) => r.code).where((c) => c != base)];
+    final codes = [
+      base,
+      ...cur.rates().map((r) => r.code).where((c) => c != base),
+    ];
     if (codes.length < 2) return const [];
     return [
-      Row(children: [
-        Text(zh ? '币种' : 'Currency',
-            style: TextStyle(fontSize: 12, color: palette.inkSoft)),
-        const SizedBox(width: 10),
-        Expanded(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(children: [
-              for (final c in codes)
-                Padding(
-                  padding: const EdgeInsets.only(right: 6),
-                  child: GestureDetector(
-                    key: Key('cur-$c'),
-                    onTap: () => setState(() => _form = _form.copyWith(cur: c)),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(
-                        color: _form.cur == c
-                            ? accent.withValues(alpha: 0.18)
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(Rad.pill),
-                        border: Border.all(
-                            color: _form.cur == c ? accent : palette.line),
-                      ),
-                      child: Text(c,
-                          style:
-                              TextStyle(fontSize: 12, color: palette.ink)),
-                    ),
-                  ),
-                ),
-            ]),
+      Row(
+        children: [
+          Text(
+            zh ? '币种' : 'Currency',
+            style: TextStyle(fontSize: 12, color: palette.inkSoft),
           ),
-        ),
-      ]),
+          const SizedBox(width: 10),
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  for (final c in codes)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 6),
+                      child: Tap(
+                        radius: Rad.pill,
+                        key: Key('cur-$c'),
+                        onTap: () =>
+                            setState(() => _form = _form.copyWith(cur: c)),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _form.cur == c
+                                ? accent.withValues(alpha: 0.18)
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(Rad.pill),
+                            border: Border.all(
+                              color: _form.cur == c ? accent : palette.line,
+                            ),
+                          ),
+                          child: Text(
+                            c,
+                            style: TextStyle(fontSize: 12, color: palette.ink),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
       const SizedBox(height: 14),
     ];
   }
@@ -835,19 +865,24 @@ class _RecordSheetState extends State<RecordSheet> {
         runSpacing: 6,
         children: [
           for (final h in hints)
-            GestureDetector(
+            Tap(
+              radius: 999,
               key: Key('note-hint-$h'),
               onTap: () => setState(() => _note.text = h),
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: palette.paperWarm,
                   borderRadius: BorderRadius.circular(999),
                   border: Border.all(color: palette.line),
                 ),
-                child: Text(h,
-                    style: TextStyle(fontSize: 12.5, color: palette.ink)),
+                child: Text(
+                  h,
+                  style: TextStyle(fontSize: 12.5, color: palette.ink),
+                ),
               ),
             ),
         ],
@@ -927,7 +962,8 @@ class _RecordSheetState extends State<RecordSheet> {
       label: spoken,
       // keyed: the keypad's '0' and '=' also appear in the amount panel above
       // it, so a finder that goes by text cannot say which one it means
-      child: GestureDetector(
+      child: Tap(
+        radius: Rad.md,
         key: Key('key-$k'),
         // Held while a rate is in flight: pressing twice would write twice.
         onTap: () => isSave ? (_fetching ? null : _save()) : _key(k),
@@ -985,8 +1021,10 @@ class _TemplateNameDialogState extends State<_TemplateNameDialog> {
     return AlertDialog(
       key: const Key('tpl-name-dialog'),
       backgroundColor: palette.card,
-      title: Text(zh ? '存为模板' : 'Pin as template',
-          style: TextStyle(fontSize: 16, color: palette.ink)),
+      title: Text(
+        zh ? '存为模板' : 'Pin as template',
+        style: TextStyle(fontSize: 16, color: palette.ink),
+      ),
       content: TextField(
         key: const Key('tpl-name-field'),
         controller: _name,

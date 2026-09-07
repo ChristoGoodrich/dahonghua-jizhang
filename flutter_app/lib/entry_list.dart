@@ -17,6 +17,7 @@ import 'src/rust/api/money.dart' as money;
 import 'src/rust/api/search.dart' as search;
 import 'src/rust/api/store.dart' as store;
 import 'reimburse_screen.dart';
+import 'tap.dart';
 import 'theme.dart';
 
 /// `y-m-d` for a local calendar day. The timezone is the platform's, so this
@@ -118,7 +119,10 @@ class _EntryListScreenState extends State<EntryListScreen> {
             zh: widget.zh,
           )
           .toSet();
-      final kept = [for (var i = 0; i < ids.length; i++) if (keep.contains(ids[i])) i];
+      final kept = [
+        for (var i = 0; i < ids.length; i++)
+          if (keep.contains(ids[i])) i,
+      ];
       ids = [for (final i in kept) ids[i]];
       days = [for (final i in kept) days[i]];
     }
@@ -164,7 +168,9 @@ class _EntryListScreenState extends State<EntryListScreen> {
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   isDense: true,
-                  hintText: zh ? '找一笔:上周、支出、星巴克' : 'last week · income · coffee',
+                  hintText: zh
+                      ? '找一笔:上周、支出、星巴克'
+                      : 'last week · income · coffee',
                   hintStyle: TextStyle(fontSize: 15, color: palette.inkSoft),
                 ),
                 onChanged: (_) => _reload(),
@@ -180,8 +186,10 @@ class _EntryListScreenState extends State<EntryListScreen> {
         actions: [
           IconButton(
             key: const Key('search-toggle'),
-            icon: Icon(_searching ? Icons.close : Icons.search,
-                color: palette.ink),
+            icon: Icon(
+              _searching ? Icons.close : Icons.search,
+              color: palette.ink,
+            ),
             onPressed: () {
               setState(() {
                 _searching = !_searching;
@@ -192,21 +200,22 @@ class _EntryListScreenState extends State<EntryListScreen> {
           ),
         ],
       ),
-      body: Column(children: [
-        if (_searching && _parsed != null) _readback(zh),
-        Expanded(
-          child: _items.isEmpty
-              ? _empty(zh)
-              : ListView.builder(
-                  padding: const EdgeInsets.only(top: 6, bottom: 140),
-                  itemCount: _items.length,
-                  itemBuilder: (context, i) => _row(_items[i], zh),
-                ),
-        ),
-      ]),
+      body: Column(
+        children: [
+          if (_searching && _parsed != null) _readback(zh),
+          Expanded(
+            child: _items.isEmpty
+                ? _empty(zh)
+                : ListView.builder(
+                    padding: const EdgeInsets.only(top: 6, bottom: 140),
+                    itemCount: _items.length,
+                    itemBuilder: (context, i) => _row(_items[i], zh),
+                  ),
+          ),
+        ],
+      ),
     );
   }
-
 
   /// What the box was understood to mean.
   ///
@@ -221,14 +230,18 @@ class _EntryListScreenState extends State<EntryListScreen> {
             ? '${p.from!.mo}月${p.from!.d}日 到 ${p.to!.mo}月${p.to!.d}日'
             : '${p.from!.mo}/${p.from!.d} – ${p.to!.mo}/${p.to!.d}',
       if (p.io != null)
-        p.io == 'inc' ? (zh ? '只看收入' : 'income only') : (zh ? '只看支出' : 'expense only'),
+        p.io == 'inc'
+            ? (zh ? '只看收入' : 'income only')
+            : (zh ? '只看支出' : 'expense only'),
     ];
     if (bits.isEmpty) return const SizedBox.shrink();
     return Padding(
       key: const Key('search-readback'),
       padding: const EdgeInsets.fromLTRB(22, 0, 22, 6),
-      child: Text(bits.join(zh ? ' · ' : ' · '),
-          style: TextStyle(fontSize: 12, color: palette.hibiscus)),
+      child: Text(
+        bits.join(zh ? ' · ' : ' · '),
+        style: TextStyle(fontSize: 12, color: palette.hibiscus),
+      ),
     );
   }
 
@@ -356,109 +369,124 @@ class _EntryListScreenState extends State<EntryListScreen> {
       label:
           '${label.name}, ${money.fmtSigned(n: e.amt, io: e.io)}'
           '${e.note != null ? ', ${e.note}' : ''}',
-      child: GestureDetector(
-        onTap: () => widget.onEdit?.call(e.id),
-        // Claiming and refunding are ledger writes rather than form fields, so
-        // they live here and not on the record sheet — a draft that had already
-        // written half of itself would be a confusing thing to cancel.
-        onLongPress: () async {
-          final changed = await showEntryActions(
-            context,
-            id: e.id,
-            amt: e.amt,
-            isPending: e.rb == 'pending',
-            zh: zh,
-            onDelete: () => _delete(e, zh),
-          );
-          if (changed) widget.onChanged?.call();
-        },
-        child: ExcludeSemantics(
-          child: Container(
-            margin: const EdgeInsets.only(bottom: 8),
-            padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 11),
-            decoration: BoxDecoration(
-              color: palette.card,
-              borderRadius: BorderRadius.circular(Rad.md),
-              border: Border.all(
-                color: palette.line,
-                width: 1 / MediaQuery.devicePixelRatioOf(context),
-              ),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: accent.withValues(
-                      alpha: palette.isDark ? 0.19 : 0.12,
-                    ),
-                    borderRadius: BorderRadius.circular(13),
-                  ),
-                  child: Text(
-                    label.emoji,
-                    style: const TextStyle(fontSize: 19),
-                  ),
+      // The row's gap is a Padding outside the Tap rather than a margin on the
+      // Container inside it: the press veil fills the Tap, and a margin within
+      // it would let the veil paint the gap between rows as well.
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: Tap(
+          radius: Rad.md,
+          onTap: () => widget.onEdit?.call(e.id),
+          // Claiming and refunding are ledger writes rather than form fields,
+          // so they live here and not on the record sheet — a draft that had
+          // already written half of itself would be a confusing thing to
+          // cancel.
+          onLongPress: () async {
+            final changed = await showEntryActions(
+              context,
+              id: e.id,
+              amt: e.amt,
+              isPending: e.rb == 'pending',
+              zh: zh,
+              onDelete: () => _delete(e, zh),
+            );
+            if (changed) widget.onChanged?.call();
+          },
+          child: ExcludeSemantics(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 11),
+              decoration: BoxDecoration(
+                color: palette.card,
+                borderRadius: BorderRadius.circular(Rad.md),
+                border: Border.all(
+                  color: palette.line,
+                  width: 1 / MediaQuery.devicePixelRatioOf(context),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Flexible(
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: accent.withValues(
+                        alpha: palette.isDark ? 0.19 : 0.12,
+                      ),
+                      borderRadius: BorderRadius.circular(13),
+                    ),
+                    child: Text(
+                      label.emoji,
+                      style: const TextStyle(fontSize: 19),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                label.name,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 14.5,
+                                  fontWeight: FontWeight.w600,
+                                  color: palette.ink,
+                                ),
+                              ),
+                            ),
+                            if (e.rb == 'pending')
+                              _badge(
+                                zh ? '待报销' : 'Claim',
+                                palette.stamen,
+                                0.18,
+                              ),
+                            if (e.rb == 'done')
+                              _badge(
+                                zh ? '已报销' : 'Claimed',
+                                palette.leaf,
+                                0.19,
+                              ),
+                            if ((e.refund ?? 0) != 0)
+                              _badge(
+                                zh ? '退款' : 'Refund',
+                                palette.hibiscus,
+                                0.15,
+                              ),
+                          ],
+                        ),
+                        if (e.note != null && e.note!.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 2),
                             child: Text(
-                              label.name,
+                              e.note!,
+                              maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
-                                fontSize: 14.5,
-                                fontWeight: FontWeight.w600,
-                                color: palette.ink,
+                                fontSize: 11.5,
+                                color: palette.inkSoft,
                               ),
                             ),
                           ),
-                          if (e.rb == 'pending')
-                            _badge(zh ? '待报销' : 'Claim', palette.stamen, 0.18),
-                          if (e.rb == 'done')
-                            _badge(zh ? '已报销' : 'Claimed', palette.leaf, 0.19),
-                          if ((e.refund ?? 0) != 0)
-                            _badge(
-                              zh ? '退款' : 'Refund',
-                              palette.hibiscus,
-                              0.15,
-                            ),
-                        ],
-                      ),
-                      if (e.note != null && e.note!.isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 2),
-                          child: Text(
-                            e.note!,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 11.5,
-                              color: palette.inkSoft,
-                            ),
-                          ),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  money.fmtSigned(n: e.amt, io: e.io),
-                  style: TextStyle(
-                    fontSize: 15.5,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: -0.2,
-                    fontFeatures: tabular,
-                    color: e.io == 'inc' ? palette.leafDeep : palette.ink,
+                  const SizedBox(width: 12),
+                  Text(
+                    money.fmtSigned(n: e.amt, io: e.io),
+                    style: TextStyle(
+                      fontSize: 15.5,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.2,
+                      fontFeatures: tabular,
+                      color: e.io == 'inc' ? palette.leafDeep : palette.ink,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
