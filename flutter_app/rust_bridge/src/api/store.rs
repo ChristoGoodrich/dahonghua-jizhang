@@ -37,13 +37,59 @@ use std::sync::{Mutex, MutexGuard, OnceLock};
 
 use crate::api::db;
 
-pub(crate) fn store() -> MutexGuard<'static, Store> {
+fn lock() -> MutexGuard<'static, Store> {
     static STORE: OnceLock<Mutex<Store>> = OnceLock::new();
     let m = STORE.get_or_init(|| Mutex::new(Store::new()));
     // A panic inside one command poisons the lock. Taking the value anyway is
     // the right call here: the alternative is that every later call fails too,
     // which turns one bad row into an unusable ledger.
     m.lock().unwrap_or_else(|e| e.into_inner())
+}
+
+/// Read-only access to the store.
+///
+/// Deliberately not a `MutexGuard`, which would hand out `&mut` and let any
+/// module write without saying so. That is not hypothetical: `record.rs` did
+/// exactly that, and because it never marked the rows it wrote, **every entry
+/// recorded through the record sheet was lost on the next launch**. Six
+/// mutators in this file were audited when the dirty set was written and no
+/// one checked whether other modules reached past them.
+///
+/// So writing is now a different function, and the compiler finds every caller
+/// that needs it.
+#[frb(ignore)]
+pub(crate) struct StoreRef(MutexGuard<'static, Store>);
+
+impl std::ops::Deref for StoreRef {
+    type Target = Store;
+    fn deref(&self) -> &Store {
+        &self.0
+    }
+}
+
+pub(crate) fn store() -> StoreRef {
+    StoreRef(lock())
+}
+
+/// Write access, marking the whole ledger.
+///
+/// A caller holding `&mut Store` can change anything, and this side cannot see
+/// what — so the safe reading is "everything". Marking too much costs one
+/// slower save; marking too little costs the data, which is the failure this
+/// function exists to make impossible to reach by accident.
+pub(crate) fn store_mut() -> MutexGuard<'static, Store> {
+    db::mark_all();
+    lock()
+}
+
+/// Write access for a caller that has already said which rows it touches.
+///
+/// Only for the handful of paths that mark narrowly and can prove the blast
+/// radius — they call `db::mark` themselves, and taking the wide mark as well
+/// would rewrite the ledger on every keystroke. Everything else uses
+/// [`store_mut`].
+pub(crate) fn store_marked() -> MutexGuard<'static, Store> {
+    lock()
 }
 
 /// The currency settings, which the record sheet's decisions read.
@@ -363,7 +409,7 @@ pub struct UndoToken {
 pub fn add_entry(entry: NewEntry, id: String, now: i64) -> String {
     let ts = entry.ts;
     let e: Entry = entry.into();
-    let id = store().add_entry(e, id, ts, now);
+    let id = store_marked().add_entry(e, id, ts, now);
     db::mark(&id);
     id
 }
@@ -374,7 +420,7 @@ pub fn add_entry(entry: NewEntry, id: String, now: i64) -> String {
 /// devices editing *different* fields of one entry both keep their edit.
 #[frb(sync)]
 pub fn update_entry(id: String, patch: EntryPatch, now: i64) -> bool {
-    let found = store().update_entry(&id, &patch.into(), now);
+    let found = store_marked().update_entry(&id, &patch.into(), now);
     if found {
         db::mark(&id);
     }
@@ -388,7 +434,7 @@ pub fn update_entry(id: String, patch: EntryPatch, now: i64) -> bool {
 /// unknown.
 #[frb(sync)]
 pub fn remove_entry(id: String, now: i64) -> Option<UndoToken> {
-    let token = store().remove_entry(&id, now).map(|u| UndoToken {
+    let token = store_marked().remove_entry(&id, now).map(|u| UndoToken {
         id: u.id,
         child_ids: u.child_ids,
         refunded_id: u.refunded_id,
@@ -418,7 +464,7 @@ pub fn unremove_entry(undo: UndoToken, now: i64) {
     if let Some(r) = undo.refunded_id.as_deref() {
         db::mark(r);
     }
-    store().unremove_entry(
+    store_marked().unremove_entry(
         &dahonghua_core::ledger::RemoveUndo {
             id: undo.id,
             child_ids: undo.child_ids,
@@ -457,7 +503,7 @@ pub struct NewTransfer {
 /// guard against.
 #[frb(sync)]
 pub fn add_transfer(transfer: NewTransfer, id: String, now: i64) -> String {
-    let out = store().add_transfer(
+    let out = store_marked().add_transfer(
         TransferOpts {
             from: transfer.from,
             to: transfer.to,
@@ -501,7 +547,7 @@ pub fn import_bills(
             ts: ts[i],
         })
         .collect();
-    let n = store().import_bills(&bills, &ids, now) as u32;
+    let n = store_marked().import_bills(&bills, &ids, now) as u32;
     db::mark_all();
     n
 }
@@ -509,7 +555,7 @@ pub fn import_bills(
 /// Where the next entry defaults to.
 #[frb(sync)]
 pub fn set_current_account(id: String) {
-    store().current_account = id;
+    store_marked().current_account = id;
     db::mark_config();
 }
 
@@ -688,7 +734,11 @@ pub fn load_entries(json: String) -> i32 {
     };
     let entries: Vec<Entry> = items.iter().map(entry_from_value).collect();
     let n = entries.len() as i32;
-    store().ledger = Ledger::from_entries(entries);
+    // `store_marked`: whether this is a change depends on who called. A
+    // load clears the marks afterwards; a restore or a merge sets them. The
+    // one thing this must not do is mark on its own behalf, which would make
+    // every startup rewrite the whole database.
+    store_marked().ledger = Ledger::from_entries(entries);
     n
 }
 
@@ -973,7 +1023,7 @@ pub fn load_config(json: String) -> bool {
             })
             .collect();
         if !accounts.is_empty() {
-            store().accounts = accounts;
+            store_marked().accounts = accounts;
         }
     }
     if let Some(Value::Str(l)) = v.get("lang") {
@@ -1005,7 +1055,7 @@ pub fn load_config(json: String) -> bool {
         matches!(v.get("monthlyReport"), Some(Value::Bool(true))),
     );
     if let Some(Value::Str(id)) = v.get("curAccount") {
-        store().current_account = id.clone();
+        store_marked().current_account = id.clone();
     }
     {
         let mut lib = super::catalog::library_of();
@@ -1183,7 +1233,10 @@ pub fn persist_debounce_ms() -> i64 {
 /// Empty the store. For tests and for sign-out.
 #[frb(sync)]
 pub fn reset() {
-    *store() = Store::new();
+    // The test reset. `store_marked` rather than `store_mut`: a test that
+    // starts by emptying the store has not changed a user's ledger, and
+    // marking here would make every test's first act a full rewrite.
+    *store_marked() = Store::new();
     // the currency table too: a test that inherited the previous one's rates
     // would take a different branch through `validate` for no stated reason,
     // which is the fixture gap the TypeScript suite had

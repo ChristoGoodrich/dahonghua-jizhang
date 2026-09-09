@@ -22,7 +22,7 @@ use dahonghua_core::entry::{Io, Reimburse};
 use dahonghua_core::reimburse as core;
 use flutter_rust_bridge::frb;
 
-use super::store::store;
+use super::store::{store, store_mut};
 
 /// One claim, as the screen draws it.
 #[derive(Debug, Clone, PartialEq)]
@@ -99,19 +99,19 @@ pub fn claims(zh: bool) -> ClaimList {
 /// Only `pending` clears. A settled claim re-opens rather than disappearing.
 #[frb(sync)]
 pub fn toggle_reimburse(id: String, now: i64) -> bool {
-    core::toggle_reimburse(&mut store().ledger, &id, now)
+    core::toggle_reimburse(&mut store_mut().ledger, &id, now)
 }
 
 /// Settle a claim, recording what came back.
 #[frb(sync)]
 pub fn confirm_reimburse(id: String, now: i64) -> bool {
-    core::confirm_reimburse(&mut store().ledger, &id, now)
+    core::confirm_reimburse(&mut store_mut().ledger, &id, now)
 }
 
 /// Drop the claim entirely, state and amount together.
 #[frb(sync)]
 pub fn unmark_reimburse(id: String, now: i64) -> bool {
-    core::unmark_reimburse(&mut store().ledger, &id, now)
+    core::unmark_reimburse(&mut store_mut().ledger, &id, now)
 }
 
 /// Refund part or all of an expense. Returns how much was actually refunded.
@@ -121,7 +121,7 @@ pub fn unmark_reimburse(id: String, now: i64) -> bool {
 /// first would be a second implementation of it.
 #[frb(sync)]
 pub fn refund_entry(id: String, amount: f64, zh: bool, new_id: String, now: i64) -> f64 {
-    let mut s = store();
+    let mut s = store_mut();
     let acct = s.current_account.clone();
     core::refund_entry(&mut s.ledger, &id, amount, zh, &[], &acct, new_id, now)
 }

@@ -16,6 +16,9 @@ import 'package:flutter_app/persistence.dart';
 import 'package:flutter_app/src/rust/api/accounts.dart' as accounts;
 import 'package:flutter_app/src/rust/api/currency.dart' as currency;
 import 'package:flutter_app/src/rust/api/db.dart' as db;
+import 'package:flutter_app/src/rust/api/record.dart' as record;
+import 'package:flutter_app/src/rust/api/reimburse.dart' as rb;
+import 'package:flutter_app/src/rust/api/subscriptions.dart' as subs;
 import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -339,6 +342,111 @@ void main() {
         (tester) async {
       db.resetStoreHandle();
       expect(db.flushStore(), isNotEmpty);
+    });
+  });
+
+  group('every write reaches the disk', () {
+    // The defect this group exists for: `record.rs` wrote through a plain
+    // `store()` and marked nothing, so an entry recorded through the sheet —
+    // the app's primary way of creating one — lived in memory and was gone on
+    // the next launch. Five other modules did the same. Six mutators in
+    // `store.rs` had been audited and nobody checked whether anything reached
+    // past them.
+    //
+    // These go through the REAL command each screen calls rather than through
+    // `store.addEntry`, because the bug was precisely that some screens do not
+    // call it. A test written against the audited path would have passed
+    // throughout.
+
+    record.FormView form({String amt = '42', String note = '午饭'}) =>
+        record.FormView(
+          io: 'exp',
+          cat: 'food',
+          amt: amt,
+          note: note,
+          acct: '',
+          acctTo: '',
+          fee: '',
+          discount: '',
+          tags: const [],
+          ledger: '',
+          // The base, not an empty string: an empty `cur` reads as a chosen
+          // foreign currency with no rate, and the form is rejected.
+          cur: 'CNY',
+          subcat: '',
+          ts: t0,
+        );
+
+    testWidgets('an entry from the record sheet survives a restart',
+        (tester) async {
+      var p = await open();
+      final r = record.saveForm(
+        form: form(),
+        editId: '',
+        id: 'sheet-1',
+        now: t0,
+        rateWasCached: false,
+      );
+      expect(r.rejected, isNull, reason: 'the form has to be accepted');
+
+      p = await restart(p);
+      expect(store.getEntry(id: 'sheet-1'), isNotNull,
+          reason: 'this is the entry that was being lost');
+      expect(store.getEntry(id: 'sheet-1')!.amt, 42);
+      p.dispose();
+    });
+
+    testWidgets('an edit from the record sheet survives too', (tester) async {
+      var p = await open();
+      record.saveForm(
+          form: form(),
+          editId: '',
+          id: 'sheet-1',
+          now: t0,
+          rateWasCached: false);
+      p.save();
+
+      record.saveForm(
+          form: form(amt: '99'),
+          editId: 'sheet-1',
+          id: 'ignored',
+          now: t0 + 1,
+          rateWasCached: false);
+
+      p = await restart(p);
+      expect(store.getEntry(id: 'sheet-1')!.amt, 99);
+      p.dispose();
+    });
+
+    testWidgets('a reimbursement mark survives a restart', (tester) async {
+      var p = await open();
+      add('a', 50);
+      p.save();
+
+      rb.toggleReimburse(id: 'a', now: t0 + 1);
+      p = await restart(p);
+
+      expect(store.getEntry(id: 'a')!.rb, 'pending');
+      p.dispose();
+    });
+
+    testWidgets('a base-currency change survives a restart', (tester) async {
+      var p = await open();
+      add('a', 100);
+      p.save();
+
+      // The rate has to exist before the base can move to it — switching to a
+      // currency the app cannot convert would silently rewrite every amount
+      // by nothing.
+      currency.addRate(code: 'USD');
+      currency.setRate(code: 'USD', rate: 0.14);
+      expect(currency.setBaseCurrency(code: 'USD', now: t0 + 1), 'ok',
+          reason: 'the switch has to be accepted');
+
+      p = await restart(p);
+
+      expect(currency.baseCurrency(), 'USD');
+      p.dispose();
     });
   });
 

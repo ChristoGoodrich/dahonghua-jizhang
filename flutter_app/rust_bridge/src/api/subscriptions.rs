@@ -23,7 +23,7 @@ use dahonghua_core::subs;
 use flutter_rust_bridge::frb;
 use std::sync::{Mutex, MutexGuard, OnceLock};
 
-use super::store::store;
+use super::store::store_mut;
 
 pub(crate) fn subs_lock() -> MutexGuard<'static, Vec<Sub>> {
     static S: OnceLock<Mutex<Vec<Sub>>> = OnceLock::new();
@@ -273,7 +273,9 @@ pub fn subs_commit(
 
     let mut list = subs_of();
     let mut fired = Vec::new();
-    let mut s = store();
+    // A subscription that comes due writes a real entry, and those were being
+    // lost with everything else.
+    let mut s = store_mut();
     for (i, sub) in list.iter_mut().enumerate() {
         let Some(start) = starts.get(i).and_then(|x| parse_day(x)) else {
             continue;

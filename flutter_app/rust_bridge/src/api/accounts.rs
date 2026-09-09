@@ -17,7 +17,7 @@ use dahonghua_core::accounts::{self as core, Account, AccountKind, NewAccountOpt
 use dahonghua_core::networth;
 use flutter_rust_bridge::frb;
 
-use super::store::{store, AccountView};
+use super::store::{store, store_mut, AccountView};
 use crate::api::db;
 
 /// An account with its live balance.
@@ -116,7 +116,7 @@ pub fn add_account(
     fx_code: Option<String>,
 ) -> String {
     db::mark_config();
-    let mut s = store();
+    let mut s = store_mut();
     let a = core::add_account(
         &mut s.accounts,
         id,
@@ -141,7 +141,7 @@ pub fn remove_account(id: String, now: i64) -> bool {
     // Removing an account reassigns every entry that pointed at it, and
     // the core reports back only whether it found the account.
     db::mark_all();
-    let mut s = store();
+    let mut s = store_mut();
     let store_ref = &mut *s;
     core::remove_account(
         &mut store_ref.accounts,
@@ -159,7 +159,7 @@ pub fn remove_account(id: String, now: i64) -> bool {
 #[frb(sync)]
 pub fn archive_account(id: String, archived: bool) -> bool {
     db::mark_config();
-    let mut s = store();
+    let mut s = store_mut();
     let store_ref = &mut *s;
     core::archive_account(
         &mut store_ref.accounts,

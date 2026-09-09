@@ -17,7 +17,7 @@ use dahonghua_core::record::{self as core, Draft, FormDefaults, FormFields, Rate
 use dahonghua_core::store::TransferOpts;
 use flutter_rust_bridge::frb;
 
-use super::store::{currencies_of, set_currencies_inner, store};
+use super::store::{currencies_of, set_currencies_inner, store, store_mut};
 
 /// The record sheet's fields, as Dart holds them.
 ///
@@ -154,7 +154,12 @@ pub fn save_form(
     };
 
     let editing = !edit_id.is_empty();
-    let mut s = store();
+    // `store_mut`, and this line is the defect that lost every entry the app
+    // recorded: it wrote through a plain `store()` and marked nothing, so the
+    // rows lived in memory and never reached the database. Six mutators in
+    // `store.rs` were audited when the dirty set was written and nobody
+    // checked whether other modules reached past them. Five did.
+    let mut s = store_mut();
     let written = match d {
         Draft::Xfer {
             from,

@@ -28,7 +28,7 @@ use dahonghua_core::jsval::{parse_checked, stable, Value};
 use dahonghua_core::notif::{NotifEntryDraft, NotifSource, RawNotif};
 use dahonghua_core::store::ImportedBill;
 
-use super::store::store;
+use super::store::{store, store_mut};
 
 /// The inbox, which is device-local and is not part of the config blob.
 ///
@@ -144,7 +144,7 @@ fn post(drafts: &[NotifEntryDraft], now: i64, tag: &str) -> u32 {
     let ids: Vec<String> = (0..bills.len())
         .map(|i| format!("n{now}{tag}{i}"))
         .collect();
-    store().post_captured(&bills, &ids, now) as u32
+    store_mut().post_captured(&bills, &ids, now) as u32
 }
 
 /// Drain the native queue: classify, record what is confident, keep the rest.

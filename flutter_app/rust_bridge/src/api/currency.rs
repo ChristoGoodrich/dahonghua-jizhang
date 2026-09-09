@@ -127,7 +127,9 @@ pub fn set_base_currency(code: String, now: i64) -> String {
     // does internally, rather than relying on it to have decided before it
     // mutates. The caller is Dart's one UI isolate, so there is nothing to
     // race with in between.
-    let mut s = super::store::store();
+    // Changing the base re-denominates every entry, so the wide mark is
+    // exactly right here rather than merely safe.
+    let mut s = super::store::store_mut();
     let mut subs = super::subscriptions::subs_lock();
     let mut assets = super::networth::assets_lock();
     let mut loans = super::networth::loans_lock();

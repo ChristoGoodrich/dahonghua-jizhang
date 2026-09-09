@@ -58,6 +58,23 @@ refuses to run without `src/` for exactly that reason.
 The suite is one entrypoint on purpose: per file it was 33 APK builds and about
 twenty minutes. Add a test file and re-run `node scripts/gen-all-tests.js`.
 
+## Writing to the store
+
+`store()` hands out a **read-only** reference. Writing goes through
+`store_mut()`, which marks the whole ledger dirty, or `store_marked()` for the
+handful of paths that mark narrowly and can prove their blast radius.
+
+This is not ceremony. When the dirty set was written, six mutators in
+`api/store.rs` were audited and nobody checked whether other modules reached
+past them. Five did — `record.rs`, `reimburse.rs`, `capture.rs`,
+`currency.rs`, `subscriptions.rs` — and every one of them wrote rows that were
+never marked and never saved. **Every entry recorded through the record sheet
+was lost on the next launch**, which is the app's primary way of creating one.
+
+The type is what makes it findable: making `store()` read-only turned twenty
+silent data-loss sites into twenty compile errors. Forgetting now means taking
+the wide mark, which costs a slower save rather than the data.
+
 ## Two habits worth keeping
 
 **Injections.** After writing a test, break the thing it covers and check that
