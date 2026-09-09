@@ -67,6 +67,39 @@ pub struct GlassSpec {
     pub sheen_height: f64,
     pub edge: &'static str,
     pub edge_width: f64,
+
+    /// How far the blurred backdrop's colour is amplified, 1.0 being none.
+    ///
+    /// This is the layer the port did not have, and the reason a blurred
+    /// surface looked like grey mush rather than glass. A Gaussian blur
+    /// averages neighbouring pixels, and averaging colour is a walk toward
+    /// grey: a red row and a green row behind a bar come out beige. Real
+    /// frosted glass does not desaturate what it scatters, and every system
+    /// implementation of this material compensates by amplifying saturation
+    /// afterwards — Apple calls the result vibrancy and describes it as
+    /// amplifying the colour of the content behind.
+    ///
+    /// Chrome carries the most because it floats over the ledger, where the
+    /// colour behind it is the only thing telling you the bar is transparent
+    /// at all. A sheet covers the room and needs less.
+    pub vibrancy: f64,
+
+    /// The lit rim, top and bottom.
+    ///
+    /// A single flat border is a stroke; a rim that is bright where the light
+    /// falls and dim where it does not is an edge with a direction, which is
+    /// what "随光而变" is describing. `rim_top` lightens, `rim_bottom` darkens,
+    /// and the two meet around the curve.
+    pub rim_top: f64,
+    pub rim_bottom: f64,
+
+    /// Grain over the whole surface.
+    ///
+    /// Small, and not decoration: a wide blur across a near-flat background
+    /// produces visible banding, and a little noise is the standard way to
+    /// break it up. It is also what makes the surface read as frosted rather
+    /// than merely transparent.
+    pub noise: f64,
 }
 
 /// `StyleSheet.hairlineWidth` is a platform value; the caller substitutes its
@@ -76,6 +109,10 @@ pub const HAIRLINE: f64 = -1.0;
 const LIGHT: [GlassSpec; 3] = [
     GlassSpec {
         sheen_height: 26.0,
+        vibrancy: 1.9,
+        rim_top: 0.55,
+        rim_bottom: 0.10,
+        noise: 0.035,
         intensity: 62.0,
         wash_alpha: 0.54,
         wash_alpha_flat: 0.86,
@@ -85,6 +122,10 @@ const LIGHT: [GlassSpec; 3] = [
     },
     GlassSpec {
         sheen_height: 22.0,
+        vibrancy: 1.6,
+        rim_top: 0.45,
+        rim_bottom: 0.08,
+        noise: 0.03,
         intensity: 48.0,
         wash_alpha: 0.82,
         wash_alpha_flat: 0.95,
@@ -94,6 +135,10 @@ const LIGHT: [GlassSpec; 3] = [
     },
     GlassSpec {
         sheen_height: 14.0,
+        vibrancy: 1.35,
+        rim_top: 0.34,
+        rim_bottom: 0.06,
+        noise: 0.022,
         intensity: 30.0,
         wash_alpha: 0.9,
         wash_alpha_flat: 1.0,
@@ -106,6 +151,10 @@ const LIGHT: [GlassSpec; 3] = [
 const DARK: [GlassSpec; 3] = [
     GlassSpec {
         sheen_height: 26.0,
+        vibrancy: 1.7,
+        rim_top: 0.16,
+        rim_bottom: 0.22,
+        noise: 0.05,
         intensity: 70.0,
         wash_alpha: 0.62,
         wash_alpha_flat: 0.9,
@@ -115,6 +164,10 @@ const DARK: [GlassSpec; 3] = [
     },
     GlassSpec {
         sheen_height: 22.0,
+        vibrancy: 1.45,
+        rim_top: 0.13,
+        rim_bottom: 0.18,
+        noise: 0.045,
         intensity: 54.0,
         wash_alpha: 0.85,
         wash_alpha_flat: 0.96,
@@ -124,6 +177,10 @@ const DARK: [GlassSpec; 3] = [
     },
     GlassSpec {
         sheen_height: 14.0,
+        vibrancy: 1.25,
+        rim_top: 0.10,
+        rim_bottom: 0.14,
+        noise: 0.035,
         intensity: 34.0,
         wash_alpha: 0.92,
         wash_alpha_flat: 1.0,
@@ -320,6 +377,45 @@ pub fn touch_light_color(t: &GlassTheme) -> &'static str {
     } else {
         "rgba(255,252,247,0.72)"
     }
+}
+
+/// The saturation matrix a renderer applies to the blurred backdrop.
+///
+/// Returned as the five rows of a 4x5 colour matrix, flattened, because that
+/// is the shape every platform takes one in — `ColorFilter.matrix` on Flutter,
+/// `ColorMatrix` on Android, `feColorMatrix` in SVG. Computing it here rather
+/// than in each renderer is the same rule as everything else in this crate: a
+/// number two implementations could disagree about belongs on this side.
+///
+/// The luminance weights are Rec. 709, which is what every one of those
+/// platforms uses.
+pub fn saturation_matrix(v: f64) -> [f64; 20] {
+    const LR: f64 = 0.2126;
+    const LG: f64 = 0.7152;
+    const LB: f64 = 0.0722;
+    let (r, g, b) = (LR * (1.0 - v), LG * (1.0 - v), LB * (1.0 - v));
+    [
+        r + v,
+        g,
+        b,
+        0.0,
+        0.0,
+        r,
+        g + v,
+        b,
+        0.0,
+        0.0,
+        r,
+        g,
+        b + v,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+    ]
 }
 
 #[cfg(test)]
@@ -519,5 +615,77 @@ mod tests {
     fn the_touch_bloom_is_warm_in_light_and_plain_in_dark() {
         assert!(touch_light_color(&light()).starts_with("rgba(255,252,247"));
         assert!(touch_light_color(&dark()).starts_with("rgba(255,255,255"));
+    }
+
+    #[test]
+    fn a_saturation_of_one_is_the_identity() {
+        let m = saturation_matrix(1.0);
+        // The diagonal is 1 and everything else that touches colour is 0.
+        assert!((m[0] - 1.0).abs() < 1e-12);
+        assert!((m[6] - 1.0).abs() < 1e-12);
+        assert!((m[12] - 1.0).abs() < 1e-12);
+        for i in [1, 2, 5, 7, 10, 11] {
+            assert!(m[i].abs() < 1e-12, "off-diagonal {i} was {}", m[i]);
+        }
+    }
+
+    #[test]
+    fn a_saturation_of_zero_is_luminance() {
+        // Every row becomes the same Rec. 709 weights, which is greyscale.
+        let m = saturation_matrix(0.0);
+        for row in 0..3 {
+            assert!((m[row * 5] - 0.2126).abs() < 1e-12);
+            assert!((m[row * 5 + 1] - 0.7152).abs() < 1e-12);
+            assert!((m[row * 5 + 2] - 0.0722).abs() < 1e-12);
+        }
+    }
+
+    /// Grey has to stay grey at any saturation, or the whole surface takes a
+    /// colour cast — which on a near-white paper palette is the one thing that
+    /// would be obvious immediately.
+    #[test]
+    fn grey_is_unmoved_at_every_saturation() {
+        for v in [0.0, 0.5, 1.0, 1.9, 3.0] {
+            let m = saturation_matrix(v);
+            for row in 0..3 {
+                let sum = m[row * 5] + m[row * 5 + 1] + m[row * 5 + 2];
+                assert!((sum - 1.0).abs() < 1e-12, "v={v} row={row} sum={sum}");
+            }
+        }
+    }
+
+    #[test]
+    fn alpha_is_never_touched() {
+        for v in [0.0, 1.0, 2.0] {
+            let m = saturation_matrix(v);
+            assert_eq!(&m[15..20], &[0.0, 0.0, 0.0, 1.0, 0.0]);
+        }
+    }
+
+    /// Chrome floats over the ledger and needs the most amplification; a card
+    /// sits in it and needs the least.
+    #[test]
+    fn chrome_is_the_most_vibrant_level() {
+        let t = light();
+        let chrome = glass_spec(&t, GlassLevel::Chrome).vibrancy;
+        let sheet = glass_spec(&t, GlassLevel::Sheet).vibrancy;
+        let card = glass_spec(&t, GlassLevel::Card).vibrancy;
+        assert!(chrome > sheet && sheet > card, "{chrome} {sheet} {card}");
+        assert!(card >= 1.0, "amplifying by less than 1 would desaturate");
+    }
+
+    /// On light the rim is lit from above; on dark the brighter half is the
+    /// bottom, because a dark surface on a dark room is found by its lower
+    /// edge catching the light rather than its upper one.
+    #[test]
+    fn the_rim_turns_over_between_themes() {
+        assert!(
+            glass_spec(&light(), GlassLevel::Chrome).rim_top
+                > glass_spec(&light(), GlassLevel::Chrome).rim_bottom
+        );
+        assert!(
+            glass_spec(&dark(), GlassLevel::Chrome).rim_bottom
+                > glass_spec(&dark(), GlassLevel::Chrome).rim_top
+        );
     }
 }

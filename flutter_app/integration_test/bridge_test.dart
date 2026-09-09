@@ -178,6 +178,63 @@ void main() {
       );
     });
 
+    testWidgets('the backdrop is re-saturated, not just blurred',
+        (tester) async {
+      // The layer whose absence made the first two attempts look like grey
+      // mush. A blur averages neighbouring pixels and averaging colour walks
+      // toward grey; the amplification has to be COMPOSED with the blur so it
+      // applies to the blurred result. Applied separately it would amplify the
+      // sharp content and then blur it, which averages the amplification away
+      // again and looks the same as not doing it.
+      await tester.pumpWidget(const MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: Glass(
+              key: Key('probe-glass'),
+              child: SizedBox(width: 100, height: 100),
+            ),
+          ),
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      final bd = tester.widget<BackdropFilter>(find.descendant(
+        of: find.byKey(const Key('probe-glass')),
+        matching: find.byType(BackdropFilter),
+      ));
+      // Both halves, and in that order: the blur is the source and the matrix
+      // is applied to its result.
+      final f = bd.filter.toString();
+      expect(f, contains('compose'));
+      expect(f, contains('blur'));
+      expect(f, contains('ColorFilter.matrix'),
+          reason: 'a bare blur is the version that looked like grey mush');
+      expect(f.indexOf('blur'), lessThan(f.indexOf('ColorFilter.matrix')),
+          reason: 'amplifying before the blur averages the amplification away');
+    });
+
+    testWidgets('the saturation matrix leaves grey alone', (tester) async {
+      // Every row has to sum to 1 or the surface takes a colour cast, which on
+      // a near-white paper palette would be the first thing anyone noticed.
+      for (final v in [1.0, 1.35, 1.9]) {
+        final m = glass.saturationMatrix(vibrancy: v);
+        for (var row = 0; row < 3; row++) {
+          final sum = m[row * 5] + m[row * 5 + 1] + m[row * 5 + 2];
+          expect(sum, closeTo(1, 1e-9), reason: 'v=$v row=$row');
+        }
+      }
+    });
+
+    testWidgets('chrome is amplified more than a card', (tester) async {
+      final chrome =
+          glass.glassSpec(isDark: false, level: glass.GlassLevel.chrome);
+      final card =
+          glass.glassSpec(isDark: false, level: glass.GlassLevel.card);
+      expect(chrome.vibrancy, greaterThan(card.vibrancy));
+      expect(card.vibrancy, greaterThanOrEqualTo(1),
+          reason: 'amplifying by less than one would drain it further');
+    });
+
     testWidgets('the record button is beside the bar, not inside it',
         (tester) async {
       // The shape the first attempt got wrong. The bar is one uninterrupted

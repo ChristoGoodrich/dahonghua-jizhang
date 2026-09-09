@@ -71,6 +71,13 @@ pub struct GlassSpec {
     /// Negative means "the platform's hairline" — Flutter substitutes
     /// `1 / devicePixelRatio`, the way `StyleSheet.hairlineWidth` did.
     pub edge_width: f64,
+    /// Saturation applied to the blurred backdrop. See `core::glass`.
+    pub vibrancy: f64,
+    /// The lit rim, top and bottom.
+    pub rim_top: f64,
+    pub rim_bottom: f64,
+    /// Grain, to break the banding a wide blur leaves behind.
+    pub noise: f64,
 }
 
 fn theme(is_dark: bool, card: String, paper: String) -> core::GlassTheme {
@@ -131,6 +138,10 @@ pub fn glass_spec(is_dark: bool, level: GlassLevel) -> GlassSpec {
         sheen_height: s.sheen_height,
         edge: s.edge.to_string(),
         edge_width: s.edge_width,
+        vibrancy: s.vibrancy,
+        rim_top: s.rim_top,
+        rim_bottom: s.rim_bottom,
+        noise: s.noise,
     }
 }
 
@@ -149,4 +160,14 @@ pub fn touch_light_color(is_dark: bool) -> String {
 #[frb(sync)]
 pub fn luminance(hex: String) -> f64 {
     core::luminance(&hex)
+}
+
+/// The 4x5 colour matrix a renderer applies to the blurred backdrop.
+///
+/// Twenty numbers rather than one, because the matrix is what every platform's
+/// API actually takes and deriving it in each renderer is exactly the kind of
+/// arithmetic this crate exists to hold on one side of the boundary.
+#[frb(sync)]
+pub fn saturation_matrix(vibrancy: f64) -> Vec<f64> {
+    core::saturation_matrix(vibrancy).to_vec()
 }

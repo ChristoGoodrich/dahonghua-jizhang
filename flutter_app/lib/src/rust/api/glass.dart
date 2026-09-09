@@ -65,6 +65,14 @@ String touchLightColor({required bool isDark}) =>
 double luminance({required String hex}) =>
     RustLib.instance.api.crateApiGlassLuminance(hex: hex);
 
+/// The 4x5 colour matrix a renderer applies to the blurred backdrop.
+///
+/// Twenty numbers rather than one, because the matrix is what every platform's
+/// API actually takes and deriving it in each renderer is exactly the kind of
+/// arithmetic this crate exists to hold on one side of the boundary.
+Float64List saturationMatrix({required double vibrancy}) =>
+    RustLib.instance.api.crateApiGlassSaturationMatrix(vibrancy: vibrancy);
+
 /// Where a glass surface sits in the stack.
 enum GlassLevel { chrome, sheet, card }
 
@@ -82,6 +90,16 @@ class GlassSpec {
   /// `1 / devicePixelRatio`, the way `StyleSheet.hairlineWidth` did.
   final double edgeWidth;
 
+  /// Saturation applied to the blurred backdrop. See `core::glass`.
+  final double vibrancy;
+
+  /// The lit rim, top and bottom.
+  final double rimTop;
+  final double rimBottom;
+
+  /// Grain, to break the banding a wide blur leaves behind.
+  final double noise;
+
   const GlassSpec({
     required this.intensity,
     required this.washAlpha,
@@ -90,6 +108,10 @@ class GlassSpec {
     required this.sheenHeight,
     required this.edge,
     required this.edgeWidth,
+    required this.vibrancy,
+    required this.rimTop,
+    required this.rimBottom,
+    required this.noise,
   });
 
   @override
@@ -100,7 +122,11 @@ class GlassSpec {
       sheen.hashCode ^
       sheenHeight.hashCode ^
       edge.hashCode ^
-      edgeWidth.hashCode;
+      edgeWidth.hashCode ^
+      vibrancy.hashCode ^
+      rimTop.hashCode ^
+      rimBottom.hashCode ^
+      noise.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -113,7 +139,11 @@ class GlassSpec {
           sheen == other.sheen &&
           sheenHeight == other.sheenHeight &&
           edge == other.edge &&
-          edgeWidth == other.edgeWidth;
+          edgeWidth == other.edgeWidth &&
+          vibrancy == other.vibrancy &&
+          rimTop == other.rimTop &&
+          rimBottom == other.rimBottom &&
+          noise == other.noise;
 }
 
 /// How much of the material a device can actually render.
