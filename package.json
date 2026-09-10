@@ -5,7 +5,7 @@
   "description": "大红花记账 — a Rust core with a Flutter UI. Node is here only to run the checks; there is no JavaScript in the app.",
   "scripts": {
     "rust:test": "cargo test --manifest-path rust/Cargo.toml",
-    "rust:fmt": "cargo fmt --manifest-path rust/Cargo.toml --check",
+    "rust:fmt": "cargo fmt --manifest-path rust/Cargo.toml --all --check",
     "rust:clippy": "cargo clippy --manifest-path rust/Cargo.toml --all-targets -- -D warnings",
     "bridge:fmt": "cargo fmt --manifest-path flutter_app/rust_bridge/Cargo.toml --check",
     "bridge:clippy": "cargo clippy --manifest-path flutter_app/rust_bridge/Cargo.toml --all-targets -- -D warnings",

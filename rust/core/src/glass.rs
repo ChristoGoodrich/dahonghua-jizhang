@@ -418,6 +418,144 @@ pub fn saturation_matrix(v: f64) -> [f64; 20] {
     ]
 }
 
+// ---------------------------------------------------------------------------
+// 渐进模糊 — the scrim floating chrome stands on.
+// ---------------------------------------------------------------------------
+
+/// How the ground under a floating surface dissolves.
+///
+/// A glass bar with nothing under it is a sticker: content runs full contrast
+/// right up to its edge and then vanishes behind it, and the eye reads the cut
+/// rather than the material. HyperOS answers that with a blur that *ramps* —
+/// zero a little way above the bar, deepest at the screen's edge — so the last
+/// rows dissolve into the chrome instead of being clipped by it.
+///
+/// The ramp is the arithmetic; where it is drawn is not. This side answers how
+/// deep the blur goes, over what distance, and in how many steps.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct ScrimSpec {
+    /// How far the fade reaches *beyond* the surface it stands under, in dp.
+    /// The renderer adds the surface's own height and the gesture inset.
+    pub fade: f64,
+    /// Blur sigma at the deepest point. Zero below the `Full` tier.
+    pub sigma: f64,
+    /// How many steps the ramp is cut into. See [`scrim_bands`].
+    pub bands: usize,
+    /// Alpha of the paper wash at the deepest point.
+    pub wash: f64,
+}
+
+/// The scrim for a tier.
+///
+/// Below `Full` the blur is gone and the wash carries the whole effect, which
+/// is the same trade [`readability_alpha`] makes: a surface that cannot blur
+/// should still look deliberate. `Solid` is a plain block of paper, because a
+/// user who asked for less transparency asked for exactly that.
+///
+/// Dark themes take a heavier wash. A dark room has less contrast to lose, so
+/// the fade has to do more of the separating before the bar reads as floating
+/// rather than as a hole.
+pub fn scrim_spec(t: &GlassTheme, tier: GlassTier) -> ScrimSpec {
+    match tier {
+        GlassTier::Full => ScrimSpec {
+            fade: 72.0,
+            sigma: 22.0,
+            bands: 6,
+            wash: if t.is_dark { 0.62 } else { 0.5 },
+        },
+        GlassTier::Wash => ScrimSpec {
+            fade: 56.0,
+            sigma: 0.0,
+            bands: 6,
+            wash: if t.is_dark { 0.86 } else { 0.8 },
+        },
+        GlassTier::Solid => ScrimSpec {
+            fade: 0.0,
+            sigma: 0.0,
+            bands: 1,
+            wash: 1.0,
+        },
+    }
+}
+
+/// One step of the ramp: where it starts, and the blur it adds there.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct ScrimBand {
+    /// The band's top edge, 0 at the top of the scrim and 1 at the bottom.
+    /// Every band runs from there to the bottom, so they nest.
+    pub top: f64,
+    /// The sigma *this* band contributes, not the blur seen through it.
+    pub sigma: f64,
+}
+
+/// The ramp, as a stack of nested blurs.
+///
+/// No renderer this app targets has a progressive blur; what they all have is
+/// a backdrop blur over a rectangle. So the ramp is built out of those:
+/// `bands` rectangles, each starting lower than the last and all reaching the
+/// bottom, so a point near the bottom is seen through every band above it and
+/// a point near the top through almost none.
+///
+/// Which makes the per-band sigma a real calculation rather than a guess.
+/// **Blurs compose by variance, not by radius** — looking through σ=3 and then
+/// σ=4 is looking through σ=5, not σ=7. Handing a renderer eight equal steps
+/// would ramp as √k, which is steep at the top exactly where the onset has to
+/// be invisible and flat at the bottom where the depth is wanted.
+///
+/// So the target is stated as a curve and the steps are derived from it. The
+/// blur seen through the first k bands is `sigma · (k/n)²`, quadratic so it
+/// starts almost flat, and each band supplies the difference of the squares:
+///
+/// ```text
+/// C(k) = sigma · (k/n)²           the blur at the bottom of band k-1
+/// s(k) = √(C(k)² − C(k−1)²)       what band k−1 has to add to get there
+/// ```
+///
+/// With six bands at σ=22 the first adds 0.61 — below a pixel, which is the
+/// point: the top edge of a progressive blur must not be findable. The last
+/// adds 15.8, on top of the 15.3 already accumulated, reaching 22 exactly.
+///
+/// Six rather than more because each band is a save layer the GPU composites
+/// every frame the list moves under it, and the ramp is already smooth enough
+/// that a seventh would cost a frame to hide nothing.
+pub fn scrim_bands(sigma: f64, bands: usize) -> Vec<ScrimBand> {
+    if bands == 0 {
+        return Vec::new();
+    }
+    let n = bands as f64;
+    let mut out = Vec::with_capacity(bands);
+    let mut prev = 0.0_f64;
+    for k in 0..bands {
+        let x = (k + 1) as f64 / n;
+        let total = sigma * x * x;
+        // Never negative: `total` is monotone in k, but a caller passing a
+        // sigma of zero should get zeros rather than a NaN out of `sqrt`.
+        let step = (total * total - prev * prev).max(0.0).sqrt();
+        out.push(ScrimBand {
+            top: k as f64 / n,
+            sigma: step,
+        });
+        prev = total;
+    }
+    out
+}
+
+/// The wash's alpha at each band edge, `bands + 1` of them.
+///
+/// The same quadratic the blur follows, for the same reason and for one more:
+/// a stack of clipped rectangles has a hard edge at every join, and a wash
+/// that thickens across those joins is what stops them being visible. The two
+/// ramps have to agree, so they are one curve stated once.
+pub fn scrim_ramp(wash: f64, bands: usize) -> Vec<f64> {
+    let n = bands.max(1) as f64;
+    (0..=bands.max(1))
+        .map(|k| {
+            let x = k as f64 / n;
+            wash * x * x
+        })
+        .collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -687,5 +825,75 @@ mod tests {
             glass_spec(&dark(), GlassLevel::Chrome).rim_bottom
                 > glass_spec(&dark(), GlassLevel::Chrome).rim_top
         );
+    }
+    // ---- the progressive scrim ----
+
+    /// The whole point of composing by variance: the stack has to arrive at
+    /// the sigma that was asked for, not at √n times it.
+    #[test]
+    fn the_bands_compose_to_the_sigma_asked_for() {
+        for (sigma, n) in [(22.0, 8), (12.0, 5), (40.0, 12), (3.0, 2)] {
+            let total: f64 = scrim_bands(sigma, n)
+                .iter()
+                .map(|b| b.sigma * b.sigma)
+                .sum::<f64>()
+                .sqrt();
+            assert!(
+                (total - sigma).abs() < 1e-9,
+                "sigma={sigma} n={n} composed={total}"
+            );
+        }
+    }
+
+    /// Each step is bigger than the one above it, and the first is small
+    /// enough that the top edge of the scrim cannot be found. A band that
+    /// opened at a full pixel would draw the line the scrim exists to hide.
+    #[test]
+    fn the_ramp_opens_below_a_pixel_and_deepens() {
+        let bands = scrim_bands(22.0, 8);
+        assert!(bands[0].sigma < 1.0, "opens at {}", bands[0].sigma);
+        for w in bands.windows(2) {
+            assert!(w[1].sigma > w[0].sigma, "{w:?}");
+            assert!(w[1].top > w[0].top);
+        }
+        assert_eq!(bands[0].top, 0.0, "the first band starts at the top");
+    }
+
+    /// Sigma zero is the flat tiers, and `sqrt` of a difference of zeros is a
+    /// place NaN gets in. It does not.
+    #[test]
+    fn a_flat_tier_ramps_to_nothing() {
+        for b in scrim_bands(0.0, 8) {
+            assert_eq!(b.sigma, 0.0);
+        }
+        assert!(scrim_bands(22.0, 0).is_empty());
+    }
+
+    /// The wash reaches the alpha it was given, having started at nothing —
+    /// a scrim whose top edge is already tinted is a visible rectangle.
+    #[test]
+    fn the_wash_runs_from_nothing_to_the_full_alpha() {
+        let r = scrim_ramp(0.5, 8);
+        assert_eq!(r.len(), 9);
+        assert_eq!(r[0], 0.0);
+        assert!((r[8] - 0.5).abs() < 1e-12);
+        for w in r.windows(2) {
+            assert!(w[1] >= w[0]);
+        }
+    }
+
+    /// A tier that cannot blur puts the whole effect in the wash, and the one
+    /// that was asked for no transparency gets a block of paper.
+    #[test]
+    fn the_flat_tiers_trade_blur_for_body() {
+        let t = light();
+        let full = scrim_spec(&t, GlassTier::Full);
+        let wash = scrim_spec(&t, GlassTier::Wash);
+        let solid = scrim_spec(&t, GlassTier::Solid);
+        assert!(full.sigma > 0.0 && wash.sigma == 0.0 && solid.sigma == 0.0);
+        assert!(wash.wash > full.wash, "no blur has to be paid for");
+        assert_eq!(solid.wash, 1.0);
+        assert_eq!(solid.fade, 0.0, "opaque has nothing to fade");
+        assert!(scrim_spec(&dark(), GlassTier::Full).wash > full.wash);
     }
 }

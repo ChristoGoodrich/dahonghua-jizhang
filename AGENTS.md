@@ -46,16 +46,16 @@ refuses to run without `src/` for exactly that reason.
 ## Running things
 
     npm run goldens       the core against what the TypeScript answered
-    npm run rust:test     764 tests
+    npm run rust:test     782 tests
     npm run rust:clippy   -D warnings
     npm run bridge:clippy the bridge is a separate cargo project
     npm run tests:check   all_test.dart is not stale
 
     cd flutter_app
-    flutter test integration_test/all_test.dart    601 tests, ~5 min
+    flutter test integration_test/all_test.dart    638 tests, ~5 min
     flutter test integration_test/<one>_test.dart  while working on one screen
 
-The suite is one entrypoint on purpose: per file it was 33 APK builds and about
+The suite is one entrypoint on purpose: per file it was 34 APK builds and about
 twenty minutes. Add a test file and re-run `node scripts/gen-all-tests.js`.
 
 ## Writing to the store
@@ -74,6 +74,24 @@ was lost on the next launch**, which is the app's primary way of creating one.
 The type is what makes it findable: making `store()` read-only turned twenty
 silent data-loss sites into twenty compile errors. Forgetting now means taking
 the wide mark, which costs a slower save rather than the data.
+
+## Drawing the chrome
+
+`core::glass` owns the material's arithmetic and `lib/glass.dart` draws it.
+Two pieces, and the second is easy to get wrong:
+
+`Glass` is a surface — blur, wash, vibrancy, rim, grain. `GlassScrim` is the
+**ground it stands on**: 渐进模糊, a blur that ramps from nothing to deep so
+content dissolves into the chrome instead of being clipped by it. Nothing this
+app draws on has a progressive blur, so it is built out of six nested clipped
+`BackdropFilter`s. **Blurs compose by variance** — σ=3 then σ=4 is σ=5, not 7 —
+so the per-band sigma is `core::glass::scrim_bands`, not `sigma / bands`.
+Dividing evenly ramps as √k and puts the whole transition in the top two bands.
+
+The ramp lives in the `fade` at the shallow end and holds full depth beyond it.
+A scrim is sized to the chrome it belongs to plus that fade, and for a header
+with a hard bottom edge it is sized to the header alone — otherwise the
+transition lands below the bar and blurs rows nobody has scrolled near.
 
 ## Two habits worth keeping
 

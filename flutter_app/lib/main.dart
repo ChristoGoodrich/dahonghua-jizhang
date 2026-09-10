@@ -153,6 +153,12 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with WidgetsBindingObserver {
   int _tab = 0;
 
+  /// The entry list is in 批量处理. The shell's nav bar stands down while it
+  /// is, because the selection bar takes the same slot — two bars in one slot
+  /// is the kind of thing that looks fine in a widget test and stacks on a
+  /// phone.
+  bool _selecting = false;
+
   /// Which language the app speaks, read from the store rather than assumed.
   ///
   /// Threaded down rather than read at each screen: a screen that fetched it
@@ -279,6 +285,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           zh: _zh,
           onEdit: (id) => _record(editId: id),
           onChanged: _entriesChanged,
+          onSelecting: (v) => setState(() => _selecting = v),
         ),
         StatsScreen(key: ValueKey(_listVersion), zh: _zh),
         AssetsScreen(
@@ -300,7 +307,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     // a bar in the `bottomNavigationBar` slot has only the scaffold's
     // background behind it, and blurring a flat colour produces a flat colour.
     extendBody: true,
-    bottomNavigationBar: _bar(),
+    bottomNavigationBar: _selecting ? null : _bar(),
   );
 
 

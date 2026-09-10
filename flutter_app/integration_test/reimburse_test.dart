@@ -45,6 +45,18 @@ Future<void> showList(WidgetTester tester) async {
   await tester.pumpAndSettle();
 }
 
+/// Open the single-row action sheet.
+///
+/// Long-pressing a row starts 批量处理 now — the gesture every Xiaomi app uses
+/// — so the sheet moved to 更多 on the selection bar, which is live only while
+/// exactly one row is ticked. Two taps instead of one, and the same sheet.
+Future<void> openActions(WidgetTester tester, String row) async {
+  await tester.longPress(find.text(row));
+  await tester.pumpAndSettle();
+  await tester.tap(find.byKey(const Key('batch-more')));
+  await tester.pumpAndSettle();
+}
+
 String textOf(WidgetTester tester, String key) =>
     tester.widget<Text>(find.byKey(Key(key))).data!;
 
@@ -254,13 +266,12 @@ void main() {
     });
   });
 
-  group('the long-press menu', () {
+  group('the single-row action sheet', () {
     testWidgets('opens on an entry and offers both actions', (tester) async {
       spend('e1', 120, note: '打车');
       await showList(tester);
 
-      await tester.longPress(find.text('打车'));
-      await tester.pumpAndSettle();
+      await openActions(tester, '打车');
 
       expect(find.byKey(const Key('action-reimburse')), findsOneWidget);
       expect(find.byKey(const Key('action-refund')), findsOneWidget);
@@ -275,8 +286,7 @@ void main() {
       spend('e1', 120, note: '打车');
       await showList(tester);
 
-      await tester.longPress(find.text('打车'));
-      await tester.pumpAndSettle();
+      await openActions(tester, '打车');
       expect(find.byKey(const Key('action-delete')), findsOneWidget);
     });
 
@@ -285,8 +295,7 @@ void main() {
       spend('e1', 120, note: '打车');
       await showList(tester);
 
-      await tester.longPress(find.text('打车'));
-      await tester.pumpAndSettle();
+      await openActions(tester, '打车');
       await tester.tap(find.byKey(const Key('action-delete')));
       await tester.pumpAndSettle();
 
@@ -304,8 +313,7 @@ void main() {
       spend('e1', 120, note: '打车');
       await showList(tester);
 
-      await tester.longPress(find.text('打车'));
-      await tester.pumpAndSettle();
+      await openActions(tester, '打车');
       await tester.tap(find.byKey(const Key('action-reimburse')));
       await tester.pumpAndSettle();
 
@@ -316,8 +324,7 @@ void main() {
       spend('e1', 120, note: '打车');
       await showList(tester);
 
-      await tester.longPress(find.text('打车'));
-      await tester.pumpAndSettle();
+      await openActions(tester, '打车');
       await tester.tap(find.byKey(const Key('action-refund')));
       await tester.pumpAndSettle();
 
@@ -335,8 +342,7 @@ void main() {
       spend('e1', 120, note: '打车');
       await showList(tester);
 
-      await tester.longPress(find.text('打车'));
-      await tester.pumpAndSettle();
+      await openActions(tester, '打车');
       await tester.tap(find.byKey(const Key('action-refund')));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('refund-cancel')));

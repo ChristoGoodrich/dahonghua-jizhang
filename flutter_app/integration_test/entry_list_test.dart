@@ -7,7 +7,9 @@
 // corpus already pinned against the shipping TypeScript.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/bloom.dart';
 import 'package:flutter_app/entry_list.dart';
+import 'package:flutter_app/glass.dart';
 import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_app/theme.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -30,14 +32,24 @@ void main() {
   setUpAll(ensureRust);
   setUp(() => store.reset());
 
-  testWidgets('an empty ledger says so rather than showing nothing', (tester) async {
+  testWidgets('an empty ledger says so rather than showing nothing', (
+    tester,
+  ) async {
     await show(tester);
     expect(find.text('还没有记账'), findsOneWidget);
   });
 
-  testWidgets('a row shows its category, note and signed amount', (tester) async {
+  testWidgets('a row shows its category, note and signed amount', (
+    tester,
+  ) async {
     store.addEntry(
-      entry: store.NewEntry(io: 'exp', cat: 'food', amt: 35.5, note: '午饭', ts: now),
+      entry: store.NewEntry(
+        io: 'exp',
+        cat: 'food',
+        amt: 35.5,
+        note: '午饭',
+        ts: now,
+      ),
       id: 'e1',
       now: now,
     );
@@ -46,10 +58,15 @@ void main() {
     expect(find.text('餐饮'), findsOneWidget); // the category name, from Rust
     expect(find.text('🍜'), findsOneWidget); // and its emoji
     expect(find.text('午饭'), findsOneWidget);
-    expect(find.text('-35.50'), findsOneWidget); // signed, grouped, two decimals
+    expect(
+      find.text('-35.50'),
+      findsOneWidget,
+    ); // signed, grouped, two decimals
   });
 
-  testWidgets('income is signed the other way and coloured differently', (tester) async {
+  testWidgets('income is signed the other way and coloured differently', (
+    tester,
+  ) async {
     store.addEntry(
       entry: store.NewEntry(io: 'inc', cat: 'salary', amt: 9000, ts: now),
       id: 'e1',
@@ -88,7 +105,9 @@ void main() {
     expect(iToday, lessThan(iYesterday));
   });
 
-  testWidgets('a day with income and no expense heads with the income', (tester) async {
+  testWidgets('a day with income and no expense heads with the income', (
+    tester,
+  ) async {
     store.addEntry(
       entry: store.NewEntry(io: 'inc', cat: 'salary', amt: 100, ts: now),
       id: 'e1',
@@ -100,7 +119,13 @@ void main() {
 
   testWidgets('a tombstone is not drawn', (tester) async {
     store.addEntry(
-      entry: store.NewEntry(io: 'exp', cat: 'food', amt: 30, note: '午饭', ts: now),
+      entry: store.NewEntry(
+        io: 'exp',
+        cat: 'food',
+        amt: 30,
+        note: '午饭',
+        ts: now,
+      ),
       id: 'e1',
       now: now,
     );
@@ -117,7 +142,11 @@ void main() {
       id: 'e1',
       now: now,
     );
-    store.updateEntry(id: 'e1', patch: store.EntryPatch(rb: 'pending'), now: now);
+    store.updateEntry(
+      id: 'e1',
+      patch: store.EntryPatch(rb: 'pending'),
+      now: now,
+    );
     await show(tester);
     expect(find.text('待报销'), findsOneWidget);
   });
@@ -139,7 +168,13 @@ void main() {
     // Slint reached 0 of 8 nodes on Android; this is the standard Flutter was
     // chosen against, so it is worth a test rather than an assumption.
     store.addEntry(
-      entry: store.NewEntry(io: 'exp', cat: 'food', amt: 35.5, note: '午饭', ts: now),
+      entry: store.NewEntry(
+        io: 'exp',
+        cat: 'food',
+        amt: 35.5,
+        note: '午饭',
+        ts: now,
+      ),
       id: 'e1',
       now: now,
     );
@@ -150,10 +185,17 @@ void main() {
     handle.dispose();
   });
 
-  testWidgets('a hundred rows draw without the ledger crossing per row', (tester) async {
+  testWidgets('a hundred rows draw without the ledger crossing per row', (
+    tester,
+  ) async {
     for (var i = 0; i < 100; i++) {
       store.addEntry(
-        entry: store.NewEntry(io: 'exp', cat: 'food', amt: 1, ts: now - i * 3600 * 1000),
+        entry: store.NewEntry(
+          io: 'exp',
+          cat: 'food',
+          amt: 1,
+          ts: now - i * 3600 * 1000,
+        ),
         id: 'e$i',
         now: now + i,
       );
@@ -172,7 +214,12 @@ void main() {
     testWidgets('a row lights while it is held', (tester) async {
       store.addEntry(
         entry: store.NewEntry(
-            io: 'exp', cat: 'food', amt: 35.5, note: '午饭', ts: now),
+          io: 'exp',
+          cat: 'food',
+          amt: 35.5,
+          note: '午饭',
+          ts: now,
+        ),
         id: 'e1',
         now: now,
       );
@@ -181,7 +228,8 @@ void main() {
       final row = find.byKey(const Key('row-e1'));
       double veilOf() => tester
           .widgetList<AnimatedOpacity>(
-              find.descendant(of: row, matching: find.byType(AnimatedOpacity)))
+            find.descendant(of: row, matching: find.byType(AnimatedOpacity)),
+          )
           .map((w) => w.opacity)
           .fold(0.0, (a, b) => a > b ? a : b);
 
@@ -201,7 +249,12 @@ void main() {
       // finger has gone somewhere else is worse than one that never lit.
       store.addEntry(
         entry: store.NewEntry(
-            io: 'exp', cat: 'food', amt: 35.5, note: '午饭', ts: now),
+          io: 'exp',
+          cat: 'food',
+          amt: 35.5,
+          note: '午饭',
+          ts: now,
+        ),
         id: 'e1',
         now: now,
       );
@@ -216,10 +269,57 @@ void main() {
 
       final lit = tester
           .widgetList<AnimatedOpacity>(
-              find.descendant(of: row, matching: find.byType(AnimatedOpacity)))
+            find.descendant(of: row, matching: find.byType(AnimatedOpacity)),
+          )
           .map((w) => w.opacity)
           .fold(0.0, (a, b) => a > b ? a : b);
       expect(lit, 0);
+    });
+  });
+
+  group('渐进模糊 and the mark', () {
+    /// The scrim's whole job is to have something to dissolve. A list that
+    /// starts below the header has nothing running under it, and the blur
+    /// would be a blur of paper — which is paper.
+    testWidgets('the list runs under the header rather than stopping at it', (
+      tester,
+    ) async {
+      store.addEntry(
+        entry: store.NewEntry(io: 'exp', cat: 'food', amt: 30, ts: now),
+        id: 'e1',
+        now: now,
+      );
+      await show(tester);
+
+      final list = tester.widget<ListView>(find.byType(ListView));
+      final pad = list.padding! as EdgeInsets;
+      expect(
+        pad.top,
+        greaterThanOrEqualTo(kToolbarHeight),
+        reason: 'the first row has to clear a header it scrolls beneath',
+      );
+      expect(find.byType(GlassScrim), findsOneWidget);
+    });
+
+    /// 🌺 was somebody else's drawing — Noto's on one phone, Samsung's on
+    /// another — and it was not the flower on the launcher icon the user had
+    /// just tapped.
+    testWidgets('an empty ledger shows the app own mark, not an emoji', (
+      tester,
+    ) async {
+      await show(tester);
+
+      expect(find.byType(Bloom), findsOneWidget);
+      expect(find.text('🌺'), findsNothing);
+    });
+
+    testWidgets('the mark takes the flower the user chose', (tester) async {
+      await show(tester);
+      final bloom = tester.widget<Bloom>(find.byType(Bloom));
+      // Left to the palette rather than pinned to the icon's #D94E5C: the
+      // launcher cannot follow a theme change and this can.
+      expect(bloom.petal, isNull);
+      expect(bloom.core, isNull);
     });
   });
 }

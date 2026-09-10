@@ -11,6 +11,7 @@ pub mod accounts;
 pub mod acct;
 pub mod archive;
 pub mod backup;
+pub mod batch;
 pub mod bills;
 pub mod budget;
 pub mod calc;

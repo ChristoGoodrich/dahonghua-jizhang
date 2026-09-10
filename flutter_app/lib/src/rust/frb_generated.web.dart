@@ -9,6 +9,7 @@
 import 'api/accounts.dart';
 import 'api/acct.dart';
 import 'api/backup.dart';
+import 'api/batch.dart';
 import 'api/budget.dart';
 import 'api/calc.dart';
 import 'api/capture.dart';
@@ -65,6 +66,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   BackupInfoView dco_decode_backup_info_view(dynamic raw);
+
+  @protected
+  BatchTally dco_decode_batch_tally(dynamic raw);
 
   @protected
   bool dco_decode_bool(dynamic raw);
@@ -149,6 +153,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   ClaimList dco_decode_claim_list(dynamic raw);
+
+  @protected
+  ClaimTo dco_decode_claim_to(dynamic raw);
 
   @protected
   ClaimView dco_decode_claim_view(dynamic raw);
@@ -283,6 +290,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<ScheduleView> dco_decode_list_schedule_view(dynamic raw);
 
   @protected
+  List<ScrimBand> dco_decode_list_scrim_band(dynamic raw);
+
+  @protected
   List<SliceView> dco_decode_list_slice_view(dynamic raw);
 
   @protected
@@ -296,6 +306,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<TrendPointView> dco_decode_list_trend_point_view(dynamic raw);
+
+  @protected
+  List<UndoToken> dco_decode_list_undo_token(dynamic raw);
 
   @protected
   List<UnparsedView> dco_decode_list_unparsed_view(dynamic raw);
@@ -402,6 +415,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ScheduleView dco_decode_schedule_view(dynamic raw);
 
   @protected
+  ScrimBand dco_decode_scrim_band(dynamic raw);
+
+  @protected
+  ScrimSpec dco_decode_scrim_spec(dynamic raw);
+
+  @protected
   SettingsView dco_decode_settings_view(dynamic raw);
 
   @protected
@@ -478,6 +497,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   BackupInfoView sse_decode_backup_info_view(SseDeserializer deserializer);
+
+  @protected
+  BatchTally sse_decode_batch_tally(SseDeserializer deserializer);
 
   @protected
   bool sse_decode_bool(SseDeserializer deserializer);
@@ -572,6 +594,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   ClaimList sse_decode_claim_list(SseDeserializer deserializer);
+
+  @protected
+  ClaimTo sse_decode_claim_to(SseDeserializer deserializer);
 
   @protected
   ClaimView sse_decode_claim_view(SseDeserializer deserializer);
@@ -724,6 +749,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  List<ScrimBand> sse_decode_list_scrim_band(SseDeserializer deserializer);
+
+  @protected
   List<SliceView> sse_decode_list_slice_view(SseDeserializer deserializer);
 
   @protected
@@ -741,6 +769,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<TrendPointView> sse_decode_list_trend_point_view(
     SseDeserializer deserializer,
   );
+
+  @protected
+  List<UndoToken> sse_decode_list_undo_token(SseDeserializer deserializer);
 
   @protected
   List<UnparsedView> sse_decode_list_unparsed_view(
@@ -859,6 +890,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ScheduleView sse_decode_schedule_view(SseDeserializer deserializer);
 
   @protected
+  ScrimBand sse_decode_scrim_band(SseDeserializer deserializer);
+
+  @protected
+  ScrimSpec sse_decode_scrim_spec(SseDeserializer deserializer);
+
+  @protected
   SettingsView sse_decode_settings_view(SseDeserializer deserializer);
 
   @protected
@@ -943,6 +980,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     BackupInfoView self,
     SseSerializer serializer,
   );
+
+  @protected
+  void sse_encode_batch_tally(BatchTally self, SseSerializer serializer);
 
   @protected
   void sse_encode_bool(bool self, SseSerializer serializer);
@@ -1075,6 +1115,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_claim_list(ClaimList self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_claim_to(ClaimTo self, SseSerializer serializer);
 
   @protected
   void sse_encode_claim_view(ClaimView self, SseSerializer serializer);
@@ -1278,6 +1321,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_list_scrim_band(
+    List<ScrimBand> self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_list_slice_view(
     List<SliceView> self,
     SseSerializer serializer,
@@ -1301,6 +1350,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_trend_point_view(
     List<TrendPointView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_undo_token(
+    List<UndoToken> self,
     SseSerializer serializer,
   );
 
@@ -1441,6 +1496,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_schedule_view(ScheduleView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_scrim_band(ScrimBand self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_scrim_spec(ScrimSpec self, SseSerializer serializer);
 
   @protected
   void sse_encode_settings_view(SettingsView self, SseSerializer serializer);

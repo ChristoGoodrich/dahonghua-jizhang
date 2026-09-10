@@ -18,7 +18,6 @@ import 'package:flutter_app/src/rust/api/currency.dart' as currency;
 import 'package:flutter_app/src/rust/api/db.dart' as db;
 import 'package:flutter_app/src/rust/api/record.dart' as record;
 import 'package:flutter_app/src/rust/api/reimburse.dart' as rb;
-import 'package:flutter_app/src/rust/api/subscriptions.dart' as subs;
 import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';

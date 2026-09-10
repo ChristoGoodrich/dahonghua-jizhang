@@ -88,8 +88,7 @@ class Glass extends StatelessWidget {
     final p = palette;
 
     final tier = g.resolveTier(
-      reduceTransparency:
-          MediaQuery.maybeDisableAnimationsOf(context) ?? false,
+      reduceTransparency: MediaQuery.maybeDisableAnimationsOf(context) ?? false,
       isWeb: false,
     );
     final spec = g.glassSpec(isDark: p.isDark, level: level);
@@ -99,15 +98,17 @@ class Glass extends StatelessWidget {
       density: density,
       tier: tier,
     );
-    final wash = parseRgba(g.washColor(
-      isDark: p.isDark,
-      card: p.cardHex,
-      paper: p.paperHex,
-      level: level,
-      under: under ?? p.paperHex,
-      alpha: alpha,
-      surface: surface,
-    ));
+    final wash = parseRgba(
+      g.washColor(
+        isDark: p.isDark,
+        card: p.cardHex,
+        paper: p.paperHex,
+        level: level,
+        under: under ?? p.paperHex,
+        alpha: alpha,
+        surface: surface,
+      ),
+    );
 
     final shape = BorderRadius.circular(radius);
     final hairline = 1 / MediaQuery.devicePixelRatioOf(context);
@@ -157,8 +158,9 @@ class Glass extends StatelessWidget {
           Positioned.fill(
             child: IgnorePointer(
               child: ColoredBox(
-                color: parseRgba(g.touchLightColor(isDark: p.isDark))
-                    .withValues(alpha: touch.clamp(0.0, 1.0)),
+                color: parseRgba(
+                  g.touchLightColor(isDark: p.isDark),
+                ).withValues(alpha: touch.clamp(0.0, 1.0)),
               ),
             ),
           ),
@@ -287,14 +289,17 @@ class _Grain extends CustomPainter {
     final n = (size.width * size.height / 90).clamp(0, 4000).toInt();
     final light = Paint()..color = Colors.white.withValues(alpha: opacity);
     final shade = Paint()
-      ..color = (dark ? Colors.black : const Color(0xFF6B4632))
-          .withValues(alpha: opacity * 0.8);
+      ..color = (dark ? Colors.black : const Color(0xFF6B4632)).withValues(
+        alpha: opacity * 0.8,
+      );
 
     final pts = <Offset>[];
     final dots = <Offset>[];
     for (var i = 0; i < n; i++) {
-      final o = Offset(rnd.nextDouble() * size.width,
-          rnd.nextDouble() * size.height);
+      final o = Offset(
+        rnd.nextDouble() * size.width,
+        rnd.nextDouble() * size.height,
+      );
       (rnd.nextBool() ? pts : dots).add(o);
     }
     canvas.drawPoints(ui.PointMode.points, pts, light);
@@ -302,6 +307,163 @@ class _Grain extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_Grain old) =>
-      old.opacity != opacity || old.dark != dark;
+  bool shouldRepaint(_Grain old) => old.opacity != opacity || old.dark != dark;
 }
+
+/// 渐进模糊 — the ground a floating surface stands on.
+///
+/// The bar was a sticker before this. Content ran at full contrast right up to
+/// its edge and then stopped, and what the eye read was the cut rather than the
+/// material — the same complaint that started the vibrancy work, one layer
+/// further out. HyperOS answers it with a blur that *ramps*: nothing a little
+/// way above the bar, deepest at the screen's edge, so the last rows dissolve
+/// into the chrome instead of being clipped by it. The header does the same
+/// thing upside down.
+///
+/// ## How it is built, and why it is built that way
+///
+/// Nothing this app draws on has a progressive blur. Skia has a blur over a
+/// rectangle and that is all, so the ramp is assembled out of rectangles:
+/// `bands` of them, each starting lower than the last and all reaching the
+/// deep end, so a point at the bottom is seen through every band and a point
+/// at the top through none.
+///
+/// The per-band sigma is the part that is easy to get wrong and is therefore
+/// not decided here. Blurs compose by variance — looking through σ=3 and then
+/// σ=4 is looking through σ=5, not σ=7 — so equal steps would ramp as √k,
+/// which is steep at the top, exactly where the onset has to be invisible.
+/// `core::glass` states the curve and hands over the steps; see `scrim_bands`.
+///
+/// The wash rides the same curve. It is not only tone: a stack of clipped
+/// rectangles has a hard edge at every join, and a tint that thickens across
+/// those joins is what stops them being findable.
+class GlassScrim extends StatelessWidget {
+  const GlassScrim({super.key, this.flipped = false, this.under});
+
+  /// Deepest at the TOP rather than the bottom, for chrome that floats above
+  /// the content instead of below it.
+  final bool flipped;
+
+  /// What the wash fades toward. The page's paper unless told otherwise.
+  final String? under;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = palette;
+    final tier = g.resolveTier(
+      reduceTransparency: MediaQuery.maybeDisableAnimationsOf(context) ?? false,
+      isWeb: false,
+    );
+    final spec = g.scrimSpec(isDark: p.isDark, tier: tier);
+    final ramp = g.scrimRamp(wash: spec.wash, bands: spec.bands);
+    final tint = under == null ? p.paper : parseHex(under!);
+
+    return IgnorePointer(
+      // The band edges are fractions and `Positioned` wants pixels, so the box
+      // has to be measured. A `FractionallySizedBox` was the first attempt and
+      // cannot work: `Positioned(left, right, bottom)` leaves the height
+      // unbounded, and a fraction of an unbounded height is the assertion that
+      // took down sixty-nine tests at once.
+      child: LayoutBuilder(
+        builder: (context, c) {
+          final h = c.maxHeight;
+          if (!h.isFinite) return const SizedBox.shrink();
+
+          // The ramp occupies `fade` at the SHALLOW end; everything deeper is
+          // held at full strength. Spreading it across the whole box instead
+          // was the first version's mistake and it showed on the first
+          // screenshot: the deepest blur ended up in the 26dp behind the
+          // status bar, and rows a comfortable distance BELOW the header were
+          // still visibly soft. The part of the box behind the chrome is not
+          // part of the transition — nobody sees it — so the transition
+          // should not spend itself there.
+          final fade = spec.fade.clamp(0.0, h);
+          final wash = Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: flipped ? Alignment.bottomCenter : Alignment.topCenter,
+                  end: flipped ? Alignment.topCenter : Alignment.bottomCenter,
+                  colors: [
+                    for (final a in ramp)
+                      tint.withValues(alpha: a.clamp(0.0, 1.0)),
+                    // Held, not extrapolated: the gradient's own last stop
+                    // would otherwise land at the box's edge and stretch the
+                    // ramp back over the whole thing.
+                    tint.withValues(alpha: ramp.last.clamp(0.0, 1.0)),
+                  ],
+                  stops: [
+                    for (var k = 0; k < ramp.length; k++)
+                      (k / (ramp.length - 1)) * (fade / h),
+                    1.0,
+                  ],
+                ),
+              ),
+            ),
+          );
+
+          if (spec.sigma <= 0) {
+            // Positioned children only, so this takes its whole constraints —
+            // which for once is the intent. The callers give it a box.
+            return Stack(children: [wash]);
+          }
+          return Stack(
+            children: [
+              for (final band in g.scrimBands(
+                sigma: spec.sigma,
+                bands: spec.bands,
+              ))
+                // A sub-pixel sigma is a save layer for nothing. The first band
+                // is deliberately that small — the top of a progressive blur
+                // must not be findable — so it is the one that gets dropped,
+                // and dropping it moves the total from 22 to 21.99.
+                if (band.sigma >= 0.05)
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    // Every band runs to the deep end, so they nest and the
+                    // blur through them compounds. That is what the per-band
+                    // sigmas are computed for.
+                    top: flipped ? 0 : band.top * fade,
+                    bottom: flipped ? band.top * fade : 0,
+                    // The clip is what confines the filter. An unclipped
+                    // BackdropFilter blurs the whole screen.
+                    child: ClipRect(
+                      child: BackdropFilter(
+                        filter: ui.ImageFilter.blur(
+                          sigmaX: band.sigma,
+                          sigmaY: band.sigma,
+                          // Clamp, unlike `Glass`: this band's edges ARE the
+                          // screen's edges, and decal would fade the content
+                          // there to nothing and draw a dark seam down both
+                          // sides.
+                          tileMode: TileMode.clamp,
+                        ),
+                        child: const SizedBox.expand(),
+                      ),
+                    ),
+                  ),
+              wash,
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+/// How far a scrim reaches past the surface it stands under, in dp.
+///
+/// The caller adds its own height: the bar knows how tall it is and the header
+/// knows the status bar's inset, and neither is arithmetic worth crossing the
+/// boundary for.
+double scrimFade(BuildContext context) => g
+    .scrimSpec(
+      isDark: palette.isDark,
+      tier: g.resolveTier(
+        reduceTransparency:
+            MediaQuery.maybeDisableAnimationsOf(context) ?? false,
+        isWeb: false,
+      ),
+    )
+    .fade;

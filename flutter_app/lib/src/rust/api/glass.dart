@@ -7,7 +7,7 @@ import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 // These functions are ignored because they are not marked as `pub`: `theme`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `assert_fields_are_eq`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `assert_fields_are_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`
 
 /// 感知环境颜色 — the wash a surface should paint over a given colour.
 ///
@@ -72,6 +72,22 @@ double luminance({required String hex}) =>
 /// arithmetic this crate exists to hold on one side of the boundary.
 Float64List saturationMatrix({required double vibrancy}) =>
     RustLib.instance.api.crateApiGlassSaturationMatrix(vibrancy: vibrancy);
+
+ScrimSpec scrimSpec({required bool isDark, required GlassTier tier}) =>
+    RustLib.instance.api.crateApiGlassScrimSpec(isDark: isDark, tier: tier);
+
+/// The ramp, as the stack of nested blurs a renderer can actually draw.
+///
+/// The per-band sigma is not `sigma / bands`: blurs compose by variance, so
+/// looking through σ=3 and then σ=4 is looking through σ=5. Getting that wrong
+/// puts the whole ramp in the top two bands, which is the opposite of the
+/// effect. `core::glass` states the curve; this hands over the steps.
+List<ScrimBand> scrimBands({required double sigma, required int bands}) =>
+    RustLib.instance.api.crateApiGlassScrimBands(sigma: sigma, bands: bands);
+
+/// The wash's alpha at each band edge, `bands + 1` of them.
+Float64List scrimRamp({required double wash, required int bands}) =>
+    RustLib.instance.api.crateApiGlassScrimRamp(wash: wash, bands: bands);
 
 /// Where a glass surface sits in the stack.
 enum GlassLevel { chrome, sheet, card }
@@ -148,3 +164,60 @@ class GlassSpec {
 
 /// How much of the material a device can actually render.
 enum GlassTier { full, wash, solid }
+
+/// One step of the ramp.
+class ScrimBand {
+  /// The band's top edge, 0 at the top of the scrim and 1 at the bottom.
+  final double top;
+
+  /// The sigma this band contributes, not the blur seen through it.
+  final double sigma;
+
+  const ScrimBand({required this.top, required this.sigma});
+
+  @override
+  int get hashCode => top.hashCode ^ sigma.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ScrimBand &&
+          runtimeType == other.runtimeType &&
+          top == other.top &&
+          sigma == other.sigma;
+}
+
+/// 渐进模糊 — how the ground under a floating surface dissolves.
+class ScrimSpec {
+  /// How far the fade reaches beyond the surface, in dp. The renderer adds
+  /// the surface's own height and the gesture inset.
+  final double fade;
+
+  /// Blur sigma at the deepest point; zero below the `Full` tier.
+  final double sigma;
+  final int bands;
+
+  /// Alpha of the paper wash at the deepest point.
+  final double wash;
+
+  const ScrimSpec({
+    required this.fade,
+    required this.sigma,
+    required this.bands,
+    required this.wash,
+  });
+
+  @override
+  int get hashCode =>
+      fade.hashCode ^ sigma.hashCode ^ bands.hashCode ^ wash.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ScrimSpec &&
+          runtimeType == other.runtimeType &&
+          fade == other.fade &&
+          sigma == other.sigma &&
+          bands == other.bands &&
+          wash == other.wash;
+}

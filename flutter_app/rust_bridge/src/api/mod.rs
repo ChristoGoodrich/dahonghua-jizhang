@@ -8,6 +8,7 @@
 pub mod accounts;
 pub mod acct;
 pub mod backup;
+pub mod batch;
 pub mod budget;
 pub mod calc;
 pub mod capture;

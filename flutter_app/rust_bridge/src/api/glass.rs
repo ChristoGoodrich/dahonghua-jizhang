@@ -171,3 +171,62 @@ pub fn luminance(hex: String) -> f64 {
 pub fn saturation_matrix(vibrancy: f64) -> Vec<f64> {
     core::saturation_matrix(vibrancy).to_vec()
 }
+
+/// 渐进模糊 — how the ground under a floating surface dissolves.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct ScrimSpec {
+    /// How far the fade reaches beyond the surface, in dp. The renderer adds
+    /// the surface's own height and the gesture inset.
+    pub fade: f64,
+    /// Blur sigma at the deepest point; zero below the `Full` tier.
+    pub sigma: f64,
+    pub bands: u32,
+    /// Alpha of the paper wash at the deepest point.
+    pub wash: f64,
+}
+
+/// One step of the ramp.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct ScrimBand {
+    /// The band's top edge, 0 at the top of the scrim and 1 at the bottom.
+    pub top: f64,
+    /// The sigma this band contributes, not the blur seen through it.
+    pub sigma: f64,
+}
+
+#[frb(sync)]
+pub fn scrim_spec(is_dark: bool, tier: GlassTier) -> ScrimSpec {
+    let s = core::scrim_spec(
+        &theme(is_dark, "#FFFFFF".into(), "#FBF7F0".into()),
+        tier.into(),
+    );
+    ScrimSpec {
+        fade: s.fade,
+        sigma: s.sigma,
+        bands: s.bands as u32,
+        wash: s.wash,
+    }
+}
+
+/// The ramp, as the stack of nested blurs a renderer can actually draw.
+///
+/// The per-band sigma is not `sigma / bands`: blurs compose by variance, so
+/// looking through σ=3 and then σ=4 is looking through σ=5. Getting that wrong
+/// puts the whole ramp in the top two bands, which is the opposite of the
+/// effect. `core::glass` states the curve; this hands over the steps.
+#[frb(sync)]
+pub fn scrim_bands(sigma: f64, bands: u32) -> Vec<ScrimBand> {
+    core::scrim_bands(sigma, bands as usize)
+        .into_iter()
+        .map(|b| ScrimBand {
+            top: b.top,
+            sigma: b.sigma,
+        })
+        .collect()
+}
+
+/// The wash's alpha at each band edge, `bands + 1` of them.
+#[frb(sync)]
+pub fn scrim_ramp(wash: f64, bands: u32) -> Vec<f64> {
+    core::scrim_ramp(wash, bands as usize)
+}

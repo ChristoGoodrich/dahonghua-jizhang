@@ -22,6 +22,7 @@ import 'package:flutter/services.dart';
 
 import 'glass.dart';
 import 'src/rust/api/glass.dart' as g;
+import 'tap.dart';
 import 'theme.dart';
 
 /// The outer gutter, and the widest the whole row is allowed to get.
@@ -55,6 +56,28 @@ double navBottomInset(BuildContext context) =>
 double navBottomPad(BuildContext context) {
   final inset = MediaQuery.viewPaddingOf(context).bottom;
   return inset + 6 < 16 ? 16 : inset + 6;
+}
+
+/// A bottom-bar slot standing on its scrim.
+///
+/// Shared by the nav bar and the selection bar so the two occupy exactly the
+/// same box: switching between them must not move the ground, and a second
+/// copy of this arithmetic is how it would.
+///
+/// The scrim fills the slot and the bar is placed at its foot. Both bars are
+/// `_barH` tall and both clear the gesture inset by `navBottomPad`, so the only
+/// thing that changes when a selection starts is what is drawn inside.
+Widget navScrimBox(BuildContext context, {required Widget child}) {
+  final pad = navBottomPad(context);
+  return SizedBox(
+    height: scrimFade(context) + _barH + pad,
+    child: Stack(
+      children: [
+        const Positioned.fill(child: GlassScrim()),
+        Positioned(left: 0, right: 0, bottom: pad, height: _barH, child: child),
+      ],
+    ),
+  );
 }
 
 class BottomNav extends StatelessWidget {
@@ -91,34 +114,38 @@ class BottomNav extends StatelessWidget {
     final itemW = innerW / 4;
     final indicatorX = _pad + active * itemW + itemW / 2 - _pillW / 2;
 
-    return Padding(
-      padding: EdgeInsets.only(bottom: navBottomPad(context)),
-      // A `SizedBox` with the bar's height rather than a `Center`. The
-      // `bottomNavigationBar` slot passes loose constraints whose maxHeight is
-      // the whole screen, and `Center` takes all of it — which put the bar in
-      // the middle of the display. Same shape as the Stack bug before it: a
-      // widget with nothing to size it from expands, and in this slot that is
-      // never what is wanted.
-      child: SizedBox(
-        height: _barH,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: rowW,
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: barW,
-                    child: _bar(context, p, barW, itemW, indicatorX),
-                  ),
-                  const SizedBox(width: _addGap),
-                  _AddButton(onTap: onAdd),
-                ],
-              ),
+    // A `SizedBox` with a known height rather than a `Center`. The
+    // `bottomNavigationBar` slot passes loose constraints whose maxHeight is
+    // the whole screen, and `Center` takes all of it — which put the bar in
+    // the middle of the display. Same shape as the Stack bug before it: a
+    // widget with nothing to size it from expands, and in this slot that is
+    // never what is wanted.
+    //
+    // The height now includes the scrim's fade, so the slot reserves the whole
+    // dissolve rather than the bar overflowing upward out of it. Nothing below
+    // has to change for that: `extendBody` means the body still runs the full
+    // height behind, and the content's own clearance is `navBottomInset`,
+    // which is deliberately shorter — rows are *supposed* to scroll into the
+    // fade.
+    return navScrimBox(
+      context,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: rowW,
+            child: Row(
+              children: [
+                SizedBox(
+                  width: barW,
+                  child: _bar(context, p, barW, itemW, indicatorX),
+                ),
+                const SizedBox(width: _addGap),
+                _AddButton(onTap: onAdd),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -142,8 +169,9 @@ class BottomNav extends StatelessWidget {
           // directly put a brown haze behind translucent glass, which is what
           // made the bar look muddy rather than lit.
           BoxShadow(
-            color: parseHex(p.shadowHex)
-                .withValues(alpha: p.isDark ? 0.32 : 0.06),
+            color: parseHex(
+              p.shadowHex,
+            ).withValues(alpha: p.isDark ? 0.32 : 0.06),
             blurRadius: 10,
             offset: const Offset(0, 3),
           ),
@@ -327,8 +355,9 @@ class _AddButtonState extends State<_AddButton> {
               // a primary button feels warm instead of heavy. 0 5px 16px at
               // 0.2 on light, 0.34 on dark.
               BoxShadow(
-                color: parseHex(p.glowHex)
-                    .withValues(alpha: p.isDark ? 0.34 : 0.2),
+                color: parseHex(
+                  p.glowHex,
+                ).withValues(alpha: p.isDark ? 0.34 : 0.2),
                 blurRadius: 16,
                 offset: const Offset(0, 5),
               ),
@@ -367,6 +396,131 @@ class _AddButtonState extends State<_AddButton> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// One button on the selection bar.
+///
+/// `onTap` of `null` is a disabled button rather than an absent one. Which
+/// actions a selection can take changes as rows are ticked — 改分类 needs one
+/// side of the ledger, 更多 needs exactly one row — and a bar whose buttons
+/// appear and disappear underneath a moving finger is worse than one whose
+/// buttons dim.
+class SelectionAction {
+  const SelectionAction({
+    required this.id,
+    required this.icon,
+    required this.label,
+    this.onTap,
+  });
+
+  final String id;
+  final IconData icon;
+  final String label;
+  final VoidCallback? onTap;
+}
+
+/// 批量处理的操作栏 — the bar that replaces the nav bar while rows are ticked.
+///
+/// Same slot, same height, same material, and that is the whole design: the
+/// selection is a mode of the screen, not a different screen, so the ground
+/// under it must not move. Only the contents change.
+///
+/// One glass slab across the full width rather than a slab plus a button. The
+/// record button is the one primary act on this screen and there is no primary
+/// act in a selection — 删除 is not one, and giving it the accent capsule would
+/// make the destructive choice the obvious one.
+class SelectionBar extends StatelessWidget {
+  const SelectionBar({super.key, required this.actions});
+
+  final List<SelectionAction> actions;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = palette;
+    final rowW = (MediaQuery.sizeOf(context).width - 2 * _margin).clamp(
+      0.0,
+      _maxW,
+    );
+
+    return navScrimBox(
+      context,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: rowW,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(_radius),
+                boxShadow: [
+                  BoxShadow(
+                    color: parseHex(
+                      p.shadowHex,
+                    ).withValues(alpha: p.isDark ? 0.32 : 0.06),
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Glass(
+                key: const Key('selection-bar'),
+                level: g.GlassLevel.chrome,
+                density: 0.45,
+                radius: _radius,
+                padding: const EdgeInsets.symmetric(horizontal: _pad),
+                child: SizedBox(
+                  height: _barH,
+                  child: Row(
+                    children: [
+                      for (final a in actions)
+                        Expanded(child: _ActionItem(action: a)),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ActionItem extends StatelessWidget {
+  const _ActionItem({required this.action});
+
+  final SelectionAction action;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = palette;
+    final on = action.onTap != null;
+    // Dimmed rather than greyed: the palette has no disabled ink, and mixing
+    // one here would be a colour the theme does not know about.
+    final tone = p.ink.withValues(alpha: on ? 1 : 0.3);
+    return Tap(
+      key: Key('batch-${action.id}'),
+      onTap: action.onTap,
+      radius: Rad.md,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(action.icon, size: 21, color: tone),
+          const SizedBox(height: 4),
+          Text(
+            action.label,
+            maxLines: 1,
+            style: TextStyle(
+              fontSize: 11,
+              height: 1,
+              fontWeight: FontWeight.w500,
+              color: tone,
+            ),
+          ),
+        ],
       ),
     );
   }
