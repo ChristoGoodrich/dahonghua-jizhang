@@ -10,6 +10,17 @@ Android's app info. That is fine for putting the app on your own phone. It is no
 cannot later be updated by a properly signed one, because Android checks that
 the signature matches and refuses when it does not.
 
+## Which APK
+
+`npm run apk` from the repository root, and send `app-arm64-v8a-release.apk`.
+The three builds are the same app for three architectures; a phone loads one.
+
+Do not go back to a plain `flutter build apk` afterwards. The split builds
+carry an offset versionCode — arm64 is 2001, the universal build is 1 — and
+Android refuses to install a lower versionCode over a higher one. The
+universal APK will fail to install over a split one with a parse error, and
+the only way past it is uninstalling.
+
 ## Making one
 
 Run this yourself. It will ask for a password twice; that password is yours and

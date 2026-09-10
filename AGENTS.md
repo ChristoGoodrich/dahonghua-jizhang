@@ -50,6 +50,7 @@ refuses to run without `src/` for exactly that reason.
     npm run rust:clippy   -D warnings
     npm run bridge:clippy the bridge is a separate cargo project
     npm run tests:check   all_test.dart is not stale
+    npm run apk           the release APKs, one per architecture
 
     cd flutter_app
     flutter test integration_test/all_test.dart    646 tests, ~5 min
@@ -57,6 +58,22 @@ refuses to run without `src/` for exactly that reason.
 
 The suite is one entrypoint on purpose: per file it was 35 APK builds and about
 twenty minutes. Add a test file and re-run `node scripts/gen-all-tests.js`.
+
+## Shipping a build
+
+`npm run apk`, not `flutter build apk`. The plain command makes a **universal**
+APK — 67MB, of which 63MB is three copies of the same two native libraries, one
+architecture of which any given phone ever loads. Split, the arm64 build that
+goes on the phone is 25MB.
+
+The reason it is a script and not a flag is the versionCode. Flutter offsets it
+per architecture, so the arm64 split is **2001** where the universal build is
+**1**, and Android will not install a lower versionCode over a higher one.
+Once a split APK is on a phone a universal one can no longer update it — it
+fails with a parse error, and the way out is an uninstall, which on a
+debug-signed build takes the ledger with it. So the choice is made once and
+kept, and the script deletes any stale `app-release.apk` so the wrong file
+cannot be sent by accident.
 
 ## Writing to the store
 
