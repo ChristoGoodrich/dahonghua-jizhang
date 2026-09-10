@@ -35,6 +35,7 @@ pub mod jsstr;
 pub mod jsval;
 pub mod keywords;
 pub mod ledger;
+pub mod liquid;
 pub mod list;
 pub mod lock;
 pub mod merge;

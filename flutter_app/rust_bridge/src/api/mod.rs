@@ -20,6 +20,7 @@ pub mod glass;
 pub mod history;
 pub mod imports;
 pub mod init;
+pub mod liquid;
 pub mod lock;
 pub mod money;
 pub mod networth;

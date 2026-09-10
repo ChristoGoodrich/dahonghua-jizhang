@@ -20,6 +20,7 @@ import 'api/export.dart';
 import 'api/glass.dart';
 import 'api/history.dart';
 import 'api/imports.dart';
+import 'api/liquid.dart';
 import 'api/lock.dart';
 import 'api/money.dart';
 import 'api/networth.dart';
@@ -201,6 +202,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   InsightView dco_decode_insight_view(dynamic raw);
+
+  @protected
+  Lens dco_decode_lens(dynamic raw);
+
+  @protected
+  LiquidSpec dco_decode_liquid_spec(dynamic raw);
 
   @protected
   List<String> dco_decode_list_String(dynamic raw);
@@ -642,6 +649,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   InsightView sse_decode_insight_view(SseDeserializer deserializer);
+
+  @protected
+  Lens sse_decode_lens(SseDeserializer deserializer);
+
+  @protected
+  LiquidSpec sse_decode_liquid_spec(SseDeserializer deserializer);
 
   @protected
   List<String> sse_decode_list_String(SseDeserializer deserializer);
@@ -1166,6 +1179,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_insight_view(InsightView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_lens(Lens self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_liquid_spec(LiquidSpec self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_String(List<String> self, SseSerializer serializer);

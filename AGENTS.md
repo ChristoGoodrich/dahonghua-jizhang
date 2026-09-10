@@ -46,16 +46,16 @@ refuses to run without `src/` for exactly that reason.
 ## Running things
 
     npm run goldens       the core against what the TypeScript answered
-    npm run rust:test     782 tests
+    npm run rust:test     792 tests
     npm run rust:clippy   -D warnings
     npm run bridge:clippy the bridge is a separate cargo project
     npm run tests:check   all_test.dart is not stale
 
     cd flutter_app
-    flutter test integration_test/all_test.dart    638 tests, ~5 min
+    flutter test integration_test/all_test.dart    646 tests, ~5 min
     flutter test integration_test/<one>_test.dart  while working on one screen
 
-The suite is one entrypoint on purpose: per file it was 34 APK builds and about
+The suite is one entrypoint on purpose: per file it was 35 APK builds and about
 twenty minutes. Add a test file and re-run `node scripts/gen-all-tests.js`.
 
 ## Writing to the store
@@ -92,6 +92,31 @@ The ramp lives in the `fade` at the shallow end and holds full depth beyond it.
 A scrim is sized to the chrome it belongs to plus that fade, and for a header
 with a hard bottom edge it is sized to the header alone — otherwise the
 transition lands below the bar and blurs rows nobody has scrolled near.
+
+## Moving the chrome
+
+`core::liquid` is the same arrangement one step further out: `glass` says what
+the material looks like standing still, `liquid` says what it does when a
+finger pushes it. The selected-tab indicator is a lens with a position of its
+own — not a value derived from `active`, which can only ever teleport between
+four places.
+
+Three rules live there because all three are easy to write differently:
+
+* **Stretch conserves area.** `scale_y = 1 / scale_x`. A lens that stretched
+  without thinning is a lens that grew, and growth reads as a scale animation
+  rather than as momentum.
+* **The shadow trails.** Signed against the direction of travel. This is the
+  whole of "可拖动的阴影" — a tint with no shadow is a hole, and a shadow that
+  moves *with* the object is a shadow painted on it.
+* **A flick lands where it was heading**, not on the nearest tab: `x + v *
+  fling`, then the tab under that.
+
+And a test note that cost an hour: **`TestGesture.moveBy` stamps every event
+`Duration.zero`**, so a hand-built flick reports a velocity of zero however it
+is spaced with `pump`. Use `tester.fling` and `tester.drag`. `pumpWidget`
+twice in one test also reuses the element and therefore the lens's position —
+give the two trees different keys.
 
 ## Two habits worth keeping
 

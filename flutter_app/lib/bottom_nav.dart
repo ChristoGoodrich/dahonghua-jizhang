@@ -18,10 +18,13 @@
 // the first frame instead of after one.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/physics.dart';
 import 'package:flutter/services.dart';
 
 import 'glass.dart';
+import 'liquid.dart';
 import 'src/rust/api/glass.dart' as g;
+import 'src/rust/api/liquid.dart' as q;
 import 'tap.dart';
 import 'theme.dart';
 
@@ -112,7 +115,6 @@ class BottomNav extends StatelessWidget {
     final barW = rowW - _add - _addGap;
     final innerW = barW - 2 * _border - 2 * _pad;
     final itemW = innerW / 4;
-    final indicatorX = _pad + active * itemW + itemW / 2 - _pillW / 2;
 
     // A `SizedBox` with a known height rather than a `Center`. The
     // `bottomNavigationBar` slot passes loose constraints whose maxHeight is
@@ -136,10 +138,7 @@ class BottomNav extends StatelessWidget {
             width: rowW,
             child: Row(
               children: [
-                SizedBox(
-                  width: barW,
-                  child: _bar(context, p, barW, itemW, indicatorX),
-                ),
+                SizedBox(width: barW, child: _bar(p, itemW)),
                 const SizedBox(width: _addGap),
                 _AddButton(onTap: onAdd),
               ],
@@ -150,13 +149,7 @@ class BottomNav extends StatelessWidget {
     );
   }
 
-  Widget _bar(
-    BuildContext context,
-    Palette p,
-    double barW,
-    double itemW,
-    double indicatorX,
-  ) {
+  Widget _bar(Palette p, double itemW) {
     // The shadow lives on a wrapper. On the blurred surface itself it would be
     // clipped by the same rounding that makes the surface round.
     return DecoratedBox(
@@ -185,61 +178,230 @@ class BottomNav extends StatelessWidget {
         density: 0.45,
         radius: _radius,
         padding: const EdgeInsets.symmetric(horizontal: _pad),
-        child: SizedBox(
-          height: _barH,
-          child: Stack(
-            children: [
-              // The indicator slides rather than appearing: a tab that lights
-              // up in place reads as four separate buttons, and one that
-              // travels reads as one control with a position.
-              AnimatedPositioned(
-                duration: const Duration(milliseconds: 320),
-                curve: Curves.easeOutBack,
-                left: indicatorX,
-                // 10 from the top, not centred. The indicator sits behind the
-                // ICON; centring it in a 64-tall bar puts it straddling the
-                // gap between icon and label, which reads as a stray pill
-                // rather than as the icon being lit.
-                top: 10,
-                width: _pillW,
-                height: _pillH,
-                child: IgnorePointer(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: p.hibiscus.withValues(
-                        alpha: p.isDark ? 0.18 : 0.12,
-                      ),
-                      borderRadius: BorderRadius.circular(_pillH / 2),
-                      border: Border.all(
-                        color: p.hibiscus.withValues(
-                          alpha: p.isDark ? 0.30 : 0.22,
-                        ),
-                        width: 1 / MediaQuery.devicePixelRatioOf(context),
-                      ),
+        child: _TabRow(
+          active: active,
+          onChange: onChange,
+          labels: labels,
+          icons: _icons,
+          itemW: itemW,
+        ),
+      ),
+    );
+  }
+}
+
+/// The four tabs and the lens that sits on one of them.
+///
+/// Stateful because the lens has a **position of its own**, which is not the
+/// same thing as the selected tab. While a finger is on it the lens is
+/// wherever the finger has pushed it and the selection follows; when the
+/// finger lifts the selection is decided and the lens springs to it. A widget
+/// that derived the position from `active` could only ever teleport between
+/// four values, which is what it used to do.
+class _TabRow extends StatefulWidget {
+  const _TabRow({
+    required this.active,
+    required this.onChange,
+    required this.labels,
+    required this.icons,
+    required this.itemW,
+  });
+
+  final int active;
+  final ValueChanged<int> onChange;
+  final List<String> labels;
+  final List<IconData> icons;
+  final double itemW;
+
+  @override
+  State<_TabRow> createState() => _TabRowState();
+}
+
+class _TabRowState extends State<_TabRow> with SingleTickerProviderStateMixin {
+  /// The lens's centre, measured from the row's left edge. Unbounded because
+  /// a spring overshoots, and a controller clamped to 0..1 would clip the
+  /// overshoot into a stop.
+  late final AnimationController _pos = AnimationController.unbounded(
+    vsync: this,
+    value: q.centreOf(index: widget.active, itemW: widget.itemW),
+  );
+
+  /// The simulation currently running, kept so the velocity can be asked of
+  /// it. Flutter's controller exposes where the animation is, not how fast —
+  /// and how fast is what the lens's whole shape is made of.
+  SpringSimulation? _sim;
+
+  bool _dragging = false;
+  double _dragV = 0;
+  double _lastMs = 0;
+  final _clock = Stopwatch()..start();
+
+  /// Where the lens is heading, so a rebuild does not restart a spring that is
+  /// already on its way there.
+  double _target = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _target = _pos.value;
+  }
+
+  @override
+  void didUpdateWidget(_TabRow old) {
+    super.didUpdateWidget(old);
+    // A tap on a tab, a swipe elsewhere in the app, or a screen that changed
+    // width. All three arrive the same way: the lens is somewhere the current
+    // selection says it should not be.
+    final want = q.centreOf(index: widget.active, itemW: widget.itemW);
+    if (!_dragging && (want - _target).abs() > 0.01) {
+      _settleTo(want, _velocity);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pos.dispose();
+    super.dispose();
+  }
+
+  /// dp per second, whichever thing is moving the lens.
+  double get _velocity {
+    if (_dragging) return _dragV;
+    final sim = _sim;
+    final t = _pos.lastElapsedDuration;
+    if (sim == null || t == null || !_pos.isAnimating) return 0;
+    return sim.dx(t.inMicroseconds / 1e6);
+  }
+
+  void _settleTo(double x, double velocity) {
+    final s = q.liquidSpec(isDark: palette.isDark);
+    _target = x;
+    _sim = SpringSimulation(
+      SpringDescription(
+        mass: s.mass,
+        stiffness: s.stiffness,
+        damping: s.damping,
+      ),
+      _pos.value,
+      x,
+      velocity,
+    );
+    _pos.animateWith(_sim!);
+  }
+
+  void _dragStart(DragStartDetails _) {
+    // Stop the spring where it is rather than where it was going: a finger
+    // catching a lens mid-flight should catch it, not have it snap ahead.
+    _pos.stop();
+    _sim = null;
+    _dragging = true;
+    _dragV = 0;
+    _lastMs = _clock.elapsedMicroseconds / 1000;
+  }
+
+  void _dragUpdate(DragUpdateDetails d) {
+    final ms = _clock.elapsedMicroseconds / 1000;
+    // Clamped: a delta reported over a claimed zero milliseconds is an
+    // infinite velocity, and an infinite velocity is a NaN transform one
+    // multiplication later.
+    final dt = (ms - _lastMs).clamp(1.0, 64.0);
+    _lastMs = ms;
+    _dragV = d.primaryDelta! / dt * 1000;
+
+    final n = widget.labels.length;
+    _pos.value = (_pos.value + d.primaryDelta!).clamp(
+      q.centreOf(index: 0, itemW: widget.itemW),
+      q.centreOf(index: n - 1, itemW: widget.itemW),
+    );
+    _target = _pos.value;
+
+    // Live, so the tab under the lens lights up as it passes. The alternative
+    // is a lens that slides over four dark icons and lights one when the
+    // finger lifts, which reads as a decision being made rather than as an
+    // object being moved.
+    final i = q.tabAt(x: _pos.value, itemW: widget.itemW, count: n);
+    if (i != widget.active) {
+      HapticFeedback.selectionClick();
+      widget.onChange(i);
+    }
+  }
+
+  void _dragEnd(DragEndDetails d) {
+    final v = d.primaryVelocity ?? 0;
+    final n = widget.labels.length;
+    final i = q.snap(
+      isDark: palette.isDark,
+      x: _pos.value,
+      itemW: widget.itemW,
+      count: n,
+      velocity: v,
+    );
+    _dragging = false;
+    _dragV = 0;
+    if (i != widget.active) {
+      HapticFeedback.selectionClick();
+      widget.onChange(i);
+    }
+    _settleTo(q.centreOf(index: i, itemW: widget.itemW), v);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      key: const Key('tab-drag'),
+      // Horizontal only. A vertical drag on the bar belongs to whatever is
+      // scrolling behind it, and claiming it would make the bar a wall.
+      behavior: HitTestBehavior.translucent,
+      onHorizontalDragStart: _dragStart,
+      onHorizontalDragUpdate: _dragUpdate,
+      onHorizontalDragEnd: _dragEnd,
+      child: SizedBox(
+        height: _barH,
+        child: Stack(
+          children: [
+            // The builder is INSIDE the Positioned, not around it: a
+            // `Positioned` has to be a direct child of its `Stack`, and one
+            // returned from an `AnimatedBuilder` is a child of the builder.
+            // Aligning to the top-left and translating puts the lens exactly
+            // where a `left`/`top` would, and repaints only the lens.
+            Positioned.fill(
+              child: AnimatedBuilder(
+                animation: _pos,
+                builder: (context, child) => Align(
+                  alignment: Alignment.topLeft,
+                  child: Transform.translate(
+                    // 10 from the top, not centred. The lens sits behind the
+                    // ICON; centring it in a 64-tall bar puts it straddling
+                    // the gap between icon and label, which reads as a stray
+                    // pill rather than as the icon being lit.
+                    offset: Offset(_pos.value - _pillW / 2, 10),
+                    child: LiquidLens(
+                      width: _pillW,
+                      height: _pillH,
+                      velocity: _velocity,
                     ),
                   ),
                 ),
               ),
-              Row(
-                children: [
-                  for (var i = 0; i < 4; i++)
-                    SizedBox(
-                      width: itemW,
-                      child: _NavItem(
-                        index: i,
-                        icon: _icons[i],
-                        label: labels[i],
-                        active: active == i,
-                        onTap: () {
-                          HapticFeedback.selectionClick();
-                          onChange(i);
-                        },
-                      ),
+            ),
+            Row(
+              children: [
+                for (var i = 0; i < widget.labels.length; i++)
+                  SizedBox(
+                    width: widget.itemW,
+                    child: _NavItem(
+                      icon: widget.icons[i],
+                      label: widget.labels[i],
+                      active: widget.active == i,
+                      onTap: () {
+                        HapticFeedback.selectionClick();
+                        widget.onChange(i);
+                      },
                     ),
-                ],
-              ),
-            ],
-          ),
+                  ),
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -248,14 +410,12 @@ class BottomNav extends StatelessWidget {
 
 class _NavItem extends StatelessWidget {
   const _NavItem({
-    required this.index,
     required this.icon,
     required this.label,
     required this.active,
     required this.onTap,
   });
 
-  final int index;
   final IconData icon;
   final String label;
   final bool active;
