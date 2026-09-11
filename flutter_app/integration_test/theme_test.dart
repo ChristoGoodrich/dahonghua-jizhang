@@ -143,6 +143,62 @@ void main() {
     });
   });
 
+  group('按压反馈', () {
+    /// Sixty-four Material widgets never went through `Tap`, so the app had
+    /// two press languages: a veil that fades in on its own surfaces and
+    /// Material's expanding ripple everywhere else. Stated once in the theme
+    /// rather than converted at sixty-four call sites — which means a test
+    /// has to hold the statement, because nothing else will notice if it goes.
+    testWidgets('Material presses with the app veil, not a ripple', (
+      tester,
+    ) async {
+      final t = appTheme();
+      expect(
+        t.splashFactory,
+        NoSplash.splashFactory,
+        reason: 'an expanding circle is not this app press',
+      );
+
+      final veil = palette.ink.withValues(alpha: 0.07);
+      for (final style in [
+        t.textButtonTheme.style,
+        t.filledButtonTheme.style,
+        t.iconButtonTheme.style,
+        t.outlinedButtonTheme.style,
+        t.elevatedButtonTheme.style,
+      ]) {
+        expect(
+          style!.overlayColor!.resolve({WidgetState.pressed}),
+          veil,
+          reason: 'the same ink at the same alpha Tap uses',
+        );
+        expect(
+          style.overlayColor!.resolve(<WidgetState>{}),
+          isNull,
+          reason: 'and nothing at all when it is not being pressed',
+        );
+      }
+
+      // ListTile and any bare InkWell read the ambient theme instead.
+      expect(t.highlightColor, veil);
+      expect(t.splashColor, Colors.transparent);
+    });
+
+    testWidgets('and the veil follows the room', (tester) async {
+      theme.setTheme(key: 'default', dark: true);
+      refreshPalette();
+      final dark = appTheme().highlightColor;
+      theme.setTheme(key: 'default', dark: false);
+      refreshPalette();
+      final light = appTheme().highlightColor;
+      expect(
+        dark,
+        isNot(light),
+        reason: 'the ink differs between the rooms, so the veil does too',
+      );
+    });
+  });
+
   group('the settings screen', () {
     testWidgets('offers a swatch per flower and a dark switch', (tester) async {
       await showSettings(tester);

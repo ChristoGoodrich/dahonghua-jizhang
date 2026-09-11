@@ -53,7 +53,7 @@ refuses to run without `src/` for exactly that reason.
     npm run apk           the release APKs, one per architecture
 
     cd flutter_app
-    flutter test integration_test/all_test.dart    646 tests, ~5 min
+    flutter test integration_test/all_test.dart    648 tests, ~5 min
     flutter test integration_test/<one>_test.dart  while working on one screen
 
 The suite is one entrypoint on purpose: per file it was 35 APK builds and about
@@ -128,6 +128,20 @@ Two things follow from a body that runs behind a header, and both bit:
   `systemOverlayStyle` from its own background, and `Colors.transparent` reads
   as dark, so it asks for white icons on cream paper. `systemOverlay` in
   `theme.dart` answers from the palette instead, and every bar declares it.
+
+## Pressing things
+
+`Tap` is the app's press feedback: an ink veil on a filled surface, a dim on a
+bare glyph. Sixty-four Material widgets were not going through it, so the app
+had two press languages — the veil on its own rows and Material's expanding
+ripple on every button, icon button and list tile.
+
+That is fixed in `appTheme()` rather than at sixty-four call sites:
+`splashFactory: NoSplash`, the same ink at the same alpha as `Tap`'s as a
+`ButtonStyle` overlay, and the same again as `highlightColor` for `ListTile`
+and any bare `InkWell`, which read the ambient theme instead of a button
+style. A widget added next year gets it without being told — and `theme_test`
+holds the numbers, because nothing else would notice them going.
 
 ## Moving the chrome
 

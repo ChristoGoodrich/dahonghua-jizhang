@@ -131,6 +131,20 @@ class Rad {
 /// name.
 const tabular = [FontFeature.tabularFigures()];
 
+/// The press veil, in the shape a Material button style takes it.
+///
+/// The same ink at the same alpha as `Tap`'s — the two have to agree, because
+/// a row and the button below it are pressed by the same finger in the same
+/// second. Only `pressed` is filled: hover and focus are a pointer's and a
+/// keyboard's business, and this app is a phone's.
+ButtonStyle get _pressStyle => ButtonStyle(
+  overlayColor: WidgetStateProperty.resolveWith(
+    (states) => states.contains(WidgetState.pressed)
+        ? palette.ink.withValues(alpha: 0.07)
+        : null,
+  ),
+);
+
 /// The palette as a Material theme.
 ///
 /// Material 3 derives its own colour scheme when none is given, and its default
@@ -158,6 +172,31 @@ ThemeData appTheme() {
   return ThemeData(
     colorScheme: scheme,
     scaffoldBackgroundColor: palette.paper,
+    // 按压反馈, for the widgets that answer a touch themselves.
+    //
+    // `Tap` is this app's press feedback and sixty-four Material widgets were
+    // not going through it — 30 `TextButton`s, 25 `IconButton`s, 5
+    // `FilledButton`s, 4 `ListTile`s, spread across 资产, 账户, 报销, 订阅 and
+    // 标签与账本 as well as the dialogs. So the app had two feedback
+    // languages: an ink veil that fades in on its own surfaces, and Material's
+    // expanding ripple everywhere else.
+    //
+    // Converting sixty-four call sites would have been sixty-four chances to
+    // change something else by accident, and would not have covered the
+    // sixty-fifth. Material's feedback is themeable, so it is stated once
+    // here instead: no ripple, and the same veil at the same alpha `Tap`
+    // uses. A widget added next year gets it without being told.
+    splashFactory: NoSplash.splashFactory,
+    // `ListTile` and any bare `InkWell` take their pressed colour from the
+    // ambient theme rather than from a button style, so the same veil has to
+    // be said twice — once as a `ButtonStyle` overlay and once here.
+    splashColor: Colors.transparent,
+    highlightColor: palette.ink.withValues(alpha: 0.07),
+    textButtonTheme: TextButtonThemeData(style: _pressStyle),
+    filledButtonTheme: FilledButtonThemeData(style: _pressStyle),
+    outlinedButtonTheme: OutlinedButtonThemeData(style: _pressStyle),
+    elevatedButtonTheme: ElevatedButtonThemeData(style: _pressStyle),
+    iconButtonTheme: IconButtonThemeData(style: _pressStyle),
     dialogTheme: DialogThemeData(backgroundColor: palette.card),
     textSelectionTheme: TextSelectionThemeData(
       cursorColor: palette.stamen,
