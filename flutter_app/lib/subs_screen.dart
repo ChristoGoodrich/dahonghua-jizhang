@@ -20,6 +20,7 @@ import 'src/rust/api/catalog.dart' as catalog;
 import 'src/rust/api/money.dart' as money;
 import 'src/rust/api/subscriptions.dart' as subs;
 import 'tap.dart';
+import 'glass.dart';
 import 'theme.dart';
 
 /// `YYYY-M-D` with a **0-indexed** month, inherited from v7 — the encoding the
@@ -153,27 +154,22 @@ class _SubsScreenState extends State<SubsScreen> {
   @override
   Widget build(BuildContext context) {
     final zh = widget.zh;
-    return Scaffold(
-      backgroundColor: palette.paper,
-      appBar: AppBar(
-        backgroundColor: palette.paper,
-        surfaceTintColor: Colors.transparent,
-        title: Text(
-          zh ? '订阅' : 'Subscriptions',
-          style: TextStyle(
-            color: palette.ink,
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-          ),
+    return ScrimScaffold(
+      title: Text(
+        zh ? '订阅' : 'Subscriptions',
+        style: TextStyle(
+          color: palette.ink,
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
         ),
-        actions: [
-          IconButton(
-            key: const Key('add-sub'),
-            icon: Icon(Icons.add, color: palette.ink),
-            onPressed: _add,
-          ),
-        ],
       ),
+      actions: [
+        IconButton(
+          key: const Key('add-sub'),
+          icon: Icon(Icons.add, color: palette.ink),
+          onPressed: _add,
+        ),
+      ],
       body: _rows.isEmpty
           ? Center(
               child: Text(
@@ -183,7 +179,12 @@ class _SubsScreenState extends State<SubsScreen> {
               ),
             )
           : ListView(
-              padding: const EdgeInsets.fromLTRB(22, 6, 22, 120),
+              padding: EdgeInsets.fromLTRB(
+                22,
+                headerInset(context) + 6,
+                22,
+                120,
+              ),
               children: [for (final s in _rows) _row(s, zh)],
             ),
     );

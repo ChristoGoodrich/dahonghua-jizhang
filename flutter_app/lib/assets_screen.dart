@@ -17,6 +17,7 @@ import 'src/rust/api/accounts.dart' as accounts;
 import 'src/rust/api/money.dart' as money;
 import 'src/rust/api/networth.dart' as nw;
 import 'tap.dart';
+import 'glass.dart';
 import 'theme.dart';
 
 class AssetsScreen extends StatefulWidget {
@@ -100,10 +101,9 @@ class _AssetsScreenState extends State<AssetsScreen> {
     final zh = widget.zh;
     return Scaffold(
       backgroundColor: palette.paper,
-      body: SafeArea(
-        bottom: false,
+      body: StatusScrim(
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(22, 18, 22, 120),
+          padding: EdgeInsets.fromLTRB(22, statusInset(context) + 18, 22, 120),
           children: [
             Text(
               zh ? '资产' : 'Net worth',

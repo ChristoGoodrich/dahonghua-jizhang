@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 
 import 'src/rust/api/catalog.dart' as catalog;
 import 'src/rust/api/money.dart' as money;
+import 'glass.dart';
 import 'theme.dart';
 
 class TagsScreen extends StatefulWidget {
@@ -72,17 +73,17 @@ class _TagsScreenState extends State<TagsScreen> {
   @override
   Widget build(BuildContext context) {
     final zh = widget.zh;
-    return Scaffold(
-      backgroundColor: palette.paper,
-      appBar: AppBar(
-        backgroundColor: palette.paper,
-        surfaceTintColor: Colors.transparent,
-        title: Text(zh ? '标签与账本' : 'Tags and ledgers',
-            style: TextStyle(
-                color: palette.ink, fontSize: 20, fontWeight: FontWeight.w700)),
+    return ScrimScaffold(
+      title: Text(
+        zh ? '标签与账本' : 'Tags and ledgers',
+        style: TextStyle(
+          color: palette.ink,
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
+        ),
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(22, 6, 22, 120),
+        padding: EdgeInsets.fromLTRB(22, headerInset(context) + 6, 22, 120),
         children: [
           _head(zh ? '标签' : 'Tags', 'add-tag', () => _add('normal'), zh),
           _chips(
@@ -142,25 +143,33 @@ class _TagsScreenState extends State<TagsScreen> {
   Widget _head(String title, String? key, VoidCallback? onAdd, bool zh) =>
       Padding(
         padding: const EdgeInsets.only(left: 2, bottom: 10, top: 8),
-        child: Row(children: [
-          Expanded(
-            child: Text(title,
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                title,
                 style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: palette.inkSoft)),
-          ),
-          if (key != null)
-            GestureDetector(
-              key: Key(key),
-              onTap: onAdd,
-              child: Text(zh ? '添加' : 'Add',
-                  style: TextStyle(
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w600,
-                      color: palette.hibiscus)),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: palette.inkSoft,
+                ),
+              ),
             ),
-        ]),
+            if (key != null)
+              GestureDetector(
+                key: Key(key),
+                onTap: onAdd,
+                child: Text(
+                  zh ? '添加' : 'Add',
+                  style: TextStyle(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w600,
+                    color: palette.hibiscus,
+                  ),
+                ),
+              ),
+          ],
+        ),
       );
 
   Widget _chips(
@@ -168,19 +177,20 @@ class _TagsScreenState extends State<TagsScreen> {
     required String empty,
     required String emptyKey,
     required Widget Function(String) builder,
-  }) =>
-      list.isEmpty
-          ? Padding(
-              padding: const EdgeInsets.only(left: 2),
-              child: Text(empty,
-                  key: Key(emptyKey),
-                  style: TextStyle(fontSize: 12.5, color: palette.inkSoft)),
-            )
-          : Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [for (final x in list) builder(x)],
-            );
+  }) => list.isEmpty
+      ? Padding(
+          padding: const EdgeInsets.only(left: 2),
+          child: Text(
+            empty,
+            key: Key(emptyKey),
+            style: TextStyle(fontSize: 12.5, color: palette.inkSoft),
+          ),
+        )
+      : Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [for (final x in list) builder(x)],
+        );
 
   Widget _chip(
     String name, {
@@ -188,70 +198,77 @@ class _TagsScreenState extends State<TagsScreen> {
     required VoidCallback onRemove,
     IconData icon = Icons.close,
     Color? tone,
-  }) =>
-      Container(
-        key: Key(keyName),
-        padding: const EdgeInsets.only(left: 12, right: 4, top: 5, bottom: 5),
-        decoration: BoxDecoration(
-          color: palette.card,
-          borderRadius: BorderRadius.circular(Rad.pill),
-          border: Border.all(color: palette.line),
-        ),
-        child: Row(mainAxisSize: MainAxisSize.min, children: [
-          Text(name,
-              style: TextStyle(
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.w600,
-                  color: palette.ink)),
-          IconButton(
-            key: Key('$keyName-remove'),
-            constraints: const BoxConstraints(minWidth: 30, minHeight: 30),
-            padding: EdgeInsets.zero,
-            iconSize: 15,
-            icon: Icon(icon, color: tone ?? palette.inkSoft),
-            onPressed: onRemove,
+  }) => Container(
+    key: Key(keyName),
+    padding: const EdgeInsets.only(left: 12, right: 4, top: 5, bottom: 5),
+    decoration: BoxDecoration(
+      color: palette.card,
+      borderRadius: BorderRadius.circular(Rad.pill),
+      border: Border.all(color: palette.line),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          name,
+          style: TextStyle(
+            fontSize: 12.5,
+            fontWeight: FontWeight.w600,
+            color: palette.ink,
           ),
-        ]),
-      );
+        ),
+        IconButton(
+          key: Key('$keyName-remove'),
+          constraints: const BoxConstraints(minWidth: 30, minHeight: 30),
+          padding: EdgeInsets.zero,
+          iconSize: 15,
+          icon: Icon(icon, color: tone ?? palette.inkSoft),
+          onPressed: onRemove,
+        ),
+      ],
+    ),
+  );
 
   /// An archived ledger can be brought back or, only now, deleted.
   Widget _archivedChip(String l, bool zh) => Container(
-        key: Key('archived-$l'),
-        padding: const EdgeInsets.only(left: 12, right: 2, top: 5, bottom: 5),
-        decoration: BoxDecoration(
-          color: palette.paperWarm,
-          borderRadius: BorderRadius.circular(Rad.pill),
-          border: Border.all(color: palette.line),
+    key: Key('archived-$l'),
+    padding: const EdgeInsets.only(left: 12, right: 2, top: 5, bottom: 5),
+    decoration: BoxDecoration(
+      color: palette.paperWarm,
+      borderRadius: BorderRadius.circular(Rad.pill),
+      border: Border.all(color: palette.line),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(l, style: TextStyle(fontSize: 12.5, color: palette.inkSoft)),
+        IconButton(
+          key: Key('archived-$l-restore'),
+          tooltip: zh ? '取消归档' : 'Unarchive',
+          constraints: const BoxConstraints(minWidth: 30, minHeight: 30),
+          padding: EdgeInsets.zero,
+          iconSize: 15,
+          icon: Icon(Icons.unarchive_outlined, color: palette.inkSoft),
+          onPressed: () {
+            catalog.archiveLedger(name: l, archive: false);
+            _changed();
+          },
         ),
-        child: Row(mainAxisSize: MainAxisSize.min, children: [
-          Text(l,
-              style: TextStyle(fontSize: 12.5, color: palette.inkSoft)),
-          IconButton(
-            key: Key('archived-$l-restore'),
-            tooltip: zh ? '取消归档' : 'Unarchive',
-            constraints: const BoxConstraints(minWidth: 30, minHeight: 30),
-            padding: EdgeInsets.zero,
-            iconSize: 15,
-            icon: Icon(Icons.unarchive_outlined, color: palette.inkSoft),
-            onPressed: () {
-              catalog.archiveLedger(name: l, archive: false);
-              _changed();
-            },
-          ),
-          IconButton(
-            key: Key('archived-$l-delete'),
-            tooltip: zh ? '删除' : 'Delete',
-            constraints: const BoxConstraints(minWidth: 30, minHeight: 30),
-            padding: EdgeInsets.zero,
-            iconSize: 15,
-            icon: Icon(Icons.delete_outline, color: palette.hibiscus),
-            onPressed: () {
-              catalog.removeTag(kind: 'ledger', name: l);
-              _changed();
-            },
-          ),
-        ]),
-      );
+        IconButton(
+          key: Key('archived-$l-delete'),
+          tooltip: zh ? '删除' : 'Delete',
+          constraints: const BoxConstraints(minWidth: 30, minHeight: 30),
+          padding: EdgeInsets.zero,
+          iconSize: 15,
+          icon: Icon(Icons.delete_outline, color: palette.hibiscus),
+          onPressed: () {
+            catalog.removeTag(kind: 'ledger', name: l);
+            _changed();
+          },
+        ),
+      ],
+    ),
+  );
 }
 
 /// The pinned entries the record sheet offers as one-tap chips.
@@ -284,14 +301,14 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
   @override
   Widget build(BuildContext context) {
     final zh = widget.zh;
-    return Scaffold(
-      backgroundColor: palette.paper,
-      appBar: AppBar(
-        backgroundColor: palette.paper,
-        surfaceTintColor: Colors.transparent,
-        title: Text(zh ? '模板' : 'Templates',
-            style: TextStyle(
-                color: palette.ink, fontSize: 20, fontWeight: FontWeight.w700)),
+    return ScrimScaffold(
+      title: Text(
+        zh ? '模板' : 'Templates',
+        style: TextStyle(
+          color: palette.ink,
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
+        ),
       ),
       body: _rows.isEmpty
           ? Center(
@@ -308,7 +325,12 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
               ),
             )
           : ListView(
-              padding: const EdgeInsets.fromLTRB(22, 6, 22, 120),
+              padding: EdgeInsets.fromLTRB(
+                22,
+                headerInset(context) + 6,
+                22,
+                120,
+              ),
               children: [for (final t in _rows) _row(t, zh)],
             ),
     );
@@ -327,58 +349,67 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
           borderRadius: BorderRadius.circular(Rad.md),
           border: Border.all(color: palette.line),
         ),
-        child: Row(children: [
-          Container(
-            width: 38,
-            height: 38,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: parseHex(c.c, opacity: 0.13),
-              borderRadius: BorderRadius.circular(Rad.sm),
+        child: Row(
+          children: [
+            Container(
+              width: 38,
+              height: 38,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: parseHex(c.c, opacity: 0.13),
+                borderRadius: BorderRadius.circular(Rad.sm),
+              ),
+              child: Text(c.e, style: const TextStyle(fontSize: 18)),
             ),
-            child: Text(c.e, style: const TextStyle(fontSize: 18)),
-          ),
-          const SizedBox(width: 11),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(name,
+            const SizedBox(width: 11),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    name,
                     key: Key('tpl-${t.id}-name'),
                     style: TextStyle(
-                        fontSize: 14.5,
-                        fontWeight: FontWeight.w600,
-                        color: palette.ink)),
-                const SizedBox(height: 1),
-                Text(
-                  note.isEmpty
-                      ? catalog.catName(cat: c, zh: zh)
-                      : '${catalog.catName(cat: c, zh: zh)} · $note',
-                  style: TextStyle(fontSize: 12, color: palette.inkSoft),
-                ),
-              ],
+                      fontSize: 14.5,
+                      fontWeight: FontWeight.w600,
+                      color: palette.ink,
+                    ),
+                  ),
+                  const SizedBox(height: 1),
+                  Text(
+                    note.isEmpty
+                        ? catalog.catName(cat: c, zh: zh)
+                        : '${catalog.catName(cat: c, zh: zh)} · $note',
+                    style: TextStyle(fontSize: 12, color: palette.inkSoft),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Text(
-            money.fmtSigned(n: t.amt, io: t.io),
-            key: Key('tpl-${t.id}-amt'),
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w700,
-              fontFeatures: tabular,
-              color: t.io == 'exp' ? palette.ink : palette.leafDeep,
+            Text(
+              money.fmtSigned(n: t.amt, io: t.io),
+              key: Key('tpl-${t.id}-amt'),
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                fontFeatures: tabular,
+                color: t.io == 'exp' ? palette.ink : palette.leafDeep,
+              ),
             ),
-          ),
-          IconButton(
-            key: Key('tpl-${t.id}-delete'),
-            tooltip: zh ? '删除' : 'Delete',
-            icon: Icon(Icons.delete_outline, size: 20, color: palette.hibiscus),
-            onPressed: () {
-              catalog.removeTemplate(id: t.id);
-              _changed();
-            },
-          ),
-        ]),
+            IconButton(
+              key: Key('tpl-${t.id}-delete'),
+              tooltip: zh ? '删除' : 'Delete',
+              icon: Icon(
+                Icons.delete_outline,
+                size: 20,
+                color: palette.hibiscus,
+              ),
+              onPressed: () {
+                catalog.removeTemplate(id: t.id);
+                _changed();
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -425,8 +456,10 @@ class _NameDialogState extends State<_NameDialog> {
     return AlertDialog(
       key: const Key('name-dialog'),
       backgroundColor: palette.card,
-      title: Text(widget.title,
-          style: TextStyle(fontSize: 16, color: palette.ink)),
+      title: Text(
+        widget.title,
+        style: TextStyle(fontSize: 16, color: palette.ink),
+      ),
       content: TextField(
         key: const Key('name-field'),
         controller: _name,

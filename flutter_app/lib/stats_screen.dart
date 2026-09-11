@@ -19,6 +19,7 @@ import 'src/rust/api/period.dart' as period;
 import 'src/rust/api/stats.dart' as stats;
 import 'src/rust/api/store.dart' as store;
 import 'tap.dart';
+import 'glass.dart';
 import 'theme.dart';
 
 /// `y-m-d` for a local calendar day — the one conversion that needs a timezone,
@@ -174,22 +175,17 @@ class _StatsScreenState extends State<StatsScreen> {
   @override
   Widget build(BuildContext context) {
     final zh = widget.zh;
-    return Scaffold(
-      backgroundColor: palette.paper,
-      appBar: AppBar(
-        backgroundColor: palette.paper,
-        surfaceTintColor: Colors.transparent,
-        title: Text(
-          zh ? '统计' : 'Stats',
-          style: TextStyle(
-            color: palette.ink,
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-          ),
+    return ScrimScaffold(
+      title: Text(
+        zh ? '统计' : 'Stats',
+        style: TextStyle(
+          color: palette.ink,
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
         ),
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(22, 6, 22, 120),
+        padding: EdgeInsets.fromLTRB(22, headerInset(context) + 6, 22, 120),
         children: [
           _totals(zh),
           const SizedBox(height: 16),

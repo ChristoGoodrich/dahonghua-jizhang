@@ -18,10 +18,12 @@ import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'rust_init.dart';
+import 'scroll.dart';
 
 String dayOf(DateTime d) => '${d.year}-${d.month}-${d.day}';
 
-void add(String id, {
+void add(
+  String id, {
   String io = 'exp',
   String cat = 'food',
   double amt = 30,
@@ -32,7 +34,13 @@ void add(String id, {
   final t = (at ?? DateTime.now()).millisecondsSinceEpoch;
   store.addEntry(
     entry: store.NewEntry(
-        io: io, cat: cat, amt: amt, note: note, acct: acct, ts: t),
+      io: io,
+      cat: cat,
+      amt: amt,
+      note: note,
+      acct: acct,
+      ts: t,
+    ),
     id: id,
     now: t,
   );
@@ -59,13 +67,11 @@ String csv() => utf8.decode(csvBytes().skip(3).toList());
 /// ListView does not build what is off screen. Tapping a control below the
 /// fold lands on whatever is at those coordinates instead.
 Future<void> tapSetting(WidgetTester tester, Key key) async {
-  // `scrollUntilVisible`, not `ensureVisible`: the latter needs the widget to
-  // be in the tree already, and a ListView does not build what is off screen
-  // at all. There is nothing to make visible until the scroll has built it.
-  await tester.scrollUntilVisible(find.byKey(key), 300);
-  await tester.pumpAndSettle();
-  await tester.tap(find.byKey(key));
-  await tester.pumpAndSettle();
+  // A scroll, not `ensureVisible`: the latter needs the widget to be in the
+  // tree already, and a ListView does not build what is off screen at all.
+  // And `scrollAndTap` rather than a bare scroll, because the body runs
+  // behind the header now. See scroll.dart.
+  await scrollAndTap(tester, find.byKey(key));
 }
 
 void main() {
@@ -74,8 +80,9 @@ void main() {
   setUp(() => store.reset());
 
   group('the document', () {
-    testWidgets('starts with a BOM, so Excel does not guess a code page',
-        (tester) async {
+    testWidgets('starts with a BOM, so Excel does not guess a code page', (
+      tester,
+    ) async {
       add('a', note: '午饭');
 
       // Without it Excel reads the file as a local code page and every Chinese
@@ -92,16 +99,16 @@ void main() {
       expect(csv().split('\n'), hasLength(3));
     });
 
-    testWidgets('an empty ledger is a header and nothing else',
-        (tester) async {
+    testWidgets('an empty ledger is a header and nothing else', (tester) async {
       final lines = csv().split('\n');
 
       expect(lines, hasLength(1));
       expect(lines.first, contains('date'));
     });
 
-    testWidgets('the date column is the local day, not the UTC one',
-        (tester) async {
+    testWidgets('the date column is the local day, not the UTC one', (
+      tester,
+    ) async {
       // The shipping app used toISOString().slice(0, 10) here, so in Sydney
       // every entry logged before ten in the morning exported with yesterday's
       // date. The day comes from Dart now, which is where a zone is known.
@@ -109,7 +116,8 @@ void main() {
       add('a', at: now);
 
       final row = csv().split('\n')[1];
-      final expected = '${now.year}-'
+      final expected =
+          '${now.year}-'
           '${now.month.toString().padLeft(2, '0')}-'
           '${now.day.toString().padLeft(2, '0')}';
       expect(row, startsWith(expected));
@@ -125,13 +133,17 @@ void main() {
       expect(out, isNot(contains('删掉')));
     });
 
-    testWidgets('a note with a comma does not become two columns',
-        (tester) async {
+    testWidgets('a note with a comma does not become two columns', (
+      tester,
+    ) async {
       add('a', note: '午饭,加了个蛋');
 
       final row = csv().split('\n')[1];
-      expect(row, contains('"午饭,加了个蛋"'),
-          reason: 'the cell is quoted, or every column after it shifts');
+      expect(
+        row,
+        contains('"午饭,加了个蛋"'),
+        reason: 'the cell is quoted, or every column after it shifts',
+      );
     });
 
     testWidgets('a note with a quote in it survives', (tester) async {
@@ -148,8 +160,9 @@ void main() {
       expect(row, isNot(contains(',cash,')));
     });
 
-    testWidgets('oldest first, whatever order the ledger is in',
-        (tester) async {
+    testWidgets('oldest first, whatever order the ledger is in', (
+      tester,
+    ) async {
       final now = DateTime.now();
       add('new', note: '新的', at: now);
       add('old', note: '旧的', at: now.subtract(const Duration(days: 5)));
@@ -164,9 +177,9 @@ void main() {
     testWidgets('writes a file and hands it over', (tester) async {
       add('a', note: '午饭');
       String? shared;
-      await tester.pumpWidget(MaterialApp(
-        home: SettingsScreen(share: (p) async => shared = p),
-      ));
+      await tester.pumpWidget(
+        MaterialApp(home: SettingsScreen(share: (p) async => shared = p)),
+      );
       await tester.pumpAndSettle();
 
       await tapSetting(tester, const Key('export-csv'));
@@ -180,9 +193,9 @@ void main() {
     testWidgets('the file is named for the day it was taken', (tester) async {
       add('a');
       String? shared;
-      await tester.pumpWidget(MaterialApp(
-        home: SettingsScreen(share: (p) async => shared = p),
-      ));
+      await tester.pumpWidget(
+        MaterialApp(home: SettingsScreen(share: (p) async => shared = p)),
+      );
       await tester.pumpAndSettle();
       await tapSetting(tester, const Key('export-csv'));
 
@@ -195,9 +208,9 @@ void main() {
       add('a');
       add('b');
       add('c');
-      await tester.pumpWidget(MaterialApp(
-        home: SettingsScreen(share: (_) async {}),
-      ));
+      await tester.pumpWidget(
+        MaterialApp(home: SettingsScreen(share: (_) async {})),
+      );
       await tester.pumpAndSettle();
 
       await tapSetting(tester, const Key('export-csv'));
@@ -205,12 +218,17 @@ void main() {
       expect(find.text('已导出 3 条'), findsOneWidget);
     });
 
-    testWidgets('a share that fails says so rather than looking finished',
-        (tester) async {
+    testWidgets('a share that fails says so rather than looking finished', (
+      tester,
+    ) async {
       add('a');
-      await tester.pumpWidget(MaterialApp(
-        home: SettingsScreen(share: (_) async => throw const FileSystemException('no')),
-      ));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: SettingsScreen(
+            share: (_) async => throw const FileSystemException('no'),
+          ),
+        ),
+      );
       await tester.pumpAndSettle();
 
       await tapSetting(tester, const Key('export-csv'));
@@ -221,9 +239,9 @@ void main() {
     testWidgets('the file is real UTF-8 on disk, BOM included', (tester) async {
       add('a', note: '星巴克');
       String? shared;
-      await tester.pumpWidget(MaterialApp(
-        home: SettingsScreen(share: (p) async => shared = p),
-      ));
+      await tester.pumpWidget(
+        MaterialApp(home: SettingsScreen(share: (p) async => shared = p)),
+      );
       await tester.pumpAndSettle();
       await tapSetting(tester, const Key('export-csv'));
 
@@ -232,12 +250,13 @@ void main() {
       expect(utf8.decode(bytes.skip(3).toList()), contains('星巴克'));
     });
 
-    testWidgets('English throughout when the app is in English',
-        (tester) async {
+    testWidgets('English throughout when the app is in English', (
+      tester,
+    ) async {
       add('a');
-      await tester.pumpWidget(MaterialApp(
-        home: SettingsScreen(zh: false, share: (_) async {}),
-      ));
+      await tester.pumpWidget(
+        MaterialApp(home: SettingsScreen(zh: false, share: (_) async {})),
+      );
       await tester.pumpAndSettle();
 
       await tester.scrollUntilVisible(find.byKey(const Key('export-csv')), 300);
@@ -247,15 +266,18 @@ void main() {
       expect(find.text('Exported 1'), findsOneWidget);
     });
 
-    testWidgets('the settings note no longer claims export is missing',
-        (tester) async {
+    testWidgets('the settings note no longer claims export is missing', (
+      tester,
+    ) async {
       await tester.pumpWidget(const MaterialApp(home: SettingsScreen()));
       await tester.pumpAndSettle();
 
       // The note is the last thing on a screen that keeps growing, and a
       // ListView does not build what is off screen.
       await tester.scrollUntilVisible(
-        find.byKey(const Key('settings-note')), 300);
+        find.byKey(const Key('settings-note')),
+        300,
+      );
       await tester.pumpAndSettle();
       final note = tester.widget<Text>(find.byKey(const Key('settings-note')));
 
@@ -265,8 +287,11 @@ void main() {
       // has just used the button three lines above.
       for (final sentence in note.data!.split('。')) {
         if (!sentence.contains('导出')) continue;
-        expect(sentence, contains('xlsx'),
-            reason: 'a list of what is missing has to stop naming what is here');
+        expect(
+          sentence,
+          contains('xlsx'),
+          reason: 'a list of what is missing has to stop naming what is here',
+        );
       }
     });
   });

@@ -16,6 +16,7 @@ import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'rust_init.dart';
+import 'scroll.dart';
 
 int get now => DateTime.now().millisecondsSinceEpoch;
 
@@ -52,10 +53,10 @@ Future<void> tapMeRow(WidgetTester tester, String key) async {
 /// there is nothing to make visible until a scroll has built it. The Me tab
 /// above is short enough that its rows always exist. This one is not.
 Future<void> tapSetting(WidgetTester tester, Key key) async {
-  await tester.scrollUntilVisible(find.byKey(key), 300);
-  await tester.pumpAndSettle();
-  await tester.tap(find.byKey(key));
-  await tester.pumpAndSettle();
+  // `scrollAndTap` rather than a scroll and a tap: the body runs behind the
+  // header, so a scroll that stops at "in the viewport" can stop with the
+  // target under the title bar, where the bar takes the tap. See scroll.dart.
+  await scrollAndTap(tester, find.byKey(key));
 }
 
 void main() {
@@ -75,8 +76,9 @@ void main() {
       expect(store.language(), 'en');
     });
 
-    testWidgets('a language this build has never heard of falls back to zh',
-        (tester) async {
+    testWidgets('a language this build has never heard of falls back to zh', (
+      tester,
+    ) async {
       // a restored config can say anything
       store.setLanguage(lang: 'fr');
       expect(store.language(), 'zh');
@@ -108,8 +110,9 @@ void main() {
       expect(find.byKey(const Key('tab-Me')), findsOneWidget);
     });
 
-    testWidgets('switching it translates the WHOLE shell, not one screen',
-        (tester) async {
+    testWidgets('switching it translates the WHOLE shell, not one screen', (
+      tester,
+    ) async {
       // the failure this guards is a language that arrives a screen at a time,
       // which is what happens when each screen reads the setting itself
       await shell(tester);
@@ -130,8 +133,9 @@ void main() {
       expect(find.text('记账工具'), findsNothing);
     });
 
-    testWidgets('and a pushed screen opens in the language just chosen',
-        (tester) async {
+    testWidgets('and a pushed screen opens in the language just chosen', (
+      tester,
+    ) async {
       store.setLanguage(lang: 'en');
       await shell(tester);
       await tester.tap(find.byKey(const Key('tab-Me')));
@@ -163,8 +167,9 @@ void main() {
       expect(find.byKey(const Key('cycle-31')), findsNothing);
     });
 
-    testWidgets('changing it changes which entries the budget counts',
-        (tester) async {
+    testWidgets('changing it changes which entries the budget counts', (
+      tester,
+    ) async {
       // the setting is not decorative: the cycle is what the budget screen and
       // the report both slice by
       await show(tester);
@@ -174,13 +179,16 @@ void main() {
   });
 
   group('what is deliberately absent', () {
-    testWidgets('says so, rather than listing rows that do nothing',
-        (tester) async {
+    testWidgets('says so, rather than listing rows that do nothing', (
+      tester,
+    ) async {
       await show(tester);
       // The note is the last thing on a screen that keeps growing, and a
       // ListView does not build what is off screen.
       await tester.scrollUntilVisible(
-        find.byKey(const Key('settings-note')), 300);
+        find.byKey(const Key('settings-note')),
+        300,
+      );
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('settings-note')), findsOneWidget);
 

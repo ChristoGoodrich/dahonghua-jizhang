@@ -13,7 +13,6 @@
 // is what makes "save" mean "go back to what I was looking at" without the
 // shell having to remember where that was.
 
-import 'dart:ui' as ui;
 
 import 'dart:async';
 
@@ -32,7 +31,6 @@ import 'me_screen.dart';
 import 'capture_screen.dart';
 import 'inbox.dart';
 import 'lock_gate.dart';
-import 'glass.dart';
 import 'import_screen.dart';
 import 'persistence.dart';
 import 'record_sheet.dart' as sheet;
@@ -43,8 +41,6 @@ import 'report_screen.dart';
 import 'stats_screen.dart';
 import 'subs_screen.dart';
 import 'theme.dart';
-import 'src/rust/api/calc.dart' as calc;
-import 'src/rust/api/glass.dart' as glass;
 import 'src/rust/api/budget.dart' as budget;
 import 'src/rust/api/history.dart' as history;
 import 'src/rust/api/store.dart' as store;
@@ -125,11 +121,15 @@ class _AppState extends State<App> {
     // The gate wraps the shell rather than replacing it: covering the app
     // keeps the navigator mounted, so unlocking returns to wherever the user
     // was rather than to the first tab.
-    home: LockGate(
-      zh: store.language() != 'en',
-      child: Home(
-        store: widget.store,
-        onThemeChanged: () => setState(() {}),
+    // The outermost declaration of the system bars' colours. An `AppBar` puts
+    // its own region deeper in the tree and wins where there is one; this is
+    // what answers for the two tabs that have no header at all, and it
+    // rebuilds with the root when the flower or the room changes.
+    home: AnnotatedRegion<SystemUiOverlayStyle>(
+      value: systemOverlay,
+      child: LockGate(
+        zh: store.language() != 'en',
+        child: Home(store: widget.store, onThemeChanged: () => setState(() {})),
       ),
     ),
   );
@@ -268,9 +268,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   }
 
   Future<void> _push(Widget screen) async {
-    await Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (_) => screen),
-    );
+    await Navigator.of(
+      context,
+    ).push(MaterialPageRoute<void>(builder: (_) => screen));
     setState(() {});
   }
 
@@ -310,7 +310,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     bottomNavigationBar: _selecting ? null : _bar(),
   );
 
-
   /// How many entries this cycle, and how many days in a row.
   ///
   /// Both are the core's arithmetic over days Dart resolved — "consecutive" is
@@ -320,16 +319,17 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     final live = store.liveEntries();
     if (live.isEmpty) return null;
     final today = DateTime.now();
-    final days = live
-        .map((e) {
-          final d = DateTime.fromMillisecondsSinceEpoch(e.ts);
-          return '${d.year}-${d.month}-${d.day}';
-        })
-        .toList();
+    final days = live.map((e) {
+      final d = DateTime.fromMillisecondsSinceEpoch(e.ts);
+      return '${d.year}-${d.month}-${d.day}';
+    }).toList();
     final todayKey = '${today.year}-${today.month}-${today.day}';
     final ids = live.map((e) => e.id).toList();
     final inCycle = budget.cycleIds(ids: ids, daysOf: days, today: todayKey);
-    return (inCycle.length, history.streak(days: days, today: todayKey).toInt());
+    return (
+      inCycle.length,
+      history.streak(days: days, today: todayKey).toInt(),
+    );
   }
 
   List<(String, List<MeRow>)> _meGroups() {
@@ -342,7 +342,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             id: 'report',
             icon: Icons.insights_outlined,
             title: zh ? '回顾' : 'Report',
-            desc: zh ? '这个周期和这一周,过得怎么样' : 'How the cycle and the week are going',
+            desc: zh
+                ? '这个周期和这一周,过得怎么样'
+                : 'How the cycle and the week are going',
             onTap: () => _push(ReportScreen(zh: zh)),
           ),
           MeRow(
@@ -350,7 +352,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             icon: Icons.receipt_long_outlined,
             title: zh ? '报销' : 'Reimbursements',
             desc: zh ? '垫的钱,和收回来的' : 'What you fronted, and what came back',
-            onTap: () => _push(ReimburseScreen(zh: zh, onChanged: _entriesChanged)),
+            onTap: () =>
+                _push(ReimburseScreen(zh: zh, onChanged: _entriesChanged)),
           ),
           MeRow(
             id: 'budget',
@@ -371,18 +374,21 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             icon: Icons.bolt_outlined,
             title: zh ? '模板' : 'Templates',
             desc: zh ? '一按就记的常用笔' : 'One-tap entries you make often',
-            onTap: () => _push(TemplatesScreen(zh: zh, onChanged: _configChanged)),
+            onTap: () =>
+                _push(TemplatesScreen(zh: zh, onChanged: _configChanged)),
           ),
           MeRow(
             id: 'currency',
             icon: Icons.currency_exchange,
             title: zh ? '币种与汇率' : 'Currencies',
             desc: zh ? '记账单位,和别的币种怎么换' : 'The base unit, and the rates',
-            onTap: () => _push(CurrencyScreen(
-              zh: zh,
-              onChanged: ({required ledgerToo}) =>
-                  ledgerToo ? _bothChanged() : _configChanged(),
-            )),
+            onTap: () => _push(
+              CurrencyScreen(
+                zh: zh,
+                onChanged: ({required ledgerToo}) =>
+                    ledgerToo ? _bothChanged() : _configChanged(),
+              ),
+            ),
           ),
           MeRow(
             id: 'tags',
@@ -401,43 +407,52 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             icon: Icons.notifications_active_outlined,
             title: zh ? '自动记账' : 'Auto-capture',
             desc: zh ? '支付通知一到就记下' : 'A payment push becomes an entry',
-            onTap: () => _push(CaptureScreen(zh: zh, onChanged: _entriesChanged)),
+            onTap: () =>
+                _push(CaptureScreen(zh: zh, onChanged: _entriesChanged)),
           ),
           MeRow(
             id: 'import',
             icon: Icons.file_upload_outlined,
             title: zh ? '导入账单' : 'Import bills',
             desc: zh ? '支付宝或微信导出的 CSV' : 'A CSV from Alipay or WeChat',
-            onTap: () => _push(ImportScreen(zh: zh, onImported: _entriesChanged)),
+            onTap: () =>
+                _push(ImportScreen(zh: zh, onImported: _entriesChanged)),
           ),
           MeRow(
             id: 'backup',
             icon: Icons.archive_outlined,
             title: zh ? '备份' : 'Backups',
             desc: zh ? '存一份现在的样子,随时回去' : 'Snapshots you can go back to',
-            onTap: () => _push(BackupScreen(
-              zh: zh,
-              // a restore replaces both files and every screen's contents
-              onRestored: _bothChanged,
-            )),
+            onTap: () => _push(
+              BackupScreen(
+                zh: zh,
+                // a restore replaces both files and every screen's contents
+                onRestored: _bothChanged,
+              ),
+            ),
           ),
           MeRow(
             id: 'sync',
             icon: Icons.sync_alt,
             title: zh ? '同步' : 'Sync',
-            desc: zh ? '通过一个文件,和另一台设备合并' : 'Merge with another device, through a file',
-            onTap: () => _push(SyncScreen(
-              zh: zh,
-              // a merge rewrites the ledger and may add accounts
-              onChanged: _bothChanged,
-            )),
+            desc: zh
+                ? '通过一个文件,和另一台设备合并'
+                : 'Merge with another device, through a file',
+            onTap: () => _push(
+              SyncScreen(
+                zh: zh,
+                // a merge rewrites the ledger and may add accounts
+                onChanged: _bothChanged,
+              ),
+            ),
           ),
           MeRow(
             id: 'settings',
             icon: Icons.tune,
             title: zh ? '设置' : 'Settings',
             desc: zh ? '语言和账单周期' : 'Language and the budget cycle',
-            onTap: () => _push(SettingsScreen(zh: zh, onChanged: _configChanged)),
+            onTap: () =>
+                _push(SettingsScreen(zh: zh, onChanged: _configChanged)),
           ),
         ],
       ),

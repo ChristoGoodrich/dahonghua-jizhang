@@ -18,26 +18,22 @@ import 'src/rust/api/accounts.dart' as accounts;
 import 'src/rust/api/money.dart' as money;
 import 'src/rust/api/statement.dart' as statement;
 import 'src/rust/api/store.dart' as store;
+import 'glass.dart';
 import 'theme.dart';
 
 String _acctEmoji(String kind) => switch (kind) {
-      'credit' => '💳',
-      'prepaid' => '🎫',
-      _ => '👛',
-    };
+  'credit' => '💳',
+  'prepaid' => '🎫',
+  _ => '👛',
+};
 
 class AccountDetailScreen extends StatelessWidget {
-  const AccountDetailScreen({
-    super.key,
-    required this.id,
-    this.zh = true,
-  });
+  const AccountDetailScreen({super.key, required this.id, this.zh = true});
 
   final String id;
   final bool zh;
 
-  String _name(accounts.AccountBalance a) =>
-      zh ? a.name : (a.nameEn ?? a.name);
+  String _name(accounts.AccountBalance a) => zh ? a.name : (a.nameEn ?? a.name);
 
   @override
   Widget build(BuildContext context) {
@@ -52,19 +48,15 @@ class AccountDetailScreen extends StatelessWidget {
     // "balance: -1,200" reads as a loss rather than a debt.
     final owed = account?.kind == 'credit' && bal < 0;
 
-    return Scaffold(
-      backgroundColor: p.paper,
-      appBar: AppBar(
-        backgroundColor: p.paper,
-        title: Text(
-          account == null
-              ? (zh ? '账户' : 'Account')
-              : '${_acctEmoji(account.kind)} ${_name(account)}',
-          key: const Key('acct-detail-title'),
-        ),
+    return ScrimScaffold(
+      title: Text(
+        account == null
+            ? (zh ? '账户' : 'Account')
+            : '${_acctEmoji(account.kind)} ${_name(account)}',
+        key: const Key('acct-detail-title'),
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.fromLTRB(16, headerInset(context) + 16, 16, 16),
         children: [
           Container(
             key: const Key('acct-detail-balance'),
@@ -79,7 +71,10 @@ class AccountDetailScreen extends StatelessWidget {
               children: [
                 Text(
                   owed ? (zh ? '欠款' : 'Owed') : (zh ? '余额' : 'Balance'),
-                  style: TextStyle(color: p.paper.withValues(alpha: 0.7), fontSize: 12),
+                  style: TextStyle(
+                    color: p.paper.withValues(alpha: 0.7),
+                    fontSize: 12,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -143,10 +138,10 @@ class AccountDetailScreen extends StatelessWidget {
     final rel = days == null
         ? ''
         : days > 0
-            ? (zh ? '还有 $days 天' : '$days days left')
-            : days == 0
-                ? (zh ? '今天到期' : 'Due today')
-                : (zh ? '逾期 ${-days} 天' : '${-days} days overdue');
+        ? (zh ? '还有 $days 天' : '$days days left')
+        : days == 0
+        ? (zh ? '今天到期' : 'Due today')
+        : (zh ? '逾期 ${-days} 天' : '${-days} days overdue');
 
     return [
       const SizedBox(height: 12),
@@ -161,11 +156,15 @@ class AccountDetailScreen extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(zh ? '本期账单' : 'This statement',
-                style: TextStyle(color: p.inkSoft, fontSize: 13)),
-            Text(rel,
-                key: const Key('acct-detail-due'),
-                style: TextStyle(color: p.ink, fontSize: 13)),
+            Text(
+              zh ? '本期账单' : 'This statement',
+              style: TextStyle(color: p.inkSoft, fontSize: 13),
+            ),
+            Text(
+              rel,
+              key: const Key('acct-detail-due'),
+              style: TextStyle(color: p.ink, fontSize: 13),
+            ),
           ],
         ),
       ),
@@ -198,12 +197,17 @@ class AccountDetailScreen extends StatelessWidget {
                         ? (zh ? '转账' : 'Transfer')
                         : (e.note?.isNotEmpty == true ? e.note! : e.cat),
                     style: TextStyle(
-                        fontSize: 14, fontWeight: FontWeight.w600, color: p.ink),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: p.ink,
+                    ),
                   ),
                   if (e.io != 'xfer' && e.note?.isNotEmpty == true) ...[
                     const SizedBox(height: 2),
-                    Text(e.cat,
-                        style: TextStyle(fontSize: 12, color: p.inkSoft)),
+                    Text(
+                      e.cat,
+                      style: TextStyle(fontSize: 12, color: p.inkSoft),
+                    ),
                   ],
                 ],
               ),

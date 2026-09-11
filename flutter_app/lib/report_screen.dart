@@ -18,6 +18,7 @@ import 'src/rust/api/catalog.dart' as catalog;
 import 'src/rust/api/money.dart' as money;
 import 'src/rust/api/report.dart' as report;
 import 'src/rust/api/store.dart' as store;
+import 'glass.dart';
 import 'theme.dart';
 
 /// `YYYY-M-D`, a **1-indexed** month — the spelling `parse_day` on the other
@@ -114,17 +115,17 @@ class _ReportScreenState extends State<ReportScreen> {
   @override
   Widget build(BuildContext context) {
     final zh = widget.zh;
-    return Scaffold(
-      backgroundColor: palette.paper,
-      appBar: AppBar(
-        backgroundColor: palette.paper,
-        surfaceTintColor: Colors.transparent,
-        title: Text(zh ? '回顾' : 'Report',
-            style: TextStyle(
-                color: palette.ink, fontSize: 20, fontWeight: FontWeight.w700)),
+    return ScrimScaffold(
+      title: Text(
+        zh ? '回顾' : 'Report',
+        style: TextStyle(
+          color: palette.ink,
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
+        ),
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(22, 6, 22, 120),
+        padding: EdgeInsets.fromLTRB(22, headerInset(context) + 6, 22, 120),
         children: [
           if (_insight != null) _banner(_insight!),
           _recapCard(zh),
@@ -137,24 +138,28 @@ class _ReportScreenState extends State<ReportScreen> {
 
   /// One sentence, when there is one worth saying.
   Widget _banner(report.InsightView i) => Container(
-        key: const Key('insight'),
-        margin: const EdgeInsets.only(bottom: 16),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        decoration: BoxDecoration(
-          color: palette.stamen.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(Rad.md),
-          border: Border.all(color: palette.stamen.withValues(alpha: 0.4)),
-        ),
-        child: Row(children: [
-          Text(i.icon, style: const TextStyle(fontSize: 18)),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(i.text,
-                key: const Key('insight-text'),
-                style: TextStyle(fontSize: 13.5, color: palette.ink)),
+    key: const Key('insight'),
+    margin: const EdgeInsets.only(bottom: 16),
+    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+    decoration: BoxDecoration(
+      color: palette.stamen.withValues(alpha: 0.12),
+      borderRadius: BorderRadius.circular(Rad.md),
+      border: Border.all(color: palette.stamen.withValues(alpha: 0.4)),
+    ),
+    child: Row(
+      children: [
+        Text(i.icon, style: const TextStyle(fontSize: 18)),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            i.text,
+            key: const Key('insight-text'),
+            style: TextStyle(fontSize: 13.5, color: palette.ink),
           ),
-        ]),
-      );
+        ),
+      ],
+    ),
+  );
 
   Widget _recapCard(bool zh) {
     final top = _recap.topCat;
@@ -174,8 +179,10 @@ class _ReportScreenState extends State<ReportScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(zh ? '这个周期' : 'This cycle',
-              style: TextStyle(fontSize: 12, color: palette.inkSoft)),
+          Text(
+            zh ? '这个周期' : 'This cycle',
+            style: TextStyle(fontSize: 12, color: palette.inkSoft),
+          ),
           const SizedBox(height: 4),
           Text(
             _m(_recap.net),
@@ -190,21 +197,37 @@ class _ReportScreenState extends State<ReportScreen> {
             ),
           ),
           const SizedBox(height: 14),
-          Row(children: [
-            Expanded(child: _stat(zh ? '支出' : 'Spent', _m(_recap.exp), 'recap-exp')),
-            Expanded(child: _stat(zh ? '收入' : 'Earned', _m(_recap.inc), 'recap-inc')),
-          ]),
+          Row(
+            children: [
+              Expanded(
+                child: _stat(zh ? '支出' : 'Spent', _m(_recap.exp), 'recap-exp'),
+              ),
+              Expanded(
+                child: _stat(zh ? '收入' : 'Earned', _m(_recap.inc), 'recap-inc'),
+              ),
+            ],
+          ),
           const SizedBox(height: 12),
-          Row(children: [
-            // `count` includes transfers though neither total does — it is how
-            // many rows there are, not how many moved money one way
-            Expanded(
-                child: _stat(zh ? '笔数' : 'Entries', '${_recap.count}',
-                    'recap-count')),
-            Expanded(
-                child: _stat(zh ? '有记录的天' : 'Active days',
-                    '${_recap.activeDays}', 'recap-days')),
-          ]),
+          Row(
+            children: [
+              // `count` includes transfers though neither total does — it is how
+              // many rows there are, not how many moved money one way
+              Expanded(
+                child: _stat(
+                  zh ? '笔数' : 'Entries',
+                  '${_recap.count}',
+                  'recap-count',
+                ),
+              ),
+              Expanded(
+                child: _stat(
+                  zh ? '有记录的天' : 'Active days',
+                  '${_recap.activeDays}',
+                  'recap-days',
+                ),
+              ),
+            ],
+          ),
           if (topName != null) ...[
             const SizedBox(height: 12),
             _stat(
@@ -230,8 +253,10 @@ class _ReportScreenState extends State<ReportScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(zh ? '这一周' : 'This week',
-              style: TextStyle(fontSize: 12, color: palette.inkSoft)),
+          Text(
+            zh ? '这一周' : 'This week',
+            style: TextStyle(fontSize: 12, color: palette.inkSoft),
+          ),
           const SizedBox(height: 4),
           Text(
             _m(_week.spent),
@@ -250,12 +275,12 @@ class _ReportScreenState extends State<ReportScreen> {
                 // the same rule the budget screen is built on.
                 ? (zh ? '未设每周上限' : 'No weekly budget set')
                 : _week.over
-                    ? (zh
-                        ? '超出 ${_m(-_week.remaining)} · 还剩 ${_week.daysLeft} 天'
-                        : '${_m(-_week.remaining)} over · ${_week.daysLeft} days left')
-                    : (zh
-                        ? '还剩 ${_m(_week.remaining)} · ${_week.daysLeft} 天'
-                        : '${_m(_week.remaining)} left · ${_week.daysLeft} days'),
+                ? (zh
+                      ? '超出 ${_m(-_week.remaining)} · 还剩 ${_week.daysLeft} 天'
+                      : '${_m(-_week.remaining)} over · ${_week.daysLeft} days left')
+                : (zh
+                      ? '还剩 ${_m(_week.remaining)} · ${_week.daysLeft} 天'
+                      : '${_m(_week.remaining)} left · ${_week.daysLeft} days'),
             key: const Key('week-text'),
             style: TextStyle(
               fontSize: 12.5,
@@ -268,17 +293,20 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 
   Widget _stat(String label, String value, String key) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label, style: TextStyle(fontSize: 11.5, color: palette.inkSoft)),
-          const SizedBox(height: 1),
-          Text(value,
-              key: Key(key),
-              style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  fontFeatures: tabular,
-                  color: palette.ink)),
-        ],
-      );
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(label, style: TextStyle(fontSize: 11.5, color: palette.inkSoft)),
+      const SizedBox(height: 1),
+      Text(
+        value,
+        key: Key(key),
+        style: TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.w600,
+          fontFeatures: tabular,
+          color: palette.ink,
+        ),
+      ),
+    ],
+  );
 }

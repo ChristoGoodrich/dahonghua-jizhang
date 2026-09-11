@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'inbox.dart';
 import 'notif_capture.dart';
 import 'src/rust/api/capture.dart' as capture;
+import 'glass.dart';
 import 'theme.dart';
 
 class CaptureScreen extends StatefulWidget {
@@ -81,7 +82,8 @@ class _CaptureScreenState extends State<CaptureScreen> {
     final parts = <String>[
       if (r.posted > 0) zh ? '记了 ${r.posted} 笔' : '${r.posted} recorded',
       if (r.queued > 0) zh ? '${r.queued} 笔待确认' : '${r.queued} to confirm',
-      if (r.unparsed > 0) zh ? '${r.unparsed} 条没看懂' : "${r.unparsed} not understood",
+      if (r.unparsed > 0)
+        zh ? '${r.unparsed} 条没看懂' : "${r.unparsed} not understood",
     ];
     return parts.join(zh ? ',' : ' · ');
   }
@@ -118,26 +120,26 @@ class _CaptureScreenState extends State<CaptureScreen> {
   @override
   Widget build(BuildContext context) {
     final zh = widget.zh;
-    return Scaffold(
-      backgroundColor: palette.paper,
-      appBar: AppBar(
-        backgroundColor: palette.paper,
-        surfaceTintColor: Colors.transparent,
-        title: Text(zh ? '自动记账' : 'Auto-capture',
-            style: TextStyle(
-                color: palette.ink, fontSize: 20, fontWeight: FontWeight.w700)),
+    return ScrimScaffold(
+      title: Text(
+        zh ? '自动记账' : 'Auto-capture',
+        style: TextStyle(
+          color: palette.ink,
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
+        ),
       ),
       body: ListView(
         key: const Key('capture-list'),
-        padding: const EdgeInsets.fromLTRB(22, 6, 22, 120),
+        padding: EdgeInsets.fromLTRB(22, headerInset(context) + 6, 22, 120),
         children: [
           if (!_native.supported)
             Text(
               zh
                   ? '这台设备没有通知监听,自动记账用不了。账单导入可以做同样的事,晚一点而已。'
                   : 'This device has no notification listener, so auto-capture '
-                      'is unavailable. Importing a bill export does the same '
-                      'job, just later.',
+                        'is unavailable. Importing a bill export does the same '
+                        'job, just later.',
               key: const Key('capture-unsupported'),
               style: TextStyle(fontSize: 13, color: palette.inkSoft),
             )
@@ -147,10 +149,11 @@ class _CaptureScreenState extends State<CaptureScreen> {
             if (_flash != null)
               Padding(
                 padding: const EdgeInsets.only(bottom: 14),
-                child: Text(_flash!,
-                    key: const Key('capture-flash'),
-                    style:
-                        TextStyle(fontSize: 13, color: palette.leafDeep)),
+                child: Text(
+                  _flash!,
+                  key: const Key('capture-flash'),
+                  style: TextStyle(fontSize: 13, color: palette.leafDeep),
+                ),
               ),
             ..._pendingSection(zh),
             ..._unparsedSection(zh),
@@ -161,77 +164,86 @@ class _CaptureScreenState extends State<CaptureScreen> {
   }
 
   List<Widget> _permission(bool zh) => [
-        Text(
-          zh
-              ? '支付通知一到就记下来,不用打开这个 app。只看支付宝、微信和银行的通知,别的一概不存。'
-              : 'A payment notification becomes an entry without opening the '
-                  'app. Only Alipay, WeChat and bank notifications are read; '
-                  'nothing else is stored.',
-          style: TextStyle(fontSize: 12.5, color: palette.inkSoft),
+    Text(
+      zh
+          ? '支付通知一到就记下来,不用打开这个 app。只看支付宝、微信和银行的通知,别的一概不存。'
+          : 'A payment notification becomes an entry without opening the '
+                'app. Only Alipay, WeChat and bank notifications are read; '
+                'nothing else is stored.',
+      style: TextStyle(fontSize: 12.5, color: palette.inkSoft),
+    ),
+    const SizedBox(height: 16),
+    if (!_granted) ...[
+      Text(
+        zh
+            ? '还没有通知权限。这个权限只能在系统设置里给,app 弹不出来。'
+            : 'Notification access has not been granted. It can only be '
+                  'given in system settings — no app can ask for it.',
+        key: const Key('capture-not-granted'),
+        style: TextStyle(fontSize: 13, color: palette.hibiscusDeep),
+      ),
+      const SizedBox(height: 12),
+      FilledButton(
+        key: const Key('open-notif-settings'),
+        onPressed: () async {
+          await _native.openSettings();
+          // Coming back is the only signal there is; the system never
+          // tells an app its access changed.
+          if (mounted) await _reload();
+        },
+        style: FilledButton.styleFrom(
+          backgroundColor: palette.hibiscus,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 14),
         ),
-        const SizedBox(height: 16),
-        if (!_granted) ...[
-          Text(
-            zh
-                ? '还没有通知权限。这个权限只能在系统设置里给,app 弹不出来。'
-                : 'Notification access has not been granted. It can only be '
-                    'given in system settings — no app can ask for it.',
-            key: const Key('capture-not-granted'),
-            style: TextStyle(fontSize: 13, color: palette.hibiscusDeep),
-          ),
-          const SizedBox(height: 12),
-          FilledButton(
-            key: const Key('open-notif-settings'),
-            onPressed: () async {
-              await _native.openSettings();
-              // Coming back is the only signal there is; the system never
-              // tells an app its access changed.
-              if (mounted) await _reload();
-            },
-            style: FilledButton.styleFrom(
-              backgroundColor: palette.hibiscus,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 14),
-            ),
-            child: Text(zh ? '去系统设置里打开' : 'Open system settings'),
-          ),
-        ] else
-          SwitchListTile(
-            key: const Key('capture-toggle'),
-            contentPadding: EdgeInsets.zero,
-            value: _capturing,
-            onChanged: _busy ? null : _toggle,
-            activeThumbColor: palette.hibiscus,
-            title: Text(zh ? '自动记账' : 'Capture payments',
-                style: TextStyle(fontSize: 15, color: palette.ink)),
-            subtitle: Text(
-              _capturing
-                  ? (zh ? '开着' : 'On')
-                  : (zh ? '权限有了,还没开' : 'Granted, but not on'),
-              style: TextStyle(fontSize: 12, color: palette.inkSoft),
-            ),
-          ),
-      ];
+        child: Text(zh ? '去系统设置里打开' : 'Open system settings'),
+      ),
+    ] else
+      SwitchListTile(
+        key: const Key('capture-toggle'),
+        contentPadding: EdgeInsets.zero,
+        value: _capturing,
+        onChanged: _busy ? null : _toggle,
+        activeThumbColor: palette.hibiscus,
+        title: Text(
+          zh ? '自动记账' : 'Capture payments',
+          style: TextStyle(fontSize: 15, color: palette.ink),
+        ),
+        subtitle: Text(
+          _capturing
+              ? (zh ? '开着' : 'On')
+              : (zh ? '权限有了,还没开' : 'Granted, but not on'),
+          style: TextStyle(fontSize: 12, color: palette.inkSoft),
+        ),
+      ),
+  ];
 
   List<Widget> _pendingSection(bool zh) {
     if (_inbox.pending.isEmpty) {
       return [
         if (_granted && _capturing)
-          Text(zh ? '没有待确认的。' : 'Nothing waiting.',
-              key: const Key('capture-empty'),
-              style: TextStyle(fontSize: 12.5, color: palette.inkSoft)),
+          Text(
+            zh ? '没有待确认的。' : 'Nothing waiting.',
+            key: const Key('capture-empty'),
+            style: TextStyle(fontSize: 12.5, color: palette.inkSoft),
+          ),
       ];
     }
     return [
-      Text(zh ? '待确认' : 'Waiting for you',
-          style: TextStyle(
-              fontSize: 13, fontWeight: FontWeight.w600, color: palette.ink)),
+      Text(
+        zh ? '待确认' : 'Waiting for you',
+        style: TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+          color: palette.ink,
+        ),
+      ),
       const SizedBox(height: 4),
       Text(
         zh
             ? '这些看懂了金额,没看出商家。记下来的备注会是下面这个。'
             : 'The amount was read but no merchant was. The note would be what '
-                'is shown below.',
+                  'is shown below.',
         style: TextStyle(fontSize: 11.5, color: palette.inkSoft),
       ),
       const SizedBox(height: 10),
@@ -241,89 +253,101 @@ class _CaptureScreenState extends State<CaptureScreen> {
   }
 
   Widget _pendingRow(capture.PendingView p, bool zh) => Container(
-        key: Key('pending-${p.id}'),
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: palette.card,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: palette.line),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    key: Key('pending-${p.id}'),
+    margin: const EdgeInsets.only(bottom: 10),
+    padding: const EdgeInsets.all(14),
+    decoration: BoxDecoration(
+      color: palette.card,
+      borderRadius: BorderRadius.circular(14),
+      border: Border.all(color: palette.line),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
           children: [
-            Row(children: [
-              Expanded(
-                child: Text(
-                  '${_sourceLabel(p.source)} · ${p.note}',
-                  style: TextStyle(fontSize: 14, color: palette.ink),
-                ),
+            Expanded(
+              child: Text(
+                '${_sourceLabel(p.source)} · ${p.note}',
+                style: TextStyle(fontSize: 14, color: palette.ink),
               ),
-              Text(
-                p.amt.toStringAsFixed(2),
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: p.io == 'inc' ? palette.leafDeep : palette.ink,
-                ),
+            ),
+            Text(
+              p.amt.toStringAsFixed(2),
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                color: p.io == 'inc' ? palette.leafDeep : palette.ink,
               ),
-            ]),
-            const SizedBox(height: 6),
-            // What the notification said, verbatim. This is the evidence for
-            // the guess above it.
-            Text(p.raw,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 11.5, color: palette.inkSoft)),
-            const SizedBox(height: 8),
-            Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-              TextButton(
-                key: Key('reject-${p.id}'),
-                onPressed: () => _reject(p),
-                style: TextButton.styleFrom(foregroundColor: palette.inkSoft),
-                child: Text(zh ? '不记' : 'Discard'),
-              ),
-              const SizedBox(width: 4),
-              FilledButton(
-                key: Key('accept-${p.id}'),
-                onPressed: () => _accept(p),
-                style: FilledButton.styleFrom(
-                  backgroundColor: palette.hibiscus,
-                  foregroundColor: Colors.white,
-                ),
-                child: Text(zh ? '记一笔' : 'Record'),
-              ),
-            ]),
+            ),
           ],
         ),
-      );
+        const SizedBox(height: 6),
+        // What the notification said, verbatim. This is the evidence for
+        // the guess above it.
+        Text(
+          p.raw,
+          maxLines: 3,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(fontSize: 11.5, color: palette.inkSoft),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            TextButton(
+              key: Key('reject-${p.id}'),
+              onPressed: () => _reject(p),
+              style: TextButton.styleFrom(foregroundColor: palette.inkSoft),
+              child: Text(zh ? '不记' : 'Discard'),
+            ),
+            const SizedBox(width: 4),
+            FilledButton(
+              key: Key('accept-${p.id}'),
+              onPressed: () => _accept(p),
+              style: FilledButton.styleFrom(
+                backgroundColor: palette.hibiscus,
+                foregroundColor: Colors.white,
+              ),
+              child: Text(zh ? '记一笔' : 'Record'),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
 
   List<Widget> _unparsedSection(bool zh) {
     if (_inbox.unparsed.isEmpty) return const [];
     return [
-      Row(children: [
-        Expanded(
-          child: Text(zh ? '没看懂的' : 'Not understood',
+      Row(
+        children: [
+          Expanded(
+            child: Text(
+              zh ? '没看懂的' : 'Not understood',
               style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: palette.ink)),
-        ),
-        TextButton(
-          key: const Key('clear-unparsed'),
-          onPressed: () async {
-            await _inbox.clearUnparsed();
-            if (mounted) setState(() {});
-          },
-          style: TextButton.styleFrom(foregroundColor: palette.inkSoft),
-          child: Text(zh ? '清空' : 'Clear'),
-        ),
-      ]),
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: palette.ink,
+              ),
+            ),
+          ),
+          TextButton(
+            key: const Key('clear-unparsed'),
+            onPressed: () async {
+              await _inbox.clearUnparsed();
+              if (mounted) setState(() {});
+            },
+            style: TextButton.styleFrom(foregroundColor: palette.inkSoft),
+            child: Text(zh ? '清空' : 'Clear'),
+          ),
+        ],
+      ),
       Text(
         zh
             ? '留着是为了看清真实的通知长什么样,规则才能改对。这些不会变成账。'
             : 'Kept so the real wording can be read and the rules improved. '
-                'None of these become entries.',
+                  'None of these become entries.',
         style: TextStyle(fontSize: 11.5, color: palette.inkSoft),
       ),
       const SizedBox(height: 8),
@@ -331,10 +355,12 @@ class _CaptureScreenState extends State<CaptureScreen> {
         Padding(
           key: Key('unparsed-${u.id}'),
           padding: const EdgeInsets.symmetric(vertical: 5),
-          child: Text(u.raw,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 11.5, color: palette.inkSoft)),
+          child: Text(
+            u.raw,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontSize: 11.5, color: palette.inkSoft),
+          ),
         ),
     ];
   }

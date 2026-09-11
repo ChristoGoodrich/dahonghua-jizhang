@@ -19,6 +19,7 @@ import 'src/rust/api/statement.dart' as statement;
 import 'src/rust/api/store.dart' as store;
 import 'account_detail_screen.dart';
 import 'tap.dart';
+import 'glass.dart';
 import 'theme.dart';
 
 class AccountsScreen extends StatefulWidget {
@@ -157,29 +158,24 @@ class _AccountsScreenState extends State<AccountsScreen> {
     final shown = _rows.where((a) => _showArchived || !a.archived).toList();
     final archivedCount = _rows.where((a) => a.archived).length;
 
-    return Scaffold(
-      backgroundColor: palette.paper,
-      appBar: AppBar(
-        backgroundColor: palette.paper,
-        surfaceTintColor: Colors.transparent,
-        title: Text(
-          zh ? '账户' : 'Accounts',
-          style: TextStyle(
-            color: palette.ink,
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-          ),
+    return ScrimScaffold(
+      title: Text(
+        zh ? '账户' : 'Accounts',
+        style: TextStyle(
+          color: palette.ink,
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
         ),
-        actions: [
-          IconButton(
-            key: const Key('add-account'),
-            icon: Icon(Icons.add, color: palette.ink),
-            onPressed: _add,
-          ),
-        ],
       ),
+      actions: [
+        IconButton(
+          key: const Key('add-account'),
+          icon: Icon(Icons.add, color: palette.ink),
+          onPressed: _add,
+        ),
+      ],
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(22, 6, 22, 120),
+        padding: EdgeInsets.fromLTRB(22, headerInset(context) + 6, 22, 120),
         children: [
           _totalCard(zh),
           if (_due.isNotEmpty) ...[const SizedBox(height: 14), _dueBanner(zh)],

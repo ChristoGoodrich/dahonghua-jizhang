@@ -269,6 +269,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
     surfaceTintColor: Colors.transparent,
     scrolledUnderElevation: 0,
     elevation: 0,
+    systemOverlayStyle: systemOverlay,
     title: _searching
         ? TextField(
             key: const Key('search-field'),
@@ -335,6 +336,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
       surfaceTintColor: Colors.transparent,
       scrolledUnderElevation: 0,
       elevation: 0,
+      systemOverlayStyle: systemOverlay,
       leading: IconButton(
         key: const Key('select-close'),
         icon: Icon(Icons.close, color: palette.ink),

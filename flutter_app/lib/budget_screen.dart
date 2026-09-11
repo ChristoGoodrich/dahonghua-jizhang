@@ -20,6 +20,7 @@ import 'src/rust/api/budget.dart' as budget;
 import 'src/rust/api/money.dart' as money;
 import 'src/rust/api/store.dart' as store;
 import 'tap.dart';
+import 'glass.dart';
 import 'theme.dart';
 
 String _day(DateTime d) => '${d.year}-${d.month}-${d.day}';
@@ -98,22 +99,17 @@ class _BudgetScreenState extends State<BudgetScreen> {
   @override
   Widget build(BuildContext context) {
     final zh = widget.zh;
-    return Scaffold(
-      backgroundColor: palette.paper,
-      appBar: AppBar(
-        backgroundColor: palette.paper,
-        surfaceTintColor: Colors.transparent,
-        title: Text(
-          zh ? '预算' : 'Budget',
-          style: TextStyle(
-            color: palette.ink,
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-          ),
+    return ScrimScaffold(
+      title: Text(
+        zh ? '预算' : 'Budget',
+        style: TextStyle(
+          color: palette.ink,
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
         ),
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(22, 6, 22, 120),
+        padding: EdgeInsets.fromLTRB(22, headerInset(context) + 6, 22, 120),
         children: [
           _tierCard(
             key: 'monthly',

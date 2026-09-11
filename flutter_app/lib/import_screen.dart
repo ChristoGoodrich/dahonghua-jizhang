@@ -26,6 +26,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge.dart' show Int64List;
 
 import 'src/rust/api/imports.dart' as imports;
 import 'src/rust/api/store.dart' as store;
+import 'glass.dart';
 import 'theme.dart';
 
 /// How many rows the list shows before it stops and says how many are left.
@@ -135,23 +136,23 @@ class _ImportScreenState extends State<ImportScreen> {
   Widget build(BuildContext context) {
     final zh = widget.zh;
     final p = _preview;
-    return Scaffold(
-      backgroundColor: palette.paper,
-      appBar: AppBar(
-        backgroundColor: palette.paper,
-        surfaceTintColor: Colors.transparent,
-        title: Text(zh ? '导入账单' : 'Import bills',
-            style: TextStyle(
-                color: palette.ink, fontSize: 20, fontWeight: FontWeight.w700)),
+    return ScrimScaffold(
+      title: Text(
+        zh ? '导入账单' : 'Import bills',
+        style: TextStyle(
+          color: palette.ink,
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
+        ),
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(22, 6, 22, 120),
+        padding: EdgeInsets.fromLTRB(22, headerInset(context) + 6, 22, 120),
         children: [
           Text(
             zh
                 ? '支付宝或微信导出的账单 CSV。编码不用管,认得出来。'
                 : 'A bill export from Alipay or WeChat. The encoding sorts '
-                    'itself out.',
+                      'itself out.',
             style: TextStyle(fontSize: 12.5, color: palette.inkSoft),
           ),
           const SizedBox(height: 14),
@@ -172,9 +173,11 @@ class _ImportScreenState extends State<ImportScreen> {
           ],
           if (_flash != null) ...[
             const SizedBox(height: 14),
-            Text(_flash!,
-                key: const Key('import-flash'),
-                style: TextStyle(fontSize: 13, color: palette.leafDeep)),
+            Text(
+              _flash!,
+              key: const Key('import-flash'),
+              style: TextStyle(fontSize: 13, color: palette.leafDeep),
+            ),
           ],
           if (p != null) ...[
             const SizedBox(height: 18),
@@ -197,50 +200,76 @@ class _ImportScreenState extends State<ImportScreen> {
   List<Widget> _summary(imports.ImportPreview p, bool zh) {
     final fresh = p.candidates.where((c) => !c.dup).toList();
     return [
-      Row(children: [
-        Text(zh ? '来源' : 'Source',
-            style: TextStyle(fontSize: 12, color: palette.inkSoft)),
-        const SizedBox(width: 8),
-        Container(
-          key: const Key('import-source'),
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          decoration: BoxDecoration(
-            color: palette.hibiscus.withValues(alpha: 0.10),
-            borderRadius: BorderRadius.circular(999),
+      Row(
+        children: [
+          Text(
+            zh ? '来源' : 'Source',
+            style: TextStyle(fontSize: 12, color: palette.inkSoft),
           ),
-          child: Text(_sourceLabel(p.source),
-              style: TextStyle(fontSize: 12, color: palette.hibiscus)),
-        ),
-      ]),
+          const SizedBox(width: 8),
+          Container(
+            key: const Key('import-source'),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: palette.hibiscus.withValues(alpha: 0.10),
+              borderRadius: BorderRadius.circular(999),
+            ),
+            child: Text(
+              _sourceLabel(p.source),
+              style: TextStyle(fontSize: 12, color: palette.hibiscus),
+            ),
+          ),
+        ],
+      ),
       const SizedBox(height: 14),
-      Row(children: [
-        Expanded(
-            child: _stat(zh ? '支出' : 'Expense', p.expCount, p.expSum,
-                palette.ink, 'import-exp')),
-        Expanded(
-            child: _stat(zh ? '收入' : 'Income', p.incCount, p.incSum,
-                palette.leafDeep, 'import-inc')),
-      ]),
+      Row(
+        children: [
+          Expanded(
+            child: _stat(
+              zh ? '支出' : 'Expense',
+              p.expCount,
+              p.expSum,
+              palette.ink,
+              'import-exp',
+            ),
+          ),
+          Expanded(
+            child: _stat(
+              zh ? '收入' : 'Income',
+              p.incCount,
+              p.incSum,
+              palette.leafDeep,
+              'import-inc',
+            ),
+          ),
+        ],
+      ),
       const SizedBox(height: 10),
       Text(
         key: const Key('import-meta'),
         zh
             ? '${p.candidates.length} 行,其中 ${p.dupCount} 行已经记过'
-                '${p.skipped > 0 ? ",${p.skipped} 行读不了" : ""}'
+                  '${p.skipped > 0 ? ",${p.skipped} 行读不了" : ""}'
             : '${p.candidates.length} rows · ${p.dupCount} already recorded'
-                '${p.skipped > 0 ? " · ${p.skipped} unreadable" : ""}',
+                  '${p.skipped > 0 ? " · ${p.skipped} unreadable" : ""}',
         style: TextStyle(fontSize: 12, color: palette.inkSoft),
       ),
       if (p.errors.isNotEmpty) ...[
         const SizedBox(height: 12),
-        Text(zh ? '读不了的行' : 'Rows that would not read',
-            style: TextStyle(fontSize: 12, color: palette.hibiscusDeep)),
+        Text(
+          zh ? '读不了的行' : 'Rows that would not read',
+          style: TextStyle(fontSize: 12, color: palette.hibiscusDeep),
+        ),
         for (final e in p.errors.take(5))
-          Text('${zh ? '第' : 'line '}${e.row}${zh ? ' 行' : ''} · ${e.reason}',
-              style: TextStyle(fontSize: 11.5, color: palette.inkSoft)),
+          Text(
+            '${zh ? '第' : 'line '}${e.row}${zh ? ' 行' : ''} · ${e.reason}',
+            style: TextStyle(fontSize: 11.5, color: palette.inkSoft),
+          ),
         if (p.errors.length > 5)
-          Text(zh ? '还有 ${p.errors.length - 5} 行' : '${p.errors.length - 5} more',
-              style: TextStyle(fontSize: 11.5, color: palette.inkSoft)),
+          Text(
+            zh ? '还有 ${p.errors.length - 5} 行' : '${p.errors.length - 5} more',
+            style: TextStyle(fontSize: 11.5, color: palette.inkSoft),
+          ),
       ],
       const SizedBox(height: 16),
       // Every row, duplicates included and marked. A list that quietly dropped
@@ -265,57 +294,67 @@ class _ImportScreenState extends State<ImportScreen> {
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 14),
         ),
-        child: Text(fresh.isEmpty
-            ? (zh ? '没有新的一笔' : 'Nothing new')
-            : (zh ? '导入 ${fresh.length} 条' : 'Import ${fresh.length}')),
+        child: Text(
+          fresh.isEmpty
+              ? (zh ? '没有新的一笔' : 'Nothing new')
+              : (zh ? '导入 ${fresh.length} 条' : 'Import ${fresh.length}'),
+        ),
       ),
     ];
   }
 
   Widget _stat(String label, int n, double sum, Color tint, String k) => Column(
-        key: Key(k),
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('$n',
-              style: TextStyle(
-                  fontSize: 22, fontWeight: FontWeight.w700, color: tint)),
-          Text(label, style: TextStyle(fontSize: 12, color: palette.inkSoft)),
-          Text(sum.toStringAsFixed(2),
-              style: TextStyle(fontSize: 13, color: tint)),
-        ],
-      );
+    key: Key(k),
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        '$n',
+        style: TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.w700,
+          color: tint,
+        ),
+      ),
+      Text(label, style: TextStyle(fontSize: 12, color: palette.inkSoft)),
+      Text(sum.toStringAsFixed(2), style: TextStyle(fontSize: 13, color: tint)),
+    ],
+  );
 
   Widget _row(imports.CandidateView c, bool zh) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 7),
-        child: Row(children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(c.note.isEmpty ? (zh ? '(无备注)' : '(no note)') : c.note,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 13.5,
-                      color: c.dup ? palette.inkSoft : palette.ink,
-                    )),
-                Text(
-                  '${c.mo}/${c.d} · ${c.cat}'
-                  '${c.dup ? (zh ? " · 已记过" : " · already here") : ""}',
-                  style: TextStyle(fontSize: 11.5, color: palette.inkSoft),
+    padding: const EdgeInsets.symmetric(vertical: 7),
+    child: Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                c.note.isEmpty ? (zh ? '(无备注)' : '(no note)') : c.note,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 13.5,
+                  color: c.dup ? palette.inkSoft : palette.ink,
                 ),
-              ],
-            ),
+              ),
+              Text(
+                '${c.mo}/${c.d} · ${c.cat}'
+                '${c.dup ? (zh ? " · 已记过" : " · already here") : ""}',
+                style: TextStyle(fontSize: 11.5, color: palette.inkSoft),
+              ),
+            ],
           ),
-          Text(
-            c.amt.toStringAsFixed(2),
-            style: TextStyle(
-              fontSize: 14,
-              color: c.dup
-                  ? palette.inkSoft
-                  : (c.io == 'inc' ? palette.leafDeep : palette.ink),
-            ),
+        ),
+        Text(
+          c.amt.toStringAsFixed(2),
+          style: TextStyle(
+            fontSize: 14,
+            color: c.dup
+                ? palette.inkSoft
+                : (c.io == 'inc' ? palette.leafDeep : palette.ink),
           ),
-        ]),
-      );
+        ),
+      ],
+    ),
+  );
 }

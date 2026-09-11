@@ -467,3 +467,121 @@ double scrimFade(BuildContext context) => g
       ),
     )
     .fade;
+
+/// How far down a screen's content has to start so its first row is not born
+/// under the header.
+///
+/// The status bar plus the toolbar, which is the whole of the chrome a pushed
+/// screen puts over its body. Called from the screen's own build rather than
+/// from inside the `Scaffold`, because a `Scaffold` with
+/// `extendBodyBehindAppBar` deliberately does not consume the top inset and
+/// asking twice in two places is how the two answers drift.
+double headerInset(BuildContext context) =>
+    MediaQuery.paddingOf(context).top + kToolbarHeight;
+
+/// A screen whose content runs under its header instead of stopping at it.
+///
+/// The same arrangement the entry list already had, extracted once fifteen
+/// other screens needed it: a transparent app bar standing on a [GlassScrim],
+/// with the body running the full height behind both. Content is crisp at rest
+/// and dissolves as it slides underneath — which is the point, and is why the
+/// scrim is sized to the header alone. Given the fade as well, the transition
+/// would land *below* the bar and blur rows nobody had scrolled near.
+///
+/// The body must pad its own top by [headerInset]. That cannot be done out
+/// here: padding applied around a scrollable moves the viewport instead of its
+/// contents, and a viewport that starts below the header is a viewport with
+/// nothing running under it.
+class ScrimScaffold extends StatelessWidget {
+  const ScrimScaffold({
+    super.key,
+    required this.title,
+    required this.body,
+    this.actions,
+    this.leading,
+    this.floatingActionButton,
+    this.bottomNavigationBar,
+  });
+
+  /// Taken as a widget rather than a string: the screens spell their own
+  /// titles, and one of them spells a different title depending on what it is
+  /// showing.
+  final Widget title;
+  final Widget body;
+  final List<Widget>? actions;
+  final Widget? leading;
+  final Widget? floatingActionButton;
+  final Widget? bottomNavigationBar;
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    backgroundColor: palette.paper,
+    // Without this the scrim has nothing to blur, and a blur of a flat colour
+    // is a flat colour.
+    extendBodyBehindAppBar: true,
+    extendBody: true,
+    appBar: AppBar(
+      backgroundColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
+      // Material 3 tints an app bar the moment content passes under it, and
+      // content passing under it is the whole arrangement.
+      scrolledUnderElevation: 0,
+      elevation: 0,
+      // Without this the icons are derived from a transparent background,
+      // which reads as dark and asks for white icons on cream paper.
+      systemOverlayStyle: systemOverlay,
+      leading: leading,
+      title: title,
+      actions: actions,
+    ),
+    body: Stack(
+      fit: StackFit.expand,
+      children: [
+        body,
+        Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          height: headerInset(context),
+          child: const GlassScrim(flipped: true),
+        ),
+      ],
+    ),
+    floatingActionButton: floatingActionButton,
+    bottomNavigationBar: bottomNavigationBar,
+  );
+}
+
+/// The status bar, which is the only chrome above a screen that has no header.
+double statusInset(BuildContext context) => MediaQuery.paddingOf(context).top;
+
+/// A scrolling screen with no header of its own.
+///
+/// The large-title tabs — 资产 and 我的 — put their title inside the list, so
+/// there is no app bar for a scrim to stand under. They used a `SafeArea` to
+/// clear the status bar, which pushes the list down and cuts the content dead
+/// exactly where every other screen now dissolves it.
+///
+/// So: no `SafeArea`, the list pads its own top by [statusInset], and the
+/// status bar gets a scrim of its own. Shallower than a header's, because it
+/// is covering 24dp rather than 80 — the ramp is clamped to the box.
+class StatusScrim extends StatelessWidget {
+  const StatusScrim({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Stack(
+    fit: StackFit.expand,
+    children: [
+      child,
+      Positioned(
+        top: 0,
+        left: 0,
+        right: 0,
+        height: statusInset(context),
+        child: const GlassScrim(flipped: true),
+      ),
+    ],
+  );
+}

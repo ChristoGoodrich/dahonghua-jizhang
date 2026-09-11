@@ -110,6 +110,25 @@ A scrim is sized to the chrome it belongs to plus that fade, and for a header
 with a hard bottom edge it is sized to the header alone — otherwise the
 transition lands below the bar and blurs rows nobody has scrolled near.
 
+Screens do not assemble this themselves. `ScrimScaffold` is the header version
+— a transparent app bar over a scrim, with the body running behind both — and
+`StatusScrim` is for the two large-title tabs that have no app bar at all. In
+both cases **the body pads its own top** by `headerInset` or `statusInset`;
+that cannot be done from outside, because padding wrapped around a scrollable
+moves the viewport rather than its contents, and a viewport that starts below
+the header has nothing running under it.
+
+Two things follow from a body that runs behind a header, and both bit:
+
+* **The header absorbs taps in its own strip.** That is right — chrome
+  absorbs, here and in every app on the phone — but `scrollUntilVisible` stops
+  at "inside the viewport", which now includes "under the title bar". Tests
+  press things through `scrollAndTap` in `integration_test/scroll.dart`.
+* **A transparent app bar picks the wrong status-bar icons.** `AppBar` derives
+  `systemOverlayStyle` from its own background, and `Colors.transparent` reads
+  as dark, so it asks for white icons on cream paper. `systemOverlay` in
+  `theme.dart` answers from the palette instead, and every bar declares it.
+
 ## Moving the chrome
 
 `core::liquid` is the same arrangement one step further out: `glass` says what

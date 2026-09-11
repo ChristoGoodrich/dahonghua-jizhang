@@ -15,6 +15,7 @@ import 'package:flutter_app/theme.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'rust_init.dart';
+import 'scroll.dart';
 
 Future<void> showSettings(WidgetTester tester, {bool zh = true}) async {
   await tester.pumpWidget(MaterialApp(home: SettingsScreen(zh: zh)));
@@ -38,8 +39,9 @@ void main() {
       expect(theme.isDark(), isFalse);
     });
 
-    testWidgets('every flower is offered, with the accent it is known by',
-        (tester) async {
+    testWidgets('every flower is offered, with the accent it is known by', (
+      tester,
+    ) async {
       final opts = theme.themeOptions();
 
       expect(opts, hasLength(7));
@@ -47,20 +49,28 @@ void main() {
       expect(opts.first.swatch, '#D94E5C');
     });
 
-    testWidgets('a key this build has never heard of reads back as default',
-        (tester) async {
+    testWidgets('a key this build has never heard of reads back as default', (
+      tester,
+    ) async {
       theme.setTheme(key: 'chrysanthemum', dark: false);
 
-      expect(theme.themeKey(), 'default',
-          reason: 'a config from a newer build must not stop the app opening');
+      expect(
+        theme.themeKey(),
+        'default',
+        reason: 'a config from a newer build must not stop the app opening',
+      );
     });
 
-    testWidgets('the stored key is normalised, not kept verbatim',
-        (tester) async {
+    testWidgets('the stored key is normalised, not kept verbatim', (
+      tester,
+    ) async {
       theme.setTheme(key: 'SAKURA', dark: false);
 
-      expect(theme.themeKey(), 'default',
-          reason: 'what is stored is always a key this build understands');
+      expect(
+        theme.themeKey(),
+        'default',
+        reason: 'what is stored is always a key this build understands',
+      );
     });
   });
 
@@ -92,8 +102,10 @@ void main() {
 
       // The one property that matters and that a wrong swap would break:
       // paper and ink must not both be dark.
-      expect(palette.paper.computeLuminance(),
-          lessThan(palette.ink.computeLuminance()));
+      expect(
+        palette.paper.computeLuminance(),
+        lessThan(palette.ink.computeLuminance()),
+      );
     });
 
     testWidgets('every flower is readable in both rooms', (tester) async {
@@ -101,18 +113,24 @@ void main() {
         for (final dark in [false, true]) {
           theme.setTheme(key: o.key, dark: dark);
           refreshPalette();
-          final gap = (palette.paper.computeLuminance() -
-                  palette.ink.computeLuminance())
-              .abs();
-          expect(gap, greaterThan(0.5),
-              reason: '${o.key} ${dark ? 'dark' : 'light'} has too little '
-                  'contrast between paper and ink');
+          final gap =
+              (palette.paper.computeLuminance() -
+                      palette.ink.computeLuminance())
+                  .abs();
+          expect(
+            gap,
+            greaterThan(0.5),
+            reason:
+                '${o.key} ${dark ? 'dark' : 'light'} has too little '
+                'contrast between paper and ink',
+          );
         }
       }
     });
 
-    testWidgets('the cache is what makes a stale palette possible',
-        (tester) async {
+    testWidgets('the cache is what makes a stale palette possible', (
+      tester,
+    ) async {
       final before = palette.hibiscus;
       theme.setTheme(key: 'forest', dark: false);
 
@@ -126,8 +144,7 @@ void main() {
   });
 
   group('the settings screen', () {
-    testWidgets('offers a swatch per flower and a dark switch',
-        (tester) async {
+    testWidgets('offers a swatch per flower and a dark switch', (tester) async {
       await showSettings(tester);
 
       expect(find.byKey(const Key('theme-default')), findsOneWidget);
@@ -142,12 +159,16 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(theme.themeKey(), 'jasmine');
-      expect(palette.hibiscus, parseHex('#7C9C8F'),
-          reason: 'the cached palette was refreshed, not left behind');
+      expect(
+        palette.hibiscus,
+        parseHex('#7C9C8F'),
+        reason: 'the cached palette was refreshed, not left behind',
+      );
     });
 
-    testWidgets('the switch turns the light off without losing the flower',
-        (tester) async {
+    testWidgets('the switch turns the light off without losing the flower', (
+      tester,
+    ) async {
       await showSettings(tester);
       await tester.tap(find.byKey(const Key('theme-sunset')));
       await tester.pumpAndSettle();
@@ -171,14 +192,15 @@ void main() {
       expect(palette.isDark, isTrue);
     });
 
-    testWidgets('the note no longer claims themes are missing',
-        (tester) async {
+    testWidgets('the note no longer claims themes are missing', (tester) async {
       await showSettings(tester);
 
       // The note is the last thing on a screen that keeps growing, and a
       // ListView does not build what is off screen.
       await tester.scrollUntilVisible(
-        find.byKey(const Key('settings-note')), 300);
+        find.byKey(const Key('settings-note')),
+        300,
+      );
       await tester.pumpAndSettle();
       final note = tester.widget<Text>(find.byKey(const Key('settings-note')));
       expect(note.data, isNot(contains('主题')));
@@ -186,30 +208,31 @@ void main() {
   });
 
   group('the whole app', () {
-    testWidgets('Material defaults follow the theme, not just our own widgets',
-        (tester) async {
-      // `MaterialApp.theme` is computed once. Without the root rebuilding, a
-      // dark app keeps light dialogs and light menus — every widget this app
-      // does not paint itself.
-      await tester.pumpWidget(const App());
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('tab-我的')));
-      await tester.pumpAndSettle();
-      await tester.ensureVisible(find.byKey(const Key('me-settings')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('me-settings')));
-      await tester.pumpAndSettle();
+    testWidgets(
+      'Material defaults follow the theme, not just our own widgets',
+      (tester) async {
+        // `MaterialApp.theme` is computed once. Without the root rebuilding, a
+        // dark app keeps light dialogs and light menus — every widget this app
+        // does not paint itself.
+        await tester.pumpWidget(const App());
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const Key('tab-我的')));
+        await tester.pumpAndSettle();
+        await tester.ensureVisible(find.byKey(const Key('me-settings')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const Key('me-settings')));
+        await tester.pumpAndSettle();
 
-      // The theme group is partway down a scrolling screen. Tapping a control
-      // below the fold lands on whatever is at those coordinates instead.
-      await tester.ensureVisible(find.byKey(const Key('dark-toggle')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('dark-toggle')));
-      await tester.pumpAndSettle();
+        // The theme group is partway down a scrolling screen. Tapping a control
+        // below the fold lands on whatever is at those coordinates instead —
+        // and now that the body runs behind the header, so does one scrolled
+        // to the very top. See scroll.dart.
+        await scrollAndTap(tester, find.byKey(const Key('dark-toggle')));
 
-      final app = tester.widget<MaterialApp>(find.byType(MaterialApp));
-      expect(app.theme!.colorScheme.brightness, Brightness.dark);
-    });
+        final app = tester.widget<MaterialApp>(find.byType(MaterialApp));
+        expect(app.theme!.colorScheme.brightness, Brightness.dark);
+      },
+    );
 
     testWidgets('the choice survives a snapshot and a reload', (tester) async {
       theme.setTheme(key: 'daisy', dark: true);
@@ -222,19 +245,24 @@ void main() {
       expect(theme.isDark(), isTrue);
     });
 
-    testWidgets('a config written before dark mode existed is a lit room',
-        (tester) async {
+    testWidgets('a config written before dark mode existed is a lit room', (
+      tester,
+    ) async {
       theme.setTheme(key: 'ocean', dark: true);
 
       expect(store.loadConfig(json: '{"theme":"forest"}'), isTrue);
 
       expect(theme.themeKey(), 'forest');
-      expect(theme.isDark(), isFalse,
-          reason: 'a missing key is not a dark room');
+      expect(
+        theme.isDark(),
+        isFalse,
+        reason: 'a missing key is not a dark room',
+      );
     });
 
-    testWidgets('a config with no theme at all is the default flower',
-        (tester) async {
+    testWidgets('a config with no theme at all is the default flower', (
+      tester,
+    ) async {
       theme.setTheme(key: 'ocean', dark: true);
 
       expect(store.loadConfig(json: '{}'), isTrue);

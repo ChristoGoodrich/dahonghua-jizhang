@@ -5,6 +5,7 @@
 // inputs to that, and the ink the material is read against.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'src/rust/api/theme.dart' as theme;
 
@@ -13,13 +14,16 @@ import 'src/rust/api/theme.dart' as theme;
 /// The mix, the ambient pull and the readability curve all happened on the
 /// other side of the boundary; this only parses the answer.
 Color parseRgba(String s) {
-  final n = RegExp(r'[-0-9.eE+]+')
-      .allMatches(s)
-      .map((m) => double.parse(m.group(0)!))
-      .toList();
+  final n = RegExp(
+    r'[-0-9.eE+]+',
+  ).allMatches(s).map((m) => double.parse(m.group(0)!)).toList();
   if (n.length < 3) return const Color(0xFF000000);
   return Color.fromRGBO(
-      n[0].toInt(), n[1].toInt(), n[2].toInt(), n.length > 3 ? n[3] : 1);
+    n[0].toInt(),
+    n[1].toInt(),
+    n[2].toInt(),
+    n.length > 3 ? n[3] : 1,
+  );
 }
 
 /// `#RRGGBB` or `#RGB` → a Flutter colour, with an optional alpha override.
@@ -82,6 +86,37 @@ Palette get palette => _active ??= Palette(theme.currentTheme());
 /// Forget the cached palette. Call after changing the theme; the next read
 /// rebuilds it from the core.
 void refreshPalette() => _active = null;
+
+/// The status and navigation bars' own colours.
+///
+/// Declared rather than inherited, which it was not. Nothing in this app ever
+/// set it, so the icons took whatever the last widget to express an opinion
+/// had asked for — and an `AppBar` expresses one automatically, derived from
+/// its own background. That was survivable while the bars were paper. Once
+/// they went transparent for the scrim, `estimateBrightnessForColor` read
+/// `Colors.transparent` as dark and asked for **light** icons, which is white
+/// on cream.
+///
+/// The room knows the answer: a lit room takes dark icons and a dark one takes
+/// light. Both bars are transparent because content is meant to run under
+/// them — that is the whole point of the scrim.
+SystemUiOverlayStyle get systemOverlay {
+  final dark = palette.isDark;
+  return SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+    // The two names are the same question asked by Android and by iOS, and
+    // they answer it in opposite directions: `statusBarIconBrightness` is the
+    // brightness of the ICONS, `statusBarBrightness` the brightness behind
+    // them. Setting one and not the other is how this goes wrong on one
+    // platform only.
+    statusBarIconBrightness: dark ? Brightness.light : Brightness.dark,
+    statusBarBrightness: dark ? Brightness.dark : Brightness.light,
+    systemNavigationBarColor: Colors.transparent,
+    systemNavigationBarIconBrightness: dark
+        ? Brightness.light
+        : Brightness.dark,
+  );
+}
 
 /// Corner radii, matching `theme/tokens.ts`.
 class Rad {

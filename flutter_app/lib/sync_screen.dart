@@ -22,6 +22,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'src/rust/api/sync.dart' as sync;
+import 'glass.dart';
 import 'theme.dart';
 
 class SyncScreen extends StatefulWidget {
@@ -109,7 +110,9 @@ class _SyncScreenState extends State<SyncScreen> {
       parts.add(zh ? '更新 ${r.updated} 笔' : '${r.updated} updated');
     }
     if (r.accountsAdded > 0) {
-      parts.add(zh ? '新增 ${r.accountsAdded} 个账户' : '${r.accountsAdded} accounts');
+      parts.add(
+        zh ? '新增 ${r.accountsAdded} 个账户' : '${r.accountsAdded} accounts',
+      );
     }
     final head = parts.join('，');
     if (r.conflicts == 0) return head;
@@ -140,7 +143,9 @@ class _SyncScreenState extends State<SyncScreen> {
       }
       setState(() {
         _bad = false;
-        _flash = zh ? '已写出，放进你同步的文件夹里' : 'Written — put it in your synced folder';
+        _flash = zh
+            ? '已写出，放进你同步的文件夹里'
+            : 'Written — put it in your synced folder';
       });
     } catch (e) {
       setState(() {
@@ -155,23 +160,19 @@ class _SyncScreenState extends State<SyncScreen> {
   @override
   Widget build(BuildContext context) {
     final p = palette;
-    return Scaffold(
-      backgroundColor: p.paper,
-      appBar: AppBar(
-        backgroundColor: p.paper,
-        title: Text(zh ? '同步' : 'Sync'),
-      ),
+    return ScrimScaffold(
+      title: Text(zh ? '同步' : 'Sync'),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.fromLTRB(16, headerInset(context) + 16, 16, 16),
         children: [
           Text(
             zh
                 ? '这个 app 不联网同步。它写出一个文件，你把它放进任何一个会跟着你走的文件夹 —— '
-                    '网盘、WebDAV、U 盘都行 —— 另一台设备读它、合并、再写回去。'
+                      '网盘、WebDAV、U 盘都行 —— 另一台设备读它、合并、再写回去。'
                 : 'This app does not sync over a network. It writes a file; you '
-                    'put it wherever your files already follow you — a cloud '
-                    'folder, WebDAV, a USB stick — and the other device reads '
-                    'it, merges, and writes it back.',
+                      'put it wherever your files already follow you — a cloud '
+                      'folder, WebDAV, a USB stick — and the other device reads '
+                      'it, merges, and writes it back.',
             key: const Key('sync-note'),
             style: TextStyle(color: p.inkSoft, height: 1.5),
           ),
@@ -185,10 +186,10 @@ class _SyncScreenState extends State<SyncScreen> {
             title: zh ? '先读进来' : 'Read it in first',
             body: zh
                 ? '合并另一台设备写的文件。两边都改过的同一笔，按最后修改时间取舍；'
-                    '这边删掉的不会被它带回来。'
+                      '这边删掉的不会被它带回来。'
                 : 'Merge the file the other device wrote. Where both edited the '
-                    'same entry the later edit wins; anything deleted here '
-                    'stays deleted.',
+                      'same entry the later edit wins; anything deleted here '
+                      'stays deleted.',
             action: FilledButton(
               key: const Key('sync-merge'),
               onPressed: _busy ? null : _merge,
@@ -202,7 +203,7 @@ class _SyncScreenState extends State<SyncScreen> {
             body: zh
                 ? '把合并后的账本写成文件。先合并再写，否则对面那台的记录会被这边覆盖掉。'
                 : 'Write the merged ledger out. Merge before writing, or this '
-                    "device's copy overwrites what the other one had.",
+                      "device's copy overwrites what the other one had.",
             action: FilledButton.tonal(
               key: const Key('sync-write'),
               onPressed: _busy ? null : _write,
@@ -245,10 +246,10 @@ class _SyncScreenState extends State<SyncScreen> {
           Text(
             zh
                 ? '不同步的东西：汇率、预算、提醒、主题、锁 —— 这些更像是每台设备自己的设置。'
-                    '账户会带过来，但改名不会。'
+                      '账户会带过来，但改名不会。'
                 : 'Not synced: rates, budgets, reminders, the theme, the lock — '
-                    'those are per-device settings. Accounts come across; '
-                    'renaming one does not.',
+                      'those are per-device settings. Accounts come across; '
+                      'renaming one does not.',
             key: const Key('sync-limits'),
             style: TextStyle(color: p.inkSoft, fontSize: 13, height: 1.5),
           ),
@@ -288,15 +289,17 @@ class _Step extends StatelessWidget {
               CircleAvatar(
                 radius: 12,
                 backgroundColor: p.paperWarm,
-                child: Text(n,
-                    style: TextStyle(
-                        color: p.hibiscus,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold)),
+                child: Text(
+                  n,
+                  style: TextStyle(
+                    color: p.hibiscus,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
               const SizedBox(width: 8),
-              Text(title,
-                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
             ],
           ),
           const SizedBox(height: 8),

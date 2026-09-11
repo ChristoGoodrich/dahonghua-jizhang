@@ -24,6 +24,7 @@ import 'src/rust/api/store.dart' as store;
 import 'src/rust/api/theme.dart' as theme;
 import 'reminders.dart';
 import 'tap.dart';
+import 'glass.dart';
 import 'theme.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -183,22 +184,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     final zh = widget.zh;
     final lang = store.language();
-    return Scaffold(
-      backgroundColor: palette.paper,
-      appBar: AppBar(
-        backgroundColor: palette.paper,
-        surfaceTintColor: Colors.transparent,
-        title: Text(
-          zh ? '设置' : 'Settings',
-          style: TextStyle(
-            color: palette.ink,
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-          ),
+    return ScrimScaffold(
+      title: Text(
+        zh ? '设置' : 'Settings',
+        style: TextStyle(
+          color: palette.ink,
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
         ),
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(22, 6, 22, 120),
+        padding: EdgeInsets.fromLTRB(22, headerInset(context) + 6, 22, 120),
         children: [
           _group(zh ? '语言' : 'Language', [
             Row(

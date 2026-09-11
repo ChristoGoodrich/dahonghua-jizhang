@@ -17,6 +17,7 @@ import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'rust_init.dart';
+import 'scroll.dart';
 
 /// Records what it was asked to do, and answers however a test wants.
 class FakeNotifier implements Notifier {
@@ -27,7 +28,7 @@ class FakeNotifier implements Notifier {
 
   /// Ids scheduled, in order, with what each was told to say.
   final List<({int id, String kind, int hour, int minute, String title})>
-      scheduled = [];
+  scheduled = [];
 
   /// Ids cancelled, in order.
   final List<int> cancelled = [];
@@ -40,7 +41,10 @@ class FakeNotifier implements Notifier {
 
   @override
   Future<void> schedule(
-      remind.ScheduleView s, String title, String body) async {
+    remind.ScheduleView s,
+    String title,
+    String body,
+  ) async {
     scheduled.add((
       id: s.id,
       kind: s.kind,
@@ -61,20 +65,20 @@ Future<void> showSettings(
   required FakeNotifier notifier,
   bool zh = true,
 }) async {
-  await tester.pumpWidget(MaterialApp(
-    home: SettingsScreen(zh: zh, notifier: notifier),
-  ));
+  await tester.pumpWidget(
+    MaterialApp(
+      home: SettingsScreen(zh: zh, notifier: notifier),
+    ),
+  );
   await tester.pumpAndSettle();
 }
 
 Future<void> tapSetting(WidgetTester tester, Key key) async {
   // Not `ensureVisible`: that needs the widget in the tree already, and a
-  // ListView has not built what is off screen. Passes today only because the
-  // reminder rows are above the fold, which is not a property to rely on.
-  await tester.scrollUntilVisible(find.byKey(key), 300);
-  await tester.pumpAndSettle();
-  await tester.tap(find.byKey(key));
-  await tester.pumpAndSettle();
+  // ListView has not built what is off screen. And not `scrollUntilVisible`
+  // alone either — the body runs behind the header now, so "visible" includes
+  // "under the title bar", where the bar takes the tap. See scroll.dart.
+  await scrollAndTap(tester, find.byKey(key));
 }
 
 void main() {
@@ -101,8 +105,9 @@ void main() {
       expect([s.hour, s.minute], [21, 30]);
     });
 
-    testWidgets('a time that is not one is refused and stores nothing',
-        (tester) async {
+    testWidgets('a time that is not one is refused and stores nothing', (
+      tester,
+    ) async {
       expect(remind.setDailyReminder(at: '25:00'), isFalse);
       expect(remind.dailyReminderAt(), isEmpty);
       expect(remind.activeSchedules(), isEmpty);
@@ -134,16 +139,20 @@ void main() {
   });
 
   group('handing them over', () {
-    testWidgets('nothing on cancels ours and asks for no permission',
-        (tester) async {
+    testWidgets('nothing on cancels ours and asks for no permission', (
+      tester,
+    ) async {
       final n = FakeNotifier();
 
       expect(await syncReminders(zh: true, notifier: n), isTrue);
 
       expect(n.scheduled, isEmpty);
       expect(n.cancelled.toSet(), remind.allIds().toSet());
-      expect(n.permissionAsks, 0,
-          reason: 'do not ask for permission we are not about to use');
+      expect(
+        n.permissionAsks,
+        0,
+        reason: 'do not ask for permission we are not about to use',
+      );
     });
 
     testWidgets('what is on is scheduled, with words', (tester) async {
@@ -162,8 +171,7 @@ void main() {
     /// the daily reminder called `cancelAllScheduledNotificationsAsync`, so
     /// whether the reports survived depended on the order three unrelated
     /// switches were toggled.
-    testWidgets('a daily reminder does not cancel the reports',
-        (tester) async {
+    testWidgets('a daily reminder does not cancel the reports', (tester) async {
       remind.setWeeklyReport(enabled: true);
       remind.setMonthlyReport(enabled: true);
       remind.setDailyReminder(at: '21:00');
@@ -171,8 +179,11 @@ void main() {
 
       await syncReminders(zh: true, notifier: n);
 
-      expect(n.scheduledIds, remind.allIds().toSet(),
-          reason: 'all three survive, whatever order they were set in');
+      expect(
+        n.scheduledIds,
+        remind.allIds().toSet(),
+        reason: 'all three survive, whatever order they were set in',
+      );
     });
 
     testWidgets('only ours are cancelled, never everything', (tester) async {
@@ -185,8 +196,9 @@ void main() {
       expect(n.cancelled.toSet(), remind.allIds().toSet());
     });
 
-    testWidgets('turning one off cancels its id and leaves the rest',
-        (tester) async {
+    testWidgets('turning one off cancels its id and leaves the rest', (
+      tester,
+    ) async {
       remind.setWeeklyReport(enabled: true);
       remind.setDailyReminder(at: '08:00');
       final n = FakeNotifier();
@@ -200,14 +212,18 @@ void main() {
       expect(n2.scheduled.map((e) => e.kind), ['weekly']);
     });
 
-    testWidgets('a refused permission says so rather than lying',
-        (tester) async {
+    testWidgets('a refused permission says so rather than lying', (
+      tester,
+    ) async {
       remind.setDailyReminder(at: '08:00');
       final n = FakeNotifier(permitted: false);
 
       expect(await syncReminders(zh: true, notifier: n), isFalse);
-      expect(n.scheduled, isEmpty,
-          reason: 'nothing was scheduled, so nothing may claim it was');
+      expect(
+        n.scheduled,
+        isEmpty,
+        reason: 'nothing was scheduled, so nothing may claim it was',
+      );
     });
 
     testWidgets('English words when the app is in English', (tester) async {
@@ -261,8 +277,9 @@ void main() {
       expect(find.textContaining('通知权限'), findsOneWidget);
     });
 
-    testWidgets('the weekly switch schedules the weekly report',
-        (tester) async {
+    testWidgets('the weekly switch schedules the weekly report', (
+      tester,
+    ) async {
       final n = FakeNotifier();
       await showSettings(tester, notifier: n);
 
@@ -274,8 +291,7 @@ void main() {
   });
 
   group('across a restart', () {
-    testWidgets('the settings survive a snapshot and a reload',
-        (tester) async {
+    testWidgets('the settings survive a snapshot and a reload', (tester) async {
       remind.setDailyReminder(at: '07:15');
       remind.setWeeklyReport(enabled: true);
       final blob = store.snapshotConfig();
@@ -288,8 +304,9 @@ void main() {
       expect(remind.monthlyReportOn(), isFalse);
     });
 
-    testWidgets('a config from before reminders existed has none on',
-        (tester) async {
+    testWidgets('a config from before reminders existed has none on', (
+      tester,
+    ) async {
       remind.setDailyReminder(at: '07:15');
       remind.setWeeklyReport(enabled: true);
 
@@ -298,8 +315,9 @@ void main() {
       expect(remind.activeSchedules(), isEmpty);
     });
 
-    testWidgets('a stored time that is not one comes back as off',
-        (tester) async {
+    testWidgets('a stored time that is not one comes back as off', (
+      tester,
+    ) async {
       expect(store.loadConfig(json: '{"remindAt":"nonsense"}'), isTrue);
 
       expect(remind.dailyReminderAt(), isEmpty);
