@@ -16,7 +16,7 @@ use dahonghua_core::stats;
 use dahonghua_core::trends::{self, TrendRow};
 use flutter_rust_bridge::frb;
 
-use super::store::store;
+use super::store::{by_id, store};
 
 fn parse_day(s: &str) -> Civil {
     let mut it = s.split('-');
@@ -100,9 +100,10 @@ fn rows_of<'a>(s: &'a [Entry], ids: &[String], days: &[String]) -> Vec<(&'a Entr
 #[frb(sync)]
 pub fn overview(ids: Vec<String>) -> OverviewView {
     let s = store();
+    let by = by_id(&s);
     let rows: Vec<Entry> = ids
         .iter()
-        .filter_map(|id| s.ledger.get(id).cloned())
+        .filter_map(|id| by.get(id.as_str()).map(|e| (*e).clone()))
         .collect();
     let o = stats::overview(&rows);
     OverviewView {
@@ -120,9 +121,10 @@ pub fn overview(ids: Vec<String>) -> OverviewView {
 #[frb(sync)]
 pub fn category_slices(ids: Vec<String>, io: String, zh: bool) -> Vec<SliceView> {
     let s = store();
+    let by = by_id(&s);
     let rows: Vec<Entry> = ids
         .iter()
-        .filter_map(|id| s.ledger.get(id).cloned())
+        .filter_map(|id| by.get(id.as_str()).map(|e| (*e).clone()))
         .collect();
     let direction = Io::parse(&io).unwrap_or(Io::Exp);
     let cats = stats::by_category(&rows, direction);

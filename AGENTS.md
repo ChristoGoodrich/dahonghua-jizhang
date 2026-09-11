@@ -53,10 +53,10 @@ refuses to run without `src/` for exactly that reason.
     npm run apk           the release APKs, one per architecture
 
     cd flutter_app
-    flutter test integration_test/all_test.dart    648 tests, ~5 min
+    flutter test integration_test/all_test.dart    653 tests, ~5 min
     flutter test integration_test/<one>_test.dart  while working on one screen
 
-The suite is one entrypoint on purpose: per file it was 35 APK builds and about
+The suite is one entrypoint on purpose: per file it was 36 APK builds and about
 twenty minutes. Add a test file and re-run `node scripts/gen-all-tests.js`.
 
 ## Shipping a build
@@ -167,6 +167,23 @@ And a test note that cost an hour: **`TestGesture.moveBy` stamps every event
 is spaced with `pump`. Use `tester.fling` and `tester.drag`. `pumpWidget`
 twice in one test also reuses the element and therefore the lens's position —
 give the two trees different keys.
+
+## Looking things up
+
+`Ledger::get` is a linear scan over `entries`. That is fine once; twelve call
+sites in the bridge called it **once per id in a list that was itself the whole
+ledger**, which is O(n²). At 5,000 rows `list_items` alone took 218ms — on
+every record, every delete and every keystroke in the search box — and 统计,
+预算, 报销, 报表, 结算单, 导出 and 搜索 all had the same shape.
+
+`api::store::by_id` builds the map once and hands out constant-time lookups.
+If you are about to write `ledger.get(id)` inside a loop over ids, take that
+instead. It uses `or_insert` rather than `collect` so a duplicated id resolves
+to the same row the scan would have found — first, not last.
+
+`scale_test.dart` holds it, with a clock, and the header there explains why a
+timing assertion is the right tool for once: a quadratic list and a linear one
+return byte-identical answers, so no correctness test can tell them apart.
 
 ## Two habits worth keeping
 

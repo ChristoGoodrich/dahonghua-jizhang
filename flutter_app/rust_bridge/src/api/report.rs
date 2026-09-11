@@ -17,7 +17,7 @@ use dahonghua_core::recap;
 use dahonghua_core::weekly::{self, WeekRow};
 use flutter_rust_bridge::frb;
 
-use super::store::{settings_of, store};
+use super::store::{by_id, settings_of, store};
 
 fn parse_day(s: &str) -> Civil {
     let mut it = s.split('-');
@@ -30,11 +30,12 @@ fn parse_day(s: &str) -> Civil {
 /// The entries named by `ids`, paired with the day Dart resolved for each.
 fn rows(ids: &[String], days_of: &[String]) -> (Vec<Entry>, Vec<Civil>) {
     let s = store();
+    let by = by_id(&s);
     let n = ids.len().min(days_of.len());
     let mut entries = Vec::with_capacity(n);
     let mut days = Vec::with_capacity(n);
     for i in 0..n {
-        if let Some(e) = s.ledger.get(&ids[i]) {
+        if let Some(e) = by.get(ids[i].as_str()).copied() {
             entries.push(e.clone());
             days.push(parse_day(&days_of[i]));
         }

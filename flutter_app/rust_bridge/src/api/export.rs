@@ -21,7 +21,7 @@ use flutter_rust_bridge::frb;
 use dahonghua_core::civil::Civil;
 use dahonghua_core::export::{to_csv, CustomCats, ExportRow};
 
-use super::store::store;
+use super::store::{by_id, store};
 
 fn parse_day(s: &str) -> Civil {
     let mut it = s.split('-');
@@ -47,10 +47,11 @@ fn parse_day(s: &str) -> Civil {
 #[frb(sync)]
 pub fn export_csv(ids: Vec<String>, days_of: Vec<String>) -> Vec<u8> {
     let s = store();
+    let by = by_id(&s);
     let n = ids.len().min(days_of.len());
     let rows: Vec<ExportRow> = (0..n)
         .filter_map(|i| {
-            let e = s.ledger.get(&ids[i])?;
+            let e = *by.get(ids[i].as_str())?;
             Some(ExportRow {
                 entry: e.clone(),
                 day: parse_day(&days_of[i]),

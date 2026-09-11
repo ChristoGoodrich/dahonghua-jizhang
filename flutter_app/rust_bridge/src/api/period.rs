@@ -13,7 +13,7 @@ use flutter_rust_bridge::frb;
 use dahonghua_core::civil::Civil;
 use dahonghua_core::period::{period_range, shift_period, Period};
 
-use super::store::{settings_of, store};
+use super::store::{by_id, settings_of, store};
 
 fn parse_day(s: &str) -> Civil {
     let mut it = s.split('-');
@@ -95,10 +95,11 @@ pub fn ids_in_period(
     );
     let (lo, hi) = (r.start.day_number(), r.end.day_number());
     let s = store();
+    let by = by_id(&s);
     let n = ids.len().min(days_of.len());
     (0..n)
         .filter(|&i| {
-            if s.ledger.get(&ids[i]).is_none() {
+            if !by.contains_key(ids[i].as_str()) {
                 return false;
             }
             let d = parse_day(&days_of[i]).day_number();

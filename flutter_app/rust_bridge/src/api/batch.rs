@@ -18,7 +18,7 @@ use dahonghua_core::entry::Io;
 use dahonghua_core::reimburse;
 use flutter_rust_bridge::frb;
 
-use super::store::{store, store_mut, EntryPatch, UndoToken};
+use super::store::{by_id, store, store_mut, EntryPatch, UndoToken};
 
 /// What the selection header says.
 #[derive(Debug, Clone, PartialEq, Default)]
@@ -61,8 +61,9 @@ impl From<ClaimTo> for core::ClaimTo {
 /// to the deadlock the alternative buys.
 fn rows(ids: &[String]) -> Vec<dahonghua_core::entry::Entry> {
     let s = store();
+    let by = by_id(&s);
     ids.iter()
-        .filter_map(|id| s.ledger.get(id))
+        .filter_map(|id| by.get(id.as_str()).copied())
         .filter(|e| e.is_live())
         .cloned()
         .collect()

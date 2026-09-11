@@ -15,7 +15,7 @@ use dahonghua_core::civil::Civil;
 use dahonghua_core::entry::Entry;
 use dahonghua_core::statement::{due_soon, statement_summary, DatedEntry};
 
-use super::store::store;
+use super::store::{by_id, store};
 
 fn parse_day(s: &str) -> Civil {
     let mut it = s.split('-');
@@ -32,10 +32,11 @@ fn show_day(c: Civil) -> String {
 /// The entries named by `ids`, paired with the day Dart resolved for each.
 fn dated(ids: &[String], days_of: &[String]) -> Vec<DatedEntry> {
     let s = store();
+    let by = by_id(&s);
     let n = ids.len().min(days_of.len());
     (0..n)
         .filter_map(|i| {
-            let e: &Entry = s.ledger.get(&ids[i])?;
+            let e: &Entry = *by.get(ids[i].as_str())?;
             Some(DatedEntry {
                 entry: e.clone(),
                 day: parse_day(&days_of[i]),

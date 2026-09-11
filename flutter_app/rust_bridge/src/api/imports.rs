@@ -27,7 +27,7 @@ use dahonghua_core::dedup::{existing_row, to_candidates, ExistingRow};
 use dahonghua_core::encoding::decode_bill_text;
 use dahonghua_core::num::round2;
 
-use super::store::store;
+use super::store::{by_id, store};
 
 fn parse_day(s: &str) -> Civil {
     let mut it = s.split('-');
@@ -103,10 +103,11 @@ pub fn preview_bills(bytes: Vec<u8>, ids: Vec<String>, days_of: Vec<String>) -> 
 
     let existing: Vec<ExistingRow> = {
         let s = store();
+        let by = by_id(&s);
         let n = ids.len().min(days_of.len());
         (0..n)
             .filter_map(|i| {
-                let e = s.ledger.get(&ids[i])?;
+                let e = *by.get(ids[i].as_str())?;
                 existing_row(e, parse_day(&days_of[i]))
             })
             .collect()

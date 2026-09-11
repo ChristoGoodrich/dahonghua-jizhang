@@ -15,7 +15,7 @@ use dahonghua_core::civil::Civil;
 use dahonghua_core::entry::{Entry, Io};
 use flutter_rust_bridge::frb;
 
-use super::store::{set_settings_inner, settings_of, store, BudgetSettings};
+use super::store::{by_id, set_settings_inner, settings_of, store, BudgetSettings};
 
 /// The budget settings, as Dart holds them.
 ///
@@ -129,8 +129,9 @@ pub struct CatBudgetView {
 
 fn entries_of(ids: &[String]) -> Vec<Entry> {
     let s = store();
+    let by = by_id(&s);
     ids.iter()
-        .filter_map(|id| s.ledger.get(id).cloned())
+        .filter_map(|id| by.get(id.as_str()).map(|e| (*e).clone()))
         .collect()
 }
 
@@ -152,10 +153,11 @@ pub fn daily_status(
     today: String,
 ) -> TierView {
     let s = store();
+    let by = by_id(&s);
     let n = ids.len().min(days_of.len());
     let rows: Vec<core::DayRow> = (0..n)
         .filter_map(|i| {
-            let e = s.ledger.get(&ids[i])?;
+            let e = *by.get(ids[i].as_str())?;
             Some(core::DayRow {
                 io: e.io,
                 amt: e.amt,
