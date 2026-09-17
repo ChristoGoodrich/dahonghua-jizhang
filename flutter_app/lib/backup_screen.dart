@@ -1,4 +1,17 @@
-// 备份 — snapshots of the whole store, on this device.
+// 备份 — snapshots of the whole store.
+//
+// They live in the app's own storage, and that is worth being blunt about
+// because the word 备份 promises more than the directory delivers: **an
+// uninstall takes every one of them**. That is not a hypothetical filing
+// cabinet either — installing a properly signed build over a debug-signed one
+// requires exactly that uninstall. A snapshot that only exists in the sandbox
+// protects against a bad restore and against nothing else.
+//
+// So every snapshot can be handed out of the app. The note here used to say
+// export elsewhere needed "a sharing plugin"; `share_plus` had arrived for the
+// sync screen in the meantime and nobody came back. It is the share sheet, so
+// where it lands is the user's choice — 文件, a cloud drive, a chat with
+// themselves — and this app still sends nothing anywhere on its own.
 //
 // The bytes are Dart's; the naming, the ordering, the pruning and the document
 // are Rust's. That split matters more than it looks: pruning keeps the FIRST
@@ -19,6 +32,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'src/rust/api/backup.dart' as backup;
 import 'glass.dart';
@@ -107,6 +121,25 @@ class _BackupScreenState extends State<BackupScreen> {
     } finally {
       if (mounted) setState(() => _busy = false);
     }
+  }
+
+  /// Hand a snapshot out of the app.
+  ///
+  /// The share sheet rather than a folder this app picks: scoped storage means
+  /// an app cannot just write to 下载 any more, and where a backup belongs is
+  /// the user's call anyway. What matters is that after this the file exists
+  /// somewhere an uninstall cannot reach.
+  Future<void> _export(backup.BackupInfoView b) async {
+    final dir = await backupDir();
+    final file = File('${dir.path}/${b.name}');
+    if (!await file.exists()) {
+      if (!mounted) return;
+      setState(() => _flash = widget.zh ? '这份快照不见了' : 'That snapshot is gone');
+      return;
+    }
+    await SharePlus.instance.share(
+      ShareParams(files: [XFile(file.path)], text: b.name),
+    );
   }
 
   Future<void> _restore(backup.BackupInfoView b) async {
@@ -219,9 +252,12 @@ class _BackupScreenState extends State<BackupScreen> {
           const SizedBox(height: 24),
           Text(
             zh
-                ? '加密备份和导出到别处还没做 — 前者要一套密码学库,后者要文件分享插件。'
-                : 'Encrypted snapshots and export elsewhere are not here yet: '
-                      'one needs a crypto library, the other a sharing plugin.',
+                ? '快照在这个 app 的存储里,卸载会一起没有 —— 装正式签名的版本就要先卸载,'
+                      '所以换版本前请先「导出」一份。加密备份还没做,那要一套密码学库。'
+                : 'Snapshots live in this app storage and an uninstall takes '
+                      'them — which is what installing a properly signed build '
+                      'needs. Export one first. Encrypted snapshots are still '
+                      'absent: that needs a crypto library.',
             key: const Key('backup-note'),
             style: TextStyle(fontSize: 11.5, color: palette.inkSoft),
           ),
@@ -263,6 +299,12 @@ class _BackupScreenState extends State<BackupScreen> {
                 ),
               ],
             ),
+          ),
+          TextButton(
+            key: Key('backup-${b.name}-export'),
+            onPressed: () => _export(b),
+            style: TextButton.styleFrom(foregroundColor: palette.inkSoft),
+            child: Text(zh ? '导出' : 'Export'),
           ),
           TextButton(
             key: Key('backup-${b.name}-restore'),

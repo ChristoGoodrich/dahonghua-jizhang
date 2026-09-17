@@ -7,12 +7,23 @@
       app writes a file and reads one back, and moving that file between
       devices is the user's doing. The ledger can end up in a cloud folder —
       but because someone put it there, not because this app sent it anywhere.
+
+      That paragraph was false for as long as it has been here. `allowBackup`
+      defaults to ON, so Android's Auto Backup had been uploading the ledger to
+      the user's cloud backup — every transaction, every account — with nobody
+      choosing it and nothing in the app saying so. The rules below turn the
+      cloud copy off and leave device-to-device transfer on, which is the half
+      that is somebody moving their own data between two phones they are
+      holding rather than this app sending anything anywhere.
     -->
     <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:label="@string/app_name"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:allowBackup="true"
+        android:fullBackupContent="@xml/backup_rules"
+        android:dataExtractionRules="@xml/data_extraction_rules">
         <activity
             android:name="com.dahonghua.flutter_app.MainActivity"
             android:exported="true"

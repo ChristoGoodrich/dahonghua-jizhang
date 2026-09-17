@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The same answer for API 24 to 30, where `dataExtractionRules` does not exist.
+
+  Those versions have one mechanism rather than two: Auto Backup covered both
+  the cloud upload and the transfer to a new phone, so excluding everything
+  turns off both. That is the conservative half of the trade and it is the
+  right way round — an upload nobody asked for is a worse outcome than a
+  restore nobody gets, and the app has 备份 → 导出 either way.
+-->
+<full-backup-content>
+    <exclude domain="root" />
+    <exclude domain="file" />
+    <exclude domain="database" />
+    <exclude domain="sharedpref" />
+    <exclude domain="external" />
+</full-backup-content>

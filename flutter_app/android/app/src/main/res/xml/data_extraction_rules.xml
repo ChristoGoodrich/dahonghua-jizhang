@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  What Android may copy out of this app, on API 31 and up.
+
+  The manifest says the only thing this app reaches the network for is an
+  exchange rate, and that the ledger leaves the device because someone put it
+  somewhere, not because the app sent it. That was not true: `allowBackup`
+  defaults to **on**, so Android's own Auto Backup had been uploading the
+  SQLite ledger — every transaction, every account — to the user's cloud
+  backup without anyone choosing it.
+
+  So cloud backup is off, and device transfer is on. They are different things
+  and only one of them contradicts the claim: moving to a new phone copies the
+  data directly between two devices the same person is holding, which is what
+  someone replacing a phone expects and is not the app sending anything
+  anywhere.
+
+  The ledger still has a way off this phone deliberately: 备份 → 导出 hands a
+  snapshot to the share sheet, and 同步 writes a document. Both because the
+  user asked.
+
+  Each domain is listed rather than relying on `root` to cover its children —
+  the documentation is explicit that the domains are independent, and an
+  exclusion that silently covers less than it looks like is the shape of the
+  bug this file exists to fix.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="root" />
+        <exclude domain="file" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="external" />
+    </cloud-backup>
+    <device-transfer>
+        <include domain="root" path="." />
+        <include domain="file" path="." />
+        <include domain="database" path="." />
+        <include domain="sharedpref" path="." />
+    </device-transfer>
+</data-extraction-rules>

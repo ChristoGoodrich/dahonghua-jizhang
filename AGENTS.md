@@ -53,7 +53,7 @@ refuses to run without `src/` for exactly that reason.
     npm run apk           the release APKs, one per architecture
 
     cd flutter_app
-    flutter test integration_test/all_test.dart    653 tests, ~5 min
+    flutter test integration_test/all_test.dart    656 tests, ~5 min
     flutter test integration_test/<one>_test.dart  while working on one screen
 
 The suite is one entrypoint on purpose: per file it was 36 APK builds and about
@@ -184,6 +184,31 @@ to the same row the scan would have found — first, not last.
 `scale_test.dart` holds it, with a clock, and the header there explains why a
 timing assertion is the right tool for once: a quadratic list and a linear one
 return byte-identical answers, so no correctness test can tell them apart.
+
+**Duplicate ids are not coherent, and that predates `by_id`.** `Ledger::add`
+pushes without checking, so a ledger can hold two rows with one id. Rust
+resolves them first-wins (`get`, `by_id`); the entry list draws from a Dart map
+literal, which is last-wins. Tap a duplicated row and the sheet opens the
+other copy. Nothing creates duplicates on purpose, and `get` already returns
+tombstones — this is a core-level question pinned by goldens, not a bridge
+fix. Written down so the next person does not rediscover it through a test
+that passes when a millisecond happens to tick.
+
+## Where the ledger can go
+
+Off the phone only when somebody sends it. 备份 writes snapshots **inside the
+app's own storage**, where an uninstall takes them — and installing a properly
+signed build over a debug-signed one requires exactly that uninstall — so every
+snapshot has 导出, which hands it to the share sheet. 同步 writes a document.
+
+Android's Auto Backup is the exception that used to exist silently.
+`allowBackup` defaults to on, which uploaded the ledger to the user's cloud
+backup while the manifest claimed nothing left the device unless someone sent
+it. `res/xml/data_extraction_rules.xml` turns cloud backup off and leaves
+device-to-device transfer on (API 31+); `backup_rules.xml` turns both off below
+that, where they were one mechanism. If you add a data directory, it is
+already excluded — each domain is listed rather than trusting `root` to cover
+its children.
 
 ## Two habits worth keeping
 

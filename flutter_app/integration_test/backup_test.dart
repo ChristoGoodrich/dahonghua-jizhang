@@ -47,7 +47,11 @@ Future<void> writeRaw(String name, String body) async {
 
 Future<List<String>> namesOnDisk() async {
   final dir = await backupDir();
-  return dir.listSync().whereType<File>().map((f) => f.uri.pathSegments.last).toList()
+  return dir
+      .listSync()
+      .whereType<File>()
+      .map((f) => f.uri.pathSegments.last)
+      .toList()
     ..sort();
 }
 
@@ -76,8 +80,9 @@ void main() {
       expect(name, isNot(contains('.enc.')));
     });
 
-    testWidgets('the document carries the ledger and the config',
-        (tester) async {
+    testWidgets('the document carries the ledger and the config', (
+      tester,
+    ) async {
       spend('e1', 35, note: '午饭');
       final f = await createBackup();
       final body = await f.readAsString();
@@ -98,8 +103,9 @@ void main() {
       expect(gone, ['backup_200.json', 'backup_100.json']);
     });
 
-    testWidgets('a listing in any order still prunes the right files',
-        (tester) async {
+    testWidgets('a listing in any order still prunes the right files', (
+      tester,
+    ) async {
       // the reason the sort lives in Rust rather than in whatever order the
       // directory came back in
       final gone = backup.pruneBackups(
@@ -111,18 +117,15 @@ void main() {
         ],
         keep: 1,
       );
-      expect(gone, [
-        'backup_300.json',
-        'backup_200.json',
-        'backup_100.json',
-      ]);
+      expect(gone, ['backup_300.json', 'backup_200.json', 'backup_100.json']);
     });
 
     testWidgets('leaves files that are not backups alone', (tester) async {
       await writeRaw('entries.json', '[]');
       await writeRaw('backup_100.json', '[]');
-      expect(backup.pruneBackups(names: await namesOnDisk(), keep: 0),
-          ['backup_100.json']);
+      expect(backup.pruneBackups(names: await namesOnDisk(), keep: 0), [
+        'backup_100.json',
+      ]);
     });
   });
 
@@ -135,8 +138,9 @@ void main() {
       expect(list.map((b) => b.time).toList(), [300.0, 200.0, 100.0]);
     });
 
-    testWidgets('an unreadable name sorts last rather than first',
-        (tester) async {
+    testWidgets('an unreadable name sorts last rather than first', (
+      tester,
+    ) async {
       // `Number('draft')` is NaN, and a NaN comparator is not a total order —
       // ranking it explicitly is what stops it being pruned ahead of a real
       // backup
@@ -147,8 +151,9 @@ void main() {
       expect(list.last.time.isNaN, isTrue);
     });
 
-    testWidgets('an empty number is epoch zero, not unreadable',
-        (tester) async {
+    testWidgets('an empty number is epoch zero, not unreadable', (
+      tester,
+    ) async {
       // `Number('')` is 0 — the JavaScript fact the corpus caught
       await writeRaw('backup_.json', '[]');
       final list = await listBackups();
@@ -185,8 +190,9 @@ void main() {
       expect(store.language(), 'en');
     });
 
-    testWidgets('refuses a document it cannot read, and changes nothing',
-        (tester) async {
+    testWidgets('refuses a document it cannot read, and changes nothing', (
+      tester,
+    ) async {
       spend('e1', 35);
       final r = backup.restoreBackup(json: 'not json at all');
 
@@ -196,22 +202,22 @@ void main() {
       expect(store.getEntry(id: 'e1'), isNotNull);
     });
 
-    testWidgets('refuses a truncated document rather than loading half of it',
-        (tester) async {
+    testWidgets('refuses a truncated document rather than loading half of it', (
+      tester,
+    ) async {
       // the same reason `load_entries` answers -1 instead of loading the rows
       // it managed to parse
       spend('e1', 35);
       final good = backup.buildBackup(ts: now.toDouble());
-      final r = backup.restoreBackup(
-        json: good.substring(0, good.length ~/ 2),
-      );
+      final r = backup.restoreBackup(json: good.substring(0, good.length ~/ 2));
 
       expect(r.ok, isFalse);
       expect(store.entryCount(), 1);
     });
 
-    testWidgets('takes a bare array, which is what an older export was',
-        (tester) async {
+    testWidgets('takes a bare array, which is what an older export was', (
+      tester,
+    ) async {
       // refusing it would be refusing the files this feature exists to read
       spend('e1', 35);
       final entries = store.snapshotEntries();
@@ -242,8 +248,9 @@ void main() {
       expect((await listBackups()).length, 1);
     });
 
-    testWidgets('restoring asks first, and cancelling changes nothing',
-        (tester) async {
+    testWidgets('restoring asks first, and cancelling changes nothing', (
+      tester,
+    ) async {
       spend('old', 10);
       await createBackup();
       store.reset();
@@ -260,8 +267,9 @@ void main() {
       expect(store.getEntry(id: 'old'), isNull);
     });
 
-    testWidgets('confirming restores, and snapshots what it replaced first',
-        (tester) async {
+    testWidgets('confirming restores, and snapshots what it replaced first', (
+      tester,
+    ) async {
       // restoring is the one action here with no undo, and the cheapest undo
       // is another backup
       spend('old', 10);
@@ -282,8 +290,9 @@ void main() {
       expect((await listBackups()).length, before + 1);
     });
 
-    testWidgets('an encrypted snapshot offers no restore it cannot do',
-        (tester) async {
+    testWidgets('an encrypted snapshot offers no restore it cannot do', (
+      tester,
+    ) async {
       await writeRaw('backup_100.enc.json', 'ciphertext');
       await show(tester);
 
@@ -296,6 +305,44 @@ void main() {
     testWidgets('says what is deliberately absent', (tester) async {
       await show(tester);
       expect(find.byKey(const Key('backup-note')), findsOneWidget);
+    });
+
+    /// The note used to say export elsewhere needed "a sharing plugin".
+    /// `share_plus` arrived for the sync screen and nobody came back here, so
+    /// the screen went on claiming a gap it no longer had. Any sentence that
+    /// still names something absent has to name something actually absent.
+    testWidgets('and does not still claim exporting is missing', (
+      tester,
+    ) async {
+      await show(tester);
+      final note = tester.widget<Text>(find.byKey(const Key('backup-note')));
+      expect(note.data, isNot(contains('分享插件')));
+      expect(note.data, contains('导出'));
+    });
+
+    /// The point of the button: a snapshot in the app's own storage does not
+    /// survive the uninstall that installing a signed build requires.
+    testWidgets('every snapshot can be handed out of the app', (tester) async {
+      await writeRaw('backup_100.json', '{}');
+      await show(tester);
+      expect(
+        find.byKey(const Key('backup-backup_100.json-export')),
+        findsOneWidget,
+      );
+    });
+
+    /// Unlike restore, which cannot read an encrypted snapshot, exporting one
+    /// is just moving bytes — and a snapshot nothing here can read is exactly
+    /// the one worth getting off the phone.
+    testWidgets('including an encrypted one it cannot itself read', (
+      tester,
+    ) async {
+      await writeRaw('backup_100.enc.json', 'ciphertext');
+      await show(tester);
+      final export = tester.widget<TextButton>(
+        find.byKey(const Key('backup-backup_100.enc.json-export')),
+      );
+      expect(export.onPressed, isNotNull);
     });
   });
 }
