@@ -68,6 +68,20 @@ List<String> daysOf(List<store.EntryView> live) => [
   for (final e in live) localDay(DateTime.fromMillisecondsSinceEpoch(e.ts)),
 ];
 
+/// Pump the list, guaranteeing a fresh `State`.
+///
+/// `_EntryListScreenState` reads the ledger in `initState`, so a reused
+/// element would render an earlier test's rows. `testWidgets` tears the tree
+/// down between tests, so this is a precaution rather than a fix — and it is
+/// worth saying so, because it was first added as the fix for a failure it
+/// did not cause. That failure is described on the duplicate-id test below.
+Future<void> showList(WidgetTester tester, String tag) async {
+  await tester.pumpWidget(
+    MaterialApp(key: ValueKey(tag), home: const EntryListScreen()),
+  );
+  await tester.pumpAndSettle();
+}
+
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(ensureRust);
@@ -123,9 +137,10 @@ void main() {
       expect(ms, lessThan(300), reason: 'categorySlices took ${ms}ms');
     });
 
-    /// The whole point of the map is that it answers the same as the scan it
-    /// replaced. A screen that renders is the cheapest proof of that: every
-    /// row it draws came back through `by_id`.
+    /// The screen still renders a ledger that went through the map. This is a
+    /// smoke test of the seam, not of the duplicate rule — the rows' text is
+    /// drawn from the Dart side's own id map over `liveEntries()`, and only
+    /// the order and grouping came back through `listItems` and `by_id`.
     testWidgets('the list still says what it said', (tester) async {
       store.addEntry(
         entry: store.NewEntry(
@@ -139,8 +154,7 @@ void main() {
         now: now,
       );
       fill(200);
-      await tester.pumpWidget(const MaterialApp(home: EntryListScreen()));
-      await tester.pumpAndSettle();
+      await showList(tester, 'lunch');
 
       expect(find.text('午饭'), findsOneWidget);
       expect(find.text('-35.50'), findsOneWidget);
@@ -154,32 +168,60 @@ void main() {
     /// performance change, so `by_id` uses `or_insert` and this holds it to
     /// that.
     ///
-    /// Found by accident: an earlier version of the test above reused `e1`
-    /// and the list drew 午饭 twice, which is exactly what the linear scan
-    /// did too.
+    /// ## Why this goes through the statistics and not the screen
+    ///
+    /// An earlier version rendered the list and counted the notes. It failed
+    /// two runs in three, and it was not flaky so much as wrong: the list
+    /// draws its rows from Dart's own `{for (e in live) e.id: e}`, where the
+    /// LAST duplicate wins, so `by_id` never decided what text appeared at
+    /// all. It passed only when a millisecond ticked between the two
+    /// `addEntry` calls, because `now` is a getter — a later timestamp sorted
+    /// the second row first, and Dart's last-wins then happened to land on
+    /// the first. The test was tracking the emulator's clock.
+    ///
+    /// `categorySlices` reads through `by_id` and its answer differs between
+    /// the two rules: resolve both ids to 餐饮 10 and the slice is 餐饮 20;
+    /// resolve both to 交通 99 and it is 交通 198. One fixed timestamp for both
+    /// rows, so nothing here depends on how fast the machine is.
     testWidgets('a duplicated id resolves the way the scan did — first wins', (
       tester,
     ) async {
-      for (final note in ['第一个', '第二个']) {
-        store.addEntry(
-          entry: store.NewEntry(
-            io: 'exp',
-            cat: 'food',
-            amt: 10,
-            note: note,
-            ts: now,
-          ),
-          id: 'same',
-          now: now,
-        );
-      }
-      await tester.pumpWidget(const MaterialApp(home: EntryListScreen()));
-      await tester.pumpAndSettle();
+      final t = now;
+      store.addEntry(
+        entry: store.NewEntry(
+          io: 'exp',
+          cat: 'food',
+          amt: 10,
+          note: '第一个',
+          ts: t,
+        ),
+        id: 'same',
+        now: t,
+      );
+      store.addEntry(
+        entry: store.NewEntry(
+          io: 'exp',
+          cat: 'trans',
+          amt: 99,
+          note: '第二个',
+          ts: t,
+        ),
+        id: 'same',
+        now: t,
+      );
+      expect(store.entryCount(), 2, reason: 'the ledger holds both rows');
 
-      // Two rows, because two rows are live — and both resolve to the first.
-      expect(find.text('第一个'), findsNWidgets(2));
-      expect(find.text('第二个'), findsNothing);
+      // The scan's answer, which is the rule being matched.
       expect(store.getEntry(id: 'same')!.note, '第一个');
+
+      final slices = stats.categorySlices(
+        ids: ['same', 'same'],
+        io: 'exp',
+        zh: true,
+      );
+      expect(slices, hasLength(1), reason: 'both ids resolve to one row');
+      expect(slices.single.cat, 'food', reason: 'the first row, not the last');
+      expect(slices.single.amt, 20);
     });
   });
 }
