@@ -53,7 +53,7 @@ refuses to run without `src/` for exactly that reason.
     npm run apk           the release APKs, one per architecture
 
     cd flutter_app
-    flutter test integration_test/all_test.dart    660 tests, ~5 min
+    flutter test integration_test/all_test.dart    661 tests, ~5 min
     flutter test integration_test/<one>_test.dart  while working on one screen
 
 The suite is one entrypoint on purpose: per file it was 36 APK builds and about

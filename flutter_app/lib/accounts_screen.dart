@@ -436,7 +436,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                   icon: Icon(
                     Icons.delete_outline,
                     size: 20,
-                    color: palette.hibiscus,
+                    color: palette.inkSoft,
                   ),
                   onPressed: () => _confirmDelete(a),
                 ),

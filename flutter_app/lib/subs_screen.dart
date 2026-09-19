@@ -21,6 +21,7 @@ import 'src/rust/api/money.dart' as money;
 import 'src/rust/api/subscriptions.dart' as subs;
 import 'tap.dart';
 import 'glass.dart';
+import 'empty_note.dart';
 import 'theme.dart';
 
 /// `YYYY-M-D` with a **0-indexed** month, inherited from v7 — the encoding the
@@ -171,12 +172,18 @@ class _SubsScreenState extends State<SubsScreen> {
         ),
       ],
       body: _rows.isEmpty
-          ? Center(
-              child: Text(
-                zh ? '还没有订阅' : 'No subscriptions yet',
-                key: const Key('no-subs'),
-                style: TextStyle(fontSize: 14, color: palette.inkSoft),
-              ),
+          ? ListView(
+              padding: EdgeInsets.only(top: headerInset(context)),
+              children: [
+                EmptyNote(
+                  key: const Key('no-subs'),
+                  icon: Icons.autorenew_outlined,
+                  text: zh ? '还没有订阅' : 'No subscriptions yet',
+                  hint: zh
+                      ? '会员、房租、话费 —— 到期那天自动记一笔'
+                      : 'Memberships, rent, a phone plan — logged on the day',
+                ),
+              ],
             )
           : ListView(
               padding: EdgeInsets.fromLTRB(
@@ -287,7 +294,7 @@ class _SubsScreenState extends State<SubsScreen> {
               icon: Icon(
                 Icons.delete_outline,
                 size: 20,
-                color: palette.hibiscus,
+                color: palette.inkSoft,
               ),
               onPressed: () => _confirmDelete(s),
             ),

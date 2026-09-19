@@ -191,11 +191,6 @@ class _CaptureScreenState extends State<CaptureScreen> {
           // tells an app its access changed.
           if (mounted) await _reload();
         },
-        style: FilledButton.styleFrom(
-          backgroundColor: palette.hibiscus,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 14),
-        ),
         child: Text(zh ? '去系统设置里打开' : 'Open system settings'),
       ),
     ] else
@@ -305,10 +300,6 @@ class _CaptureScreenState extends State<CaptureScreen> {
             FilledButton(
               key: Key('accept-${p.id}'),
               onPressed: () => _accept(p),
-              style: FilledButton.styleFrom(
-                backgroundColor: palette.hibiscus,
-                foregroundColor: Colors.white,
-              ),
               child: Text(zh ? '记一笔' : 'Record'),
             ),
           ],

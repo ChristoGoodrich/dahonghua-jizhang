@@ -477,11 +477,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               key: const Key('export-csv'),
               onPressed: _busy ? null : _export,
               icon: const Icon(Icons.ios_share, size: 18),
-              style: FilledButton.styleFrom(
-                backgroundColor: palette.hibiscus,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-              ),
               label: Text(zh ? '导出 CSV' : 'Export CSV'),
             ),
             if (_flash != null)

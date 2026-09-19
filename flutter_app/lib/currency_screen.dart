@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 
 import 'src/rust/api/currency.dart' as cur;
 import 'glass.dart';
+import 'empty_note.dart';
 import 'theme.dart';
 
 class CurrencyScreen extends StatefulWidget {
@@ -240,13 +241,13 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
             ),
           ),
           if (_rates.isEmpty)
-            Padding(
-              padding: const EdgeInsets.only(left: 2),
-              child: Text(
-                zh ? '还没有别的币种' : 'No other currencies yet',
-                key: const Key('no-rates'),
-                style: TextStyle(fontSize: 12.5, color: palette.inkSoft),
-              ),
+            EmptyNote(
+              key: const Key('no-rates'),
+              icon: Icons.currency_exchange,
+              text: zh ? '还没有别的币种' : 'No other currencies yet',
+              hint: zh
+                  ? '出国或海淘时点右上角加一个,记账时就能选'
+                  : 'Add one with + to record in it',
             ),
           for (final r in _rates) _row(r, zh),
         ],

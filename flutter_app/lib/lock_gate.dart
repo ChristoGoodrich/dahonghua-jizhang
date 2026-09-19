@@ -53,15 +53,15 @@ class DeviceAuthenticator implements Authenticator {
 
   @override
   Future<bool> authenticate(String reason) => _auth.authenticate(
-        localizedReason: reason,
-        // The device passcode counts. Requiring biometrics would lock out a
-        // user whose fingerprint sensor has stopped reading, which is a
-        // support problem rather than a security gain.
-        biometricOnly: false,
-        // The prompt survives the app going to the background, which is what
-        // the OS does to us while its own dialog is up.
-        persistAcrossBackgrounding: true,
-      );
+    localizedReason: reason,
+    // The device passcode counts. Requiring biometrics would lock out a
+    // user whose fingerprint sensor has stopped reading, which is a
+    // support problem rather than a security gain.
+    biometricOnly: false,
+    // The prompt survives the app going to the background, which is what
+    // the OS does to us while its own dialog is up.
+    persistAcrossBackgrounding: true,
+  );
 
   @override
   Future<void> cancel() => _auth.stopAuthentication();
@@ -155,24 +155,25 @@ class _LockGateState extends State<LockGate> with WidgetsBindingObserver {
         widget.zh ? '解锁大红花记账' : 'Unlock Red Blossom',
       );
       if (!mounted) return;
-      _apply(lock.lockSettled(
-        attempt: BigInt.from(attempt),
-        outcome: ok ? 'success' : 'rejected',
-      ));
+      _apply(
+        lock.lockSettled(
+          attempt: BigInt.from(attempt),
+          outcome: ok ? 'success' : 'rejected',
+        ),
+      );
     } catch (_) {
       // Could not ask. NOT the same as a refusal, and not a reason to open.
       if (!mounted) return;
-      _apply(lock.lockSettled(
-        attempt: BigInt.from(attempt),
-        outcome: 'errored',
-      ));
+      _apply(
+        lock.lockSettled(attempt: BigInt.from(attempt), outcome: 'errored'),
+      );
     }
   }
 
   String _noticeText(String n, bool zh) => switch (n) {
-        'failed' => zh ? '没通过,再试一次' : 'Not recognised — try again',
-        _ => zh ? '现在没法验证' : 'Cannot verify right now',
-      };
+    'failed' => zh ? '没通过,再试一次' : 'Not recognised — try again',
+    _ => zh ? '现在没法验证' : 'Cannot verify right now',
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -205,19 +206,15 @@ class _LockGateState extends State<LockGate> with WidgetsBindingObserver {
                       _noticeText(_notice!, zh),
                       key: const Key('lock-notice'),
                       style: TextStyle(
-                          fontSize: 13, color: palette.hibiscusDeep),
+                        fontSize: 13,
+                        color: palette.hibiscusDeep,
+                      ),
                     ),
                   ],
                   const SizedBox(height: 20),
                   FilledButton(
                     key: const Key('lock-unlock'),
                     onPressed: () => _apply(lock.lockUnlockPressed()),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: palette.hibiscus,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 28, vertical: 12),
-                    ),
                     child: Text(
                       _notice != null
                           ? (zh ? '重试' : 'Try again')

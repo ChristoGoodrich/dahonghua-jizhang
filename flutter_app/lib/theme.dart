@@ -118,6 +118,24 @@ SystemUiOverlayStyle get systemOverlay {
   );
 }
 
+/// Where red goes.
+///
+/// Not on a delete button at rest. 订阅, 模板 and 账户 put a red trash icon on
+/// every row, so a list of five subscriptions said "danger" five times before
+/// anybody had decided anything — and it was the loudest thing on each
+/// screen. Every one of those deletes is guarded — a dialog whose confirm
+/// button is red, or for a ledger the archive it has to go through before a
+/// delete is offered at all — and the guard is the moment of decision, so the
+/// colour belongs to it. The resting icons are `inkSoft`: still there to be
+/// found, no longer shouting.
+///
+/// Checking that claim is how 模板 was found deleting on the tap with no
+/// dialog and no undo. It asks now; a quiet icon that does not ask is the
+/// easiest thing on the screen to hit by accident.
+///
+/// Red at rest is for things that are actually wrong: an overspent budget, a
+/// negative balance, a bill that is due.
+
 /// Corner radii, matching `theme/tokens.ts`.
 class Rad {
   static const double sm = 10;
@@ -165,7 +183,23 @@ ThemeData appTheme() {
     seedColor: palette.hibiscus,
     brightness: palette.isDark ? Brightness.dark : Brightness.light,
     primary: palette.hibiscus,
+    // Stated rather than derived. Every filled button used to restate this
+    // inline — seven of them, each with its own padding — and a button added
+    // without the restatement would have come out in whatever `fromSeed`
+    // picked. White on the flower is the app's primary action everywhere.
+    onPrimary: Colors.white,
     secondary: palette.stamen,
+    // What a tonal button is painted with. Material's default is a pale wash
+    // with dark text, which on 同步 made 写出文件 — the second of two steps,
+    // not a disabled one — read as switched off. The flower's own tint with
+    // the flower's deep ink is a secondary action and looks like one.
+    secondaryContainer: Color.alphaBlend(
+      palette.hibiscus.withValues(alpha: palette.isDark ? 0.22 : 0.13),
+      palette.card,
+    ),
+    onSecondaryContainer: palette.isDark
+        ? palette.hibiscus
+        : palette.hibiscusDeep,
     surface: palette.card,
     onSurface: palette.ink,
   );
@@ -193,7 +227,18 @@ ThemeData appTheme() {
     splashColor: Colors.transparent,
     highlightColor: palette.ink.withValues(alpha: 0.07),
     textButtonTheme: TextButtonThemeData(style: _pressStyle),
-    filledButtonTheme: FilledButtonThemeData(style: _pressStyle),
+    filledButtonTheme: FilledButtonThemeData(
+      style: _pressStyle.copyWith(
+        shape: const WidgetStatePropertyAll(StadiumBorder()),
+        minimumSize: const WidgetStatePropertyAll(Size(0, 46)),
+        padding: const WidgetStatePropertyAll(
+          EdgeInsets.symmetric(horizontal: 22),
+        ),
+        textStyle: const WidgetStatePropertyAll(
+          TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+        ),
+      ),
+    ),
     outlinedButtonTheme: OutlinedButtonThemeData(style: _pressStyle),
     elevatedButtonTheme: ElevatedButtonThemeData(style: _pressStyle),
     iconButtonTheme: IconButtonThemeData(style: _pressStyle),

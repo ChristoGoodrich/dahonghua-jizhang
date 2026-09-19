@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'src/rust/api/catalog.dart' as catalog;
 import 'src/rust/api/money.dart' as money;
 import 'glass.dart';
+import 'empty_note.dart';
 import 'theme.dart';
 
 class TagsScreen extends StatefulWidget {
@@ -260,7 +261,7 @@ class _TagsScreenState extends State<TagsScreen> {
           constraints: const BoxConstraints(minWidth: 30, minHeight: 30),
           padding: EdgeInsets.zero,
           iconSize: 15,
-          icon: Icon(Icons.delete_outline, color: palette.hibiscus),
+          icon: Icon(Icons.delete_outline, color: palette.inkSoft),
           onPressed: () {
             catalog.removeTag(kind: 'ledger', name: l);
             _changed();
@@ -298,6 +299,53 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
     _reload();
   }
 
+  /// Ask first, the way 订阅 and 账户 already did.
+  ///
+  /// This one deleted on the tap, with no dialog and no undo. That was
+  /// survivable while the icon was red and loud; once every resting delete
+  /// icon went grey — red belongs to the moment of decision, not to the list
+  /// — a quiet icon that deletes without asking is the easiest thing on the
+  /// screen to hit by accident. A template is cheap to make again, but three
+  /// screens with one delete gesture should behave one way.
+  Future<void> _confirmDelete(catalog.TemplateView t) async {
+    final zh = widget.zh;
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        key: const Key('tpl-delete-dialog'),
+        backgroundColor: palette.card,
+        title: Text(
+          zh ? '删除模板' : 'Delete template',
+          style: TextStyle(fontSize: 16, color: palette.ink),
+        ),
+        content: Text(
+          zh
+              ? '「${t.name}」不再出现在记一笔里。已经记下的不受影响。'
+              : '"${t.name}" leaves the record sheet. Entries already made '
+                    'are kept.',
+          style: TextStyle(fontSize: 14, color: palette.inkSoft),
+        ),
+        actions: [
+          TextButton(
+            key: const Key('tpl-delete-cancel'),
+            onPressed: () => Navigator.pop(ctx, false),
+            style: TextButton.styleFrom(foregroundColor: palette.inkSoft),
+            child: Text(zh ? '取消' : 'Cancel'),
+          ),
+          TextButton(
+            key: const Key('tpl-delete-ok'),
+            onPressed: () => Navigator.pop(ctx, true),
+            style: TextButton.styleFrom(foregroundColor: palette.hibiscus),
+            child: Text(zh ? '删除' : 'Delete'),
+          ),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    catalog.removeTemplate(id: t.id);
+    _changed();
+  }
+
   @override
   Widget build(BuildContext context) {
     final zh = widget.zh;
@@ -311,18 +359,18 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
         ),
       ),
       body: _rows.isEmpty
-          ? Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40),
-                child: Text(
-                  zh
-                      ? '在记一笔里长按保存,就能存成模板'
-                      : 'Save one from the record sheet to pin it here',
+          ? ListView(
+              padding: EdgeInsets.only(top: headerInset(context)),
+              children: [
+                EmptyNote(
                   key: const Key('no-templates'),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 13.5, color: palette.inkSoft),
+                  icon: Icons.bolt_outlined,
+                  text: zh ? '还没有模板' : 'No templates yet',
+                  hint: zh
+                      ? '在记一笔里长按「保存」,就能存成模板'
+                      : 'Long-press Save on the record sheet to pin one here',
                 ),
-              ),
+              ],
             )
           : ListView(
               padding: EdgeInsets.fromLTRB(
@@ -401,12 +449,9 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
               icon: Icon(
                 Icons.delete_outline,
                 size: 20,
-                color: palette.hibiscus,
+                color: palette.inkSoft,
               ),
-              onPressed: () {
-                catalog.removeTemplate(id: t.id);
-                _changed();
-              },
+              onPressed: () => _confirmDelete(t),
             ),
           ],
         ),

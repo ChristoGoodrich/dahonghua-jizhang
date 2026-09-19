@@ -160,11 +160,6 @@ class _ImportScreenState extends State<ImportScreen> {
             key: const Key('pick-bill-file'),
             onPressed: _busy ? null : _pick,
             icon: const Icon(Icons.upload_file_outlined, size: 18),
-            style: FilledButton.styleFrom(
-              backgroundColor: palette.hibiscus,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 14),
-            ),
             label: Text(zh ? '选择文件' : 'Choose a file'),
           ),
           if (_busy) ...[
@@ -289,11 +284,6 @@ class _ImportScreenState extends State<ImportScreen> {
       FilledButton(
         key: const Key('confirm-import'),
         onPressed: fresh.isEmpty ? null : _confirm,
-        style: FilledButton.styleFrom(
-          backgroundColor: palette.hibiscus,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 14),
-        ),
         child: Text(
           fresh.isEmpty
               ? (zh ? '没有新的一笔' : 'Nothing new')

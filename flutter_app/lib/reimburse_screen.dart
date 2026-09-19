@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'src/rust/api/money.dart' as money;
 import 'src/rust/api/reimburse.dart' as rb;
 import 'glass.dart';
+import 'empty_note.dart';
 import 'theme.dart';
 
 class ReimburseScreen extends StatefulWidget {
@@ -83,17 +84,17 @@ class _ReimburseScreenState extends State<ReimburseScreen> {
             ],
           ),
           const SizedBox(height: 20),
+          // The hint used to say long-press an entry to mark it. Long-press
+          // starts a selection now, and 报销 is a button on the selection bar
+          // — the old sentence described a gesture that no longer did that.
           if (_claims.items.isEmpty)
-            Padding(
-              padding: const EdgeInsets.only(top: 40),
-              child: Text(
-                zh
-                    ? '在账目里长按一笔,标成待报销'
-                    : 'Long-press an entry to mark it for reimbursement',
-                key: const Key('no-claims'),
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 13.5, color: palette.inkSoft),
-              ),
+            EmptyNote(
+              key: const Key('no-claims'),
+              icon: Icons.receipt_long_outlined,
+              text: zh ? '还没有报销' : 'Nothing to claim',
+              hint: zh
+                  ? '在明细里长按一笔,再点下面的「报销」'
+                  : 'Long-press an entry, then tap Claim on the bar',
             ),
           for (final c in _claims.items) _row(c, zh),
         ],

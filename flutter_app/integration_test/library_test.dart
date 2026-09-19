@@ -205,9 +205,29 @@ void main() {
 
       await tester.tap(find.byKey(const Key('tpl-t1-delete')));
       await tester.pumpAndSettle();
+      // it asks first now, the way 订阅 and 账户 do
+      expect(find.byKey(const Key('tpl-delete-dialog')), findsOneWidget);
+      await tester.tap(find.byKey(const Key('tpl-delete-ok')));
+      await tester.pumpAndSettle();
 
       expect(catalog.templates(), isEmpty);
       expect(find.byKey(const Key('no-templates')), findsOneWidget);
+    });
+
+    /// The reason the dialog exists: the resting icon went grey, and a quiet
+    /// icon that deletes without asking is the easiest thing to hit by
+    /// accident.
+    testWidgets('and a tap on the icon alone deletes nothing', (tester) async {
+      catalog.addTemplate(
+          id: 't1', io: 'exp', cat: 'food', amt: 35, note: null, name: 'X');
+      await showTemplates(tester);
+
+      await tester.tap(find.byKey(const Key('tpl-t1-delete')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('tpl-delete-cancel')));
+      await tester.pumpAndSettle();
+
+      expect(catalog.templates(), hasLength(1));
     });
   });
 

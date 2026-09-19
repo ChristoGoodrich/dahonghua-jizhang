@@ -36,6 +36,7 @@ import 'package:share_plus/share_plus.dart';
 
 import 'src/rust/api/backup.dart' as backup;
 import 'glass.dart';
+import 'empty_note.dart';
 import 'theme.dart';
 
 /// Where snapshots live: a subdirectory of the app's own storage.
@@ -243,10 +244,11 @@ class _BackupScreenState extends State<BackupScreen> {
           ],
           const SizedBox(height: 18),
           if (_rows.isEmpty)
-            Text(
-              zh ? '还没有备份' : 'No snapshots yet',
+            EmptyNote(
               key: const Key('no-backups'),
-              style: TextStyle(fontSize: 13, color: palette.inkSoft),
+              icon: Icons.archive_outlined,
+              text: zh ? '还没有备份' : 'No snapshots yet',
+              hint: zh ? '点右上角的 + 存一份' : 'Take one with + above',
             ),
           for (final b in _rows) _row(b, zh),
           const SizedBox(height: 24),

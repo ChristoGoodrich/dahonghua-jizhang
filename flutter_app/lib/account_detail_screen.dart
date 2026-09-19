@@ -19,6 +19,7 @@ import 'src/rust/api/money.dart' as money;
 import 'src/rust/api/statement.dart' as statement;
 import 'src/rust/api/store.dart' as store;
 import 'glass.dart';
+import 'empty_note.dart';
 import 'theme.dart';
 
 String _acctEmoji(String kind) => switch (kind) {
@@ -98,15 +99,10 @@ class AccountDetailScreen extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           if (rows.isEmpty)
-            Padding(
+            EmptyNote(
               key: const Key('acct-detail-empty'),
-              padding: const EdgeInsets.symmetric(vertical: 28),
-              child: Center(
-                child: Text(
-                  zh ? '还没有流水' : 'Nothing here yet',
-                  style: TextStyle(color: p.inkSoft),
-                ),
-              ),
+              icon: Icons.receipt_long_outlined,
+              text: zh ? '还没有流水' : 'Nothing here yet',
             )
           else
             ...rows.map((r) => _row(r, p)),
