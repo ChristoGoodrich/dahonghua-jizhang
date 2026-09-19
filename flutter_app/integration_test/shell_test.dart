@@ -151,8 +151,9 @@ void main() {
   });
 
   group('recording', () {
-    testWidgets('is a route, and saving returns to what was underneath',
-        (tester) async {
+    testWidgets('is a route, and saving returns to what was underneath', (
+      tester,
+    ) async {
       await shell(tester);
       await tester.tap(find.byKey(const Key('record-button')));
       await tester.pumpAndSettle();
@@ -177,8 +178,9 @@ void main() {
       expect(find.text('-42.00'), findsOneWidget);
     });
 
-    testWidgets('editing a row opens the sheet on it and comes back',
-        (tester) async {
+    testWidgets('editing a row opens the sheet on it and comes back', (
+      tester,
+    ) async {
       add('e1', 35.5, note: '午饭');
       await shell(tester);
 
@@ -213,8 +215,9 @@ void main() {
       expect(find.text('记账工具'), findsOneWidget);
     });
 
-    testWidgets('reaches the subscriptions screen and comes back',
-        (tester) async {
+    testWidgets('reaches the subscriptions screen and comes back', (
+      tester,
+    ) async {
       await shell(tester);
       await tapTab(tester, '我的');
 
@@ -240,8 +243,11 @@ void main() {
       // One anchor rather than a count: the walk has to reach the LAST row, or
       // it is back to covering whatever fits on a screen. A count would have to
       // be edited to add a screen, which is the thing this test avoids.
-      expect(keys.last, 'me-settings',
-          reason: 'the walk stopped before the bottom of the hub');
+      expect(
+        keys.last,
+        'me-settings',
+        reason: 'the walk stopped before the bottom of the hub',
+      );
 
       for (final k in keys) {
         await tapMeRow(tester, k);
@@ -271,6 +277,61 @@ void main() {
       // have re-read the store rather than kept its own copy
       await tapTab(tester, '资产');
       expect(textOf(tester, 'net-worth'), '￥-99.00');
+    });
+  });
+
+  group('the four tabs have one header', () {
+    /// The large title, told apart from the tab bar's label of the same word
+    /// by its size.
+    Finder title(String text, double size) => find.byWidgetPredicate(
+      (w) => w is Text && w.data == text && w.style?.fontSize == size,
+    );
+
+    /// They used to disagree: 明细 and 统计 titled themselves in a 20px app
+    /// bar, 资产 and 我的 with a 26px title inside the list, so the heading
+    /// jumped size and height as the tab bar was used. The rule now is one
+    /// large title in one place, and this is the rule.
+    testWidgets('every tab puts its large title at the same height', (
+      tester,
+    ) async {
+      await shell(tester);
+      final tops = <String, double>{};
+      for (final (tab, heading) in [
+        ('明细', '大红花记账'),
+        ('统计', '统计'),
+        ('资产', '资产'),
+        ('我的', '我的'),
+      ]) {
+        await tapTab(tester, tab);
+        final f = title(heading, 28);
+        expect(f, findsOneWidget, reason: '$tab has a large title');
+        tops[tab] = tester.getTopLeft(f).dy;
+      }
+      final first = tops.values.first;
+      for (final e in tops.entries) {
+        expect(e.value, closeTo(first, 0.5), reason: '${e.key}: $tops');
+      }
+    });
+
+    /// A large title that scrolls away leaves a screen that no longer says
+    /// what it is, so the bar takes it up as it goes under — and not before:
+    /// at rest the title is on the screen once, not twice.
+    testWidgets('the bar takes the title up once it has scrolled under', (
+      tester,
+    ) async {
+      await shell(tester);
+      await tapTab(tester, '我的');
+      expect(title('我的', 17), findsNothing, reason: 'not while it is visible');
+
+      await tester.drag(
+        find.descendant(
+          of: find.byKey(const Key('me-list')),
+          matching: find.byType(Scrollable),
+        ),
+        const Offset(0, -200),
+      );
+      await tester.pumpAndSettle();
+      expect(title('我的', 17), findsOneWidget);
     });
   });
 }

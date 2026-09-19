@@ -54,46 +54,34 @@ class MeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final shown = groups.where((g) => g.$2.isNotEmpty).toList();
-    return Scaffold(
-      backgroundColor: palette.paper,
-      body: StatusScrim(
-        child: ListView(
-          // Named so a test can scroll it. There are four tabs alive in an
-          // IndexedStack at once, so `find.byType(Scrollable)` is ambiguous
-          // here in a way that is not obvious from the screen.
-          key: const Key('me-list'),
-          padding: EdgeInsets.fromLTRB(22, statusInset(context) + 18, 22, 120),
-          children: [
-            Text(
-              zh ? '我的' : 'Me',
-              style: TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.w700,
-                color: palette.ink,
-              ),
-            ),
-            if (streak != null) ...[
-              const SizedBox(height: 6),
-              _streakLine(zh, streak!.$1, streak!.$2),
-            ],
-            const SizedBox(height: 18),
-            for (final (title, rows) in shown) ...[
-              Padding(
-                padding: const EdgeInsets.only(left: 4, bottom: 8),
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: palette.inkSoft,
-                  ),
+    return TitledScaffold(
+      title: zh ? '我的' : 'Me',
+      subtitle: streak == null ? null : _streakLine(zh, streak!.$1, streak!.$2),
+      body: (context, b) => ListView(
+        // Named so a test can scroll it. There are four tabs alive in an
+        // IndexedStack at once, so `find.byType(Scrollable)` is ambiguous
+        // here in a way that is not obvious from the screen.
+        key: const Key('me-list'),
+        controller: b.controller,
+        padding: EdgeInsets.fromLTRB(22, b.top, 22, 120),
+        children: [
+          b.header,
+          for (final (title, rows) in shown) ...[
+            Padding(
+              padding: const EdgeInsets.only(left: 4, bottom: 8),
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: palette.inkSoft,
                 ),
               ),
-              _group(rows),
-              const SizedBox(height: 20),
-            ],
+            ),
+            _group(rows),
+            const SizedBox(height: 20),
           ],
-        ),
+        ],
       ),
     );
   }

@@ -175,18 +175,13 @@ class _StatsScreenState extends State<StatsScreen> {
   @override
   Widget build(BuildContext context) {
     final zh = widget.zh;
-    return ScrimScaffold(
-      title: Text(
-        zh ? '统计' : 'Stats',
-        style: TextStyle(
-          color: palette.ink,
-          fontSize: 20,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
-      body: ListView(
-        padding: EdgeInsets.fromLTRB(22, headerInset(context) + 6, 22, 120),
+    return TitledScaffold(
+      title: zh ? '统计' : 'Stats',
+      body: (context, b) => ListView(
+        controller: b.controller,
+        padding: EdgeInsets.fromLTRB(22, b.top, 22, 120),
         children: [
+          b.header,
           _totals(zh),
           const SizedBox(height: 16),
           _windowPicker(zh),

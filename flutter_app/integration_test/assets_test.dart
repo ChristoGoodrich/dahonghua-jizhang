@@ -14,6 +14,8 @@ import 'package:flutter_app/assets_screen.dart';
 import 'package:flutter_app/src/rust/api/accounts.dart' as accounts;
 import 'package:flutter_app/src/rust/api/networth.dart' as nw;
 import 'package:flutter_app/src/rust/api/store.dart' as store;
+import 'package:flutter_app/src/rust/api/theme.dart' as theme;
+import 'package:flutter_app/theme.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'rust_init.dart';
@@ -60,17 +62,19 @@ void main() {
   setUp(() => store.reset());
 
   group('the split', () {
-    testWidgets('a credit account in debt is a liability, not a negative asset',
-        (tester) async {
-      openAccount('招行', balance: 1000);
-      openAccount('信用卡', kind: 'credit');
-      spend('e1', 400, acct: '信用卡');
-      await show(tester);
+    testWidgets(
+      'a credit account in debt is a liability, not a negative asset',
+      (tester) async {
+        openAccount('招行', balance: 1000);
+        openAccount('信用卡', kind: 'credit');
+        spend('e1', 400, acct: '信用卡');
+        await show(tester);
 
-      expect(textOf(tester, 'nw-asset'), '￥1,000.00');
-      expect(textOf(tester, 'nw-liab'), '￥400.00');
-      expect(textOf(tester, 'net-worth'), '￥600.00');
-    });
+        expect(textOf(tester, 'nw-asset'), '￥1,000.00');
+        expect(textOf(tester, 'nw-liab'), '￥400.00');
+        expect(textOf(tester, 'net-worth'), '￥600.00');
+      },
+    );
 
     testWidgets('an OVERPAID credit card is an asset again', (tester) async {
       // the rule is about the sign of the balance, not the kind of account
@@ -81,8 +85,9 @@ void main() {
       expect(textOf(tester, 'nw-liab'), '￥0.00');
     });
 
-    testWidgets('a cash account in debt is still counted as an asset',
-        (tester) async {
+    testWidgets('a cash account in debt is still counted as an asset', (
+      tester,
+    ) async {
       // only CREDIT accounts cross over; an overdrawn cash account is a
       // negative asset, which is what makes the two totals differ from a
       // simple positive/negative split
@@ -107,8 +112,9 @@ void main() {
       expect(textOf(tester, 'net-worth'), '￥200,000.00');
     });
 
-    testWidgets('one marked not-counted stays on the list and out of the sum',
-        (tester) async {
+    testWidgets('one marked not-counted stays on the list and out of the sum', (
+      tester,
+    ) async {
       asset('房子', 500000);
       await show(tester);
       expect(textOf(tester, 'net-worth'), '￥500,000.00');
@@ -121,8 +127,9 @@ void main() {
       expect(find.text('不计入净资产'), findsOneWidget);
     });
 
-    testWidgets('a new one is stored as counted rather than left absent',
-        (tester) async {
+    testWidgets('a new one is stored as counted rather than left absent', (
+      tester,
+    ) async {
       // `noCount: false` is written, not omitted — a reader that treated
       // absent as false would still be wrong once it crossed the wire
       asset('车', 80000);
@@ -142,8 +149,9 @@ void main() {
   });
 
   group('loans', () {
-    testWidgets('money lent is an asset, money borrowed is a liability',
-        (tester) async {
+    testWidgets('money lent is an asset, money borrowed is a liability', (
+      tester,
+    ) async {
       loan('小王', 2000);
       loan('银行', 5000, kind: 'borrow');
       await show(tester);
@@ -153,8 +161,9 @@ void main() {
       expect(textOf(tester, 'net-worth'), '￥-3,000.00');
     });
 
-    testWidgets('a new one starts at zero repaid, stored rather than absent',
-        (tester) async {
+    testWidgets('a new one starts at zero repaid, stored rather than absent', (
+      tester,
+    ) async {
       loan('小王', 2000);
       expect(nw.loans().single.repaid, 0);
       expect(nw.loans().single.remaining, 2000);
@@ -220,8 +229,9 @@ void main() {
   });
 
   group('the forms', () {
-    testWidgets('creating an asset takes a name, a value and a kind',
-        (tester) async {
+    testWidgets('creating an asset takes a name, a value and a kind', (
+      tester,
+    ) async {
       await show(tester);
       await tester.tap(find.byKey(const Key('add-asset')));
       await tester.pumpAndSettle();
@@ -252,8 +262,9 @@ void main() {
       await tester.pumpAndSettle();
     });
 
-    testWidgets('creating a loan takes a name, an amount and a direction',
-        (tester) async {
+    testWidgets('creating a loan takes a name, an amount and a direction', (
+      tester,
+    ) async {
       await show(tester);
       await tester.tap(find.byKey(const Key('add-loan')));
       await tester.pumpAndSettle();
@@ -285,8 +296,9 @@ void main() {
   });
 
   group('accounts on the screen', () {
-    testWidgets('are listed with their balances, archived ones excluded',
-        (tester) async {
+    testWidgets('are listed with their balances, archived ones excluded', (
+      tester,
+    ) async {
       openAccount('招行', balance: 1000);
       openAccount('旧卡', balance: 50);
       accounts.archiveAccount(id: '旧卡', archived: true);
@@ -298,8 +310,9 @@ void main() {
       expect(textOf(tester, 'nw-asset'), '￥1,050.00');
     });
 
-    testWidgets('managing them is one level down and comes back',
-        (tester) async {
+    testWidgets('managing them is one level down and comes back', (
+      tester,
+    ) async {
       openAccount('招行', balance: 1000);
       await show(tester);
 
@@ -334,5 +347,54 @@ void main() {
       expect(back.repaid, 500);
       expect(back.remaining, 1500);
     });
+  });
+
+  group('the hero card in both rooms', () {
+    /// WCAG contrast between two colours, 1 to 21.
+    double contrast(Color a, Color b) {
+      final la = a.computeLuminance(), lb = b.computeLuminance();
+      final hi = la > lb ? la : lb, lo = la > lb ? lb : la;
+      return (hi + 0.05) / (lo + 0.05);
+    }
+
+    /// The card painted `palette.ink` with its text hardcoded white. Ink is
+    /// dark in a lit room and light in a dark one, so in 夜间模式 the card
+    /// turned cream and 总资产 and 总负债 vanished into it. Found on a
+    /// screenshot, because nothing had looked at this screen in the dark.
+    ///
+    /// Asserted as contrast rather than as a colour: the rule is that the
+    /// text can be read on what it sits on, and a test naming the colours
+    /// would pass the day someone changes both to two new ones that clash.
+    for (final dark in [false, true]) {
+      testWidgets('the numbers can be read (${dark ? 'dark' : 'light'})', (
+        tester,
+      ) async {
+        theme.setTheme(key: 'default', dark: dark);
+        refreshPalette();
+        addTearDown(() {
+          theme.setTheme(key: 'default', dark: false);
+          refreshPalette();
+        });
+        await show(tester);
+
+        for (final key in ['net-worth', 'nw-asset', 'nw-liab']) {
+          final text = find.byKey(Key(key));
+          final fg = tester.widget<Text>(text).style!.color!;
+          final slab = tester
+              .widgetList<Container>(
+                find.ancestor(of: text, matching: find.byType(Container)),
+              )
+              .map((c) => (c.decoration as BoxDecoration?)?.color)
+              .firstWhere((c) => c != null)!;
+          // the value sits on the slab; flatten any alpha onto it first
+          final ratio = contrast(Color.alphaBlend(fg, slab), slab);
+          expect(
+            ratio,
+            greaterThanOrEqualTo(4.5),
+            reason: '$key is ${ratio.toStringAsFixed(2)}:1 on its card',
+          );
+        }
+      });
+    }
   });
 }

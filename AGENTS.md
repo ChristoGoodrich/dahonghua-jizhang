@@ -53,7 +53,7 @@ refuses to run without `src/` for exactly that reason.
     npm run apk           the release APKs, one per architecture
 
     cd flutter_app
-    flutter test integration_test/all_test.dart    656 tests, ~5 min
+    flutter test integration_test/all_test.dart    660 tests, ~5 min
     flutter test integration_test/<one>_test.dart  while working on one screen
 
 The suite is one entrypoint on purpose: per file it was 36 APK builds and about
@@ -110,20 +110,37 @@ A scrim is sized to the chrome it belongs to plus that fade, and for a header
 with a hard bottom edge it is sized to the header alone — otherwise the
 transition lands below the bar and blurs rows nobody has scrolled near.
 
-Screens do not assemble this themselves. `ScrimScaffold` is the header version
-— a transparent app bar over a scrim, with the body running behind both — and
-`StatusScrim` is for the two large-title tabs that have no app bar at all. In
-both cases **the body pads its own top** by `headerInset` or `statusInset`;
-that cannot be done from outside, because padding wrapped around a scrollable
-moves the viewport rather than its contents, and a viewport that starts below
-the header has nothing running under it.
+Screens do not assemble this themselves. **The four tabs use
+`TitledScaffold`**: a slim transparent bar holding only the actions, a large
+28px title that scrolls with the content, and a small title that fades into
+the bar once the large one has gone under — the HyperOS and iOS header, and
+the one the reference screenshots show. They used to disagree (20px app-bar
+titles on two tabs, 26px in-list titles on the other two), and `shell_test`
+now holds them to one height. **Pushed screens use `ScrimScaffold`**, the same
+transparent bar and scrim with a back arrow and a small title.
+
+In both cases **the body pads its own top** by `headerInset`, and a titled
+body puts `b.header` first; that cannot be done from outside, because padding
+wrapped around a scrollable moves the viewport rather than its contents, and a
+viewport that starts below the header has nothing running under it.
 
 Two things follow from a body that runs behind a header, and both bit:
 
 * **The header absorbs taps in its own strip.** That is right — chrome
   absorbs, here and in every app on the phone — but `scrollUntilVisible` stops
   at "inside the viewport", which now includes "under the title bar". Tests
-  press things through `scrollAndTap` in `integration_test/scroll.dart`.
+  press things through `scrollAndTap` in `integration_test/scroll.dart`, which
+  measures the target's *own* screen's bar: all four tabs live in an
+  `IndexedStack`, so a bare `find.byType(AppBar)` matches four.
+
+**Look at it before and after.** `integration_test/tour.dart` seeds a month
+somebody might keep and screenshots all nineteen screens in both rooms, as real
+surface captures — so the glass renders — into `build/tour/`:
+
+    flutter drive --driver=test_driver/tour.dart --target=integration_test/tour.dart -d <device>
+
+It found a net-worth card whose numbers were invisible in 夜间模式, which no
+test had looked at because no test had looked at anything in the dark.
 * **A transparent app bar picks the wrong status-bar icons.** `AppBar` derives
   `systemOverlayStyle` from its own background, and `Colors.transparent` reads
   as dark, so it asks for white icons on cream paper. `systemOverlay` in

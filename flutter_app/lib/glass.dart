@@ -552,36 +552,188 @@ class ScrimScaffold extends StatelessWidget {
   );
 }
 
-/// The status bar, which is the only chrome above a screen that has no header.
-double statusInset(BuildContext context) => MediaQuery.paddingOf(context).top;
+/// What a [TitledScaffold] hands its body: where to start, what to put first,
+/// and the controller the bar watches.
+class TitledBody {
+  const TitledBody({
+    required this.controller,
+    required this.top,
+    required this.header,
+  });
 
-/// A scrolling screen with no header of its own.
-///
-/// The large-title tabs — 资产 and 我的 — put their title inside the list, so
-/// there is no app bar for a scrim to stand under. They used a `SafeArea` to
-/// clear the status bar, which pushes the list down and cuts the content dead
-/// exactly where every other screen now dissolves it.
-///
-/// So: no `SafeArea`, the list pads its own top by [statusInset], and the
-/// status bar gets a scrim of its own. Shallower than a header's, because it
-/// is covering 24dp rather than 80 — the ramp is clamped to the box.
-class StatusScrim extends StatelessWidget {
-  const StatusScrim({super.key, required this.child});
+  /// The body's scrollable must use this, or the small title never appears.
+  final ScrollController controller;
 
-  final Widget child;
+  /// How far down the first item has to start: the status bar and the bar.
+  final double top;
+
+  /// The large title, to be the body's first item.
+  final Widget header;
+}
+
+/// A top-level screen: a large title that scrolls with the content, and a
+/// small one that takes its place in the bar once it has gone underneath.
+///
+/// The four tabs used to disagree. 明细 and 统计 titled themselves in a 20px
+/// app bar; 资产 and 我的 put a 26px title inside their lists. Side by side on
+/// the tab bar that read as two apps sharing one. HyperOS and iOS agree on the
+/// answer — the large title, with the bar above it holding only the actions —
+/// and so do the screenshots this was designed against: 文件管理's 最近, 小米笔记's
+/// 已选中2项.
+///
+/// The collapse is not decoration either. A large title that simply scrolls
+/// away leaves a screen that no longer says what it is, and in 批量处理 the
+/// thing that scrolled away was the count of what is ticked. So the bar picks
+/// the title up as it goes under.
+///
+/// Built on the same transparent app bar and scrim as [ScrimScaffold], so the
+/// header still absorbs taps in its own strip, still declares the status-bar
+/// icons, and `scrollAndTap` in the tests still finds it.
+class TitledScaffold extends StatefulWidget {
+  const TitledScaffold({
+    super.key,
+    required this.title,
+    required this.body,
+    this.titleKey,
+    this.subtitle,
+    this.actions,
+    this.leading,
+    this.barTitle,
+    this.largeTitle = true,
+    this.bottomNavigationBar,
+  });
+
+  final String title;
+
+  /// Put on the large title, so a test can read it. Not on the small one: two
+  /// widgets with one key is an error, and the small one is the echo.
+  final Key? titleKey;
+
+  /// Under the large title. Scrolls with it.
+  final Widget? subtitle;
+
+  final List<Widget>? actions;
+  final Widget? leading;
+
+  /// Replaces the small title outright — the search box goes here.
+  final Widget? barTitle;
+
+  /// Off while searching, where a large 大红花记账 over a list of results
+  /// would be a heading for the wrong thing.
+  final bool largeTitle;
+
+  final Widget? bottomNavigationBar;
+  final Widget Function(BuildContext context, TitledBody b) body;
 
   @override
-  Widget build(BuildContext context) => Stack(
-    fit: StackFit.expand,
-    children: [
-      child,
-      Positioned(
-        top: 0,
-        left: 0,
-        right: 0,
-        height: statusInset(context),
-        child: const GlassScrim(flipped: true),
-      ),
-    ],
+  State<TitledScaffold> createState() => _TitledScaffoldState();
+}
+
+class _TitledScaffoldState extends State<TitledScaffold> {
+  final _scroll = ScrollController();
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  /// How far the small title has faded in. Zero until the large one is most
+  /// of the way under the bar, then quick: a title that is legible twice at
+  /// once, large below and small above, is the frame that looks like a bug.
+  double get _fade {
+    if (!_scroll.hasClients || !widget.largeTitle) return 0;
+    return ((_scroll.offset - 18) / 22).clamp(0.0, 1.0);
+  }
+
+  Widget _large(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(left: 2, top: 2, bottom: 16),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          widget.title,
+          key: widget.titleKey,
+          style: TextStyle(
+            fontSize: 28,
+            height: 1.15,
+            fontWeight: FontWeight.w700,
+            letterSpacing: -0.2,
+            color: palette.ink,
+          ),
+        ),
+        if (widget.subtitle != null) ...[
+          const SizedBox(height: 6),
+          widget.subtitle!,
+        ],
+      ],
+    ),
   );
+
+  @override
+  Widget build(BuildContext context) {
+    final top = headerInset(context);
+    return Scaffold(
+      backgroundColor: palette.paper,
+      extendBodyBehindAppBar: true,
+      extendBody: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        elevation: 0,
+        systemOverlayStyle: systemOverlay,
+        leading: widget.leading,
+        automaticallyImplyLeading: false,
+        titleSpacing: widget.leading == null ? 22 : 0,
+        title:
+            widget.barTitle ??
+            AnimatedBuilder(
+              animation: _scroll,
+              builder: (context, _) {
+                final f = _fade;
+                // Absent rather than transparent at rest, so the screen does
+                // not carry its title twice where a finder or a screen
+                // reader would find both.
+                if (f == 0) return const SizedBox.shrink();
+                return Opacity(
+                  opacity: f,
+                  child: Text(
+                    widget.title,
+                    style: TextStyle(
+                      color: palette.ink,
+                      fontSize: 17,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                );
+              },
+            ),
+        actions: [...?widget.actions, const SizedBox(width: 6)],
+      ),
+      bottomNavigationBar: widget.bottomNavigationBar,
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          widget.body(
+            context,
+            TitledBody(
+              controller: _scroll,
+              top: top,
+              header: widget.largeTitle
+                  ? _large(context)
+                  : const SizedBox.shrink(),
+            ),
+          ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: top,
+            child: const GlassScrim(flipped: true),
+          ),
+        ],
+      ),
+    );
+  }
 }

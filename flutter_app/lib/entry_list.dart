@@ -181,11 +181,8 @@ class _EntryListScreenState extends State<EntryListScreen> {
   @override
   Widget build(BuildContext context) {
     final zh = widget.zh;
-    // Where the content has to start so the first row is not born under the
-    // header. The list runs the full height and pads instead, which is the
-    // whole point: a row that stops at the header cannot dissolve into it.
-    final topInset = MediaQuery.paddingOf(context).top + kToolbarHeight;
     final readback = _selecting ? null : _readbackText(zh);
+    final t = _selecting ? _tally : null;
 
     return PopScope(
       // Back leaves the selection before it leaves the screen, which is what
@@ -195,52 +192,66 @@ class _EntryListScreenState extends State<EntryListScreen> {
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) _endSelecting();
       },
-      child: Scaffold(
-        backgroundColor: palette.paper,
-        // The content runs under both bars rather than between them. Without
-        // this the scrim has nothing to blur, and a blur of a flat colour is a
-        // flat colour.
-        extendBodyBehindAppBar: true,
-        extendBody: true,
-        appBar: _selecting ? _selectionHeader(zh) : _titleHeader(zh),
+      // One header for three modes, and the large title is what changes. At
+      // rest it is the app's name. Ticking rows, it is the count — large, the
+      // way 小米笔记 says 已选中2项, and not the 17px line it used to be squeezed
+      // into beside the close button. Searching, there is no large title at
+      // all: a heading over a list of results would be a heading for the
+      // wrong thing, and the box is in the bar instead.
+      child: TitledScaffold(
+        title: t != null
+            ? (zh ? '已选中 ${t.count} 项' : '${t.count} selected')
+            : (zh ? '大红花记账' : 'Red Blossom'),
+        titleKey: t != null ? const Key('select-count') : null,
+        subtitle: t == null ? null : _sums(t, zh),
+        // Hidden while searching — unless rows are being ticked, when the
+        // title IS the count. Selecting from a search is the common way to
+        // select at all (上周, 全选, 改分类), and hiding the title there hid
+        // the only thing saying how many were ticked.
+        largeTitle: t != null || !_searching,
+        leading: t == null
+            ? null
+            : IconButton(
+                key: const Key('select-close'),
+                icon: Icon(Icons.close, color: palette.ink),
+                onPressed: _endSelecting,
+              ),
+        barTitle: _searching && t == null ? _searchField(zh) : null,
+        actions: t != null ? [_selectAll(zh)] : _restActions(zh),
         // The shell's nav bar is hidden while selecting — see `onSelecting` —
         // so the two never both draw. Same slot, same height, same material.
-        bottomNavigationBar: _selecting
+        bottomNavigationBar: t != null
             ? SelectionBar(actions: _batchActions(zh))
             : null,
-        body: Stack(
+        body: (context, b) => Stack(
           fit: StackFit.expand,
           children: [
             if (_items.isEmpty)
-              _empty(zh)
+              _empty(zh, b)
             else
               ListView.builder(
+                controller: b.controller,
                 padding: EdgeInsets.only(
-                  top: topInset + (readback == null ? 6 : 26),
+                  top: b.top + (readback == null ? 0 : 22),
                   bottom: navBottomInset(context),
                 ),
-                itemCount: _items.length,
-                itemBuilder: (context, i) => _row(_items[i], zh),
+                itemCount: _items.length + 1,
+                itemBuilder: (context, i) => i == 0
+                    // The title lives in the list so it scrolls with it; the
+                    // side padding is the rows', so the two line up.
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 22),
+                        child: b.header,
+                      )
+                    : _row(_items[i - 1], zh),
               ),
-            // The scrim is exactly the header's own extent, so the ramp
-            // completes AT its bottom edge: the first row is crisp at rest and
-            // dissolves as it slides underneath. Made it `topInset + fade`
-            // first, which put the transition 72dp below the bar and blurred
-            // the day header nobody had scrolled anywhere near. A dissolve is
-            // anchored to the chrome it dissolves into.
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              height: topInset,
-              child: const GlassScrim(flipped: true),
-            ),
-            // Over the scrim so it stays legible through it, and pinned rather
-            // than scrolled: it describes the list, and a caption that scrolls
-            // away from what it captions is a caption for nothing.
+            // Pinned rather than scrolled: it describes the list, and a
+            // caption that scrolls away from what it captions is a caption
+            // for nothing. At the header's bottom edge, which is where the
+            // scrim has finished ramping — under it, it would blur.
             if (readback != null)
               Positioned(
-                top: topInset - 2,
+                top: b.top,
                 left: 0,
                 right: 0,
                 child: Padding(
@@ -258,131 +269,84 @@ class _EntryListScreenState extends State<EntryListScreen> {
     );
   }
 
-  /// The ordinary header: the app's name, or the search box in its place.
+  /// What the selection comes to, under its count.
   ///
-  /// Transparent, because it stands on the scrim now rather than on a block of
-  /// paper. `scrolledUnderElevation` too — Material 3 tints an app bar the
-  /// moment content passes under it, and content passing under it is the whole
-  /// arrangement.
-  PreferredSizeWidget _titleHeader(bool zh) => AppBar(
-    backgroundColor: Colors.transparent,
-    surfaceTintColor: Colors.transparent,
-    scrolledUnderElevation: 0,
-    elevation: 0,
-    systemOverlayStyle: systemOverlay,
-    title: _searching
-        ? TextField(
-            key: const Key('search-field'),
-            controller: _query,
-            autofocus: true,
-            style: TextStyle(fontSize: 16, color: palette.ink),
-            cursorColor: palette.hibiscus,
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              isDense: true,
-              hintText: zh ? '找一笔:上周、支出、星巴克' : 'last week · income · coffee',
-              hintStyle: TextStyle(fontSize: 15, color: palette.inkSoft),
-            ),
-            onChanged: (_) => _reload(),
-          )
-        : Text(
-            zh ? '大红花记账' : 'Red Blossom',
-            style: TextStyle(
-              color: palette.ink,
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-    actions: [
-      // Long-pressing a row starts a selection too, and that is the gesture
-      // people actually use. This is here because a gesture with no visible
-      // affordance is a gesture you have to already know about — the same
-      // argument that put 删除 in the long-press sheet next to the swipe.
-      IconButton(
-        key: const Key('select-toggle'),
-        tooltip: zh ? '批量处理' : 'Select',
-        icon: Icon(Icons.checklist_rtl, color: palette.ink),
-        onPressed: _items.isEmpty ? null : _beginSelecting,
-      ),
-      IconButton(
-        key: const Key('search-toggle'),
-        icon: Icon(_searching ? Icons.close : Icons.search, color: palette.ink),
-        onPressed: () {
-          setState(() {
-            _searching = !_searching;
-            if (!_searching) _query.clear();
-          });
-          _reload();
-        },
-      ),
-    ],
-  );
-
-  /// The header while rows are ticked: how many, what they come to, and the
-  /// two ways out — close, and take everything.
-  PreferredSizeWidget _selectionHeader(bool zh) {
-    final t = _tally;
-    final sums = <String>[
+  /// The sums are the core's, not a fold written here. They are the same
+  /// arithmetic the day headers show, and two implementations of one sum is
+  /// how they come to disagree.
+  Widget? _sums(batch.BatchTally t, bool zh) {
+    final parts = <String>[
       if (t.exp > 0)
         '${zh ? '支出' : 'Exp'} ${money.fmt(n: t.exp, symbol: zh ? '￥' : '\$')}',
       if (t.inc > 0)
         '${zh ? '收入' : 'Inc'} ${money.fmt(n: t.inc, symbol: zh ? '￥' : '\$')}',
     ];
+    if (parts.isEmpty) return null;
+    return Text(
+      parts.join(' · '),
+      style: TextStyle(
+        color: palette.inkSoft,
+        fontSize: 12.5,
+        fontFeatures: tabular,
+      ),
+    );
+  }
+
+  Widget _searchField(bool zh) => TextField(
+    key: const Key('search-field'),
+    controller: _query,
+    autofocus: true,
+    style: TextStyle(fontSize: 16, color: palette.ink),
+    cursorColor: palette.hibiscus,
+    decoration: InputDecoration(
+      border: InputBorder.none,
+      isDense: true,
+      hintText: zh ? '找一笔:上周、支出、星巴克' : 'last week · income · coffee',
+      hintStyle: TextStyle(fontSize: 15, color: palette.inkSoft),
+    ),
+    onChanged: (_) => _reload(),
+  );
+
+  /// The bar at rest: select, and search.
+  List<Widget> _restActions(bool zh) => [
+    // Long-pressing a row starts a selection too, and that is the gesture
+    // people actually use. This is here because a gesture with no visible
+    // affordance is a gesture you have to already know about — the same
+    // argument that put 删除 in the long-press sheet next to the swipe.
+    IconButton(
+      key: const Key('select-toggle'),
+      tooltip: zh ? '批量处理' : 'Select',
+      icon: Icon(Icons.checklist_rtl, color: palette.ink),
+      onPressed: _items.isEmpty ? null : _beginSelecting,
+    ),
+    IconButton(
+      key: const Key('search-toggle'),
+      icon: Icon(_searching ? Icons.close : Icons.search, color: palette.ink),
+      onPressed: () {
+        setState(() {
+          _searching = !_searching;
+          if (!_searching) _query.clear();
+        });
+        _reload();
+      },
+    ),
+  ];
+
+  /// Take everything on screen, or let it all go.
+  Widget _selectAll(bool zh) {
     final all = _visibleIds();
     final everything = all.isNotEmpty && _picked!.length == all.length;
-
-    return AppBar(
-      backgroundColor: Colors.transparent,
-      surfaceTintColor: Colors.transparent,
-      scrolledUnderElevation: 0,
-      elevation: 0,
-      systemOverlayStyle: systemOverlay,
-      leading: IconButton(
-        key: const Key('select-close'),
-        icon: Icon(Icons.close, color: palette.ink),
-        onPressed: _endSelecting,
+    return IconButton(
+      key: const Key('select-all'),
+      tooltip: everything
+          ? (zh ? '取消全选' : 'Select none')
+          : (zh ? '全选' : 'Select all'),
+      icon: Icon(
+        everything ? Icons.deselect : Icons.select_all,
+        color: everything ? palette.hibiscus : palette.ink,
       ),
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            zh ? '已选中 ${t.count} 项' : '${t.count} selected',
-            key: const Key('select-count'),
-            style: TextStyle(
-              color: palette.ink,
-              fontSize: 17,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          // The sums are the core's, not a fold written here. They are the
-          // same arithmetic the day headers show, and two implementations of
-          // one sum is how they come to disagree.
-          if (sums.isNotEmpty)
-            Text(
-              sums.join(' · '),
-              style: TextStyle(
-                color: palette.inkSoft,
-                fontSize: 11.5,
-                fontFeatures: tabular,
-              ),
-            ),
-        ],
-      ),
-      actions: [
-        IconButton(
-          key: const Key('select-all'),
-          tooltip: everything
-              ? (zh ? '取消全选' : 'Select none')
-              : (zh ? '全选' : 'Select all'),
-          icon: Icon(
-            everything ? Icons.deselect : Icons.select_all,
-            color: everything ? palette.hibiscus : palette.ink,
-          ),
-          onPressed: () =>
-              setState(() => _picked = everything ? <String>{} : all.toSet()),
-        ),
-      ],
+      onPressed: () =>
+          setState(() => _picked = everything ? <String>{} : all.toSet()),
     );
   }
 
@@ -715,41 +679,53 @@ class _EntryListScreenState extends State<EntryListScreen> {
     ),
   );
 
-  Widget _empty(bool zh) => Center(
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // The app's own mark, not an emoji. 🌺 was somebody else's drawing —
-        // Noto's on one phone, Samsung's on another, a fallback box on a third
-        // — and it was not the flower on the launcher icon the user had just
-        // tapped. `Bloom` is that icon's geometry, in the theme's colour.
-        Container(
-          width: 108,
-          height: 108,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: palette.paperWarm,
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: palette.hibiscus.withValues(alpha: 0.10),
-              width: 1,
+  /// Nothing to show — under the title, not instead of it.
+  ///
+  /// A `ListView` rather than a `Center`: with the title inside the scrolling
+  /// body, a centred empty state would lose the heading every other tab still
+  /// has, and the empty ledger is the one screen a new user sees first. The
+  /// mark sits a fifth of the way down, which is where the eye lands rather
+  /// than dead centre, where it sits too low under a large title.
+  Widget _empty(bool zh, TitledBody b) => ListView(
+    controller: b.controller,
+    padding: EdgeInsets.fromLTRB(22, b.top, 22, 0),
+    children: [
+      b.header,
+      SizedBox(height: MediaQuery.sizeOf(context).height * 0.14),
+      Column(
+        children: [
+          // The app's own mark, not an emoji. 🌺 was somebody else's drawing —
+          // Noto's on one phone, Samsung's on another, a fallback box on a third
+          // — and it was not the flower on the launcher icon the user had just
+          // tapped. `Bloom` is that icon's geometry, in the theme's colour.
+          Container(
+            width: 108,
+            height: 108,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: palette.paperWarm,
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: palette.hibiscus.withValues(alpha: 0.10),
+                width: 1,
+              ),
             ),
+            child: const Bloom(size: 56),
           ),
-          child: const Bloom(size: 56),
-        ),
-        const SizedBox(height: 14),
-        // An empty ledger and an empty search look the same and are not the
-        // same thing. Telling a user who is searching that they have never
-        // recorded anything is worse than saying nothing.
-        Text(
-          _query.text.trim().isEmpty
-              ? (zh ? '还没有记账' : 'Nothing recorded yet')
-              : (zh ? '没有找到' : 'Nothing matched'),
-          key: const Key('list-empty'),
-          style: TextStyle(fontSize: 13, color: palette.inkSoft),
-        ),
-      ],
-    ),
+          const SizedBox(height: 14),
+          // An empty ledger and an empty search look the same and are not the
+          // same thing. Telling a user who is searching that they have never
+          // recorded anything is worse than saying nothing.
+          Text(
+            _query.text.trim().isEmpty
+                ? (zh ? '还没有记账' : 'Nothing recorded yet')
+                : (zh ? '没有找到' : 'Nothing matched'),
+            key: const Key('list-empty'),
+            style: TextStyle(fontSize: 13, color: palette.inkSoft),
+          ),
+        ],
+      ),
+    ],
   );
 
   // ---- 批量处理 ----------------------------------------------------------

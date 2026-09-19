@@ -99,61 +99,49 @@ class _AssetsScreenState extends State<AssetsScreen> {
   @override
   Widget build(BuildContext context) {
     final zh = widget.zh;
-    return Scaffold(
-      backgroundColor: palette.paper,
-      body: StatusScrim(
-        child: ListView(
-          padding: EdgeInsets.fromLTRB(22, statusInset(context) + 18, 22, 120),
-          children: [
-            Text(
-              zh ? '资产' : 'Net worth',
-              style: TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.w700,
-                color: palette.ink,
-              ),
+    return TitledScaffold(
+      title: zh ? '资产' : 'Net worth',
+      body: (context, b) => ListView(
+        controller: b.controller,
+        padding: EdgeInsets.fromLTRB(22, b.top, 22, 120),
+        children: [
+          b.header,
+          _netCard(zh),
+          const SizedBox(height: 22),
+          _section(
+            zh ? '账户' : 'Accounts',
+            action: zh ? '管理' : 'Manage',
+            onAction: _manageAccounts,
+            actionKey: 'manage-accounts',
+          ),
+          for (final a in _accounts)
+            _line(
+              key: 'nw-acct-${a.id}',
+              title: zh ? a.name : (a.nameEn ?? a.name),
+              value: a.balance,
+              negative: a.balance < 0,
             ),
-            const SizedBox(height: 14),
-            _netCard(zh),
-            const SizedBox(height: 22),
-            _section(
-              zh ? '账户' : 'Accounts',
-              action: zh ? '管理' : 'Manage',
-              onAction: _manageAccounts,
-              actionKey: 'manage-accounts',
-            ),
-            for (final a in _accounts)
-              _line(
-                key: 'nw-acct-${a.id}',
-                title: zh ? a.name : (a.nameEn ?? a.name),
-                value: a.balance,
-                negative: a.balance < 0,
-              ),
-            const SizedBox(height: 22),
-            _section(
-              zh ? '其他资产' : 'Other assets',
-              action: zh ? '添加' : 'Add',
-              onAction: _addAsset,
-              actionKey: 'add-asset',
-            ),
-            if (_assets.isEmpty)
-              _empty(
-                zh ? '房子、车、公积金…' : 'A flat, a car, a pension…',
-                'no-assets',
-              ),
-            for (final a in _assets) _assetLine(a, zh),
-            const SizedBox(height: 22),
-            _section(
-              zh ? '借贷' : 'Loans',
-              action: zh ? '添加' : 'Add',
-              onAction: _addLoan,
-              actionKey: 'add-loan',
-            ),
-            if (_loans.isEmpty)
-              _empty(zh ? '借出去的、借进来的' : 'Lent out, or borrowed', 'no-loans'),
-            for (final l in _loans) _loanLine(l, zh),
-          ],
-        ),
+          const SizedBox(height: 22),
+          _section(
+            zh ? '其他资产' : 'Other assets',
+            action: zh ? '添加' : 'Add',
+            onAction: _addAsset,
+            actionKey: 'add-asset',
+          ),
+          if (_assets.isEmpty)
+            _empty(zh ? '房子、车、公积金…' : 'A flat, a car, a pension…', 'no-assets'),
+          for (final a in _assets) _assetLine(a, zh),
+          const SizedBox(height: 22),
+          _section(
+            zh ? '借贷' : 'Loans',
+            action: zh ? '添加' : 'Add',
+            onAction: _addLoan,
+            actionKey: 'add-loan',
+          ),
+          if (_loans.isEmpty)
+            _empty(zh ? '借出去的、借进来的' : 'Lent out, or borrowed', 'no-loans'),
+          for (final l in _loans) _loanLine(l, zh),
+        ],
       ),
     );
   }
@@ -162,10 +150,27 @@ class _AssetsScreenState extends State<AssetsScreen> {
   ///
   /// Dark, because it is the one number on the screen that is a conclusion
   /// rather than an item — the shipping app makes the same move.
+  /// The hero slab, and what it is painted on.
+  ///
+  /// It used to be `palette.ink` with the text hardcoded white. Ink is the
+  /// DARK colour in a lit room and the LIGHT one in a dark room, so in 夜间模式
+  /// the card turned cream and its white text disappeared into it — 总资产 and
+  /// 总负债 were not dim, they were invisible. Nothing here had been looked at
+  /// in the dark.
+  ///
+  /// So the slab and its text are chosen together. Lit, it stays the ink slab
+  /// with paper-coloured type. Dark, it is the card surface warmed a touch
+  /// toward the flower, so it still reads as the one heavy object on the
+  /// screen without becoming a lamp in a dark room.
+  Color get _slab => palette.isDark
+      ? Color.alphaBlend(palette.hibiscus.withValues(alpha: 0.14), palette.card)
+      : palette.ink;
+  Color get _onSlab => palette.isDark ? palette.ink : palette.paper;
+
   Widget _netCard(bool zh) => Container(
     padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
     decoration: BoxDecoration(
-      color: palette.ink,
+      color: _slab,
       borderRadius: BorderRadius.circular(Rad.lg),
     ),
     child: Column(
@@ -173,17 +178,20 @@ class _AssetsScreenState extends State<AssetsScreen> {
       children: [
         Text(
           zh ? '净资产' : 'Net worth',
-          style: const TextStyle(fontSize: 12, color: Color(0xFFBFB6AC)),
+          style: TextStyle(
+            fontSize: 12,
+            color: _onSlab.withValues(alpha: 0.62),
+          ),
         ),
         const SizedBox(height: 4),
         Text(
           _m(_net.net),
           key: const Key('net-worth'),
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 30,
             fontWeight: FontWeight.w700,
             fontFeatures: tabular,
-            color: Colors.white,
+            color: _onSlab,
           ),
         ),
         const SizedBox(height: 14),
@@ -206,17 +214,17 @@ class _AssetsScreenState extends State<AssetsScreen> {
     children: [
       Text(
         label,
-        style: const TextStyle(fontSize: 11, color: Color(0xFF9C938A)),
+        style: TextStyle(fontSize: 11, color: _onSlab.withValues(alpha: 0.55)),
       ),
       const SizedBox(height: 2),
       Text(
         _m(v),
         key: Key(key),
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.w600,
           fontFeatures: tabular,
-          color: Color(0xFFEDE6DC),
+          color: _onSlab.withValues(alpha: 0.92),
         ),
       ),
     ],

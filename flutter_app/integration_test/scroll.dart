@@ -26,24 +26,32 @@ Future<void> scrollTo(
   WidgetTester tester,
   Finder target, {
   double delta = 300,
+  Finder? scrollable,
 }) async {
-  await tester.scrollUntilVisible(target, delta);
+  await tester.scrollUntilVisible(target, delta, scrollable: scrollable);
   await tester.pumpAndSettle();
 
-  final bar = find.byType(AppBar);
+  // The target's OWN header, not the first app bar in the tree. All four tabs
+  // stay alive in an `IndexedStack` and all four have an app bar now that
+  // they share one large-title scaffold, so a bare `find.byType(AppBar)`
+  // matches four and `getRect` refuses — or, worse, measures a tab nobody is
+  // looking at.
+  final screen = find.ancestor(of: target, matching: find.byType(Scaffold));
+  if (screen.evaluate().isEmpty) return;
+  final bar = find.descendant(of: screen.first, matching: find.byType(AppBar));
   if (bar.evaluate().isEmpty) return;
 
-  final floor = tester.getRect(bar).bottom + 4;
+  final floor = tester.getRect(bar.first).bottom + 4;
   final top = tester.getRect(target).top;
   if (top >= floor) return;
 
   // A drag rather than another `scrollUntilVisible`: that one would stop
   // immediately, the target being in the viewport already. Positive dy moves
   // the content down, which is the direction that pushes it clear.
-  final scrollable = find
+  final list = find
       .ancestor(of: target, matching: find.byType(Scrollable))
       .first;
-  await tester.drag(scrollable, Offset(0, floor - top));
+  await tester.drag(list, Offset(0, floor - top));
   await tester.pumpAndSettle();
 }
 
@@ -52,8 +60,9 @@ Future<void> scrollAndTap(
   WidgetTester tester,
   Finder target, {
   double delta = 300,
+  Finder? scrollable,
 }) async {
-  await scrollTo(tester, target, delta: delta);
+  await scrollTo(tester, target, delta: delta, scrollable: scrollable);
   await tester.tap(target);
   await tester.pumpAndSettle();
 }
