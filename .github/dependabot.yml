@@ -1,56 +1,13 @@
 version: 2
 updates:
-  - package-ecosystem: npm
-    directory: /
-    schedule:
-      interval: weekly
-      day: monday
-    open-pull-requests-limit: 5
-    commit-message:
-      prefix: chore
-      include: scope
-    groups:
-      dev-dependencies:
-        dependency-type: development
-        update-types:
-          - minor
-          - patch
-      production-patches:
-        dependency-type: production
-        update-types:
-          - patch
-    ignore:
-      # The Expo SDK pins these as a set. Bump them with `npx expo install --fix`
-      # when moving to a new SDK, never one package at a time.
-      - dependency-name: expo
-      - dependency-name: expo-*
-      - dependency-name: "@expo/*"
-      - dependency-name: react
-      - dependency-name: react-dom
-      - dependency-name: react-native
-      - dependency-name: react-native-*
-      - dependency-name: "@react-native-async-storage/async-storage"
-      - dependency-name: jest-expo
-      - dependency-name: eslint-config-expo
-      # Major bumps of the test/lint/build toolchain are migrations, not
-      # upgrades, and some of them are coupled to the SDK anyway — jest-expo@56
-      # expects jest 29, so a lone jest 30 PR only turns the suite red. Minor
-      # and patch still come through; majors are done by hand, usually next to
-      # an SDK bump.
-      - dependency-name: typescript
-        update-types: ["version-update:semver-major"]
-      - dependency-name: jest
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "@types/jest"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: eslint
-        update-types: ["version-update:semver-major"]
-      - dependency-name: storybook
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "@storybook/*"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: detox
-        update-types: ["version-update:semver-major"]
+  # No npm block. `package.json` declares no dependencies at all — Node is
+  # here only to run `node scripts/…`, and the app has no JavaScript in it.
+  # What used to be here ignored Expo, React Native, jest, storybook and
+  # detox, none of which have existed since the rewrite.
+  #
+  # Rust and Flutter are not watched either. Adding `cargo` and `pub`
+  # ecosystems would be the real replacement, and is a decision about wanting
+  # the pull requests rather than a cleanup.
 
   - package-ecosystem: github-actions
     directory: /
