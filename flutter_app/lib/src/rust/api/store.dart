@@ -6,7 +6,7 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `as_str`, `currencies_lock`, `currencies_of`, `lang_lock`, `lock`, `parse_day`, `set_currencies_inner`, `set_settings_inner`, `settings_lock`, `settings_of`, `show_day`, `store_marked`, `store_mut`, `store`, `str_of`
+// These functions are ignored because they are not marked as `pub`: `as_str`, `by_id`, `currencies_lock`, `currencies_of`, `lang_lock`, `lock`, `parse_day`, `set_currencies_inner`, `set_settings_inner`, `settings_lock`, `settings_of`, `show_day`, `store_marked`, `store_mut`, `store`, `str_of`
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `StoreRef`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `deref`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`, `from`
 

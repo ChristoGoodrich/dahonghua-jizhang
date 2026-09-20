@@ -11,6 +11,7 @@
 //! for a day's name — a rejection is logic, a sentence is Intl.
 
 use dahonghua_core::catalog;
+use dahonghua_core::civil::{month_grid, Civil};
 use dahonghua_core::entry::Io;
 use dahonghua_core::money::Currencies;
 use dahonghua_core::record::{self as core, Draft, FormDefaults, FormFields, RateSource};
@@ -372,4 +373,75 @@ pub fn set_currencies(base: String, codes: Vec<String>, rates: Vec<f64>) {
 #[frb(sync)]
 pub fn base_currency() -> String {
     currencies_of().base
+}
+
+// ---------- the date an entry is on ----------
+
+/// `y-m-d`, month 1-based — the form `localDay` writes on the Dart side,
+/// where the timezone lives. A string that does not parse is the epoch
+/// rather than a panic: a picker that crashed on a bad date would lose the
+/// whole sheet over it.
+fn civil(s: &str) -> Civil {
+    let mut it = s.split('-').map(|p| p.parse::<i32>().ok());
+    let y = it.next().flatten().unwrap_or(1970);
+    let m = it.next().flatten().unwrap_or(1);
+    let d = it.next().flatten().unwrap_or(1);
+    Civil::new(y, m - 1, d)
+}
+
+/// What the sheet calls `day`: `today`, `yesterday`, `day_before`, or `date`
+/// when it is further away — in either direction. Dart spells it; this
+/// decides which of the four it is.
+#[frb(sync)]
+pub fn day_name(day: String, today: String) -> String {
+    match core::day_name(civil(&day), civil(&today)) {
+        core::DayName::Today => "today",
+        core::DayName::Yesterday => "yesterday",
+        core::DayName::DayBefore => "day_before",
+        core::DayName::Date => "date",
+    }
+    .to_string()
+}
+
+/// One cell of the picker's month: a blank before the 1st, or a day.
+#[derive(Debug, Clone, PartialEq)]
+pub struct DayCell {
+    /// `None` for the blanks that put the 1st under its weekday.
+    pub day: Option<i32>,
+    /// False after today. See `core::record::pickable`.
+    pub pickable: bool,
+    pub today: bool,
+}
+
+/// A month for the picker, Monday first. `m` is 1-based.
+#[frb(sync)]
+pub fn date_grid(y: i32, m: i32, today: String) -> Vec<DayCell> {
+    let today = civil(&today);
+    month_grid(y, m - 1)
+        .into_iter()
+        .map(|d| match d {
+            None => DayCell {
+                day: None,
+                pickable: false,
+                today: false,
+            },
+            Some(d) => {
+                let c = Civil::new(y, m - 1, d);
+                DayCell {
+                    day: Some(d),
+                    pickable: core::pickable(c, today),
+                    today: c == today,
+                }
+            }
+        })
+        .collect()
+}
+
+/// Whether the picker may page forward from `y`/`m`. Not past the month
+/// today is in: every day after it would be greyed out, and a page of
+/// nothing but greyed-out days is a page with nothing to do on it.
+#[frb(sync)]
+pub fn can_page_forward(y: i32, m: i32, today: String) -> bool {
+    let today = civil(&today);
+    (y, m - 1) < (today.y, today.m)
 }

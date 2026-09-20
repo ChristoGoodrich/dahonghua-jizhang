@@ -21,6 +21,7 @@ import 'rate_fetch.dart';
 import 'src/rust/api/currency.dart' as cur;
 import 'src/rust/api/history.dart' as history;
 import 'src/rust/api/rates.dart' as rates;
+import 'date_field.dart';
 import 'tap.dart';
 import 'theme.dart';
 
@@ -80,6 +81,27 @@ extension FormEdit on record.FormView {
     ledger: ledger ?? this.ledger,
     cur: cur ?? this.cur,
     subcat: subcat ?? this.subcat,
+    ts: ts,
+  );
+
+  /// The same form on another day. Separate from [copyWith] because `ts` is
+  /// nullable there in the other sense — `null` means "leave it" — so
+  /// copyWith cannot put a date on a form at all.
+  record.FormView withTs(int ts) => record.FormView(
+    io: io,
+    cat: cat,
+    amt: amt,
+    note: note,
+    acct: acct,
+    acctTo: acctTo,
+    fee: fee,
+    discount: discount,
+    tags: tags,
+    ledger: ledger,
+    // `this.` because `cur` is also the currency import's prefix in this
+    // file, and without it the analyser reads the field as the library.
+    cur: this.cur,
+    subcat: subcat,
     ts: ts,
   );
 }
@@ -360,37 +382,77 @@ class _RecordSheetState extends State<RecordSheet> {
     );
   }
 
+  /// The amount, and the day it is on.
+  ///
+  /// The number sat alone at the right of an otherwise empty card, with no
+  /// currency on it: a bare red 0. The left half now holds the date chip —
+  /// the control the port had lost — and the number carries its symbol, in
+  /// the entry's own currency when that is not the base one.
   Widget _amount(double total, bool showsTotal, Color accent) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+    padding: const EdgeInsets.fromLTRB(14, 14, 16, 16),
     decoration: BoxDecoration(
       color: palette.card,
       borderRadius: BorderRadius.circular(Rad.lg),
       border: Border.all(color: palette.line),
     ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          _form.amt.isEmpty ? '0' : _form.amt,
-          key: const Key('amount-expr'),
-          style: TextStyle(
-            fontSize: 34,
-            fontWeight: FontWeight.w700,
-            fontFeatures: tabular,
-            color: accent,
+        DateChip(
+          ts: _form.ts,
+          accent: accent,
+          zh: widget.zh,
+          onChanged: (ts) => setState(() => _form = _form.withTs(ts)),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Text(
+                    money.curSymbol(code: _form.cur),
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: accent.withValues(alpha: 0.7),
+                    ),
+                  ),
+                  const SizedBox(width: 3),
+                  Flexible(
+                    child: Text(
+                      _form.amt.isEmpty ? '0' : _form.amt,
+                      key: const Key('amount-expr'),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 34,
+                        fontWeight: FontWeight.w700,
+                        fontFeatures: tabular,
+                        color: accent,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              // the running total, only while the expression has an operator in
+              // it — `hasOperator` is Rust's answer, not a `contains('+')`
+              if (showsTotal)
+                Text(
+                  '= ${money.fmtNum(n: total)}',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontFeatures: tabular,
+                    color: palette.inkSoft,
+                  ),
+                ),
+            ],
           ),
         ),
-        // the running total, only while the expression has an operator in
-        // it — `hasOperator` is Rust's answer, not a `contains('+')`
-        if (showsTotal)
-          Text(
-            '= ${money.fmtNum(n: total)}',
-            style: TextStyle(
-              fontSize: 15,
-              fontFeatures: tabular,
-              color: palette.inkSoft,
-            ),
-          ),
       ],
     ),
   );

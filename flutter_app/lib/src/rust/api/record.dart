@@ -6,7 +6,8 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `eq`, `eq`, `fmt`, `fmt`, `from`, `from`
+// These functions are ignored because they are not marked as `pub`: `civil`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `from`, `from`
 
 /// Why a form cannot be saved: `"amount"`, `"xferTo"`, `"xferSame"`, or
 /// `"noRate:USD"`. `None` means it can.
@@ -97,6 +98,49 @@ void setCurrencies({
 );
 
 String baseCurrency() => RustLib.instance.api.crateApiRecordBaseCurrency();
+
+/// What the sheet calls `day`: `today`, `yesterday`, `day_before`, or `date`
+/// when it is further away — in either direction. Dart spells it; this
+/// decides which of the four it is.
+String dayName({required String day, required String today}) =>
+    RustLib.instance.api.crateApiRecordDayName(day: day, today: today);
+
+/// A month for the picker, Monday first. `m` is 1-based.
+List<DayCell> dateGrid({
+  required int y,
+  required int m,
+  required String today,
+}) => RustLib.instance.api.crateApiRecordDateGrid(y: y, m: m, today: today);
+
+/// Whether the picker may page forward from `y`/`m`. Not past the month
+/// today is in: every day after it would be greyed out, and a page of
+/// nothing but greyed-out days is a page with nothing to do on it.
+bool canPageForward({required int y, required int m, required String today}) =>
+    RustLib.instance.api.crateApiRecordCanPageForward(y: y, m: m, today: today);
+
+/// One cell of the picker's month: a blank before the 1st, or a day.
+class DayCell {
+  /// `None` for the blanks that put the 1st under its weekday.
+  final int? day;
+
+  /// False after today. See `core::record::pickable`.
+  final bool pickable;
+  final bool today;
+
+  const DayCell({this.day, required this.pickable, required this.today});
+
+  @override
+  int get hashCode => day.hashCode ^ pickable.hashCode ^ today.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DayCell &&
+          runtimeType == other.runtimeType &&
+          day == other.day &&
+          pickable == other.pickable &&
+          today == other.today;
+}
 
 /// The record sheet's fields, as Dart holds them.
 ///

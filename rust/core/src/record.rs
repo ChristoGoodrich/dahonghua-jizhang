@@ -20,6 +20,7 @@
 //! * **[`should_patch_ts`]** — whether an edit writes the date at all.
 
 use crate::calc::eval_expr;
+use crate::civil::Civil;
 use crate::entry::{Entry, Io};
 use crate::money::{to_base, Currencies};
 use std::collections::HashMap;
@@ -385,6 +386,50 @@ pub fn after_save_next(f: &FormFields) -> FormFields {
         discount: String::new(),
         ..f.clone()
     }
+}
+
+// ---------------------------------------------------------------------------
+// The date an entry is on.
+// ---------------------------------------------------------------------------
+
+/// What the record sheet calls a day, counted back from today.
+///
+/// The shipping app's sheet had a date row — 今天, 昨天, 前天, or the date —
+/// and the Flutter port dropped it, so every entry was stamped "now" and a
+/// taxi forgotten yesterday could not be recorded as yesterday's. Backfilling
+/// is one of the most ordinary things anyone does in a ledger.
+///
+/// The three names are one more than the entry list has. The list says 今天
+/// and 昨天 and then the date; the sheet also says 前天, because the sheet is
+/// where somebody is reaching back a day or two and the word is what they are
+/// thinking. Same arithmetic, a different vocabulary for a different job.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum DayName {
+    Today,
+    Yesterday,
+    DayBefore,
+    /// Anything else, including a day after today — which an entry can carry
+    /// if it arrived from another device with a clock ahead of this one.
+    Date,
+}
+
+pub fn day_name(day: Civil, today: Civil) -> DayName {
+    match day.days_until(today) {
+        0 => DayName::Today,
+        1 => DayName::Yesterday,
+        2 => DayName::DayBefore,
+        _ => DayName::Date,
+    }
+}
+
+/// Whether an entry may be put on `day`.
+///
+/// Not after today. The shipping picker greyed out future days, and it is
+/// right to: an expense has already happened, and the one thing an entry
+/// dated next Tuesday does is sit at the top of the list pretending to be the
+/// most recent. Today itself is pickable, and so is every day before it.
+pub fn pickable(day: Civil, today: Civil) -> bool {
+    day.day_number() <= today.day_number()
 }
 
 #[cfg(test)]
@@ -838,5 +883,56 @@ mod tests {
                 String::new()
             )
         );
+    }
+    // ---- the date an entry is on ----
+
+    fn civ(y: i32, m1: i32, d: i32) -> Civil {
+        Civil::new(y, m1 - 1, d)
+    }
+
+    #[test]
+    fn a_day_is_named_by_how_far_back_it_is() {
+        let today = civ(2026, 9, 20);
+        assert_eq!(day_name(civ(2026, 9, 20), today), DayName::Today);
+        assert_eq!(day_name(civ(2026, 9, 19), today), DayName::Yesterday);
+        assert_eq!(day_name(civ(2026, 9, 18), today), DayName::DayBefore);
+        assert_eq!(day_name(civ(2026, 9, 17), today), DayName::Date);
+    }
+
+    /// Counted in calendar days, so a month or a year boundary is one day
+    /// like any other. A version that compared day-of-month would call the
+    /// 31st of last month "today" on the 1st.
+    #[test]
+    fn the_count_runs_across_months_and_years() {
+        assert_eq!(
+            day_name(civ(2026, 8, 31), civ(2026, 9, 1)),
+            DayName::Yesterday
+        );
+        assert_eq!(
+            day_name(civ(2025, 12, 31), civ(2026, 1, 1)),
+            DayName::Yesterday
+        );
+        assert_eq!(
+            day_name(civ(2026, 2, 28), civ(2026, 3, 2)),
+            DayName::DayBefore
+        );
+        assert_eq!(day_name(civ(2026, 9, 20), civ(2026, 10, 20)), DayName::Date);
+    }
+
+    /// A day after today is a date, not "today": an entry can carry one from
+    /// a device whose clock ran ahead, and calling it 今天 would hide that.
+    #[test]
+    fn tomorrow_is_not_today() {
+        assert_eq!(day_name(civ(2026, 9, 21), civ(2026, 9, 20)), DayName::Date);
+    }
+
+    #[test]
+    fn nothing_after_today_can_be_picked() {
+        let today = civ(2026, 9, 20);
+        assert!(pickable(today, today));
+        assert!(pickable(civ(2026, 9, 19), today));
+        assert!(pickable(civ(2020, 1, 1), today));
+        assert!(!pickable(civ(2026, 9, 21), today));
+        assert!(!pickable(civ(2027, 1, 1), today));
     }
 }

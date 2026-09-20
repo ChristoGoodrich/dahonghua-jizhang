@@ -60,8 +60,9 @@ void main() {
       expect(expr(tester), '35.5');
     });
 
-    testWidgets('refuses a second decimal point, as the shipping keypad does',
-        (tester) async {
+    testWidgets('refuses a second decimal point, as the shipping keypad does', (
+      tester,
+    ) async {
       await show(tester);
       await type(tester, '1');
       await press(tester, '.');
@@ -73,10 +74,15 @@ void main() {
       expect(expr(tester), '1.59');
     });
 
-    testWidgets('shows a running total once there is an operator', (tester) async {
+    testWidgets('shows a running total once there is an operator', (
+      tester,
+    ) async {
       await show(tester);
       await type(tester, '12');
-      expect(find.textContaining('= '), findsNothing); // not the keypad's '=' key
+      expect(
+        find.textContaining('= '),
+        findsNothing,
+      ); // not the keypad's '=' key
       await press(tester, '+');
       await type(tester, '8');
       expect(find.text('= 20.00'), findsOneWidget);
@@ -95,8 +101,9 @@ void main() {
       expect(store.liveEntries().first.amt, 36);
     });
 
-    testWidgets('the equals key evaluates rather than typing a character',
-        (tester) async {
+    testWidgets('the equals key evaluates rather than typing a character', (
+      tester,
+    ) async {
       await show(tester);
       await type(tester, '12');
       await press(tester, '+');
@@ -112,8 +119,9 @@ void main() {
       expect(expr(tester), '0');
     });
 
-    testWidgets('an operator cannot lead, and replaces a trailing one',
-        (tester) async {
+    testWidgets('an operator cannot lead, and replaces a trailing one', (
+      tester,
+    ) async {
       await show(tester);
       await press(tester, '+'); // nothing to operate on
       expect(expr(tester), '0');
@@ -123,7 +131,9 @@ void main() {
       expect(expr(tester), '5×');
     });
 
-    testWidgets('deletes the last character, and stops at empty', (tester) async {
+    testWidgets('deletes the last character, and stops at empty', (
+      tester,
+    ) async {
       await show(tester);
       await type(tester, '12');
       await press(tester, 'back');
@@ -150,8 +160,9 @@ void main() {
       expect(flash(tester), '已保存');
     });
 
-    testWidgets('evaluates the expression rather than storing the text',
-        (tester) async {
+    testWidgets('evaluates the expression rather than storing the text', (
+      tester,
+    ) async {
       await show(tester);
       await type(tester, '12');
       await press(tester, '+');
@@ -160,8 +171,9 @@ void main() {
       expect(store.liveEntries().first.amt, 20);
     });
 
-    testWidgets('refuses an empty amount, and says which refusal it is',
-        (tester) async {
+    testWidgets('refuses an empty amount, and says which refusal it is', (
+      tester,
+    ) async {
       await show(tester);
       await press(tester, 'save');
 
@@ -169,7 +181,9 @@ void main() {
       expect(flash(tester), '请输入金额'); // spelled here, decided in Rust
     });
 
-    testWidgets('refuses a zero, which is not the same as empty', (tester) async {
+    testWidgets('refuses a zero, which is not the same as empty', (
+      tester,
+    ) async {
       await show(tester);
       await type(tester, '0');
       await press(tester, 'save');
@@ -177,7 +191,9 @@ void main() {
       expect(flash(tester), '请输入金额');
     });
 
-    testWidgets('a refusal goes when the thing it refused changes', (tester) async {
+    testWidgets('a refusal goes when the thing it refused changes', (
+      tester,
+    ) async {
       // a complaint that outlives what it complained about is worse than none
       await show(tester);
       await press(tester, 'save');
@@ -186,7 +202,9 @@ void main() {
       expect(flash(tester), isNull);
     });
 
-    testWidgets('refuses an expression that comes out negative', (tester) async {
+    testWidgets('refuses an expression that comes out negative', (
+      tester,
+    ) async {
       await show(tester);
       await type(tester, '5');
       await press(tester, '-');
@@ -211,8 +229,9 @@ void main() {
       expect(find.textContaining('工资'), findsNothing);
     });
 
-    testWidgets('a transfer with only one account is refused, and says why',
-        (tester) async {
+    testWidgets('a transfer with only one account is refused, and says why', (
+      tester,
+    ) async {
       // a fresh store has exactly one account, so there is no second one to
       // transfer to — pickIo leaves the destination empty and validate refuses
       await show(tester);
@@ -241,7 +260,8 @@ void main() {
       record.setCurrencies(base: 'CNY', codes: ['USD'], rates: [0]);
       expect(record.cachedRate(code: 'USD'), 0);
       final r = record.validateForm(
-        form: record.initialForm(sourceId: '', editing: false, ledger: '')
+        form: record
+            .initialForm(sourceId: '', editing: false, ledger: '')
             .copyWith(amt: '10', cur: 'USD'),
       );
       expect(r, 'noRate:USD');
@@ -249,8 +269,9 @@ void main() {
   });
 
   group('the sheet says nothing the core did not decide', () {
-    testWidgets('a rejection is a kind, spelled by the reader language',
-        (tester) async {
+    testWidgets('a rejection is a kind, spelled by the reader language', (
+      tester,
+    ) async {
       expect(rejectionText('amount', true), '请输入金额');
       expect(rejectionText('amount', false), 'Enter an amount');
       expect(rejectionText('noRate:USD', false), 'No exchange rate for USD');
@@ -261,6 +282,114 @@ void main() {
       expect(find.text('Expense'), findsOneWidget);
       await press(tester, 'save');
       expect(flash(tester), 'Enter an amount');
+    });
+  });
+
+  group('the date an entry is on', () {
+    String dateLabel(WidgetTester tester) =>
+        tester.widget<Text>(find.byKey(const Key('date-label'))).data!;
+
+    /// Open the picker and take a day from the quick row. 0 is today, 1
+    /// yesterday, 2 the day before.
+    Future<void> pickBack(WidgetTester tester, int back) async {
+      await tester.tap(find.byKey(const Key('date-chip')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(Key('date-quick-$back')));
+      await tester.pumpAndSettle();
+    }
+
+    DateTime dayOf(int ms) => DateTime.fromMillisecondsSinceEpoch(ms);
+
+    testWidgets('a new entry is on today, and says so', (tester) async {
+      await show(tester);
+      expect(dateLabel(tester), '今天');
+    });
+
+    /// The whole point of the control. The port had dropped it, so an expense
+    /// forgotten yesterday could only be recorded as today's — and a ledger
+    /// where yesterday's lunch is filed under today is a ledger whose day
+    /// totals are wrong.
+    testWidgets('a backdated entry is saved on the day picked', (tester) async {
+      await show(tester);
+      await pickBack(tester, 1);
+      expect(dateLabel(tester), '昨天');
+
+      await type(tester, '42');
+      await press(tester, 'save');
+
+      final saved = dayOf(store.liveEntries().first.ts);
+      final yesterday = DateTime.now().subtract(const Duration(days: 1));
+      expect(saved.year, yesterday.year);
+      expect(saved.month, yesterday.month);
+      expect(saved.day, yesterday.day);
+    });
+
+    /// Moving the day keeps the time of day. Dropping it to midnight would
+    /// reorder the entry against everything else logged that day, since the
+    /// list sorts on the instant.
+    testWidgets('and keeps the time of day it had', (tester) async {
+      await show(tester);
+      final before = DateTime.now();
+      await pickBack(tester, 2);
+      await type(tester, '10');
+      await press(tester, 'save');
+
+      final saved = dayOf(store.liveEntries().first.ts);
+      expect(saved.hour, before.hour);
+      expect(saved.minute, closeTo(before.minute, 1));
+    });
+
+    /// 再记一笔 keeps the date, which is `after_save_next`'s doing and the
+    /// shipping behaviour: somebody entering a stack of yesterday's receipts
+    /// should not have to re-pick the day for each one.
+    testWidgets('the next entry stays on the day just used', (tester) async {
+      await show(tester);
+      await pickBack(tester, 1);
+      await type(tester, '10');
+      await press(tester, 'save');
+
+      expect(dateLabel(tester), '昨天');
+      await type(tester, '20');
+      await press(tester, 'save');
+
+      final days = store.liveEntries().map((e) => dayOf(e.ts).day).toSet();
+      expect(days, hasLength(1), reason: 'both on the same day');
+    });
+
+    /// An expense has already happened. A day after today would sit at the
+    /// top of the list pretending to be the most recent thing.
+    testWidgets('tomorrow cannot be picked', (tester) async {
+      await show(tester);
+      await tester.tap(find.byKey(const Key('date-chip')));
+      await tester.pumpAndSettle();
+
+      final now = DateTime.now();
+      final tomorrow = DateTime(now.year, now.month, now.day + 1);
+      if (tomorrow.month != now.month) return; // it is on the next page
+      expect(
+        find.byKey(Key('date-day-${tomorrow.day}')),
+        findsNothing,
+        reason: 'a future day is drawn, but not as something to press',
+      );
+      expect(find.byKey(Key('date-day-${now.day}')), findsOneWidget);
+    });
+
+    testWidgets('and the month cannot be paged past this one', (tester) async {
+      await show(tester);
+      await tester.tap(find.byKey(const Key('date-chip')));
+      await tester.pumpAndSettle();
+
+      final next = tester.widget<IconButton>(
+        find.byKey(const Key('date-next')),
+      );
+      expect(next.onPressed, isNull);
+
+      await tester.tap(find.byKey(const Key('date-prev')));
+      await tester.pumpAndSettle();
+      final back = tester.widget<IconButton>(
+        find.byKey(const Key('date-next')),
+      );
+      expect(back.onPressed, isNotNull, reason: 'and back again from there');
     });
   });
 }

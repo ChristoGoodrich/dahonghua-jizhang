@@ -46,14 +46,14 @@ refuses to run without `src/` for exactly that reason.
 ## Running things
 
     npm run goldens       the core against what the TypeScript answered
-    npm run rust:test     792 tests
+    npm run rust:test     796 tests
     npm run rust:clippy   -D warnings
     npm run bridge:clippy the bridge is a separate cargo project
     npm run tests:check   all_test.dart is not stale
     npm run apk           the release APKs, one per architecture
 
     cd flutter_app
-    flutter test integration_test/all_test.dart    661 tests, ~5 min
+    flutter test integration_test/all_test.dart    667 tests, ~5 min
     flutter test integration_test/<one>_test.dart  while working on one screen
 
 The suite is one entrypoint on purpose: per file it was 36 APK builds and about
@@ -226,6 +226,25 @@ device-to-device transfer on (API 31+); `backup_rules.xml` turns both off below
 that, where they were one mechanism. If you add a data directory, it is
 already excluded — each domain is listed rather than trusting `root` to cover
 its children.
+
+## What the port dropped
+
+The rewrite ported every screen, and the screenshot tour is how a missing
+*control* turns up rather than a missing screen. 记一笔 had no date field: every
+entry was stamped "now", so a taxi forgotten yesterday could only be recorded
+as today's, and a ledger that files yesterday's lunch under today has wrong day
+totals. The form had carried a `ts` the whole time and `core::record` even had
+a test for a pre-picked date — only the control was gone.
+
+`lib/date_field.dart` is that control, rebuilt from `DateField.tsx` at
+`rn-final`, with one change: it lives in the amount card rather than expanding
+in place, because the sheet's fields already fill the space above the keypad
+exactly. `core::record::day_name` decides which of 今天/昨天/前天/date a day
+gets and `pickable` decides that the future is not one; composing an instant
+on another day at the same time of day is the timezone's job and stays in
+Dart.
+
+Worth checking the rest of `rn-final` the same way when something feels thin.
 
 ## Two habits worth keeping
 
