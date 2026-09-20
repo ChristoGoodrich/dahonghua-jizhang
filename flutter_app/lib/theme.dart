@@ -47,6 +47,7 @@ class Palette {
 
   /// Some tokens want the hex, not the colour: `glass.rs` takes strings.
   String get paperHex => _t.paper;
+  String get paperWarmHex => _t.paperWarm;
   String get cardHex => _t.card;
 
   Color get paper => parseHex(_t.paper);

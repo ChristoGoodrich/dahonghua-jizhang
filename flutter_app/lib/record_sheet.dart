@@ -22,6 +22,7 @@ import 'src/rust/api/currency.dart' as cur;
 import 'src/rust/api/history.dart' as history;
 import 'src/rust/api/rates.dart' as rates;
 import 'date_field.dart';
+import 'glass.dart';
 import 'tap.dart';
 import 'theme.dart';
 
@@ -307,28 +308,46 @@ class _RecordSheetState extends State<RecordSheet> {
       body: SafeArea(
         child: Column(
           children: [
+            // The fields dissolve into the keypad rather than being sliced
+            // off by it. They fill the space above it exactly, so 标签 and
+            // 账本 sit below the fold — and a chip cut in half at a hard edge
+            // reads as a rendering fault, where the same chip fading out
+            // reads as "there is more here". Same scrim as under the nav bar
+            // and the headers, the other way up.
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 22),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _templateRow(zh),
-                    _directions(zh),
-                    const SizedBox(height: 14),
-                    _amount(total, showsTotal, accent),
-                    const SizedBox(height: 14),
-                    if (_form.io != 'xfer') _categories(zh, accent),
-                    const SizedBox(height: 14),
-                    _accountRow(zh, accent),
-                    const SizedBox(height: 14),
-                    ..._currencyRow(zh, accent),
-                    _noteField(zh),
-                    _tagRow(zh, accent),
-                    _ledgerRow(zh, accent),
-                    if (_flash != null) _flashLine(),
-                  ],
-                ),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 22),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _templateRow(zh),
+                        _directions(zh),
+                        const SizedBox(height: 14),
+                        _amount(total, showsTotal, accent),
+                        const SizedBox(height: 14),
+                        if (_form.io != 'xfer') _categories(zh, accent),
+                        const SizedBox(height: 14),
+                        _accountRow(zh, accent),
+                        const SizedBox(height: 14),
+                        ..._currencyRow(zh, accent),
+                        _noteField(zh),
+                        _tagRow(zh, accent),
+                        _ledgerRow(zh, accent),
+                        if (_flash != null) _flashLine(),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    height: scrimFade(context),
+                    child: GlassScrim(under: palette.paperWarmHex),
+                  ),
+                ],
               ),
             ),
             _keypad(zh, accent),
