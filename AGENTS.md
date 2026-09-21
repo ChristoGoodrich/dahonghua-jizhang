@@ -46,14 +46,14 @@ refuses to run without `src/` for exactly that reason.
 ## Running things
 
     npm run goldens       the core against what the TypeScript answered
-    npm run rust:test     798 tests
+    npm run rust:test     819 tests
     npm run rust:clippy   -D warnings
     npm run bridge:clippy the bridge is a separate cargo project
     npm run tests:check   all_test.dart is not stale
     npm run apk           the release APKs, one per architecture
 
     cd flutter_app
-    flutter test integration_test/all_test.dart    669 tests, ~5 min
+    flutter test integration_test/all_test.dart    687 tests, ~6 min
     flutter test integration_test/<one>_test.dart  while working on one screen
 
 The suite is one entrypoint on purpose: per file it was 36 APK builds and about
@@ -217,6 +217,11 @@ If you are about to write `ledger.get(id)` inside a loop over ids, take that
 instead. It uses `or_insert` rather than `collect` so a duplicated id resolves
 to the same row the scan would have found — first, not last.
 
+The sweep missed one. `rows_of` in `api/stats.rs` did the same thing with
+`iter().find` instead of `get`, so a search for `ledger.get` did not find it,
+and 统计's trend took 1.6s at 8,000 rows. Search for the shape — a lookup by
+id inside a loop over ids — not for one spelling of it.
+
 `scale_test.dart` holds it, with a clock, and the header there explains why a
 timing assertion is the right tool for once: a quadratic list and a linear one
 return byte-identical answers, so no correctness test can tell them apart.
@@ -262,6 +267,28 @@ exactly. `core::record::day_name` decides which of 今天/昨天/前天/date a d
 gets and `pickable` decides that the future is not one; composing an instant
 on another day at the same time of day is the timezone's job and stays in
 Dart.
+
+统计 was the same gap on a larger scale. The port drew three of the shipping
+screen's nine sections: totals, one polyline, one donut. `StatsView.tsx` also
+had the entry count, every category rather than six, the last six windows,
+the largest entries, weekday and time-of-day breakdowns, and this month
+against the same days of the last. The core had the arithmetic for all of it
+and the corpus pinned it; what was missing was the bridge and the drawing.
+`api::stats::stats_page` is now one call for the whole screen, and
+`lib/charts.dart` scales a box and chooses colours.
+
+Three decisions the screen used to make, or not make, now sit in the core:
+
+* **The curve is `chart::smooth`, monotone cubic.** The obvious curve
+  (Catmull-Rom) overshoots, so a day of nothing between two big days dips
+  below the axis and the chart shows negative spending. The tests check the
+  property directly: every control point stays inside its segment's range.
+* **`period::trend_axis` decides what a window's chart covers.** A window
+  still under way stops at today, a day is charted as the week up to it
+  (one point is not a trend), and half-years and years go weekly. The first of
+  these used to be `_clampToToday` in Dart.
+* **`stats::verdict` decides between "more", "less" and "about the same"**
+  (5%). That was in the shipping view, where the corpus never recorded it.
 
 Worth checking the rest of `rn-final` the same way when something feels thin.
 

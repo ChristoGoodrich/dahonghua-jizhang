@@ -137,6 +137,56 @@ void main() {
       expect(ms, lessThan(300), reason: 'categorySlices took ${ms}ms');
     });
 
+    /// `rows_of` in the stats bridge was a `find` per id over the ledger —
+    /// the same quadratic shape, missed when the other twelve were fixed.
+    testWidgets('and the trend', (tester) async {
+      fill(big);
+      final live = store.liveEntries();
+      final today = localDay(DateTime.now());
+
+      final clock = Stopwatch()..start();
+      final pts = stats.dailyTrend(
+        ids: idsOf(live),
+        daysOf: daysOf(live),
+        days: 30,
+        today: today,
+      );
+      final ms = clock.elapsedMilliseconds;
+
+      expect(pts, hasLength(30));
+      expect(ms, lessThan(300), reason: 'dailyTrend took ${ms}ms');
+    });
+
+    /// The whole stats screen is one call now, over every live row: the
+    /// window, the trend, six windows, the comparison, the top five and the
+    /// habits. A year is its most expensive window.
+    testWidgets('and the whole stats page', (tester) async {
+      fill(big);
+      final live = store.liveEntries();
+      final at = [
+        for (final e in live) DateTime.fromMillisecondsSinceEpoch(e.ts),
+      ];
+      final today = localDay(DateTime.now());
+
+      for (final period in ['month', 'year']) {
+        final clock = Stopwatch()..start();
+        final page = stats.statsPage(
+          ids: idsOf(live),
+          daysOf: daysOf(live),
+          dows: [for (final d in at) d.weekday % 7],
+          hours: [for (final d in at) d.hour],
+          anchor: today,
+          period: period,
+          io: 'exp',
+          today: today,
+          zh: true,
+        );
+        final ms = clock.elapsedMilliseconds;
+        expect(page.overview.count, greaterThan(0));
+        expect(ms, lessThan(300), reason: 'statsPage($period) took ${ms}ms');
+      }
+    });
+
     /// The screen still renders a ledger that went through the map. This is a
     /// smoke test of the seam, not of the duplicate rule — the rows' text is
     /// drawn from the Dart side's own id map over `liveEntries()`, and only

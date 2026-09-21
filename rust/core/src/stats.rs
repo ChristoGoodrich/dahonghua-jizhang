@@ -397,6 +397,42 @@ pub fn comparison(rows: &[DatedRow], anchor: Civil, cycle_start: i32, today: Civ
     }
 }
 
+/// What [`comparison`] adds up to, in a word.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum Verdict {
+    /// Nothing last cycle to measure against — a first month, or one where
+    /// nothing was spent. Saying "¥300 more than last month" over a last
+    /// month of zero is true and useless.
+    NoBase,
+    /// Within five per cent either way.
+    Same,
+    /// This much more than the same days last cycle.
+    More(f64),
+    /// This much less.
+    Less(f64),
+}
+
+/// The headline over the this-cycle-against-last chart: 比上月同期多 ¥x.
+///
+/// The judgement was in the shipping view — `Math.abs(diff) / lastTotal <
+/// 0.05` reads as the same — and nothing pinned it, because only the domain
+/// was recorded for the corpus. It is here so the one number that decides
+/// whether the screen says "more" is not decided by the screen.
+pub fn verdict(this_total: f64, last_total: f64) -> Verdict {
+    // `lastTotal > 0` is false for NaN as well as for nothing
+    if last_total.is_nan() || last_total <= 0.0 {
+        return Verdict::NoBase;
+    }
+    let diff = this_total - last_total;
+    if diff.abs() / last_total < 0.05 {
+        Verdict::Same
+    } else if diff > 0.0 {
+        Verdict::More(diff)
+    } else {
+        Verdict::Less(-diff)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -747,5 +783,30 @@ mod tests {
         ];
         let cmp = comparison(&rows, c(2026, 5, 1), 1, c(2026, 5, 1));
         assert_eq!(cmp.this_cum, vec![0.0]);
+    }
+
+    // ---- the verdict over the comparison ----
+
+    #[test]
+    fn five_per_cent_either_way_is_the_same() {
+        assert_eq!(verdict(100.0, 100.0), Verdict::Same);
+        assert_eq!(verdict(104.9, 100.0), Verdict::Same);
+        assert_eq!(verdict(95.1, 100.0), Verdict::Same);
+        // five per cent exactly is not under five per cent
+        assert_eq!(verdict(105.0, 100.0), Verdict::More(5.0));
+        assert_eq!(verdict(95.0, 100.0), Verdict::Less(5.0));
+    }
+
+    #[test]
+    fn the_difference_is_said_as_a_positive_amount() {
+        assert_eq!(verdict(300.0, 100.0), Verdict::More(200.0));
+        assert_eq!(verdict(0.0, 100.0), Verdict::Less(100.0));
+    }
+
+    #[test]
+    fn nothing_last_time_is_nothing_to_compare_with() {
+        assert_eq!(verdict(50.0, 0.0), Verdict::NoBase);
+        assert_eq!(verdict(50.0, -1.0), Verdict::NoBase);
+        assert_eq!(verdict(50.0, f64::NAN), Verdict::NoBase);
     }
 }

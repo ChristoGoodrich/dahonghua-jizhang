@@ -6,8 +6,8 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `parse_day`, `rows_of`, `show_day`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
+// These functions are ignored because they are not marked as `pub`: `cubic_views`, `parse_day`, `polyline_view`, `rows_of`, `show_day`, `slices_of`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
 
 OverviewView overview({required List<String> ids}) =>
     RustLib.instance.api.crateApiStatsOverview(ids: ids);
@@ -65,6 +65,74 @@ ChartView chartPoints({
   points: points,
   series: series,
 );
+
+/// The stats screen, whole.
+///
+/// One call rather than eight: the screen redraws on every window and every
+/// direction, and each of the eight would carry the same ledger across the
+/// boundary to answer one question about it.
+///
+/// What Dart supplies is what only Dart knows — for each live entry, the
+/// local calendar day, the weekday (`0` is Sunday) and the hour it fell in —
+/// plus today. Everything else is decided here or in the core: which rows are
+/// in the window, what the trend covers and at what grain, where the curve
+/// goes, where the gridlines fall, which six windows the bars are, which
+/// entries are the largest, and whether this month is more than the last.
+StatsPage statsPage({
+  required List<String> ids,
+  required List<String> daysOf,
+  required List<int> dows,
+  required List<int> hours,
+  required String anchor,
+  required String period,
+  required String io,
+  required String today,
+  required bool zh,
+}) => RustLib.instance.api.crateApiStatsStatsPage(
+  ids: ids,
+  daysOf: daysOf,
+  dows: dows,
+  hours: hours,
+  anchor: anchor,
+  period: period,
+  io: io,
+  today: today,
+  zh: zh,
+);
+
+/// Which of `n` points a finger at `x` means, `x` in the chart's own box.
+int? indexAt({required double x, required int n}) =>
+    RustLib.instance.api.crateApiStatsIndexAt(x: x, n: n);
+
+/// A bar in the weekday or time-of-day breakdown.
+class BarView {
+  /// `0`–`6` from Sunday for a weekday; `dawn` … `night` for a time.
+  final String key;
+  final double amt;
+  final int count;
+  final double frac;
+
+  const BarView({
+    required this.key,
+    required this.amt,
+    required this.count,
+    required this.frac,
+  });
+
+  @override
+  int get hashCode =>
+      key.hashCode ^ amt.hashCode ^ count.hashCode ^ frac.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BarView &&
+          runtimeType == other.runtimeType &&
+          key == other.key &&
+          amt == other.amt &&
+          count == other.count &&
+          frac == other.frac;
+}
 
 /// A point in the chart's own coordinate box, which a painter scales.
 class ChartPoint {
@@ -126,6 +194,112 @@ class ChartView {
           height == other.height;
 }
 
+/// This cycle's cumulative spend against the same days of the last.
+class CompareView {
+  final List<ChartPoint> thisLine;
+  final List<ChartPoint> lastLine;
+  final List<CubicView> thisCurve;
+  final List<CubicView> lastCurve;
+  final double thisTotal;
+  final double lastTotal;
+
+  /// Where zero sits in the box.
+  final double zero;
+
+  /// `none`, `same`, `more` or `less`: see `core::stats::verdict`.
+  final String verdict;
+
+  /// How much more or less, as a positive amount.
+  final double diff;
+  final double width;
+  final double height;
+
+  const CompareView({
+    required this.thisLine,
+    required this.lastLine,
+    required this.thisCurve,
+    required this.lastCurve,
+    required this.thisTotal,
+    required this.lastTotal,
+    required this.zero,
+    required this.verdict,
+    required this.diff,
+    required this.width,
+    required this.height,
+  });
+
+  @override
+  int get hashCode =>
+      thisLine.hashCode ^
+      lastLine.hashCode ^
+      thisCurve.hashCode ^
+      lastCurve.hashCode ^
+      thisTotal.hashCode ^
+      lastTotal.hashCode ^
+      zero.hashCode ^
+      verdict.hashCode ^
+      diff.hashCode ^
+      width.hashCode ^
+      height.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CompareView &&
+          runtimeType == other.runtimeType &&
+          thisLine == other.thisLine &&
+          lastLine == other.lastLine &&
+          thisCurve == other.thisCurve &&
+          lastCurve == other.lastCurve &&
+          thisTotal == other.thisTotal &&
+          lastTotal == other.lastTotal &&
+          zero == other.zero &&
+          verdict == other.verdict &&
+          diff == other.diff &&
+          width == other.width &&
+          height == other.height;
+}
+
+/// One Bézier segment of a smooth curve, in the chart's own box.
+class CubicView {
+  final double c1X;
+  final double c1Y;
+  final double c2X;
+  final double c2Y;
+  final double x;
+  final double y;
+
+  const CubicView({
+    required this.c1X,
+    required this.c1Y,
+    required this.c2X,
+    required this.c2Y,
+    required this.x,
+    required this.y,
+  });
+
+  @override
+  int get hashCode =>
+      c1X.hashCode ^
+      c1Y.hashCode ^
+      c2X.hashCode ^
+      c2Y.hashCode ^
+      x.hashCode ^
+      y.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CubicView &&
+          runtimeType == other.runtimeType &&
+          c1X == other.c1X &&
+          c1Y == other.c1Y &&
+          c2X == other.c2X &&
+          c2Y == other.c2Y &&
+          x == other.x &&
+          y == other.y;
+}
+
 /// Expense, income, balance and how many rows are in range.
 class OverviewView {
   final double exp;
@@ -156,6 +330,34 @@ class OverviewView {
           inc == other.inc &&
           balance == other.balance &&
           count == other.count;
+}
+
+/// One of the six windows ending with this one.
+class PeriodBarView {
+  /// The window's first day, `y-m-d`, for the label Dart writes.
+  final String start;
+  final double total;
+
+  /// Share of the tallest of the six.
+  final double frac;
+
+  const PeriodBarView({
+    required this.start,
+    required this.total,
+    required this.frac,
+  });
+
+  @override
+  int get hashCode => start.hashCode ^ total.hashCode ^ frac.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is PeriodBarView &&
+          runtimeType == other.runtimeType &&
+          start == other.start &&
+          total == other.total &&
+          frac == other.frac;
 }
 
 /// One slice of the category donut, with everything needed to draw it.
@@ -210,6 +412,122 @@ class SliceView {
           start == other.start;
 }
 
+/// Everything the stats screen draws, for one window and one direction.
+class StatsPage {
+  final OverviewView overview;
+  final TrendView trend;
+  final List<SliceView> slices;
+  final List<PeriodBarView> periods;
+  final List<TopView> top;
+  final List<BarView> weekday;
+  final List<BarView> hours;
+
+  /// Only for a month — the comparison the shipping app drew, which is of
+  /// spending whichever direction the rest of the screen is showing.
+  final CompareView? compare;
+
+  const StatsPage({
+    required this.overview,
+    required this.trend,
+    required this.slices,
+    required this.periods,
+    required this.top,
+    required this.weekday,
+    required this.hours,
+    this.compare,
+  });
+
+  @override
+  int get hashCode =>
+      overview.hashCode ^
+      trend.hashCode ^
+      slices.hashCode ^
+      periods.hashCode ^
+      top.hashCode ^
+      weekday.hashCode ^
+      hours.hashCode ^
+      compare.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is StatsPage &&
+          runtimeType == other.runtimeType &&
+          overview == other.overview &&
+          trend == other.trend &&
+          slices == other.slices &&
+          periods == other.periods &&
+          top == other.top &&
+          weekday == other.weekday &&
+          hours == other.hours &&
+          compare == other.compare;
+}
+
+/// A gridline: the value it marks, and where it sits in the box.
+class TickView {
+  final double value;
+  final double y;
+
+  const TickView({required this.value, required this.y});
+
+  @override
+  int get hashCode => value.hashCode ^ y.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TickView &&
+          runtimeType == other.runtimeType &&
+          value == other.value &&
+          y == other.y;
+}
+
+/// One of the largest single entries.
+class TopView {
+  final String id;
+  final String emoji;
+  final String color;
+  final String catName;
+  final String note;
+
+  /// `y-m-d`, the local day Dart said it fell on.
+  final String day;
+  final double amt;
+
+  const TopView({
+    required this.id,
+    required this.emoji,
+    required this.color,
+    required this.catName,
+    required this.note,
+    required this.day,
+    required this.amt,
+  });
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      emoji.hashCode ^
+      color.hashCode ^
+      catName.hashCode ^
+      note.hashCode ^
+      day.hashCode ^
+      amt.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TopView &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          emoji == other.emoji &&
+          color == other.color &&
+          catName == other.catName &&
+          note == other.note &&
+          day == other.day &&
+          amt == other.amt;
+}
+
 /// One point of a trend line.
 class TrendPointView {
   /// `y-m-d`, for the axis label Dart writes.
@@ -234,4 +552,84 @@ class TrendPointView {
           day == other.day &&
           exp == other.exp &&
           inc == other.inc;
+}
+
+/// The window's trend, for one direction.
+class TrendView {
+  /// One per bucket: `day` is the bucket's first day, for the axis and the
+  /// readout under a finger.
+  final List<TrendPointView> points;
+
+  /// A point per week rather than per day.
+  final bool weekly;
+
+  /// The first and last day the chart covers, `y-m-d`, for its axis. Not
+  /// the first and last point: a weekly point is dated to its Monday, and
+  /// the first Monday of a year can be in the year before.
+  final String from;
+  final String end;
+
+  /// The drawn series' values, parallel to `points`.
+  final Float64List values;
+
+  /// Those values as coordinates in the box, and the curve through them.
+  final List<ChartPoint> line;
+  final List<CubicView> curve;
+  final List<TickView> ticks;
+
+  /// Where zero sits in the box — what an area under the curve fills to.
+  final double zero;
+
+  /// The highest point, if anything is above zero.
+  final int? peak;
+  final double width;
+  final double height;
+
+  const TrendView({
+    required this.points,
+    required this.weekly,
+    required this.from,
+    required this.end,
+    required this.values,
+    required this.line,
+    required this.curve,
+    required this.ticks,
+    required this.zero,
+    this.peak,
+    required this.width,
+    required this.height,
+  });
+
+  @override
+  int get hashCode =>
+      points.hashCode ^
+      weekly.hashCode ^
+      from.hashCode ^
+      end.hashCode ^
+      values.hashCode ^
+      line.hashCode ^
+      curve.hashCode ^
+      ticks.hashCode ^
+      zero.hashCode ^
+      peak.hashCode ^
+      width.hashCode ^
+      height.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TrendView &&
+          runtimeType == other.runtimeType &&
+          points == other.points &&
+          weekly == other.weekly &&
+          from == other.from &&
+          end == other.end &&
+          values == other.values &&
+          line == other.line &&
+          curve == other.curve &&
+          ticks == other.ticks &&
+          zero == other.zero &&
+          peak == other.peak &&
+          width == other.width &&
+          height == other.height;
 }

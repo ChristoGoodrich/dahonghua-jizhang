@@ -13,7 +13,6 @@
 // is what makes "save" mean "go back to what I was looking at" without the
 // shell having to remember where that was.
 
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -287,7 +286,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           onChanged: _entriesChanged,
           onSelecting: (v) => setState(() => _selecting = v),
         ),
-        StatsScreen(key: ValueKey(_listVersion), zh: _zh),
+        StatsScreen(
+          key: ValueKey(_listVersion),
+          zh: _zh,
+          onEdit: (id) => _record(editId: id),
+        ),
         AssetsScreen(
           key: ValueKey(_listVersion),
           zh: _zh,

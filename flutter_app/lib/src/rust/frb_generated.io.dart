@@ -67,6 +67,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BackupInfoView dco_decode_backup_info_view(dynamic raw);
 
   @protected
+  BarView dco_decode_bar_view(dynamic raw);
+
+  @protected
   BatchTally dco_decode_batch_tally(dynamic raw);
 
   @protected
@@ -77,6 +80,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   CategoryView dco_decode_box_autoadd_category_view(dynamic raw);
+
+  @protected
+  CompareView dco_decode_box_autoadd_compare_view(dynamic raw);
 
   @protected
   EntryPatch dco_decode_box_autoadd_entry_patch(dynamic raw);
@@ -163,6 +169,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ClaimView dco_decode_claim_view(dynamic raw);
 
   @protected
+  CompareView dco_decode_compare_view(dynamic raw);
+
+  @protected
+  CubicView dco_decode_cubic_view(dynamic raw);
+
+  @protected
   DayCell dco_decode_day_cell(dynamic raw);
 
   @protected
@@ -232,6 +244,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<BackupInfoView> dco_decode_list_backup_info_view(dynamic raw);
 
   @protected
+  List<BarView> dco_decode_list_bar_view(dynamic raw);
+
+  @protected
   List<CandidateView> dco_decode_list_candidate_view(dynamic raw);
 
   @protected
@@ -245,6 +260,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<ClaimView> dco_decode_list_claim_view(dynamic raw);
+
+  @protected
+  List<CubicView> dco_decode_list_cubic_view(dynamic raw);
 
   @protected
   List<DayCell> dco_decode_list_day_cell(dynamic raw);
@@ -271,10 +289,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<PendingView> dco_decode_list_pending_view(dynamic raw);
 
   @protected
+  List<PeriodBarView> dco_decode_list_period_bar_view(dynamic raw);
+
+  @protected
   List<double> dco_decode_list_prim_f_64_loose(dynamic raw);
 
   @protected
   Float64List dco_decode_list_prim_f_64_strict(dynamic raw);
+
+  @protected
+  List<int> dco_decode_list_prim_i_32_loose(dynamic raw);
 
   @protected
   Int32List dco_decode_list_prim_i_32_strict(dynamic raw);
@@ -319,6 +343,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<ThemeOption> dco_decode_list_theme_option(dynamic raw);
 
   @protected
+  List<TickView> dco_decode_list_tick_view(dynamic raw);
+
+  @protected
+  List<TopView> dco_decode_list_top_view(dynamic raw);
+
+  @protected
   List<TrendPointView> dco_decode_list_trend_point_view(dynamic raw);
 
   @protected
@@ -350,6 +380,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   bool? dco_decode_opt_box_autoadd_bool(dynamic raw);
+
+  @protected
+  CompareView? dco_decode_opt_box_autoadd_compare_view(dynamic raw);
 
   @protected
   EntryView? dco_decode_opt_box_autoadd_entry_view(dynamic raw);
@@ -402,6 +435,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   PendingView dco_decode_pending_view(dynamic raw);
 
   @protected
+  PeriodBarView dco_decode_period_bar_view(dynamic raw);
+
+  @protected
   RateView dco_decode_rate_view(dynamic raw);
 
   @protected
@@ -447,6 +483,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   StatementView dco_decode_statement_view(dynamic raw);
 
   @protected
+  StatsPage dco_decode_stats_page(dynamic raw);
+
+  @protected
   SubView dco_decode_sub_view(dynamic raw);
 
   @protected
@@ -465,10 +504,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ThemeView dco_decode_theme_view(dynamic raw);
 
   @protected
+  TickView dco_decode_tick_view(dynamic raw);
+
+  @protected
   TierView dco_decode_tier_view(dynamic raw);
 
   @protected
+  TopView dco_decode_top_view(dynamic raw);
+
+  @protected
   TrendPointView dco_decode_trend_point_view(dynamic raw);
+
+  @protected
+  TrendView dco_decode_trend_view(dynamic raw);
 
   @protected
   int dco_decode_u_32(dynamic raw);
@@ -516,6 +564,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BackupInfoView sse_decode_backup_info_view(SseDeserializer deserializer);
 
   @protected
+  BarView sse_decode_bar_view(SseDeserializer deserializer);
+
+  @protected
   BatchTally sse_decode_batch_tally(SseDeserializer deserializer);
 
   @protected
@@ -528,6 +579,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   CategoryView sse_decode_box_autoadd_category_view(
     SseDeserializer deserializer,
   );
+
+  @protected
+  CompareView sse_decode_box_autoadd_compare_view(SseDeserializer deserializer);
 
   @protected
   EntryPatch sse_decode_box_autoadd_entry_patch(SseDeserializer deserializer);
@@ -622,6 +676,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ClaimView sse_decode_claim_view(SseDeserializer deserializer);
 
   @protected
+  CompareView sse_decode_compare_view(SseDeserializer deserializer);
+
+  @protected
+  CubicView sse_decode_cubic_view(SseDeserializer deserializer);
+
+  @protected
   DayCell sse_decode_day_cell(SseDeserializer deserializer);
 
   @protected
@@ -695,6 +755,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  List<BarView> sse_decode_list_bar_view(SseDeserializer deserializer);
+
+  @protected
   List<CandidateView> sse_decode_list_candidate_view(
     SseDeserializer deserializer,
   );
@@ -714,6 +777,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<ClaimView> sse_decode_list_claim_view(SseDeserializer deserializer);
+
+  @protected
+  List<CubicView> sse_decode_list_cubic_view(SseDeserializer deserializer);
 
   @protected
   List<DayCell> sse_decode_list_day_cell(SseDeserializer deserializer);
@@ -740,10 +806,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<PendingView> sse_decode_list_pending_view(SseDeserializer deserializer);
 
   @protected
+  List<PeriodBarView> sse_decode_list_period_bar_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   List<double> sse_decode_list_prim_f_64_loose(SseDeserializer deserializer);
 
   @protected
   Float64List sse_decode_list_prim_f_64_strict(SseDeserializer deserializer);
+
+  @protected
+  List<int> sse_decode_list_prim_i_32_loose(SseDeserializer deserializer);
 
   @protected
   Int32List sse_decode_list_prim_i_32_strict(SseDeserializer deserializer);
@@ -798,6 +872,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<ThemeOption> sse_decode_list_theme_option(SseDeserializer deserializer);
 
   @protected
+  List<TickView> sse_decode_list_tick_view(SseDeserializer deserializer);
+
+  @protected
+  List<TopView> sse_decode_list_top_view(SseDeserializer deserializer);
+
+  @protected
   List<TrendPointView> sse_decode_list_trend_point_view(
     SseDeserializer deserializer,
   );
@@ -833,6 +913,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   bool? sse_decode_opt_box_autoadd_bool(SseDeserializer deserializer);
+
+  @protected
+  CompareView? sse_decode_opt_box_autoadd_compare_view(
+    SseDeserializer deserializer,
+  );
 
   @protected
   EntryView? sse_decode_opt_box_autoadd_entry_view(
@@ -895,6 +980,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   PendingView sse_decode_pending_view(SseDeserializer deserializer);
 
   @protected
+  PeriodBarView sse_decode_period_bar_view(SseDeserializer deserializer);
+
+  @protected
   RateView sse_decode_rate_view(SseDeserializer deserializer);
 
   @protected
@@ -940,6 +1028,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   StatementView sse_decode_statement_view(SseDeserializer deserializer);
 
   @protected
+  StatsPage sse_decode_stats_page(SseDeserializer deserializer);
+
+  @protected
   SubView sse_decode_sub_view(SseDeserializer deserializer);
 
   @protected
@@ -960,10 +1051,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ThemeView sse_decode_theme_view(SseDeserializer deserializer);
 
   @protected
+  TickView sse_decode_tick_view(SseDeserializer deserializer);
+
+  @protected
   TierView sse_decode_tier_view(SseDeserializer deserializer);
 
   @protected
+  TopView sse_decode_top_view(SseDeserializer deserializer);
+
+  @protected
   TrendPointView sse_decode_trend_point_view(SseDeserializer deserializer);
+
+  @protected
+  TrendView sse_decode_trend_view(SseDeserializer deserializer);
 
   @protected
   int sse_decode_u_32(SseDeserializer deserializer);
@@ -1017,6 +1117,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_bar_view(BarView self, SseSerializer serializer);
+
+  @protected
   void sse_encode_batch_tally(BatchTally self, SseSerializer serializer);
 
   @protected
@@ -1028,6 +1131,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_box_autoadd_category_view(
     CategoryView self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_compare_view(
+    CompareView self,
     SseSerializer serializer,
   );
 
@@ -1161,6 +1270,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_claim_view(ClaimView self, SseSerializer serializer);
 
   @protected
+  void sse_encode_compare_view(CompareView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_cubic_view(CubicView self, SseSerializer serializer);
+
+  @protected
   void sse_encode_day_cell(DayCell self, SseSerializer serializer);
 
   @protected
@@ -1248,6 +1363,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_list_bar_view(List<BarView> self, SseSerializer serializer);
+
+  @protected
   void sse_encode_list_candidate_view(
     List<CandidateView> self,
     SseSerializer serializer,
@@ -1274,6 +1392,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_claim_view(
     List<ClaimView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_cubic_view(
+    List<CubicView> self,
     SseSerializer serializer,
   );
 
@@ -1311,6 +1435,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_list_period_bar_view(
+    List<PeriodBarView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_list_prim_f_64_loose(
     List<double> self,
     SseSerializer serializer,
@@ -1319,6 +1449,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_prim_f_64_strict(
     Float64List self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_prim_i_32_loose(
+    List<int> self,
     SseSerializer serializer,
   );
 
@@ -1398,6 +1534,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_list_tick_view(List<TickView> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_top_view(List<TopView> self, SseSerializer serializer);
+
+  @protected
   void sse_encode_list_trend_point_view(
     List<TrendPointView> self,
     SseSerializer serializer,
@@ -1438,6 +1580,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_opt_box_autoadd_bool(bool? self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_opt_box_autoadd_compare_view(
+    CompareView? self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_opt_box_autoadd_entry_view(
@@ -1518,6 +1666,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_pending_view(PendingView self, SseSerializer serializer);
 
   @protected
+  void sse_encode_period_bar_view(PeriodBarView self, SseSerializer serializer);
+
+  @protected
   void sse_encode_rate_view(RateView self, SseSerializer serializer);
 
   @protected
@@ -1566,6 +1717,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_statement_view(StatementView self, SseSerializer serializer);
 
   @protected
+  void sse_encode_stats_page(StatsPage self, SseSerializer serializer);
+
+  @protected
   void sse_encode_sub_view(SubView self, SseSerializer serializer);
 
   @protected
@@ -1587,13 +1741,22 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_theme_view(ThemeView self, SseSerializer serializer);
 
   @protected
+  void sse_encode_tick_view(TickView self, SseSerializer serializer);
+
+  @protected
   void sse_encode_tier_view(TierView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_top_view(TopView self, SseSerializer serializer);
 
   @protected
   void sse_encode_trend_point_view(
     TrendPointView self,
     SseSerializer serializer,
   );
+
+  @protected
+  void sse_encode_trend_view(TrendView self, SseSerializer serializer);
 
   @protected
   void sse_encode_u_32(int self, SseSerializer serializer);

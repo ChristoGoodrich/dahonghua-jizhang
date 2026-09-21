@@ -38,7 +38,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.12.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -987332455;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1859585528;
 
 // Section: executor
 
@@ -2544,6 +2544,37 @@ fn wire__crate__api__capture__inbox_unparsed_impl(
             deserializer.end();
             transform_result_sse::<_, ()>((move || {
                 let output_ok = Result::<_, ()>::Ok(crate::api::capture::inbox_unparsed())?;
+                Ok(output_ok)
+            })())
+        },
+    )
+}
+fn wire__crate__api__stats__index_at_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "index_at",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_x = <f64>::sse_decode(&mut deserializer);
+            let api_n = <u32>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let output_ok = Result::<_, ()>::Ok(crate::api::stats::index_at(api_x, api_n))?;
                 Ok(output_ok)
             })())
         },
@@ -6000,6 +6031,54 @@ fn wire__crate__api__statement__statement_of_impl(
         },
     )
 }
+fn wire__crate__api__stats__stats_page_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "stats_page",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_ids = <Vec<String>>::sse_decode(&mut deserializer);
+            let api_days_of = <Vec<String>>::sse_decode(&mut deserializer);
+            let api_dows = <Vec<i32>>::sse_decode(&mut deserializer);
+            let api_hours = <Vec<i32>>::sse_decode(&mut deserializer);
+            let api_anchor = <String>::sse_decode(&mut deserializer);
+            let api_period = <String>::sse_decode(&mut deserializer);
+            let api_io = <String>::sse_decode(&mut deserializer);
+            let api_today = <String>::sse_decode(&mut deserializer);
+            let api_zh = <bool>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let output_ok = Result::<_, ()>::Ok(crate::api::stats::stats_page(
+                    api_ids,
+                    api_days_of,
+                    api_dows,
+                    api_hours,
+                    api_anchor,
+                    api_period,
+                    api_io,
+                    api_today,
+                    api_zh,
+                ))?;
+                Ok(output_ok)
+            })())
+        },
+    )
+}
 fn wire__crate__api__period__step_period_impl(
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -7131,6 +7210,22 @@ impl SseDecode for crate::api::backup::BackupInfoView {
     }
 }
 
+impl SseDecode for crate::api::stats::BarView {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_key = <String>::sse_decode(deserializer);
+        let mut var_amt = <f64>::sse_decode(deserializer);
+        let mut var_count = <u32>::sse_decode(deserializer);
+        let mut var_frac = <f64>::sse_decode(deserializer);
+        return crate::api::stats::BarView {
+            key: var_key,
+            amt: var_amt,
+            count: var_count,
+            frac: var_frac,
+        };
+    }
+}
+
 impl SseDecode for crate::api::batch::BatchTally {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -7332,6 +7427,56 @@ impl SseDecode for crate::api::reimburse::ClaimView {
             amt: var_amt,
             rb_amt: var_rbAmt,
             ts: var_ts,
+        };
+    }
+}
+
+impl SseDecode for crate::api::stats::CompareView {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_thisLine = <Vec<crate::api::stats::ChartPoint>>::sse_decode(deserializer);
+        let mut var_lastLine = <Vec<crate::api::stats::ChartPoint>>::sse_decode(deserializer);
+        let mut var_thisCurve = <Vec<crate::api::stats::CubicView>>::sse_decode(deserializer);
+        let mut var_lastCurve = <Vec<crate::api::stats::CubicView>>::sse_decode(deserializer);
+        let mut var_thisTotal = <f64>::sse_decode(deserializer);
+        let mut var_lastTotal = <f64>::sse_decode(deserializer);
+        let mut var_zero = <f64>::sse_decode(deserializer);
+        let mut var_verdict = <String>::sse_decode(deserializer);
+        let mut var_diff = <f64>::sse_decode(deserializer);
+        let mut var_width = <f64>::sse_decode(deserializer);
+        let mut var_height = <f64>::sse_decode(deserializer);
+        return crate::api::stats::CompareView {
+            this_line: var_thisLine,
+            last_line: var_lastLine,
+            this_curve: var_thisCurve,
+            last_curve: var_lastCurve,
+            this_total: var_thisTotal,
+            last_total: var_lastTotal,
+            zero: var_zero,
+            verdict: var_verdict,
+            diff: var_diff,
+            width: var_width,
+            height: var_height,
+        };
+    }
+}
+
+impl SseDecode for crate::api::stats::CubicView {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_c1X = <f64>::sse_decode(deserializer);
+        let mut var_c1Y = <f64>::sse_decode(deserializer);
+        let mut var_c2X = <f64>::sse_decode(deserializer);
+        let mut var_c2Y = <f64>::sse_decode(deserializer);
+        let mut var_x = <f64>::sse_decode(deserializer);
+        let mut var_y = <f64>::sse_decode(deserializer);
+        return crate::api::stats::CubicView {
+            c1x: var_c1X,
+            c1y: var_c1Y,
+            c2x: var_c2X,
+            c2y: var_c2Y,
+            x: var_x,
+            y: var_y,
         };
     }
 }
@@ -7796,6 +7941,18 @@ impl SseDecode for Vec<crate::api::backup::BackupInfoView> {
     }
 }
 
+impl SseDecode for Vec<crate::api::stats::BarView> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::stats::BarView>::sse_decode(deserializer));
+        }
+        return ans_;
+    }
+}
+
 impl SseDecode for Vec<crate::api::imports::CandidateView> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -7857,6 +8014,18 @@ impl SseDecode for Vec<crate::api::reimburse::ClaimView> {
         let mut ans_ = Vec::with_capacity(len_ as usize);
         for idx_ in 0..len_ {
             ans_.push(<crate::api::reimburse::ClaimView>::sse_decode(deserializer));
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<crate::api::stats::CubicView> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::stats::CubicView>::sse_decode(deserializer));
         }
         return ans_;
     }
@@ -7961,6 +8130,18 @@ impl SseDecode for Vec<crate::api::capture::PendingView> {
         let mut ans_ = Vec::with_capacity(len_ as usize);
         for idx_ in 0..len_ {
             ans_.push(<crate::api::capture::PendingView>::sse_decode(deserializer));
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<crate::api::stats::PeriodBarView> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::stats::PeriodBarView>::sse_decode(deserializer));
         }
         return ans_;
     }
@@ -8137,6 +8318,30 @@ impl SseDecode for Vec<crate::api::theme::ThemeOption> {
         let mut ans_ = Vec::with_capacity(len_ as usize);
         for idx_ in 0..len_ {
             ans_.push(<crate::api::theme::ThemeOption>::sse_decode(deserializer));
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<crate::api::stats::TickView> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::stats::TickView>::sse_decode(deserializer));
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<crate::api::stats::TopView> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::stats::TopView>::sse_decode(deserializer));
         }
         return ans_;
     }
@@ -8334,6 +8539,17 @@ impl SseDecode for Option<bool> {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         if (<bool>::sse_decode(deserializer)) {
             return Some(<bool>::sse_decode(deserializer));
+        } else {
+            return None;
+        }
+    }
+}
+
+impl SseDecode for Option<crate::api::stats::CompareView> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<crate::api::stats::CompareView>::sse_decode(deserializer));
         } else {
             return None;
         }
@@ -8544,6 +8760,20 @@ impl SseDecode for crate::api::capture::PendingView {
             amt: var_amt,
             note: var_note,
             ts: var_ts,
+        };
+    }
+}
+
+impl SseDecode for crate::api::stats::PeriodBarView {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_start = <String>::sse_decode(deserializer);
+        let mut var_total = <f64>::sse_decode(deserializer);
+        let mut var_frac = <f64>::sse_decode(deserializer);
+        return crate::api::stats::PeriodBarView {
+            start: var_start,
+            total: var_total,
+            frac: var_frac,
         };
     }
 }
@@ -8793,6 +9023,30 @@ impl SseDecode for crate::api::statement::StatementView {
     }
 }
 
+impl SseDecode for crate::api::stats::StatsPage {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_overview = <crate::api::stats::OverviewView>::sse_decode(deserializer);
+        let mut var_trend = <crate::api::stats::TrendView>::sse_decode(deserializer);
+        let mut var_slices = <Vec<crate::api::stats::SliceView>>::sse_decode(deserializer);
+        let mut var_periods = <Vec<crate::api::stats::PeriodBarView>>::sse_decode(deserializer);
+        let mut var_top = <Vec<crate::api::stats::TopView>>::sse_decode(deserializer);
+        let mut var_weekday = <Vec<crate::api::stats::BarView>>::sse_decode(deserializer);
+        let mut var_hours = <Vec<crate::api::stats::BarView>>::sse_decode(deserializer);
+        let mut var_compare = <Option<crate::api::stats::CompareView>>::sse_decode(deserializer);
+        return crate::api::stats::StatsPage {
+            overview: var_overview,
+            trend: var_trend,
+            slices: var_slices,
+            periods: var_periods,
+            top: var_top,
+            weekday: var_weekday,
+            hours: var_hours,
+            compare: var_compare,
+        };
+    }
+}
+
 impl SseDecode for crate::api::subscriptions::SubView {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -8951,6 +9205,18 @@ impl SseDecode for crate::api::theme::ThemeView {
     }
 }
 
+impl SseDecode for crate::api::stats::TickView {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_value = <f64>::sse_decode(deserializer);
+        let mut var_y = <f64>::sse_decode(deserializer);
+        return crate::api::stats::TickView {
+            value: var_value,
+            y: var_y,
+        };
+    }
+}
+
 impl SseDecode for crate::api::budget::TierView {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -8971,6 +9237,28 @@ impl SseDecode for crate::api::budget::TierView {
     }
 }
 
+impl SseDecode for crate::api::stats::TopView {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_id = <String>::sse_decode(deserializer);
+        let mut var_emoji = <String>::sse_decode(deserializer);
+        let mut var_color = <String>::sse_decode(deserializer);
+        let mut var_catName = <String>::sse_decode(deserializer);
+        let mut var_note = <String>::sse_decode(deserializer);
+        let mut var_day = <String>::sse_decode(deserializer);
+        let mut var_amt = <f64>::sse_decode(deserializer);
+        return crate::api::stats::TopView {
+            id: var_id,
+            emoji: var_emoji,
+            color: var_color,
+            cat_name: var_catName,
+            note: var_note,
+            day: var_day,
+            amt: var_amt,
+        };
+    }
+}
+
 impl SseDecode for crate::api::stats::TrendPointView {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -8981,6 +9269,38 @@ impl SseDecode for crate::api::stats::TrendPointView {
             day: var_day,
             exp: var_exp,
             inc: var_inc,
+        };
+    }
+}
+
+impl SseDecode for crate::api::stats::TrendView {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_points = <Vec<crate::api::stats::TrendPointView>>::sse_decode(deserializer);
+        let mut var_weekly = <bool>::sse_decode(deserializer);
+        let mut var_from = <String>::sse_decode(deserializer);
+        let mut var_end = <String>::sse_decode(deserializer);
+        let mut var_values = <Vec<f64>>::sse_decode(deserializer);
+        let mut var_line = <Vec<crate::api::stats::ChartPoint>>::sse_decode(deserializer);
+        let mut var_curve = <Vec<crate::api::stats::CubicView>>::sse_decode(deserializer);
+        let mut var_ticks = <Vec<crate::api::stats::TickView>>::sse_decode(deserializer);
+        let mut var_zero = <f64>::sse_decode(deserializer);
+        let mut var_peak = <Option<u32>>::sse_decode(deserializer);
+        let mut var_width = <f64>::sse_decode(deserializer);
+        let mut var_height = <f64>::sse_decode(deserializer);
+        return crate::api::stats::TrendView {
+            points: var_points,
+            weekly: var_weekly,
+            from: var_from,
+            end: var_end,
+            values: var_values,
+            line: var_line,
+            curve: var_curve,
+            ticks: var_ticks,
+            zero: var_zero,
+            peak: var_peak,
+            width: var_width,
+            height: var_height,
         };
     }
 }
@@ -9115,18 +9435,18 @@ fn pde_ffi_dispatcher_primary_impl(
         }
         61 => wire__crate__api__store__entry_patch_default_impl(port, ptr, rust_vec_len, data_len),
         70 => wire__crate__api__record__form_view_default_impl(port, ptr, rust_vec_len, data_len),
-        79 => wire__crate__api__init__init_app_impl(port, ptr, rust_vec_len, data_len),
-        120 => wire__crate__api__store__new_entry_default_impl(port, ptr, rust_vec_len, data_len),
-        121 => {
+        80 => wire__crate__api__init__init_app_impl(port, ptr, rust_vec_len, data_len),
+        121 => wire__crate__api__store__new_entry_default_impl(port, ptr, rust_vec_len, data_len),
+        122 => {
             wire__crate__api__store__new_transfer_default_impl(port, ptr, rust_vec_len, data_len)
         }
-        127 => wire__crate__api__subscriptions__pending_charges_default_impl(
+        128 => wire__crate__api__subscriptions__pending_charges_default_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        182 => {
+        183 => {
             wire__crate__api__budget__settings_view_default_impl(port, ptr, rust_vec_len, data_len)
         }
         _ => unreachable!(),
@@ -9214,141 +9534,143 @@ fn pde_ffi_dispatcher_sync_impl(
         76 => wire__crate__api__capture__inbox_blob_impl(ptr, rust_vec_len, data_len),
         77 => wire__crate__api__capture__inbox_pending_impl(ptr, rust_vec_len, data_len),
         78 => wire__crate__api__capture__inbox_unparsed_impl(ptr, rust_vec_len, data_len),
-        80 => wire__crate__api__record__initial_form_impl(ptr, rust_vec_len, data_len),
-        81 => wire__crate__api__report__insight_impl(ptr, rust_vec_len, data_len),
-        82 => wire__crate__api__sync__inspect_document_impl(ptr, rust_vec_len, data_len),
-        83 => wire__crate__api__rates__invert_rate_impl(ptr, rust_vec_len, data_len),
-        84 => wire__crate__api__theme__is_dark_impl(ptr, rust_vec_len, data_len),
-        85 => wire__crate__api__currency__known_currencies_impl(ptr, rust_vec_len, data_len),
-        86 => wire__crate__api__store__language_impl(ptr, rust_vec_len, data_len),
-        87 => wire__crate__api__catalog__ledgers_impl(ptr, rust_vec_len, data_len),
-        88 => wire__crate__api__liquid__lens_impl(ptr, rust_vec_len, data_len),
-        89 => wire__crate__api__liquid__liquid_spec_impl(ptr, rust_vec_len, data_len),
-        90 => wire__crate__api__backup__list_backups_impl(ptr, rust_vec_len, data_len),
-        91 => wire__crate__api__store__list_items_impl(ptr, rust_vec_len, data_len),
-        92 => wire__crate__api__store__live_entries_impl(ptr, rust_vec_len, data_len),
-        93 => wire__crate__api__store__load_config_impl(ptr, rust_vec_len, data_len),
-        94 => wire__crate__api__store__load_entries_impl(ptr, rust_vec_len, data_len),
-        95 => wire__crate__api__db__load_from_store_impl(ptr, rust_vec_len, data_len),
-        96 => wire__crate__api__capture__load_inbox_impl(ptr, rust_vec_len, data_len),
-        97 => wire__crate__api__remind__load_reminders_impl(ptr, rust_vec_len, data_len),
-        98 => wire__crate__api__networth__loans_impl(ptr, rust_vec_len, data_len),
-        99 => wire__crate__api__lock__lock_backgrounded_impl(ptr, rust_vec_len, data_len),
-        100 => wire__crate__api__lock__lock_capability_impl(ptr, rust_vec_len, data_len),
-        101 => wire__crate__api__lock__lock_enabled_impl(ptr, rust_vec_len, data_len),
-        102 => wire__crate__api__lock__lock_gated_impl(ptr, rust_vec_len, data_len),
-        103 => wire__crate__api__lock__lock_inactive_impl(ptr, rust_vec_len, data_len),
-        104 => wire__crate__api__lock__lock_load_impl(ptr, rust_vec_len, data_len),
-        105 => wire__crate__api__lock__lock_mounted_impl(ptr, rust_vec_len, data_len),
-        106 => wire__crate__api__lock__lock_notice_impl(ptr, rust_vec_len, data_len),
-        107 => wire__crate__api__lock__lock_reset_impl(ptr, rust_vec_len, data_len),
-        108 => wire__crate__api__lock__lock_resumed_impl(ptr, rust_vec_len, data_len),
-        109 => wire__crate__api__lock__lock_set_enabled_impl(ptr, rust_vec_len, data_len),
-        110 => wire__crate__api__lock__lock_settled_impl(ptr, rust_vec_len, data_len),
-        111 => wire__crate__api__lock__lock_unlock_pressed_impl(ptr, rust_vec_len, data_len),
-        112 => wire__crate__api__glass__luminance_impl(ptr, rust_vec_len, data_len),
-        113 => wire__crate__api__backup__max_backups_impl(ptr, rust_vec_len, data_len),
-        114 => wire__crate__api__capture__max_unparsed_impl(ptr, rust_vec_len, data_len),
-        115 => wire__crate__api__sync__merge_document_impl(ptr, rust_vec_len, data_len),
-        116 => wire__crate__api__db__migrate_from_json_impl(ptr, rust_vec_len, data_len),
-        117 => wire__crate__api__remind__monthly_report_on_impl(ptr, rust_vec_len, data_len),
-        118 => wire__crate__api__budget__monthly_status_impl(ptr, rust_vec_len, data_len),
-        119 => wire__crate__api__networth__net_worth_impl(ptr, rust_vec_len, data_len),
-        122 => wire__crate__api__remind__next_monthly_date_impl(ptr, rust_vec_len, data_len),
-        123 => wire__crate__api__history__note_hints_impl(ptr, rust_vec_len, data_len),
-        124 => wire__crate__api__db__open_store_impl(ptr, rust_vec_len, data_len),
-        125 => wire__crate__api__stats__overview_impl(ptr, rust_vec_len, data_len),
-        126 => wire__crate__api__search__parse_query_impl(ptr, rust_vec_len, data_len),
-        128 => wire__crate__api__period__period_window_impl(ptr, rust_vec_len, data_len),
-        129 => wire__crate__api__store__persist_debounce_ms_impl(ptr, rust_vec_len, data_len),
-        130 => wire__crate__api__record__pick_direction_impl(ptr, rust_vec_len, data_len),
-        131 => wire__crate__api__accounts__pickable_impl(ptr, rust_vec_len, data_len),
-        132 => wire__crate__api__catalog__pickable_ledgers_impl(ptr, rust_vec_len, data_len),
-        133 => wire__crate__api__money__plain_impl(ptr, rust_vec_len, data_len),
-        134 => wire__crate__api__imports__preview_bills_impl(ptr, rust_vec_len, data_len),
-        135 => wire__crate__api__backup__prune_backups_impl(ptr, rust_vec_len, data_len),
-        136 => wire__crate__api__rates__rate_date_is_recent_impl(ptr, rust_vec_len, data_len),
-        137 => wire__crate__api__record__rate_is_cached_impl(ptr, rust_vec_len, data_len),
-        138 => wire__crate__api__currency__rates_impl(ptr, rust_vec_len, data_len),
-        139 => wire__crate__api__glass__readability_alpha_impl(ptr, rust_vec_len, data_len),
-        140 => wire__crate__api__report__recap_impl(ptr, rust_vec_len, data_len),
-        141 => wire__crate__api__reimburse__refund_entry_impl(ptr, rust_vec_len, data_len),
-        142 => wire__crate__api__reimburse__refund_state_impl(ptr, rust_vec_len, data_len),
-        143 => wire__crate__api__accounts__remove_account_impl(ptr, rust_vec_len, data_len),
-        144 => wire__crate__api__batch__remove_all_impl(ptr, rust_vec_len, data_len),
-        145 => wire__crate__api__networth__remove_asset_impl(ptr, rust_vec_len, data_len),
-        146 => wire__crate__api__store__remove_entry_impl(ptr, rust_vec_len, data_len),
-        147 => wire__crate__api__networth__remove_loan_impl(ptr, rust_vec_len, data_len),
-        148 => wire__crate__api__currency__remove_rate_impl(ptr, rust_vec_len, data_len),
-        149 => wire__crate__api__subscriptions__remove_sub_impl(ptr, rust_vec_len, data_len),
-        150 => wire__crate__api__catalog__remove_tag_impl(ptr, rust_vec_len, data_len),
-        151 => wire__crate__api__catalog__remove_template_impl(ptr, rust_vec_len, data_len),
-        152 => wire__crate__api__networth__repay_loan_impl(ptr, rust_vec_len, data_len),
-        153 => wire__crate__api__store__reset_impl(ptr, rust_vec_len, data_len),
-        154 => wire__crate__api__capture__reset_inbox_impl(ptr, rust_vec_len, data_len),
-        155 => wire__crate__api__remind__reset_reminders_impl(ptr, rust_vec_len, data_len),
-        156 => wire__crate__api__db__reset_store_handle_impl(ptr, rust_vec_len, data_len),
-        157 => wire__crate__api__rates__resolve_rate_impl(ptr, rust_vec_len, data_len),
-        158 => wire__crate__api__glass__resolve_tier_impl(ptr, rust_vec_len, data_len),
-        159 => wire__crate__api__backup__restore_backup_impl(ptr, rust_vec_len, data_len),
-        160 => wire__crate__api__acct__row_count_for_account_impl(ptr, rust_vec_len, data_len),
-        161 => wire__crate__api__acct__rows_for_account_impl(ptr, rust_vec_len, data_len),
-        162 => wire__crate__api__glass__saturation_matrix_impl(ptr, rust_vec_len, data_len),
-        163 => wire__crate__api__record__save_form_impl(ptr, rust_vec_len, data_len),
-        164 => wire__crate__api__glass__scrim_bands_impl(ptr, rust_vec_len, data_len),
-        165 => wire__crate__api__glass__scrim_ramp_impl(ptr, rust_vec_len, data_len),
-        166 => wire__crate__api__glass__scrim_spec_impl(ptr, rust_vec_len, data_len),
-        167 => wire__crate__api__search__search_ids_impl(ptr, rust_vec_len, data_len),
-        168 => wire__crate__api__networth__set_asset_no_count_impl(ptr, rust_vec_len, data_len),
-        169 => wire__crate__api__currency__set_base_currency_impl(ptr, rust_vec_len, data_len),
-        170 => wire__crate__api__batch__set_claim_impl(ptr, rust_vec_len, data_len),
-        171 => wire__crate__api__record__set_currencies_impl(ptr, rust_vec_len, data_len),
-        172 => wire__crate__api__store__set_current_account_impl(ptr, rust_vec_len, data_len),
-        173 => wire__crate__api__catalog__set_current_ledger_impl(ptr, rust_vec_len, data_len),
-        174 => wire__crate__api__remind__set_daily_reminder_impl(ptr, rust_vec_len, data_len),
-        175 => wire__crate__api__store__set_language_impl(ptr, rust_vec_len, data_len),
-        176 => wire__crate__api__remind__set_monthly_report_impl(ptr, rust_vec_len, data_len),
-        177 => wire__crate__api__currency__set_rate_impl(ptr, rust_vec_len, data_len),
-        178 => wire__crate__api__budget__set_settings_impl(ptr, rust_vec_len, data_len),
-        179 => wire__crate__api__theme__set_theme_impl(ptr, rust_vec_len, data_len),
-        180 => wire__crate__api__remind__set_weekly_report_impl(ptr, rust_vec_len, data_len),
-        181 => wire__crate__api__budget__settings_impl(ptr, rust_vec_len, data_len),
-        183 => wire__crate__api__liquid__snap_impl(ptr, rust_vec_len, data_len),
-        184 => wire__crate__api__store__snapshot_config_impl(ptr, rust_vec_len, data_len),
-        185 => wire__crate__api__store__snapshot_entries_impl(ptr, rust_vec_len, data_len),
-        186 => wire__crate__api__statement__statement_of_impl(ptr, rust_vec_len, data_len),
-        187 => wire__crate__api__period__step_period_impl(ptr, rust_vec_len, data_len),
-        188 => wire__crate__api__db__store_is_open_impl(ptr, rust_vec_len, data_len),
-        189 => wire__crate__api__db__store_schema_version_impl(ptr, rust_vec_len, data_len),
-        190 => wire__crate__api__db__store_snapshot_impl(ptr, rust_vec_len, data_len),
-        191 => wire__crate__api__history__streak_impl(ptr, rust_vec_len, data_len),
-        192 => wire__crate__api__subscriptions__sub_next_due_impl(ptr, rust_vec_len, data_len),
-        193 => wire__crate__api__subscriptions__subs_impl(ptr, rust_vec_len, data_len),
-        194 => wire__crate__api__subscriptions__subs_commit_impl(ptr, rust_vec_len, data_len),
-        195 => wire__crate__api__subscriptions__subs_pending_impl(ptr, rust_vec_len, data_len),
-        196 => wire__crate__api__db__supported_schema_version_impl(ptr, rust_vec_len, data_len),
-        197 => wire__crate__api__sync__sync_document_impl(ptr, rust_vec_len, data_len),
-        198 => wire__crate__api__liquid__tab_at_impl(ptr, rust_vec_len, data_len),
-        199 => wire__crate__api__catalog__tags_impl(ptr, rust_vec_len, data_len),
-        200 => wire__crate__api__batch__tally_impl(ptr, rust_vec_len, data_len),
-        201 => wire__crate__api__catalog__template_draft_impl(ptr, rust_vec_len, data_len),
-        202 => wire__crate__api__catalog__templates_impl(ptr, rust_vec_len, data_len),
-        203 => wire__crate__api__theme__theme_key_impl(ptr, rust_vec_len, data_len),
-        204 => wire__crate__api__theme__theme_of_impl(ptr, rust_vec_len, data_len),
-        205 => wire__crate__api__theme__theme_options_impl(ptr, rust_vec_len, data_len),
-        206 => wire__crate__api__reimburse__toggle_reimburse_impl(ptr, rust_vec_len, data_len),
-        207 => wire__crate__api__accounts__total_balance_impl(ptr, rust_vec_len, data_len),
-        208 => wire__crate__api__glass__touch_light_color_impl(ptr, rust_vec_len, data_len),
-        209 => wire__crate__api__reimburse__unmark_reimburse_impl(ptr, rust_vec_len, data_len),
-        210 => wire__crate__api__batch__unremove_all_impl(ptr, rust_vec_len, data_len),
-        211 => wire__crate__api__store__unremove_entry_impl(ptr, rust_vec_len, data_len),
-        212 => wire__crate__api__store__update_entry_impl(ptr, rust_vec_len, data_len),
-        213 => wire__crate__api__remind__valid_time_impl(ptr, rust_vec_len, data_len),
-        214 => wire__crate__api__record__validate_form_impl(ptr, rust_vec_len, data_len),
-        215 => wire__crate__api__glass__wash_color_impl(ptr, rust_vec_len, data_len),
-        216 => wire__crate__api__report__weekly_impl(ptr, rust_vec_len, data_len),
-        217 => wire__crate__api__remind__weekly_report_on_impl(ptr, rust_vec_len, data_len),
-        218 => wire__crate__api__stats__weekly_trend_impl(ptr, rust_vec_len, data_len),
+        79 => wire__crate__api__stats__index_at_impl(ptr, rust_vec_len, data_len),
+        81 => wire__crate__api__record__initial_form_impl(ptr, rust_vec_len, data_len),
+        82 => wire__crate__api__report__insight_impl(ptr, rust_vec_len, data_len),
+        83 => wire__crate__api__sync__inspect_document_impl(ptr, rust_vec_len, data_len),
+        84 => wire__crate__api__rates__invert_rate_impl(ptr, rust_vec_len, data_len),
+        85 => wire__crate__api__theme__is_dark_impl(ptr, rust_vec_len, data_len),
+        86 => wire__crate__api__currency__known_currencies_impl(ptr, rust_vec_len, data_len),
+        87 => wire__crate__api__store__language_impl(ptr, rust_vec_len, data_len),
+        88 => wire__crate__api__catalog__ledgers_impl(ptr, rust_vec_len, data_len),
+        89 => wire__crate__api__liquid__lens_impl(ptr, rust_vec_len, data_len),
+        90 => wire__crate__api__liquid__liquid_spec_impl(ptr, rust_vec_len, data_len),
+        91 => wire__crate__api__backup__list_backups_impl(ptr, rust_vec_len, data_len),
+        92 => wire__crate__api__store__list_items_impl(ptr, rust_vec_len, data_len),
+        93 => wire__crate__api__store__live_entries_impl(ptr, rust_vec_len, data_len),
+        94 => wire__crate__api__store__load_config_impl(ptr, rust_vec_len, data_len),
+        95 => wire__crate__api__store__load_entries_impl(ptr, rust_vec_len, data_len),
+        96 => wire__crate__api__db__load_from_store_impl(ptr, rust_vec_len, data_len),
+        97 => wire__crate__api__capture__load_inbox_impl(ptr, rust_vec_len, data_len),
+        98 => wire__crate__api__remind__load_reminders_impl(ptr, rust_vec_len, data_len),
+        99 => wire__crate__api__networth__loans_impl(ptr, rust_vec_len, data_len),
+        100 => wire__crate__api__lock__lock_backgrounded_impl(ptr, rust_vec_len, data_len),
+        101 => wire__crate__api__lock__lock_capability_impl(ptr, rust_vec_len, data_len),
+        102 => wire__crate__api__lock__lock_enabled_impl(ptr, rust_vec_len, data_len),
+        103 => wire__crate__api__lock__lock_gated_impl(ptr, rust_vec_len, data_len),
+        104 => wire__crate__api__lock__lock_inactive_impl(ptr, rust_vec_len, data_len),
+        105 => wire__crate__api__lock__lock_load_impl(ptr, rust_vec_len, data_len),
+        106 => wire__crate__api__lock__lock_mounted_impl(ptr, rust_vec_len, data_len),
+        107 => wire__crate__api__lock__lock_notice_impl(ptr, rust_vec_len, data_len),
+        108 => wire__crate__api__lock__lock_reset_impl(ptr, rust_vec_len, data_len),
+        109 => wire__crate__api__lock__lock_resumed_impl(ptr, rust_vec_len, data_len),
+        110 => wire__crate__api__lock__lock_set_enabled_impl(ptr, rust_vec_len, data_len),
+        111 => wire__crate__api__lock__lock_settled_impl(ptr, rust_vec_len, data_len),
+        112 => wire__crate__api__lock__lock_unlock_pressed_impl(ptr, rust_vec_len, data_len),
+        113 => wire__crate__api__glass__luminance_impl(ptr, rust_vec_len, data_len),
+        114 => wire__crate__api__backup__max_backups_impl(ptr, rust_vec_len, data_len),
+        115 => wire__crate__api__capture__max_unparsed_impl(ptr, rust_vec_len, data_len),
+        116 => wire__crate__api__sync__merge_document_impl(ptr, rust_vec_len, data_len),
+        117 => wire__crate__api__db__migrate_from_json_impl(ptr, rust_vec_len, data_len),
+        118 => wire__crate__api__remind__monthly_report_on_impl(ptr, rust_vec_len, data_len),
+        119 => wire__crate__api__budget__monthly_status_impl(ptr, rust_vec_len, data_len),
+        120 => wire__crate__api__networth__net_worth_impl(ptr, rust_vec_len, data_len),
+        123 => wire__crate__api__remind__next_monthly_date_impl(ptr, rust_vec_len, data_len),
+        124 => wire__crate__api__history__note_hints_impl(ptr, rust_vec_len, data_len),
+        125 => wire__crate__api__db__open_store_impl(ptr, rust_vec_len, data_len),
+        126 => wire__crate__api__stats__overview_impl(ptr, rust_vec_len, data_len),
+        127 => wire__crate__api__search__parse_query_impl(ptr, rust_vec_len, data_len),
+        129 => wire__crate__api__period__period_window_impl(ptr, rust_vec_len, data_len),
+        130 => wire__crate__api__store__persist_debounce_ms_impl(ptr, rust_vec_len, data_len),
+        131 => wire__crate__api__record__pick_direction_impl(ptr, rust_vec_len, data_len),
+        132 => wire__crate__api__accounts__pickable_impl(ptr, rust_vec_len, data_len),
+        133 => wire__crate__api__catalog__pickable_ledgers_impl(ptr, rust_vec_len, data_len),
+        134 => wire__crate__api__money__plain_impl(ptr, rust_vec_len, data_len),
+        135 => wire__crate__api__imports__preview_bills_impl(ptr, rust_vec_len, data_len),
+        136 => wire__crate__api__backup__prune_backups_impl(ptr, rust_vec_len, data_len),
+        137 => wire__crate__api__rates__rate_date_is_recent_impl(ptr, rust_vec_len, data_len),
+        138 => wire__crate__api__record__rate_is_cached_impl(ptr, rust_vec_len, data_len),
+        139 => wire__crate__api__currency__rates_impl(ptr, rust_vec_len, data_len),
+        140 => wire__crate__api__glass__readability_alpha_impl(ptr, rust_vec_len, data_len),
+        141 => wire__crate__api__report__recap_impl(ptr, rust_vec_len, data_len),
+        142 => wire__crate__api__reimburse__refund_entry_impl(ptr, rust_vec_len, data_len),
+        143 => wire__crate__api__reimburse__refund_state_impl(ptr, rust_vec_len, data_len),
+        144 => wire__crate__api__accounts__remove_account_impl(ptr, rust_vec_len, data_len),
+        145 => wire__crate__api__batch__remove_all_impl(ptr, rust_vec_len, data_len),
+        146 => wire__crate__api__networth__remove_asset_impl(ptr, rust_vec_len, data_len),
+        147 => wire__crate__api__store__remove_entry_impl(ptr, rust_vec_len, data_len),
+        148 => wire__crate__api__networth__remove_loan_impl(ptr, rust_vec_len, data_len),
+        149 => wire__crate__api__currency__remove_rate_impl(ptr, rust_vec_len, data_len),
+        150 => wire__crate__api__subscriptions__remove_sub_impl(ptr, rust_vec_len, data_len),
+        151 => wire__crate__api__catalog__remove_tag_impl(ptr, rust_vec_len, data_len),
+        152 => wire__crate__api__catalog__remove_template_impl(ptr, rust_vec_len, data_len),
+        153 => wire__crate__api__networth__repay_loan_impl(ptr, rust_vec_len, data_len),
+        154 => wire__crate__api__store__reset_impl(ptr, rust_vec_len, data_len),
+        155 => wire__crate__api__capture__reset_inbox_impl(ptr, rust_vec_len, data_len),
+        156 => wire__crate__api__remind__reset_reminders_impl(ptr, rust_vec_len, data_len),
+        157 => wire__crate__api__db__reset_store_handle_impl(ptr, rust_vec_len, data_len),
+        158 => wire__crate__api__rates__resolve_rate_impl(ptr, rust_vec_len, data_len),
+        159 => wire__crate__api__glass__resolve_tier_impl(ptr, rust_vec_len, data_len),
+        160 => wire__crate__api__backup__restore_backup_impl(ptr, rust_vec_len, data_len),
+        161 => wire__crate__api__acct__row_count_for_account_impl(ptr, rust_vec_len, data_len),
+        162 => wire__crate__api__acct__rows_for_account_impl(ptr, rust_vec_len, data_len),
+        163 => wire__crate__api__glass__saturation_matrix_impl(ptr, rust_vec_len, data_len),
+        164 => wire__crate__api__record__save_form_impl(ptr, rust_vec_len, data_len),
+        165 => wire__crate__api__glass__scrim_bands_impl(ptr, rust_vec_len, data_len),
+        166 => wire__crate__api__glass__scrim_ramp_impl(ptr, rust_vec_len, data_len),
+        167 => wire__crate__api__glass__scrim_spec_impl(ptr, rust_vec_len, data_len),
+        168 => wire__crate__api__search__search_ids_impl(ptr, rust_vec_len, data_len),
+        169 => wire__crate__api__networth__set_asset_no_count_impl(ptr, rust_vec_len, data_len),
+        170 => wire__crate__api__currency__set_base_currency_impl(ptr, rust_vec_len, data_len),
+        171 => wire__crate__api__batch__set_claim_impl(ptr, rust_vec_len, data_len),
+        172 => wire__crate__api__record__set_currencies_impl(ptr, rust_vec_len, data_len),
+        173 => wire__crate__api__store__set_current_account_impl(ptr, rust_vec_len, data_len),
+        174 => wire__crate__api__catalog__set_current_ledger_impl(ptr, rust_vec_len, data_len),
+        175 => wire__crate__api__remind__set_daily_reminder_impl(ptr, rust_vec_len, data_len),
+        176 => wire__crate__api__store__set_language_impl(ptr, rust_vec_len, data_len),
+        177 => wire__crate__api__remind__set_monthly_report_impl(ptr, rust_vec_len, data_len),
+        178 => wire__crate__api__currency__set_rate_impl(ptr, rust_vec_len, data_len),
+        179 => wire__crate__api__budget__set_settings_impl(ptr, rust_vec_len, data_len),
+        180 => wire__crate__api__theme__set_theme_impl(ptr, rust_vec_len, data_len),
+        181 => wire__crate__api__remind__set_weekly_report_impl(ptr, rust_vec_len, data_len),
+        182 => wire__crate__api__budget__settings_impl(ptr, rust_vec_len, data_len),
+        184 => wire__crate__api__liquid__snap_impl(ptr, rust_vec_len, data_len),
+        185 => wire__crate__api__store__snapshot_config_impl(ptr, rust_vec_len, data_len),
+        186 => wire__crate__api__store__snapshot_entries_impl(ptr, rust_vec_len, data_len),
+        187 => wire__crate__api__statement__statement_of_impl(ptr, rust_vec_len, data_len),
+        188 => wire__crate__api__stats__stats_page_impl(ptr, rust_vec_len, data_len),
+        189 => wire__crate__api__period__step_period_impl(ptr, rust_vec_len, data_len),
+        190 => wire__crate__api__db__store_is_open_impl(ptr, rust_vec_len, data_len),
+        191 => wire__crate__api__db__store_schema_version_impl(ptr, rust_vec_len, data_len),
+        192 => wire__crate__api__db__store_snapshot_impl(ptr, rust_vec_len, data_len),
+        193 => wire__crate__api__history__streak_impl(ptr, rust_vec_len, data_len),
+        194 => wire__crate__api__subscriptions__sub_next_due_impl(ptr, rust_vec_len, data_len),
+        195 => wire__crate__api__subscriptions__subs_impl(ptr, rust_vec_len, data_len),
+        196 => wire__crate__api__subscriptions__subs_commit_impl(ptr, rust_vec_len, data_len),
+        197 => wire__crate__api__subscriptions__subs_pending_impl(ptr, rust_vec_len, data_len),
+        198 => wire__crate__api__db__supported_schema_version_impl(ptr, rust_vec_len, data_len),
+        199 => wire__crate__api__sync__sync_document_impl(ptr, rust_vec_len, data_len),
+        200 => wire__crate__api__liquid__tab_at_impl(ptr, rust_vec_len, data_len),
+        201 => wire__crate__api__catalog__tags_impl(ptr, rust_vec_len, data_len),
+        202 => wire__crate__api__batch__tally_impl(ptr, rust_vec_len, data_len),
+        203 => wire__crate__api__catalog__template_draft_impl(ptr, rust_vec_len, data_len),
+        204 => wire__crate__api__catalog__templates_impl(ptr, rust_vec_len, data_len),
+        205 => wire__crate__api__theme__theme_key_impl(ptr, rust_vec_len, data_len),
+        206 => wire__crate__api__theme__theme_of_impl(ptr, rust_vec_len, data_len),
+        207 => wire__crate__api__theme__theme_options_impl(ptr, rust_vec_len, data_len),
+        208 => wire__crate__api__reimburse__toggle_reimburse_impl(ptr, rust_vec_len, data_len),
+        209 => wire__crate__api__accounts__total_balance_impl(ptr, rust_vec_len, data_len),
+        210 => wire__crate__api__glass__touch_light_color_impl(ptr, rust_vec_len, data_len),
+        211 => wire__crate__api__reimburse__unmark_reimburse_impl(ptr, rust_vec_len, data_len),
+        212 => wire__crate__api__batch__unremove_all_impl(ptr, rust_vec_len, data_len),
+        213 => wire__crate__api__store__unremove_entry_impl(ptr, rust_vec_len, data_len),
+        214 => wire__crate__api__store__update_entry_impl(ptr, rust_vec_len, data_len),
+        215 => wire__crate__api__remind__valid_time_impl(ptr, rust_vec_len, data_len),
+        216 => wire__crate__api__record__validate_form_impl(ptr, rust_vec_len, data_len),
+        217 => wire__crate__api__glass__wash_color_impl(ptr, rust_vec_len, data_len),
+        218 => wire__crate__api__report__weekly_impl(ptr, rust_vec_len, data_len),
+        219 => wire__crate__api__remind__weekly_report_on_impl(ptr, rust_vec_len, data_len),
+        220 => wire__crate__api__stats__weekly_trend_impl(ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -9476,6 +9798,24 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::backup::BackupInfoView>
     for crate::api::backup::BackupInfoView
 {
     fn into_into_dart(self) -> crate::api::backup::BackupInfoView {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::stats::BarView {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.key.into_into_dart().into_dart(),
+            self.amt.into_into_dart().into_dart(),
+            self.count.into_into_dart().into_dart(),
+            self.frac.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for crate::api::stats::BarView {}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::stats::BarView> for crate::api::stats::BarView {
+    fn into_into_dart(self) -> crate::api::stats::BarView {
         self
     }
 }
@@ -9725,6 +10065,58 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::reimburse::ClaimView>
     for crate::api::reimburse::ClaimView
 {
     fn into_into_dart(self) -> crate::api::reimburse::ClaimView {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::stats::CompareView {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.this_line.into_into_dart().into_dart(),
+            self.last_line.into_into_dart().into_dart(),
+            self.this_curve.into_into_dart().into_dart(),
+            self.last_curve.into_into_dart().into_dart(),
+            self.this_total.into_into_dart().into_dart(),
+            self.last_total.into_into_dart().into_dart(),
+            self.zero.into_into_dart().into_dart(),
+            self.verdict.into_into_dart().into_dart(),
+            self.diff.into_into_dart().into_dart(),
+            self.width.into_into_dart().into_dart(),
+            self.height.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::stats::CompareView
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::stats::CompareView>
+    for crate::api::stats::CompareView
+{
+    fn into_into_dart(self) -> crate::api::stats::CompareView {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::stats::CubicView {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.c1x.into_into_dart().into_dart(),
+            self.c1y.into_into_dart().into_dart(),
+            self.c2x.into_into_dart().into_dart(),
+            self.c2y.into_into_dart().into_dart(),
+            self.x.into_into_dart().into_dart(),
+            self.y.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for crate::api::stats::CubicView {}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::stats::CubicView>
+    for crate::api::stats::CubicView
+{
+    fn into_into_dart(self) -> crate::api::stats::CubicView {
         self
     }
 }
@@ -10364,6 +10756,28 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::capture::PendingView>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::stats::PeriodBarView {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.start.into_into_dart().into_dart(),
+            self.total.into_into_dart().into_dart(),
+            self.frac.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::stats::PeriodBarView
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::stats::PeriodBarView>
+    for crate::api::stats::PeriodBarView
+{
+    fn into_into_dart(self) -> crate::api::stats::PeriodBarView {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::currency::RateView {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
@@ -10680,6 +11094,30 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::statement::StatementView>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::stats::StatsPage {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.overview.into_into_dart().into_dart(),
+            self.trend.into_into_dart().into_dart(),
+            self.slices.into_into_dart().into_dart(),
+            self.periods.into_into_dart().into_dart(),
+            self.top.into_into_dart().into_dart(),
+            self.weekday.into_into_dart().into_dart(),
+            self.hours.into_into_dart().into_dart(),
+            self.compare.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for crate::api::stats::StatsPage {}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::stats::StatsPage>
+    for crate::api::stats::StatsPage
+{
+    fn into_into_dart(self) -> crate::api::stats::StatsPage {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::subscriptions::SubView {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
@@ -10843,6 +11281,24 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::theme::ThemeView>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::stats::TickView {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.value.into_into_dart().into_dart(),
+            self.y.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for crate::api::stats::TickView {}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::stats::TickView>
+    for crate::api::stats::TickView
+{
+    fn into_into_dart(self) -> crate::api::stats::TickView {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::budget::TierView {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
@@ -10865,6 +11321,27 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::budget::TierView>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::stats::TopView {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.id.into_into_dart().into_dart(),
+            self.emoji.into_into_dart().into_dart(),
+            self.color.into_into_dart().into_dart(),
+            self.cat_name.into_into_dart().into_dart(),
+            self.note.into_into_dart().into_dart(),
+            self.day.into_into_dart().into_dart(),
+            self.amt.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for crate::api::stats::TopView {}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::stats::TopView> for crate::api::stats::TopView {
+    fn into_into_dart(self) -> crate::api::stats::TopView {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::stats::TrendPointView {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
@@ -10883,6 +11360,34 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::stats::TrendPointView>
     for crate::api::stats::TrendPointView
 {
     fn into_into_dart(self) -> crate::api::stats::TrendPointView {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::stats::TrendView {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.points.into_into_dart().into_dart(),
+            self.weekly.into_into_dart().into_dart(),
+            self.from.into_into_dart().into_dart(),
+            self.end.into_into_dart().into_dart(),
+            self.values.into_into_dart().into_dart(),
+            self.line.into_into_dart().into_dart(),
+            self.curve.into_into_dart().into_dart(),
+            self.ticks.into_into_dart().into_dart(),
+            self.zero.into_into_dart().into_dart(),
+            self.peak.into_into_dart().into_dart(),
+            self.width.into_into_dart().into_dart(),
+            self.height.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for crate::api::stats::TrendView {}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::stats::TrendView>
+    for crate::api::stats::TrendView
+{
+    fn into_into_dart(self) -> crate::api::stats::TrendView {
         self
     }
 }
@@ -11068,6 +11573,16 @@ impl SseEncode for crate::api::backup::BackupInfoView {
     }
 }
 
+impl SseEncode for crate::api::stats::BarView {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.key, serializer);
+        <f64>::sse_encode(self.amt, serializer);
+        <u32>::sse_encode(self.count, serializer);
+        <f64>::sse_encode(self.frac, serializer);
+    }
+}
+
 impl SseEncode for crate::api::batch::BatchTally {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -11203,6 +11718,35 @@ impl SseEncode for crate::api::reimburse::ClaimView {
         <f64>::sse_encode(self.amt, serializer);
         <f64>::sse_encode(self.rb_amt, serializer);
         <i64>::sse_encode(self.ts, serializer);
+    }
+}
+
+impl SseEncode for crate::api::stats::CompareView {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<crate::api::stats::ChartPoint>>::sse_encode(self.this_line, serializer);
+        <Vec<crate::api::stats::ChartPoint>>::sse_encode(self.last_line, serializer);
+        <Vec<crate::api::stats::CubicView>>::sse_encode(self.this_curve, serializer);
+        <Vec<crate::api::stats::CubicView>>::sse_encode(self.last_curve, serializer);
+        <f64>::sse_encode(self.this_total, serializer);
+        <f64>::sse_encode(self.last_total, serializer);
+        <f64>::sse_encode(self.zero, serializer);
+        <String>::sse_encode(self.verdict, serializer);
+        <f64>::sse_encode(self.diff, serializer);
+        <f64>::sse_encode(self.width, serializer);
+        <f64>::sse_encode(self.height, serializer);
+    }
+}
+
+impl SseEncode for crate::api::stats::CubicView {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <f64>::sse_encode(self.c1x, serializer);
+        <f64>::sse_encode(self.c1y, serializer);
+        <f64>::sse_encode(self.c2x, serializer);
+        <f64>::sse_encode(self.c2y, serializer);
+        <f64>::sse_encode(self.x, serializer);
+        <f64>::sse_encode(self.y, serializer);
     }
 }
 
@@ -11513,6 +12057,16 @@ impl SseEncode for Vec<crate::api::backup::BackupInfoView> {
     }
 }
 
+impl SseEncode for Vec<crate::api::stats::BarView> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::stats::BarView>::sse_encode(item, serializer);
+        }
+    }
+}
+
 impl SseEncode for Vec<crate::api::imports::CandidateView> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -11559,6 +12113,16 @@ impl SseEncode for Vec<crate::api::reimburse::ClaimView> {
         <i32>::sse_encode(self.len() as _, serializer);
         for item in self {
             <crate::api::reimburse::ClaimView>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for Vec<crate::api::stats::CubicView> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::stats::CubicView>::sse_encode(item, serializer);
         }
     }
 }
@@ -11641,6 +12205,16 @@ impl SseEncode for Vec<crate::api::capture::PendingView> {
         <i32>::sse_encode(self.len() as _, serializer);
         for item in self {
             <crate::api::capture::PendingView>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for Vec<crate::api::stats::PeriodBarView> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::stats::PeriodBarView>::sse_encode(item, serializer);
         }
     }
 }
@@ -11785,6 +12359,26 @@ impl SseEncode for Vec<crate::api::theme::ThemeOption> {
     }
 }
 
+impl SseEncode for Vec<crate::api::stats::TickView> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::stats::TickView>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for Vec<crate::api::stats::TopView> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::stats::TopView>::sse_encode(item, serializer);
+        }
+    }
+}
+
 impl SseEncode for Vec<crate::api::stats::TrendPointView> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -11911,6 +12505,16 @@ impl SseEncode for Option<bool> {
         <bool>::sse_encode(self.is_some(), serializer);
         if let Some(value) = self {
             <bool>::sse_encode(value, serializer);
+        }
+    }
+}
+
+impl SseEncode for Option<crate::api::stats::CompareView> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <crate::api::stats::CompareView>::sse_encode(value, serializer);
         }
     }
 }
@@ -12078,6 +12682,15 @@ impl SseEncode for crate::api::capture::PendingView {
     }
 }
 
+impl SseEncode for crate::api::stats::PeriodBarView {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.start, serializer);
+        <f64>::sse_encode(self.total, serializer);
+        <f64>::sse_encode(self.frac, serializer);
+    }
+}
+
 impl SseEncode for crate::api::currency::RateView {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -12232,6 +12845,20 @@ impl SseEncode for crate::api::statement::StatementView {
     }
 }
 
+impl SseEncode for crate::api::stats::StatsPage {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <crate::api::stats::OverviewView>::sse_encode(self.overview, serializer);
+        <crate::api::stats::TrendView>::sse_encode(self.trend, serializer);
+        <Vec<crate::api::stats::SliceView>>::sse_encode(self.slices, serializer);
+        <Vec<crate::api::stats::PeriodBarView>>::sse_encode(self.periods, serializer);
+        <Vec<crate::api::stats::TopView>>::sse_encode(self.top, serializer);
+        <Vec<crate::api::stats::BarView>>::sse_encode(self.weekday, serializer);
+        <Vec<crate::api::stats::BarView>>::sse_encode(self.hours, serializer);
+        <Option<crate::api::stats::CompareView>>::sse_encode(self.compare, serializer);
+    }
+}
+
 impl SseEncode for crate::api::subscriptions::SubView {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -12323,6 +12950,14 @@ impl SseEncode for crate::api::theme::ThemeView {
     }
 }
 
+impl SseEncode for crate::api::stats::TickView {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <f64>::sse_encode(self.value, serializer);
+        <f64>::sse_encode(self.y, serializer);
+    }
+}
+
 impl SseEncode for crate::api::budget::TierView {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -12335,12 +12970,43 @@ impl SseEncode for crate::api::budget::TierView {
     }
 }
 
+impl SseEncode for crate::api::stats::TopView {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.id, serializer);
+        <String>::sse_encode(self.emoji, serializer);
+        <String>::sse_encode(self.color, serializer);
+        <String>::sse_encode(self.cat_name, serializer);
+        <String>::sse_encode(self.note, serializer);
+        <String>::sse_encode(self.day, serializer);
+        <f64>::sse_encode(self.amt, serializer);
+    }
+}
+
 impl SseEncode for crate::api::stats::TrendPointView {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <String>::sse_encode(self.day, serializer);
         <f64>::sse_encode(self.exp, serializer);
         <f64>::sse_encode(self.inc, serializer);
+    }
+}
+
+impl SseEncode for crate::api::stats::TrendView {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<crate::api::stats::TrendPointView>>::sse_encode(self.points, serializer);
+        <bool>::sse_encode(self.weekly, serializer);
+        <String>::sse_encode(self.from, serializer);
+        <String>::sse_encode(self.end, serializer);
+        <Vec<f64>>::sse_encode(self.values, serializer);
+        <Vec<crate::api::stats::ChartPoint>>::sse_encode(self.line, serializer);
+        <Vec<crate::api::stats::CubicView>>::sse_encode(self.curve, serializer);
+        <Vec<crate::api::stats::TickView>>::sse_encode(self.ticks, serializer);
+        <f64>::sse_encode(self.zero, serializer);
+        <Option<u32>>::sse_encode(self.peak, serializer);
+        <f64>::sse_encode(self.width, serializer);
+        <f64>::sse_encode(self.height, serializer);
     }
 }
 

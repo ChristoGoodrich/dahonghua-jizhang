@@ -69,6 +69,12 @@ void seed() {
     ('exp', 'gift', 520, '朋友婚礼', 12),
     ('exp', 'shop', 1299, '耳机', 14),
     ('exp', 'food', 31, '外卖', 15),
+    // last month, so 本月 vs 上月同期 has a month to compare with
+    ('exp', 'home', 2800, '房租', 34),
+    ('exp', 'food', 412, '聚餐', 36),
+    ('exp', 'shop', 689, '外套', 40),
+    ('exp', 'trans', 96, '打车', 44),
+    ('inc', 'salary', 12800, '八月工资', 34),
   ];
   var i = 0;
   for (final (io, cat, amt, note, ago) in rows) {
@@ -217,9 +223,17 @@ void main() {
         of: find.byKey(const Key('stats-list')),
         matching: find.byType(Scrollable),
       );
-      await tester.drag(statsList, const Offset(0, -420));
-      await shot(tester, '$room-04b-stats-scrolled');
-      await tester.drag(statsList, const Offset(0, 420));
+      // The page is several screens long; each of these is roughly one more.
+      for (final (n, dy) in [
+        ('b', 520.0),
+        ('c', 700.0),
+        ('d', 700.0),
+        ('e', 700.0),
+      ]) {
+        await tester.drag(statsList, Offset(0, -dy));
+        await shot(tester, '$room-04$n-stats-scrolled');
+      }
+      await tester.drag(statsList, const Offset(0, 4000));
       await tester.pumpAndSettle();
 
       await tab(tester, '资产');
