@@ -8703,9 +8703,11 @@ impl SseDecode for crate::api::glass::ScrimBand {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_top = <f64>::sse_decode(deserializer);
+        let mut var_full = <f64>::sse_decode(deserializer);
         let mut var_sigma = <f64>::sse_decode(deserializer);
         return crate::api::glass::ScrimBand {
             top: var_top,
+            full: var_full,
             sigma: var_sigma,
         };
     }
@@ -8715,11 +8717,13 @@ impl SseDecode for crate::api::glass::ScrimSpec {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_fade = <f64>::sse_decode(deserializer);
+        let mut var_headerRamp = <f64>::sse_decode(deserializer);
         let mut var_sigma = <f64>::sse_decode(deserializer);
         let mut var_bands = <u32>::sse_decode(deserializer);
         let mut var_wash = <f64>::sse_decode(deserializer);
         return crate::api::glass::ScrimSpec {
             fade: var_fade,
+            header_ramp: var_headerRamp,
             sigma: var_sigma,
             bands: var_bands,
             wash: var_wash,
@@ -10567,6 +10571,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::glass::ScrimBand {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
             self.top.into_into_dart().into_dart(),
+            self.full.into_into_dart().into_dart(),
             self.sigma.into_into_dart().into_dart(),
         ]
         .into_dart()
@@ -10585,6 +10590,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::glass::ScrimSpec {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
             self.fade.into_into_dart().into_dart(),
+            self.header_ramp.into_into_dart().into_dart(),
             self.sigma.into_into_dart().into_dart(),
             self.bands.into_into_dart().into_dart(),
             self.wash.into_into_dart().into_dart(),
@@ -12173,6 +12179,7 @@ impl SseEncode for crate::api::glass::ScrimBand {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <f64>::sse_encode(self.top, serializer);
+        <f64>::sse_encode(self.full, serializer);
         <f64>::sse_encode(self.sigma, serializer);
     }
 }
@@ -12181,6 +12188,7 @@ impl SseEncode for crate::api::glass::ScrimSpec {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <f64>::sse_encode(self.fade, serializer);
+        <f64>::sse_encode(self.header_ramp, serializer);
         <f64>::sse_encode(self.sigma, serializer);
         <u32>::sse_encode(self.bands, serializer);
         <f64>::sse_encode(self.wash, serializer);

@@ -191,6 +191,12 @@ void main() {
       await tester.pumpAndSettle();
 
       await shot(tester, '$room-01-entries');
+      // Scrolled, because a scrim over nothing shows nothing: the header's
+      // blur is only visible with rows running under it.
+      await tester.drag(find.byType(Scrollable).first, const Offset(0, -260));
+      await shot(tester, '$room-01b-entries-scrolled');
+      await tester.drag(find.byType(Scrollable).first, const Offset(0, 260));
+      await tester.pumpAndSettle();
 
       // a selection, since it is its own screen in all but name
       await tester.longPress(find.text('午饭 牛肉面'));
@@ -207,6 +213,14 @@ void main() {
 
       await tab(tester, '统计');
       await shot(tester, '$room-04-stats');
+      final statsList = find.descendant(
+        of: find.byKey(const Key('stats-list')),
+        matching: find.byType(Scrollable),
+      );
+      await tester.drag(statsList, const Offset(0, -420));
+      await shot(tester, '$room-04b-stats-scrolled');
+      await tester.drag(statsList, const Offset(0, 420));
+      await tester.pumpAndSettle();
 
       await tab(tester, '资产');
       await shot(tester, '$room-05-assets');

@@ -178,6 +178,7 @@ class _StatsScreenState extends State<StatsScreen> {
     return TitledScaffold(
       title: zh ? '统计' : 'Stats',
       body: (context, b) => ListView(
+        key: const Key('stats-list'),
         controller: b.controller,
         padding: EdgeInsets.fromLTRB(22, b.top, 22, 120),
         children: [

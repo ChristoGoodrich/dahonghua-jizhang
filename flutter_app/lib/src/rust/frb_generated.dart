@@ -8290,11 +8290,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ScrimBand dco_decode_scrim_band(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 2)
-      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
     return ScrimBand(
       top: dco_decode_f_64(arr[0]),
-      sigma: dco_decode_f_64(arr[1]),
+      full: dco_decode_f_64(arr[1]),
+      sigma: dco_decode_f_64(arr[2]),
     );
   }
 
@@ -8302,13 +8303,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ScrimSpec dco_decode_scrim_spec(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 4)
-      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    if (arr.length != 5)
+      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
     return ScrimSpec(
       fade: dco_decode_f_64(arr[0]),
-      sigma: dco_decode_f_64(arr[1]),
-      bands: dco_decode_u_32(arr[2]),
-      wash: dco_decode_f_64(arr[3]),
+      headerRamp: dco_decode_f_64(arr[1]),
+      sigma: dco_decode_f_64(arr[2]),
+      bands: dco_decode_u_32(arr[3]),
+      wash: dco_decode_f_64(arr[4]),
     );
   }
 
@@ -10318,19 +10320,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ScrimBand sse_decode_scrim_band(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_top = sse_decode_f_64(deserializer);
+    var var_full = sse_decode_f_64(deserializer);
     var var_sigma = sse_decode_f_64(deserializer);
-    return ScrimBand(top: var_top, sigma: var_sigma);
+    return ScrimBand(top: var_top, full: var_full, sigma: var_sigma);
   }
 
   @protected
   ScrimSpec sse_decode_scrim_spec(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_fade = sse_decode_f_64(deserializer);
+    var var_headerRamp = sse_decode_f_64(deserializer);
     var var_sigma = sse_decode_f_64(deserializer);
     var var_bands = sse_decode_u_32(deserializer);
     var var_wash = sse_decode_f_64(deserializer);
     return ScrimSpec(
       fade: var_fade,
+      headerRamp: var_headerRamp,
       sigma: var_sigma,
       bands: var_bands,
       wash: var_wash,
@@ -12063,6 +12068,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void sse_encode_scrim_band(ScrimBand self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_f_64(self.top, serializer);
+    sse_encode_f_64(self.full, serializer);
     sse_encode_f_64(self.sigma, serializer);
   }
 
@@ -12070,6 +12076,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void sse_encode_scrim_spec(ScrimSpec self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_f_64(self.fade, serializer);
+    sse_encode_f_64(self.headerRamp, serializer);
     sse_encode_f_64(self.sigma, serializer);
     sse_encode_u_32(self.bands, serializer);
     sse_encode_f_64(self.wash, serializer);

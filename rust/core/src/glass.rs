@@ -437,6 +437,17 @@ pub struct ScrimSpec {
     /// How far the fade reaches *beyond* the surface it stands under, in dp.
     /// The renderer adds the surface's own height and the gesture inset.
     pub fade: f64,
+    /// How much of a header's own height the ramp takes, from its bottom
+    /// edge up, in dp.
+    ///
+    /// Not `fade`, and not beyond the header. A header's scrim is sized to the
+    /// header alone, so a fade laid past it would blur the large title that
+    /// sits directly under it at rest. And not the whole header either, which
+    /// is what the first version did with a 72dp fade in a ~105dp header: the
+    /// bar's own title and actions ended up standing over content blurred to
+    /// σ≈3 — still legible, so two lines of text were fighting in one strip.
+    /// Short enough that the bar's middle is past most of the ramp.
+    pub header_ramp: f64,
     /// Blur sigma at the deepest point. Zero below the `Full` tier.
     pub sigma: f64,
     /// How many steps the ramp is cut into. See [`scrim_bands`].
@@ -459,18 +470,21 @@ pub fn scrim_spec(t: &GlassTheme, tier: GlassTier) -> ScrimSpec {
     match tier {
         GlassTier::Full => ScrimSpec {
             fade: 72.0,
+            header_ramp: 36.0,
             sigma: 22.0,
             bands: 6,
             wash: if t.is_dark { 0.62 } else { 0.5 },
         },
         GlassTier::Wash => ScrimSpec {
             fade: 56.0,
+            header_ramp: 36.0,
             sigma: 0.0,
             bands: 6,
             wash: if t.is_dark { 0.86 } else { 0.8 },
         },
         GlassTier::Solid => ScrimSpec {
             fade: 0.0,
+            header_ramp: 0.0,
             sigma: 0.0,
             bands: 1,
             wash: 1.0,
@@ -478,12 +492,17 @@ pub fn scrim_spec(t: &GlassTheme, tier: GlassTier) -> ScrimSpec {
     }
 }
 
-/// One step of the ramp: where it starts, and the blur it adds there.
+/// One step of the ramp: where it starts, where it is at full strength, and
+/// the blur it adds.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct ScrimBand {
     /// The band's top edge, 0 at the top of the scrim and 1 at the bottom.
     /// Every band runs from there to the bottom, so they nest.
     pub top: f64,
+    /// Where the band's mask reaches full strength, in the same units. It
+    /// fades in from nothing at `top`, so the edge a clip draws there is an
+    /// edge of zero strength. `full` is the next band's `top`.
+    pub full: f64,
     /// The sigma *this* band contributes, not the blur seen through it.
     pub sigma: f64,
 }
@@ -515,9 +534,26 @@ pub struct ScrimBand {
 /// point: the top edge of a progressive blur must not be findable. The last
 /// adds 15.8, on top of the 15.3 already accumulated, reaching 22 exactly.
 ///
-/// Six rather than more because each band is a save layer the GPU composites
-/// every frame the list moves under it, and the ramp is already smooth enough
-/// that a seventh would cost a frame to hide nothing.
+/// ## Every band fades in
+///
+/// Which is not enough on its own, and the first version shipped proving it.
+/// A band that starts at full strength has a hard edge where it starts, and
+/// the blur jumps there — 0.61 to 2.44 to 5.5 to 9.8 — in one pixel row. On a
+/// flat colour that is invisible; across a line of text it cuts the glyphs in
+/// half, sharp above and soft below, six times over. "一层一层的" was the
+/// report, and it was exact.
+///
+/// So each band is masked: nothing at its `top`, full strength at its `full`,
+/// which is where the next band begins. At any depth exactly one band is
+/// fading in — everything shallower is at full strength and everything deeper
+/// has not started — so what is seen is a crossfade from `C(k)` to `C(k+1)`,
+/// and there is no row anywhere at which anything changes all at once. The
+/// sigmas still decide how deep the ramp goes; the masks decide that it goes
+/// there gradually.
+///
+/// Six bands rather than more because each is a save layer the GPU composites
+/// every frame the list moves under it. With the joins gone the count sets
+/// how closely the crossfade follows the curve, and six follow it closely.
 pub fn scrim_bands(sigma: f64, bands: usize) -> Vec<ScrimBand> {
     if bands == 0 {
         return Vec::new();
@@ -533,6 +569,7 @@ pub fn scrim_bands(sigma: f64, bands: usize) -> Vec<ScrimBand> {
         let step = (total * total - prev * prev).max(0.0).sqrt();
         out.push(ScrimBand {
             top: k as f64 / n,
+            full: x,
             sigma: step,
         });
         prev = total;
@@ -542,10 +579,10 @@ pub fn scrim_bands(sigma: f64, bands: usize) -> Vec<ScrimBand> {
 
 /// The wash's alpha at each band edge, `bands + 1` of them.
 ///
-/// The same quadratic the blur follows, for the same reason and for one more:
-/// a stack of clipped rectangles has a hard edge at every join, and a wash
-/// that thickens across those joins is what stops them being visible. The two
-/// ramps have to agree, so they are one curve stated once.
+/// The same quadratic the blur follows, so the tint and the blur thicken
+/// together: a wash that arrived ahead of the blur would read as fog over
+/// sharp text, and one that lagged it as a blur with no material in it. The
+/// two ramps have to agree, so they are one curve stated once.
 pub fn scrim_ramp(wash: f64, bands: usize) -> Vec<f64> {
     let n = bands.max(1) as f64;
     (0..=bands.max(1))
@@ -859,6 +896,42 @@ mod tests {
         assert_eq!(bands[0].top, 0.0, "the first band starts at the top");
     }
 
+    /// The masks tile the ramp: each band is at full strength exactly where
+    /// the next one starts to fade in, the first fades in from the very top,
+    /// and the last is at full strength at the deep end. A gap between two
+    /// masks would be a row where nothing is changing and then something
+    /// does; an overlap, two crossfades stacked into one steeper one.
+    #[test]
+    fn every_band_fades_in_where_the_last_one_finished() {
+        for n in [1, 2, 6, 8] {
+            let bands = scrim_bands(22.0, n);
+            assert_eq!(bands[0].top, 0.0);
+            assert!((bands[n - 1].full - 1.0).abs() < 1e-12);
+            for b in &bands {
+                assert!(b.full > b.top, "a band that is full where it starts: {b:?}");
+            }
+            for w in bands.windows(2) {
+                assert!((w[1].top - w[0].full).abs() < 1e-12, "{w:?}");
+            }
+        }
+    }
+
+    /// What `header_ramp` is for: the middle of a 56dp bar, where its title
+    /// sits, has to be standing on more than half the depth. Measured with
+    /// the curve the bands follow — `sigma · t²`, `t` from the shallow edge.
+    #[test]
+    fn a_header_title_stands_on_deep_blur() {
+        let s = scrim_spec(&light(), GlassTier::Full);
+        let t: f64 = (28.0 / s.header_ramp).min(1.0);
+        assert!(
+            s.sigma * t * t > s.sigma / 2.0,
+            "the bar's middle is at σ={} of {}",
+            s.sigma * t * t,
+            s.sigma
+        );
+        assert!(s.header_ramp > 0.0 && s.header_ramp <= 56.0);
+    }
+
     /// Sigma zero is the flat tiers, and `sqrt` of a difference of zeros is a
     /// place NaN gets in. It does not.
     #[test]
@@ -894,6 +967,7 @@ mod tests {
         assert!(wash.wash > full.wash, "no blur has to be paid for");
         assert_eq!(solid.wash, 1.0);
         assert_eq!(solid.fade, 0.0, "opaque has nothing to fade");
+        assert_eq!(solid.header_ramp, 0.0);
         assert!(scrim_spec(&dark(), GlassTier::Full).wash > full.wash);
     }
 }

@@ -334,9 +334,20 @@ class _Grain extends CustomPainter {
 /// which is steep at the top, exactly where the onset has to be invisible.
 /// `core::glass` states the curve and hands over the steps; see `scrim_bands`.
 ///
-/// The wash rides the same curve. It is not only tone: a stack of clipped
-/// rectangles has a hard edge at every join, and a tint that thickens across
-/// those joins is what stops them being findable.
+/// ## And why every band fades in
+///
+/// A clipped rectangle of blur starts at full strength, so the stack had a
+/// hard edge at every join: across a row of text the glyphs were sharp above
+/// the line and soft below it, six times on the way down. The wash thickening
+/// across the joins was meant to hide them and did not — a tint can hide a
+/// step in tone, not a step in focus.
+///
+/// So each band draws a mask into its own layer: a gradient painted with
+/// [BlendMode.dstIn], which scales the blurred backdrop already in the layer
+/// by the gradient's alpha before the layer lands on the screen. Nothing at
+/// the band's edge, full strength by the point the next band starts; the clip
+/// still confines the filter, but the edge it draws is an edge of nothing.
+/// Where each mask begins and ends is the core's, beside the sigmas.
 class GlassScrim extends StatelessWidget {
   const GlassScrim({super.key, this.flipped = false, this.under});
 
@@ -377,7 +388,11 @@ class GlassScrim extends StatelessWidget {
           // still visibly soft. The part of the box behind the chrome is not
           // part of the transition — nobody sees it — so the transition
           // should not spend itself there.
-          final fade = spec.fade.clamp(0.0, h);
+          //
+          // A header takes its own, shorter ramp: its box is the header alone,
+          // and the bar's title has to stand on deep blur rather than in the
+          // middle of the transition. See `ScrimSpec.header_ramp`.
+          final fade = (flipped ? spec.headerRamp : spec.fade).clamp(0.0, h);
           final wash = Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
@@ -413,10 +428,10 @@ class GlassScrim extends StatelessWidget {
                 sigma: spec.sigma,
                 bands: spec.bands,
               ))
-                // A sub-pixel sigma is a save layer for nothing. The first band
-                // is deliberately that small — the top of a progressive blur
-                // must not be findable — so it is the one that gets dropped,
-                // and dropping it moves the total from 22 to 21.99.
+                // A sigma this small is a save layer for nothing. None of the
+                // shipping specs has one — the first of six bands at σ=22 adds
+                // 0.61 — but a spec with more bands would, and dropping it
+                // there moves the total by less than a hundredth.
                 if (band.sigma >= 0.05)
                   Positioned(
                     left: 0,
@@ -439,7 +454,15 @@ class GlassScrim extends StatelessWidget {
                           // sides.
                           tileMode: TileMode.clamp,
                         ),
-                        child: const SizedBox.expand(),
+                        // The child paints into the same layer the blurred
+                        // backdrop was put in, which is what lets it mask it.
+                        child: CustomPaint(
+                          size: Size.infinite,
+                          painter: ScrimBandMask(
+                            ramp: (band.full - band.top) * fade,
+                            flipped: flipped,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -450,6 +473,46 @@ class GlassScrim extends StatelessWidget {
       ),
     );
   }
+}
+
+/// A band's fade-in: transparent at its shallow edge, opaque `ramp` dp in, and
+/// opaque from there to the deep end.
+///
+/// Painted with [BlendMode.dstIn] into the band's backdrop layer, so it is not
+/// drawn over anything — it decides how much of the blur underneath survives.
+///
+/// Public so a test can hold every band to having one: the version without it
+/// looked fine in every test and cut text in half on the screen.
+@visibleForTesting
+class ScrimBandMask extends CustomPainter {
+  ScrimBandMask({required this.ramp, required this.flipped});
+
+  final double ramp;
+  final bool flipped;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (size.height <= 0) return;
+    final r = (ramp / size.height).clamp(0.0, 1.0);
+    final box = Offset.zero & size;
+    canvas.drawRect(
+      box,
+      Paint()
+        ..blendMode = BlendMode.dstIn
+        ..shader = LinearGradient(
+          // The shallow edge is where the band starts: its top, or for a
+          // header, its bottom.
+          begin: flipped ? Alignment.bottomCenter : Alignment.topCenter,
+          end: flipped ? Alignment.topCenter : Alignment.bottomCenter,
+          colors: const [Color(0x00000000), Color(0xFF000000)],
+          stops: [0, r],
+        ).createShader(box),
+    );
+  }
+
+  @override
+  bool shouldRepaint(ScrimBandMask old) =>
+      old.ramp != ramp || old.flipped != flipped;
 }
 
 /// How far a scrim reaches past the surface it stands under, in dp.

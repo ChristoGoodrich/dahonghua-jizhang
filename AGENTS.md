@@ -46,14 +46,14 @@ refuses to run without `src/` for exactly that reason.
 ## Running things
 
     npm run goldens       the core against what the TypeScript answered
-    npm run rust:test     796 tests
+    npm run rust:test     798 tests
     npm run rust:clippy   -D warnings
     npm run bridge:clippy the bridge is a separate cargo project
     npm run tests:check   all_test.dart is not stale
     npm run apk           the release APKs, one per architecture
 
     cd flutter_app
-    flutter test integration_test/all_test.dart    667 tests, ~5 min
+    flutter test integration_test/all_test.dart    669 tests, ~5 min
     flutter test integration_test/<one>_test.dart  while working on one screen
 
 The suite is one entrypoint on purpose: per file it was 36 APK builds and about
@@ -114,10 +114,20 @@ app draws on has a progressive blur, so it is built out of six nested clipped
 so the per-band sigma is `core::glass::scrim_bands`, not `sigma / bands`.
 Dividing evenly ramps as √k and puts the whole transition in the top two bands.
 
+**And every band fades in.** A clipped band starts at full strength, so the
+blur jumps at its edge in one pixel row, and across text that is a line —
+sharp above, soft below, six times down the ramp. It shipped like that, it was
+reported as "一层一层的", and no test noticed, because every number in it was
+right. Each band now paints a `ScrimBandMask` into its own backdrop layer with
+`BlendMode.dstIn`: nothing at its `top`, full strength at its `full`, where
+the next band starts. The sigmas say how deep; the masks say gradually.
+
 The ramp lives in the `fade` at the shallow end and holds full depth beyond it.
 A scrim is sized to the chrome it belongs to plus that fade, and for a header
 with a hard bottom edge it is sized to the header alone — otherwise the
-transition lands below the bar and blurs rows nobody has scrolled near.
+transition lands below the bar and blurs rows nobody has scrolled near. A
+header also ramps over `header_ramp`, not `fade`: with 72dp of ramp in a
+~105dp header the bar's title stood over text blurred to σ≈3, still legible.
 
 Screens do not assemble this themselves. **The four tabs use
 `TitledScaffold`**: a slim transparent bar holding only the actions, a large

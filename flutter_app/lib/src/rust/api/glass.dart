@@ -170,13 +170,17 @@ class ScrimBand {
   /// The band's top edge, 0 at the top of the scrim and 1 at the bottom.
   final double top;
 
+  /// Where the band's mask reaches full strength; it fades in from nothing
+  /// at `top`, which is what keeps the joins from showing.
+  final double full;
+
   /// The sigma this band contributes, not the blur seen through it.
   final double sigma;
 
-  const ScrimBand({required this.top, required this.sigma});
+  const ScrimBand({required this.top, required this.full, required this.sigma});
 
   @override
-  int get hashCode => top.hashCode ^ sigma.hashCode;
+  int get hashCode => top.hashCode ^ full.hashCode ^ sigma.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -184,6 +188,7 @@ class ScrimBand {
       other is ScrimBand &&
           runtimeType == other.runtimeType &&
           top == other.top &&
+          full == other.full &&
           sigma == other.sigma;
 }
 
@@ -192,6 +197,10 @@ class ScrimSpec {
   /// How far the fade reaches beyond the surface, in dp. The renderer adds
   /// the surface's own height and the gesture inset.
   final double fade;
+
+  /// How much of a header's own height the ramp takes, from its bottom
+  /// edge up. Inside the header, unlike `fade`.
+  final double headerRamp;
 
   /// Blur sigma at the deepest point; zero below the `Full` tier.
   final double sigma;
@@ -202,6 +211,7 @@ class ScrimSpec {
 
   const ScrimSpec({
     required this.fade,
+    required this.headerRamp,
     required this.sigma,
     required this.bands,
     required this.wash,
@@ -209,7 +219,11 @@ class ScrimSpec {
 
   @override
   int get hashCode =>
-      fade.hashCode ^ sigma.hashCode ^ bands.hashCode ^ wash.hashCode;
+      fade.hashCode ^
+      headerRamp.hashCode ^
+      sigma.hashCode ^
+      bands.hashCode ^
+      wash.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -217,6 +231,7 @@ class ScrimSpec {
       other is ScrimSpec &&
           runtimeType == other.runtimeType &&
           fade == other.fade &&
+          headerRamp == other.headerRamp &&
           sigma == other.sigma &&
           bands == other.bands &&
           wash == other.wash;

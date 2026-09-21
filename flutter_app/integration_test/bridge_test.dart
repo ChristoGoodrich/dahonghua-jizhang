@@ -213,6 +213,59 @@ void main() {
           reason: 'amplifying before the blur averages the amplification away');
     });
 
+    /// The scrim that shipped first was six clipped rectangles of blur, each
+    /// at full strength from its first row, and across a line of text that
+    /// is a line: sharp above, soft below, once per band. Every band now
+    /// fades in under a mask, and between them the masks cover the whole
+    /// ramp — so no band starts anywhere at full strength.
+    List<ScrimBandMask> bandMasks(WidgetTester tester) => [
+          for (final bd in tester.widgetList<BackdropFilter>(find.descendant(
+            of: find.byType(GlassScrim),
+            matching: find.byType(BackdropFilter),
+          )))
+            ((bd.child! as CustomPaint).painter! as ScrimBandMask),
+        ];
+
+    Future<void> scrim(WidgetTester tester, {required bool flipped}) =>
+        tester.pumpWidget(MaterialApp(
+          home: Scaffold(
+            body: Align(
+              alignment: Alignment.topCenter,
+              child: SizedBox(
+                height: 200,
+                child: GlassScrim(flipped: flipped),
+              ),
+            ),
+          ),
+        ));
+
+    testWidgets('every band of the scrim fades in, so no join shows',
+        (tester) async {
+      await scrim(tester, flipped: false);
+      final spec = glass.scrimSpec(isDark: false, tier: glass.GlassTier.full);
+      final masks = bandMasks(tester);
+      expect(masks, hasLength(spec.bands),
+          reason: 'one mask per band, and no band without one');
+      for (final m in masks) {
+        expect(m.ramp, greaterThan(0), reason: 'a band full where it starts');
+      }
+      expect(masks.fold<double>(0, (a, m) => a + m.ramp),
+          closeTo(spec.fade, 1e-9),
+          reason: 'the fade-ins tile the ramp end to end');
+    });
+
+    testWidgets('a header ramps over its own, shorter distance',
+        (tester) async {
+      await scrim(tester, flipped: true);
+      final spec = glass.scrimSpec(isDark: false, tier: glass.GlassTier.full);
+      final masks = bandMasks(tester);
+      expect(masks.every((m) => m.flipped), isTrue,
+          reason: 'a header fades in from its bottom edge');
+      expect(masks.fold<double>(0, (a, m) => a + m.ramp),
+          closeTo(spec.headerRamp, 1e-9));
+      expect(spec.headerRamp, lessThan(spec.fade));
+    });
+
     testWidgets('the saturation matrix leaves grey alone', (tester) async {
       // Every row has to sum to 1 or the surface takes a colour cast, which on
       // a near-white paper palette would be the first thing anyone noticed.

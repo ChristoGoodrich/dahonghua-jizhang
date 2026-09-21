@@ -178,6 +178,9 @@ pub struct ScrimSpec {
     /// How far the fade reaches beyond the surface, in dp. The renderer adds
     /// the surface's own height and the gesture inset.
     pub fade: f64,
+    /// How much of a header's own height the ramp takes, from its bottom
+    /// edge up. Inside the header, unlike `fade`.
+    pub header_ramp: f64,
     /// Blur sigma at the deepest point; zero below the `Full` tier.
     pub sigma: f64,
     pub bands: u32,
@@ -190,6 +193,9 @@ pub struct ScrimSpec {
 pub struct ScrimBand {
     /// The band's top edge, 0 at the top of the scrim and 1 at the bottom.
     pub top: f64,
+    /// Where the band's mask reaches full strength; it fades in from nothing
+    /// at `top`, which is what keeps the joins from showing.
+    pub full: f64,
     /// The sigma this band contributes, not the blur seen through it.
     pub sigma: f64,
 }
@@ -202,6 +208,7 @@ pub fn scrim_spec(is_dark: bool, tier: GlassTier) -> ScrimSpec {
     );
     ScrimSpec {
         fade: s.fade,
+        header_ramp: s.header_ramp,
         sigma: s.sigma,
         bands: s.bands as u32,
         wash: s.wash,
@@ -220,6 +227,7 @@ pub fn scrim_bands(sigma: f64, bands: u32) -> Vec<ScrimBand> {
         .into_iter()
         .map(|b| ScrimBand {
             top: b.top,
+            full: b.full,
             sigma: b.sigma,
         })
         .collect()
