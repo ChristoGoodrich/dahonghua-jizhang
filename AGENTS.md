@@ -75,6 +75,15 @@ debug-signed build takes the ledger with it. So the choice is made once and
 kept, and the script deletes any stale `app-release.apk` so the wrong file
 cannot be sent by accident.
 
+**`app-debug.apk` in that same folder is not a phone build.** `flutter test`
+leaves it there, built for the emulator it ran on, and after a clean it is the
+only APK in the folder. It was sent, and it crashed on launch: Flutter packed
+its engine for x86_64 alone but let a plugin's library through for all three,
+so an arm64 phone accepted the file and then found no engine it could load.
+`build.gradle.kts` now narrows `abiFilters` to the build's `target-platform`,
+so that file is refused at install instead — but the one to send is still the
+one the script names.
+
 ## Writing to the store
 
 `store()` hands out a **read-only** reference. Writing goes through

@@ -50,6 +50,36 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // Only the architectures this build was made for.
+        //
+        // Flutter's plugin sets abiFilters to all three whatever it was asked
+        // for, but packs its own engine only for the ones in `target-platform`
+        // — and `flutter run` and `flutter test` pass just the device's. So the
+        // APK the integration suite leaves behind for the x86_64 emulator had
+        // libflutter.so for x86_64 alone, beside a plugin's libdartjni.so for
+        // all three. A phone saw an arm64 library in it, accepted the install,
+        // and crashed on launch looking for an engine the file did not have.
+        // After a clean it was the only APK in the folder, and it got sent.
+        //
+        // Narrowed, that file is x86_64 through and through and a phone
+        // refuses it at install as not compatible — a message where there was
+        // a crash. Not when splitting: the splits choose the ABIs there, and
+        // AGP rejects abiFilters alongside them.
+        val targetPlatform = project.findProperty("target-platform")?.toString()
+        val splitPerAbi =
+            project.findProperty("split-per-abi")?.toString()?.toBoolean() ?: false
+        if (targetPlatform != null && !splitPerAbi) {
+            val abiOf = mapOf(
+                "android-arm" to "armeabi-v7a",
+                "android-arm64" to "arm64-v8a",
+                "android-x64" to "x86_64",
+            )
+            ndk {
+                abiFilters.clear()
+                abiFilters.addAll(targetPlatform.split(",").map { abiOf.getValue(it) })
+            }
+        }
     }
 
     signingConfigs {
