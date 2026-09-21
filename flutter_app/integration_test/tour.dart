@@ -38,7 +38,7 @@ const day = 86400000;
 void seed() {
   final now = DateTime.now().millisecondsSinceEpoch;
   accounts.addAccount(id: 'cash', name: '现金', balance: 820, kind: 'cash');
-  accounts.addAccount(id: 'card', name: '招商银行', balance: 23650, kind: 'debit');
+  accounts.addAccount(id: 'card', name: '招商银行', balance: 23650, kind: 'cash');
   accounts.addAccount(
     id: 'credit',
     name: '信用卡',

@@ -45,14 +45,26 @@ void spend(String id, double amt, {String? acct, String cat = 'food'}) {
 void earn(String id, double amt, {String? acct}) {
   final t = now;
   store.addEntry(
-    entry: store.NewEntry(io: 'inc', cat: 'salary', amt: amt, acct: acct, ts: t),
+    entry: store.NewEntry(
+      io: 'inc',
+      cat: 'salary',
+      amt: amt,
+      acct: acct,
+      ts: t,
+    ),
     id: id,
     now: t,
   );
 }
 
-void move(String id, String from, String to, double amt,
-    {double? fee, double? discount}) {
+void move(
+  String id,
+  String from,
+  String to,
+  double amt, {
+  double? fee,
+  double? discount,
+}) {
   final t = now;
   store.addTransfer(
     transfer: store.NewTransfer(
@@ -85,8 +97,9 @@ void main() {
   setUp(() => store.reset());
 
   group('a balance', () {
-    testWidgets('is the opening figure plus what touched the account',
-        (tester) async {
+    testWidgets('is the opening figure plus what touched the account', (
+      tester,
+    ) async {
       open('招行', balance: 1000);
       spend('e1', 35.5, acct: '招行');
       earn('e2', 200, acct: '招行');
@@ -104,8 +117,9 @@ void main() {
       expect(textOf(tester, 'acct-招行-bal'), '￥1,000.00');
     });
 
-    testWidgets('an entry naming an account that no longer exists is dropped',
-        (tester) async {
+    testWidgets('an entry naming an account that no longer exists is dropped', (
+      tester,
+    ) async {
       // not resurrected as a phantom row — the arithmetic only writes keys the
       // account list already holds
       store.addEntry(
@@ -119,7 +133,9 @@ void main() {
       expect(textOf(tester, 'acct-default-bal'), '￥0.00');
     });
 
-    testWidgets('an unparseable opening balance starts at zero', (tester) async {
+    testWidgets('an unparseable opening balance starts at zero', (
+      tester,
+    ) async {
       // `a.balance || 0` is a truthiness test, so a NaN opening figure starts
       // the account at zero rather than poisoning it for good
       open('坏账', balance: double.nan);
@@ -131,8 +147,9 @@ void main() {
   });
 
   group('a transfer', () {
-    testWidgets('moves the amount out of one account and into the other',
-        (tester) async {
+    testWidgets('moves the amount out of one account and into the other', (
+      tester,
+    ) async {
       open('招行', balance: 1000);
       open('支付宝', balance: 0);
       move('t1', '招行', '支付宝', 300);
@@ -142,19 +159,22 @@ void main() {
       expect(textOf(tester, 'acct-支付宝-bal'), '￥300.00');
     });
 
-    testWidgets('the fee leaves the source and the discount credits the target',
-        (tester) async {
-      open('招行', balance: 1000);
-      open('支付宝', balance: 0);
-      move('t1', '招行', '支付宝', 300, fee: 2, discount: 5);
-      await show(tester);
+    testWidgets(
+      'the fee leaves the source and the discount credits the target',
+      (tester) async {
+        open('招行', balance: 1000);
+        open('支付宝', balance: 0);
+        move('t1', '招行', '支付宝', 300, fee: 2, discount: 5);
+        await show(tester);
 
-      expect(textOf(tester, 'acct-招行-bal'), '￥698.00'); // 1000 - (300 + 2)
-      expect(textOf(tester, 'acct-支付宝-bal'), '￥305.00'); // 300 + 5
-    });
+        expect(textOf(tester, 'acct-招行-bal'), '￥698.00'); // 1000 - (300 + 2)
+        expect(textOf(tester, 'acct-支付宝-bal'), '￥305.00'); // 300 + 5
+      },
+    );
 
-    testWidgets('and does not change the total, apart from the fee',
-        (tester) async {
+    testWidgets('and does not change the total, apart from the fee', (
+      tester,
+    ) async {
       open('招行', balance: 1000);
       open('支付宝', balance: 0);
       move('t1', '招行', '支付宝', 300);
@@ -164,8 +184,9 @@ void main() {
   });
 
   group('the total', () {
-    testWidgets('adds every account together, including the negative ones',
-        (tester) async {
+    testWidgets('adds every account together, including the negative ones', (
+      tester,
+    ) async {
       open('招行', balance: 1000);
       open('信用卡', balance: 0, kind: 'credit');
       spend('e1', 400, acct: '信用卡');
@@ -175,8 +196,9 @@ void main() {
       expect(textOf(tester, 'acct-total'), '￥600.00');
     });
 
-    testWidgets('a negative figure is coloured rather than hidden',
-        (tester) async {
+    testWidgets('a negative figure is coloured rather than hidden', (
+      tester,
+    ) async {
       open('信用卡', balance: 0, kind: 'credit');
       spend('e1', 400, acct: '信用卡');
       await show(tester);
@@ -189,22 +211,26 @@ void main() {
   });
 
   group('deleting an account', () {
-    testWidgets('migrates the entries that pointed at it rather than orphaning',
-        (tester) async {
-      open('招行', balance: 0);
-      spend('e1', 35, acct: '招行');
-      await show(tester);
+    testWidgets(
+      'migrates the entries that pointed at it rather than orphaning',
+      (tester) async {
+        open('招行', balance: 0);
+        spend('e1', 35, acct: '招行');
+        await show(tester);
 
-      await tester.tap(find.byKey(const Key('acct-招行-delete')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('delete-ok')));
-      await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const Key('acct-招行-more')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const Key('acct-招行-delete')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const Key('delete-ok')));
+        await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('acct-招行-bal')), findsNothing);
-      expect(store.getEntry(id: 'e1')!.acct, 'default');
-      // the money did not evaporate with the account
-      expect(textOf(tester, 'acct-default-bal'), '￥-35.00');
-    });
+        expect(find.byKey(const Key('acct-招行-bal')), findsNothing);
+        expect(store.getEntry(id: 'e1')!.acct, 'default');
+        // the money did not evaporate with the account
+        expect(textOf(tester, 'acct-default-bal'), '￥-35.00');
+      },
+    );
 
     testWidgets('migrates a transfer target too', (tester) async {
       // `acctTo` is as much a reference as `acct`, and v7 left those dangling
@@ -213,6 +239,8 @@ void main() {
       move('t1', '招行', '支付宝', 100);
       await show(tester);
 
+      await tester.tap(find.byKey(const Key('acct-支付宝-more')));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('acct-支付宝-delete')));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('delete-ok')));
@@ -222,8 +250,9 @@ void main() {
       expect(textOf(tester, 'acct-default-bal'), '￥100.00');
     });
 
-    testWidgets('stamps the rewritten entries so a sync push can see them',
-        (tester) async {
+    testWidgets('stamps the rewritten entries so a sync push can see them', (
+      tester,
+    ) async {
       // an unstamped rewrite is invisible to the push watermark, and other
       // devices would keep pointing at an account that no longer exists
       open('招行', balance: 0);
@@ -231,12 +260,17 @@ void main() {
       final before = store.getEntry(id: 'e1')!.updatedAt!;
       await show(tester);
 
+      await tester.tap(find.byKey(const Key('acct-招行-more')));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('acct-招行-delete')));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('delete-ok')));
       await tester.pumpAndSettle();
 
-      expect(store.getEntry(id: 'e1')!.updatedAt!, greaterThanOrEqualTo(before));
+      expect(
+        store.getEntry(id: 'e1')!.updatedAt!,
+        greaterThanOrEqualTo(before),
+      );
     });
 
     testWidgets('cancel changes nothing', (tester) async {
@@ -244,6 +278,8 @@ void main() {
       spend('e1', 35, acct: '招行');
       await show(tester);
 
+      await tester.tap(find.byKey(const Key('acct-招行-more')));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('acct-招行-delete')));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('delete-cancel')));
@@ -255,20 +291,25 @@ void main() {
   });
 
   group('the default account', () {
-    testWidgets('offers neither destructive button', (tester) async {
-      // the core refuses both, and a button that does nothing when pressed is
-      // worse than no button at all
+    testWidgets('offers neither destructive action', (tester) async {
+      // the core refuses both, and a menu of things that do nothing when
+      // pressed is worse than no menu at all
       open('招行', balance: 0);
       await show(tester);
 
-      expect(find.byKey(const Key('acct-default-delete')), findsNothing);
-      expect(find.byKey(const Key('acct-default-archive')), findsNothing);
+      expect(find.byKey(const Key('acct-default-more')), findsNothing);
+      expect(find.byKey(const Key('acct-招行-more')), findsOneWidget);
+
+      // and one that can be removed offers both, behind the one button
+      await tester.tap(find.byKey(const Key('acct-招行-more')));
+      await tester.pumpAndSettle();
       expect(find.byKey(const Key('acct-招行-delete')), findsOneWidget);
       expect(find.byKey(const Key('acct-招行-archive')), findsOneWidget);
     });
 
-    testWidgets('and refuses at the core even when asked directly',
-        (tester) async {
+    testWidgets('and refuses at the core even when asked directly', (
+      tester,
+    ) async {
       expect(accounts.removeAccount(id: 'default', now: now), isFalse);
       expect(accounts.archiveAccount(id: 'default', archived: true), isFalse);
       expect(accounts.balances().where((a) => a.id == 'default').length, 1);
@@ -276,11 +317,14 @@ void main() {
   });
 
   group('archiving', () {
-    testWidgets('hides the account without touching its balance',
-        (tester) async {
+    testWidgets('hides the account without touching its balance', (
+      tester,
+    ) async {
       open('旧卡', balance: 250);
       await show(tester);
 
+      await tester.tap(find.byKey(const Key('acct-旧卡-more')));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('acct-旧卡-archive')));
       await tester.pumpAndSettle();
 
@@ -299,14 +343,19 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('acct-旧卡-bal')), findsOneWidget);
 
+      await tester.tap(find.byKey(const Key('acct-旧卡-more')));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('acct-旧卡-archive')));
       await tester.pumpAndSettle();
-      expect(accounts.balances().firstWhere((a) => a.id == '旧卡').archived,
-          isFalse);
+      expect(
+        accounts.balances().firstWhere((a) => a.id == '旧卡').archived,
+        isFalse,
+      );
     });
 
-    testWidgets('moves the record sheet off the account it just hid',
-        (tester) async {
+    testWidgets('moves the record sheet off the account it just hid', (
+      tester,
+    ) async {
       // otherwise the next entry defaults to an account the picker will not
       // show, which reads as the picker being broken
       open('旧卡', balance: 0);
@@ -314,6 +363,8 @@ void main() {
       expect(store.currentAccount(), '旧卡');
       await show(tester);
 
+      await tester.tap(find.byKey(const Key('acct-旧卡-more')));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('acct-旧卡-archive')));
       await tester.pumpAndSettle();
       expect(store.currentAccount(), 'default');
@@ -362,8 +413,9 @@ void main() {
       await tester.pumpAndSettle();
     });
 
-    testWidgets('an unparseable opening balance is zero, not a refusal',
-        (tester) async {
+    testWidgets('an unparseable opening balance is zero, not a refusal', (
+      tester,
+    ) async {
       await show(tester);
       await tester.tap(find.byKey(const Key('add-account')));
       await tester.pumpAndSettle();
@@ -375,8 +427,9 @@ void main() {
       expect(accounts.balances().firstWhere((a) => a.name == '现金').balance, 0);
     });
 
-    testWidgets('spells its own label colours instead of inheriting them',
-        (tester) async {
+    testWidgets('spells its own label colours instead of inheriting them', (
+      tester,
+    ) async {
       // the focused 名称 label came out lavender on the device — Material 3's
       // default scheme, against warm paper, in an app whose accent is amber.
       // No test saw it: a colour a widget does not set is not one a widget
@@ -386,8 +439,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final name = tester.widget<TextField>(find.byKey(const Key('new-name')));
-      expect(name.decoration!.floatingLabelStyle!.color,
-          palette.stamen);
+      expect(name.decoration!.floatingLabelStyle!.color, palette.stamen);
       expect(name.decoration!.labelStyle!.color, palette.inkSoft);
 
       await tester.tap(find.byKey(const Key('new-cancel')));
@@ -425,8 +477,9 @@ void main() {
       expect(balanceOf('招行'), 965);
     });
 
-    testWidgets('a transfer can be saved at all, which it could not before',
-        (tester) async {
+    testWidgets('a transfer can be saved at all, which it could not before', (
+      tester,
+    ) async {
       // `validate` refuses a transfer with no destination, and until the picker
       // existed nothing on the sheet could name one
       open('招行', balance: 1000);
@@ -478,8 +531,9 @@ void main() {
       expect(balanceOf('招行'), 1050);
     });
 
-    testWidgets('and refuses one when there is no second account to pick',
-        (tester) async {
+    testWidgets('and refuses one when there is no second account to pick', (
+      tester,
+    ) async {
       // the one case the auto-pick cannot cover: a fresh install has exactly
       // one account, and money cannot be moved from it to itself
       await tester.pumpWidget(
@@ -502,8 +556,9 @@ void main() {
       expect(store.entryCount(), 0);
     });
 
-    testWidgets('and refuses one that goes to where it came from',
-        (tester) async {
+    testWidgets('and refuses one that goes to where it came from', (
+      tester,
+    ) async {
       open('招行', balance: 1000);
       await tester.pumpWidget(
         MaterialApp(home: RecordSheet(onSaved: ({required staleRate}) {})),
@@ -540,8 +595,9 @@ void main() {
       expect(find.byKey(const Key('acct-default')), findsOneWidget);
     });
 
-    testWidgets('but keeps one that an entry being edited already sits on',
-        (tester) async {
+    testWidgets('but keeps one that an entry being edited already sits on', (
+      tester,
+    ) async {
       // otherwise opening an old entry would silently move it somewhere else
       open('旧卡', balance: 0);
       spend('e1', 20, acct: '旧卡');

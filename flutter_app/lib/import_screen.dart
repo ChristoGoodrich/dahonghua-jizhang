@@ -148,14 +148,10 @@ class _ImportScreenState extends State<ImportScreen> {
       body: ListView(
         padding: EdgeInsets.fromLTRB(22, headerInset(context) + 6, 22, 120),
         children: [
-          Text(
-            zh
-                ? '支付宝或微信导出的账单 CSV。编码不用管,认得出来。'
-                : 'A bill export from Alipay or WeChat. The encoding sorts '
-                      'itself out.',
-            style: TextStyle(fontSize: 12.5, color: palette.inkSoft),
-          ),
-          const SizedBox(height: 14),
+          // Until there is a file. Then the preview is the explanation — it
+          // says what was read and what is already recorded, about this file
+          // rather than in general.
+          if (p == null) ...[_intro(zh), const SizedBox(height: 14)],
           FilledButton.icon(
             key: const Key('pick-bill-file'),
             onPressed: _busy ? null : _pick,
@@ -187,6 +183,94 @@ class _ImportScreenState extends State<ImportScreen> {
             else
               ..._summary(p, zh),
           ],
+        ],
+      ),
+    );
+  }
+
+  /// What happens to the file, before there is one.
+  ///
+  /// It was one grey line and a button over an empty screen, which says what
+  /// to pick and nothing about what picking it does — and "does it record
+  /// them straight away?" is the question anyone about to import three
+  /// hundred rows is actually asking. It does not: it shows them first.
+  Widget _intro(bool zh) {
+    final steps = zh
+        ? [
+            ('选文件', '支付宝或微信导出的账单 CSV,编码不用管,认得出来'),
+            ('先看一遍', '读出来的每一行都列出来,已经记过的会标出来'),
+            ('再确认', '只导入新的那些,确认之前一笔都不记'),
+          ]
+        : [
+            (
+              'Pick the file',
+              'An Alipay or WeChat bill export, in any encoding',
+            ),
+            (
+              'Look it over',
+              'Every row is listed; ones already recorded are marked',
+            ),
+            ('Confirm', 'Only the new ones go in, and nothing does until then'),
+          ];
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 6),
+      decoration: BoxDecoration(
+        color: palette.card,
+        borderRadius: BorderRadius.circular(Rad.lg),
+        border: Border.all(color: palette.line),
+      ),
+      child: Column(
+        children: [
+          for (var i = 0; i < steps.length; i++)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 24,
+                    height: 24,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: palette.hibiscus.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      '${i + 1}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: palette.hibiscus,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          steps[i].$1,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: palette.ink,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          steps[i].$2,
+                          style: TextStyle(
+                            fontSize: 12.5,
+                            color: palette.inkSoft,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
         ],
       ),
     );

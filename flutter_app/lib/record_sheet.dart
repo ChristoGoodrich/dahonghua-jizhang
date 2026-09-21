@@ -23,6 +23,7 @@ import 'src/rust/api/history.dart' as history;
 import 'src/rust/api/rates.dart' as rates;
 import 'date_field.dart';
 import 'glass.dart';
+import 'segmented.dart';
 import 'tap.dart';
 import 'theme.dart';
 
@@ -357,49 +358,16 @@ class _RecordSheetState extends State<RecordSheet> {
     );
   }
 
-  Widget _directions(bool zh) {
-    final labels = {
-      'exp': zh ? '支出' : 'Expense',
-      'inc': zh ? '收入' : 'Income',
-      'xfer': zh ? '转账' : 'Transfer',
-    };
-    return Row(
-      children: [
-        for (final io in ['exp', 'inc', 'xfer'])
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: Tap(
-                radius: Rad.sm,
-                onTap: () => _pick(io),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: _form.io == io ? palette.card : Colors.transparent,
-                    borderRadius: BorderRadius.circular(Rad.sm),
-                    border: Border.all(
-                      color: _form.io == io ? palette.stamen : palette.line,
-                      width: _form.io == io ? 1.5 : 1,
-                    ),
-                  ),
-                  child: Text(
-                    labels[io]!,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: _form.io == io
-                          ? FontWeight.w700
-                          : FontWeight.w500,
-                      color: _form.io == io ? palette.ink : palette.inkSoft,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-      ],
-    );
-  }
+  Widget _directions(bool zh) => Segmented(
+    keyPrefix: 'dir',
+    value: _form.io,
+    onChanged: _pick,
+    items: [
+      ('exp', zh ? '支出' : 'Expense'),
+      ('inc', zh ? '收入' : 'Income'),
+      ('xfer', zh ? '转账' : 'Transfer'),
+    ],
+  );
 
   /// The amount, and the day it is on.
   ///

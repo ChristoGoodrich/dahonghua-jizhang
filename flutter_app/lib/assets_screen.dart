@@ -114,13 +114,10 @@ class _AssetsScreenState extends State<AssetsScreen> {
             onAction: _manageAccounts,
             actionKey: 'manage-accounts',
           ),
-          for (final a in _accounts)
-            _line(
-              key: 'nw-acct-${a.id}',
-              title: zh ? a.name : (a.nameEn ?? a.name),
-              value: a.balance,
-              negative: a.balance < 0,
-            ),
+          // One card, like a day in 明细: they are one list, and a card each
+          // made the section look longer than the four rows it is.
+          if (_accounts.isNotEmpty)
+            _group([for (final a in _accounts) _acctLine(a, zh)]),
           const SizedBox(height: 22),
           _section(
             zh ? '其他资产' : 'Other assets',
@@ -129,7 +126,12 @@ class _AssetsScreenState extends State<AssetsScreen> {
             actionKey: 'add-asset',
           ),
           if (_assets.isEmpty)
-            _empty(zh ? '房子、车、公积金…' : 'A flat, a car, a pension…', 'no-assets'),
+            _empty(
+              zh ? '房子、车、公积金…' : 'A flat, a car, a pension…',
+              'no-assets',
+              icon: Icons.home_work_outlined,
+              onTap: _addAsset,
+            ),
           for (final a in _assets) _assetLine(a, zh),
           const SizedBox(height: 22),
           _section(
@@ -139,7 +141,12 @@ class _AssetsScreenState extends State<AssetsScreen> {
             actionKey: 'add-loan',
           ),
           if (_loans.isEmpty)
-            _empty(zh ? '借出去的、借进来的' : 'Lent out, or borrowed', 'no-loans'),
+            _empty(
+              zh ? '借出去的、借进来的' : 'Lent out, or borrowed',
+              'no-loans',
+              icon: Icons.handshake_outlined,
+              onTap: _addLoan,
+            ),
           for (final l in _loans) _loanLine(l, zh),
         ],
       ),
@@ -265,12 +272,106 @@ class _AssetsScreenState extends State<AssetsScreen> {
     ),
   );
 
-  Widget _empty(String text, String key) => Padding(
-    padding: const EdgeInsets.only(left: 4, bottom: 6),
-    child: Text(
-      text,
-      key: Key(key),
-      style: TextStyle(fontSize: 12.5, color: palette.inkSoft),
+  /// An empty section, as the place its first item goes.
+  ///
+  /// It was a line of grey text under a heading, which read as a section that
+  /// had not been finished rather than one with nothing in it yet. Now it is
+  /// the shape a row will be, faint, with what goes there — and pressing it
+  /// adds one, the same as 添加 beside the heading.
+  Widget _empty(
+    String text,
+    String key, {
+    required IconData icon,
+    required VoidCallback onTap,
+  }) => Tap(
+    radius: Rad.md,
+    onTap: onTap,
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+      decoration: BoxDecoration(
+        color: palette.card.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(Rad.md),
+        border: Border.all(color: palette.line),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: palette.hibiscus.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, size: 19, color: palette.hibiscus),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              text,
+              key: Key(key),
+              style: TextStyle(fontSize: 13, color: palette.inkSoft),
+            ),
+          ),
+          Icon(Icons.add_rounded, size: 20, color: palette.hibiscus),
+        ],
+      ),
+    ),
+  );
+
+  /// Rows that are one list, as one card with hairlines between them.
+  Widget _group(List<Widget> rows) => Container(
+    decoration: BoxDecoration(
+      color: palette.card,
+      borderRadius: BorderRadius.circular(Rad.md),
+      border: Border.all(color: palette.line),
+    ),
+    child: Column(
+      children: [
+        for (var i = 0; i < rows.length; i++) ...[
+          rows[i],
+          if (i != rows.length - 1)
+            Divider(
+              height: 1,
+              thickness: 1 / MediaQuery.devicePixelRatioOf(context),
+              color: palette.line,
+              // under the name, not under the tile
+              indent: 12 + 38 + 12,
+            ),
+        ],
+      ],
+    ),
+  );
+
+  Widget _acctLine(accounts.AccountBalance a, bool zh) => Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+    child: Row(
+      children: [
+        AcctTile(kind: a.kind),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            zh ? a.name : (a.nameEn ?? a.name),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 14.5,
+              fontWeight: FontWeight.w600,
+              color: palette.ink,
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          _m(a.balance),
+          key: Key('nw-acct-${a.id}-val'),
+          style: TextStyle(
+            fontSize: 14.5,
+            fontWeight: FontWeight.w700,
+            fontFeatures: tabular,
+            color: a.balance < 0 ? palette.hibiscus : palette.ink,
+          ),
+        ),
+      ],
     ),
   );
 

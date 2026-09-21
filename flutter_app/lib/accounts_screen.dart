@@ -22,6 +22,40 @@ import 'tap.dart';
 import 'glass.dart';
 import 'theme.dart';
 
+/// What an account is, as a glyph: a wallet, a card, a top-up, a currency.
+IconData acctGlyph(String kind) => switch (kind) {
+  'credit' => Icons.credit_card_rounded,
+  'prepaid' => Icons.card_giftcard_rounded,
+  'fx' => Icons.currency_exchange_rounded,
+  _ => Icons.account_balance_wallet_outlined,
+};
+
+/// An account's glyph on a tile of its own, the way a category's emoji sits
+/// on one in the entry list — so a list of accounts is read down its left
+/// edge by kind, the same as a list of entries is read by category.
+class AcctTile extends StatelessWidget {
+  const AcctTile({super.key, required this.kind});
+
+  final String kind;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = palette;
+    // A credit account is the one that is money owed, so it is the one
+    // drawn in the flower's colour; the rest are the ink's.
+    final tone = kind == 'credit' ? p.hibiscus : p.inkSoft;
+    return Container(
+      width: 38,
+      height: 38,
+      decoration: BoxDecoration(
+        color: tone.withValues(alpha: p.isDark ? 0.18 : 0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Icon(acctGlyph(kind), size: 19, color: tone),
+    );
+  }
+}
+
 class AccountsScreen extends StatefulWidget {
   const AccountsScreen({super.key, this.zh = true, this.onChanged});
 
@@ -362,7 +396,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
           ),
         ),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          padding: const EdgeInsets.fromLTRB(12, 12, 4, 12),
           decoration: BoxDecoration(
             color: palette.card,
             borderRadius: BorderRadius.circular(Rad.md),
@@ -370,6 +404,8 @@ class _AccountsScreenState extends State<AccountsScreen> {
           ),
           child: Row(
             children: [
+              AcctTile(kind: a.kind),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -408,44 +444,84 @@ class _AccountsScreenState extends State<AccountsScreen> {
                   ],
                 ),
               ),
-              // Neither button is offered for the default account: it is the
-              // fallback every orphaned entry migrates to, so the core refuses
-              // both, and a button that does nothing when pressed is worse than
-              // no button at all.
-              if (!a.isDefault) ...[
+              // Not offered for the default account: it is the fallback every
+              // orphaned entry migrates to, so the core refuses both archiving
+              // and deleting it, and a menu of things that do nothing is worse
+              // than no menu.
+              //
+              // One button rather than two. An archive and a bin on every row
+              // made the screen a column of icons, and both are things done to
+              // an account once — they do not need to be one tap away forever.
+              if (!a.isDefault)
                 IconButton(
-                  key: Key('acct-${a.id}-archive'),
-                  tooltip: a.archived
-                      ? (zh ? '取消归档' : 'Unarchive')
-                      : (zh ? '归档' : 'Archive'),
+                  key: Key('acct-${a.id}-more'),
+                  tooltip: zh ? '更多' : 'More',
                   icon: Icon(
-                    a.archived
-                        ? Icons.unarchive_outlined
-                        : Icons.archive_outlined,
-                    size: 20,
+                    Icons.more_horiz_rounded,
+                    size: 22,
                     color: palette.inkSoft,
                   ),
-                  onPressed: () {
-                    accounts.archiveAccount(id: a.id, archived: !a.archived);
-                    _changed();
-                  },
-                ),
-                IconButton(
-                  key: Key('acct-${a.id}-delete'),
-                  tooltip: zh ? '删除' : 'Delete',
-                  icon: Icon(
-                    Icons.delete_outline,
-                    size: 20,
-                    color: palette.inkSoft,
-                  ),
-                  onPressed: () => _confirmDelete(a),
-                ),
-              ],
+                  onPressed: () => _more(a, zh),
+                )
+              else
+                const SizedBox(width: 12),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Future<void> _more(accounts.AccountBalance a, bool zh) async {
+    final choice = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: palette.card,
+      showDragHandle: true,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              key: Key('acct-${a.id}-archive'),
+              leading: Icon(
+                a.archived ? Icons.unarchive_outlined : Icons.archive_outlined,
+                color: palette.ink,
+              ),
+              title: Text(
+                a.archived
+                    ? (zh ? '取消归档' : 'Unarchive')
+                    : (zh ? '归档' : 'Archive'),
+              ),
+              subtitle: a.archived
+                  ? null
+                  : Text(
+                      zh
+                          ? '不出现在记账里,历史和余额保留'
+                          : 'Hidden when recording; history and balance kept',
+                    ),
+              onTap: () => Navigator.pop(ctx, 'archive'),
+            ),
+            ListTile(
+              key: Key('acct-${a.id}-delete'),
+              leading: Icon(Icons.delete_outline, color: palette.hibiscus),
+              title: Text(
+                zh ? '删除' : 'Delete',
+                style: TextStyle(color: palette.hibiscus),
+              ),
+              onTap: () => Navigator.pop(ctx, 'delete'),
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+    if (!mounted) return;
+    if (choice == 'archive') {
+      accounts.archiveAccount(id: a.id, archived: !a.archived);
+      _changed();
+    } else if (choice == 'delete') {
+      await _confirmDelete(a);
+    }
   }
 
   Widget _chip(String text, Color tone) => Container(

@@ -163,16 +163,118 @@ class _CaptureScreenState extends State<CaptureScreen> {
     );
   }
 
-  List<Widget> _permission(bool zh) => [
-    Text(
-      zh
-          ? '支付通知一到就记下来,不用打开这个 app。只看支付宝、微信和银行的通知,别的一概不存。'
-          : 'A payment notification becomes an entry without opening the '
-                'app. Only Alipay, WeChat and bank notifications are read; '
-                'nothing else is stored.',
-      style: TextStyle(fontSize: 12.5, color: palette.inkSoft),
-    ),
-    const SizedBox(height: 16),
+  /// The state of the one thing this screen depends on, as a card: what it
+  /// is, whether it is on, and the way to change that.
+  ///
+  /// It was three loose lines — a paragraph, a warning in red, a button —
+  /// with nothing to say they were one question. The paragraph is still here
+  /// and still first; what it promises about what is read is the part worth
+  /// keeping in view.
+  List<Widget> _permission(bool zh) {
+    final on = _granted && _capturing;
+    final (word, tone) = !_granted
+        ? (zh ? '没有权限' : 'No access', palette.hibiscusDeep)
+        : on
+        ? (zh ? '开着' : 'On', palette.leafDeep)
+        : (zh ? '没开' : 'Off', palette.inkSoft);
+    return [
+      Container(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
+        decoration: BoxDecoration(
+          color: palette.card,
+          borderRadius: BorderRadius.circular(Rad.lg),
+          border: Border.all(color: palette.line),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 38,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    color: palette.hibiscus.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    Icons.notifications_active_outlined,
+                    size: 20,
+                    color: palette.hibiscus,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    zh ? '读支付通知' : 'Payment notifications',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: palette.ink,
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 9,
+                    vertical: 3,
+                  ),
+                  decoration: BoxDecoration(
+                    color: tone.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(Rad.pill),
+                  ),
+                  child: Text(
+                    word,
+                    style: TextStyle(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w700,
+                      color: tone,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              zh
+                  ? '支付通知一到就记下来,不用打开这个 app。'
+                  : 'A payment notification becomes an entry without '
+                        'opening the app.',
+              style: TextStyle(fontSize: 13, color: palette.ink),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 1),
+                  child: Icon(
+                    Icons.lock_outline_rounded,
+                    size: 14,
+                    color: palette.inkSoft,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    zh
+                        ? '只看支付宝、微信和银行的通知,别的一概不存。'
+                        : 'Only Alipay, WeChat and bank notifications are '
+                              'read; nothing else is stored.',
+                    style: TextStyle(fontSize: 12, color: palette.inkSoft),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            ..._permissionAction(zh),
+          ],
+        ),
+      ),
+    ];
+  }
+
+  List<Widget> _permissionAction(bool zh) => [
     if (!_granted) ...[
       Text(
         zh
@@ -194,21 +296,27 @@ class _CaptureScreenState extends State<CaptureScreen> {
         child: Text(zh ? '去系统设置里打开' : 'Open system settings'),
       ),
     ] else
-      SwitchListTile(
-        key: const Key('capture-toggle'),
-        contentPadding: EdgeInsets.zero,
-        value: _capturing,
-        onChanged: _busy ? null : _toggle,
-        activeThumbColor: palette.hibiscus,
-        title: Text(
-          zh ? '自动记账' : 'Capture payments',
-          style: TextStyle(fontSize: 15, color: palette.ink),
-        ),
-        subtitle: Text(
-          _capturing
-              ? (zh ? '开着' : 'On')
-              : (zh ? '权限有了,还没开' : 'Granted, but not on'),
-          style: TextStyle(fontSize: 12, color: palette.inkSoft),
+      // Its own transparent Material: a ListTile paints its press on the
+      // nearest Material, and the nearest one is under the card, whose
+      // colour would hide it.
+      Material(
+        type: MaterialType.transparency,
+        child: SwitchListTile(
+          key: const Key('capture-toggle'),
+          contentPadding: EdgeInsets.zero,
+          value: _capturing,
+          onChanged: _busy ? null : _toggle,
+          activeThumbColor: palette.hibiscus,
+          title: Text(
+            zh ? '自动记账' : 'Capture payments',
+            style: TextStyle(fontSize: 15, color: palette.ink),
+          ),
+          subtitle: Text(
+            _capturing
+                ? (zh ? '开着' : 'On')
+                : (zh ? '权限有了,还没开' : 'Granted, but not on'),
+            style: TextStyle(fontSize: 12, color: palette.inkSoft),
+          ),
         ),
       ),
   ];

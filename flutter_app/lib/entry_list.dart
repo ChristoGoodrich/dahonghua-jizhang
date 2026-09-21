@@ -243,7 +243,14 @@ class _EntryListScreenState extends State<EntryListScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 22),
                         child: b.header,
                       )
-                    : _row(_items[i - 1], zh),
+                    : _row(
+                        _items[i - 1],
+                        zh,
+                        // Where the row falls in its day: the day is one card,
+                        // and only its ends are rounded.
+                        first: i < 2 || _items[i - 2].kind == 'header',
+                        last: i >= _items.length || _items[i].kind == 'header',
+                      ),
               ),
             // Pinned rather than scrolled: it describes the list, and a
             // caption that scrolls away from what it captions is a caption
@@ -398,7 +405,12 @@ class _EntryListScreenState extends State<EntryListScreen> {
     return bits.isEmpty ? null : bits.join(' · ');
   }
 
-  Widget _row(store.ListItem item, bool zh) {
+  Widget _row(
+    store.ListItem item,
+    bool zh, {
+    bool first = true,
+    bool last = true,
+  }) {
     if (item.kind == 'header') return _header(item, zh);
     // `row` packs several entries for a tablet layout; `entry` is one.
     final entries = item.ids
@@ -414,9 +426,18 @@ class _EntryListScreenState extends State<EntryListScreen> {
         ),
       );
     }
+    // A day is one card, the way 小米笔记 and 设置 group their rows: the
+    // entries of a day are one thing, and a card each made a screen of
+    // blocks — thirteen outlines where the eye wanted four. The tablet row
+    // above keeps its own cards, because side by side there is no "between".
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 22),
-      child: Column(children: [for (final e in entries) _swipeable(e, zh)]),
+      padding: EdgeInsets.fromLTRB(22, 0, 22, last ? 6 : 0),
+      child: Column(
+        children: [
+          for (final e in entries)
+            _swipeable(e, zh, group: (first: first, last: last)),
+        ],
+      ),
     );
   }
 
@@ -427,24 +448,42 @@ class _EntryListScreenState extends State<EntryListScreen> {
   /// row. Replaying it would restore an `updatedAt` below the push watermark,
   /// so the undo would never reach the cloud and the next pull would delete the
   /// entry again.
-  Widget _swipeable(store.EntryView e, bool zh) => Dismissible(
-    key: Key('row-${e.id}'),
-    // Not while ticking. A drag across a row is how a finger scrolls a list it
-    // is also selecting from, and a swipe that deleted one mid-selection would
-    // be the most expensive gesture in the app.
-    direction: _selecting ? DismissDirection.none : DismissDirection.endToStart,
-    background: Container(
-      alignment: Alignment.centerRight,
-      padding: const EdgeInsets.only(right: 20, bottom: 8),
-      decoration: BoxDecoration(
-        color: palette.hibiscus.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(Rad.md),
+  Widget _swipeable(
+    store.EntryView e,
+    bool zh, {
+    ({bool first, bool last})? group,
+  }) {
+    final row = Dismissible(
+      key: Key('row-${e.id}'),
+      // Not while ticking. A drag across a row is how a finger scrolls a list it
+      // is also selecting from, and a swipe that deleted one mid-selection would
+      // be the most expensive gesture in the app.
+      direction: _selecting
+          ? DismissDirection.none
+          : DismissDirection.endToStart,
+      background: Container(
+        alignment: Alignment.centerRight,
+        padding: EdgeInsets.only(right: 20, bottom: group == null ? 8 : 0),
+        decoration: BoxDecoration(
+          color: palette.hibiscus.withValues(alpha: 0.12),
+          borderRadius: group == null ? BorderRadius.circular(Rad.md) : null,
+        ),
+        child: Icon(Icons.delete_outline, color: palette.hibiscus),
       ),
-      child: Icon(Icons.delete_outline, color: palette.hibiscus),
-    ),
-    onDismissed: (_) => _delete(e, zh),
-    child: _entryCard(e, zh),
-  );
+      onDismissed: (_) => _delete(e, zh),
+      child: _entryCard(e, zh, group: group),
+    );
+    if (group == null) return row;
+    // The clip is the day card's corners, so the press veil and the swipe
+    // behind a row are the card's shape too, not a rectangle poking out of it.
+    return ClipRRect(borderRadius: _groupRadius(group), child: row);
+  }
+
+  static BorderRadius _groupRadius(({bool first, bool last}) g) =>
+      BorderRadius.vertical(
+        top: Radius.circular(g.first ? Rad.md : 0),
+        bottom: Radius.circular(g.last ? Rad.md : 0),
+      );
 
   void _delete(store.EntryView e, bool zh) {
     final undo = store.removeEntry(
@@ -492,7 +531,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
       color: palette.inkSoft,
     );
     return Padding(
-      padding: const EdgeInsets.fromLTRB(26, 8, 26, 7),
+      padding: const EdgeInsets.fromLTRB(26, 12, 26, 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -503,7 +542,11 @@ class _EntryListScreenState extends State<EntryListScreen> {
     );
   }
 
-  Widget _entryCard(store.EntryView e, bool zh) {
+  Widget _entryCard(
+    store.EntryView e,
+    bool zh, {
+    ({bool first, bool last})? group,
+  }) {
     // One call for the emoji, the name and the accent — the lookup has a
     // fallback rule (the *last* category, not a generic "other") that is not
     // worth a second implementation.
@@ -531,9 +574,9 @@ class _EntryListScreenState extends State<EntryListScreen> {
       // Container inside it: the press veil fills the Tap, and a margin within
       // it would let the veil paint the gap between rows as well.
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 8),
+        padding: EdgeInsets.only(bottom: group == null ? 8 : 0),
         child: Tap(
-          radius: Rad.md,
+          radius: group == null ? Rad.md : 0,
           onTap: () => _selecting ? _toggle(e.id) : widget.onEdit?.call(e.id),
           // Long-press starts a selection with this row in it, which is what
           // 小米笔记 and 相册 do and therefore what a finger on this phone
@@ -544,114 +587,136 @@ class _EntryListScreenState extends State<EntryListScreen> {
           // trade.
           onLongPress: _selecting ? null : () => _beginSelecting(e.id),
           child: ExcludeSemantics(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 11),
-              decoration: BoxDecoration(
-                // A ticked row is tinted rather than outlined. The list is
-                // read down its left edge — emoji, name, note — and an outline
-                // competes with the card's own hairline at exactly the size
-                // that makes both hard to see.
-                color: picked
-                    ? Color.alphaBlend(
-                        palette.hibiscus.withValues(alpha: 0.10),
-                        palette.card,
-                      )
-                    : palette.card,
-                borderRadius: BorderRadius.circular(Rad.md),
-                border: Border.all(
-                  color: picked
-                      ? palette.hibiscus.withValues(alpha: 0.35)
-                      : palette.line,
-                  width: 1 / MediaQuery.devicePixelRatioOf(context),
+            child: CustomPaint(
+              foregroundPainter: group == null
+                  ? null
+                  : _DayEdge(
+                      first: group.first,
+                      last: group.last,
+                      color: palette.line,
+                      width: 1 / MediaQuery.devicePixelRatioOf(context),
+                      // under the text, not under the emoji: the rows of a
+                      // day read as one list with its icons down the side
+                      inset: 13 + (_selecting ? 22 + 11 : 0) + 40 + 12,
+                    ),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 13,
+                  vertical: 11,
                 ),
-              ),
-              child: Row(
-                children: [
-                  if (_selecting) ...[
-                    _Tick(picked: picked),
-                    const SizedBox(width: 11),
-                  ],
-                  Container(
-                    width: 40,
-                    height: 40,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: accent.withValues(
-                        alpha: palette.isDark ? 0.19 : 0.12,
+                decoration: BoxDecoration(
+                  // A ticked row is tinted rather than outlined. The list is
+                  // read down its left edge — emoji, name, note — and an outline
+                  // competes with the card's own hairline at exactly the size
+                  // that makes both hard to see.
+                  color: picked
+                      ? Color.alphaBlend(
+                          palette.hibiscus.withValues(alpha: 0.10),
+                          palette.card,
+                        )
+                      : palette.card,
+                  borderRadius: group == null
+                      ? BorderRadius.circular(Rad.md)
+                      : null,
+                  // In a day card the outline is the card's, drawn by
+                  // `_DayEdge`; a ticked row there is the tint alone.
+                  border: group != null
+                      ? null
+                      : Border.all(
+                          color: picked
+                              ? palette.hibiscus.withValues(alpha: 0.35)
+                              : palette.line,
+                          width: 1 / MediaQuery.devicePixelRatioOf(context),
+                        ),
+                ),
+                child: Row(
+                  children: [
+                    if (_selecting) ...[
+                      _Tick(picked: picked),
+                      const SizedBox(width: 11),
+                    ],
+                    Container(
+                      width: 40,
+                      height: 40,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: accent.withValues(
+                          alpha: palette.isDark ? 0.19 : 0.12,
+                        ),
+                        borderRadius: BorderRadius.circular(13),
                       ),
-                      borderRadius: BorderRadius.circular(13),
+                      child: Text(
+                        label.emoji,
+                        style: const TextStyle(fontSize: 19),
+                      ),
                     ),
-                    child: Text(
-                      label.emoji,
-                      style: const TextStyle(fontSize: 19),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Flexible(
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  label.name,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 14.5,
+                                    fontWeight: FontWeight.w600,
+                                    color: palette.ink,
+                                  ),
+                                ),
+                              ),
+                              if (e.rb == 'pending')
+                                _badge(
+                                  zh ? '待报销' : 'Claim',
+                                  palette.stamen,
+                                  0.18,
+                                ),
+                              if (e.rb == 'done')
+                                _badge(
+                                  zh ? '已报销' : 'Claimed',
+                                  palette.leaf,
+                                  0.19,
+                                ),
+                              if ((e.refund ?? 0) != 0)
+                                _badge(
+                                  zh ? '退款' : 'Refund',
+                                  palette.hibiscus,
+                                  0.15,
+                                ),
+                            ],
+                          ),
+                          if (e.note != null && e.note!.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 2),
                               child: Text(
-                                label.name,
+                                e.note!,
+                                maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                  fontSize: 14.5,
-                                  fontWeight: FontWeight.w600,
-                                  color: palette.ink,
+                                  fontSize: 11.5,
+                                  color: palette.inkSoft,
                                 ),
                               ),
                             ),
-                            if (e.rb == 'pending')
-                              _badge(
-                                zh ? '待报销' : 'Claim',
-                                palette.stamen,
-                                0.18,
-                              ),
-                            if (e.rb == 'done')
-                              _badge(
-                                zh ? '已报销' : 'Claimed',
-                                palette.leaf,
-                                0.19,
-                              ),
-                            if ((e.refund ?? 0) != 0)
-                              _badge(
-                                zh ? '退款' : 'Refund',
-                                palette.hibiscus,
-                                0.15,
-                              ),
-                          ],
-                        ),
-                        if (e.note != null && e.note!.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 2),
-                            child: Text(
-                              e.note!,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 11.5,
-                                color: palette.inkSoft,
-                              ),
-                            ),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    money.fmtSigned(n: e.amt, io: e.io),
-                    style: TextStyle(
-                      fontSize: 15.5,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: -0.2,
-                      fontFeatures: tabular,
-                      color: e.io == 'inc' ? palette.leafDeep : palette.ink,
+                    const SizedBox(width: 12),
+                    Text(
+                      money.fmtSigned(n: e.amt, io: e.io),
+                      style: TextStyle(
+                        fontSize: 15.5,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.2,
+                        fontFeatures: tabular,
+                        color: e.io == 'inc' ? palette.leafDeep : palette.ink,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -956,6 +1021,65 @@ class _EntryListScreenState extends State<EntryListScreen> {
 /// Filled when it is, a hollow ring when it is not — never absent, because a
 /// row with no ring in a list where other rows have one reads as a row that
 /// cannot be selected rather than as one that is not.
+/// The outline of a day card, drawn one row at a time.
+///
+/// Each row strokes a rounded rectangle that runs past its own top and
+/// bottom wherever the day carries on, and clips it to itself — so the first
+/// row draws the top corners and both sides, a middle row just the sides, the
+/// last the bottom corners, and a stack of them is one outline. A `Border`
+/// cannot say this: Flutter will not round a border with a side missing.
+/// Every row but the last also draws the hairline under it, from the text.
+class _DayEdge extends CustomPainter {
+  _DayEdge({
+    required this.first,
+    required this.last,
+    required this.color,
+    required this.width,
+    required this.inset,
+  });
+
+  final bool first;
+  final bool last;
+  final Color color;
+  final double width;
+  final double inset;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = width
+      ..color = color;
+    final h = width / 2;
+    const r = Rad.md;
+    canvas.save();
+    canvas.clipRect(Offset.zero & size);
+    canvas.drawRRect(
+      RRect.fromLTRBR(
+        h,
+        first ? h : -2 * r,
+        size.width - h,
+        last ? size.height - h : size.height + 2 * r,
+        const Radius.circular(r),
+      ),
+      paint,
+    );
+    canvas.restore();
+    if (!last) {
+      final y = size.height - h;
+      canvas.drawLine(Offset(inset, y), Offset(size.width, y), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_DayEdge old) =>
+      old.first != first ||
+      old.last != last ||
+      old.color != color ||
+      old.width != width ||
+      old.inset != inset;
+}
+
 class _Tick extends StatelessWidget {
   const _Tick({required this.picked});
 

@@ -119,7 +119,7 @@ class MeScreen extends StatelessWidget {
         for (var i = 0; i < rows.length; i++) ...[
           _row(rows[i]),
           if (i != rows.length - 1)
-            Divider(height: 1, thickness: 1, color: palette.line, indent: 54),
+            Divider(height: 1, thickness: 1, color: palette.line, indent: 61),
         ],
       ],
     ),
@@ -133,8 +133,21 @@ class MeScreen extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       child: Row(
         children: [
-          Icon(r.icon, size: 19, color: palette.hibiscus),
-          const SizedBox(width: 15),
+          // On a tile of the same accent: the glyphs stay one colour, which
+          // is what makes the list one surface, but a bare line icon beside
+          // a two-line row read as lighter than the text it labels.
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: palette.hibiscus.withValues(
+                alpha: palette.isDark ? 0.16 : 0.09,
+              ),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(r.icon, size: 18, color: palette.hibiscus),
+          ),
+          const SizedBox(width: 13),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
