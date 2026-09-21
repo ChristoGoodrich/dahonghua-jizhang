@@ -1583,7 +1583,7 @@ match that rather than to be more Rust than Xiaomi is.
 
 It reverses the previous entry, and the reversal is worth stating plainly. Two
 Rust UI frameworks were prototyped and measured on the same Android emulator,
-and the readings in `rust/proto/FINDINGS.md` still stand:
+and the readings in `docs/archive/ui-framework-probes.md` still stand:
 
 | | Slint | Dioxus |
 | --- | --- | --- |
@@ -1621,8 +1621,11 @@ was moved into `glass.rs` before this decision was taken rather than after.
 | Android build | `dx build` | `flutter build` + `cargo-ndk` |
 | Web target | one component tree | Flutter web, or dropped |
 
-`rust/proto/` stays as the record of how the Rust-UI question was settled. It is
-not deleted: the measurements are what justify not revisiting it.
+The measurements are what justify not revisiting it, so they are kept:
+`docs/archive/ui-framework-probes.md` was `rust/proto/FINDINGS.md`. The two
+prototypes themselves were removed once Flutter had shipped — nothing built
+them, and the workspace had to exclude them by name. They are at the `rn-final`
+tag, with the commands to build them in the findings.
 
 ### The ledger now lives in Rust, across the boundary
 

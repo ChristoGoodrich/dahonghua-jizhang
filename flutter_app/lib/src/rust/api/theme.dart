@@ -13,11 +13,6 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 /// The palette in force.
 ThemeView currentTheme() => RustLib.instance.api.crateApiThemeCurrentTheme();
 
-/// One particular palette, for a picker that wants to draw a preview of a
-/// theme nobody has chosen yet.
-ThemeView themeOf({required String key, required bool dark}) =>
-    RustLib.instance.api.crateApiThemeThemeOf(key: key, dark: dark);
-
 /// Which flower is chosen. An unknown stored key reads back as `default`,
 /// which is what a config written by a build with one more flower should do.
 String themeKey() => RustLib.instance.api.crateApiThemeThemeKey();

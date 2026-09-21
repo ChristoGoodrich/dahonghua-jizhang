@@ -34,10 +34,3 @@ pub fn rows_for_account(id: String) -> Vec<AcctRowView> {
         })
         .collect()
 }
-
-/// How many rows an account has, without building them all.
-#[frb(sync)]
-pub fn row_count_for_account(id: String) -> u32 {
-    let s = store();
-    acct_rows(&id, s.ledger.all()).len() as u32
-}

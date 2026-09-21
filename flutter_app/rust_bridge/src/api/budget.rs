@@ -200,9 +200,3 @@ pub fn cat_budget_rows(
         })
         .collect()
 }
-
-/// Total expense over the given entries. Income and transfers excluded.
-#[frb(sync)]
-pub fn expense_total(ids: Vec<String>) -> f64 {
-    core::expense_total(&entries_of(&ids))
-}

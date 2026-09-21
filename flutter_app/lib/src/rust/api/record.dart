@@ -43,14 +43,6 @@ SaveResult saveForm({
   rateWasCached: rateWasCached,
 );
 
-/// Whether a fetched rate is really the cached one, within a tolerance.
-///
-/// The tolerance is the point: the same rate from the network and from storage
-/// has been through a JSON round trip, and is not obliged to come back as the
-/// same double.
-bool rateIsCached({double? fetched, double? cached}) => RustLib.instance.api
-    .crateApiRecordRateIsCached(fetched: fetched, cached: cached);
-
 /// The cached rate for a code, which the platform's fetcher compares against.
 double? cachedRate({required String code}) =>
     RustLib.instance.api.crateApiRecordCachedRate(code: code);

@@ -11,13 +11,6 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `eq`, `fmt`, `fmt`
 // These functions are ignored (category: IgnoreBecauseOwnerTyShouldIgnore): `default`
 
-/// Whether a string is a time this app will accept.
-///
-/// Exposed so a settings field can refuse before anything is stored, rather
-/// than accepting text that quietly schedules nothing.
-bool validTime({required String text}) =>
-    RustLib.instance.api.crateApiRemindValidTime(text: text);
-
 /// Every reminder that is on, with when it fires. Empty when none are.
 List<ScheduleView> activeSchedules() =>
     RustLib.instance.api.crateApiRemindActiveSchedules();
@@ -45,13 +38,6 @@ void setMonthlyReport({required bool enabled}) =>
 bool weeklyReportOn() => RustLib.instance.api.crateApiRemindWeeklyReportOn();
 
 bool monthlyReportOn() => RustLib.instance.api.crateApiRemindMonthlyReportOn();
-
-/// The next 1st of a month after `today`, as `y-m-d`.
-///
-/// For a platform that can only schedule a one-shot date rather than a
-/// repeating monthly rule; it re-arms after each firing.
-String nextMonthlyDate({required String today}) =>
-    RustLib.instance.api.crateApiRemindNextMonthlyDate(today: today);
 
 /// Restore from the config, without scheduling anything.
 void loadReminders({

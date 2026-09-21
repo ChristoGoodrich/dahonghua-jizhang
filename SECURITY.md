@@ -38,22 +38,43 @@ give us a reasonable window to ship a fix before disclosing publicly.
 
 ### What is in scope
 
-- The app source in `src/`, `modules/`, `plugins/` and `WidgetExtension/`
-- The Supabase schema, row-level-security policies and migrations in `supabase/`
-- The `ai-parse` edge function
-- The backup encryption path (AES-256-GCM), the app-lock flow, and the sync engine
+- The Rust core, store and bridge — `rust/core`, `rust/store`, `flutter_app/rust_bridge`
+- The Flutter app — `flutter_app/lib`
+- The Android components — the notification listener and the home-screen widget,
+  in `flutter_app/android/app/src/main/kotlin`
+- Anything that makes the ledger leave the device without the user sending it,
+  or that lets another app read it
+
+### Where the ledger goes
+
+This is what the app does today, stated so that a report can say where it differs.
+
+- **The ledger stays on the phone**, in the app's own storage.
+- **The network is used for one thing:** fetching exchange rates, from
+  `api.frankfurter.app` and `api.exchangerate-api.com`. Nothing from the ledger is
+  sent with the request. There is no account, no server and no cloud sync.
+- **It leaves only when you send it** — 备份 → 导出, 同步's document, or a CSV
+  export, each through the system share sheet to wherever you choose.
+- **Android's cloud Auto Backup is turned off** (`data_extraction_rules.xml`,
+  `backup_rules.xml`). Device-to-device transfer, where you move your data between
+  two phones you are holding, is left on for Android 12 and later.
+- **Backups and sync documents are not encrypted.** They are plain JSON. Treat an
+  exported file the way you would treat the ledger itself. (The React Native app
+  encrypted backups; the rewrite has not ported that yet, and the backup screen
+  says so.)
+- **The app lock uses the phone's own biometric or screen-lock credential**
+  (`local_auth`). The app never sees or stores a fingerprint or a password.
+- **Auto-capture reads notifications only from Alipay, WeChat and banks**, and
+  only once you have granted notification access in system settings. Everything
+  else is ignored and nothing else is stored.
 
 ### What is not a vulnerability
 
-- **The Supabase anon key or `EXPO_PUBLIC_*` variables being readable in a build.** They are client-side by design; row-level security is what protects the data. A *missing or bypassable RLS policy*, on the other hand, very much is a vulnerability — report it.
-- **An LLM API key in a build you configured with `EXPO_PUBLIC_MIMO_API_KEY`.** That option is documented as personal-builds-only for exactly this reason; use the proxy for anything you distribute.
-- Findings that require an already-compromised, rooted or jailbroken device, or physical access to an unlocked one.
-
-### Handling your own data
-
-The app stores your financial data locally. If you enable cloud sync, entries go to
-*your* Supabase project under per-user row-level security. Passcode and biometric-lock
-settings are never uploaded.
+- Findings that need an already-compromised, rooted or jailbroken device, or
+  physical access to an unlocked one.
+- That an exported backup is readable by whoever has the file — see above.
+- That a debug-signed build can be installed over itself. Release builds are signed
+  with the project's own key; see `RELEASE.md`.
 
 ---
 
@@ -93,18 +114,25 @@ settings are never uploaded.
 
 ### 属于范围内的部分
 
-- `src/`、`modules/`、`plugins/`、`WidgetExtension/` 中的应用源码
-- `supabase/` 中的表结构、行级安全策略与迁移脚本
-- `ai-parse` 边缘函数
-- 备份加密流程（AES-256-GCM）、应用锁流程与同步引擎
+- Rust 内核、存储与桥接层 —— `rust/core`、`rust/store`、`flutter_app/rust_bridge`
+- Flutter 应用 —— `flutter_app/lib`
+- Android 组件 —— `flutter_app/android/app/src/main/kotlin` 中的通知监听和桌面小组件
+- 任何让账本在用户没有主动发送的情况下离开手机,或能被其他 app 读到的问题
+
+### 账本会去哪里
+
+下面是 app 现在的实际行为。写清楚,是为了让报告能指出哪里和这里不一样。
+
+- **账本留在手机上**,存在 app 自己的存储空间里。
+- **联网只做一件事:** 从 `api.frankfurter.app` 和 `api.exchangerate-api.com` 取汇率。请求里不带任何账本内容。没有账号、没有服务器,也没有云同步。
+- **只有你发送时它才会离开** —— 备份里的「导出」、同步生成的文件、CSV 导出,都经过系统的分享面板,发到你自己选的地方。
+- **Android 的云端自动备份是关闭的**(`data_extraction_rules.xml`、`backup_rules.xml`)。设备之间的直接迁移(你在两台手里的手机之间搬自己的数据)在 Android 12 及以上保留开启。
+- **备份文件和同步文件都没有加密**,是普通的 JSON。导出的文件请像对待账本本身一样对待。(React Native 版的备份是加密的;重写版还没有移植这部分,备份页面上也写明了。)
+- **应用锁用的是手机自己的指纹或锁屏密码**(`local_auth`)。app 看不到、也不保存任何指纹或密码。
+- **自动记账只读支付宝、微信和银行的通知**,而且要你先在系统设置里给了通知权限才会读。其余通知一律忽略,什么都不存。
 
 ### 不属于漏洞的情况
 
-- **构建包中能读到 Supabase anon key 或 `EXPO_PUBLIC_*` 变量。** 它们本来就是给客户端用的，真正保护数据的是行级安全策略。但**缺失或可被绕过的 RLS 策略**确实是漏洞 —— 请报告。
-- **你自己用 `EXPO_PUBLIC_MIMO_API_KEY` 打的包里带有大模型密钥。** 该选项在文档中已明确标注仅限个人自用构建，原因正是如此；对外分发请使用代理方案。
-- 需要设备已被攻陷、已 root/越狱，或需要物理接触已解锁设备才能成立的问题。
-
-### 关于你的数据
-
-应用把财务数据存在本地。开启云同步后，数据会进入**你自己的** Supabase 项目，并受按用户
-隔离的行级安全策略保护。锁屏密码与生物识别相关设置永远不会上传。
+- 需要设备已被攻陷、已 root/越狱,或需要物理接触已解锁设备才能成立的问题。
+- 拿到导出的备份文件就能读到内容 —— 见上文。
+- 调试签名的包可以覆盖安装它自己。正式版用项目自己的密钥签名,见 `RELEASE.md`。

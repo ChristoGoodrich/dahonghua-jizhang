@@ -99,13 +99,6 @@ pub fn current_theme() -> ThemeView {
     view(ThemeKey::parse(&c.key), c.dark)
 }
 
-/// One particular palette, for a picker that wants to draw a preview of a
-/// theme nobody has chosen yet.
-#[frb(sync)]
-pub fn theme_of(key: String, dark: bool) -> ThemeView {
-    view(ThemeKey::parse(&key), dark)
-}
-
 /// Which flower is chosen. An unknown stored key reads back as `default`,
 /// which is what a config written by a build with one more flower should do.
 #[frb(sync)]

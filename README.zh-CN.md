@@ -229,7 +229,7 @@ debug 构建装成 `com.dahonghua.app.debug`，所以在手机上跑测试不会
 | [rust/MIGRATION.md](rust/MIGRATION.md) | 重写为什么是那样做的，一个模块一个模块，包括先做错的那些 |
 | [flutter_app/android/README.md](flutter_app/android/README.md) | 生成签名密钥，以及弄丢它的代价 |
 | [RELEASE.md](RELEASE.md) | 打标签发版 |
-| [DATA_MODEL_assets.md](DATA_MODEL_assets.md) | 账户、资产、借贷与净资产之间的关系 |
+| [docs/archive/DATA_MODEL_assets.md](docs/archive/DATA_MODEL_assets.md) | 账户、资产、借贷与净资产之间的关系 —— 写于 React Native 时期,文件名已过时,模型本身仍然成立 |
 | [CHANGELOG.md](CHANGELOG.md) | 版本变更记录 |
 | [CONTRIBUTING.zh-CN.md](CONTRIBUTING.zh-CN.md) | 开发流程、提交与 PR 规范 |
 | [SECURITY.md](SECURITY.md) | 如何报告安全漏洞 |

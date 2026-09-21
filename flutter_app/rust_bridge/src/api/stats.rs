@@ -173,36 +173,6 @@ pub fn daily_trend(
         .collect()
 }
 
-/// The weekly trend over the last `weeks`, each point dated to its Monday.
-#[frb(sync)]
-pub fn weekly_trend(
-    ids: Vec<String>,
-    days_of: Vec<String>,
-    weeks: i64,
-    today: String,
-) -> Vec<TrendPointView> {
-    let s = store();
-    let by = by_id(&s);
-    let rows: Vec<TrendRow> = rows_of(&by, &ids, &days_of)
-        .into_iter()
-        .map(|(e, day)| TrendRow {
-            io: e.io,
-            amt: e.amt,
-            cat: e.cat.clone(),
-            day,
-            deleted_at: e.deleted_at.map(|v| v as f64),
-        })
-        .collect();
-    trends::weekly_trend(&rows, weeks, parse_day(&today))
-        .into_iter()
-        .map(|p| TrendPointView {
-            day: show_day(p.date),
-            exp: p.exp,
-            inc: p.inc,
-        })
-        .collect()
-}
-
 /// Trend points as coordinates a painter can draw without arithmetic.
 ///
 /// `series` is `"exp"`, `"inc"` or `"both"`, and it decides the maximum — a

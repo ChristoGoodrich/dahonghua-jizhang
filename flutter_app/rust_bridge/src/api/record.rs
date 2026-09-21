@@ -14,7 +14,7 @@ use dahonghua_core::catalog;
 use dahonghua_core::civil::{month_grid, Civil};
 use dahonghua_core::entry::Io;
 use dahonghua_core::money::Currencies;
-use dahonghua_core::record::{self as core, Draft, FormDefaults, FormFields, RateSource};
+use dahonghua_core::record::{self as core, Draft, FormDefaults, FormFields};
 use dahonghua_core::store::TransferOpts;
 use flutter_rust_bridge::frb;
 
@@ -272,16 +272,6 @@ pub fn save_form(
         id: Some(written),
         stale_rate: rate_was_cached && f.cur != c.base,
     }
-}
-
-/// Whether a fetched rate is really the cached one, within a tolerance.
-///
-/// The tolerance is the point: the same rate from the network and from storage
-/// has been through a JSON round trip, and is not obliged to come back as the
-/// same double.
-#[frb(sync)]
-pub fn rate_is_cached(fetched: Option<f64>, cached: Option<f64>) -> bool {
-    core::rate_source(fetched, cached) == Some(RateSource::Cached)
 }
 
 /// The cached rate for a code, which the platform's fetcher compares against.

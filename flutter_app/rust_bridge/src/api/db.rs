@@ -37,7 +37,7 @@ use flutter_rust_bridge::frb;
 use dahonghua_core::Entry;
 use dahonghua_store::{Db, StoreError, KEY_CONFIG, KEY_MIGRATED, SCHEMA_VERSION};
 
-use crate::api::store::{load_config, load_entries, snapshot_config, snapshot_entries, store};
+use crate::api::store::{load_config, load_entries, snapshot_config, store};
 
 /// The open database, and what still needs writing to it.
 #[frb(ignore)]
@@ -331,26 +331,6 @@ pub fn migrate_from_json(entries_json: String, config_json: String) -> String {
         }
     }
     String::new()
-}
-
-/// The whole ledger as JSON, for a caller that wants the bytes rather than the
-/// database — the backup export, and nothing else.
-#[frb(sync)]
-pub fn store_snapshot() -> String {
-    snapshot_entries()
-}
-
-/// Reclaim space. Slow; never on a save path.
-#[frb(sync)]
-pub fn compact_store() -> String {
-    let h = handle();
-    match h.db.as_ref() {
-        Some(db) => match db.compact() {
-            Ok(()) => String::new(),
-            Err(e) => say(e),
-        },
-        None => "no database is open".to_string(),
-    }
 }
 
 /// Forget the open database and everything pending. For tests, which share one

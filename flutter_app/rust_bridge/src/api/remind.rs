@@ -13,8 +13,7 @@ use std::sync::{Mutex, MutexGuard, OnceLock};
 
 use flutter_rust_bridge::frb;
 
-use dahonghua_core::civil::Civil;
-use dahonghua_core::remind::{daily, monthly, next_monthly_after, parse_time, weekly, Reminder};
+use dahonghua_core::remind::{daily, monthly, parse_time, weekly, Reminder};
 
 /// What the user has switched on.
 ///
@@ -48,15 +47,6 @@ pub struct ScheduleView {
     pub weekday: Option<u32>,
     /// Day of month. Only meaningful for `monthly`.
     pub day: Option<u32>,
-}
-
-/// Whether a string is a time this app will accept.
-///
-/// Exposed so a settings field can refuse before anything is stored, rather
-/// than accepting text that quietly schedules nothing.
-#[frb(sync)]
-pub fn valid_time(text: String) -> bool {
-    parse_time(&text).is_some()
 }
 
 /// Every reminder that is on, with when it fires. Empty when none are.
@@ -134,20 +124,6 @@ pub fn weekly_report_on() -> bool {
 #[frb(sync)]
 pub fn monthly_report_on() -> bool {
     settings().monthly
-}
-
-/// The next 1st of a month after `today`, as `y-m-d`.
-///
-/// For a platform that can only schedule a one-shot date rather than a
-/// repeating monthly rule; it re-arms after each firing.
-#[frb(sync)]
-pub fn next_monthly_date(today: String) -> String {
-    let mut it = today.split('-');
-    let y = it.next().and_then(|v| v.parse().ok()).unwrap_or(1970);
-    let m: i32 = it.next().and_then(|v| v.parse().ok()).unwrap_or(1);
-    let d = it.next().and_then(|v| v.parse().ok()).unwrap_or(1);
-    let next = next_monthly_after(Civil::new(y, m - 1, d));
-    format!("{}-{}-{}", next.y, next.m + 1, next.d)
 }
 
 /// Restore from the config, without scheduling anything.

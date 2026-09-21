@@ -67,13 +67,6 @@ String migrateFromJson({
   configJson: configJson,
 );
 
-/// The whole ledger as JSON, for a caller that wants the bytes rather than the
-/// database — the backup export, and nothing else.
-String storeSnapshot() => RustLib.instance.api.crateApiDbStoreSnapshot();
-
-/// Reclaim space. Slow; never on a save path.
-String compactStore() => RustLib.instance.api.crateApiDbCompactStore();
-
 /// Forget the open database and everything pending. For tests, which share one
 /// process and must not leak a handle from one case into the next.
 void resetStoreHandle() => RustLib.instance.api.crateApiDbResetStoreHandle();

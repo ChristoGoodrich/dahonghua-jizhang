@@ -67,10 +67,6 @@ List<CatBudgetView> catBudgetRows({
   zh: zh,
 );
 
-/// Total expense over the given entries. Income and transfers excluded.
-double expenseTotal({required List<String> ids}) =>
-    RustLib.instance.api.crateApiBudgetExpenseTotal(ids: ids);
-
 /// One category with a cap, and how it is doing against it.
 class CatBudgetView {
   final String cat;

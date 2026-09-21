@@ -245,7 +245,7 @@ does not uninstall the app that phone is using.
 | [flutter_app/android/README.md](flutter_app/android/README.md) | Making a signing key, and what losing it costs |
 | [AGENTS.md](AGENTS.md) | The rules this codebase is written under |
 | [RELEASE.md](RELEASE.md) | Tagging a release |
-| [DATA_MODEL_assets.md](DATA_MODEL_assets.md) | How accounts, assets, loans and net worth relate |
+| [docs/archive/DATA_MODEL_assets.md](docs/archive/DATA_MODEL_assets.md) | How accounts, assets, loans and net worth relate — written against the React Native files, still true of the model |
 | [CHANGELOG.md](CHANGELOG.md) | Release history |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Development workflow, commit and PR conventions |
 | [SECURITY.md](SECURITY.md) | Reporting a vulnerability |

@@ -41,19 +41,6 @@ List<TrendPointView> dailyTrend({
   today: today,
 );
 
-/// The weekly trend over the last `weeks`, each point dated to its Monday.
-List<TrendPointView> weeklyTrend({
-  required List<String> ids,
-  required List<String> daysOf,
-  required PlatformInt64 weeks,
-  required String today,
-}) => RustLib.instance.api.crateApiStatsWeeklyTrend(
-  ids: ids,
-  daysOf: daysOf,
-  weeks: weeks,
-  today: today,
-);
-
 /// Trend points as coordinates a painter can draw without arithmetic.
 ///
 /// `series` is `"exp"`, `"inc"` or `"both"`, and it decides the maximum — a

@@ -13,10 +13,6 @@ import 'store.dart';
 List<AcctRowView> rowsForAccount({required String id}) =>
     RustLib.instance.api.crateApiAcctRowsForAccount(id: id);
 
-/// How many rows an account has, without building them all.
-int rowCountForAccount({required String id}) =>
-    RustLib.instance.api.crateApiAcctRowCountForAccount(id: id);
-
 /// An entry, and what it did to the balance of the account being viewed.
 ///
 /// The delta is not derivable from the entry alone — the same transfer is
