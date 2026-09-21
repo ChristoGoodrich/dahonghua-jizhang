@@ -48,7 +48,24 @@ struct Handle {
     dirty: BTreeSet<String>,
     /// Every row differs — a bulk change, or a load that replaced the ledger.
     dirty_all: bool,
+    /// Somebody said the config changed. A hint now, not the rule: see
+    /// `written_config`.
     dirty_config: bool,
+    /// The config as the disk holds it, in the form `snapshot_config` writes.
+    ///
+    /// The save compares against this rather than trusting `dirty_config`,
+    /// because trusting it lost data. Four setters marked the config — the
+    /// currency table, the current account, accounts and sync — and the rest
+    /// did not: the theme, the budget, templates, tags, assets, loans,
+    /// subscriptions, reminders, the language and the lock were all changed
+    /// in memory and never written, and came back as defaults on the next
+    /// launch unless something that did mark happened to be changed after
+    /// them. Each looked saved, because a snapshot held it.
+    ///
+    /// It is the store's lesson again (see `store_mut`), and this time the
+    /// fix does not depend on the next setter remembering: the config is one
+    /// row, a snapshot of it is small, and a comparison cannot forget.
+    written_config: Option<String>,
 }
 
 fn handle() -> MutexGuard<'static, Handle> {
@@ -115,6 +132,9 @@ pub fn open_store(path: String) -> String {
             h.dirty.clear();
             h.dirty_all = false;
             h.dirty_config = false;
+            // Unknown until a load says; a first launch that saves before
+            // loading writes its config, which is what it should do.
+            h.written_config = None;
             String::new()
         }
         Err(e) => say(e),
@@ -185,11 +205,14 @@ pub fn load_from_store() -> i64 {
 
     // A load is not a change. Whatever the two calls above marked, the ledger
     // now matches the disk exactly, and leaving it marked would rewrite every
-    // row on the first save for nothing.
+    // row on the first save for nothing. The config is recorded in the form
+    // the next save would write it, so the comparison there finds nothing.
+    let loaded = snapshot_config();
     let mut h = handle();
     h.dirty.clear();
     h.dirty_all = false;
     h.dirty_config = false;
+    h.written_config = Some(loaded);
     n as i64
 }
 
@@ -220,15 +243,25 @@ pub fn dirty_entry_count() -> i64 {
 /// Write everything outstanding. `""` on success.
 #[frb(sync)]
 pub fn flush_store() -> String {
-    let (dirty, all, cfg_dirty) = {
+    let (dirty, all, marked, written) = {
         let h = handle();
         if h.db.is_none() {
             return "no database is open".to_string();
         }
-        (h.dirty.clone(), h.dirty_all, h.dirty_config)
+        (
+            h.dirty.clone(),
+            h.dirty_all,
+            h.dirty_config,
+            h.written_config.clone(),
+        )
     };
 
-    if !all && dirty.is_empty() && !cfg_dirty {
+    // Compared, not trusted — `written_config` says why. Taken with the
+    // handle lock released, like the rows below.
+    let config_now = snapshot_config();
+    let cfg_changed = marked || written.as_deref() != Some(config_now.as_str());
+
+    if !all && dirty.is_empty() && !cfg_changed {
         return String::new();
     }
 
@@ -247,11 +280,7 @@ pub fn flush_store() -> String {
                 .collect()
         }
     };
-    let config = if cfg_dirty {
-        Some(snapshot_config())
-    } else {
-        None
-    };
+    let config = cfg_changed.then_some(config_now);
 
     let mut h = handle();
     let Some(db) = h.db.as_mut() else {
@@ -267,8 +296,8 @@ pub fn flush_store() -> String {
     if let Err(e) = result {
         return say(e);
     }
-    if let Some(json) = config {
-        if let Err(e) = db.set(KEY_CONFIG, &json) {
+    if let Some(json) = &config {
+        if let Err(e) = db.set(KEY_CONFIG, json) {
             return say(e);
         }
     }
@@ -276,6 +305,9 @@ pub fn flush_store() -> String {
     h.dirty.clear();
     h.dirty_all = false;
     h.dirty_config = false;
+    if let Some(json) = config {
+        h.written_config = Some(json);
+    }
     String::new()
 }
 

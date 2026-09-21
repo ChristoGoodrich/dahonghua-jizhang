@@ -11,6 +11,7 @@
 // file to leave behind now, and no rename to be atomic.
 
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter_app/persistence.dart';
 import 'package:flutter_app/src/rust/api/accounts.dart' as accounts;
@@ -19,6 +20,13 @@ import 'package:flutter_app/src/rust/api/db.dart' as db;
 import 'package:flutter_app/src/rust/api/record.dart' as record;
 import 'package:flutter_app/src/rust/api/reimburse.dart' as rb;
 import 'package:flutter_app/src/rust/api/store.dart' as store;
+import 'package:flutter_app/src/rust/api/budget.dart' as budget;
+import 'package:flutter_app/src/rust/api/catalog.dart' as catalog;
+import 'package:flutter_app/src/rust/api/lock.dart' as lock;
+import 'package:flutter_app/src/rust/api/networth.dart' as nw;
+import 'package:flutter_app/src/rust/api/remind.dart' as remind;
+import 'package:flutter_app/src/rust/api/subscriptions.dart' as subs;
+import 'package:flutter_app/src/rust/api/theme.dart' as theme;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'rust_init.dart';
@@ -81,8 +89,9 @@ void main() {
       p.dispose();
     });
 
-    testWidgets('creates the database rather than waiting for a save',
-        (tester) async {
+    testWidgets('creates the database rather than waiting for a save', (
+      tester,
+    ) async {
       final p = await open();
       expect(await dbFile.exists(), isTrue);
       p.dispose();
@@ -107,8 +116,9 @@ void main() {
       p.dispose();
     });
 
-    testWidgets('keeps tombstones, or a restart resurrects them',
-        (tester) async {
+    testWidgets('keeps tombstones, or a restart resurrects them', (
+      tester,
+    ) async {
       var p = await open();
       add('a', 12.5);
       add('b', 30);
@@ -135,8 +145,10 @@ void main() {
       );
 
       p = await restart(p);
-      expect(store.getEntry(id: 'a')!.note,
-          'a "quoted" \\ backslash\nand a newline 🌺');
+      expect(
+        store.getEntry(id: 'a')!.note,
+        'a "quoted" \\ backslash\nand a newline 🌺',
+      );
       p.dispose();
     });
 
@@ -144,8 +156,7 @@ void main() {
       var p = await open();
       add('a', 12.5);
       p.save();
-      store.updateEntry(
-          id: 'a', patch: store.EntryPatch(amt: 99), now: t0 + 1);
+      store.updateEntry(id: 'a', patch: store.EntryPatch(amt: 99), now: t0 + 1);
 
       p = await restart(p);
       expect(store.getEntry(id: 'a')!.amt, 99);
@@ -182,8 +193,7 @@ void main() {
 
     testWidgets('keeps the current account', (tester) async {
       var p = await open();
-      accounts.addAccount(
-          id: 'wallet', name: '钱包', balance: 0, kind: 'cash');
+      accounts.addAccount(id: 'wallet', name: '钱包', balance: 0, kind: 'cash');
       store.setCurrentAccount(id: 'wallet');
 
       p = await restart(p);
@@ -192,9 +202,155 @@ void main() {
     });
   });
 
+  /// Every setting a person can change, through a real save and a real
+  /// reopen.
+  ///
+  /// The config is written only when something has marked it dirty, and for
+  /// most of the settings nothing did: the currency table and the current
+  /// account marked it, and the theme, the budget, templates, tags, assets,
+  /// loans, subscriptions, reminders, the language and the lock did not. Each
+  /// looked saved — a snapshot of the config held it, and the one test that
+  /// checked the lock checked the snapshot — and none reached the disk.
+  ///
+  /// `store.reset()` forgets most of that, but not the theme, the lock or the
+  /// reminders, which live in singletons of their own. They are forgotten
+  /// here by hand, or this group could not fail for them.
+  group('every setting survives a restart', () {
+    Future<Persistence> restartAll(Persistence p) async {
+      p.save();
+      p.dispose();
+      store.reset();
+      theme.setTheme(key: 'default', dark: false);
+      lock.lockReset();
+      remind.resetReminders();
+      return open();
+    }
+
+    tearDown(() {
+      theme.setTheme(key: 'default', dark: false);
+      lock.lockReset();
+      remind.resetReminders();
+    });
+
+    testWidgets('the theme and the dark room', (tester) async {
+      var p = await open();
+      theme.setTheme(key: 'sakura', dark: true);
+
+      p = await restartAll(p);
+      expect(theme.themeKey(), 'sakura');
+      expect(theme.isDark(), isTrue);
+      p.dispose();
+    });
+
+    testWidgets('the budget', (tester) async {
+      var p = await open();
+      budget.setSettings(
+        view: budget.SettingsView(
+          budget: 6000,
+          dailyBudget: 200,
+          cycleStart: 15,
+          capCats: const ['food'],
+          capAmounts: Float64List.fromList([1500]),
+        ),
+      );
+
+      p = await restartAll(p);
+      final s = budget.settings();
+      expect(s.budget, 6000);
+      expect(s.dailyBudget, 200);
+      expect(s.cycleStart, 15);
+      expect(s.capCats, ['food']);
+      p.dispose();
+    });
+
+    testWidgets('a template', (tester) async {
+      var p = await open();
+      catalog.addTemplate(
+        id: 'tpl-coffee',
+        io: 'exp',
+        cat: 'food',
+        amt: 36,
+        name: '咖啡',
+      );
+
+      p = await restartAll(p);
+      expect(catalog.templates().map((t) => t.id), contains('tpl-coffee'));
+      p.dispose();
+    });
+
+    testWidgets('a tag', (tester) async {
+      var p = await open();
+      catalog.addTag(kind: 'normal', name: '出差');
+
+      p = await restartAll(p);
+      expect(catalog.tags(), contains('出差'));
+      p.dispose();
+    });
+
+    testWidgets('an asset and a loan', (tester) async {
+      var p = await open();
+      nw.addAsset(id: 'as-house', name: '房子', kind: 'asset', val: 500000);
+      nw.addLoan(id: 'ln-a', who: '小王', kind: 'lend', amt: 300, ts: t0);
+
+      p = await restartAll(p);
+      expect(nw.assets().map((a) => a.id), contains('as-house'));
+      expect(nw.loans().map((l) => l.id), contains('ln-a'));
+      p.dispose();
+    });
+
+    testWidgets('a subscription', (tester) async {
+      var p = await open();
+      subs.addSub(
+        sub: const subs.NewSub(
+          name: '视频会员',
+          amt: 25,
+          freq: 'monthly',
+          day: 12,
+          cat: 'fun',
+          emoji: '📺',
+          isTransfer: false,
+        ),
+        id: 'sub-video',
+        now: t0,
+      );
+
+      p = await restartAll(p);
+      expect(subs.subs().map((s) => s.id), contains('sub-video'));
+      p.dispose();
+    });
+
+    testWidgets('the reminders', (tester) async {
+      var p = await open();
+      remind.setDailyReminder(at: '21:00');
+      remind.setWeeklyReport(enabled: true);
+
+      p = await restartAll(p);
+      expect(remind.dailyReminderAt(), '21:00');
+      expect(remind.weeklyReportOn(), isTrue);
+      p.dispose();
+    });
+
+    testWidgets('the language', (tester) async {
+      var p = await open();
+      store.setLanguage(lang: 'en');
+
+      p = await restartAll(p);
+      expect(store.language(), 'en');
+      p.dispose();
+    });
+
+    testWidgets('the lock', (tester) async {
+      var p = await open();
+      lock.lockSetEnabled(enabled: true);
+
+      p = await restartAll(p);
+      expect(lock.lockEnabled(), isTrue);
+      p.dispose();
+    });
+  });
+
   group('only what changed is written', () {
-    testWidgets('one edit means one row, not the whole ledger',
-        (tester) async {
+    testWidgets('one edit means one row, not the whole ledger', (tester) async {
       final p = await open();
       for (var i = 0; i < 20; i++) {
         add('e$i', 10);
@@ -203,9 +359,15 @@ void main() {
       expect(p.pendingRows, 0, reason: 'a save clears what it wrote');
 
       store.updateEntry(
-          id: 'e7', patch: store.EntryPatch(amt: 99), now: t0 + 1);
-      expect(p.pendingRows, 1,
-          reason: 'editing one entry must not queue the other nineteen');
+        id: 'e7',
+        patch: store.EntryPatch(amt: 99),
+        now: t0 + 1,
+      );
+      expect(
+        p.pendingRows,
+        1,
+        reason: 'editing one entry must not queue the other nineteen',
+      );
       p.dispose();
     });
 
@@ -216,20 +378,27 @@ void main() {
       }
       p = await restart(p);
 
-      expect(p.pendingRows, 0,
-          reason: 'reading rows in must not queue them straight back out');
+      expect(
+        p.pendingRows,
+        0,
+        reason: 'reading rows in must not queue them straight back out',
+      );
       p.dispose();
     });
 
-    testWidgets('a bulk change says so rather than listing rows',
-        (tester) async {
+    testWidgets('a bulk change says so rather than listing rows', (
+      tester,
+    ) async {
       final p = await open();
       add('a', 10);
       p.save();
 
       currency.setBaseCurrency(code: 'USD', now: t0 + 1);
-      expect(p.pendingRows, -1,
-          reason: 'changing the base re-denominates every entry');
+      expect(
+        p.pendingRows,
+        -1,
+        reason: 'changing the base re-denominates every entry',
+      );
       p.dispose();
     });
 
@@ -245,11 +414,14 @@ void main() {
   });
 
   group('coming from the JSON files', () {
-    testWidgets('imports a ledger written by the previous build',
-        (tester) async {
-      await legacyEntries.writeAsString('['
-          '{"id":"old","ts":$t0,"io":"exp","cat":"food","amt":42}'
-          ']');
+    testWidgets('imports a ledger written by the previous build', (
+      tester,
+    ) async {
+      await legacyEntries.writeAsString(
+        '['
+        '{"id":"old","ts":$t0,"io":"exp","cat":"food","amt":42}'
+        ']',
+      );
 
       final p = await open();
       expect(store.entryCount(), 1);
@@ -257,22 +429,30 @@ void main() {
       p.dispose();
     });
 
-    testWidgets('keeps the old files rather than deleting them',
-        (tester) async {
-      await legacyEntries.writeAsString('['
-          '{"id":"old","ts":$t0,"io":"exp","cat":"food","amt":42}'
-          ']');
+    testWidgets('keeps the old files rather than deleting them', (
+      tester,
+    ) async {
+      await legacyEntries.writeAsString(
+        '['
+        '{"id":"old","ts":$t0,"io":"exp","cat":"food","amt":42}'
+        ']',
+      );
 
       final p = await open();
-      expect(await legacyEntries.exists(), isTrue,
-          reason: 'the only copy of a ledger is not deleted on a first run');
+      expect(
+        await legacyEntries.exists(),
+        isTrue,
+        reason: 'the only copy of a ledger is not deleted on a first run',
+      );
       p.dispose();
     });
 
     testWidgets('does not import twice', (tester) async {
-      await legacyEntries.writeAsString('['
-          '{"id":"old","ts":$t0,"io":"exp","cat":"food","amt":42}'
-          ']');
+      await legacyEntries.writeAsString(
+        '['
+        '{"id":"old","ts":$t0,"io":"exp","cat":"food","amt":42}'
+        ']',
+      );
 
       var p = await open();
       expect(store.entryCount(), 1);
@@ -281,24 +461,33 @@ void main() {
       store.removeEntry(id: 'old', now: t0 + 1);
       p = await restart(p);
 
-      expect(store.liveEntries(), isEmpty,
-          reason: 'a second import would resurrect it');
+      expect(
+        store.liveEntries(),
+        isEmpty,
+        reason: 'a second import would resurrect it',
+      );
       p.dispose();
     });
 
-    testWidgets('a truncated ledger file is refused, not partly imported',
-        (tester) async {
+    testWidgets('a truncated ledger file is refused, not partly imported', (
+      tester,
+    ) async {
       await legacyEntries.writeAsString('[{"id":"a","ts":$t0,"amt":1},{"id":');
 
       final p = await open();
-      expect(p.healthy, isFalse,
-          reason: 'importing whichever rows happen to be complete loses '
-              'the rest silently');
+      expect(
+        p.healthy,
+        isFalse,
+        reason:
+            'importing whichever rows happen to be complete loses '
+            'the rest silently',
+      );
       p.dispose();
     });
 
-    testWidgets('an empty file is refused rather than read as an empty ledger',
-        (tester) async {
+    testWidgets('an empty file is refused rather than read as an empty ledger', (
+      tester,
+    ) async {
       await legacyEntries.writeAsString('');
       await legacyConfig.writeAsString('{}');
 
@@ -312,8 +501,9 @@ void main() {
   });
 
   group('a database it cannot use', () {
-    testWidgets('from a newer build is refused rather than opened',
-        (tester) async {
+    testWidgets('from a newer build is refused rather than opened', (
+      tester,
+    ) async {
       final p = await open();
       p.dispose();
       store.reset();
@@ -329,16 +519,18 @@ void main() {
       expect(db.supportedSchemaVersion(), greaterThan(0));
     });
 
-    testWidgets('a path that cannot be opened leaves the app saying so',
-        (tester) async {
+    testWidgets('a path that cannot be opened leaves the app saying so', (
+      tester,
+    ) async {
       final bad = '${dir.path}/nope/deeper/ledger.db';
       final err = db.openStore(path: bad);
       expect(err, isNotEmpty, reason: 'a directory that does not exist');
       expect(db.storeIsOpen(), isFalse);
     });
 
-    testWidgets('a save with nothing open says so rather than pretending',
-        (tester) async {
+    testWidgets('a save with nothing open says so rather than pretending', (
+      tester,
+    ) async {
       db.resetStoreHandle();
       expect(db.flushStore(), isNotEmpty);
     });
@@ -376,8 +568,9 @@ void main() {
           ts: t0,
         );
 
-    testWidgets('an entry from the record sheet survives a restart',
-        (tester) async {
+    testWidgets('an entry from the record sheet survives a restart', (
+      tester,
+    ) async {
       var p = await open();
       final r = record.saveForm(
         form: form(),
@@ -389,8 +582,11 @@ void main() {
       expect(r.rejected, isNull, reason: 'the form has to be accepted');
 
       p = await restart(p);
-      expect(store.getEntry(id: 'sheet-1'), isNotNull,
-          reason: 'this is the entry that was being lost');
+      expect(
+        store.getEntry(id: 'sheet-1'),
+        isNotNull,
+        reason: 'this is the entry that was being lost',
+      );
       expect(store.getEntry(id: 'sheet-1')!.amt, 42);
       p.dispose();
     });
@@ -398,19 +594,21 @@ void main() {
     testWidgets('an edit from the record sheet survives too', (tester) async {
       var p = await open();
       record.saveForm(
-          form: form(),
-          editId: '',
-          id: 'sheet-1',
-          now: t0,
-          rateWasCached: false);
+        form: form(),
+        editId: '',
+        id: 'sheet-1',
+        now: t0,
+        rateWasCached: false,
+      );
       p.save();
 
       record.saveForm(
-          form: form(amt: '99'),
-          editId: 'sheet-1',
-          id: 'ignored',
-          now: t0 + 1,
-          rateWasCached: false);
+        form: form(amt: '99'),
+        editId: 'sheet-1',
+        id: 'ignored',
+        now: t0 + 1,
+        rateWasCached: false,
+      );
 
       p = await restart(p);
       expect(store.getEntry(id: 'sheet-1')!.amt, 99);
@@ -439,8 +637,11 @@ void main() {
       // by nothing.
       currency.addRate(code: 'USD');
       currency.setRate(code: 'USD', rate: 0.14);
-      expect(currency.setBaseCurrency(code: 'USD', now: t0 + 1), 'ok',
-          reason: 'the switch has to be accepted');
+      expect(
+        currency.setBaseCurrency(code: 'USD', now: t0 + 1),
+        'ok',
+        reason: 'the switch has to be accepted',
+      );
 
       p = await restart(p);
 

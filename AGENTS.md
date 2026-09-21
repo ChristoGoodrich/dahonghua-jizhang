@@ -53,7 +53,7 @@ refuses to run without `src/` for exactly that reason.
     npm run apk           the release APKs, one per architecture
 
     cd flutter_app
-    flutter test integration_test/all_test.dart    687 tests, ~6 min
+    flutter test integration_test/all_test.dart    696 tests, ~6 min
     flutter test integration_test/<one>_test.dart  while working on one screen
 
 The suite is one entrypoint on purpose: per file it was 36 APK builds and about
@@ -100,6 +100,22 @@ was lost on the next launch**, which is the app's primary way of creating one.
 The type is what makes it findable: making `store()` read-only turned twenty
 silent data-loss sites into twenty compile errors. Forgetting now means taking
 the wide mark, which costs a slower save rather than the data.
+
+**The config had the same hole, and nobody looked.** It was written only when
+`dirty_config` was set, and four setters set it — the currency table, the
+current account, accounts, sync. The theme, the budget, templates, tags,
+assets, loans, subscriptions, reminders, the language and the lock did not, so
+every one of them came back as a default on the next launch unless something
+that did mark was changed after it. The one persistence test that touched the
+lock checked a snapshot, which held it, rather than a restart, which did not.
+
+So the save no longer trusts the mark. It snapshots the config — one small row
+— and compares it with `written_config`, what the disk holds; a difference is
+written whatever marked it or did not. A setter added next year cannot forget,
+because it is not asked. `persistence_test`'s "every setting survives a
+restart" goes through a real save and reopen for each, and clears the three
+settings `store.reset()` does not (theme, lock, reminders) by hand — without
+that, the group could not fail for them.
 
 ## Drawing the chrome
 
