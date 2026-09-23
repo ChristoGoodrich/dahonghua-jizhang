@@ -115,6 +115,7 @@ class RecordSheet extends StatefulWidget {
     this.onSaved,
     this.editId,
     this.fetchRate,
+    this.initialTs,
   });
 
   final bool zh;
@@ -125,6 +126,10 @@ class RecordSheet extends StatefulWidget {
   /// Editing loads the source whole, date included — which is what separates it
   /// from 再记一笔, where the same fields land on a new row dated today.
   final String? editId;
+
+  /// A new entry already on a day — 明细's calendar opens the sheet this way
+  /// from 补记这天. Ignored when editing, which carries its own date.
+  final int? initialTs;
 
   /// Where the exchange rate comes from. A test has no network, and the part
   /// worth testing is what this screen does with each answer.
@@ -173,6 +178,8 @@ class _RecordSheetState extends State<RecordSheet> {
       editing: id.isNotEmpty,
       ledger: '',
     );
+    final at = widget.initialTs;
+    if (id.isEmpty && at != null) _form = _form.withTs(at);
     _note.text = _form.note;
     _flash = null;
   }

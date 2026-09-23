@@ -252,11 +252,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   ///
   /// A route rather than a tab: saving pops back to whatever was underneath,
   /// which is the behaviour without the shell having to track it.
-  Future<void> _record({String? editId}) async {
+  Future<void> _record({String? editId, int? at}) async {
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => sheet.RecordSheet(
           editId: editId,
+          initialTs: at,
           zh: _zh,
           onSaved: ({required staleRate}) => _entriesChanged(),
         ),
@@ -288,6 +289,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           onOpenBudget: () =>
               _push(BudgetScreen(zh: _zh, onChanged: _configChanged)),
           onOpenStats: () => setState(() => _tab = 1),
+          onRecordAt: (ts) => _record(at: ts),
           onPrivacy: _configChanged,
         ),
         StatsScreen(

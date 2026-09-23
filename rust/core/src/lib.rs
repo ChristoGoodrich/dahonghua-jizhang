@@ -15,6 +15,7 @@ pub mod batch;
 pub mod bills;
 pub mod budget;
 pub mod calc;
+pub mod calendar;
 pub mod catalog;
 pub mod chart;
 pub mod civil;

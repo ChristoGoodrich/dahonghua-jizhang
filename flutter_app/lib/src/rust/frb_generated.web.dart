@@ -12,6 +12,7 @@ import 'api/backup.dart';
 import 'api/batch.dart';
 import 'api/budget.dart';
 import 'api/calc.dart';
+import 'api/calendar.dart';
 import 'api/capture.dart';
 import 'api/catalog.dart';
 import 'api/currency.dart';
@@ -149,6 +150,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BudgetSettings dco_decode_budget_settings(dynamic raw);
 
   @protected
+  CalCellView dco_decode_cal_cell_view(dynamic raw);
+
+  @protected
+  CalMonthView dco_decode_cal_month_view(dynamic raw);
+
+  @protected
   CandidateView dco_decode_candidate_view(dynamic raw);
 
   @protected
@@ -255,6 +262,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<BarView> dco_decode_list_bar_view(dynamic raw);
+
+  @protected
+  List<CalCellView> dco_decode_list_cal_cell_view(dynamic raw);
 
   @protected
   List<CandidateView> dco_decode_list_candidate_view(dynamic raw);
@@ -668,6 +678,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BudgetSettings sse_decode_budget_settings(SseDeserializer deserializer);
 
   @protected
+  CalCellView sse_decode_cal_cell_view(SseDeserializer deserializer);
+
+  @protected
+  CalMonthView sse_decode_cal_month_view(SseDeserializer deserializer);
+
+  @protected
   CandidateView sse_decode_candidate_view(SseDeserializer deserializer);
 
   @protected
@@ -778,6 +794,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<BarView> sse_decode_list_bar_view(SseDeserializer deserializer);
+
+  @protected
+  List<CalCellView> sse_decode_list_cal_cell_view(SseDeserializer deserializer);
 
   @protected
   List<CandidateView> sse_decode_list_candidate_view(
@@ -1274,6 +1293,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_cal_cell_view(CalCellView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_cal_month_view(CalMonthView self, SseSerializer serializer);
+
+  @protected
   void sse_encode_candidate_view(CandidateView self, SseSerializer serializer);
 
   @protected
@@ -1398,6 +1423,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_list_bar_view(List<BarView> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_cal_cell_view(
+    List<CalCellView> self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_list_candidate_view(

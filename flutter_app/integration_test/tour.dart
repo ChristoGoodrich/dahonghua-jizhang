@@ -204,6 +204,25 @@ void main() {
       await tester.drag(find.byType(Scrollable).first, const Offset(0, 260));
       await tester.pumpAndSettle();
 
+      // the calendar, and a day picked in it
+      await tester.tap(find.byKey(const Key('calendar-toggle')));
+      await shot(tester, '$room-01c-calendar');
+      final today = DateTime.now();
+      await tester.tap(
+        find.byKey(Key('cal-${today.year}-${today.month}-${today.day}')),
+      );
+      await tester.pumpAndSettle();
+      await tester.drag(
+        find.descendant(
+          of: find.byKey(const Key('cal-list')),
+          matching: find.byType(Scrollable),
+        ),
+        const Offset(0, -500),
+      );
+      await shot(tester, '$room-01d-calendar-day');
+      await tester.tap(find.byKey(const Key('calendar-toggle')));
+      await tester.pumpAndSettle();
+
       // a selection, since it is its own screen in all but name
       await tester.longPress(find.text('午饭 牛肉面'));
       await tester.pumpAndSettle();

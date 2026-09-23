@@ -46,14 +46,14 @@ refuses to run without `src/` for exactly that reason.
 ## Running things
 
     npm run goldens       the core against what the TypeScript answered
-    npm run rust:test     824 tests
+    npm run rust:test     831 tests
     npm run rust:clippy   -D warnings
     npm run bridge:clippy the bridge is a separate cargo project
     npm run tests:check   all_test.dart is not stale
     npm run apk           the release APKs, one per architecture
 
     cd flutter_app
-    flutter test integration_test/all_test.dart    716 tests, ~7 min
+    flutter test integration_test/all_test.dart    725 tests, ~9 min
     flutter test integration_test/<one>_test.dart  while working on one screen
 
 The suite is one entrypoint on purpose: per file it was 36 APK builds and about
@@ -316,6 +316,15 @@ the cycle's pot, or today's when that is the only one set. The eye — 隐藏金
 `hideAmounts` in the config as it was in the shipping settings — hides the
 totals on 明细, 资产 and 账户 through one function, `lib/amounts.dart`, and
 leaves the rows alone.
+
+Its second face was gone too: a toggle turned the rows into the month
+(`CalendarView.tsx`). `core::calendar` is that grid — the cycle's days, the
+Monday-first blanks, what each spent, which are ahead of today — and one
+addition, `heat`, which shades a day by the **square root** of its share of
+the biggest day. Shaded in proportion, a rent day is the only day that shows;
+the root keeps the order and lets the lunches be told apart. The calendar's
+state lives in the route's `PageStorage`, because the shell rebuilds 明细
+after every save and 补记这天 is a save made from the calendar.
 
 Worth checking the rest of `rn-final` the same way when something feels thin.
 

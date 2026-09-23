@@ -11,6 +11,7 @@ pub mod backup;
 pub mod batch;
 pub mod budget;
 pub mod calc;
+pub mod calendar;
 pub mod capture;
 pub mod catalog;
 pub mod currency;

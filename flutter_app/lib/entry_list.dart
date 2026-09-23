@@ -14,13 +14,16 @@ import 'package:flutter/material.dart';
 
 import 'bloom.dart';
 import 'bottom_nav.dart';
+import 'calendar_view.dart';
 import 'glass.dart';
 import 'home_header.dart';
 import 'report_screen.dart' show insightCopy;
 import 'src/rust/api/batch.dart' as batch;
+import 'src/rust/api/calendar.dart' as calendar;
 import 'src/rust/api/catalog.dart' as catalog;
 import 'src/rust/api/home.dart' as home;
 import 'src/rust/api/money.dart' as money;
+import 'src/rust/api/period.dart' as period;
 import 'src/rust/api/privacy.dart' as privacy;
 import 'src/rust/api/search.dart' as search;
 import 'src/rust/api/store.dart' as store;
@@ -69,6 +72,7 @@ class EntryListScreen extends StatefulWidget {
     this.onOpenBudget,
     this.onOpenStats,
     this.onPrivacy,
+    this.onRecordAt,
   });
 
   final bool zh;
@@ -94,6 +98,10 @@ class EntryListScreen extends StatefulWidget {
   /// The eye was pressed. The shell saves the setting and redraws the tabs
   /// that show totals.
   final VoidCallback? onPrivacy;
+
+  /// 补记这天: record a new entry on a day the calendar was showing, as an
+  /// instant at noon on it.
+  final ValueChanged<int>? onRecordAt;
 
   @override
   State<EntryListScreen> createState() => _EntryListScreenState();
@@ -131,11 +139,38 @@ class _EntryListScreenState extends State<EntryListScreen> {
   /// search's slice of it.
   home.HomeView? _home;
 
+  /// 明细's other face: the cycle as a grid. Kept in the route's page storage
+  /// rather than only here, because the shell rebuilds this screen after
+  /// every save — and 补记这天 is a save made from the calendar, which would
+  /// otherwise drop whoever made it back into the list.
+  bool _calendar = false;
+  late String _calAnchor = localDay(DateTime.now());
+  String? _calPicked;
+  calendar.CalMonthView? _cal;
+  List<String> _allIds = const [];
+  List<String> _allDays = const [];
+
+  static const _calKey = 'ledger-calendar';
+
   @override
   void initState() {
     super.initState();
+    final kept = PageStorage.maybeOf(
+      context,
+    )?.readState(context, identifier: _calKey);
+    if (kept case (final bool on, final String anchor, final String? picked)) {
+      _calendar = on;
+      _calAnchor = anchor;
+      _calPicked = picked;
+    }
     _reload();
   }
+
+  void _keepCal() => PageStorage.maybeOf(context)?.writeState(context, (
+    _calendar,
+    _calAnchor,
+    _calPicked,
+  ), identifier: _calKey);
 
   /// Ask the store what to draw.
   ///
@@ -157,6 +192,14 @@ class _EntryListScreenState extends State<EntryListScreen> {
       zh: widget.zh,
       copy: insightCopy(widget.zh),
     );
+    final cal = calendar.calendarMonth(
+      ids: ids,
+      daysOf: days,
+      anchor: _calAnchor,
+      today: localDay(DateTime.now()),
+    );
+    final allIds = ids;
+    final allDays = days;
 
     final q = _query.text.trim();
     search.ParsedQueryView? parsed;
@@ -193,6 +236,9 @@ class _EntryListScreenState extends State<EntryListScreen> {
       _items = items;
       _parsed = parsed;
       _home = head;
+      _cal = cal;
+      _allIds = allIds;
+      _allDays = allDays;
     });
   }
 
@@ -254,7 +300,9 @@ class _EntryListScreenState extends State<EntryListScreen> {
         body: (context, b) => Stack(
           fit: StackFit.expand,
           children: [
-            if (_items.isEmpty)
+            if (_calendar && _cal != null)
+              _calendarBody(zh, b)
+            else if (_items.isEmpty)
               _empty(zh, b)
             else
               ListView.builder(
@@ -327,6 +375,222 @@ class _EntryListScreenState extends State<EntryListScreen> {
     );
   }
 
+  void _stepCal(int dir) {
+    _calAnchor = period.stepPeriod(
+      anchor: _calAnchor,
+      period: 'month',
+      dir: dir,
+    );
+    _calPicked = null;
+    _keepCal();
+    _reload();
+  }
+
+  String _calLabel(calendar.CalMonthView m, bool zh) {
+    List<int> p(String ymd) => ymd.split('-').map(int.parse).toList();
+    final a = p(m.start);
+    final b = p(m.last);
+    const en = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    // A cycle that is a calendar month is named as one; one that turns over
+    // mid-month is named by its ends, or 9月 would be a lie about the 15th.
+    if (a[2] == 1) return zh ? '${a[0]}年${a[1]}月' : '${en[a[1] - 1]} ${a[0]}';
+    return zh
+        ? '${a[1]}月${a[2]}日 – ${b[1]}月${b[2]}日'
+        : '${a[1]}/${a[2]} – ${b[1]}/${b[2]}';
+  }
+
+  /// The calendar face: the cycle's grid, and the picked day's rows under it.
+  Widget _calendarBody(bool zh, TitledBody b) {
+    final m = _cal!;
+    final sym = zh ? '￥' : '\$';
+    calendar.CalCellView? cell;
+    for (final c in m.cells) {
+      if (c.day == _calPicked) cell = c;
+    }
+    // The picked day's rows, through the same grouping the list uses, so
+    // they come back in the list's order.
+    final dayIds = <String>[];
+    final dayDays = <String>[];
+    if (cell != null) {
+      for (var i = 0; i < _allIds.length; i++) {
+        if (_allDays[i] == cell.day) {
+          dayIds.add(_allIds[i]);
+          dayDays.add(_allDays[i]);
+        }
+      }
+    }
+    final dayItems = dayIds.isEmpty
+        ? const <store.ListItem>[]
+        : store.listItems(
+            ids: dayIds,
+            days: dayDays,
+            today: localDay(DateTime.now()),
+            columns: 1,
+          );
+    final head = dayItems.where((i) => i.kind == 'header').firstOrNull;
+    final rows = dayItems.where((i) => i.kind != 'header').toList();
+    final p = palette;
+
+    return ListView(
+      key: const Key('cal-list'),
+      controller: b.controller,
+      padding: EdgeInsets.only(top: b.top, bottom: navBottomInset(context)),
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 22),
+          child: b.header,
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          child: Row(
+            children: [
+              IconButton(
+                key: const Key('cal-prev'),
+                icon: Icon(Icons.chevron_left_rounded, color: p.inkSoft),
+                onPressed: () => _stepCal(-1),
+              ),
+              Expanded(
+                child: Column(
+                  children: [
+                    Text(
+                      _calLabel(m, zh),
+                      key: const Key('cal-month'),
+                      style: TextStyle(
+                        fontSize: 15.5,
+                        fontWeight: FontWeight.w700,
+                        fontFeatures: tabular,
+                        color: p.ink,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '${zh ? '支出' : 'Out'} ${money.fmt(n: m.exp, symbol: sym)}'
+                      '  ·  ${zh ? '收入' : 'In'} ${money.fmt(n: m.inc, symbol: sym)}',
+                      key: const Key('cal-totals'),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontFeatures: tabular,
+                        color: p.inkSoft,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                key: const Key('cal-next'),
+                icon: Icon(
+                  Icons.chevron_right_rounded,
+                  color: m.canForward ? p.inkSoft : p.line,
+                ),
+                onPressed: m.canForward ? () => _stepCal(1) : null,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 6),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 22),
+          child: CalendarGrid(
+            month: m,
+            picked: _calPicked,
+            zh: zh,
+            onPick: (d) {
+              setState(() => _calPicked = _calPicked == d ? null : d);
+              _keepCal();
+            },
+          ),
+        ),
+        if (cell == null)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(26, 16, 26, 0),
+            child: Text(
+              zh ? '点一天,看那天的每一笔' : 'Tap a day to see what happened on it',
+              style: TextStyle(fontSize: 12.5, color: p.inkSoft),
+            ),
+          )
+        else ...[
+          Padding(
+            padding: const EdgeInsets.fromLTRB(26, 18, 26, 8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    head != null
+                        ? dayHeading(head.label, head.day, zh)
+                        : (zh
+                              ? '${cell.day.split('-')[1]}月${cell.day.split('-')[2]}日'
+                              : cell.day),
+                    key: const Key('cal-day-head'),
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: p.ink,
+                    ),
+                  ),
+                ),
+                if (cell.exp > 0)
+                  Text(
+                    '${zh ? '支出' : 'Out'} ${money.fmt(n: cell.exp, symbol: sym)}',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      fontFeatures: tabular,
+                      color: p.inkSoft,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          if (rows.isEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(26, 0, 26, 4),
+              child: Text(
+                zh ? '这天没有记录' : 'Nothing recorded on this day',
+                key: const Key('cal-day-empty'),
+                style: TextStyle(fontSize: 12.5, color: p.inkSoft),
+              ),
+            )
+          else
+            for (var i = 0; i < rows.length; i++)
+              _row(rows[i], zh, first: i == 0, last: i == rows.length - 1),
+          if (!cell.future)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(22, 10, 22, 0),
+              child: FilledButton.tonalIcon(
+                key: const Key('cal-add'),
+                onPressed: widget.onRecordAt == null
+                    ? null
+                    : () {
+                        final d = cell!.day.split('-').map(int.parse).toList();
+                        // Noon, as the shipping calendar did: a day picked
+                        // after the fact has no time of its own, and noon
+                        // sorts a backfilled lunch where lunch goes.
+                        widget.onRecordAt!(
+                          DateTime(d[0], d[1], d[2], 12).millisecondsSinceEpoch,
+                        );
+                      },
+                icon: const Icon(Icons.add_rounded, size: 18),
+                label: Text(zh ? '补记这天' : 'Add to this day'),
+              ),
+            ),
+        ],
+      ],
+    );
+  }
+
   /// What the selection comes to, under its count.
   ///
   /// The sums are the core's, not a fold written here. They are the same
@@ -375,7 +639,27 @@ class _EntryListScreenState extends State<EntryListScreen> {
       key: const Key('select-toggle'),
       tooltip: zh ? '批量处理' : 'Select',
       icon: Icon(Icons.checklist_rtl, color: palette.ink),
-      onPressed: _items.isEmpty ? null : _beginSelecting,
+      // not over the calendar, which has no rows to tick
+      onPressed: _items.isEmpty || _calendar ? null : _beginSelecting,
+    ),
+    IconButton(
+      key: const Key('calendar-toggle'),
+      tooltip: _calendar ? (zh ? '列表' : 'List') : (zh ? '日历' : 'Calendar'),
+      icon: Icon(
+        _calendar ? Icons.view_agenda_outlined : Icons.calendar_month_outlined,
+        color: _calendar ? palette.hibiscus : palette.ink,
+      ),
+      onPressed: () {
+        setState(() {
+          _calendar = !_calendar;
+          if (_calendar) {
+            _searching = false;
+            _query.clear();
+          }
+        });
+        _keepCal();
+        _reload();
+      },
     ),
     IconButton(
       key: const Key('search-toggle'),
@@ -384,7 +668,10 @@ class _EntryListScreenState extends State<EntryListScreen> {
         setState(() {
           _searching = !_searching;
           if (!_searching) _query.clear();
+          // a search is over rows, so it opens on the list
+          if (_searching) _calendar = false;
         });
+        _keepCal();
         _reload();
       },
     ),
