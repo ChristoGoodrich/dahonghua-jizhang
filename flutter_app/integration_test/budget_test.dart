@@ -69,8 +69,9 @@ void main() {
       expect(find.byKey(const Key('tier-monthly-pct')), findsNothing);
     });
 
-    testWidgets('which is a different answer from a cap with nothing spent',
-        (tester) async {
+    testWidgets('which is a different answer from a cap with nothing spent', (
+      tester,
+    ) async {
       caps(budget_: 500);
       await show(tester);
 
@@ -91,14 +92,19 @@ void main() {
       expect(textOf(tester, 'tier-monthly-text'), contains('超出 ￥200.00'));
     });
 
-    testWidgets('the bar is clamped even though the number is not',
-        (tester) async {
+    testWidgets('the bar is clamped even though the number is not', (
+      tester,
+    ) async {
       spend('a', 700);
       caps(budget_: 500);
       await show(tester);
       final bar = tester.widgetList<LinearProgressIndicator>(
-          find.byType(LinearProgressIndicator));
-      expect(bar.first.value, 1.0); // the drawing clamps; the arithmetic does not
+        find.byType(LinearProgressIndicator),
+      );
+      expect(
+        bar.first.value,
+        1.0,
+      ); // the drawing clamps; the arithmetic does not
     });
 
     testWidgets('the tone changes, and only once over', (tester) async {
@@ -107,7 +113,10 @@ void main() {
       await show(tester);
       // exactly at the cap is not over — `used > limit`, not `>=`
       expect(
-        tester.widget<Text>(find.byKey(const Key('tier-monthly-pct'))).style!.color,
+        tester
+            .widget<Text>(find.byKey(const Key('tier-monthly-pct')))
+            .style!
+            .color,
         palette.leafDeep,
       );
       expect(textOf(tester, 'tier-monthly-text'), contains('还剩 ￥0.00'));
@@ -139,7 +148,8 @@ void main() {
       await show(tester);
 
       final used = double.parse(
-          textOf(tester, 'tier-monthly-used').replaceAll(RegExp(r'[￥,]'), ''));
+        textOf(tester, 'tier-monthly-used').replaceAll(RegExp(r'[￥,]'), ''),
+      );
       // a cycle is at most 31 days, so it cannot contain all forty
       expect(used, lessThan(40));
       expect(used, greaterThan(0));
@@ -155,8 +165,9 @@ void main() {
   });
 
   group('category caps', () {
-    testWidgets('one row per capped category, closest to its cap first',
-        (tester) async {
+    testWidgets('one row per capped category, closest to its cap first', (
+      tester,
+    ) async {
       spend('a', 90, cat: 'food'); // 90% of 100
       spend('b', 10, cat: 'trans'); // 20% of 50
       caps(budget_: 0, cats: {'food': 100, 'trans': 50});
@@ -171,16 +182,18 @@ void main() {
       expect(iFood, lessThan(iTrans));
     });
 
-    testWidgets('a cap of zero is dropped rather than shown at zero percent',
-        (tester) async {
+    testWidgets('a cap of zero is dropped rather than shown at zero percent', (
+      tester,
+    ) async {
       spend('a', 10, cat: 'food');
       caps(cats: {'food': 0});
       await show(tester);
       expect(find.byKey(const Key('no-caps')), findsOneWidget);
     });
 
-    testWidgets('a category with a cap and no spending still shows',
-        (tester) async {
+    testWidgets('a category with a cap and no spending still shows', (
+      tester,
+    ) async {
       caps(cats: {'food': 100});
       await show(tester);
       expect(textOf(tester, 'cap-food-pct'), '0%');
@@ -200,8 +213,9 @@ void main() {
     // None of the tests above opened it, and the first tap on a device crashed:
     // the controller was disposed at the showDialog call site, while the route
     // was still animating out and the TextField still depended on it.
-    testWidgets('opens, takes a number, and closes without asserting',
-        (tester) async {
+    testWidgets('opens, takes a number, and closes without asserting', (
+      tester,
+    ) async {
       spend('a', 700);
       caps();
       await show(tester);
@@ -220,8 +234,9 @@ void main() {
       expect(textOf(tester, 'tier-monthly-pct'), '140%');
     });
 
-    testWidgets('opens on the current cap, and empty when there is none',
-        (tester) async {
+    testWidgets('opens on the current cap, and empty when there is none', (
+      tester,
+    ) async {
       caps(budget_: 250);
       await show(tester);
       await tester.tap(find.byKey(const Key('tier-monthly')));
@@ -234,7 +249,9 @@ void main() {
       // the daily one has no cap, so its field is empty rather than "0"
       await tester.tap(find.byKey(const Key('tier-daily')));
       await tester.pumpAndSettle();
-      final field = tester.widget<TextField>(find.byKey(const Key('cap-field')));
+      final field = tester.widget<TextField>(
+        find.byKey(const Key('cap-field')),
+      );
       expect(field.controller!.text, '');
       await tester.tap(find.byKey(const Key('cap-cancel')));
       await tester.pumpAndSettle();
@@ -251,21 +268,23 @@ void main() {
       expect(budget.settings().budget, 250);
     });
 
-    testWidgets('an empty field clears the cap rather than setting it to zero',
-        (tester) async {
-      // the same number, and the core already agrees about what it means
-      spend('a', 30);
-      caps(budget_: 250);
-      await show(tester);
-      await tester.tap(find.byKey(const Key('tier-monthly')));
-      await tester.pumpAndSettle();
-      await tester.enterText(find.byKey(const Key('cap-field')), '');
-      await tester.tap(find.byKey(const Key('cap-ok')));
-      await tester.pumpAndSettle();
+    testWidgets(
+      'an empty field clears the cap rather than setting it to zero',
+      (tester) async {
+        // the same number, and the core already agrees about what it means
+        spend('a', 30);
+        caps(budget_: 250);
+        await show(tester);
+        await tester.tap(find.byKey(const Key('tier-monthly')));
+        await tester.pumpAndSettle();
+        await tester.enterText(find.byKey(const Key('cap-field')), '');
+        await tester.tap(find.byKey(const Key('cap-ok')));
+        await tester.pumpAndSettle();
 
-      expect(budget.settings().budget, 0);
-      expect(textOf(tester, 'tier-monthly-text'), contains('未设上限'));
-    });
+        expect(budget.settings().budget, 0);
+        expect(textOf(tester, 'tier-monthly-text'), contains('未设上限'));
+      },
+    );
   });
 
   group('the settings survive', () {
@@ -283,6 +302,91 @@ void main() {
       expect(s.cycleStart, 15);
       expect(s.capCats, ['food']);
       expect(s.capAmounts, [100]);
+    });
+  });
+
+  // ---- where the cycle is heading ----
+
+  group('the forecast', () {
+    String ymd(DateTime d) => '${d.year}-${d.month}-${d.day}';
+
+    budget.OutlookView? outlook() {
+      final live = store.liveEntries();
+      return budget.outlook(
+        ids: [for (final e in live) e.id],
+        daysOf: [
+          for (final e in live) ymd(DateTime.fromMillisecondsSinceEpoch(e.ts)),
+        ],
+        today: ymd(DateTime.now()),
+      );
+    }
+
+    final t = DateTime.now();
+    final elapsed = t.day; // the cycle starts on the 1st in these tests
+    final days = DateTime(t.year, t.month + 1, 0).day;
+
+    testWidgets('is not there without a cap', (tester) async {
+      spend('a', 300);
+      await show(tester);
+      expect(find.byKey(const Key('outlook')), findsNothing);
+      expect(outlook(), isNull);
+    });
+
+    testWidgets('runs the pace so far on to the end of the cycle', (
+      tester,
+    ) async {
+      caps(budget_: 3000);
+      spend('a', 300);
+      final o = outlook()!;
+      expect(o.elapsed, elapsed);
+      expect(o.days, days);
+      expect(o.dailyRate, closeTo(300 / elapsed, 1e-9));
+      expect(o.projected, closeTo(300 / elapsed * days, 1e-9));
+      if (elapsed < days) {
+        expect(o.dailyLeft, closeTo(2700 / (days - elapsed), 1e-9));
+      } else {
+        expect(o.dailyLeft, isNull, reason: 'no days left to spread over');
+      }
+    });
+
+    /// The spent line stops at today rather than running flat to the end,
+    /// and the dashes carry on from where it stops.
+    testWidgets('the chart stops at today', (tester) async {
+      caps(budget_: 3000);
+      spend('a', 300);
+      final o = outlook()!;
+      expect(o.actual, hasLength(elapsed));
+      if (elapsed < days) {
+        expect(o.projection, hasLength(2));
+        expect(o.projection.first.x, o.actual.last.x);
+        expect(o.projection.first.y, o.actual.last.y);
+      }
+    });
+
+    testWidgets('a pace past the cap says by how much', (tester) async {
+      if (elapsed == days) return; // on the last day the pace is the total
+      caps(budget_: 3000);
+      spend('a', 3000);
+      await show(tester);
+      expect(find.byKey(const Key('outlook')), findsOneWidget);
+      final verdict = find.descendant(
+        of: find.byKey(const Key('outlook-verdict')),
+        matching: find.byType(Text),
+      );
+      expect(tester.widget<Text>(verdict).data, startsWith('照这样花,会超'));
+    });
+
+    testWidgets('a pace inside the cap says it will hold', (tester) async {
+      caps(budget_: 100000);
+      spend('a', 10);
+      await show(tester);
+      final verdict = find.descendant(
+        of: find.byKey(const Key('outlook-verdict')),
+        matching: find.byType(Text),
+      );
+      expect(tester.widget<Text>(verdict).data, '照这样花,守得住');
+      expect(find.byKey(const Key('fc-rate')), findsOneWidget);
+      expect(find.byKey(const Key('fc-projected')), findsOneWidget);
     });
   });
 }

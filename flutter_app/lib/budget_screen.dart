@@ -16,8 +16,10 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
+import 'charts.dart';
 import 'src/rust/api/budget.dart' as budget;
 import 'src/rust/api/money.dart' as money;
+import 'src/rust/api/stats.dart' as stats;
 import 'src/rust/api/store.dart' as store;
 import 'tap.dart';
 import 'glass.dart';
@@ -40,6 +42,9 @@ class BudgetScreen extends StatefulWidget {
 class _BudgetScreenState extends State<BudgetScreen> {
   late budget.SettingsView _settings;
   late budget.TierView _monthly;
+
+  /// 本期走势 — where the cycle is heading at its pace. `None` without a cap.
+  budget.OutlookView? _outlook;
   late budget.TierView _daily;
   List<budget.CatBudgetView> _cats = const [];
 
@@ -65,6 +70,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
     setState(() {
       _settings = s;
       _monthly = budget.monthlyStatus(ids: inCycle, budget: s.budget);
+      _outlook = budget.outlook(ids: ids, daysOf: days, today: today);
       _daily = budget.dailyStatus(
         ids: ids,
         daysOf: days,
@@ -124,6 +130,10 @@ class _BudgetScreenState extends State<BudgetScreen> {
               (v) => budget.setSettings(view: _replace(_settings, budget_: v)),
             ),
           ),
+          if (_outlook != null) ...[
+            const SizedBox(height: 12),
+            _outlookCard(_outlook!, zh),
+          ],
           const SizedBox(height: 12),
           _tierCard(
             key: 'daily',
@@ -156,6 +166,198 @@ class _BudgetScreenState extends State<BudgetScreen> {
               ),
             ),
           for (final c in _cats) _catRow(c, zh),
+        ],
+      ),
+    );
+  }
+
+  /// 本期走势: the cycle so far, the line that lands on the cap, and where the
+  /// pace so far is heading — and under it, what that means in numbers.
+  ///
+  /// `BudgetForecast.tsx` had the numbers and no picture; the numbers alone
+  /// say "¥7,800 at month end" and leave the reader to work out whether that
+  /// is early trouble or late. The chart shows it: the solid line against the
+  /// one it should be following, and which side of the cap the dashes land.
+  Widget _outlookCard(budget.OutlookView o, bool zh) {
+    final p = palette;
+    final sym = zh ? '￥' : '\$';
+    String m(double v) => money.fmt(n: v, symbol: sym);
+    final heading = o.onTrack ? p.leafDeep : p.hibiscusDeep;
+    Widget figure(String key, String label, String value, [Color? tone]) =>
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label, style: TextStyle(fontSize: 11.5, color: p.inkSoft)),
+              const SizedBox(height: 2),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  value,
+                  key: Key(key),
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    fontFeatures: tabular,
+                    color: tone ?? p.ink,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+    Widget swatch(Color c, String label, {bool dashed = false}) => Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 14,
+          height: 3,
+          decoration: BoxDecoration(
+            color: dashed ? null : c,
+            border: dashed ? Border.all(color: c, width: 1) : null,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+        const SizedBox(width: 5),
+        Text(label, style: TextStyle(fontSize: 11, color: p.inkSoft)),
+      ],
+    );
+
+    return Container(
+      key: const Key('outlook'),
+      padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
+      decoration: BoxDecoration(
+        color: p.card,
+        borderRadius: BorderRadius.circular(Rad.lg),
+        border: Border.all(color: p.line),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                zh ? '本期走势' : 'Where this cycle is heading',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: p.ink,
+                ),
+              ),
+              const Spacer(),
+              Container(
+                key: const Key('outlook-verdict'),
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+                decoration: BoxDecoration(
+                  color: heading.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(Rad.pill),
+                ),
+                child: Text(
+                  o.onTrack
+                      ? (zh ? '照这样花,守得住' : 'On track')
+                      : (zh
+                            ? '照这样花,会超 ${money.fmtShort(n: o.over, symbol: sym)}'
+                            : '${money.fmtShort(n: o.over, symbol: sym)} over at this pace'),
+                  style: TextStyle(
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w700,
+                    fontFeatures: tabular,
+                    color: heading,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          SizedBox(
+            height: 132,
+            child: CustomPaint(
+              key: const Key('outlook-chart'),
+              size: Size.infinite,
+              painter: LineChartPainter(
+                boxW: o.width,
+                boxH: o.height,
+                zero: o.zero,
+                grid: p.line,
+                ring: p.card,
+                ticks: [
+                  stats.TickView(value: 0, y: o.zero),
+                  stats.TickView(value: _settings.budget, y: o.capY),
+                ],
+                tickLabels: [
+                  '',
+                  '${zh ? '预算' : 'Cap'} ${money.fmtShort(n: _settings.budget, symbol: '')}',
+                ],
+                labelStyle: TextStyle(
+                  fontSize: 10,
+                  fontFeatures: tabular,
+                  color: p.inkSoft,
+                ),
+                // the lines all head for the right-hand end, and the cap's
+                // label sat on them there
+                labelsLeft: true,
+                mark: o.actual.isEmpty ? null : o.actual.length - 1,
+                series: [
+                  Series(
+                    line: o.actual,
+                    curve: o.actualCurve,
+                    color: p.hibiscus,
+                    fill: true,
+                  ),
+                  Series(
+                    line: o.projection,
+                    curve: o.projectionCurve,
+                    color: heading,
+                    dashed: true,
+                    width: 2,
+                  ),
+                  Series(
+                    line: o.pace,
+                    curve: o.paceCurve,
+                    color: p.inkSoft.withValues(alpha: 0.45),
+                    dashed: true,
+                    width: 1.4,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Wrap(
+            spacing: 14,
+            runSpacing: 4,
+            children: [
+              swatch(p.hibiscus, zh ? '已花' : 'Spent'),
+              swatch(heading, zh ? '照这个速度' : 'At this pace', dashed: true),
+              swatch(
+                p.inkSoft,
+                zh ? '刚好花完预算' : 'Exactly the cap',
+                dashed: true,
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Container(height: 1, color: p.line.withValues(alpha: 0.7)),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              figure('fc-rate', zh ? '日均' : 'Per day', m(o.dailyRate)),
+              figure(
+                'fc-projected',
+                zh ? '月末预计' : 'By the end',
+                m(o.projected),
+                heading,
+              ),
+              if (o.dailyLeft != null)
+                figure(
+                  'fc-left',
+                  zh ? '每天还能花' : 'Left per day',
+                  m(o.dailyLeft!),
+                  o.dailyLeft! > 0 ? null : p.hibiscusDeep,
+                ),
+            ],
+          ),
         ],
       ),
     );

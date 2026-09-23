@@ -87,6 +87,7 @@ class LineChartPainter extends CustomPainter {
     this.ticks = const [],
     this.tickLabels = const [],
     this.labelStyle = const TextStyle(fontSize: 10),
+    this.labelsLeft = false,
     this.progress = 1,
     this.mark,
     this.guide = false,
@@ -106,6 +107,10 @@ class LineChartPainter extends CustomPainter {
   final List<stats.TickView> ticks;
   final List<String> tickLabels;
   final TextStyle labelStyle;
+
+  /// Gridline labels at the left end rather than the right — for a chart
+  /// whose lines converge on the right, where a label would sit on them.
+  final bool labelsLeft;
 
   /// How much of the chart has been revealed, left to right, 0..1.
   final double progress;
@@ -137,7 +142,10 @@ class LineChartPainter extends CustomPainter {
         text: TextSpan(text: label, style: labelStyle),
         textDirection: TextDirection.ltr,
       )..layout();
-      tp.paint(canvas, Offset(size.width - tp.width, y - tp.height - 2));
+      tp.paint(
+        canvas,
+        Offset(labelsLeft ? 0 : size.width - tp.width, y - tp.height - 2),
+      );
     }
 
     canvas.save();

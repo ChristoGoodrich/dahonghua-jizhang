@@ -5,9 +5,10 @@
 
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
+import 'stats.dart';
 
 // These functions are ignored because they are not marked as `pub`: `entries_of`, `parse_day`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `from`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `from`
 
 SettingsView settings() => RustLib.instance.api.crateApiBudgetSettings();
 
@@ -67,6 +68,22 @@ List<CatBudgetView> catBudgetRows({
   zh: zh,
 );
 
+/// The cycle `today` is in, run on at its pace. `None` without a cap.
+///
+/// `ids` and `days_of` are every live entry and its local day, as for the
+/// rest of the screen; the cycle, the elapsed days and the running total are
+/// chosen here, so the forecast and the tier card above it cannot disagree
+/// about which month this is.
+OutlookView? outlook({
+  required List<String> ids,
+  required List<String> daysOf,
+  required String today,
+}) => RustLib.instance.api.crateApiBudgetOutlook(
+  ids: ids,
+  daysOf: daysOf,
+  today: today,
+);
+
 /// One category with a cap, and how it is doing against it.
 class CatBudgetView {
   final String cat;
@@ -103,6 +120,107 @@ class CatBudgetView {
           emoji == other.emoji &&
           color == other.color &&
           status == other.status;
+}
+
+/// The forecast and the chart over it — 本期走势 on 预算.
+class OutlookView {
+  /// 日均.
+  final double dailyRate;
+
+  /// 月末预计.
+  final double projected;
+
+  /// Past the cap by this much; zero or less when it is not.
+  final double over;
+  final bool onTrack;
+  final int daysLeft;
+
+  /// 每天还能花, or `None` on the cycle's last day.
+  final double? dailyLeft;
+
+  /// Spending so far, day by day, cumulative — the line and its curve.
+  final List<ChartPoint> actual;
+  final List<CubicView> actualCurve;
+
+  /// The line that lands exactly on the cap.
+  final List<ChartPoint> pace;
+  final List<CubicView> paceCurve;
+
+  /// From today to where the pace so far lands; empty once the cycle is done.
+  final List<ChartPoint> projection;
+  final List<CubicView> projectionCurve;
+  final double capY;
+  final double zero;
+  final double width;
+  final double height;
+  final int elapsed;
+  final int days;
+
+  const OutlookView({
+    required this.dailyRate,
+    required this.projected,
+    required this.over,
+    required this.onTrack,
+    required this.daysLeft,
+    this.dailyLeft,
+    required this.actual,
+    required this.actualCurve,
+    required this.pace,
+    required this.paceCurve,
+    required this.projection,
+    required this.projectionCurve,
+    required this.capY,
+    required this.zero,
+    required this.width,
+    required this.height,
+    required this.elapsed,
+    required this.days,
+  });
+
+  @override
+  int get hashCode =>
+      dailyRate.hashCode ^
+      projected.hashCode ^
+      over.hashCode ^
+      onTrack.hashCode ^
+      daysLeft.hashCode ^
+      dailyLeft.hashCode ^
+      actual.hashCode ^
+      actualCurve.hashCode ^
+      pace.hashCode ^
+      paceCurve.hashCode ^
+      projection.hashCode ^
+      projectionCurve.hashCode ^
+      capY.hashCode ^
+      zero.hashCode ^
+      width.hashCode ^
+      height.hashCode ^
+      elapsed.hashCode ^
+      days.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is OutlookView &&
+          runtimeType == other.runtimeType &&
+          dailyRate == other.dailyRate &&
+          projected == other.projected &&
+          over == other.over &&
+          onTrack == other.onTrack &&
+          daysLeft == other.daysLeft &&
+          dailyLeft == other.dailyLeft &&
+          actual == other.actual &&
+          actualCurve == other.actualCurve &&
+          pace == other.pace &&
+          paceCurve == other.paceCurve &&
+          projection == other.projection &&
+          projectionCurve == other.projectionCurve &&
+          capY == other.capY &&
+          zero == other.zero &&
+          width == other.width &&
+          height == other.height &&
+          elapsed == other.elapsed &&
+          days == other.days;
 }
 
 /// The budget settings, as Dart holds them.

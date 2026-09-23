@@ -315,7 +315,7 @@ pub struct StatsPage {
     pub compare: Option<CompareView>,
 }
 
-fn cubic_views(line: &[ChartPoint]) -> Vec<CubicView> {
+pub(crate) fn cubic_views(line: &[ChartPoint]) -> Vec<CubicView> {
     let pts: Vec<chart::Point> = line
         .iter()
         .map(|p| chart::Point { x: p.x, y: p.y })

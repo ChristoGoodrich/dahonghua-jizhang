@@ -11,6 +11,7 @@
 //! difference is visible in the app on the first day of every cycle. See
 //! `MIGRATION.md`.
 
+use crate::chart::{x_of, y_of, Point};
 use crate::civil::Civil;
 use crate::entry::{Entry, Io};
 use crate::jsobj::object_keys;
@@ -179,6 +180,103 @@ pub fn pot_fill(status: &TierStatus) -> f64 {
         0.0
     } else {
         f.clamp(0.0, 1.0)
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Where the cycle is heading — 预算's forecast.
+// ---------------------------------------------------------------------------
+
+/// The cycle so far, run on to its end at the pace so far.
+///
+/// `BudgetForecast.tsx`, which the port dropped: the budget screen said how
+/// much was gone and not where that was going. The arithmetic was the view's;
+/// it is here, because "on track" is a judgement and 预算 and 明细 must not be
+/// able to disagree about it.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct Forecast {
+    /// Spent per elapsed day — 日均.
+    pub daily_rate: f64,
+    /// The cycle's total at that rate — 月末预计.
+    pub projected: f64,
+    /// How far past the cap that lands. Zero or less when it does not.
+    pub over: f64,
+    pub on_track: bool,
+    /// Days after today still in the cycle.
+    pub days_left: i64,
+    /// What each of them can take and still land on the cap — 每天还能花 —
+    /// or `None` on the last day, when there are none. Never negative: once
+    /// the cap is gone the answer is nothing, not a debt spread over days.
+    pub daily_left: Option<f64>,
+}
+
+/// The forecast for `spent` against `budget`, `elapsed` days into a cycle of
+/// `days`. `None` without a cap, or before a day has passed — a rate of
+/// spending over no time is not a rate.
+pub fn forecast(spent: f64, budget: f64, elapsed: i64, days: i64) -> Option<Forecast> {
+    if elapsed <= 0 || budget.is_nan() || budget <= 0.0 {
+        return None;
+    }
+    let rate = spent / elapsed as f64;
+    let projected = rate * days as f64;
+    let over = projected - budget;
+    let left = days - elapsed;
+    Some(Forecast {
+        daily_rate: rate,
+        projected,
+        over,
+        on_track: over <= 0.0,
+        days_left: left.max(0),
+        daily_left: (left > 0).then(|| ((budget - spent) / left as f64).max(0.0)),
+    })
+}
+
+/// The chart over the forecast: what has been spent day by day, the line that
+/// would land exactly on the cap, and where the pace so far is heading.
+#[derive(Debug, Clone, PartialEq)]
+pub struct PaceChart {
+    /// Spending so far, cumulative, one point per elapsed day. Stops at today
+    /// rather than running flat to the end — a flat tail reads as having
+    /// stopped spending.
+    pub actual: Vec<Point>,
+    /// From the first day's share of the cap to the whole cap on the last.
+    pub pace: [Point; 2],
+    /// From today's total to the projected one, while days remain.
+    pub projection: Option<[Point; 2]>,
+    /// Where the cap sits, and where zero does, in the box.
+    pub cap_y: f64,
+    pub zero: f64,
+}
+
+/// `cum` is the cycle's cumulative spending by day so far (as
+/// [`crate::stats::comparison`] gives it), in a cycle of `days`.
+///
+/// One scale for every line, and it is the largest of them — the cap, the
+/// projection and what has been spent — never below 1, like `chart::chart_max`:
+/// a projection that went off the top would be the one line the chart exists
+/// to show.
+pub fn pace_chart(cum: &[f64], budget: f64, days: usize, projected: f64) -> PaceChart {
+    let days = days.max(1);
+    let spent = cum.last().copied().unwrap_or(0.0);
+    let max = [budget, projected, spent]
+        .iter()
+        .copied()
+        .filter(|v| v.is_finite())
+        .fold(1.0_f64, f64::max);
+    let pt = |i: usize, v: f64| Point {
+        x: x_of(i, days),
+        y: y_of(v, max),
+    };
+    let actual: Vec<Point> = cum.iter().enumerate().map(|(i, v)| pt(i, *v)).collect();
+    let pace = [pt(0, budget / days as f64), pt(days - 1, budget)];
+    let projection = (!cum.is_empty() && cum.len() < days)
+        .then(|| [pt(cum.len() - 1, spent), pt(days - 1, projected)]);
+    PaceChart {
+        actual,
+        pace,
+        projection,
+        cap_y: y_of(budget, max),
+        zero: y_of(0.0, max),
     }
 }
 
@@ -360,5 +458,76 @@ mod tests {
         assert_eq!(pot_fill(&tier_status(250.0, 1000.0)), 0.25);
         assert_eq!(pot_fill(&tier_status(3000.0, 1000.0)), 1.0);
         assert_eq!(pot_fill(&tier_status(10.0, 0.0)), 0.0);
+    }
+
+    // ---- the forecast ----
+
+    #[test]
+    fn the_pace_so_far_run_on_to_the_end() {
+        // ¥300 in 10 days of a 30-day cycle with a ¥1,000 cap
+        let f = forecast(300.0, 1000.0, 10, 30).unwrap();
+        assert_eq!(f.daily_rate, 30.0);
+        assert_eq!(f.projected, 900.0);
+        assert!(f.on_track);
+        assert_eq!(f.over, -100.0);
+        assert_eq!(f.days_left, 20);
+        assert_eq!(f.daily_left, Some(35.0));
+    }
+
+    #[test]
+    fn a_pace_that_lands_past_the_cap_is_not_on_track() {
+        let f = forecast(500.0, 1000.0, 10, 30).unwrap();
+        assert_eq!(f.projected, 1500.0);
+        assert!(!f.on_track);
+        assert_eq!(f.over, 500.0);
+        assert_eq!(f.daily_left, Some(25.0));
+    }
+
+    /// Landing exactly on the cap is on track — `projectedOver <= 0`.
+    #[test]
+    fn exactly_on_the_cap_is_on_track() {
+        assert!(forecast(100.0, 300.0, 10, 30).unwrap().on_track);
+    }
+
+    #[test]
+    fn a_cap_already_gone_leaves_nothing_a_day() {
+        let f = forecast(1200.0, 1000.0, 10, 30).unwrap();
+        assert_eq!(f.daily_left, Some(0.0));
+    }
+
+    #[test]
+    fn the_last_day_has_no_days_left_to_spread_over() {
+        let f = forecast(300.0, 1000.0, 30, 30).unwrap();
+        assert_eq!(f.days_left, 0);
+        assert_eq!(f.daily_left, None);
+    }
+
+    #[test]
+    fn no_cap_or_no_time_is_no_forecast() {
+        assert!(forecast(300.0, 0.0, 10, 30).is_none());
+        assert!(forecast(300.0, f64::NAN, 10, 30).is_none());
+        assert!(forecast(300.0, 1000.0, 0, 30).is_none());
+    }
+
+    #[test]
+    fn the_chart_stops_at_today_and_heads_for_the_projection() {
+        let c = pace_chart(&[100.0, 150.0, 300.0], 1000.0, 30, 3000.0);
+        assert_eq!(c.actual.len(), 3);
+        // one scale, the largest line's: the projection is at the top
+        let [from, to] = c.projection.unwrap();
+        assert_eq!(from, c.actual[2]);
+        assert_eq!(to.y, y_of(3000.0, 3000.0));
+        assert_eq!(to.x, x_of(29, 30));
+        // the pace ends on the cap, on the last day
+        assert_eq!(c.pace[1].y, c.cap_y);
+        assert_eq!(c.pace[1].x, to.x);
+        assert!(c.cap_y > to.y, "the cap is below a projection past it");
+    }
+
+    #[test]
+    fn a_finished_cycle_has_nothing_to_project() {
+        let cum: Vec<f64> = (1..=30).map(|i| i as f64 * 10.0).collect();
+        assert!(pace_chart(&cum, 1000.0, 30, 300.0).projection.is_none());
+        assert!(pace_chart(&[], 1000.0, 30, 0.0).projection.is_none());
     }
 }

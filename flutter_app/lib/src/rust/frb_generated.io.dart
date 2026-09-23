@@ -121,6 +121,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   NewTransfer dco_decode_box_autoadd_new_transfer(dynamic raw);
 
   @protected
+  OutlookView dco_decode_box_autoadd_outlook_view(dynamic raw);
+
+  @protected
   PotView dco_decode_box_autoadd_pot_view(dynamic raw);
 
   @protected
@@ -418,6 +421,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   InsightView? dco_decode_opt_box_autoadd_insight_view(dynamic raw);
 
   @protected
+  OutlookView? dco_decode_opt_box_autoadd_outlook_view(dynamic raw);
+
+  @protected
   PotView? dco_decode_opt_box_autoadd_pot_view(dynamic raw);
 
   @protected
@@ -442,6 +448,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<String>? dco_decode_opt_list_String(dynamic raw);
+
+  @protected
+  OutlookView dco_decode_outlook_view(dynamic raw);
 
   @protected
   OverviewView dco_decode_overview_view(dynamic raw);
@@ -641,6 +650,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   NewTransfer sse_decode_box_autoadd_new_transfer(SseDeserializer deserializer);
+
+  @protected
+  OutlookView sse_decode_box_autoadd_outlook_view(SseDeserializer deserializer);
 
   @protected
   PotView sse_decode_box_autoadd_pot_view(SseDeserializer deserializer);
@@ -978,6 +990,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  OutlookView? sse_decode_opt_box_autoadd_outlook_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   PotView? sse_decode_opt_box_autoadd_pot_view(SseDeserializer deserializer);
 
   @protected
@@ -1008,6 +1025,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<String>? sse_decode_opt_list_String(SseDeserializer deserializer);
+
+  @protected
+  OutlookView sse_decode_outlook_view(SseDeserializer deserializer);
 
   @protected
   OverviewView sse_decode_overview_view(SseDeserializer deserializer);
@@ -1239,6 +1259,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_box_autoadd_new_transfer(
     NewTransfer self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_outlook_view(
+    OutlookView self,
     SseSerializer serializer,
   );
 
@@ -1675,6 +1701,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_opt_box_autoadd_outlook_view(
+    OutlookView? self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_opt_box_autoadd_pot_view(
     PotView? self,
     SseSerializer serializer,
@@ -1715,6 +1747,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_opt_list_String(List<String>? self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_outlook_view(OutlookView self, SseSerializer serializer);
 
   @protected
   void sse_encode_overview_view(OverviewView self, SseSerializer serializer);

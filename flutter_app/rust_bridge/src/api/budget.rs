@@ -15,6 +15,7 @@ use dahonghua_core::civil::Civil;
 use dahonghua_core::entry::{Entry, Io};
 use flutter_rust_bridge::frb;
 
+use super::stats::{cubic_views, ChartPoint, CubicView};
 use super::store::{by_id, set_settings_inner, settings_of, store, BudgetSettings};
 
 /// The budget settings, as Dart holds them.
@@ -199,4 +200,102 @@ pub fn cat_budget_rows(
             }
         })
         .collect()
+}
+
+// ---------------------------------------------------------------------------
+// Where the cycle is heading.
+// ---------------------------------------------------------------------------
+
+/// The forecast and the chart over it — 本期走势 on 预算.
+#[derive(Debug, Clone, PartialEq)]
+pub struct OutlookView {
+    /// 日均.
+    pub daily_rate: f64,
+    /// 月末预计.
+    pub projected: f64,
+    /// Past the cap by this much; zero or less when it is not.
+    pub over: f64,
+    pub on_track: bool,
+    pub days_left: u32,
+    /// 每天还能花, or `None` on the cycle's last day.
+    pub daily_left: Option<f64>,
+    /// Spending so far, day by day, cumulative — the line and its curve.
+    pub actual: Vec<ChartPoint>,
+    pub actual_curve: Vec<CubicView>,
+    /// The line that lands exactly on the cap.
+    pub pace: Vec<ChartPoint>,
+    pub pace_curve: Vec<CubicView>,
+    /// From today to where the pace so far lands; empty once the cycle is done.
+    pub projection: Vec<ChartPoint>,
+    pub projection_curve: Vec<CubicView>,
+    pub cap_y: f64,
+    pub zero: f64,
+    pub width: f64,
+    pub height: f64,
+    pub elapsed: u32,
+    pub days: u32,
+}
+
+/// The cycle `today` is in, run on at its pace. `None` without a cap.
+///
+/// `ids` and `days_of` are every live entry and its local day, as for the
+/// rest of the screen; the cycle, the elapsed days and the running total are
+/// chosen here, so the forecast and the tier card above it cannot disagree
+/// about which month this is.
+#[frb(sync)]
+pub fn outlook(ids: Vec<String>, days_of: Vec<String>, today: String) -> Option<OutlookView> {
+    use dahonghua_core::chart::{self, Point};
+    use dahonghua_core::cycle::cycle_range;
+    use dahonghua_core::stats::{self, DatedRow};
+
+    let set = settings_of();
+    let today = parse_day(&today);
+    let rows: Vec<DatedRow> = {
+        let s = store();
+        let by = by_id(&s);
+        let n = ids.len().min(days_of.len());
+        (0..n)
+            .filter_map(|i| {
+                let e = by.get(ids[i].as_str())?;
+                Some(DatedRow {
+                    io: e.io,
+                    amt: e.amt,
+                    day: parse_day(&days_of[i]),
+                })
+            })
+            .collect()
+    };
+    let cycle = cycle_range(today, set.cycle_start);
+    let days = cycle.start.days_until(cycle.end).max(1);
+    let elapsed = stats::elapsed_days(cycle.start, cycle.end, today);
+    let cmp = stats::comparison(&rows, today, set.cycle_start, today);
+    let f = core::forecast(cmp.this_total, set.budget, elapsed, days)?;
+    let c = core::pace_chart(&cmp.this_cum, set.budget, days as usize, f.projected);
+
+    let view = |pts: &[Point]| -> Vec<ChartPoint> {
+        pts.iter().map(|p| ChartPoint { x: p.x, y: p.y }).collect()
+    };
+    let actual = view(&c.actual);
+    let pace = view(&c.pace);
+    let projection = c.projection.map(|p| view(&p)).unwrap_or_default();
+    Some(OutlookView {
+        daily_rate: f.daily_rate,
+        projected: f.projected,
+        over: f.over,
+        on_track: f.on_track,
+        days_left: f.days_left as u32,
+        daily_left: f.daily_left,
+        actual_curve: cubic_views(&actual),
+        pace_curve: cubic_views(&pace),
+        projection_curve: cubic_views(&projection),
+        actual,
+        pace,
+        projection,
+        cap_y: c.cap_y,
+        zero: c.zero,
+        width: chart::CHART_W,
+        height: chart::CHART_H,
+        elapsed: elapsed as u32,
+        days: days as u32,
+    })
 }

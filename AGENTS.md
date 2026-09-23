@@ -46,14 +46,14 @@ refuses to run without `src/` for exactly that reason.
 ## Running things
 
     npm run goldens       the core against what the TypeScript answered
-    npm run rust:test     831 tests
+    npm run rust:test     839 tests
     npm run rust:clippy   -D warnings
     npm run bridge:clippy the bridge is a separate cargo project
     npm run tests:check   all_test.dart is not stale
     npm run apk           the release APKs, one per architecture
 
     cd flutter_app
-    flutter test integration_test/all_test.dart    725 tests, ~9 min
+    flutter test integration_test/all_test.dart    730 tests, ~9 min
     flutter test integration_test/<one>_test.dart  while working on one screen
 
 The suite is one entrypoint on purpose: per file it was 36 APK builds and about
@@ -325,6 +325,14 @@ the biggest day. Shaded in proportion, a rent day is the only day that shows;
 the root keeps the order and lets the lunches be told apart. The calendar's
 state lives in the route's `PageStorage`, because the shell rebuilds 明细
 after every save and 补记这天 is a save made from the calendar.
+
+预算 had lost its forecast: `BudgetForecast.tsx` said 日均, 月末预计 and
+每天还能花 under the cycle's card. `core::budget::forecast` is that, with the
+judgement ("on track" is landing at or under the cap) where both screens can
+reach it, and `pace_chart` adds what the shipping card never had — the spent
+line against the line that lands exactly on the cap, and the dashes from today
+to where the pace so far is heading, on one scale so the projection cannot run
+off the top.
 
 Worth checking the rest of `rn-final` the same way when something feels thin.
 
