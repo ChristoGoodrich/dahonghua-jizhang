@@ -981,6 +981,10 @@ pub fn snapshot_config() -> String {
         ("dark".into(), Value::Bool(super::theme::is_dark())),
         ("lock".into(), Value::Bool(super::lock::lock_enabled())),
         (
+            "hideAmounts".into(),
+            Value::Bool(super::privacy::hide_amounts()),
+        ),
+        (
             "remindAt".into(),
             Value::Str(super::remind::daily_reminder_at()),
         ),
@@ -1078,6 +1082,7 @@ pub fn load_config(json: String) -> bool {
     // Restored, not switched on: loading a file is not a user turning the lock
     // on, and prompting here would ask before there is a screen to ask over.
     super::lock::lock_load(matches!(v.get("lock"), Some(Value::Bool(true))));
+    super::privacy::set_hide_amounts(matches!(v.get("hideAmounts"), Some(Value::Bool(true))));
     super::remind::load_reminders(
         match v.get("remindAt") {
             Some(Value::Str(s)) => s.clone(),
@@ -1285,4 +1290,5 @@ pub fn reset() {
     super::networth::set_loans_inner(Vec::new());
     super::catalog::set_library_inner(Default::default());
     set_language("zh".to_string());
+    super::privacy::set_hide_amounts(false);
 }

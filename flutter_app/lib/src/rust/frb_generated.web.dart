@@ -19,12 +19,14 @@ import 'api/db.dart';
 import 'api/export.dart';
 import 'api/glass.dart';
 import 'api/history.dart';
+import 'api/home.dart';
 import 'api/imports.dart';
 import 'api/liquid.dart';
 import 'api/lock.dart';
 import 'api/money.dart';
 import 'api/networth.dart';
 import 'api/period.dart';
+import 'api/privacy.dart';
 import 'api/rates.dart';
 import 'api/record.dart';
 import 'api/reimburse.dart';
@@ -120,6 +122,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   NewTransfer dco_decode_box_autoadd_new_transfer(dynamic raw);
 
   @protected
+  PotView dco_decode_box_autoadd_pot_view(dynamic raw);
+
+  @protected
   RefundState dco_decode_box_autoadd_refund_state(dynamic raw);
 
   @protected
@@ -205,6 +210,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   GlassTier dco_decode_glass_tier(dynamic raw);
+
+  @protected
+  HomeView dco_decode_home_view(dynamic raw);
 
   @protected
   int dco_decode_i_32(dynamic raw);
@@ -402,6 +410,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   InsightView? dco_decode_opt_box_autoadd_insight_view(dynamic raw);
 
   @protected
+  PotView? dco_decode_opt_box_autoadd_pot_view(dynamic raw);
+
+  @protected
   RefundState? dco_decode_opt_box_autoadd_refund_state(dynamic raw);
 
   @protected
@@ -438,6 +449,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   PeriodBarView dco_decode_period_bar_view(dynamic raw);
+
+  @protected
+  PotView dco_decode_pot_view(dynamic raw);
 
   @protected
   RateView dco_decode_rate_view(dynamic raw);
@@ -621,6 +635,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   NewTransfer sse_decode_box_autoadd_new_transfer(SseDeserializer deserializer);
 
   @protected
+  PotView sse_decode_box_autoadd_pot_view(SseDeserializer deserializer);
+
+  @protected
   RefundState sse_decode_box_autoadd_refund_state(SseDeserializer deserializer);
 
   @protected
@@ -712,6 +729,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   GlassTier sse_decode_glass_tier(SseDeserializer deserializer);
+
+  @protected
+  HomeView sse_decode_home_view(SseDeserializer deserializer);
 
   @protected
   int sse_decode_i_32(SseDeserializer deserializer);
@@ -941,6 +961,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  PotView? sse_decode_opt_box_autoadd_pot_view(SseDeserializer deserializer);
+
+  @protected
   RefundState? sse_decode_opt_box_autoadd_refund_state(
     SseDeserializer deserializer,
   );
@@ -983,6 +1006,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   PeriodBarView sse_decode_period_bar_view(SseDeserializer deserializer);
+
+  @protected
+  PotView sse_decode_pot_view(SseDeserializer deserializer);
 
   @protected
   RateView sse_decode_rate_view(SseDeserializer deserializer);
@@ -1200,6 +1226,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_box_autoadd_pot_view(PotView self, SseSerializer serializer);
+
+  @protected
   void sse_encode_box_autoadd_refund_state(
     RefundState self,
     SseSerializer serializer,
@@ -1306,6 +1335,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_glass_tier(GlassTier self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_home_view(HomeView self, SseSerializer serializer);
 
   @protected
   void sse_encode_i_32(int self, SseSerializer serializer);
@@ -1614,6 +1646,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_opt_box_autoadd_pot_view(
+    PotView? self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_opt_box_autoadd_refund_state(
     RefundState? self,
     SseSerializer serializer,
@@ -1669,6 +1707,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_period_bar_view(PeriodBarView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_pot_view(PotView self, SseSerializer serializer);
 
   @protected
   void sse_encode_rate_view(RateView self, SseSerializer serializer);

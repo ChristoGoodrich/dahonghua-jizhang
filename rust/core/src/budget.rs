@@ -130,6 +130,58 @@ pub fn cat_budget_rows(cycle_entries: &[Entry], caps: &[(String, f64)]) -> Vec<C
     rows
 }
 
+/// How the budget's flower looks on 明细: fresh, wary, or wilted.
+///
+/// `BudgetPot.tsx` coloured the flower by how much of the cap was gone — its
+/// own colours until four-fifths, the stamen's from there, a dry brown once
+/// it was all spent — and the judgement lived in the view, where the corpus
+/// never saw it. It is the one picture on the home screen that says "slow
+/// down", so it is here.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum PotMood {
+    Fresh,
+    Wary,
+    Wilted,
+}
+
+/// The mood for a tier. A cap that is not set has no mood: there is nothing
+/// to be wary of.
+pub fn pot_mood(status: &TierStatus) -> Option<PotMood> {
+    if status.limit <= 0.0 {
+        return None;
+    }
+    Some(if status.pct >= 100.0 {
+        PotMood::Wilted
+    } else if status.pct >= 80.0 {
+        PotMood::Wary
+    } else {
+        PotMood::Fresh
+    })
+}
+
+/// Which tier the flower follows: the cycle's pot when there is one, today's
+/// when that is the only one set, and neither when neither is.
+pub fn lead_tier<'a>(monthly: &'a TierStatus, daily: &'a TierStatus) -> Option<&'a TierStatus> {
+    if monthly.limit > 0.0 {
+        Some(monthly)
+    } else if daily.limit > 0.0 {
+        Some(daily)
+    } else {
+        None
+    }
+}
+
+/// How full the bar is: the share of the cap used, held at a full bar once
+/// over — `Math.min(pct, 100)` — and empty for a cap that is not a number.
+pub fn pot_fill(status: &TierStatus) -> f64 {
+    let f = status.pct / 100.0;
+    if f.is_nan() {
+        0.0
+    } else {
+        f.clamp(0.0, 1.0)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -272,5 +324,41 @@ mod tests {
         let rows = cat_budget_rows(&entries, &caps);
         assert_eq!(rows[0].cat, "b");
         assert_eq!(rows[1].cat, "a");
+    }
+
+    // ---- the flower on 明细 ----
+
+    #[test]
+    fn the_flower_wilts_as_the_budget_goes() {
+        let mood = |used: f64| pot_mood(&tier_status(used, 1000.0));
+        assert_eq!(mood(0.0), Some(PotMood::Fresh));
+        assert_eq!(mood(799.0), Some(PotMood::Fresh));
+        assert_eq!(mood(800.0), Some(PotMood::Wary));
+        assert_eq!(mood(999.0), Some(PotMood::Wary));
+        assert_eq!(mood(1000.0), Some(PotMood::Wilted));
+        assert_eq!(mood(5000.0), Some(PotMood::Wilted));
+    }
+
+    #[test]
+    fn a_cap_that_is_not_set_has_no_mood() {
+        assert_eq!(pot_mood(&tier_status(50.0, 0.0)), None);
+        assert_eq!(pot_mood(&tier_status(50.0, f64::NAN)), None);
+    }
+
+    #[test]
+    fn the_cycle_leads_and_today_stands_in() {
+        let m = tier_status(10.0, 100.0);
+        let d = tier_status(5.0, 20.0);
+        let none = tier_status(5.0, 0.0);
+        assert_eq!(lead_tier(&m, &d), Some(&m));
+        assert_eq!(lead_tier(&none, &d), Some(&d));
+        assert_eq!(lead_tier(&none, &none), None);
+    }
+
+    #[test]
+    fn the_bar_stops_at_full() {
+        assert_eq!(pot_fill(&tier_status(250.0, 1000.0)), 0.25);
+        assert_eq!(pot_fill(&tier_status(3000.0, 1000.0)), 1.0);
+        assert_eq!(pot_fill(&tier_status(10.0, 0.0)), 0.0);
     }
 }

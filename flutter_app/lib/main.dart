@@ -285,6 +285,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           onEdit: (id) => _record(editId: id),
           onChanged: _entriesChanged,
           onSelecting: (v) => setState(() => _selecting = v),
+          onOpenBudget: () =>
+              _push(BudgetScreen(zh: _zh, onChanged: _configChanged)),
+          onOpenStats: () => setState(() => _tab = 1),
+          onPrivacy: _configChanged,
         ),
         StatsScreen(
           key: ValueKey(_listVersion),

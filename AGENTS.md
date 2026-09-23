@@ -46,14 +46,14 @@ refuses to run without `src/` for exactly that reason.
 ## Running things
 
     npm run goldens       the core against what the TypeScript answered
-    npm run rust:test     819 tests
+    npm run rust:test     824 tests
     npm run rust:clippy   -D warnings
     npm run bridge:clippy the bridge is a separate cargo project
     npm run tests:check   all_test.dart is not stale
     npm run apk           the release APKs, one per architecture
 
     cd flutter_app
-    flutter test integration_test/all_test.dart    696 tests, ~6 min
+    flutter test integration_test/all_test.dart    716 tests, ~7 min
     flutter test integration_test/<one>_test.dart  while working on one screen
 
 The suite is one entrypoint on purpose: per file it was 36 APK builds and about
@@ -305,6 +305,17 @@ Three decisions the screen used to make, or not make, now sit in the core:
   these used to be `_clampToToday` in Dart.
 * **`stats::verdict` decides between "more", "less" and "about the same"**
   (5%). That was in the shipping view, where the corpus never recorded it.
+
+明细 had lost its head the same way: `LedgerContent.tsx` put `SummaryCard`,
+`BudgetPot` and `InsightBanner` above the rows, and the port kept only the
+rows. `api::home` is one call for the three; the cycle is chosen there, from
+the setting, so the head and 统计 cannot disagree about when this month began.
+`budget::pot_mood` says whether the flower is fresh, wary or wilted (80% and
+100%, the shipping card's thresholds), and `budget::lead_tier` that it follows
+the cycle's pot, or today's when that is the only one set. The eye — 隐藏金额,
+`hideAmounts` in the config as it was in the shipping settings — hides the
+totals on 明细, 资产 and 账户 through one function, `lib/amounts.dart`, and
+leaves the rows alone.
 
 Worth checking the rest of `rn-final` the same way when something feels thin.
 

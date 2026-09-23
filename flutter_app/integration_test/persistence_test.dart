@@ -24,6 +24,7 @@ import 'package:flutter_app/src/rust/api/budget.dart' as budget;
 import 'package:flutter_app/src/rust/api/catalog.dart' as catalog;
 import 'package:flutter_app/src/rust/api/lock.dart' as lock;
 import 'package:flutter_app/src/rust/api/networth.dart' as nw;
+import 'package:flutter_app/src/rust/api/privacy.dart' as privacy;
 import 'package:flutter_app/src/rust/api/remind.dart' as remind;
 import 'package:flutter_app/src/rust/api/subscriptions.dart' as subs;
 import 'package:flutter_app/src/rust/api/theme.dart' as theme;
@@ -336,6 +337,15 @@ void main() {
 
       p = await restartAll(p);
       expect(store.language(), 'en');
+      p.dispose();
+    });
+
+    testWidgets('the eye that hides the totals', (tester) async {
+      var p = await open();
+      privacy.setHideAmounts(hidden: true);
+
+      p = await restartAll(p);
+      expect(privacy.hideAmounts(), isTrue);
       p.dispose();
     });
 

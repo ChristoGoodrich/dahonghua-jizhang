@@ -15,9 +15,13 @@ import 'package:flutter/material.dart';
 import 'bloom.dart';
 import 'bottom_nav.dart';
 import 'glass.dart';
+import 'home_header.dart';
+import 'report_screen.dart' show insightCopy;
 import 'src/rust/api/batch.dart' as batch;
 import 'src/rust/api/catalog.dart' as catalog;
+import 'src/rust/api/home.dart' as home;
 import 'src/rust/api/money.dart' as money;
+import 'src/rust/api/privacy.dart' as privacy;
 import 'src/rust/api/search.dart' as search;
 import 'src/rust/api/store.dart' as store;
 import 'reimburse_screen.dart';
@@ -62,6 +66,9 @@ class EntryListScreen extends StatefulWidget {
     this.onEdit,
     this.onChanged,
     this.onSelecting,
+    this.onOpenBudget,
+    this.onOpenStats,
+    this.onPrivacy,
   });
 
   final bool zh;
@@ -79,6 +86,14 @@ class EntryListScreen extends StatefulWidget {
   /// have to agree about which one is drawing a bottom bar. Told rather than
   /// asked: a shell that polled would be a frame behind.
   final ValueChanged<bool>? onSelecting;
+
+  /// Where the head's budget flower and summary lead: 预算, and the 统计 tab.
+  final VoidCallback? onOpenBudget;
+  final VoidCallback? onOpenStats;
+
+  /// The eye was pressed. The shell saves the setting and redraws the tabs
+  /// that show totals.
+  final VoidCallback? onPrivacy;
 
   @override
   State<EntryListScreen> createState() => _EntryListScreenState();
@@ -112,6 +127,10 @@ class _EntryListScreenState extends State<EntryListScreen> {
   /// 上周 and saw an empty list deserves to know it was understood.
   search.ParsedQueryView? _parsed;
 
+  /// 明细's head, for the cycle today is in — over the whole ledger, not the
+  /// search's slice of it.
+  home.HomeView? _home;
+
   @override
   void initState() {
     super.initState();
@@ -130,6 +149,14 @@ class _EntryListScreenState extends State<EntryListScreen> {
     var days = live
         .map((e) => localDay(DateTime.fromMillisecondsSinceEpoch(e.ts)))
         .toList();
+
+    final head = home.home(
+      ids: ids,
+      daysOf: days,
+      today: localDay(DateTime.now()),
+      zh: widget.zh,
+      copy: insightCopy(widget.zh),
+    );
 
     final q = _query.text.trim();
     search.ParsedQueryView? parsed;
@@ -165,6 +192,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
       _byId = {for (final e in live) e.id: e};
       _items = items;
       _parsed = parsed;
+      _home = head;
     });
   }
 
@@ -241,7 +269,30 @@ class _EntryListScreenState extends State<EntryListScreen> {
                     // side padding is the rows', so the two line up.
                     ? Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 22),
-                        child: b.header,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            b.header,
+                            // Not over search results, which are about the
+                            // query rather than the month, and not while
+                            // ticking rows, where the title is the count.
+                            if (_home != null && !_searching && !_selecting)
+                              HomeHeader(
+                                view: _home!,
+                                zh: widget.zh,
+                                hidden: privacy.hideAmounts(),
+                                onToggleHidden: () {
+                                  privacy.setHideAmounts(
+                                    hidden: !privacy.hideAmounts(),
+                                  );
+                                  setState(() {});
+                                  widget.onPrivacy?.call();
+                                },
+                                onOpenBudget: widget.onOpenBudget,
+                                onOpenStats: widget.onOpenStats,
+                              ),
+                          ],
+                        ),
                       )
                     : _row(
                         _items[i - 1],

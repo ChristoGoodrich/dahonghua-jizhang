@@ -167,6 +167,18 @@ pub fn insight(
             day: *d,
         })
         .collect();
+    insight_of(&entries, &day_rows, parse_day(&today), zh, &copy)
+}
+
+/// The banner over a cycle's rows, for 回顾 and for 明细's head alike — one
+/// sentence chosen one way, wherever it is shown.
+pub(crate) fn insight_of(
+    entries: &[Entry],
+    day_rows: &[DayRow],
+    today: Civil,
+    zh: bool,
+    copy: &InsightCopyView,
+) -> Option<InsightView> {
     let set = settings_of();
     let c = InsightCopy {
         over_budget: &copy.over_budget,
@@ -180,15 +192,15 @@ pub fn insight(
         overdue: &copy.overdue,
     };
     insight::compute_insight(
-        &entries,
-        &day_rows,
+        entries,
+        day_rows,
         insight::Budgets {
             budget: set.budget,
             cat_budgets: &set.caps,
             daily: set.daily_budget,
         },
         &[],
-        parse_day(&today),
+        today,
         zh,
         &c,
     )

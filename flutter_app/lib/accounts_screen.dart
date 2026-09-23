@@ -14,10 +14,10 @@
 import 'package:flutter/material.dart';
 
 import 'src/rust/api/accounts.dart' as accounts;
-import 'src/rust/api/money.dart' as money;
 import 'src/rust/api/statement.dart' as statement;
 import 'src/rust/api/store.dart' as store;
 import 'account_detail_screen.dart';
+import 'amounts.dart';
 import 'tap.dart';
 import 'glass.dart';
 import 'theme.dart';
@@ -249,7 +249,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
         ),
         const SizedBox(height: 3),
         Text(
-          money.fmt(n: _total, symbol: zh ? '￥' : '\$'),
+          shownAmount(_total, zh ? '￥' : '\$'),
           key: const Key('acct-total'),
           style: TextStyle(
             fontSize: 24,
@@ -275,16 +275,16 @@ class _AccountsScreenState extends State<AccountsScreen> {
     final sym = zh ? '￥' : '\$';
     final bits = <String>[
       zh
-          ? '本期待还 ${money.fmt(n: st.billedDue, symbol: sym)}'
-          : 'Billed ${money.fmt(n: st.billedDue, symbol: sym)}',
+          ? '本期待还 ${shownAmount(st.billedDue, sym)}'
+          : 'Billed ${shownAmount(st.billedDue, sym)}',
       if (st.unbilled != 0)
         zh
-            ? '未出账 ${money.fmt(n: st.unbilled, symbol: sym)}'
-            : 'Unbilled ${money.fmt(n: st.unbilled, symbol: sym)}',
+            ? '未出账 ${shownAmount(st.unbilled, sym)}'
+            : 'Unbilled ${shownAmount(st.unbilled, sym)}',
       if (st.overpay > 0)
         zh
-            ? '溢缴款 ${money.fmt(n: st.overpay, symbol: sym)}'
-            : 'Overpaid ${money.fmt(n: st.overpay, symbol: sym)}',
+            ? '溢缴款 ${shownAmount(st.overpay, sym)}'
+            : 'Overpaid ${shownAmount(st.overpay, sym)}',
     ];
     return [
       const SizedBox(height: 4),
@@ -362,7 +362,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
   );
 
   String _dueBannerLine(statement.DueView d, bool zh) {
-    final amt = money.fmt(n: d.billedDue, symbol: zh ? '￥' : '\$');
+    final amt = shownAmount(d.billedDue, zh ? '￥' : '\$');
     if (d.daysToDue < 0) {
       return zh
           ? '${d.accountName} $amt · 逾期 ${-d.daysToDue} 天'
@@ -431,7 +431,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      money.fmt(n: a.balance, symbol: zh ? '￥' : '\$'),
+                      shownAmount(a.balance, zh ? '￥' : '\$'),
                       key: Key('acct-${a.id}-bal'),
                       style: TextStyle(
                         fontSize: 15.5,

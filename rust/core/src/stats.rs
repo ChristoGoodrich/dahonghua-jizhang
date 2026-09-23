@@ -433,6 +433,20 @@ pub fn verdict(this_total: f64, last_total: f64) -> Verdict {
     }
 }
 
+/// Spending's share of everything that moved, for the bar under 本月攒下的.
+///
+/// `exp / (exp + inc)`, from `SummaryCard.tsx`, and `None` when nothing
+/// moved — the shipping card drew no bar at all then, rather than an empty
+/// one that reads as "you spent nothing" when it means "there is nothing".
+pub fn exp_share(exp: f64, inc: f64) -> Option<f64> {
+    let flow = exp + inc;
+    if flow > 0.0 {
+        Some((exp / flow).clamp(0.0, 1.0))
+    } else {
+        None
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -808,5 +822,12 @@ mod tests {
         assert_eq!(verdict(50.0, 0.0), Verdict::NoBase);
         assert_eq!(verdict(50.0, -1.0), Verdict::NoBase);
         assert_eq!(verdict(50.0, f64::NAN), Verdict::NoBase);
+    }
+
+    #[test]
+    fn spending_is_a_share_of_what_moved() {
+        assert_eq!(exp_share(25.0, 75.0), Some(0.25));
+        assert_eq!(exp_share(40.0, 0.0), Some(1.0));
+        assert_eq!(exp_share(0.0, 0.0), None);
     }
 }

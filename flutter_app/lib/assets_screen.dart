@@ -13,9 +13,10 @@
 import 'package:flutter/material.dart';
 
 import 'accounts_screen.dart';
+import 'amounts.dart';
 import 'src/rust/api/accounts.dart' as accounts;
-import 'src/rust/api/money.dart' as money;
 import 'src/rust/api/networth.dart' as nw;
+import 'src/rust/api/privacy.dart' as privacy;
 import 'tap.dart';
 import 'glass.dart';
 import 'theme.dart';
@@ -58,7 +59,7 @@ class _AssetsScreenState extends State<AssetsScreen> {
     _reload();
   }
 
-  String _m(double v) => money.fmt(n: v, symbol: widget.zh ? '￥' : '\$');
+  String _m(double v) => shownAmount(v, widget.zh ? '￥' : '\$');
 
   Future<void> _manageAccounts() async {
     await Navigator.of(context).push(
@@ -101,6 +102,26 @@ class _AssetsScreenState extends State<AssetsScreen> {
     final zh = widget.zh;
     return TitledScaffold(
       title: zh ? '资产' : 'Net worth',
+      // The same eye as 明细's: one setting, and 资产 is the other screen
+      // whose totals someone might not want read over their shoulder.
+      actions: [
+        IconButton(
+          key: const Key('assets-hide-amounts'),
+          tooltip: privacy.hideAmounts()
+              ? (zh ? '显示金额' : 'Show amounts')
+              : (zh ? '隐藏金额' : 'Hide amounts'),
+          icon: Icon(
+            privacy.hideAmounts()
+                ? Icons.visibility_off_outlined
+                : Icons.visibility_outlined,
+            color: palette.ink,
+          ),
+          onPressed: () {
+            privacy.setHideAmounts(hidden: !privacy.hideAmounts());
+            _changed();
+          },
+        ),
+      ],
       body: (context, b) => ListView(
         controller: b.controller,
         padding: EdgeInsets.fromLTRB(22, b.top, 22, 120),
