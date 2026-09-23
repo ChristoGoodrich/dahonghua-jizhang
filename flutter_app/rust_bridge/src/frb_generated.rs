@@ -38,7 +38,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.12.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1495937474;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1184747271;
 
 // Section: executor
 
@@ -4213,6 +4213,36 @@ fn wire__crate__api__store__persist_debounce_ms_impl(
         },
     )
 }
+fn wire__crate__api__burst__petal_burst_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "petal_burst",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_seed = <u32>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let output_ok = Result::<_, ()>::Ok(crate::api::burst::petal_burst(api_seed))?;
+                Ok(output_ok)
+            })())
+        },
+    )
+}
 fn wire__crate__api__record__pick_direction_impl(
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -7158,6 +7188,18 @@ impl SseDecode for crate::api::store::BudgetSettings {
     }
 }
 
+impl SseDecode for crate::api::burst::BurstView {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_petals = <Vec<crate::api::burst::PetalView>>::sse_decode(deserializer);
+        let mut var_length = <f64>::sse_decode(deserializer);
+        return crate::api::burst::BurstView {
+            petals: var_petals,
+            length: var_length,
+        };
+    }
+}
+
 impl SseDecode for crate::api::calendar::CalCellView {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -8126,6 +8168,18 @@ impl SseDecode for Vec<crate::api::stats::PeriodBarView> {
     }
 }
 
+impl SseDecode for Vec<crate::api::burst::PetalView> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::burst::PetalView>::sse_decode(deserializer));
+        }
+        return ans_;
+    }
+}
+
 impl SseDecode for Vec<f64> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -8823,6 +8877,28 @@ impl SseDecode for crate::api::stats::PeriodBarView {
     }
 }
 
+impl SseDecode for crate::api::burst::PetalView {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_size = <f64>::sse_decode(deserializer);
+        let mut var_hue = <u32>::sse_decode(deserializer);
+        let mut var_dx = <f64>::sse_decode(deserializer);
+        let mut var_rise = <f64>::sse_decode(deserializer);
+        let mut var_rot = <f64>::sse_decode(deserializer);
+        let mut var_duration = <f64>::sse_decode(deserializer);
+        let mut var_delay = <f64>::sse_decode(deserializer);
+        return crate::api::burst::PetalView {
+            size: var_size,
+            hue: var_hue,
+            dx: var_dx,
+            rise: var_rise,
+            rot: var_rot,
+            duration: var_duration,
+            delay: var_delay,
+        };
+    }
+}
+
 impl SseDecode for crate::api::home::PotView {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -9509,7 +9585,7 @@ fn pde_ffi_dispatcher_primary_impl(
             rust_vec_len,
             data_len,
         ),
-        183 => {
+        184 => {
             wire__crate__api__budget__settings_view_default_impl(port, ptr, rust_vec_len, data_len)
         }
         _ => unreachable!(),
@@ -9646,90 +9722,91 @@ fn pde_ffi_dispatcher_sync_impl(
         128 => wire__crate__api__search__parse_query_impl(ptr, rust_vec_len, data_len),
         130 => wire__crate__api__period__period_window_impl(ptr, rust_vec_len, data_len),
         131 => wire__crate__api__store__persist_debounce_ms_impl(ptr, rust_vec_len, data_len),
-        132 => wire__crate__api__record__pick_direction_impl(ptr, rust_vec_len, data_len),
-        133 => wire__crate__api__accounts__pickable_impl(ptr, rust_vec_len, data_len),
-        134 => wire__crate__api__catalog__pickable_ledgers_impl(ptr, rust_vec_len, data_len),
-        135 => wire__crate__api__money__plain_impl(ptr, rust_vec_len, data_len),
-        136 => wire__crate__api__imports__preview_bills_impl(ptr, rust_vec_len, data_len),
-        137 => wire__crate__api__backup__prune_backups_impl(ptr, rust_vec_len, data_len),
-        138 => wire__crate__api__rates__rate_date_is_recent_impl(ptr, rust_vec_len, data_len),
-        139 => wire__crate__api__currency__rates_impl(ptr, rust_vec_len, data_len),
-        140 => wire__crate__api__glass__readability_alpha_impl(ptr, rust_vec_len, data_len),
-        141 => wire__crate__api__report__recap_impl(ptr, rust_vec_len, data_len),
-        142 => wire__crate__api__reimburse__refund_entry_impl(ptr, rust_vec_len, data_len),
-        143 => wire__crate__api__reimburse__refund_state_impl(ptr, rust_vec_len, data_len),
-        144 => wire__crate__api__accounts__remove_account_impl(ptr, rust_vec_len, data_len),
-        145 => wire__crate__api__batch__remove_all_impl(ptr, rust_vec_len, data_len),
-        146 => wire__crate__api__networth__remove_asset_impl(ptr, rust_vec_len, data_len),
-        147 => wire__crate__api__store__remove_entry_impl(ptr, rust_vec_len, data_len),
-        148 => wire__crate__api__networth__remove_loan_impl(ptr, rust_vec_len, data_len),
-        149 => wire__crate__api__currency__remove_rate_impl(ptr, rust_vec_len, data_len),
-        150 => wire__crate__api__subscriptions__remove_sub_impl(ptr, rust_vec_len, data_len),
-        151 => wire__crate__api__catalog__remove_tag_impl(ptr, rust_vec_len, data_len),
-        152 => wire__crate__api__catalog__remove_template_impl(ptr, rust_vec_len, data_len),
-        153 => wire__crate__api__networth__repay_loan_impl(ptr, rust_vec_len, data_len),
-        154 => wire__crate__api__store__reset_impl(ptr, rust_vec_len, data_len),
-        155 => wire__crate__api__capture__reset_inbox_impl(ptr, rust_vec_len, data_len),
-        156 => wire__crate__api__remind__reset_reminders_impl(ptr, rust_vec_len, data_len),
-        157 => wire__crate__api__db__reset_store_handle_impl(ptr, rust_vec_len, data_len),
-        158 => wire__crate__api__rates__resolve_rate_impl(ptr, rust_vec_len, data_len),
-        159 => wire__crate__api__glass__resolve_tier_impl(ptr, rust_vec_len, data_len),
-        160 => wire__crate__api__backup__restore_backup_impl(ptr, rust_vec_len, data_len),
-        161 => wire__crate__api__acct__rows_for_account_impl(ptr, rust_vec_len, data_len),
-        162 => wire__crate__api__glass__saturation_matrix_impl(ptr, rust_vec_len, data_len),
-        163 => wire__crate__api__record__save_form_impl(ptr, rust_vec_len, data_len),
-        164 => wire__crate__api__glass__scrim_bands_impl(ptr, rust_vec_len, data_len),
-        165 => wire__crate__api__glass__scrim_ramp_impl(ptr, rust_vec_len, data_len),
-        166 => wire__crate__api__glass__scrim_spec_impl(ptr, rust_vec_len, data_len),
-        167 => wire__crate__api__search__search_ids_impl(ptr, rust_vec_len, data_len),
-        168 => wire__crate__api__networth__set_asset_no_count_impl(ptr, rust_vec_len, data_len),
-        169 => wire__crate__api__currency__set_base_currency_impl(ptr, rust_vec_len, data_len),
-        170 => wire__crate__api__batch__set_claim_impl(ptr, rust_vec_len, data_len),
-        171 => wire__crate__api__record__set_currencies_impl(ptr, rust_vec_len, data_len),
-        172 => wire__crate__api__store__set_current_account_impl(ptr, rust_vec_len, data_len),
-        173 => wire__crate__api__catalog__set_current_ledger_impl(ptr, rust_vec_len, data_len),
-        174 => wire__crate__api__remind__set_daily_reminder_impl(ptr, rust_vec_len, data_len),
-        175 => wire__crate__api__privacy__set_hide_amounts_impl(ptr, rust_vec_len, data_len),
-        176 => wire__crate__api__store__set_language_impl(ptr, rust_vec_len, data_len),
-        177 => wire__crate__api__remind__set_monthly_report_impl(ptr, rust_vec_len, data_len),
-        178 => wire__crate__api__currency__set_rate_impl(ptr, rust_vec_len, data_len),
-        179 => wire__crate__api__budget__set_settings_impl(ptr, rust_vec_len, data_len),
-        180 => wire__crate__api__theme__set_theme_impl(ptr, rust_vec_len, data_len),
-        181 => wire__crate__api__remind__set_weekly_report_impl(ptr, rust_vec_len, data_len),
-        182 => wire__crate__api__budget__settings_impl(ptr, rust_vec_len, data_len),
-        184 => wire__crate__api__liquid__snap_impl(ptr, rust_vec_len, data_len),
-        185 => wire__crate__api__store__snapshot_config_impl(ptr, rust_vec_len, data_len),
-        186 => wire__crate__api__store__snapshot_entries_impl(ptr, rust_vec_len, data_len),
-        187 => wire__crate__api__statement__statement_of_impl(ptr, rust_vec_len, data_len),
-        188 => wire__crate__api__stats__stats_page_impl(ptr, rust_vec_len, data_len),
-        189 => wire__crate__api__period__step_period_impl(ptr, rust_vec_len, data_len),
-        190 => wire__crate__api__db__store_is_open_impl(ptr, rust_vec_len, data_len),
-        191 => wire__crate__api__db__store_schema_version_impl(ptr, rust_vec_len, data_len),
-        192 => wire__crate__api__history__streak_impl(ptr, rust_vec_len, data_len),
-        193 => wire__crate__api__subscriptions__sub_next_due_impl(ptr, rust_vec_len, data_len),
-        194 => wire__crate__api__subscriptions__subs_impl(ptr, rust_vec_len, data_len),
-        195 => wire__crate__api__subscriptions__subs_commit_impl(ptr, rust_vec_len, data_len),
-        196 => wire__crate__api__subscriptions__subs_pending_impl(ptr, rust_vec_len, data_len),
-        197 => wire__crate__api__db__supported_schema_version_impl(ptr, rust_vec_len, data_len),
-        198 => wire__crate__api__sync__sync_document_impl(ptr, rust_vec_len, data_len),
-        199 => wire__crate__api__liquid__tab_at_impl(ptr, rust_vec_len, data_len),
-        200 => wire__crate__api__catalog__tags_impl(ptr, rust_vec_len, data_len),
-        201 => wire__crate__api__batch__tally_impl(ptr, rust_vec_len, data_len),
-        202 => wire__crate__api__catalog__template_draft_impl(ptr, rust_vec_len, data_len),
-        203 => wire__crate__api__catalog__templates_impl(ptr, rust_vec_len, data_len),
-        204 => wire__crate__api__theme__theme_key_impl(ptr, rust_vec_len, data_len),
-        205 => wire__crate__api__theme__theme_options_impl(ptr, rust_vec_len, data_len),
-        206 => wire__crate__api__reimburse__toggle_reimburse_impl(ptr, rust_vec_len, data_len),
-        207 => wire__crate__api__accounts__total_balance_impl(ptr, rust_vec_len, data_len),
-        208 => wire__crate__api__glass__touch_light_color_impl(ptr, rust_vec_len, data_len),
-        209 => wire__crate__api__reimburse__unmark_reimburse_impl(ptr, rust_vec_len, data_len),
-        210 => wire__crate__api__batch__unremove_all_impl(ptr, rust_vec_len, data_len),
-        211 => wire__crate__api__store__unremove_entry_impl(ptr, rust_vec_len, data_len),
-        212 => wire__crate__api__store__update_entry_impl(ptr, rust_vec_len, data_len),
-        213 => wire__crate__api__record__validate_form_impl(ptr, rust_vec_len, data_len),
-        214 => wire__crate__api__glass__wash_color_impl(ptr, rust_vec_len, data_len),
-        215 => wire__crate__api__report__weekly_impl(ptr, rust_vec_len, data_len),
-        216 => wire__crate__api__remind__weekly_report_on_impl(ptr, rust_vec_len, data_len),
+        132 => wire__crate__api__burst__petal_burst_impl(ptr, rust_vec_len, data_len),
+        133 => wire__crate__api__record__pick_direction_impl(ptr, rust_vec_len, data_len),
+        134 => wire__crate__api__accounts__pickable_impl(ptr, rust_vec_len, data_len),
+        135 => wire__crate__api__catalog__pickable_ledgers_impl(ptr, rust_vec_len, data_len),
+        136 => wire__crate__api__money__plain_impl(ptr, rust_vec_len, data_len),
+        137 => wire__crate__api__imports__preview_bills_impl(ptr, rust_vec_len, data_len),
+        138 => wire__crate__api__backup__prune_backups_impl(ptr, rust_vec_len, data_len),
+        139 => wire__crate__api__rates__rate_date_is_recent_impl(ptr, rust_vec_len, data_len),
+        140 => wire__crate__api__currency__rates_impl(ptr, rust_vec_len, data_len),
+        141 => wire__crate__api__glass__readability_alpha_impl(ptr, rust_vec_len, data_len),
+        142 => wire__crate__api__report__recap_impl(ptr, rust_vec_len, data_len),
+        143 => wire__crate__api__reimburse__refund_entry_impl(ptr, rust_vec_len, data_len),
+        144 => wire__crate__api__reimburse__refund_state_impl(ptr, rust_vec_len, data_len),
+        145 => wire__crate__api__accounts__remove_account_impl(ptr, rust_vec_len, data_len),
+        146 => wire__crate__api__batch__remove_all_impl(ptr, rust_vec_len, data_len),
+        147 => wire__crate__api__networth__remove_asset_impl(ptr, rust_vec_len, data_len),
+        148 => wire__crate__api__store__remove_entry_impl(ptr, rust_vec_len, data_len),
+        149 => wire__crate__api__networth__remove_loan_impl(ptr, rust_vec_len, data_len),
+        150 => wire__crate__api__currency__remove_rate_impl(ptr, rust_vec_len, data_len),
+        151 => wire__crate__api__subscriptions__remove_sub_impl(ptr, rust_vec_len, data_len),
+        152 => wire__crate__api__catalog__remove_tag_impl(ptr, rust_vec_len, data_len),
+        153 => wire__crate__api__catalog__remove_template_impl(ptr, rust_vec_len, data_len),
+        154 => wire__crate__api__networth__repay_loan_impl(ptr, rust_vec_len, data_len),
+        155 => wire__crate__api__store__reset_impl(ptr, rust_vec_len, data_len),
+        156 => wire__crate__api__capture__reset_inbox_impl(ptr, rust_vec_len, data_len),
+        157 => wire__crate__api__remind__reset_reminders_impl(ptr, rust_vec_len, data_len),
+        158 => wire__crate__api__db__reset_store_handle_impl(ptr, rust_vec_len, data_len),
+        159 => wire__crate__api__rates__resolve_rate_impl(ptr, rust_vec_len, data_len),
+        160 => wire__crate__api__glass__resolve_tier_impl(ptr, rust_vec_len, data_len),
+        161 => wire__crate__api__backup__restore_backup_impl(ptr, rust_vec_len, data_len),
+        162 => wire__crate__api__acct__rows_for_account_impl(ptr, rust_vec_len, data_len),
+        163 => wire__crate__api__glass__saturation_matrix_impl(ptr, rust_vec_len, data_len),
+        164 => wire__crate__api__record__save_form_impl(ptr, rust_vec_len, data_len),
+        165 => wire__crate__api__glass__scrim_bands_impl(ptr, rust_vec_len, data_len),
+        166 => wire__crate__api__glass__scrim_ramp_impl(ptr, rust_vec_len, data_len),
+        167 => wire__crate__api__glass__scrim_spec_impl(ptr, rust_vec_len, data_len),
+        168 => wire__crate__api__search__search_ids_impl(ptr, rust_vec_len, data_len),
+        169 => wire__crate__api__networth__set_asset_no_count_impl(ptr, rust_vec_len, data_len),
+        170 => wire__crate__api__currency__set_base_currency_impl(ptr, rust_vec_len, data_len),
+        171 => wire__crate__api__batch__set_claim_impl(ptr, rust_vec_len, data_len),
+        172 => wire__crate__api__record__set_currencies_impl(ptr, rust_vec_len, data_len),
+        173 => wire__crate__api__store__set_current_account_impl(ptr, rust_vec_len, data_len),
+        174 => wire__crate__api__catalog__set_current_ledger_impl(ptr, rust_vec_len, data_len),
+        175 => wire__crate__api__remind__set_daily_reminder_impl(ptr, rust_vec_len, data_len),
+        176 => wire__crate__api__privacy__set_hide_amounts_impl(ptr, rust_vec_len, data_len),
+        177 => wire__crate__api__store__set_language_impl(ptr, rust_vec_len, data_len),
+        178 => wire__crate__api__remind__set_monthly_report_impl(ptr, rust_vec_len, data_len),
+        179 => wire__crate__api__currency__set_rate_impl(ptr, rust_vec_len, data_len),
+        180 => wire__crate__api__budget__set_settings_impl(ptr, rust_vec_len, data_len),
+        181 => wire__crate__api__theme__set_theme_impl(ptr, rust_vec_len, data_len),
+        182 => wire__crate__api__remind__set_weekly_report_impl(ptr, rust_vec_len, data_len),
+        183 => wire__crate__api__budget__settings_impl(ptr, rust_vec_len, data_len),
+        185 => wire__crate__api__liquid__snap_impl(ptr, rust_vec_len, data_len),
+        186 => wire__crate__api__store__snapshot_config_impl(ptr, rust_vec_len, data_len),
+        187 => wire__crate__api__store__snapshot_entries_impl(ptr, rust_vec_len, data_len),
+        188 => wire__crate__api__statement__statement_of_impl(ptr, rust_vec_len, data_len),
+        189 => wire__crate__api__stats__stats_page_impl(ptr, rust_vec_len, data_len),
+        190 => wire__crate__api__period__step_period_impl(ptr, rust_vec_len, data_len),
+        191 => wire__crate__api__db__store_is_open_impl(ptr, rust_vec_len, data_len),
+        192 => wire__crate__api__db__store_schema_version_impl(ptr, rust_vec_len, data_len),
+        193 => wire__crate__api__history__streak_impl(ptr, rust_vec_len, data_len),
+        194 => wire__crate__api__subscriptions__sub_next_due_impl(ptr, rust_vec_len, data_len),
+        195 => wire__crate__api__subscriptions__subs_impl(ptr, rust_vec_len, data_len),
+        196 => wire__crate__api__subscriptions__subs_commit_impl(ptr, rust_vec_len, data_len),
+        197 => wire__crate__api__subscriptions__subs_pending_impl(ptr, rust_vec_len, data_len),
+        198 => wire__crate__api__db__supported_schema_version_impl(ptr, rust_vec_len, data_len),
+        199 => wire__crate__api__sync__sync_document_impl(ptr, rust_vec_len, data_len),
+        200 => wire__crate__api__liquid__tab_at_impl(ptr, rust_vec_len, data_len),
+        201 => wire__crate__api__catalog__tags_impl(ptr, rust_vec_len, data_len),
+        202 => wire__crate__api__batch__tally_impl(ptr, rust_vec_len, data_len),
+        203 => wire__crate__api__catalog__template_draft_impl(ptr, rust_vec_len, data_len),
+        204 => wire__crate__api__catalog__templates_impl(ptr, rust_vec_len, data_len),
+        205 => wire__crate__api__theme__theme_key_impl(ptr, rust_vec_len, data_len),
+        206 => wire__crate__api__theme__theme_options_impl(ptr, rust_vec_len, data_len),
+        207 => wire__crate__api__reimburse__toggle_reimburse_impl(ptr, rust_vec_len, data_len),
+        208 => wire__crate__api__accounts__total_balance_impl(ptr, rust_vec_len, data_len),
+        209 => wire__crate__api__glass__touch_light_color_impl(ptr, rust_vec_len, data_len),
+        210 => wire__crate__api__reimburse__unmark_reimburse_impl(ptr, rust_vec_len, data_len),
+        211 => wire__crate__api__batch__unremove_all_impl(ptr, rust_vec_len, data_len),
+        212 => wire__crate__api__store__unremove_entry_impl(ptr, rust_vec_len, data_len),
+        213 => wire__crate__api__store__update_entry_impl(ptr, rust_vec_len, data_len),
+        214 => wire__crate__api__record__validate_form_impl(ptr, rust_vec_len, data_len),
+        215 => wire__crate__api__glass__wash_color_impl(ptr, rust_vec_len, data_len),
+        216 => wire__crate__api__report__weekly_impl(ptr, rust_vec_len, data_len),
+        217 => wire__crate__api__remind__weekly_report_on_impl(ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -9919,6 +9996,24 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::store::BudgetSettings>
     for crate::api::store::BudgetSettings
 {
     fn into_into_dart(self) -> crate::api::store::BudgetSettings {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::burst::BurstView {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.petals.into_into_dart().into_dart(),
+            self.length.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for crate::api::burst::BurstView {}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::burst::BurstView>
+    for crate::api::burst::BurstView
+{
+    fn into_into_dart(self) -> crate::api::burst::BurstView {
         self
     }
 }
@@ -10951,6 +11046,29 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::stats::PeriodBarView>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::burst::PetalView {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.size.into_into_dart().into_dart(),
+            self.hue.into_into_dart().into_dart(),
+            self.dx.into_into_dart().into_dart(),
+            self.rise.into_into_dart().into_dart(),
+            self.rot.into_into_dart().into_dart(),
+            self.duration.into_into_dart().into_dart(),
+            self.delay.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for crate::api::burst::PetalView {}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::burst::PetalView>
+    for crate::api::burst::PetalView
+{
+    fn into_into_dart(self) -> crate::api::burst::PetalView {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::home::PotView {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
@@ -11803,6 +11921,14 @@ impl SseEncode for crate::api::store::BudgetSettings {
     }
 }
 
+impl SseEncode for crate::api::burst::BurstView {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<crate::api::burst::PetalView>>::sse_encode(self.petals, serializer);
+        <f64>::sse_encode(self.length, serializer);
+    }
+}
+
 impl SseEncode for crate::api::calendar::CalCellView {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -12464,6 +12590,16 @@ impl SseEncode for Vec<crate::api::stats::PeriodBarView> {
     }
 }
 
+impl SseEncode for Vec<crate::api::burst::PetalView> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::burst::PetalView>::sse_encode(item, serializer);
+        }
+    }
+}
+
 impl SseEncode for Vec<f64> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -12977,6 +13113,19 @@ impl SseEncode for crate::api::stats::PeriodBarView {
         <String>::sse_encode(self.start, serializer);
         <f64>::sse_encode(self.total, serializer);
         <f64>::sse_encode(self.frac, serializer);
+    }
+}
+
+impl SseEncode for crate::api::burst::PetalView {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <f64>::sse_encode(self.size, serializer);
+        <u32>::sse_encode(self.hue, serializer);
+        <f64>::sse_encode(self.dx, serializer);
+        <f64>::sse_encode(self.rise, serializer);
+        <f64>::sse_encode(self.rot, serializer);
+        <f64>::sse_encode(self.duration, serializer);
+        <f64>::sse_encode(self.delay, serializer);
     }
 }
 

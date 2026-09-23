@@ -90,6 +90,7 @@ class BottomNav extends StatelessWidget {
     required this.onChange,
     required this.onAdd,
     required this.labels,
+    this.addKey,
   });
 
   /// 0..3 — 明细 / 统计 / 资产 / 我的.
@@ -97,6 +98,10 @@ class BottomNav extends StatelessWidget {
   final ValueChanged<int> onChange;
   final VoidCallback onAdd;
   final List<String> labels;
+
+  /// On the + button, so the shell can find where a burst of flowers should
+  /// come out of.
+  final Key? addKey;
 
   static const _icons = [
     Icons.receipt_long,
@@ -140,7 +145,7 @@ class BottomNav extends StatelessWidget {
               children: [
                 SizedBox(width: barW, child: _bar(p, itemW)),
                 const SizedBox(width: _addGap),
-                _AddButton(onTap: onAdd),
+                _AddButton(key: addKey, onTap: onAdd),
               ],
             ),
           ),
@@ -470,7 +475,7 @@ class _NavItem extends StatelessWidget {
 /// matching height — filled with the accent so it still reads as the one
 /// primary act.
 class _AddButton extends StatefulWidget {
-  const _AddButton({required this.onTap});
+  const _AddButton({super.key, required this.onTap});
 
   final VoidCallback onTap;
 

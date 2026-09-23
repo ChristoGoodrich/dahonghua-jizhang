@@ -46,14 +46,14 @@ refuses to run without `src/` for exactly that reason.
 ## Running things
 
     npm run goldens       the core against what the TypeScript answered
-    npm run rust:test     839 tests
+    npm run rust:test     844 tests
     npm run rust:clippy   -D warnings
     npm run bridge:clippy the bridge is a separate cargo project
     npm run tests:check   all_test.dart is not stale
     npm run apk           the release APKs, one per architecture
 
     cd flutter_app
-    flutter test integration_test/all_test.dart    730 tests, ~9 min
+    flutter test integration_test/all_test.dart    737 tests, ~9 min
     flutter test integration_test/<one>_test.dart  while working on one screen
 
 The suite is one entrypoint on purpose: per file it was 36 APK builds and about
@@ -333,6 +333,14 @@ reach it, and `pace_chart` adds what the shipping card never had — the spent
 line against the line that lands exactly on the cap, and the dashes from today
 to where the pace so far is heading, on one scale so the projection cannot run
 off the top.
+
+And a recorded entry used to be rewarded: a dozen small flowers out of the +
+button (`PetalBurst.tsx`), and the templates sat above the rows as one-press
+chips (`TemplateChips.tsx`). `core::burst` is the burst's shape, seeded, with
+the shipping `mulberry32` ported bit for bit — its reference values are taken
+from Node running the JavaScript, because the first set was recalled and one
+of three was wrong. A test that looks for the flowers mid-flight is a test of
+the emulator's frame times, so `burst_test` counts `PetalBurst.planted`.
 
 Worth checking the rest of `rn-final` the same way when something feels thin.
 

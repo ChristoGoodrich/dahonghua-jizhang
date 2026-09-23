@@ -8,6 +8,7 @@ import 'api/acct.dart';
 import 'api/backup.dart';
 import 'api/batch.dart';
 import 'api/budget.dart';
+import 'api/burst.dart';
 import 'api/calc.dart';
 import 'api/calendar.dart';
 import 'api/capture.dart';
@@ -149,6 +150,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   BudgetSettings dco_decode_budget_settings(dynamic raw);
+
+  @protected
+  BurstView dco_decode_burst_view(dynamic raw);
 
   @protected
   CalCellView dco_decode_cal_cell_view(dynamic raw);
@@ -313,6 +317,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<PeriodBarView> dco_decode_list_period_bar_view(dynamic raw);
 
   @protected
+  List<PetalView> dco_decode_list_petal_view(dynamic raw);
+
+  @protected
   List<double> dco_decode_list_prim_f_64_loose(dynamic raw);
 
   @protected
@@ -466,6 +473,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   PeriodBarView dco_decode_period_bar_view(dynamic raw);
+
+  @protected
+  PetalView dco_decode_petal_view(dynamic raw);
 
   @protected
   PotView dco_decode_pot_view(dynamic raw);
@@ -688,6 +698,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BudgetSettings sse_decode_budget_settings(SseDeserializer deserializer);
 
   @protected
+  BurstView sse_decode_burst_view(SseDeserializer deserializer);
+
+  @protected
   CalCellView sse_decode_cal_cell_view(SseDeserializer deserializer);
 
   @protected
@@ -860,6 +873,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<PeriodBarView> sse_decode_list_period_bar_view(
     SseDeserializer deserializer,
   );
+
+  @protected
+  List<PetalView> sse_decode_list_petal_view(SseDeserializer deserializer);
 
   @protected
   List<double> sse_decode_list_prim_f_64_loose(SseDeserializer deserializer);
@@ -1043,6 +1059,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   PeriodBarView sse_decode_period_bar_view(SseDeserializer deserializer);
+
+  @protected
+  PetalView sse_decode_petal_view(SseDeserializer deserializer);
 
   @protected
   PotView sse_decode_pot_view(SseDeserializer deserializer);
@@ -1317,6 +1336,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_burst_view(BurstView self, SseSerializer serializer);
+
+  @protected
   void sse_encode_cal_cell_view(CalCellView self, SseSerializer serializer);
 
   @protected
@@ -1526,6 +1548,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_period_bar_view(
     List<PeriodBarView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_petal_view(
+    List<PetalView> self,
     SseSerializer serializer,
   );
 
@@ -1771,6 +1799,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_period_bar_view(PeriodBarView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_petal_view(PetalView self, SseSerializer serializer);
 
   @protected
   void sse_encode_pot_view(PotView self, SseSerializer serializer);

@@ -14,6 +14,7 @@ pub mod backup;
 pub mod batch;
 pub mod bills;
 pub mod budget;
+pub mod burst;
 pub mod calc;
 pub mod calendar;
 pub mod catalog;

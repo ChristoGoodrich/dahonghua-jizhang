@@ -1,7 +1,7 @@
 // Every integration test, under one entrypoint.
 //
 // Running them a file at a time builds and installs a whole APK per file.
-// At 38 files that was 38 builds for a suite whose execution takes
+// At 39 files that was 39 builds for a suite whose execution takes
 // seconds — about twenty minutes, nearly all of it Gradle. Worse than slow:
 // twenty minutes is twenty minutes in which the emulator can die, and twice
 // it did, costing the whole run rather than part of it. One entrypoint,
@@ -32,6 +32,7 @@ import 'backup_test.dart' as backup_test;
 import 'batch_test.dart' as batch_test;
 import 'bridge_test.dart' as bridge_test;
 import 'budget_test.dart' as budget_test;
+import 'burst_test.dart' as burst_test;
 import 'calendar_test.dart' as calendar_test;
 import 'capture_test.dart' as capture_test;
 import 'currency_test.dart' as currency_test;
@@ -74,6 +75,7 @@ void main() {
   group('batch_test', batch_test.main);
   group('bridge_test', bridge_test.main);
   group('budget_test', budget_test.main);
+  group('burst_test', burst_test.main);
   group('calendar_test', calendar_test.main);
   group('capture_test', capture_test.main);
   group('currency_test', currency_test.main);

@@ -22,6 +22,8 @@ import 'assets_screen.dart';
 import 'backup_screen.dart';
 import 'bottom_nav.dart';
 import 'budget_screen.dart';
+import 'bloom.dart';
+import 'petal_burst.dart';
 import 'budget_widget.dart';
 import 'currency_screen.dart';
 import 'entry_list.dart';
@@ -152,6 +154,9 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with WidgetsBindingObserver {
   int _tab = 0;
 
+  /// The + button, which a burst of flowers comes out of.
+  final _addKey = GlobalKey(debugLabel: 'add');
+
   /// The entry list is in 批量处理. The shell's nav bar stands down while it
   /// is, because the selection bar takes the same slot — two bars in one slot
   /// is the kind of thing that looks fine in a widget test and stacks on a
@@ -253,18 +258,70 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   /// A route rather than a tab: saving pops back to whatever was underneath,
   /// which is the behaviour without the shell having to track it.
   Future<void> _record({String? editId, int? at}) async {
+    var saved = 0;
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => sheet.RecordSheet(
           editId: editId,
           initialTs: at,
           zh: _zh,
-          onSaved: ({required staleRate}) => _entriesChanged(),
+          onSaved: ({required staleRate}) {
+            saved++;
+            _entriesChanged();
+          },
         ),
       ),
     );
     // the sheet may have written rows while it was up
     setState(() {});
+    // A flower for each new entry, the shipping app's reward — played once
+    // the sheet has gone, where the + button it comes out of can be seen.
+    // Not for an edit, which planted nothing.
+    if (saved > 0 && editId == null && mounted) {
+      _celebrate(toast: _zh ? '贴上一朵花' : 'One more flower');
+    }
+  }
+
+  /// 贴上一朵花: flowers out of the + button, and a word to say why.
+  ///
+  /// The burst is skipped under reduced motion, and the word is not — it is
+  /// the part that says the entry landed.
+  void _celebrate({String? toast}) {
+    final still = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
+    final box = _addKey.currentContext?.findRenderObject() as RenderBox?;
+    if (!still && box != null && box.attached) {
+      final at = box.localToGlobal(box.size.center(Offset.zero));
+      late final OverlayEntry entry;
+      entry = OverlayEntry(
+        builder: (_) => Positioned(
+          left: at.dx,
+          top: at.dy,
+          child: PetalBurst(
+            key: const Key('petal-burst'),
+            seed: DateTime.now().microsecondsSinceEpoch,
+            onDone: () => entry.remove(),
+          ),
+        ),
+      );
+      Overlay.of(context).insert(entry);
+    }
+    if (toast != null) {
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          SnackBar(
+            key: const Key('bloom-toast'),
+            duration: const Duration(milliseconds: 1600),
+            content: Row(
+              children: [
+                Bloom(size: 18, petal: palette.hibiscus),
+                const SizedBox(width: 10),
+                Text(toast),
+              ],
+            ),
+          ),
+        );
+    }
   }
 
   Future<void> _push(Widget screen) async {
@@ -290,6 +347,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
               _push(BudgetScreen(zh: _zh, onChanged: _configChanged)),
           onOpenStats: () => setState(() => _tab = 1),
           onRecordAt: (ts) => _record(at: ts),
+          onLogged: () => _celebrate(),
           onPrivacy: _configChanged,
         ),
         StatsScreen(
@@ -473,6 +531,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   /// Nothing about how it looks is decided here. What lives in this class is
   /// which tab is showing and what the record button does.
   Widget _bar() => BottomNav(
+    addKey: _addKey,
     active: _tab,
     onChange: (i) => setState(() => _tab = i),
     onAdd: () => _record(),

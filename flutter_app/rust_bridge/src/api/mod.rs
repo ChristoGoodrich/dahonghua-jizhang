@@ -10,6 +10,7 @@ pub mod acct;
 pub mod backup;
 pub mod batch;
 pub mod budget;
+pub mod burst;
 pub mod calc;
 pub mod calendar;
 pub mod capture;

@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 
 import 'amounts.dart';
 import 'bloom.dart';
+import 'src/rust/api/catalog.dart' as catalog;
 import 'src/rust/api/home.dart' as home;
 import 'src/rust/api/money.dart' as money;
 import 'tap.dart';
@@ -25,9 +26,16 @@ class HomeHeader extends StatelessWidget {
     this.zh = true,
     this.onOpenBudget,
     this.onOpenStats,
+    this.templates = const [],
+    this.onTemplate,
   });
 
   final home.HomeView view;
+
+  /// The saved templates, as one-press chips under the head — the shipping
+  /// list's `TemplateChips`.
+  final List<catalog.TemplateView> templates;
+  final ValueChanged<String>? onTemplate;
 
   /// 隐藏金额: the totals read as [hiddenAmount].
   final bool hidden;
@@ -56,6 +64,10 @@ class HomeHeader extends StatelessWidget {
         if (view.insight != null) ...[
           const SizedBox(height: 10),
           _Insight(icon: view.insight!.icon, text: view.insight!.text),
+        ],
+        if (templates.isNotEmpty && onTemplate != null) ...[
+          const SizedBox(height: 12),
+          TemplateChips(templates: templates, zh: zh, onTap: onTemplate!),
         ],
       ],
     ),
@@ -495,6 +507,115 @@ class _Insight extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// The templates, one press each. Scrolls sideways: there may be more of them
+/// than a phone is wide, and a wrapped block of chips would push the rows
+/// down by as many lines as there are templates.
+class TemplateChips extends StatelessWidget {
+  const TemplateChips({
+    super.key,
+    required this.templates,
+    required this.zh,
+    required this.onTap,
+  });
+
+  final List<catalog.TemplateView> templates;
+  final bool zh;
+  final ValueChanged<String> onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = palette;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 6),
+          child: Text(
+            zh ? '一按就记' : 'One press',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: p.inkSoft,
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 40,
+          child: ListView.separated(
+            key: const Key('home-templates'),
+            scrollDirection: Axis.horizontal,
+            itemCount: templates.length,
+            separatorBuilder: (_, _) => const SizedBox(width: 8),
+            itemBuilder: (context, i) {
+              final t = templates[i];
+              final label = catalog.catLabel(
+                io: t.io,
+                key: t.cat,
+                zh: zh,
+                custom: const [],
+              );
+              final tone = parseHex(label.color);
+              return Tap(
+                key: Key('tpl-chip-${t.id}'),
+                radius: Rad.pill,
+                onTap: () => onTap(t.id),
+                semanticLabel: zh
+                    ? '一按记一笔 ${t.name.isEmpty ? label.name : t.name}'
+                    : 'Log ${t.name.isEmpty ? label.name : t.name}',
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(5, 5, 12, 5),
+                  decoration: BoxDecoration(
+                    color: p.card,
+                    borderRadius: BorderRadius.circular(Rad.pill),
+                    border: Border.all(color: p.line),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 28,
+                        height: 28,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: tone.withValues(alpha: p.isDark ? 0.19 : 0.12),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Text(
+                          label.emoji,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                      const SizedBox(width: 7),
+                      Text(
+                        t.name.isEmpty ? label.name : t.name,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: p.ink,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        money.fmtShort(n: t.amt, symbol: ''),
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          fontFeatures: tabular,
+                          color: t.io == 'inc' ? p.leafDeep : p.inkSoft,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

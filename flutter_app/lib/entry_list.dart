@@ -73,6 +73,7 @@ class EntryListScreen extends StatefulWidget {
     this.onOpenStats,
     this.onPrivacy,
     this.onRecordAt,
+    this.onLogged,
   });
 
   final bool zh;
@@ -102,6 +103,10 @@ class EntryListScreen extends StatefulWidget {
   /// 补记这天: record a new entry on a day the calendar was showing, as an
   /// instant at noon on it.
   final ValueChanged<int>? onRecordAt;
+
+  /// An entry went in without the sheet — a template pressed on the head.
+  /// The shell plays the flowers; this screen says what was recorded.
+  final VoidCallback? onLogged;
 
   @override
   State<EntryListScreen> createState() => _EntryListScreenState();
@@ -338,6 +343,8 @@ class _EntryListScreenState extends State<EntryListScreen> {
                                 },
                                 onOpenBudget: widget.onOpenBudget,
                                 onOpenStats: widget.onOpenStats,
+                                templates: catalog.templates(),
+                                onTemplate: _logTemplate,
                               ),
                           ],
                         ),
@@ -373,6 +380,66 @@ class _EntryListScreenState extends State<EntryListScreen> {
         ),
       ),
     );
+  }
+
+  /// One press, one entry: the template as the record sheet would have
+  /// filled it — `template_draft` decides the note, the account and the
+  /// ledger — stamped now. The shipping head did this without a sheet, and
+  /// said so with an undo, because a press is easy to make by accident.
+  void _logTemplate(String id) {
+    final d = catalog.templateDraft(id: id);
+    if (d == null) return;
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final entryId = 'e${now}t${id.hashCode.toUnsigned(20)}';
+    store.addEntry(
+      entry: store.NewEntry(
+        io: d.io,
+        cat: d.cat,
+        amt: d.amt,
+        note: d.note.isEmpty ? null : d.note,
+        acct: d.acct.isEmpty ? null : d.acct,
+        ledger: d.ledger,
+        ts: now,
+      ),
+      id: entryId,
+      now: now,
+    );
+    widget.onChanged?.call();
+    widget.onLogged?.call();
+    _reload();
+    if (!mounted) return;
+    final zh = widget.zh;
+    final label = catalog.catLabel(
+      io: d.io,
+      key: d.cat,
+      zh: zh,
+      custom: const [],
+    );
+    final what = d.note.isEmpty ? label.name : d.note;
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(
+        SnackBar(
+          key: const Key('template-logged'),
+          content: Text(
+            zh
+                ? '记了一笔 $what ${money.fmtSigned(n: d.amt, io: d.io)}'
+                : 'Logged $what ${money.fmtSigned(n: d.amt, io: d.io)}',
+          ),
+          action: SnackBarAction(
+            key: const Key('template-undo'),
+            label: zh ? '撤销' : 'Undo',
+            onPressed: () {
+              store.removeEntry(
+                id: entryId,
+                now: DateTime.now().millisecondsSinceEpoch,
+              );
+              widget.onChanged?.call();
+              _reload();
+            },
+          ),
+        ),
+      );
   }
 
   void _stepCal(int dir) {
@@ -1094,6 +1161,14 @@ class _EntryListScreenState extends State<EntryListScreen> {
     padding: EdgeInsets.fromLTRB(22, b.top, 22, 0),
     children: [
       b.header,
+      // A first launch may already have templates — imported, or synced from
+      // another phone — and one press is the quickest first entry there is.
+      if (!_searching && catalog.templates().isNotEmpty)
+        TemplateChips(
+          templates: catalog.templates(),
+          zh: zh,
+          onTap: _logTemplate,
+        ),
       SizedBox(height: MediaQuery.sizeOf(context).height * 0.14),
       Column(
         children: [
