@@ -329,11 +329,7 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
             IconButton(
               key: Key('rate-${r.code}-delete'),
               tooltip: zh ? '删除' : 'Delete',
-              icon: Icon(
-                Icons.delete_outline,
-                size: 19,
-                color: palette.hibiscus,
-              ),
+              icon: Icon(Icons.delete_outline, size: 19, color: palette.warn),
               onPressed: () {
                 cur.removeRate(code: r.code);
                 _changed();

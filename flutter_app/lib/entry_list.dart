@@ -870,10 +870,10 @@ class _EntryListScreenState extends State<EntryListScreen> {
         alignment: Alignment.centerRight,
         padding: EdgeInsets.only(right: 20, bottom: group == null ? 8 : 0),
         decoration: BoxDecoration(
-          color: palette.hibiscus.withValues(alpha: 0.12),
+          color: palette.warn.withValues(alpha: 0.12),
           borderRadius: group == null ? BorderRadius.circular(Rad.md) : null,
         ),
-        child: Icon(Icons.delete_outline, color: palette.hibiscus),
+        child: Icon(Icons.delete_outline, color: palette.warn),
       ),
       onDismissed: (_) => _delete(e, zh),
       child: _entryCard(e, zh, group: group),

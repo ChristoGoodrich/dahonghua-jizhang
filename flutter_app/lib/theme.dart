@@ -62,6 +62,18 @@ class Palette {
   Color get hibiscus => parseHex(_t.hibiscus);
   Color get hibiscusDeep => parseHex(_t.hibiscusDeep);
 
+  /// The flower's pastel, as the theme states it — lighter in both rooms,
+  /// where mixing toward [paper] would darken it at night.
+  Color get hibiscusSoft => parseHex(_t.hibiscusSoft);
+
+  /// What says "too much" — over a budget, more than last month, a balance
+  /// below zero, something missing, a delete. The flower when it is warm and
+  /// 大红花's red when it is not, because in 森林 the flower is the leaf's
+  /// green and an overspent budget read as a good month. `core::theme::warn`
+  /// decides; [warnDeep] is the same for text on paper.
+  Color get warn => parseHex(_t.warn);
+  Color get warnDeep => parseHex(_t.warnDeep);
+
   /// The record button's fill. A gradient rather than a flat accent, which is
   /// what keeps it reading as its own object next to the glass bar.
   Color get gradFrom => parseHex(_t.gradFrom);

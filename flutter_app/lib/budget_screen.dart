@@ -182,7 +182,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
     final p = palette;
     final sym = zh ? '￥' : '\$';
     String m(double v) => money.fmt(n: v, symbol: sym);
-    final heading = o.onTrack ? p.leafDeep : p.hibiscusDeep;
+    final heading = o.onTrack ? p.leafDeep : p.warnDeep;
     Widget figure(String key, String label, String value, [Color? tone]) =>
         Expanded(
           child: Column(
@@ -354,7 +354,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                   'fc-left',
                   zh ? '每天还能花' : 'Left per day',
                   m(o.dailyLeft!),
-                  o.dailyLeft! > 0 ? null : p.hibiscusDeep,
+                  o.dailyLeft! > 0 ? null : p.warnDeep,
                 ),
             ],
           ),
@@ -392,7 +392,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
     final sym = zh ? '￥' : '\$';
     // over is its own colour; under is the leaf, because a budget you are
     // inside is not a warning
-    final tone = tier.over ? palette.hibiscus : palette.leafDeep;
+    final tone = tier.over ? palette.warn : palette.leafDeep;
     return Tap(
       radius: Rad.lg,
       key: Key('tier-$key'),
@@ -508,7 +508,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
 
   Widget _catRow(budget.CatBudgetView c, bool zh) {
     final sym = zh ? '￥' : '\$';
-    final tone = c.status.over ? palette.hibiscus : parseHex(c.color);
+    final tone = c.status.over ? palette.warn : parseHex(c.color);
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Container(

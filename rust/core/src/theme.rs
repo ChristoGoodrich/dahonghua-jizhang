@@ -248,6 +248,71 @@ pub fn swatch(key: ThemeKey) -> String {
     accents(key).hibiscus.to_string()
 }
 
+/* ---------------------------------------------------------------- warning */
+
+/// The colour that says "too much": over a budget, more than last month, a
+/// balance below zero, a permission missing, a row that will be deleted.
+///
+/// Every one of those used to be painted in the flower, which is right for a
+/// warm flower and wrong for a cool one. In 森林 the flower is as green as the
+/// leaf, and the leaf is what this app says "in" and "on track" with — so an
+/// overspent budget, a card ¥3,120 in debt and "比上月同期多" all read as
+/// good news. 茉莉 is the same green-grey; 海洋's blue says nothing either
+/// way, which for a warning is saying nothing.
+///
+/// So a warm flower warns in its own colour and a cool one borrows 大红花's
+/// red. Not a per-theme table: a flower added next year is warm or it is not,
+/// and [warn] answers for it without being told.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Warn {
+    /// On a tint, a bar, an icon.
+    pub tone: String,
+    /// Text on paper.
+    pub deep: String,
+}
+
+pub fn warn(key: ThemeKey) -> Warn {
+    let flower = accents(key);
+    let from = if is_warm(flower.hibiscus) {
+        flower
+    } else {
+        BASE
+    };
+    Warn {
+        tone: from.hibiscus.into(),
+        deep: from.hibiscus_deep.into(),
+    }
+}
+
+/// Hue in degrees, `0..360`, of a `#RRGGBB`. `None` for a grey, which has
+/// none, and for anything that is not six hex digits.
+fn hue(hex: &str) -> Option<f64> {
+    let h = hex.strip_prefix('#')?;
+    if h.len() != 6 {
+        return None;
+    }
+    let ch = |i: usize| u8::from_str_radix(h.get(i..i + 2)?, 16).ok();
+    let (r, g, b) = (ch(0)? as f64, ch(2)? as f64, ch(4)? as f64);
+    let max = r.max(g).max(b);
+    let d = max - r.min(g).min(b);
+    if d == 0.0 {
+        return None;
+    }
+    let sector = if max == r {
+        (g - b) / d
+    } else if max == g {
+        (b - r) / d + 2.0
+    } else {
+        (r - g) / d + 4.0
+    };
+    Some((sector * 60.0).rem_euclid(360.0))
+}
+
+/// Red through amber — the hues a warning is read in. A grey is not warm.
+fn is_warm(hex: &str) -> bool {
+    hue(hex).is_some_and(|h| !(60.0..330.0).contains(&h))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -309,6 +374,57 @@ mod tests {
     fn every_key_round_trips_through_its_name() {
         for key in ThemeKey::ALL {
             assert_eq!(ThemeKey::parse(key.as_str()), key);
+        }
+    }
+
+    #[test]
+    fn hues_are_the_usual_ones() {
+        assert_eq!(hue("#FF0000"), Some(0.0));
+        assert_eq!(hue("#00FF00"), Some(120.0));
+        assert_eq!(hue("#0000FF"), Some(240.0));
+        assert_eq!(hue("#FF00FF"), Some(300.0));
+        assert_eq!(hue("#808080"), None);
+        assert_eq!(hue("#FFF"), None);
+        assert_eq!(hue("red"), None);
+    }
+
+    #[test]
+    fn a_warm_flower_warns_in_its_own_colour() {
+        for key in [
+            ThemeKey::Default,
+            ThemeKey::Sakura,
+            ThemeKey::Daisy,
+            ThemeKey::Sunset,
+        ] {
+            let t = make_theme(key, false);
+            let w = warn(key);
+            assert_eq!(w.tone, t.hibiscus, "{key:?}");
+            assert_eq!(w.deep, t.hibiscus_deep, "{key:?}");
+        }
+    }
+
+    #[test]
+    fn a_cool_flower_borrows_the_hibiscus() {
+        for key in [ThemeKey::Jasmine, ThemeKey::Ocean, ThemeKey::Forest] {
+            assert_eq!(warn(key), warn(ThemeKey::Default), "{key:?}");
+        }
+    }
+
+    /// The property the rule exists for, in every flower and both rooms: a
+    /// warning is never within a quarter-turn of the leaf's hue, so nothing
+    /// "too much" can be read as "in".
+    #[test]
+    fn no_warning_can_be_mistaken_for_the_leaf() {
+        for key in ThemeKey::ALL {
+            for dark in [false, true] {
+                let leaf = hue(&make_theme(key, dark).leaf_deep).unwrap();
+                let w = warn(key);
+                for c in [&w.tone, &w.deep] {
+                    let h = hue(c).unwrap();
+                    let gap = (h - leaf).abs().min(360.0 - (h - leaf).abs());
+                    assert!(gap >= 90.0, "{key:?} {c} is {gap:.0}° from the leaf");
+                }
+            }
         }
     }
 

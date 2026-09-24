@@ -389,7 +389,7 @@ class _AssetsScreenState extends State<AssetsScreen> {
             fontSize: 14.5,
             fontWeight: FontWeight.w700,
             fontFeatures: tabular,
-            color: a.balance < 0 ? palette.hibiscus : palette.ink,
+            color: a.balance < 0 ? palette.warn : palette.ink,
           ),
         ),
       ],
@@ -443,7 +443,7 @@ class _AssetsScreenState extends State<AssetsScreen> {
               fontSize: 14.5,
               fontWeight: FontWeight.w700,
               fontFeatures: tabular,
-              color: negative ? palette.hibiscus : palette.ink,
+              color: negative ? palette.warn : palette.ink,
             ),
           ),
           ?trailing,
@@ -482,7 +482,7 @@ class _AssetsScreenState extends State<AssetsScreen> {
         IconButton(
           key: Key('nw-asset-${a.id}-delete'),
           tooltip: zh ? '删除' : 'Delete',
-          icon: Icon(Icons.delete_outline, size: 19, color: palette.hibiscus),
+          icon: Icon(Icons.delete_outline, size: 19, color: palette.warn),
           onPressed: () {
             nw.removeAsset(id: a.id);
             _changed();
@@ -521,7 +521,7 @@ class _AssetsScreenState extends State<AssetsScreen> {
           IconButton(
             key: Key('nw-loan-${l.id}-delete'),
             tooltip: zh ? '删除' : 'Delete',
-            icon: Icon(Icons.delete_outline, size: 19, color: palette.hibiscus),
+            icon: Icon(Icons.delete_outline, size: 19, color: palette.warn),
             onPressed: () {
               nw.removeLoan(id: l.id);
               _changed();

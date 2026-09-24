@@ -8789,8 +8789,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ThemeView dco_decode_theme_view(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 20)
-      throw Exception('unexpected arr length: expect 20 but see ${arr.length}');
+    if (arr.length != 22)
+      throw Exception('unexpected arr length: expect 22 but see ${arr.length}');
     return ThemeView(
       hibiscus: dco_decode_String(arr[0]),
       hibiscusDeep: dco_decode_String(arr[1]),
@@ -8812,6 +8812,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       glow: dco_decode_String(arr[17]),
       overlay: dco_decode_String(arr[18]),
       isDark: dco_decode_bool(arr[19]),
+      warn: dco_decode_String(arr[20]),
+      warnDeep: dco_decode_String(arr[21]),
     );
   }
 
@@ -11322,6 +11324,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_glow = sse_decode_String(deserializer);
     var var_overlay = sse_decode_String(deserializer);
     var var_isDark = sse_decode_bool(deserializer);
+    var var_warn = sse_decode_String(deserializer);
+    var var_warnDeep = sse_decode_String(deserializer);
     return ThemeView(
       hibiscus: var_hibiscus,
       hibiscusDeep: var_hibiscusDeep,
@@ -11343,6 +11347,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       glow: var_glow,
       overlay: var_overlay,
       isDark: var_isDark,
+      warn: var_warn,
+      warnDeep: var_warnDeep,
     );
   }
 
@@ -13361,6 +13367,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_String(self.glow, serializer);
     sse_encode_String(self.overlay, serializer);
     sse_encode_bool(self.isDark, serializer);
+    sse_encode_String(self.warn, serializer);
+    sse_encode_String(self.warnDeep, serializer);
   }
 
   @protected

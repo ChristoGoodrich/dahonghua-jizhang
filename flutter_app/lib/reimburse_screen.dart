@@ -315,7 +315,7 @@ Future<bool> showEntryActions(
             // already, and the menu is where someone looks when it is not.
             ListTile(
               key: const Key('action-delete'),
-              leading: Icon(Icons.delete_outline, color: palette.hibiscus),
+              leading: Icon(Icons.delete_outline, color: palette.warn),
               title: Text(
                 zh ? '删除' : 'Delete',
                 style: TextStyle(fontSize: 15, color: palette.ink),

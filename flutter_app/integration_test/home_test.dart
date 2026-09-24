@@ -15,6 +15,8 @@ import 'package:flutter_app/entry_list.dart';
 import 'package:flutter_app/src/rust/api/budget.dart' as budget;
 import 'package:flutter_app/src/rust/api/privacy.dart' as privacy;
 import 'package:flutter_app/src/rust/api/store.dart' as store;
+import 'package:flutter_app/src/rust/api/theme.dart' as theme;
+import 'package:flutter_app/theme.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'rust_init.dart';
@@ -106,6 +108,82 @@ void main() {
       await tester.tap(find.byKey(const Key('home-summary')));
       expect(opened, isTrue);
     });
+  });
+
+  group('the card in every flower, in both rooms', () {
+    /// WCAG contrast between two colours, 1 to 21.
+    double contrast(Color a, Color b) {
+      final la = a.computeLuminance(), lb = b.computeLuminance();
+      final hi = la > lb ? la : lb, lo = la > lb ? lb : la;
+      return (hi + 0.05) / (lo + 0.05);
+    }
+
+    /// The slab is dark in both rooms — ink when lit, the warmed card at
+    /// night — and the night version painted 花掉 and 进账 in the *deep*
+    /// tones, which on a dark slab is about 2:1. In 森林 both were deep green
+    /// besides, so the two numbers were the same faint colour. Found on the
+    /// release build's screenshot.
+    ///
+    /// Asserted as contrast, and the pair as told apart by lightness alone:
+    /// a flower whose accent is green (森林, 茉莉) has no hue left to say
+    /// "spent" that "in" is not already using, and nor does a reader who
+    /// cannot see red from green.
+    const flowers = [
+      'default',
+      'sakura',
+      'daisy',
+      'jasmine',
+      'ocean',
+      'forest',
+      'sunset',
+    ];
+    for (final dark in [false, true]) {
+      testWidgets('can be read (${dark ? 'dark' : 'light'})', (tester) async {
+        addTearDown(() {
+          theme.setTheme(key: 'default', dark: false);
+          refreshPalette();
+        });
+        add('a', 'exp', 30);
+        add('b', 'inc', 100);
+        for (final flower in flowers) {
+          theme.setTheme(key: flower, dark: dark);
+          refreshPalette();
+          // a new tree per flower, so nothing is carried from the last
+          await tester.pumpWidget(const SizedBox());
+          await show(tester);
+
+          Color slabOf(Finder text) => tester
+              .widgetList<Container>(
+                find.ancestor(of: text, matching: find.byType(Container)),
+              )
+              .map((c) => (c.decoration as BoxDecoration?)?.color)
+              .firstWhere((c) => c != null)!;
+          Color ink(String key) {
+            final text = find.byKey(Key(key));
+            final fg = tester.widget<Text>(text).style!.color!;
+            return Color.alphaBlend(fg, slabOf(text));
+          }
+
+          final slab = slabOf(find.byKey(const Key('home-net')));
+          for (final key in ['home-net', 'home-exp', 'home-inc']) {
+            final ratio = contrast(ink(key), slab);
+            expect(
+              ratio,
+              greaterThanOrEqualTo(4.5),
+              reason: '$flower: $key is ${ratio.toStringAsFixed(2)}:1',
+            );
+          }
+          final apart = contrast(ink('home-exp'), ink('home-inc'));
+          expect(
+            apart,
+            greaterThanOrEqualTo(1.4),
+            reason:
+                '$flower: 花掉 and 进账 are ${apart.toStringAsFixed(2)}:1 '
+                'apart',
+          );
+        }
+      });
+    }
   });
 
   group('the eye', () {

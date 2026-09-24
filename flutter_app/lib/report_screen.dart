@@ -284,7 +284,7 @@ class _ReportScreenState extends State<ReportScreen> {
             key: const Key('week-text'),
             style: TextStyle(
               fontSize: 12.5,
-              color: _week.over ? palette.hibiscus : palette.inkSoft,
+              color: _week.over ? palette.warnDeep : palette.inkSoft,
             ),
           ),
         ],

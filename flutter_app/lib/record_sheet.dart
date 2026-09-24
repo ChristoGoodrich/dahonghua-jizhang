@@ -953,7 +953,7 @@ class _RecordSheetState extends State<RecordSheet> {
       key: const Key('flash'),
       style: TextStyle(
         fontSize: 13,
-        color: _flashIsError ? palette.hibiscus : palette.leafDeep,
+        color: _flashIsError ? palette.warnDeep : palette.leafDeep,
       ),
     ),
   );

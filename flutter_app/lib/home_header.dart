@@ -109,11 +109,17 @@ class _SummaryCard extends StatelessWidget {
         ? Color.alphaBlend(p.hibiscus.withValues(alpha: 0.14), p.card)
         : p.ink;
     final on = p.isDark ? p.ink : p.paper;
-    // The pastels that read on dark ink go deep on the dark room's warm slab.
-    final expTone = p.isDark
-        ? p.hibiscusDeep
-        : Color.lerp(p.hibiscus, p.paper, 0.35)!;
-    final incTone = p.isDark ? p.leafDeep : const Color(0xFF9DC4B3);
+    // The slab is dark in both rooms, so a tone that reads on it is lifted
+    // toward `on`, the light colour, in both. The night version used the deep
+    // tones instead and 花掉 stood at 2.4:1.
+    //
+    // The numbers follow the rows below: spent in the slab's ink, in in the
+    // leaf. The flower's own colour is kept for the dot and the bar, because
+    // in 森林 and 茉莉 the flower is green — as green as the leaf — and two
+    // numbers told apart only by that hue were not told apart.
+    final flower = Color.lerp(p.hibiscus, on, 0.3)!;
+    final spent = on.withValues(alpha: 0.92);
+    final incTone = Color.lerp(p.leaf, on, 0.3)!;
     final sym = zh ? '￥' : '\$';
     String m(double v) => hidden ? hiddenAmount : money.fmt(n: v, symbol: sym);
     final share = view.expShare;
@@ -227,7 +233,7 @@ class _SummaryCard extends StatelessWidget {
                             fontWeight: FontWeight.w800,
                             letterSpacing: -0.8,
                             fontFeatures: tabular,
-                            color: view.net < 0 && !hidden ? expTone : on,
+                            color: on,
                           ),
                         ),
                       ),
@@ -237,7 +243,8 @@ class _SummaryCard extends StatelessWidget {
                           _flow(
                             zh ? '花掉' : 'Spent',
                             m(view.exp),
-                            expTone,
+                            flower,
+                            spent,
                             on,
                             'home-exp',
                           ),
@@ -245,6 +252,7 @@ class _SummaryCard extends StatelessWidget {
                           _flow(
                             zh ? '进账' : 'In',
                             m(view.inc),
+                            incTone,
                             incTone,
                             on,
                             'home-inc',
@@ -265,7 +273,7 @@ class _SummaryCard extends StatelessWidget {
                                   key: const Key('home-share'),
                                   alignment: Alignment.centerLeft,
                                   widthFactor: share,
-                                  child: ColoredBox(color: expTone),
+                                  child: ColoredBox(color: flower),
                                 ),
                               ],
                             ),
@@ -283,41 +291,47 @@ class _SummaryCard extends StatelessWidget {
     );
   }
 
-  Widget _flow(String label, String value, Color tone, Color on, String key) =>
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _flow(
+    String label,
+    String value,
+    Color dot,
+    Color ink,
+    Color on,
+    String key,
+  ) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Row(
         children: [
-          Row(
-            children: [
-              Container(
-                width: 6,
-                height: 6,
-                decoration: BoxDecoration(color: tone, shape: BoxShape.circle),
-              ),
-              const SizedBox(width: 5),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: on.withValues(alpha: 0.75),
-                ),
-              ),
-            ],
+          Container(
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(color: dot, shape: BoxShape.circle),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(width: 5),
           Text(
-            value,
-            key: Key(key),
+            label,
             style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              fontFeatures: tabular,
-              color: tone,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: on.withValues(alpha: 0.75),
             ),
           ),
         ],
-      );
+      ),
+      const SizedBox(height: 2),
+      Text(
+        value,
+        key: Key(key),
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w700,
+          fontFeatures: tabular,
+          color: ink,
+        ),
+      ),
+    ],
+  );
 }
 
 /// The budget, as a flower that wilts as it goes — 本月预算 and 今日预算.
@@ -414,7 +428,7 @@ class _BudgetPot extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12,
                         fontFeatures: tabular,
-                        color: monthly.over ? p.hibiscusDeep : p.inkSoft,
+                        color: monthly.over ? p.warnDeep : p.inkSoft,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -461,7 +475,7 @@ class _BudgetPot extends StatelessWidget {
                             : FontWeight.w400,
                         fontFeatures: tabular,
                         color: daily.over
-                            ? p.hibiscusDeep
+                            ? p.warnDeep
                             : (monthly == null ? p.ink : p.inkSoft),
                       ),
                     ),

@@ -71,10 +71,9 @@ class _PetalBurstState extends State<PetalBurst>
   @override
   Widget build(BuildContext context) {
     final p = palette;
-    final soft = Color.lerp(p.hibiscus, p.paper, 0.35)!;
     final hues = [
       (p.hibiscus, p.stamen),
-      (soft, p.stamen),
+      (p.hibiscusSoft, p.stamen),
       (p.leaf, p.leafDeep),
       (p.stamen, p.hibiscus),
     ];

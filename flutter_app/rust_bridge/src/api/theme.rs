@@ -14,7 +14,7 @@ use std::sync::{Mutex, MutexGuard, OnceLock};
 
 use flutter_rust_bridge::frb;
 
-use dahonghua_core::theme::{make_theme, swatch, ThemeKey};
+use dahonghua_core::theme::{make_theme, swatch, warn, ThemeKey};
 
 /// The chosen flower, and whether the room is lit.
 struct Choice {
@@ -57,6 +57,10 @@ pub struct ThemeView {
     pub glow: String,
     pub overlay: String,
     pub is_dark: bool,
+    /// What says "too much". The flower when it is warm, 大红花's red when it
+    /// is not — see `core::theme::warn`.
+    pub warn: String,
+    pub warn_deep: String,
 }
 
 /// A theme the picker offers: its key and the accent it is recognised by.
@@ -68,6 +72,7 @@ pub struct ThemeOption {
 
 fn view(key: ThemeKey, dark: bool) -> ThemeView {
     let t = make_theme(key, dark);
+    let w = warn(key);
     ThemeView {
         hibiscus: t.hibiscus,
         hibiscus_deep: t.hibiscus_deep,
@@ -89,6 +94,8 @@ fn view(key: ThemeKey, dark: bool) -> ThemeView {
         glow: t.glow,
         overlay: t.overlay,
         is_dark: t.is_dark,
+        warn: w.tone,
+        warn_deep: w.deep,
     }
 }
 

@@ -69,6 +69,11 @@ class ThemeView {
   final String overlay;
   final bool isDark;
 
+  /// What says "too much". The flower when it is warm, 大红花's red when it
+  /// is not — see `core::theme::warn`.
+  final String warn;
+  final String warnDeep;
+
   const ThemeView({
     required this.hibiscus,
     required this.hibiscusDeep,
@@ -90,6 +95,8 @@ class ThemeView {
     required this.glow,
     required this.overlay,
     required this.isDark,
+    required this.warn,
+    required this.warnDeep,
   });
 
   @override
@@ -113,7 +120,9 @@ class ThemeView {
       shadow.hashCode ^
       glow.hashCode ^
       overlay.hashCode ^
-      isDark.hashCode;
+      isDark.hashCode ^
+      warn.hashCode ^
+      warnDeep.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -139,5 +148,7 @@ class ThemeView {
           shadow == other.shadow &&
           glow == other.glow &&
           overlay == other.overlay &&
-          isDark == other.isDark;
+          isDark == other.isDark &&
+          warn == other.warn &&
+          warnDeep == other.warnDeep;
 }

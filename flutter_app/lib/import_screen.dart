@@ -178,7 +178,7 @@ class _ImportScreenState extends State<ImportScreen> {
                     ? '没找到表头。这份文件不像支付宝或微信导出的账单。'
                     : 'No header row. This does not look like a bill export.',
                 key: const Key('import-no-header'),
-                style: TextStyle(fontSize: 13, color: palette.hibiscusDeep),
+                style: TextStyle(fontSize: 13, color: palette.warnDeep),
               )
             else
               ..._summary(p, zh),
@@ -337,7 +337,7 @@ class _ImportScreenState extends State<ImportScreen> {
         const SizedBox(height: 12),
         Text(
           zh ? '读不了的行' : 'Rows that would not read',
-          style: TextStyle(fontSize: 12, color: palette.hibiscusDeep),
+          style: TextStyle(fontSize: 12, color: palette.warnDeep),
         ),
         for (final e in p.errors.take(5))
           Text(

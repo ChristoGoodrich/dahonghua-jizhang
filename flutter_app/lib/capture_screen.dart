@@ -173,7 +173,7 @@ class _CaptureScreenState extends State<CaptureScreen> {
   List<Widget> _permission(bool zh) {
     final on = _granted && _capturing;
     final (word, tone) = !_granted
-        ? (zh ? '没有权限' : 'No access', palette.hibiscusDeep)
+        ? (zh ? '没有权限' : 'No access', palette.warnDeep)
         : on
         ? (zh ? '开着' : 'On', palette.leafDeep)
         : (zh ? '没开' : 'Off', palette.inkSoft);
@@ -282,7 +282,7 @@ class _CaptureScreenState extends State<CaptureScreen> {
             : 'Notification access has not been granted. It can only be '
                   'given in system settings — no app can ask for it.',
         key: const Key('capture-not-granted'),
-        style: TextStyle(fontSize: 13, color: palette.hibiscusDeep),
+        style: TextStyle(fontSize: 13, color: palette.warnDeep),
       ),
       const SizedBox(height: 12),
       FilledButton(

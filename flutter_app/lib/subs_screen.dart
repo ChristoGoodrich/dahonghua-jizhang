@@ -141,7 +141,7 @@ class _SubsScreenState extends State<SubsScreen> {
           TextButton(
             key: const Key('sub-delete-ok'),
             onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(foregroundColor: palette.hibiscus),
+            style: TextButton.styleFrom(foregroundColor: palette.warn),
             child: Text(zh ? '删除' : 'Delete'),
           ),
         ],

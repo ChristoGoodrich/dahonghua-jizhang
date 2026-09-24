@@ -226,7 +226,7 @@ class _SyncScreenState extends State<SyncScreen> {
               ),
               child: Text(
                 _flash!,
-                style: TextStyle(color: _bad ? p.hibiscusDeep : p.ink),
+                style: TextStyle(color: _bad ? p.warnDeep : p.ink),
               ),
             ),
           ],

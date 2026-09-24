@@ -335,7 +335,7 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
           TextButton(
             key: const Key('tpl-delete-ok'),
             onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(foregroundColor: palette.hibiscus),
+            style: TextButton.styleFrom(foregroundColor: palette.warn),
             child: Text(zh ? '删除' : 'Delete'),
           ),
         ],

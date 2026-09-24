@@ -444,8 +444,8 @@ class _StatsScreenState extends State<StatsScreen>
     final (icon, fg, bg) = switch (c.verdict) {
       'more' => (
         Icons.arrow_upward_rounded,
-        p.hibiscusDeep,
-        p.hibiscus.withValues(alpha: 0.1),
+        p.warnDeep,
+        p.warn.withValues(alpha: 0.1),
       ),
       'less' => (
         Icons.arrow_downward_rounded,
@@ -768,7 +768,7 @@ class _StatsScreenState extends State<StatsScreen>
                 fontSize: 12.5,
                 fontWeight: FontWeight.w600,
                 color: switch (c.verdict) {
-                  'more' => p.hibiscusDeep,
+                  'more' => p.warnDeep,
                   'less' => p.leafDeep,
                   _ => p.inkSoft,
                 },

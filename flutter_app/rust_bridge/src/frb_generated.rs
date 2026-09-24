@@ -9319,6 +9319,8 @@ impl SseDecode for crate::api::theme::ThemeView {
         let mut var_glow = <String>::sse_decode(deserializer);
         let mut var_overlay = <String>::sse_decode(deserializer);
         let mut var_isDark = <bool>::sse_decode(deserializer);
+        let mut var_warn = <String>::sse_decode(deserializer);
+        let mut var_warnDeep = <String>::sse_decode(deserializer);
         return crate::api::theme::ThemeView {
             hibiscus: var_hibiscus,
             hibiscus_deep: var_hibiscusDeep,
@@ -9340,6 +9342,8 @@ impl SseDecode for crate::api::theme::ThemeView {
             glow: var_glow,
             overlay: var_overlay,
             is_dark: var_isDark,
+            warn: var_warn,
+            warn_deep: var_warnDeep,
         };
     }
 }
@@ -11578,6 +11582,8 @@ impl flutter_rust_bridge::IntoDart for crate::api::theme::ThemeView {
             self.glow.into_into_dart().into_dart(),
             self.overlay.into_into_dart().into_dart(),
             self.is_dark.into_into_dart().into_dart(),
+            self.warn.into_into_dart().into_dart(),
+            self.warn_deep.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -13396,6 +13402,8 @@ impl SseEncode for crate::api::theme::ThemeView {
         <String>::sse_encode(self.glow, serializer);
         <String>::sse_encode(self.overlay, serializer);
         <bool>::sse_encode(self.is_dark, serializer);
+        <String>::sse_encode(self.warn, serializer);
+        <String>::sse_encode(self.warn_deep, serializer);
     }
 }
 

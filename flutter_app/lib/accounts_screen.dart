@@ -172,7 +172,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
           TextButton(
             key: const Key('delete-ok'),
             onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(foregroundColor: palette.hibiscus),
+            style: TextButton.styleFrom(foregroundColor: palette.warn),
             child: Text(zh ? '删除' : 'Delete'),
           ),
         ],
@@ -257,7 +257,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
             fontFeatures: tabular,
             // a negative total is a real state — a credit card with a
             // balance owed — so it is coloured rather than hidden
-            color: _total < 0 ? palette.hibiscus : palette.ink,
+            color: _total < 0 ? palette.warn : palette.ink,
           ),
         ),
       ],
@@ -301,9 +301,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
             fontSize: 11.5,
             // Overdue is the one state worth a colour. Everything else here is
             // information; this one is a thing to go and do.
-            color: (st.daysToDue ?? 1) < 0
-                ? palette.hibiscusDeep
-                : palette.inkSoft,
+            color: (st.daysToDue ?? 1) < 0 ? palette.warnDeep : palette.inkSoft,
           ),
         ),
     ];
@@ -332,9 +330,9 @@ class _AccountsScreenState extends State<AccountsScreen> {
     key: const Key('due-banner'),
     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
     decoration: BoxDecoration(
-      color: palette.hibiscus.withValues(alpha: 0.08),
+      color: palette.warn.withValues(alpha: 0.08),
       borderRadius: BorderRadius.circular(Rad.md),
-      border: Border.all(color: palette.hibiscus.withValues(alpha: 0.35)),
+      border: Border.all(color: palette.warn.withValues(alpha: 0.35)),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -344,7 +342,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
           style: TextStyle(
             fontSize: 12.5,
             fontWeight: FontWeight.w700,
-            color: palette.hibiscusDeep,
+            color: palette.warnDeep,
           ),
         ),
         const SizedBox(height: 4),
@@ -437,7 +435,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                         fontSize: 15.5,
                         fontWeight: FontWeight.w700,
                         fontFeatures: tabular,
-                        color: a.balance < 0 ? palette.hibiscus : palette.ink,
+                        color: a.balance < 0 ? palette.warn : palette.ink,
                       ),
                     ),
                     ..._statementLine(a, zh),
@@ -503,10 +501,10 @@ class _AccountsScreenState extends State<AccountsScreen> {
             ),
             ListTile(
               key: Key('acct-${a.id}-delete'),
-              leading: Icon(Icons.delete_outline, color: palette.hibiscus),
+              leading: Icon(Icons.delete_outline, color: palette.warn),
               title: Text(
                 zh ? '删除' : 'Delete',
-                style: TextStyle(color: palette.hibiscus),
+                style: TextStyle(color: palette.warn),
               ),
               onTap: () => Navigator.pop(ctx, 'delete'),
             ),

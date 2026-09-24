@@ -9,6 +9,10 @@
 //     cd flutter_app
 //     flutter drive --driver=test_driver/tour.dart --target=integration_test/tour.dart -d <device>
 //
+// Another flower than 大红花 with `--dart-define=TOUR_FLOWER=forest` (or
+// sakura, daisy, jasmine, ocean, sunset): the green ones are where a colour
+// told apart from the leaf only by hue stops being told apart.
+//
 // Screenshots land in `flutter_app/build/tour/`. They are real surface
 // captures, so the glass, the scrims and the lens render as they do on the
 // phone — a `RepaintBoundary.toImage` would have drawn every backdrop blur as
@@ -31,6 +35,9 @@ import 'rust_init.dart';
 import 'scroll.dart';
 
 const day = 86400000;
+
+/// Which flower to tour in. Its name prefixes the files, except 大红花's.
+const flower = String.fromEnvironment('TOUR_FLOWER', defaultValue: 'default');
 
 /// A month somebody actually lived: breakfasts and lunches, a commute, a few
 /// bigger purchases, rent, a salary and a bonus, one expense waiting to be
@@ -184,11 +191,12 @@ void main() {
   }
 
   for (final dark in [false, true]) {
-    final room = dark ? 'dark' : 'light';
+    final room =
+        '${flower == 'default' ? '' : '$flower-'}${dark ? 'dark' : 'light'}';
     testWidgets('tour ($room)', (tester) async {
       store.reset();
       store.setLanguage(lang: 'zh');
-      theme.setTheme(key: 'default', dark: dark);
+      theme.setTheme(key: flower, dark: dark);
       refreshPalette();
       seed();
 

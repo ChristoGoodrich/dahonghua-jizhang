@@ -46,14 +46,14 @@ refuses to run without `src/` for exactly that reason.
 ## Running things
 
     npm run goldens       the core against what the TypeScript answered
-    npm run rust:test     844 tests
+    npm run rust:test     848 tests
     npm run rust:clippy   -D warnings
     npm run bridge:clippy the bridge is a separate cargo project
     npm run tests:check   all_test.dart is not stale
     npm run apk           the release APKs, one per architecture
 
     cd flutter_app
-    flutter test integration_test/all_test.dart    737 tests, ~9 min
+    flutter test integration_test/all_test.dart    743 tests, ~7 min
     flutter test integration_test/<one>_test.dart  while working on one screen
 
 The suite is one entrypoint on purpose: per file it was 36 APK builds and about
@@ -167,6 +167,10 @@ Two things follow from a body that runs behind a header, and both bit:
   press things through `scrollAndTap` in `integration_test/scroll.dart`, which
   measures the target's *own* screen's bar: all four tabs live in an
   `IndexedStack`, so a bare `find.byType(AppBar)` matches four.
+* **A transparent app bar picks the wrong status-bar icons.** `AppBar` derives
+  `systemOverlayStyle` from its own background, and `Colors.transparent` reads
+  as dark, so it asks for white icons on cream paper. `systemOverlay` in
+  `theme.dart` answers from the palette instead, and every bar declares it.
 
 **Look at it before and after.** `integration_test/tour.dart` seeds a month
 somebody might keep and screenshots all nineteen screens in both rooms, as real
@@ -175,11 +179,9 @@ surface captures — so the glass renders — into `build/tour/`:
     flutter drive --driver=test_driver/tour.dart --target=integration_test/tour.dart -d <device>
 
 It found a net-worth card whose numbers were invisible in 夜间模式, which no
-test had looked at because no test had looked at anything in the dark.
-* **A transparent app bar picks the wrong status-bar icons.** `AppBar` derives
-  `systemOverlayStyle` from its own background, and `Colors.transparent` reads
-  as dark, so it asks for white icons on cream paper. `systemOverlay` in
-  `theme.dart` answers from the palette instead, and every bar declares it.
+test had looked at because no test had looked at anything in the dark. It
+tours 大红花 unless told otherwise; `--dart-define=TOUR_FLOWER=forest` (or any
+other flower) tours that one, and 森林 is the one to look at — see below.
 
 ## Pressing things
 
@@ -194,6 +196,29 @@ That is fixed in `appTheme()` rather than at sixty-four call sites:
 and any bare `InkWell`, which read the ambient theme instead of a button
 style. A widget added next year gets it without being told — and `theme_test`
 holds the numbers, because nothing else would notice them going.
+
+## Saying "too much"
+
+The flower is the accent, and for years it was also the warning: an overspent
+budget, a balance below zero, "比上月同期多", a missing permission, a delete.
+In 大红花 those are the same red. In 森林 the flower is green — the leaf's
+green, which is what this app says "in" and "on track" with — so the tour
+showed a card ¥3,120 in debt, a budget ¥24 over and the month's salary all in
+one colour. 茉莉 is the same green-grey, and 海洋's blue does not warn at all.
+
+`palette.warn` / `warnDeep` is the warning, and `core::theme::warn` decides
+it: a warm flower warns in itself, a cool one borrows 大红花's red. It is a
+rule on the hue rather than a table, so a flower added later is answered for,
+and the core test states the property — no warning within 90° of the leaf.
+**Paint the accent with `hibiscus` and the alarm with `warn`.** If you are
+choosing between them, ask whether the thing would still be right in green.
+
+The same screenshot found 明细's summary slab painting 花掉 and 进账 in the
+deep tones at night — about 2.4:1 on a dark slab, and in 森林 both green. The
+slab is dark in both rooms, so its tones lift toward the light colour in both,
+and its numbers follow the rows: spent in ink, in in the leaf. `home_test`
+holds every flower in both rooms to 4.5:1, and the pair apart by lightness —
+which is also what a reader who cannot tell red from green has to go on.
 
 ## Moving the chrome
 

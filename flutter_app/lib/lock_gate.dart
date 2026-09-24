@@ -205,10 +205,7 @@ class _LockGateState extends State<LockGate> with WidgetsBindingObserver {
                     Text(
                       _noticeText(_notice!, zh),
                       key: const Key('lock-notice'),
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: palette.hibiscusDeep,
-                      ),
+                      style: TextStyle(fontSize: 13, color: palette.warnDeep),
                     ),
                   ],
                   const SizedBox(height: 20),
