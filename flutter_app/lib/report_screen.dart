@@ -13,11 +13,12 @@
 
 import 'package:flutter/material.dart';
 
+import 'ledger_days.dart';
+
 import 'src/rust/api/budget.dart' as budget;
 import 'src/rust/api/catalog.dart' as catalog;
 import 'src/rust/api/money.dart' as money;
 import 'src/rust/api/report.dart' as report;
-import 'src/rust/api/store.dart' as store;
 import 'glass.dart';
 import 'theme.dart';
 
@@ -75,19 +76,19 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 
   void _reload() {
-    final all = store.liveEntries();
-    final ids = all.map((e) => e.id).toList();
-    final days = all
-        .map((e) => reportDay(DateTime.fromMillisecondsSinceEpoch(e.ts)))
-        .toList();
+    final l = LedgerDays.current();
+    final ids = l.ids;
+    final days = l.days;
     final today = reportDay(DateTime.now());
 
     // The cycle is not the calendar month — it turns over on `cycleStart` — so
     // which entries count is the core's answer, not a date range built here.
     final cycle = budget.cycleIds(ids: ids, daysOf: days, today: today);
+    // A set: `contains` on the list was a scan per row, over every row.
+    final inCycle = cycle.toSet();
     final cycleDays = [
       for (var i = 0; i < ids.length; i++)
-        if (cycle.contains(ids[i])) days[i],
+        if (inCycle.contains(ids[i])) days[i],
     ];
 
     setState(() {

@@ -46,14 +46,14 @@ refuses to run without `src/` for exactly that reason.
 ## Running things
 
     npm run goldens       the core against what the TypeScript answered
-    npm run rust:test     848 tests
+    npm run rust:test     850 tests
     npm run rust:clippy   -D warnings
     npm run bridge:clippy the bridge is a separate cargo project
     npm run tests:check   all_test.dart is not stale
     npm run apk           the release APKs, one per architecture
 
     cd flutter_app
-    flutter test integration_test/all_test.dart    743 tests, ~7 min
+    flutter test integration_test/all_test.dart    755 tests, ~7 min
     flutter test integration_test/<one>_test.dart  while working on one screen
 
 The suite is one entrypoint on purpose: per file it was 36 APK builds and about
@@ -138,24 +138,38 @@ right. Each band now paints a `ScrimBandMask` into its own backdrop layer with
 `BlendMode.dstIn`: nothing at its `top`, full strength at its `full`, where
 the next band starts. The sigmas say how deep; the masks say gradually.
 
+**And the bands share one capture.** A backdrop blur reads what is already on
+the screen, and on a phone's GPU that read is a break in the render pass —
+everything so far written out so it can be sampled back. Six nested bands were
+six of those per scrim; a tab has two scrims, a bar and a lens, and a route
+transition draws two screens. So each scrim keys its bands to one
+`BackdropKey` and they blur one capture, and a band applies `depth` — the blur
+seen through it — instead of `sigma`, the step it adds when nested. The masks
+make the two the same picture, and the tour is how that was checked: the
+emulator cannot measure it (below), so it was looked at.
+
 The ramp lives in the `fade` at the shallow end and holds full depth beyond it.
 A scrim is sized to the chrome it belongs to plus that fade, and for a header
 with a hard bottom edge it is sized to the header alone — otherwise the
 transition lands below the bar and blurs rows nobody has scrolled near. A
 header also ramps over `header_ramp`, not `fade`: with 72dp of ramp in a
 ~105dp header the bar's title stood over text blurred to σ≈3, still legible.
+The bottom bar's ground starts `foot` (28dp) above the bar and ramps to the
+bar's middle (`foot_ramp`): at `fade` it reached most of a bar-height up the
+list, and the report was that the blur came up too high.
 
 Screens do not assemble this themselves. **The four tabs use
-`TitledScaffold`**: a slim transparent bar holding only the actions, a large
-28px title that scrolls with the content, and a small title that fades into
-the bar once the large one has gone under — the HyperOS and iOS header, and
-the one the reference screenshots show. They used to disagree (20px app-bar
-titles on two tabs, 26px in-list titles on the other two), and `shell_test`
-now holds them to one height. **Pushed screens use `ScrimScaffold`**, the same
-transparent bar and scrim with a back arrow and a small title.
+`TitledScaffold`**: a 26px title at the start of the bar and the actions at its
+end, on one row — 大红花记账 and its three buttons side by side. They used to
+disagree (20px app-bar titles on two tabs, 26px in-list titles on the other
+two); the first fix put a large title under a bar of actions, with a small copy
+fading in when it scrolled away, and that spent a row on a word. `shell_test`
+holds all four to one row, the actions beside the title. **Pushed screens use
+`ScrimScaffold`**, the same transparent bar and scrim with a back arrow and a
+small title.
 
 In both cases **the body pads its own top** by `headerInset`, and a titled
-body puts `b.header` first; that cannot be done from outside, because padding
+body puts `b.header` — the subtitle, if there is one — first; that cannot be done from outside, because padding
 wrapped around a scrollable moves the viewport rather than its contents, and a
 viewport that starts below the header has nothing running under it.
 
@@ -196,6 +210,25 @@ That is fixed in `appTheme()` rather than at sixty-four call sites:
 and any bare `InkWell`, which read the ambient theme instead of a button
 style. A widget added next year gets it without being told — and `theme_test`
 holds the numbers, because nothing else would notice them going.
+
+**A delete asks first**, and says which row: `confirmDelete` in `toast.dart`,
+on the swipe, on the ⋯ menu and on the selection bar. A swipe is the cheapest
+gesture in the list and the one most often made on the way to scrolling.
+
+**The notices are capsules**, the phone's own shape — a small pill low on the
+screen, the flower, a few words, the action at the end — rather than a
+Material slab across the width. Not the system's `Toast` itself: since
+Android 11 a toast carries text and nothing else, and 撤销 is the reason 已删除
+is said. `showToast` draws it on a transparent floating snackbar, which is what
+already knows where the bottom bar is and keeps a notice alive across a pop.
+
+The tour's new delete shots found the bug these had been hiding. **The shell
+recreates the list on every change**, so the 撤销 in a notice belongs to a list
+that is gone by the time it is pressed: it put the row back and then called
+`setState` on a disposed state, every time, in every build. Every test of it
+showed the list on its own, where nothing recreates anything. A callback that
+outlives its screen checks `mounted`, and `shell_test` presses 撤销 in the
+shell.
 
 ## Saying "too much"
 
@@ -239,11 +272,48 @@ Three rules live there because all three are easy to write differently:
 * **A flick lands where it was heading**, not on the nearest tab: `x + v *
   fling`, then the tab under that.
 
+The lens fills its tab — icon and label, the bar's height less an inset. It
+was a 46×30 pill behind the icon, which lit part of the icon and none of the
+label. And `Segmented` — 记一笔's 支出/收入/转账, 统计's windows — has the same
+thumb: it follows a finger, lights the segment under it, springs and
+stretches by the same rules, and chooses **once, on release**, not once per
+segment crossed: 统计 reads the ledger again for each answer.
+
 And a test note that cost an hour: **`TestGesture.moveBy` stamps every event
 `Duration.zero`**, so a hand-built flick reports a velocity of zero however it
 is spaced with `pump`. Use `tester.fling` and `tester.drag`. `pumpWidget`
 twice in one test also reuses the element and therefore the lens's position —
 give the two trees different keys.
+
+## Changing the store under a screen
+
+"The screens 我的 opens stutter" was measured before anything was changed, with
+`integration_test/perf.dart` in profile mode (`--no-dds`, or it cannot reach
+the VM service). Two findings, and the first is a warning:
+
+* **The emulator's raster times are the emulator's.** They moved from 18ms to
+  45ms between identical runs and barely at all with every blur in the app
+  switched off. Only build times — the UI thread — were worth reading there.
+  GPU work has to be judged on a phone, or reasoned about, as the shared
+  capture above was.
+* **The build side was the shell.** Every change a pushed screen reported
+  bumped one version that keyed all four tabs, so all four read the whole
+  ledger again — 89ms at 3,000 entries, under the finger of whoever was using
+  设置 — and every config change rebuilt `ThemeData` and with it every widget.
+
+So `_invalidate` recreates **the tab under the route now** (it is what the
+route reveals, and 明细 must have the entry the sheet just saved) and the other
+three **one a frame, after the route's exit animation has finished** — a
+refresh in the first frame of going back is what made going back stutter.
+The root rebuilds only when the flower, the room or the language moved.
+Tabs that are not showing do not tick. And `LedgerDays` keeps every live entry
+and its day until `store.revision()` moves, which every write access does:
+seven screens began by fetching and converting the whole ledger, and most of
+the time nothing had been written since the last one had.
+
+At 3,000 entries the worst frame opening or closing a screen from 我的 went
+from 20–58ms to 4–10ms, and a setting changed with 设置 open from 132ms to
+16ms. Run it again before believing a change to any of this is free.
 
 ## Looking things up
 

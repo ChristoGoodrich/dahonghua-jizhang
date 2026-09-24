@@ -1,7 +1,7 @@
 // Every integration test, under one entrypoint.
 //
 // Running them a file at a time builds and installs a whole APK per file.
-// At 40 files that was 40 builds for a suite whose execution takes
+// At 42 files that was 42 builds for a suite whose execution takes
 // seconds — about twenty minutes, nearly all of it Gradle. Worse than slow:
 // twenty minutes is twenty minutes in which the emulator can die, and twice
 // it did, costing the whole run rather than part of it. One entrypoint,
@@ -42,6 +42,7 @@ import 'export_test.dart' as export_test;
 import 'history_test.dart' as history_test;
 import 'home_test.dart' as home_test;
 import 'import_test.dart' as import_test;
+import 'ledger_days_test.dart' as ledger_days_test;
 import 'library_test.dart' as library_test;
 import 'liquid_test.dart' as liquid_test;
 import 'lock_test.dart' as lock_test;
@@ -54,6 +55,7 @@ import 'remind_test.dart' as remind_test;
 import 'report_test.dart' as report_test;
 import 'scale_test.dart' as scale_test;
 import 'search_test.dart' as search_test;
+import 'segmented_test.dart' as segmented_test;
 import 'settings_test.dart' as settings_test;
 import 'sheet_extras_test.dart' as sheet_extras_test;
 import 'shell_test.dart' as shell_test;
@@ -86,6 +88,7 @@ void main() {
   group('history_test', history_test.main);
   group('home_test', home_test.main);
   group('import_test', import_test.main);
+  group('ledger_days_test', ledger_days_test.main);
   group('library_test', library_test.main);
   group('liquid_test', liquid_test.main);
   group('lock_test', lock_test.main);
@@ -98,6 +101,7 @@ void main() {
   group('report_test', report_test.main);
   group('scale_test', scale_test.main);
   group('search_test', search_test.main);
+  group('segmented_test', segmented_test.main);
   group('settings_test', settings_test.main);
   group('sheet_extras_test', sheet_extras_test.main);
   group('shell_test', shell_test.main);

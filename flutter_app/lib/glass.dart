@@ -348,8 +348,25 @@ class _Grain extends CustomPainter {
 /// the band's edge, full strength by the point the next band starts; the clip
 /// still confines the filter, but the edge it draws is an edge of nothing.
 /// Where each mask begins and ends is the core's, beside the sigmas.
-class GlassScrim extends StatelessWidget {
-  const GlassScrim({super.key, this.flipped = false, this.under});
+///
+/// ## And why the bands share one capture
+///
+/// A backdrop blur has to read what is already on the screen, and on a
+/// phone's GPU that read is a break in the render pass: everything drawn so
+/// far is written out so it can be sampled back in. Six nested bands were six
+/// of those per scrim, a tab has two scrims and a bar and a lens, and a route
+/// transition draws two screens — fourteen to twenty full-screen round trips a
+/// frame, which is what made the screens pushed from 我的 stutter on the way in
+/// and out.
+///
+/// So every band of one scrim is keyed to one [BackdropKey] and blurs the same
+/// capture, taken once. A shared capture means no band sees the band above it,
+/// so each applies the blur seen *through* it — `depth`, not `sigma` — and the
+/// masks make that the same picture: where a band fades in, the one before it
+/// is at full strength, and the crossfade is between the same two depths
+/// either way.
+class GlassScrim extends StatefulWidget {
+  const GlassScrim({super.key, this.flipped = false, this.under, this.ramp});
 
   /// Deepest at the TOP rather than the bottom, for chrome that floats above
   /// the content instead of below it.
@@ -358,8 +375,25 @@ class GlassScrim extends StatelessWidget {
   /// What the wash fades toward. The page's paper unless told otherwise.
   final String? under;
 
+  /// How much of the box the ramp takes, from the shallow end, in dp. A
+  /// header's is `headerRamp` and anything else's `fade` unless the caller
+  /// knows better — the bottom bar does: see `navScrimBox`.
+  final double? ramp;
+
+  @override
+  State<GlassScrim> createState() => _GlassScrimState();
+}
+
+class _GlassScrimState extends State<GlassScrim> {
+  /// The one capture this scrim's bands blur. Per scrim, not shared wider: a
+  /// screen sliding in over another has its own header over its own rows, and
+  /// a key shared with the screen underneath would blur that one's instead.
+  final _backdrop = BackdropKey();
+
   @override
   Widget build(BuildContext context) {
+    final flipped = widget.flipped;
+    final under = widget.under;
     final p = palette;
     final tier = g.resolveTier(
       reduceTransparency: MediaQuery.maybeDisableAnimationsOf(context) ?? false,
@@ -367,7 +401,7 @@ class GlassScrim extends StatelessWidget {
     );
     final spec = g.scrimSpec(isDark: p.isDark, tier: tier);
     final ramp = g.scrimRamp(wash: spec.wash, bands: spec.bands);
-    final tint = under == null ? p.paper : parseHex(under!);
+    final tint = under == null ? p.paper : parseHex(under);
 
     return IgnorePointer(
       // The band edges are fractions and `Positioned` wants pixels, so the box
@@ -392,7 +426,8 @@ class GlassScrim extends StatelessWidget {
           // A header takes its own, shorter ramp: its box is the header alone,
           // and the bar's title has to stand on deep blur rather than in the
           // middle of the transition. See `ScrimSpec.header_ramp`.
-          final fade = (flipped ? spec.headerRamp : spec.fade).clamp(0.0, h);
+          final fade = (widget.ramp ?? (flipped ? spec.headerRamp : spec.fade))
+              .clamp(0.0, h);
           final wash = Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
@@ -428,11 +463,11 @@ class GlassScrim extends StatelessWidget {
                 sigma: spec.sigma,
                 bands: spec.bands,
               ))
-                // A sigma this small is a save layer for nothing. None of the
-                // shipping specs has one — the first of six bands at σ=22 adds
-                // 0.61 — but a spec with more bands would, and dropping it
-                // there moves the total by less than a hundredth.
-                if (band.sigma >= 0.05)
+                // A blur this small is a layer for nothing. None of the
+                // shipping specs has one — the first of six bands at σ=22 is
+                // 0.61 deep — but a spec with more bands would, and dropping
+                // it there moves nothing a pixel can show.
+                if (band.depth >= 0.05)
                   Positioned(
                     left: 0,
                     right: 0,
@@ -445,9 +480,10 @@ class GlassScrim extends StatelessWidget {
                     // BackdropFilter blurs the whole screen.
                     child: ClipRect(
                       child: BackdropFilter(
+                        backdropGroupKey: _backdrop,
                         filter: ui.ImageFilter.blur(
-                          sigmaX: band.sigma,
-                          sigmaY: band.sigma,
+                          sigmaX: band.depth,
+                          sigmaY: band.depth,
                           // Clamp, unlike `Glass`: this band's edges ARE the
                           // screen's edges, and decal would fade the content
                           // there to nothing and draw a dark seam down both
@@ -513,6 +549,23 @@ class ScrimBandMask extends CustomPainter {
   @override
   bool shouldRepaint(ScrimBandMask old) =>
       old.ramp != ramp || old.flipped != flipped;
+}
+
+/// How far above a floating bar its ground starts, in dp, and how much of that
+/// ground the ramp takes for a bar `surface` dp tall. The core's: see
+/// `ScrimSpec::foot`.
+({double foot, double ramp}) scrimFoot(BuildContext context, double surface) {
+  final foot = g
+      .scrimSpec(
+        isDark: palette.isDark,
+        tier: g.resolveTier(
+          reduceTransparency:
+              MediaQuery.maybeDisableAnimationsOf(context) ?? false,
+          isWeb: false,
+        ),
+      )
+      .foot;
+  return (foot: foot, ramp: g.footRamp(foot: foot, surface: surface));
 }
 
 /// How far a scrim reaches past the surface it stands under, in dp.
@@ -616,7 +669,7 @@ class ScrimScaffold extends StatelessWidget {
 }
 
 /// What a [TitledScaffold] hands its body: where to start, what to put first,
-/// and the controller the bar watches.
+/// and the controller its list should use.
 class TitledBody {
   const TitledBody({
     required this.controller,
@@ -624,30 +677,31 @@ class TitledBody {
     required this.header,
   });
 
-  /// The body's scrollable must use this, or the small title never appears.
+  /// For the body's scrollable.
   final ScrollController controller;
 
   /// How far down the first item has to start: the status bar and the bar.
   final double top;
 
-  /// The large title, to be the body's first item.
+  /// The subtitle, if there is one, to be the body's first item.
   final Widget header;
 }
 
-/// A top-level screen: a large title that scrolls with the content, and a
-/// small one that takes its place in the bar once it has gone underneath.
+/// A top-level screen: its title and its actions on one row, over a body
+/// that runs underneath them.
 ///
-/// The four tabs used to disagree. 明细 and 统计 titled themselves in a 20px
-/// app bar; 资产 and 我的 put a 26px title inside their lists. Side by side on
-/// the tab bar that read as two apps sharing one. HyperOS and iOS agree on the
-/// answer — the large title, with the bar above it holding only the actions —
-/// and so do the screenshots this was designed against: 文件管理's 最近, 小米笔记's
-/// 已选中2项.
+/// The four tabs used to disagree — 明细 and 统计 titled themselves in a 20px
+/// app bar, 资产 and 我的 put a 26px title inside their lists — and the first
+/// fix gave all four a large title under a bar that held only the actions,
+/// with a small copy fading into the bar once the large one had scrolled
+/// away. That spent a whole row on a word and left the actions alone on the
+/// row above it; the report was that the title and the buttons belong on one
+/// line — 大红花记账 and its three buttons side by side. So they are: a large
+/// title at the start of the bar, the actions at its end, and nothing to
+/// collapse, because nothing scrolls away.
 ///
-/// The collapse is not decoration either. A large title that simply scrolls
-/// away leaves a screen that no longer says what it is, and in 批量处理 the
-/// thing that scrolled away was the count of what is ticked. So the bar picks
-/// the title up as it goes under.
+/// A subtitle still scrolls with the content — 我的's streak, 批量处理's
+/// running total — as the body's first item.
 ///
 /// Built on the same transparent app bar and scrim as [ScrimScaffold], so the
 /// header still absorbs taps in its own strip, still declares the status-bar
@@ -668,21 +722,20 @@ class TitledScaffold extends StatefulWidget {
 
   final String title;
 
-  /// Put on the large title, so a test can read it. Not on the small one: two
-  /// widgets with one key is an error, and the small one is the echo.
+  /// Put on the title, so a test can read it.
   final Key? titleKey;
 
-  /// Under the large title. Scrolls with it.
+  /// Under the bar, as the body's first item. Scrolls.
   final Widget? subtitle;
 
   final List<Widget>? actions;
   final Widget? leading;
 
-  /// Replaces the small title outright — the search box goes here.
+  /// Replaces the title outright — the search box goes here.
   final Widget? barTitle;
 
-  /// Off while searching, where a large 大红花记账 over a list of results
-  /// would be a heading for the wrong thing.
+  /// Off while searching, where 大红花记账 over a list of results would be a
+  /// heading for the wrong thing.
   final bool largeTitle;
 
   final Widget? bottomNavigationBar;
@@ -701,37 +754,12 @@ class _TitledScaffoldState extends State<TitledScaffold> {
     super.dispose();
   }
 
-  /// How far the small title has faded in. Zero until the large one is most
-  /// of the way under the bar, then quick: a title that is legible twice at
-  /// once, large below and small above, is the frame that looks like a bug.
-  double get _fade {
-    if (!_scroll.hasClients || !widget.largeTitle) return 0;
-    return ((_scroll.offset - 18) / 22).clamp(0.0, 1.0);
-  }
-
-  Widget _large(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(left: 2, top: 2, bottom: 16),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          widget.title,
-          key: widget.titleKey,
-          style: TextStyle(
-            fontSize: 28,
-            height: 1.15,
-            fontWeight: FontWeight.w700,
-            letterSpacing: -0.2,
-            color: palette.ink,
-          ),
-        ),
-        if (widget.subtitle != null) ...[
-          const SizedBox(height: 6),
-          widget.subtitle!,
-        ],
-      ],
-    ),
-  );
+  Widget get _header => widget.subtitle == null
+      ? const SizedBox(height: 6)
+      : Padding(
+          padding: const EdgeInsets.only(left: 2, top: 2, bottom: 16),
+          child: widget.subtitle,
+        );
 
   @override
   Widget build(BuildContext context) {
@@ -751,27 +779,21 @@ class _TitledScaffoldState extends State<TitledScaffold> {
         titleSpacing: widget.leading == null ? 22 : 0,
         title:
             widget.barTitle ??
-            AnimatedBuilder(
-              animation: _scroll,
-              builder: (context, _) {
-                final f = _fade;
-                // Absent rather than transparent at rest, so the screen does
-                // not carry its title twice where a finder or a screen
-                // reader would find both.
-                if (f == 0) return const SizedBox.shrink();
-                return Opacity(
-                  opacity: f,
-                  child: Text(
+            (widget.largeTitle
+                ? Text(
                     widget.title,
+                    key: widget.titleKey,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: palette.ink,
-                      fontSize: 17,
+                      fontSize: 26,
+                      height: 1.15,
                       fontWeight: FontWeight.w700,
+                      letterSpacing: -0.2,
+                      color: palette.ink,
                     ),
-                  ),
-                );
-              },
-            ),
+                  )
+                : null),
         actions: [...?widget.actions, const SizedBox(width: 6)],
       ),
       bottomNavigationBar: widget.bottomNavigationBar,
@@ -780,13 +802,7 @@ class _TitledScaffoldState extends State<TitledScaffold> {
         children: [
           widget.body(
             context,
-            TitledBody(
-              controller: _scroll,
-              top: top,
-              header: widget.largeTitle
-                  ? _large(context)
-                  : const SizedBox.shrink(),
-            ),
+            TitledBody(controller: _scroll, top: top, header: _header),
           ),
           Positioned(
             top: 0,

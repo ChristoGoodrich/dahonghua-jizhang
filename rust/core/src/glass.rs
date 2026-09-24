@@ -448,6 +448,17 @@ pub struct ScrimSpec {
     /// σ≈3 — still legible, so two lines of text were fighting in one strip.
     /// Short enough that the bar's middle is past most of the ramp.
     pub header_ramp: f64,
+    /// How far above a floating bar the ground under it starts, in dp.
+    ///
+    /// Not `fade`. The bottom scrim used `fade` too, and 72dp of ramp above a
+    /// bar that is 64dp tall and 22dp off the bottom put the blur's first
+    /// rows nearly a whole bar-height above it: rows a comfortable distance
+    /// clear of the bar were already going soft, and the report was that the
+    /// blur reached too high. The bar is glass and blurs what is behind it on
+    /// its own; what the ground has to do is take the rows the last short
+    /// way, so it starts just above the bar and ramps to its middle — see
+    /// [`foot_ramp`].
+    pub foot: f64,
     /// Blur sigma at the deepest point. Zero below the `Full` tier.
     pub sigma: f64,
     /// How many steps the ramp is cut into. See [`scrim_bands`].
@@ -471,6 +482,7 @@ pub fn scrim_spec(t: &GlassTheme, tier: GlassTier) -> ScrimSpec {
         GlassTier::Full => ScrimSpec {
             fade: 72.0,
             header_ramp: 36.0,
+            foot: 28.0,
             sigma: 22.0,
             bands: 6,
             wash: if t.is_dark { 0.62 } else { 0.5 },
@@ -478,6 +490,7 @@ pub fn scrim_spec(t: &GlassTheme, tier: GlassTier) -> ScrimSpec {
         GlassTier::Wash => ScrimSpec {
             fade: 56.0,
             header_ramp: 36.0,
+            foot: 28.0,
             sigma: 0.0,
             bands: 6,
             wash: if t.is_dark { 0.86 } else { 0.8 },
@@ -485,11 +498,23 @@ pub fn scrim_spec(t: &GlassTheme, tier: GlassTier) -> ScrimSpec {
         GlassTier::Solid => ScrimSpec {
             fade: 0.0,
             header_ramp: 0.0,
+            foot: 0.0,
             sigma: 0.0,
             bands: 1,
             wash: 1.0,
         },
     }
+}
+
+/// How much of a bottom scrim its ramp takes, from the top down, in dp, for a
+/// bar `surface` dp tall standing at its foot.
+///
+/// From [`ScrimSpec::foot`] above the bar to the bar's middle. Ending at the
+/// bar's top edge put the whole transition above the glass, where it is seen
+/// through nothing; ending at its middle lets the bar's own blur carry the
+/// last of it, so the ramp is shorter without being steeper.
+pub fn foot_ramp(foot: f64, surface: f64) -> f64 {
+    foot + surface.max(0.0) / 2.0
 }
 
 /// One step of the ramp: where it starts, where it is at full strength, and
@@ -505,6 +530,18 @@ pub struct ScrimBand {
     pub full: f64,
     /// The sigma *this* band contributes, not the blur seen through it.
     pub sigma: f64,
+    /// The blur seen through this band and every shallower one: what the
+    /// band has to apply when it blurs the page itself rather than the bands
+    /// above it.
+    ///
+    /// The two ways of drawing the ramp. Nested, each band blurs what the
+    /// band before it made, and adds `sigma`. Shared, every band blurs one
+    /// capture of the page — which is what lets a renderer take the capture
+    /// once instead of once a band, and a band is a render-pass break on a
+    /// phone's GPU — and so applies `depth`. The masks make them the same
+    /// picture: where band k fades in, band k−1 is at full strength, so both
+    /// are a crossfade from `depth(k−1)` to `depth(k)`.
+    pub depth: f64,
 }
 
 /// The ramp, as a stack of nested blurs.
@@ -571,6 +608,7 @@ pub fn scrim_bands(sigma: f64, bands: usize) -> Vec<ScrimBand> {
             top: k as f64 / n,
             full: x,
             sigma: step,
+            depth: total,
         });
         prev = total;
     }
@@ -930,6 +968,36 @@ mod tests {
             s.sigma
         );
         assert!(s.header_ramp > 0.0 && s.header_ramp <= 56.0);
+    }
+
+    /// A band's depth is every step down to it, composed by variance — so a
+    /// band drawn over one capture of the page, blurred by `depth`, looks
+    /// the way the nested stack looks at that band.
+    #[test]
+    fn a_bands_depth_is_every_step_above_it() {
+        for (sigma, n) in [(22.0, 6), (12.0, 5), (40.0, 12)] {
+            let bands = scrim_bands(sigma, n);
+            let mut acc = 0.0_f64;
+            for b in &bands {
+                acc = (acc * acc + b.sigma * b.sigma).sqrt();
+                assert!((b.depth - acc).abs() < 1e-9, "{b:?} vs {acc}");
+            }
+            assert!((bands[n - 1].depth - sigma).abs() < 1e-9);
+            for w in bands.windows(2) {
+                assert!(w[1].depth > w[0].depth, "{w:?}");
+            }
+        }
+    }
+
+    /// The bottom scrim starts just above the bar — well short of `fade` —
+    /// and its ramp ends at the bar's middle.
+    #[test]
+    fn the_ground_under_a_bar_starts_just_above_it() {
+        let s = scrim_spec(&light(), GlassTier::Full);
+        assert!(s.foot > 0.0 && s.foot < s.fade / 2.0, "{}", s.foot);
+        assert_eq!(foot_ramp(s.foot, 64.0), s.foot + 32.0);
+        assert_eq!(foot_ramp(s.foot, -4.0), s.foot, "no bar, no ramp into it");
+        assert_eq!(scrim_spec(&light(), GlassTier::Solid).foot, 0.0);
     }
 
     /// Sigma zero is the flat tiers, and `sqrt` of a difference of zeros is a

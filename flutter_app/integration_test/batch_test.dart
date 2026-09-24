@@ -31,7 +31,13 @@ void spend(String id, double amt, {String? note, String cat = 'food'}) =>
     );
 
 void earn(String id, double amt, {String? note}) => store.addEntry(
-  entry: store.NewEntry(io: 'inc', cat: 'salary', amt: amt, note: note, ts: now),
+  entry: store.NewEntry(
+    io: 'inc',
+    cat: 'salary',
+    amt: amt,
+    note: note,
+    ts: now,
+  ),
   id: id,
   now: now,
 );
@@ -190,9 +196,7 @@ void main() {
 
     /// Not what is in the ledger. A search for 上周 that turned up four rows
     /// and then selected nine hundred would be the worst kind of surprise.
-    testWidgets('全选 respects the search, not the whole ledger', (
-      tester,
-    ) async {
+    testWidgets('全选 respects the search, not the whole ledger', (tester) async {
       spend('e1', 30, note: '午饭');
       spend('e2', 12, note: '咖啡');
       await show(tester);
@@ -272,6 +276,11 @@ void main() {
       await pickByLongPress(tester, '午饭');
       await alsoPick(tester, '咖啡');
       await tapBatch(tester, 'delete');
+      // it asks, and names what it is about to take
+      expect(find.text('删除选中的 2 笔？'), findsOneWidget);
+      expect(store.liveEntries().length, 3, reason: 'nothing gone yet');
+      await tester.tap(find.byKey(const Key('entry-delete-ok')));
+      await tester.pumpAndSettle();
 
       expect(store.liveEntries().length, 1);
       expect(find.text('汽水'), findsOneWidget);
@@ -360,7 +369,11 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('已修改 2 项'), findsOneWidget);
-      expect(store.getEntry(id: 'e4')!.rb, isNull, reason: 'income is not a claim');
+      expect(
+        store.getEntry(id: 'e4')!.rb,
+        isNull,
+        reason: 'income is not a claim',
+      );
     });
 
     testWidgets('a batch that would change nothing says so', (tester) async {

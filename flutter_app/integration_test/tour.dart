@@ -231,6 +231,21 @@ void main() {
       await tester.tap(find.byKey(const Key('calendar-toggle')));
       await tester.pumpAndSettle();
 
+      // a delete: it asks, and then says so with 撤销 — which is used, so the
+      // shots after this one have the same month in them
+      await tester.drag(
+        find.ancestor(
+          of: find.text('早餐 豆浆油条'),
+          matching: find.byType(Dismissible),
+        ),
+        const Offset(-500, 0),
+      );
+      await shot(tester, '$room-01e-delete-asks');
+      await tester.tap(find.byKey(const Key('entry-delete-ok')));
+      await shot(tester, '$room-01f-deleted');
+      await tester.tap(find.byKey(const Key('deleted-undo')));
+      await tester.pumpAndSettle();
+
       // a selection, since it is its own screen in all but name
       await tester.longPress(find.text('午饭 牛肉面'));
       await tester.pumpAndSettle();

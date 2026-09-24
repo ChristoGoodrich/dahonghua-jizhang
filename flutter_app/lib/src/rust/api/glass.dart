@@ -73,6 +73,10 @@ double luminance({required String hex}) =>
 Float64List saturationMatrix({required double vibrancy}) =>
     RustLib.instance.api.crateApiGlassSaturationMatrix(vibrancy: vibrancy);
 
+/// How much of a bottom scrim its ramp takes. See `core::glass::foot_ramp`.
+double footRamp({required double foot, required double surface}) =>
+    RustLib.instance.api.crateApiGlassFootRamp(foot: foot, surface: surface);
+
 ScrimSpec scrimSpec({required bool isDark, required GlassTier tier}) =>
     RustLib.instance.api.crateApiGlassScrimSpec(isDark: isDark, tier: tier);
 
@@ -177,10 +181,20 @@ class ScrimBand {
   /// The sigma this band contributes, not the blur seen through it.
   final double sigma;
 
-  const ScrimBand({required this.top, required this.full, required this.sigma});
+  /// The blur seen through this band and every shallower one — what the
+  /// band applies when every band blurs one shared capture of the page.
+  final double depth;
+
+  const ScrimBand({
+    required this.top,
+    required this.full,
+    required this.sigma,
+    required this.depth,
+  });
 
   @override
-  int get hashCode => top.hashCode ^ full.hashCode ^ sigma.hashCode;
+  int get hashCode =>
+      top.hashCode ^ full.hashCode ^ sigma.hashCode ^ depth.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -189,7 +203,8 @@ class ScrimBand {
           runtimeType == other.runtimeType &&
           top == other.top &&
           full == other.full &&
-          sigma == other.sigma;
+          sigma == other.sigma &&
+          depth == other.depth;
 }
 
 /// 渐进模糊 — how the ground under a floating surface dissolves.
@@ -202,6 +217,10 @@ class ScrimSpec {
   /// edge up. Inside the header, unlike `fade`.
   final double headerRamp;
 
+  /// How far above a floating bar its ground starts. See
+  /// `core::glass::ScrimSpec::foot`.
+  final double foot;
+
   /// Blur sigma at the deepest point; zero below the `Full` tier.
   final double sigma;
   final int bands;
@@ -212,6 +231,7 @@ class ScrimSpec {
   const ScrimSpec({
     required this.fade,
     required this.headerRamp,
+    required this.foot,
     required this.sigma,
     required this.bands,
     required this.wash,
@@ -221,6 +241,7 @@ class ScrimSpec {
   int get hashCode =>
       fade.hashCode ^
       headerRamp.hashCode ^
+      foot.hashCode ^
       sigma.hashCode ^
       bands.hashCode ^
       wash.hashCode;
@@ -232,6 +253,7 @@ class ScrimSpec {
           runtimeType == other.runtimeType &&
           fade == other.fade &&
           headerRamp == other.headerRamp &&
+          foot == other.foot &&
           sigma == other.sigma &&
           bands == other.bands &&
           wash == other.wash;

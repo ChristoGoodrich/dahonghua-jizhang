@@ -181,6 +181,9 @@ pub struct ScrimSpec {
     /// How much of a header's own height the ramp takes, from its bottom
     /// edge up. Inside the header, unlike `fade`.
     pub header_ramp: f64,
+    /// How far above a floating bar its ground starts. See
+    /// `core::glass::ScrimSpec::foot`.
+    pub foot: f64,
     /// Blur sigma at the deepest point; zero below the `Full` tier.
     pub sigma: f64,
     pub bands: u32,
@@ -198,6 +201,15 @@ pub struct ScrimBand {
     pub full: f64,
     /// The sigma this band contributes, not the blur seen through it.
     pub sigma: f64,
+    /// The blur seen through this band and every shallower one — what the
+    /// band applies when every band blurs one shared capture of the page.
+    pub depth: f64,
+}
+
+/// How much of a bottom scrim its ramp takes. See `core::glass::foot_ramp`.
+#[frb(sync)]
+pub fn foot_ramp(foot: f64, surface: f64) -> f64 {
+    core::foot_ramp(foot, surface)
 }
 
 #[frb(sync)]
@@ -209,6 +221,7 @@ pub fn scrim_spec(is_dark: bool, tier: GlassTier) -> ScrimSpec {
     ScrimSpec {
         fade: s.fade,
         header_ramp: s.header_ramp,
+        foot: s.foot,
         sigma: s.sigma,
         bands: s.bands as u32,
         wash: s.wash,
@@ -229,6 +242,7 @@ pub fn scrim_bands(sigma: f64, bands: u32) -> Vec<ScrimBand> {
             top: b.top,
             full: b.full,
             sigma: b.sigma,
+            depth: b.depth,
         })
         .collect()
 }

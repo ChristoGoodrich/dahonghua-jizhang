@@ -98,6 +98,35 @@ void main() {
       );
     });
 
+    /// It fills the tab. It was a 46×30 pill behind the icon, which lit part
+    /// of the icon and none of the label — a chip beside the choice rather
+    /// than the choice being lit.
+    testWidgets('it covers the whole tab it is on, icon and label', (
+      tester,
+    ) async {
+      for (final (i, tag) in [(0, 'a'), (2, 'b'), (3, 'c')]) {
+        await showBar(tester, active: i, tag: tag);
+        final lens = tester.getRect(find.byKey(const Key('tab-lens')));
+        final tab = find.byKey(Key('tab-${labels[i]}'));
+        for (final part in [
+          find.descendant(of: tab, matching: find.byType(Icon)),
+          find.descendant(of: tab, matching: find.text(labels[i])),
+        ]) {
+          final r = tester.getRect(part);
+          expect(
+            lens.contains(r.topLeft) && lens.contains(r.bottomRight),
+            isTrue,
+            reason: 'tab $i: $r is not inside the lens at $lens',
+          );
+        }
+        expect(
+          lens.height,
+          greaterThan(tester.getRect(bar).height * 0.75),
+          reason: 'it stands the height of the bar, less an inset',
+        );
+      }
+    });
+
     /// The whole point. A drag moves the lens continuously and the selection
     /// follows it, rather than the selection changing and the lens catching up.
     testWidgets('a drag pushes it, and the tabs light up as it passes', (

@@ -12,6 +12,8 @@
 
 import 'package:flutter/material.dart';
 
+import 'ledger_days.dart';
+
 import 'bloom.dart';
 import 'bottom_nav.dart';
 import 'calendar_view.dart';
@@ -30,6 +32,7 @@ import 'src/rust/api/store.dart' as store;
 import 'reimburse_screen.dart';
 import 'tap.dart';
 import 'theme.dart';
+import 'toast.dart';
 
 /// `y-m-d` for a local calendar day. The timezone is the platform's, so this
 /// is where an instant becomes a day — never on the other side of the boundary.
@@ -184,11 +187,13 @@ class _EntryListScreenState extends State<EntryListScreen> {
   /// this side beyond one frame's worth, so there is no second copy of the
   /// ledger to fall out of step with.
   void _reload() {
-    final live = store.liveEntries();
-    var ids = live.map((e) => e.id).toList();
-    var days = live
-        .map((e) => localDay(DateTime.fromMillisecondsSinceEpoch(e.ts)))
-        .toList();
+    // Kept between reads until the ledger is written to: this runs on every
+    // keystroke in the search box, and the rows had not changed for any of
+    // them.
+    final l = LedgerDays.current();
+    final live = l.entries;
+    var ids = l.ids;
+    var days = l.days;
 
     final head = home.home(
       ids: ids,
@@ -416,30 +421,27 @@ class _EntryListScreenState extends State<EntryListScreen> {
       custom: const [],
     );
     final what = d.note.isEmpty ? label.name : d.note;
-    ScaffoldMessenger.of(context)
-      ..clearSnackBars()
-      ..showSnackBar(
-        SnackBar(
-          key: const Key('template-logged'),
-          content: Text(
-            zh
-                ? '记了一笔 $what ${money.fmtSigned(n: d.amt, io: d.io)}'
-                : 'Logged $what ${money.fmtSigned(n: d.amt, io: d.io)}',
-          ),
-          action: SnackBarAction(
-            key: const Key('template-undo'),
-            label: zh ? '撤销' : 'Undo',
-            onPressed: () {
-              store.removeEntry(
-                id: entryId,
-                now: DateTime.now().millisecondsSinceEpoch,
-              );
-              widget.onChanged?.call();
-              _reload();
-            },
-          ),
-        ),
-      );
+    showToast(
+      context,
+      key: const Key('template-logged'),
+      text: zh
+          ? '记了一笔 $what ${money.fmtSigned(n: d.amt, io: d.io)}'
+          : 'Logged $what ${money.fmtSigned(n: d.amt, io: d.io)}',
+      action: ToastAction(
+        key: const Key('template-undo'),
+        label: zh ? '撤销' : 'Undo',
+        onPressed: () {
+          store.removeEntry(
+            id: entryId,
+            now: DateTime.now().millisecondsSinceEpoch,
+          );
+          widget.onChanged?.call();
+          // The notice outlives this list: the shell recreated it when the
+          // entry went in, so the list that showed it may be gone.
+          if (mounted) _reload();
+        },
+      ),
+    );
   }
 
   void _stepCal(int dir) {
@@ -875,6 +877,11 @@ class _EntryListScreenState extends State<EntryListScreen> {
         ),
         child: Icon(Icons.delete_outline, color: palette.warn),
       ),
+      // Asks first. A swipe is the cheapest gesture in the list and the one
+      // most often made on the way to something else; declined, the row
+      // slides back.
+      confirmDismiss: (_) =>
+          confirmDelete(context, zh: zh, what: _describe(e, zh)),
       onDismissed: (_) => _delete(e, zh),
       child: _entryCard(e, zh, group: group),
     );
@@ -899,24 +906,41 @@ class _EntryListScreenState extends State<EntryListScreen> {
     _reload();
     if (undo == null || !mounted) return;
 
-    ScaffoldMessenger.of(context)
-      ..clearSnackBars()
-      ..showSnackBar(
-        SnackBar(
-          content: Text(zh ? '已删除' : 'Deleted'),
-          action: SnackBarAction(
-            label: zh ? '撤销' : 'Undo',
-            onPressed: () {
-              store.unremoveEntry(
-                undo: undo,
-                now: DateTime.now().millisecondsSinceEpoch,
-              );
-              widget.onChanged?.call();
-              _reload();
-            },
-          ),
-        ),
-      );
+    showToast(
+      context,
+      key: const Key('deleted-toast'),
+      text: zh ? '已删除' : 'Deleted',
+      action: ToastAction(
+        key: const Key('deleted-undo'),
+        label: zh ? '撤销' : 'Undo',
+        onPressed: () {
+          store.unremoveEntry(
+            undo: undo,
+            now: DateTime.now().millisecondsSinceEpoch,
+          );
+          widget.onChanged?.call();
+          // The shell recreated this list when the row went, so the one that
+          // put the notice up is usually gone by the time 撤销 is pressed; the
+          // new one reads the store itself.
+          if (mounted) _reload();
+        },
+      ),
+    );
+  }
+
+  /// What a delete is about to take, in the words of the row: its category,
+  /// its note, its amount and its day.
+  String _describe(store.EntryView e, bool zh) {
+    final label = catalog.catLabel(
+      io: e.io,
+      key: e.cat,
+      zh: zh,
+      custom: const [],
+    );
+    final d = DateTime.fromMillisecondsSinceEpoch(e.ts);
+    final note = (e.note ?? '').isEmpty ? '' : ' · ${e.note}';
+    final day = zh ? '${d.month}月${d.day}日' : '${d.month}/${d.day}';
+    return '${label.name}$note  ${money.fmtSigned(n: e.amt, io: e.io)}  $day';
   }
 
   Widget _header(store.ListItem item, bool zh) {
@@ -1259,6 +1283,23 @@ class _EntryListScreenState extends State<EntryListScreen> {
   /// pointing at a row that is still deleted.
   Future<void> _batchDelete(bool zh) async {
     final ids = _picked!.toList();
+    final rows = [
+      for (final id in ids.take(3))
+        if (_byId[id] != null) _describe(_byId[id]!, zh),
+    ];
+    final ok = await confirmDelete(
+      context,
+      zh: zh,
+      count: ids.length,
+      what: [
+        ...rows,
+        if (ids.length > rows.length)
+          zh
+              ? '…还有 ${ids.length - rows.length} 笔'
+              : '…and ${ids.length - rows.length} more',
+      ].join('\n'),
+    );
+    if (!ok || !mounted) return;
     final undo = batch.removeAll(
       ids: ids,
       now: DateTime.now().millisecondsSinceEpoch,
@@ -1268,24 +1309,23 @@ class _EntryListScreenState extends State<EntryListScreen> {
     _reload();
     if (undo.isEmpty || !mounted) return;
 
-    ScaffoldMessenger.of(context)
-      ..clearSnackBars()
-      ..showSnackBar(
-        SnackBar(
-          content: Text(zh ? '已删除 ${undo.length} 项' : 'Deleted ${undo.length}'),
-          action: SnackBarAction(
-            label: zh ? '撤销' : 'Undo',
-            onPressed: () {
-              batch.unremoveAll(
-                undo: undo,
-                now: DateTime.now().millisecondsSinceEpoch,
-              );
-              widget.onChanged?.call();
-              _reload();
-            },
-          ),
-        ),
-      );
+    showToast(
+      context,
+      key: const Key('deleted-toast'),
+      text: zh ? '已删除 ${undo.length} 项' : 'Deleted ${undo.length}',
+      action: ToastAction(
+        key: const Key('deleted-undo'),
+        label: zh ? '撤销' : 'Undo',
+        onPressed: () {
+          batch.unremoveAll(
+            undo: undo,
+            now: DateTime.now().millisecondsSinceEpoch,
+          );
+          widget.onChanged?.call();
+          if (mounted) _reload();
+        },
+      ),
+    );
   }
 
   /// Move the lot into one category.
@@ -1397,7 +1437,11 @@ class _EntryListScreenState extends State<EntryListScreen> {
       amt: e.amt,
       isPending: e.rb == 'pending',
       zh: zh,
-      onDelete: () => _delete(e, zh),
+      onDelete: () async {
+        if (await confirmDelete(context, zh: zh, what: _describe(e, zh))) {
+          _delete(e, zh);
+        }
+      },
     );
     _endSelecting();
     if (changed) widget.onChanged?.call();
@@ -1415,17 +1459,12 @@ class _EntryListScreenState extends State<EntryListScreen> {
     widget.onChanged?.call();
     _reload();
     if (!mounted) return;
-    ScaffoldMessenger.of(context)
-      ..clearSnackBars()
-      ..showSnackBar(
-        SnackBar(
-          content: Text(
-            written == 0
-                ? (zh ? '没有需要修改的' : 'Nothing to change')
-                : (zh ? '已修改 $written 项' : 'Changed $written'),
-          ),
-        ),
-      );
+    showToast(
+      context,
+      text: written == 0
+          ? (zh ? '没有需要修改的' : 'Nothing to change')
+          : (zh ? '已修改 $written 项' : 'Changed $written'),
+    );
   }
 }
 

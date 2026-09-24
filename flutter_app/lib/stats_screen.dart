@@ -19,6 +19,8 @@
 // drawn either way, and nothing about a wrong one looks wrong.
 
 import 'package:flutter/material.dart';
+
+import 'ledger_days.dart';
 import 'package:flutter/services.dart';
 
 import 'charts.dart';
@@ -27,7 +29,6 @@ import 'segmented.dart';
 import 'src/rust/api/money.dart' as money;
 import 'src/rust/api/period.dart' as period;
 import 'src/rust/api/stats.dart' as stats;
-import 'src/rust/api/store.dart' as store;
 import 'tap.dart';
 import 'theme.dart';
 
@@ -115,7 +116,7 @@ class _StatsScreenState extends State<StatsScreen>
     final days = <String>[];
     final dows = <int>[];
     final hours = <int>[];
-    for (final e in store.liveEntries()) {
+    for (final e in LedgerDays.current().entries) {
       final d = DateTime.fromMillisecondsSinceEpoch(e.ts);
       ids.add(e.id);
       days.add(_day(d));

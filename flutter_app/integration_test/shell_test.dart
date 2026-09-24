@@ -278,24 +278,46 @@ void main() {
       await tapTab(tester, '资产');
       expect(textOf(tester, 'net-worth'), '￥-99.00');
     });
+
+    /// 撤销 in the shell, not on a list shown alone. The delete tells the
+    /// shell, the shell recreates the list, and the notice's 撤销 belonged
+    /// to the list that was gone: it put the row back and then called
+    /// setState on a disposed state, every time. The tests of the list on
+    /// its own could not see it, because nothing recreated that list.
+    testWidgets('撤销 after a delete works where the list is recreated', (
+      tester,
+    ) async {
+      add('e1', 35.5, note: '午饭');
+      await shell(tester);
+      await tester.drag(find.byKey(const Key('row-e1')), const Offset(-500, 0));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('entry-delete-ok')));
+      await tester.pumpAndSettle();
+      expect(store.liveEntries(), isEmpty);
+
+      await tester.tap(find.byKey(const Key('deleted-undo')));
+      await tester.pumpAndSettle();
+      expect(store.liveEntries(), hasLength(1));
+      expect(find.text('午饭'), findsOneWidget, reason: 'and the list shows it');
+    });
   });
 
   group('the four tabs have one header', () {
-    /// The large title, told apart from the tab bar's label of the same word
-    /// by its size.
-    Finder title(String text, double size) => find.byWidgetPredicate(
-      (w) => w is Text && w.data == text && w.style?.fontSize == size,
+    /// The title, told apart from the tab bar's label of the same word by its
+    /// size.
+    Finder title(String text) => find.byWidgetPredicate(
+      (w) => w is Text && w.data == text && w.style?.fontSize == 26,
     );
 
     /// They used to disagree: 明细 and 统计 titled themselves in a 20px app
-    /// bar, 资产 and 我的 with a 26px title inside the list, so the heading
-    /// jumped size and height as the tab bar was used. The rule now is one
-    /// large title in one place, and this is the rule.
-    testWidgets('every tab puts its large title at the same height', (
+    /// bar, 资产 and 我的 with a 26px title inside the list. Then all four had
+    /// a large title under a bar of actions, a row spent on a word. The rule
+    /// now is the title and the actions on one row, the same row on every tab.
+    testWidgets('every tab puts its title on the row of its actions', (
       tester,
     ) async {
       await shell(tester);
-      final tops = <String, double>{};
+      final rows = <String, double>{};
       for (final (tab, heading) in [
         ('明细', '大红花记账'),
         ('统计', '统计'),
@@ -303,25 +325,37 @@ void main() {
         ('我的', '我的'),
       ]) {
         await tapTab(tester, tab);
-        final f = title(heading, 28);
-        expect(f, findsOneWidget, reason: '$tab has a large title');
-        tops[tab] = tester.getTopLeft(f).dy;
+        final f = title(heading);
+        expect(f, findsOneWidget, reason: '$tab has a title');
+        final bar = find.ancestor(of: f, matching: find.byType(AppBar));
+        expect(bar, findsOneWidget, reason: '$tab: the title is in the bar');
+        rows[tab] = tester.getCenter(f).dy;
       }
-      final first = tops.values.first;
-      for (final e in tops.entries) {
-        expect(e.value, closeTo(first, 0.5), reason: '${e.key}: $tops');
+      final first = rows.values.first;
+      for (final e in rows.entries) {
+        expect(e.value, closeTo(first, 0.5), reason: '${e.key}: $rows');
+      }
+
+      // 明细's three buttons are on that row too
+      await tapTab(tester, '明细');
+      final y = tester.getCenter(title('大红花记账')).dy;
+      for (final k in ['select-toggle', 'calendar-toggle', 'search-toggle']) {
+        final b = find.byKey(Key(k));
+        expect(b, findsOneWidget, reason: k);
+        expect(
+          tester.getCenter(b).dy,
+          closeTo(y, 2),
+          reason: '$k is beside it',
+        );
       }
     });
 
-    /// A large title that scrolls away leaves a screen that no longer says
-    /// what it is, so the bar takes it up as it goes under — and not before:
-    /// at rest the title is on the screen once, not twice.
-    testWidgets('the bar takes the title up once it has scrolled under', (
-      tester,
-    ) async {
+    /// Nothing scrolls away, so nothing has to be picked back up: the title
+    /// is where it was, once.
+    testWidgets('the title stays put as the list scrolls', (tester) async {
       await shell(tester);
       await tapTab(tester, '我的');
-      expect(title('我的', 17), findsNothing, reason: 'not while it is visible');
+      final at = tester.getCenter(title('我的'));
 
       await tester.drag(
         find.descendant(
@@ -331,7 +365,8 @@ void main() {
         const Offset(0, -200),
       );
       await tester.pumpAndSettle();
-      expect(title('我的', 17), findsOneWidget);
+      expect(title('我的'), findsOneWidget);
+      expect(tester.getCenter(title('我的')), at);
     });
   });
 }

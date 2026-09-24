@@ -22,7 +22,6 @@ import 'assets_screen.dart';
 import 'backup_screen.dart';
 import 'bottom_nav.dart';
 import 'budget_screen.dart';
-import 'bloom.dart';
 import 'petal_burst.dart';
 import 'budget_widget.dart';
 import 'currency_screen.dart';
@@ -42,10 +41,13 @@ import 'report_screen.dart';
 import 'stats_screen.dart';
 import 'subs_screen.dart';
 import 'theme.dart';
+import 'toast.dart';
 import 'src/rust/api/budget.dart' as budget;
 import 'src/rust/api/history.dart' as history;
 import 'src/rust/api/store.dart' as store;
+import 'src/rust/api/theme.dart' as theme;
 import 'src/rust/frb_generated.dart';
+import 'ledger_days.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -170,9 +172,36 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   /// language would translate the app a screen at a time.
   bool _zh = store.language() != 'en';
 
-  /// Bumped whenever the ledger or the config changes, and used as a key so
-  /// every screen re-reads the store instead of holding a stale copy of it.
-  int _listVersion = 0;
+  /// One number per tab, bumped when the ledger or the config changes and
+  /// used as that tab's key, so it re-reads the store instead of holding a
+  /// stale copy of it.
+  ///
+  /// Per tab rather than one for all four, because recreating all four is
+  /// expensive and almost never urgent: at 3,000 entries it was 89ms on an
+  /// emulator, a phone is slower, and it ran on every change a screen pushed
+  /// from 我的 reported — under the finger of whoever was using that screen.
+  /// See [_invalidate].
+  final _versions = [0, 0, 0, 0];
+
+  /// How many routes are over the shell right now.
+  int _covered = 0;
+
+  /// A change arrived while a route covered the tabs it did not refresh.
+  bool _stale = false;
+
+  /// Which refresh is current, so an older one's remaining steps stand down.
+  int _generation = 0;
+
+  /// The flower, the room and the language — the part of the config the root
+  /// has to rebuild for. See [_configChanged].
+  (String, bool, String) _look = _lookNow();
+
+  static (String, bool, String) _lookNow() =>
+      (theme.themeKey(), theme.isDark(), store.language());
+
+  /// 我的's streak, and the version of 我的 it was worked out for.
+  (int, int)? _streakKept;
+  int _streakAt = -1;
 
   /// The capture inbox, drained on every return to the foreground.
   ///
@@ -229,28 +258,106 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   void _entriesChanged() {
     widget.store?.touchEntries();
     _pushWidget();
-    setState(() => _listVersion++);
+    _invalidate();
   }
 
   void _configChanged() {
     widget.store?.touchConfig();
     _pushWidget();
-    setState(() {
-      _zh = store.language() != 'en';
-      _listVersion++;
-    });
-    // The theme lives in the config too, and only the root can carry it into
-    // `MaterialApp`. Called unconditionally rather than on a theme-shaped
-    // change: a rebuild of one widget is cheaper than knowing which setting
-    // moved.
-    widget.onThemeChanged?.call();
+    _zh = store.language() != 'en';
+    _invalidate();
+    // The flower and the language live in the config too, and only the root
+    // can carry them into `MaterialApp`. Only when one of them moved: this
+    // used to fire on every setting, and a new `ThemeData` rebuilds every
+    // widget that reads the theme — which is all of them, the screen being
+    // used included — to add a tag.
+    final look = _lookNow();
+    if (look != _look) {
+      _look = look;
+      widget.onThemeChanged?.call();
+    }
   }
 
   void _bothChanged() {
     widget.store?.touchEntries();
     widget.store?.touchConfig();
     _pushWidget();
-    setState(() => _listVersion++);
+    _invalidate();
+  }
+
+  /// The store changed: the tabs have to read it again.
+  ///
+  /// The one showing reads now — it is what a route over it will reveal when
+  /// it goes, and 明细 has to have the entry the record sheet just saved by
+  /// the time the sheet slides off it. The other three are nobody's to look
+  /// at: they wait for the routes to go, and then read one a frame, so no
+  /// frame carries all four.
+  void _invalidate() {
+    final gen = ++_generation;
+    setState(() => _versions[_tab]++);
+    final rest = [
+      for (var i = 0; i < _versions.length; i++)
+        if (i != _tab) i,
+    ];
+    if (_covered > 0) {
+      _stale = true;
+      return;
+    }
+    _stagger(gen, rest);
+  }
+
+  void _stagger(int gen, List<int> tabs) {
+    if (tabs.isEmpty) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || gen != _generation) return;
+      setState(() => _versions[tabs.first]++);
+      _stagger(gen, tabs.sublist(1));
+    });
+  }
+
+  /// Push `route` over the shell, and hold the tabs it hides until it is gone.
+  ///
+  /// Returns when the route pops, which is when its exit animation *starts* —
+  /// so a caller can react at once. The held refresh waits for the animation
+  /// to finish: reading three tabs' worth of ledger in the first frame of it
+  /// is what made going back stutter.
+  Future<T?> _cover<T>(Route<T> route) async {
+    _covered++;
+    try {
+      return await Navigator.of(context).push(route);
+    } finally {
+      unawaited(_uncover(route));
+    }
+  }
+
+  Future<void> _uncover(Route<dynamic> route) async {
+    final a = route is ModalRoute ? route.animation : null;
+    if (a != null && a.status != AnimationStatus.dismissed) {
+      final gone = Completer<void>();
+      void listen(AnimationStatus s) {
+        if (s == AnimationStatus.dismissed && !gone.isCompleted) {
+          gone.complete();
+        }
+      }
+
+      a.addStatusListener(listen);
+      // A route removed without an exit animation never reaches dismissed,
+      // and a shell waiting on it forever would never refresh again.
+      await gone.future.timeout(
+        const Duration(milliseconds: 800),
+        onTimeout: () {},
+      );
+      a.removeStatusListener(listen);
+    }
+    _covered--;
+    if (_covered == 0 && _stale && mounted) {
+      _stale = false;
+      final gen = ++_generation;
+      _stagger(gen, [
+        for (var i = 0; i < _versions.length; i++)
+          if (i != _tab) i,
+      ]);
+    }
   }
 
   /// Open the record sheet. `editId` null records a new entry.
@@ -259,7 +366,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   /// which is the behaviour without the shell having to track it.
   Future<void> _record({String? editId, int? at}) async {
     var saved = 0;
-    await Navigator.of(context).push(
+    await _cover(
       MaterialPageRoute<void>(
         builder: (_) => sheet.RecordSheet(
           editId: editId,
@@ -272,8 +379,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         ),
       ),
     );
-    // the sheet may have written rows while it was up
-    setState(() {});
     // A flower for each new entry, the shipping app's reward — played once
     // the sheet has gone, where the + button it comes out of can be seen.
     // Not for an edit, which planted nothing.
@@ -306,30 +411,19 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       Overlay.of(context).insert(entry);
     }
     if (toast != null) {
-      ScaffoldMessenger.of(context)
-        ..clearSnackBars()
-        ..showSnackBar(
-          SnackBar(
-            key: const Key('bloom-toast'),
-            duration: const Duration(milliseconds: 1600),
-            content: Row(
-              children: [
-                Bloom(size: 18, petal: palette.hibiscus),
-                const SizedBox(width: 10),
-                Text(toast),
-              ],
-            ),
-          ),
-        );
+      showToast(
+        context,
+        key: const Key('bloom-toast'),
+        text: toast,
+        duration: const Duration(milliseconds: 1600),
+      );
     }
   }
 
-  Future<void> _push(Widget screen) async {
-    await Navigator.of(
-      context,
-    ).push(MaterialPageRoute<void>(builder: (_) => screen));
-    setState(() {});
-  }
+  /// A screen from a hub. Nothing to do when it comes back: whatever it
+  /// changed, it reported, and the tabs it hid refresh once it has gone.
+  Future<void> _push(Widget screen) =>
+      _cover(MaterialPageRoute<void>(builder: (_) => screen));
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -337,35 +431,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     body: IndexedStack(
       index: _tab,
       children: [
-        EntryListScreen(
-          key: ValueKey(_listVersion),
-          zh: _zh,
-          onEdit: (id) => _record(editId: id),
-          onChanged: _entriesChanged,
-          onSelecting: (v) => setState(() => _selecting = v),
-          onOpenBudget: () =>
-              _push(BudgetScreen(zh: _zh, onChanged: _configChanged)),
-          onOpenStats: () => setState(() => _tab = 1),
-          onRecordAt: (ts) => _record(at: ts),
-          onLogged: () => _celebrate(),
-          onPrivacy: _configChanged,
-        ),
-        StatsScreen(
-          key: ValueKey(_listVersion),
-          zh: _zh,
-          onEdit: (id) => _record(editId: id),
-        ),
-        AssetsScreen(
-          key: ValueKey(_listVersion),
-          zh: _zh,
-          onChanged: _bothChanged,
-        ),
-        MeScreen(
-          key: ValueKey(_listVersion),
-          zh: _zh,
-          groups: _meGroups(),
-          streak: _streak(),
-        ),
+        for (final (i, tab) in _tabs().indexed)
+          // A tab that is not showing does not tick. `IndexedStack` keeps all
+          // four alive, and a chart's reveal or a lens's spring running on one
+          // nobody can see was a frame scheduled for nothing — while a screen
+          // pushed over the lot was trying to have that frame.
+          TickerMode(enabled: i == _tab, child: tab),
       ],
     ),
     // The bar floats over the content rather than sitting under it, which is
@@ -377,25 +448,61 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     bottomNavigationBar: _selecting ? null : _bar(),
   );
 
+  List<Widget> _tabs() => [
+    EntryListScreen(
+      key: ValueKey(_versions[0]),
+      zh: _zh,
+      onEdit: (id) => _record(editId: id),
+      onChanged: _entriesChanged,
+      onSelecting: (v) => setState(() => _selecting = v),
+      onOpenBudget: () =>
+          _push(BudgetScreen(zh: _zh, onChanged: _configChanged)),
+      onOpenStats: () => setState(() => _tab = 1),
+      onRecordAt: (ts) => _record(at: ts),
+      onLogged: () => _celebrate(),
+      onPrivacy: _configChanged,
+    ),
+    StatsScreen(
+      key: ValueKey(_versions[1]),
+      zh: _zh,
+      onEdit: (id) => _record(editId: id),
+    ),
+    AssetsScreen(key: ValueKey(_versions[2]), zh: _zh, onChanged: _bothChanged),
+    MeScreen(
+      key: ValueKey(_versions[3]),
+      zh: _zh,
+      groups: _meGroups(),
+      streak: _streakFor(_versions[3]),
+    ),
+  ];
+
+  /// The streak, worked out once per version of 我的 rather than on every
+  /// build of the shell — which is every tab switch.
+  (int, int)? _streakFor(int version) {
+    if (version != _streakAt) {
+      _streakKept = _streak();
+      _streakAt = version;
+    }
+    return _streakKept;
+  }
+
   /// How many entries this cycle, and how many days in a row.
   ///
   /// Both are the core's arithmetic over days Dart resolved — "consecutive" is
   /// a claim about calendar days, and which day an instant falls on is the
   /// device's zone to answer. Null before there is anything to say.
   (int, int)? _streak() {
-    final live = store.liveEntries();
-    if (live.isEmpty) return null;
-    final today = DateTime.now();
-    final days = live.map((e) {
-      final d = DateTime.fromMillisecondsSinceEpoch(e.ts);
-      return '${d.year}-${d.month}-${d.day}';
-    }).toList();
-    final todayKey = '${today.year}-${today.month}-${today.day}';
-    final ids = live.map((e) => e.id).toList();
-    final inCycle = budget.cycleIds(ids: ids, daysOf: days, today: todayKey);
+    final l = LedgerDays.current();
+    if (l.ids.isEmpty) return null;
+    final todayKey = dayKey(DateTime.now());
+    final inCycle = budget.cycleIds(
+      ids: l.ids,
+      daysOf: l.days,
+      today: todayKey,
+    );
     return (
       inCycle.length,
-      history.streak(days: days, today: todayKey).toInt(),
+      history.streak(days: l.days, today: todayKey).toInt(),
     );
   }
 

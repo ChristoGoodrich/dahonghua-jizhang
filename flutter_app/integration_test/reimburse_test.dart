@@ -79,8 +79,9 @@ void main() {
       expect(rb.claims(zh: true).items, isEmpty);
     });
 
-    testWidgets('toggling a SETTLED claim re-opens it rather than clearing',
-        (tester) async {
+    testWidgets('toggling a SETTLED claim re-opens it rather than clearing', (
+      tester,
+    ) async {
       // `rb === 'pending'` and not `rb != null` — a settled claim that was
       // settled by mistake goes back to pending, which is the recoverable
       // state, not to nothing
@@ -99,7 +100,10 @@ void main() {
       claim('e1');
       final before = store.getEntry(id: 'e1')!.updatedAt!;
       claim('e1');
-      expect(store.getEntry(id: 'e1')!.updatedAt!, greaterThanOrEqualTo(before));
+      expect(
+        store.getEntry(id: 'e1')!.updatedAt!,
+        greaterThanOrEqualTo(before),
+      );
       expect(store.getEntry(id: 'e1')!.rb, isNull);
     });
   });
@@ -116,8 +120,9 @@ void main() {
       expect(textOf(tester, 'rb-done-sum'), '￥0.00');
     });
 
-    testWidgets('reimbursed sums what came BACK, not what was spent',
-        (tester) async {
+    testWidgets('reimbursed sums what came BACK, not what was spent', (
+      tester,
+    ) async {
       // settled for less than it cost: the two totals differ, and that
       // difference is the number the screen exists to show
       spend('e1', 120);
@@ -129,21 +134,21 @@ void main() {
       expect(textOf(tester, 'claim-e1-state'), '已报销');
     });
 
-    testWidgets('a settled claim says both numbers when they differ',
-        (tester) async {
+    testWidgets('a settled claim says both numbers when they differ', (
+      tester,
+    ) async {
       spend('e1', 120);
       claim('e1');
       rb.confirmReimburse(id: 'e1', now: now);
       // the amount changed after settling — the claim keeps what came back
-      store.updateEntry(
-        id: 'e1',
-        patch: store.EntryPatch(amt: 200),
-        now: now,
-      );
+      store.updateEntry(id: 'e1', patch: store.EntryPatch(amt: 200), now: now);
       await show(tester);
 
       expect(textOf(tester, 'claim-e1-amt'), '￥120.00'); // what came back
-      expect(textOf(tester, 'claim-e1-sub'), contains('￥200.00')); // what it cost
+      expect(
+        textOf(tester, 'claim-e1-sub'),
+        contains('￥200.00'),
+      ); // what it cost
     });
   });
 
@@ -153,8 +158,9 @@ void main() {
       expect(find.byKey(const Key('no-claims')), findsOneWidget);
     });
 
-    testWidgets('is newest first, pending and settled together',
-        (tester) async {
+    testWidgets('is newest first, pending and settled together', (
+      tester,
+    ) async {
       // sorted by date rather than grouped by state, so a claim does not jump
       // when it is settled
       const day = 86400000;
@@ -208,7 +214,12 @@ void main() {
     testWidgets('log a linked income and raise the counter', (tester) async {
       spend('e1', 120, note: '打车');
       final got = rb.refundEntry(
-          id: 'e1', amount: 50, zh: true, newId: 'rf1', now: now);
+        id: 'e1',
+        amount: 50,
+        zh: true,
+        newId: 'rf1',
+        now: now,
+      );
 
       expect(got, 50);
       expect(store.getEntry(id: 'e1')!.refund, 50);
@@ -219,8 +230,9 @@ void main() {
       expect(income.refundOf, 'e1');
     });
 
-    testWidgets('a note-less expense is labelled by its category',
-        (tester) async {
+    testWidgets('a note-less expense is labelled by its category', (
+      tester,
+    ) async {
       spend('e1', 120);
       rb.refundEntry(id: 'e1', amount: 50, zh: true, newId: 'rf1', now: now);
       expect(store.getEntry(id: 'rf1')!.note, '退款·餐饮');
@@ -230,25 +242,37 @@ void main() {
       spend('e1', 120);
       rb.refundEntry(id: 'e1', amount: 100, zh: true, newId: 'rf1', now: now);
       final second = rb.refundEntry(
-          id: 'e1', amount: 999, zh: true, newId: 'rf2', now: now);
+        id: 'e1',
+        amount: 999,
+        zh: true,
+        newId: 'rf2',
+        now: now,
+      );
 
       expect(second, 20);
       expect(store.getEntry(id: 'e1')!.refund, 120);
     });
 
-    testWidgets('a fully refunded expense refunds nothing more',
-        (tester) async {
+    testWidgets('a fully refunded expense refunds nothing more', (
+      tester,
+    ) async {
       spend('e1', 120);
       rb.refundEntry(id: 'e1', amount: 120, zh: true, newId: 'rf1', now: now);
       final again = rb.refundEntry(
-          id: 'e1', amount: 10, zh: true, newId: 'rf2', now: now);
+        id: 'e1',
+        amount: 10,
+        zh: true,
+        newId: 'rf2',
+        now: now,
+      );
 
       expect(again, 0);
       expect(store.getEntry(id: 'rf2'), isNull); // no second income written
     });
 
-    testWidgets('the remaining amount is what the dialog opens on',
-        (tester) async {
+    testWidgets('the remaining amount is what the dialog opens on', (
+      tester,
+    ) async {
       spend('e1', 120);
       rb.refundEntry(id: 'e1', amount: 50, zh: true, newId: 'rf1', now: now);
       final s = rb.refundState(id: 'e1')!;
@@ -259,7 +283,12 @@ void main() {
     testWidgets('an unknown id refunds nothing', (tester) async {
       expect(
         rb.refundEntry(
-            id: 'nope', amount: 10, zh: true, newId: 'rf1', now: now),
+          id: 'nope',
+          amount: 10,
+          zh: true,
+          newId: 'rf1',
+          now: now,
+        ),
         0,
       );
       expect(rb.refundState(id: 'nope'), isNull);
@@ -277,8 +306,9 @@ void main() {
       expect(find.byKey(const Key('action-refund')), findsOneWidget);
     });
 
-    testWidgets('offers delete, which the swipe alone did not advertise',
-        (tester) async {
+    testWidgets('offers delete, which the swipe alone did not advertise', (
+      tester,
+    ) async {
       // Deleting has always been a left swipe and still is. It is in the menu
       // too because a gesture with no visible affordance is a gesture you have
       // to already know about, and the menu is where someone looks when they
@@ -290,13 +320,17 @@ void main() {
       expect(find.byKey(const Key('action-delete')), findsOneWidget);
     });
 
-    testWidgets('deleting from the menu removes the row and can be undone',
-        (tester) async {
+    testWidgets('deleting from the menu removes the row and can be undone', (
+      tester,
+    ) async {
       spend('e1', 120, note: '打车');
       await showList(tester);
 
       await openActions(tester, '打车');
       await tester.tap(find.byKey(const Key('action-delete')));
+      await tester.pumpAndSettle();
+      expect(store.liveEntries(), hasLength(1), reason: 'it asks first');
+      await tester.tap(find.byKey(const Key('entry-delete-ok')));
       await tester.pumpAndSettle();
 
       expect(find.text('打车'), findsNothing);

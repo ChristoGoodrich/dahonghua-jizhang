@@ -43,9 +43,15 @@ const double _add = 60;
 const double _addGap = 10;
 const double _barH = 64;
 
-/// The sliding indicator behind the active tab.
-const double _pillW = 46;
-const double _pillH = 30;
+/// How far the lens stands in from the bar's edge, top and bottom — and, at
+/// the two ends, from its sides, because it is a tab wider than its slot by
+/// the padding the bar gives its row.
+///
+/// It used to be a 46×30 pill behind the icon alone, which lit part of the
+/// icon and none of the label and read as a stray chip rather than as the
+/// tab being chosen. A lens that fills the tab, rounded to the bar, is the
+/// HyperOS and iOS shape — and the same one the reference screenshots show.
+const double _lensInset = 6;
 
 /// How far the content below has to stay clear of the bar.
 ///
@@ -70,13 +76,19 @@ double navBottomPad(BuildContext context) {
 /// The scrim fills the slot and the bar is placed at its foot. Both bars are
 /// `_barH` tall and both clear the gesture inset by `navBottomPad`, so the only
 /// thing that changes when a selection starts is what is drawn inside.
+///
+/// The ground starts [scrimFoot] above the bar rather than a whole `fade`: that
+/// reached most of a bar-height up the list, and rows well clear of the bar
+/// were already soft. Its ramp runs on into the bar's upper half, where the
+/// bar's own glass carries the rest.
 Widget navScrimBox(BuildContext context, {required Widget child}) {
   final pad = navBottomPad(context);
+  final foot = scrimFoot(context, _barH);
   return SizedBox(
-    height: scrimFade(context) + _barH + pad,
+    height: foot.foot + _barH + pad,
     child: Stack(
       children: [
-        const Positioned.fill(child: GlassScrim()),
+        Positioned.fill(child: GlassScrim(ramp: foot.ramp)),
         Positioned(left: 0, right: 0, bottom: pad, height: _barH, child: child),
       ],
     ),
@@ -372,21 +384,24 @@ class _TabRowState extends State<_TabRow> with SingleTickerProviderStateMixin {
             Positioned.fill(
               child: AnimatedBuilder(
                 animation: _pos,
-                builder: (context, child) => Align(
-                  alignment: Alignment.topLeft,
-                  child: Transform.translate(
-                    // 10 from the top, not centred. The lens sits behind the
-                    // ICON; centring it in a 64-tall bar puts it straddling
-                    // the gap between icon and label, which reads as a stray
-                    // pill rather than as the icon being lit.
-                    offset: Offset(_pos.value - _pillW / 2, 10),
-                    child: LiquidLens(
-                      width: _pillW,
-                      height: _pillH,
-                      velocity: _velocity,
+                builder: (context, child) {
+                  // The whole tab, icon and label: the slot plus the row's
+                  // padding on either side less the inset, and the bar's
+                  // height less the inset above and below.
+                  final w = widget.itemW + 2 * (_pad - _lensInset);
+                  return Align(
+                    alignment: Alignment.topLeft,
+                    child: Transform.translate(
+                      offset: Offset(_pos.value - w / 2, _lensInset),
+                      child: LiquidLens(
+                        key: const Key('tab-lens'),
+                        width: w,
+                        height: _barH - 2 * _lensInset,
+                        velocity: _velocity,
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                },
               ),
             ),
             Row(

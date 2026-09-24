@@ -33,6 +33,7 @@ use dahonghua_core::money::Currencies;
 use dahonghua_core::rows::{entry_from_value, entry_to_value};
 use dahonghua_core::store::{ImportedBill, Store, TransferOpts};
 use flutter_rust_bridge::frb;
+use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::{Mutex, MutexGuard, OnceLock};
 
 use crate::api::db;
@@ -78,6 +79,7 @@ pub(crate) fn store() -> StoreRef {
 /// slower save; marking too little costs the data, which is the failure this
 /// function exists to make impossible to reach by accident.
 pub(crate) fn store_mut() -> MutexGuard<'static, Store> {
+    REVISION.fetch_add(1, Ordering::Relaxed);
     db::mark_all();
     lock()
 }
@@ -89,7 +91,24 @@ pub(crate) fn store_mut() -> MutexGuard<'static, Store> {
 /// would rewrite the ledger on every keystroke. Everything else uses
 /// [`store_mut`].
 pub(crate) fn store_marked() -> MutexGuard<'static, Store> {
+    REVISION.fetch_add(1, Ordering::Relaxed);
     lock()
+}
+
+/// Bumped by every write access, whether or not it went on to write.
+///
+/// So the platform can keep what it read from the ledger until the ledger may
+/// have changed, instead of asking for every row again to find out. Seven
+/// screens began by reading every live entry and turning each into a calendar
+/// day — about 9ms at 3,000 rows before any of them had computed anything —
+/// and most of the time nothing had been written since the last one did.
+/// Taken at write *access*, not at a write, so it can only err toward reading
+/// again.
+static REVISION: AtomicU32 = AtomicU32::new(0);
+
+#[frb(sync)]
+pub fn revision() -> u32 {
+    REVISION.load(Ordering::Relaxed)
 }
 
 /// The ledger's rows, by id.

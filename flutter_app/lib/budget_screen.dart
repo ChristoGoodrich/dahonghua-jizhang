@@ -16,11 +16,12 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
+import 'ledger_days.dart';
+
 import 'charts.dart';
 import 'src/rust/api/budget.dart' as budget;
 import 'src/rust/api/money.dart' as money;
 import 'src/rust/api/stats.dart' as stats;
-import 'src/rust/api/store.dart' as store;
 import 'tap.dart';
 import 'glass.dart';
 import 'theme.dart';
@@ -55,11 +56,9 @@ class _BudgetScreenState extends State<BudgetScreen> {
   }
 
   void _reload() {
-    final live = store.liveEntries();
-    final ids = live.map((e) => e.id).toList();
-    final days = live
-        .map((e) => _day(DateTime.fromMillisecondsSinceEpoch(e.ts)))
-        .toList();
+    final l = LedgerDays.current();
+    final ids = l.ids;
+    final days = l.days;
     final today = _day(DateTime.now());
 
     // the cycle is not the calendar month — it turns over on `cycleStart`, and
