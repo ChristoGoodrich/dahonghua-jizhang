@@ -103,6 +103,7 @@ class BottomNav extends StatelessWidget {
     required this.onAdd,
     required this.labels,
     this.addKey,
+    this.onAddLong,
   });
 
   /// 0..3 — 明细 / 统计 / 资产 / 我的.
@@ -110,6 +111,9 @@ class BottomNav extends StatelessWidget {
   final ValueChanged<int> onChange;
   final VoidCallback onAdd;
   final List<String> labels;
+
+  /// A long press on +: 一句话记账.
+  final VoidCallback? onAddLong;
 
   /// On the + button, so the shell can find where a burst of flowers should
   /// come out of.
@@ -157,7 +161,7 @@ class BottomNav extends StatelessWidget {
               children: [
                 SizedBox(width: barW, child: _bar(p, itemW)),
                 const SizedBox(width: _addGap),
-                _AddButton(key: addKey, onTap: onAdd),
+                _AddButton(key: addKey, onTap: onAdd, onLongPress: onAddLong),
               ],
             ),
           ),
@@ -490,9 +494,10 @@ class _NavItem extends StatelessWidget {
 /// matching height — filled with the accent so it still reads as the one
 /// primary act.
 class _AddButton extends StatefulWidget {
-  const _AddButton({super.key, required this.onTap});
+  const _AddButton({super.key, required this.onTap, this.onLongPress});
 
   final VoidCallback onTap;
+  final VoidCallback? onLongPress;
 
   @override
   State<_AddButton> createState() => _AddButtonState();
@@ -515,6 +520,13 @@ class _AddButtonState extends State<_AddButton> {
         HapticFeedback.mediumImpact();
         widget.onTap();
       },
+      onLongPress: widget.onLongPress == null
+          ? null
+          : () {
+              HapticFeedback.heavyImpact();
+              setState(() => _down = false);
+              widget.onLongPress!();
+            },
       child: AnimatedScale(
         scale: _down ? 0.9 : 1,
         duration: const Duration(milliseconds: 120),

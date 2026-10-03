@@ -7,6 +7,7 @@
 
 pub mod accounts;
 pub mod acct;
+pub mod ai;
 pub mod backup;
 pub mod batch;
 pub mod budget;

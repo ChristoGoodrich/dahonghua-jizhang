@@ -46,7 +46,7 @@ refuses to run without `src/` for exactly that reason.
 ## Running things
 
     npm run goldens       the core against what the TypeScript answered
-    npm run rust:test     850 tests
+    npm run rust:test     882 tests
     npm run rust:clippy   -D warnings
     npm run bridge:clippy the bridge is a separate cargo project
     npm run tests:check   all_test.dart is not stale
@@ -362,6 +362,39 @@ that, where they were one mechanism. If you add a data directory, it is
 already excluded — each domain is listed rather than trusting `root` to cover
 its children.
 
+**AI is the one thing that sends on the user's behalf, and it is built to say
+exactly what.** The shipping app had `src/ai/` — one entry from a sentence,
+one from a receipt — and the port dropped it. `core::ai` is that and more:
+
+* `quick` — 一句话记账. Every entry in a sentence (午饭35 打车12，昨天超市128
+  is three), read **on the phone** first: amounts, Chinese numerals (三十五,
+  两千五, 12块5), days (昨天, 上周三, 3天前, 9月21日) and the category — from
+  what this user has called the same thing before, then the keyword table.
+  A model, when there is one, is the better reader; this one always answers.
+* `ask` — 问账本. A question becomes a query — which days, which side, which
+  categories, a keyword, a grouping, a measure — and **the query runs on the
+  phone**. A model only ever writes the query from the question; it never sees
+  a row. "This month" is the billing cycle, so the answer agrees with 明细.
+* `wire` — every request body, and the reading of every reply. What a request
+  carries is the privacy statement: the sentence, the picture or the question,
+  today's date, and the category names.
+
+Off by default. The key is the user's own, entered on the phone and kept in
+Android's encrypted store (`AiKey`), never in the config — so it is in no
+backup, sync file or export. MiMo is the default service (a `tp-` key picks
+the Token Plan cluster, as the shipping app did); any OpenAI-compatible
+address and model can be set, and `is_mimo` decides whether the request may
+carry MiMo's `thinking` switch, which other services reject. A reply is
+untrusted input: amounts are bounded, a date after today is dropped, an
+invented category falls back to the note, and a reading that fails falls back
+to the phone's, with the reason shown.
+
+`ai_test` holds the promises that matter: nothing is sent with AI off **even
+with a key saved** (the first spelling of that test had no key, so it could
+not fail — the injection found it), and a 问账本 request contains none of the
+ledger's notes or amounts. `examples/ai_smoke.rs` builds and reads the real
+bodies for checking against the live service by hand.
+
 ## What the port dropped
 
 The rewrite ported every screen, and the screenshot tour is how a missing
@@ -456,6 +489,7 @@ before believing a result.
 
 iOS — nobody has a device to test on, and shipping a binary nobody has run is
 not shipping. `xlsxWrite` — CSV opens everywhere and xlsx would cost the core a
-pile of dependencies. Cloud sync — sync is a file you carry, so the app still
-reaches the network for nothing but an exchange rate, and `AndroidManifest.xml`
-still says so truthfully.
+pile of dependencies. Cloud sync — sync is a file you carry, so the app
+reaches the network for an exchange rate and, when the user turned AI on and
+pressed something, for the AI service they chose — and `AndroidManifest.xml`
+says exactly that.

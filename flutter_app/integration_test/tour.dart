@@ -304,6 +304,42 @@ void main() {
       ]) {
         await hub(tester, id, '$room-$name');
       }
+
+      // 一句话记账 with a sentence read, and 问账本 with a question answered —
+      // both on the phone, which is how a fresh install meets them
+      final meList = find.descendant(
+        of: find.byKey(const Key('me-list')),
+        matching: find.byType(Scrollable),
+      );
+      await scrollAndTap(
+        tester,
+        find.byKey(const Key('me-ai-entry')),
+        // the rows are at the top, and the list was left at the bottom
+        delta: -300,
+        scrollable: meList,
+      );
+      await tester.enterText(
+        find.byKey(const Key('ai-text')),
+        '午饭35 打车12，昨天超市买菜128.5',
+      );
+      await tester.tap(find.byKey(const Key('ai-read')));
+      await shot(tester, '$room-20-ai-entry');
+      await tester.pageBack();
+      await tester.pumpAndSettle();
+      await scrollAndTap(
+        tester,
+        find.byKey(const Key('me-ask')),
+        // the rows are at the top, and the list was left at the bottom
+        delta: -300,
+        scrollable: meList,
+      );
+      await tester.tap(find.byKey(const Key('ask-suggest-1')));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(const Key('ask-field')), '上个月餐饮花了多少');
+      await tester.tap(find.byKey(const Key('ask-send')));
+      await shot(tester, '$room-21-ask');
+      await tester.pageBack();
+      await tester.pumpAndSettle();
     });
   }
 }

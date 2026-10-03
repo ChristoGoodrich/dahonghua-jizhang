@@ -19,6 +19,7 @@ import 'package:flutter_app/src/rust/api/currency.dart' as currency;
 import 'package:flutter_app/src/rust/api/db.dart' as db;
 import 'package:flutter_app/src/rust/api/record.dart' as record;
 import 'package:flutter_app/src/rust/api/reimburse.dart' as rb;
+import 'package:flutter_app/src/rust/api/ai.dart' as ai;
 import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_app/src/rust/api/budget.dart' as budget;
 import 'package:flutter_app/src/rust/api/catalog.dart' as catalog;
@@ -231,6 +232,29 @@ void main() {
       theme.setTheme(key: 'default', dark: false);
       lock.lockReset();
       remind.resetReminders();
+    });
+
+    /// The AI switches come back; the key is not in the config at all, so a
+    /// restart has nothing of it to lose or to leak.
+    testWidgets('the AI settings, and never the key', (tester) async {
+      var p = await open();
+      ai.setAiSettings(
+        view: const ai.AiSettingsView(
+          enabled: true,
+          baseUrl: 'https://example.test/v1',
+          model: 'm-1',
+          visionModel: 'v-1',
+        ),
+      );
+      expect(store.snapshotConfig(), isNot(contains('Bearer')));
+
+      p = await restartAll(p);
+      final s = ai.aiSettings();
+      expect(
+        (s.enabled, s.baseUrl, s.model, s.visionModel),
+        (true, 'https://example.test/v1', 'm-1', 'v-1'),
+      );
+      p.dispose();
     });
 
     testWidgets('the theme and the dark room', (tester) async {

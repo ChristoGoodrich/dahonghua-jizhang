@@ -116,6 +116,7 @@ class RecordSheet extends StatefulWidget {
     this.editId,
     this.fetchRate,
     this.initialTs,
+    this.onSmart,
   });
 
   final bool zh;
@@ -130,6 +131,9 @@ class RecordSheet extends StatefulWidget {
   /// A new entry already on a day — 明细's calendar opens the sheet this way
   /// from 补记这天. Ignored when editing, which carries its own date.
   final int? initialTs;
+
+  /// 一句话记账 instead: the shell closes this sheet and opens that one.
+  final VoidCallback? onSmart;
 
   /// Where the exchange rate comes from. A test has no network, and the part
   /// worth testing is what this screen does with each answer.
@@ -312,6 +316,19 @@ class _RecordSheetState extends State<RecordSheet> {
             fontWeight: FontWeight.w700,
           ),
         ),
+        actions: [
+          if (widget.onSmart != null)
+            TextButton.icon(
+              key: const Key('record-smart'),
+              onPressed: widget.onSmart,
+              icon: Icon(Icons.auto_awesome, size: 18, color: palette.hibiscus),
+              label: Text(
+                zh ? '一句话' : 'Sentence',
+                style: TextStyle(color: palette.hibiscus),
+              ),
+            ),
+          const SizedBox(width: 6),
+        ],
       ),
       body: SafeArea(
         child: Column(

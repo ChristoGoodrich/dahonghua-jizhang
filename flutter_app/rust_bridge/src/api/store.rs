@@ -1003,6 +1003,9 @@ pub fn snapshot_config() -> String {
             "hideAmounts".into(),
             Value::Bool(super::privacy::hide_amounts()),
         ),
+        // the AI switches and where it points — never the key, which the
+        // platform keeps encrypted and apart
+        ("ai".into(), super::ai::settings_value()),
         (
             "remindAt".into(),
             Value::Str(super::remind::daily_reminder_at()),
@@ -1102,6 +1105,7 @@ pub fn load_config(json: String) -> bool {
     // on, and prompting here would ask before there is a screen to ask over.
     super::lock::lock_load(matches!(v.get("lock"), Some(Value::Bool(true))));
     super::privacy::set_hide_amounts(matches!(v.get("hideAmounts"), Some(Value::Bool(true))));
+    super::ai::load_settings(v.get("ai"));
     super::remind::load_reminders(
         match v.get("remindAt") {
             Some(Value::Str(s)) => s.clone(),
@@ -1310,4 +1314,5 @@ pub fn reset() {
     super::catalog::set_library_inner(Default::default());
     set_language("zh".to_string());
     super::privacy::set_hide_amounts(false);
+    super::ai::reset_settings();
 }

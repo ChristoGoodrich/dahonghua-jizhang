@@ -15,6 +15,8 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+import 'ai.dart';
+import 'src/rust/api/ai.dart' as ai;
 import 'src/rust/api/budget.dart' as budget;
 // `export` is a reserved word in Dart, so the prefix cannot be the module name.
 import 'src/rust/api/export.dart' as exporter;
@@ -22,6 +24,7 @@ import 'src/rust/api/lock.dart' as lock;
 import 'src/rust/api/remind.dart' as remind;
 import 'src/rust/api/store.dart' as store;
 import 'src/rust/api/theme.dart' as theme;
+import 'prompt.dart';
 import 'reminders.dart';
 import 'tap.dart';
 import 'glass.dart';
@@ -62,6 +65,87 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late String _remindAt;
   late bool _weekly;
   late bool _monthly;
+
+  late bool _ai = ai.aiSettings().enabled;
+
+  /// The key as it may be shown — its prefix and last four — or null.
+  String? _aiKey;
+  late final _aiBase = TextEditingController(text: ai.aiSettings().baseUrl);
+  late final _aiModel = TextEditingController(text: ai.aiSettings().model);
+  late final _aiVision = TextEditingController(
+    text: ai.aiSettings().visionModel,
+  );
+  String? _aiResult;
+  bool _aiResultBad = false;
+  bool _aiTesting = false;
+
+  @override
+  void dispose() {
+    _aiBase.dispose();
+    _aiModel.dispose();
+    _aiVision.dispose();
+    super.dispose();
+  }
+
+  void _saveAi() {
+    ai.setAiSettings(
+      view: ai.AiSettingsView(
+        enabled: _ai,
+        baseUrl: _aiBase.text,
+        model: _aiModel.text,
+        visionModel: _aiVision.text,
+      ),
+    );
+    widget.onChanged?.call();
+  }
+
+  Future<void> _editKey() async {
+    final zh = widget.zh;
+    final key = await prompt(
+      context,
+      title: zh ? 'API Key' : 'API key',
+      ok: zh ? '保存' : 'Save',
+      cancel: zh ? '取消' : 'Cancel',
+      hint: zh ? '粘贴你的 Key' : 'Paste your key',
+      note: zh
+          ? '只加密存在这台手机上，不进备份、同步和导出。'
+          : 'Kept encrypted on this phone only — never in a backup, a sync file or an export.',
+      obscure: true,
+      fieldKey: const Key('ai-key-field'),
+      okKey: const Key('ai-key-ok'),
+    );
+    if (key == null || key.trim().isEmpty || !mounted) return;
+    await AiKey.write(key);
+    setState(() {
+      _aiKey = AiKey.masked(key.trim());
+      _aiResult = null;
+    });
+  }
+
+  Future<void> _clearKey() async {
+    await AiKey.clear();
+    if (mounted) setState(() => _aiKey = null);
+  }
+
+  Future<void> _ping() async {
+    _saveAi();
+    setState(() {
+      _aiTesting = true;
+      _aiResult = null;
+    });
+    final f = await Ai.ping();
+    if (!mounted) return;
+    setState(() {
+      _aiTesting = false;
+      _aiResultBad = f != null;
+      _aiResult = f == null
+          ? (widget.zh ? '连上了，可以用了' : 'Connected')
+          : [
+              failureText(f, widget.zh),
+              if (f.detail.isNotEmpty) f.detail,
+            ].join('\n');
+    });
+  }
 
   /// Hand the operating system whatever is switched on, and say so if it
   /// refuses. A switch left on that schedules nothing is worse than no switch.
@@ -160,6 +244,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _remindAt = remind.dailyReminderAt();
     _weekly = remind.weeklyReportOn();
     _monthly = remind.monthlyReportOn();
+    AiKey.read().then((k) {
+      if (mounted && k != null) setState(() => _aiKey = AiKey.masked(k));
+    });
   }
 
   void _setCycle(int day) {
@@ -429,6 +516,159 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   activeThumbColor: palette.hibiscus,
                 ),
               ],
+            ),
+          ]),
+          const SizedBox(height: 20),
+          _group(zh ? 'AI 助手' : 'AI', [
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        zh ? '开启 AI' : 'Use AI',
+                        style: TextStyle(fontSize: 15, color: palette.ink),
+                      ),
+                      Text(
+                        zh
+                            ? '一句话记账读得更准、能看小票和截图，问账本能听懂更多问法。关着也能用，在本机识别。'
+                            : 'Reads sentences better, reads receipts and screenshots, and understands more questions. Off, both still work on the phone.',
+                        style: TextStyle(fontSize: 12, color: palette.inkSoft),
+                      ),
+                    ],
+                  ),
+                ),
+                Switch(
+                  key: const Key('ai-toggle'),
+                  value: _ai,
+                  onChanged: (v) {
+                    setState(() => _ai = v);
+                    _saveAi();
+                  },
+                  activeThumbColor: palette.hibiscus,
+                ),
+              ],
+            ),
+            if (_ai) ...[
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Text(
+                    'API Key',
+                    style: TextStyle(fontSize: 14, color: palette.ink),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      _aiKey ?? (zh ? '未设置' : 'Not set'),
+                      key: const Key('ai-key-state'),
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontFeatures: tabular,
+                        color: _aiKey == null
+                            ? palette.warnDeep
+                            : palette.inkSoft,
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    key: const Key('ai-key-edit'),
+                    onPressed: _editKey,
+                    child: Text(
+                      _aiKey == null
+                          ? (zh ? '填写' : 'Add')
+                          : (zh ? '更换' : 'Change'),
+                    ),
+                  ),
+                  if (_aiKey != null)
+                    TextButton(
+                      key: const Key('ai-key-clear'),
+                      onPressed: _clearKey,
+                      style: TextButton.styleFrom(
+                        foregroundColor: palette.warn,
+                      ),
+                      child: Text(zh ? '清除' : 'Remove'),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              for (final (key, ctrl, label, hint) in [
+                (
+                  'ai-base',
+                  _aiBase,
+                  zh ? '服务地址' : 'Address',
+                  zh ? '默认：小米 MiMo' : 'Default: Xiaomi MiMo',
+                ),
+                (
+                  'ai-model',
+                  _aiModel,
+                  zh ? '模型' : 'Model',
+                  ai.aiDefaultModel(),
+                ),
+                (
+                  'ai-vision',
+                  _aiVision,
+                  zh ? '识图模型' : 'Picture model',
+                  ai.aiDefaultVisionModel(),
+                ),
+              ])
+                Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: TextField(
+                    key: Key(key),
+                    controller: ctrl,
+                    autocorrect: false,
+                    onChanged: (_) => _saveAi(),
+                    style: TextStyle(fontSize: 13.5, color: palette.ink),
+                    decoration: InputDecoration(
+                      isDense: true,
+                      labelText: label,
+                      hintText: hint,
+                      hintStyle: TextStyle(color: palette.inkSoft),
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  OutlinedButton(
+                    key: const Key('ai-ping'),
+                    onPressed: _aiTesting ? null : _ping,
+                    child: Text(
+                      _aiTesting
+                          ? (zh ? '正在连…' : 'Testing…')
+                          : (zh ? '测试连接' : 'Test'),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  if (_aiResult != null)
+                    Expanded(
+                      child: Text(
+                        _aiResult!,
+                        key: const Key('ai-ping-result'),
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          color: _aiResultBad
+                              ? palette.warnDeep
+                              : palette.leafDeep,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ],
+            const SizedBox(height: 12),
+            Text(
+              zh
+                  ? '只在你按下时联网，发出去的只有：一句话记账——你输入的那句话；拍小票——你选的那张图；问账本——你的问题。账本本身从不离开手机，问账本也是在手机上算的。'
+                  : 'The network is used only when you press something, and all that is sent is: for quick entry, the sentence you typed; for a receipt, the picture you chose; for a question, the question. The ledger never leaves the phone — questions are counted on it.',
+              key: const Key('ai-privacy'),
+              style: TextStyle(
+                fontSize: 12,
+                color: palette.inkSoft,
+                height: 1.5,
+              ),
             ),
           ]),
           const SizedBox(height: 20),

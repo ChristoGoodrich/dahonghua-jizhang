@@ -1,7 +1,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!--
-      The only thing this app reaches the network for is an exchange rate. The
-      request is a currency pair and a date, and it goes to a public rate API.
+      Two things reach the network, and one of them only when asked to.
+
+      An exchange rate: a currency pair and a date, to a public rate API.
+
+      AI, which is OFF until the user turns it on in 设置 and gives it their
+      own key — and even then only when they press something. What it sends is
+      what `core::ai::wire` builds and nothing more: the sentence typed for
+      一句话记账, the picture chosen for 拍小票, the question asked for 问账本,
+      with today's date and the category names. The ledger itself is never in
+      a request; a question comes back as a query and is counted on the phone.
+      The key is kept in Android's encrypted store, not in the config, so it is
+      in no backup, sync file or export.
 
       Syncing does not change that, which is why it works the way it does: the
       app writes a file and reads one back, and moving that file between

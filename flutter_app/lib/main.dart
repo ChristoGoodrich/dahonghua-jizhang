@@ -19,6 +19,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'assets_screen.dart';
+import 'ask_screen.dart';
+import 'ai_entry_screen.dart';
 import 'backup_screen.dart';
 import 'bottom_nav.dart';
 import 'budget_screen.dart';
@@ -366,9 +368,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   /// which is the behaviour without the shell having to track it.
   Future<void> _record({String? editId, int? at}) async {
     var saved = 0;
+    var smart = false;
     await _cover(
       MaterialPageRoute<void>(
-        builder: (_) => sheet.RecordSheet(
+        builder: (ctx) => sheet.RecordSheet(
           editId: editId,
           initialTs: at,
           zh: _zh,
@@ -376,9 +379,21 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             saved++;
             _entriesChanged();
           },
+          // 一句话记账, from the sheet's own bar: the sheet goes and the
+          // sentence screen takes its place
+          onSmart: editId != null
+              ? null
+              : () {
+                  smart = true;
+                  Navigator.of(ctx).pop();
+                },
         ),
       ),
     );
+    if (smart && mounted) {
+      unawaited(_smart());
+      return;
+    }
     // A flower for each new entry, the shipping app's reward — played once
     // the sheet has gone, where the + button it comes out of can be seen.
     // Not for an edit, which planted nothing.
@@ -418,6 +433,39 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         duration: const Duration(milliseconds: 1600),
       );
     }
+  }
+
+  /// 一句话记账. What it writes is announced the way a template's entry is —
+  /// the flowers, and a notice with 撤销 for all of them at once.
+  Future<void> _smart() async {
+    final ids = await _cover(
+      MaterialPageRoute<List<String>>(
+        builder: (_) => AiEntryScreen(
+          zh: _zh,
+          // the list under the route reads the new rows before it is revealed
+          onSaved: (_) => _entriesChanged(),
+        ),
+      ),
+    );
+    if (ids == null || ids.isEmpty || !mounted) return;
+    // after the screen has gone, where the + button can be seen
+    _celebrate();
+    showToast(
+      context,
+      key: const Key('smart-logged'),
+      text: _zh ? '记了 ${ids.length} 笔' : 'Recorded ${ids.length}',
+      action: ToastAction(
+        key: const Key('smart-undo'),
+        label: _zh ? '撤销' : 'Undo',
+        onPressed: () {
+          final now = DateTime.now().millisecondsSinceEpoch;
+          for (final id in ids) {
+            store.removeEntry(id: id, now: now);
+          }
+          _entriesChanged();
+        },
+      ),
+    );
   }
 
   /// A screen from a hub. Nothing to do when it comes back: whatever it
@@ -509,6 +557,34 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   List<(String, List<MeRow>)> _meGroups() {
     final zh = _zh;
     return [
+      (
+        zh ? '智能' : 'Smart',
+        [
+          MeRow(
+            id: 'ai-entry',
+            icon: Icons.auto_awesome_outlined,
+            title: zh ? '一句话记账' : 'Quick entry',
+            desc: zh
+                ? '一句话记几笔，也能看小票和截图 · 长按 + 也能打开'
+                : 'Several entries in a sentence, or from a receipt',
+            onTap: _smart,
+          ),
+          MeRow(
+            id: 'ask',
+            icon: Icons.question_answer_outlined,
+            title: zh ? '问账本' : 'Ask the ledger',
+            desc: zh
+                ? '上个月外卖花了多少？在手机上算'
+                : 'Ask it anything; counted on the phone',
+            onTap: () => _push(
+              AskScreen(
+                zh: zh,
+                onOpen: (id) => _record(editId: id),
+              ),
+            ),
+          ),
+        ],
+      ),
       (
         zh ? '记账工具' : 'Tools',
         [
@@ -642,6 +718,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     active: _tab,
     onChange: (i) => setState(() => _tab = i),
     onAdd: () => _record(),
+    onAddLong: _smart,
     labels: _zh
         ? const ['明细', '统计', '资产', '我的']
         : const ['Entries', 'Stats', 'Assets', 'Me'],

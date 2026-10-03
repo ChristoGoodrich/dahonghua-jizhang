@@ -109,6 +109,27 @@ Future<void> backToHub(WidgetTester tester) async {
 
 Future<void> tapMeRow(WidgetTester tester, String key) async {
   final f = find.byKey(Key(key));
+  // A row far down the hub is not built while the top is showing — the list
+  // is lazy, and it grew past what one screen's cache holds — so it is
+  // scrolled to before it is centred.
+  final list = find.descendant(
+    of: find.byKey(const Key('me-list')),
+    matching: find.byType(Scrollable),
+  );
+  // above the screen or below it, whichever it is
+  for (final step in const [-200.0, 200.0]) {
+    if (f.evaluate().isNotEmpty) break;
+    try {
+      await tester.scrollUntilVisible(
+        f,
+        step,
+        scrollable: list,
+        maxScrolls: 20,
+      );
+    } on StateError {
+      // not that way
+    }
+  }
   // Centred, not merely revealed. `tester.ensureVisible` scrolls the minimum
   // needed to bring a row inside the viewport — and since the bar started
   // floating, the viewport runs BEHIND it, so "inside" can mean "under the

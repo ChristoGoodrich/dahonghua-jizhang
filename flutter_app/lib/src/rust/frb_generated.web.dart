@@ -8,6 +8,7 @@
 
 import 'api/accounts.dart';
 import 'api/acct.dart';
+import 'api/ai.dart';
 import 'api/backup.dart';
 import 'api/batch.dart';
 import 'api/budget.dart';
@@ -67,6 +68,27 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   AcctRowView dco_decode_acct_row_view(dynamic raw);
 
   @protected
+  AiRequest dco_decode_ai_request(dynamic raw);
+
+  @protected
+  AiSettingsView dco_decode_ai_settings_view(dynamic raw);
+
+  @protected
+  AskAnswerView dco_decode_ask_answer_view(dynamic raw);
+
+  @protected
+  AskGroupView dco_decode_ask_group_view(dynamic raw);
+
+  @protected
+  AskQueryView dco_decode_ask_query_view(dynamic raw);
+
+  @protected
+  AskReplyView dco_decode_ask_reply_view(dynamic raw);
+
+  @protected
+  AskRowView dco_decode_ask_row_view(dynamic raw);
+
+  @protected
   AssetView dco_decode_asset_view(dynamic raw);
 
   @protected
@@ -80,6 +102,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   bool dco_decode_bool(dynamic raw);
+
+  @protected
+  AiSettingsView dco_decode_box_autoadd_ai_settings_view(dynamic raw);
+
+  @protected
+  AskQueryView dco_decode_box_autoadd_ask_query_view(dynamic raw);
 
   @protected
   bool dco_decode_box_autoadd_bool(dynamic raw);
@@ -98,6 +126,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   double dco_decode_box_autoadd_f_64(dynamic raw);
+
+  @protected
+  FailureView dco_decode_box_autoadd_failure_view(dynamic raw);
 
   @protected
   FormView dco_decode_box_autoadd_form_view(dynamic raw);
@@ -199,6 +230,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   DayCell dco_decode_day_cell(dynamic raw);
 
   @protected
+  DraftView dco_decode_draft_view(dynamic raw);
+
+  @protected
+  DraftsView dco_decode_drafts_view(dynamic raw);
+
+  @protected
   DrainSummary dco_decode_drain_summary(dynamic raw);
 
   @protected
@@ -212,6 +249,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   double dco_decode_f_64(dynamic raw);
+
+  @protected
+  FailureView dco_decode_failure_view(dynamic raw);
 
   @protected
   FormView dco_decode_form_view(dynamic raw);
@@ -262,6 +302,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<AcctRowView> dco_decode_list_acct_row_view(dynamic raw);
 
   @protected
+  List<AskGroupView> dco_decode_list_ask_group_view(dynamic raw);
+
+  @protected
+  List<AskRowView> dco_decode_list_ask_row_view(dynamic raw);
+
+  @protected
   List<AssetView> dco_decode_list_asset_view(dynamic raw);
 
   @protected
@@ -293,6 +339,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<DayCell> dco_decode_list_day_cell(dynamic raw);
+
+  @protected
+  List<DraftView> dco_decode_list_draft_view(dynamic raw);
 
   @protected
   List<DueView> dco_decode_list_due_view(dynamic raw);
@@ -409,6 +458,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String? dco_decode_opt_String(dynamic raw);
 
   @protected
+  AskQueryView? dco_decode_opt_box_autoadd_ask_query_view(dynamic raw);
+
+  @protected
   bool? dco_decode_opt_box_autoadd_bool(dynamic raw);
 
   @protected
@@ -419,6 +471,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   double? dco_decode_opt_box_autoadd_f_64(dynamic raw);
+
+  @protected
+  FailureView? dco_decode_opt_box_autoadd_failure_view(dynamic raw);
 
   @protected
   int? dco_decode_opt_box_autoadd_i_32(dynamic raw);
@@ -564,6 +619,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   TrendView dco_decode_trend_view(dynamic raw);
 
   @protected
+  int dco_decode_u_16(dynamic raw);
+
+  @protected
   int dco_decode_u_32(dynamic raw);
 
   @protected
@@ -603,6 +661,27 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   AcctRowView sse_decode_acct_row_view(SseDeserializer deserializer);
 
   @protected
+  AiRequest sse_decode_ai_request(SseDeserializer deserializer);
+
+  @protected
+  AiSettingsView sse_decode_ai_settings_view(SseDeserializer deserializer);
+
+  @protected
+  AskAnswerView sse_decode_ask_answer_view(SseDeserializer deserializer);
+
+  @protected
+  AskGroupView sse_decode_ask_group_view(SseDeserializer deserializer);
+
+  @protected
+  AskQueryView sse_decode_ask_query_view(SseDeserializer deserializer);
+
+  @protected
+  AskReplyView sse_decode_ask_reply_view(SseDeserializer deserializer);
+
+  @protected
+  AskRowView sse_decode_ask_row_view(SseDeserializer deserializer);
+
+  @protected
   AssetView sse_decode_asset_view(SseDeserializer deserializer);
 
   @protected
@@ -616,6 +695,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   bool sse_decode_bool(SseDeserializer deserializer);
+
+  @protected
+  AiSettingsView sse_decode_box_autoadd_ai_settings_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  AskQueryView sse_decode_box_autoadd_ask_query_view(
+    SseDeserializer deserializer,
+  );
 
   @protected
   bool sse_decode_box_autoadd_bool(SseDeserializer deserializer);
@@ -636,6 +725,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   double sse_decode_box_autoadd_f_64(SseDeserializer deserializer);
+
+  @protected
+  FailureView sse_decode_box_autoadd_failure_view(SseDeserializer deserializer);
 
   @protected
   FormView sse_decode_box_autoadd_form_view(SseDeserializer deserializer);
@@ -745,6 +837,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   DayCell sse_decode_day_cell(SseDeserializer deserializer);
 
   @protected
+  DraftView sse_decode_draft_view(SseDeserializer deserializer);
+
+  @protected
+  DraftsView sse_decode_drafts_view(SseDeserializer deserializer);
+
+  @protected
   DrainSummary sse_decode_drain_summary(SseDeserializer deserializer);
 
   @protected
@@ -758,6 +856,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   double sse_decode_f_64(SseDeserializer deserializer);
+
+  @protected
+  FailureView sse_decode_failure_view(SseDeserializer deserializer);
 
   @protected
   FormView sse_decode_form_view(SseDeserializer deserializer);
@@ -810,6 +911,14 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<AcctRowView> sse_decode_list_acct_row_view(SseDeserializer deserializer);
 
   @protected
+  List<AskGroupView> sse_decode_list_ask_group_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  List<AskRowView> sse_decode_list_ask_row_view(SseDeserializer deserializer);
+
+  @protected
   List<AssetView> sse_decode_list_asset_view(SseDeserializer deserializer);
 
   @protected
@@ -849,6 +958,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<DayCell> sse_decode_list_day_cell(SseDeserializer deserializer);
+
+  @protected
+  List<DraftView> sse_decode_list_draft_view(SseDeserializer deserializer);
 
   @protected
   List<DueView> sse_decode_list_due_view(SseDeserializer deserializer);
@@ -981,6 +1093,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String? sse_decode_opt_String(SseDeserializer deserializer);
 
   @protected
+  AskQueryView? sse_decode_opt_box_autoadd_ask_query_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   bool? sse_decode_opt_box_autoadd_bool(SseDeserializer deserializer);
 
   @protected
@@ -995,6 +1112,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   double? sse_decode_opt_box_autoadd_f_64(SseDeserializer deserializer);
+
+  @protected
+  FailureView? sse_decode_opt_box_autoadd_failure_view(
+    SseDeserializer deserializer,
+  );
 
   @protected
   int? sse_decode_opt_box_autoadd_i_32(SseDeserializer deserializer);
@@ -1152,6 +1274,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   TrendView sse_decode_trend_view(SseDeserializer deserializer);
 
   @protected
+  int sse_decode_u_16(SseDeserializer deserializer);
+
+  @protected
   int sse_decode_u_32(SseDeserializer deserializer);
 
   @protected
@@ -1194,6 +1319,30 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_acct_row_view(AcctRowView self, SseSerializer serializer);
 
   @protected
+  void sse_encode_ai_request(AiRequest self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_ai_settings_view(
+    AiSettingsView self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_ask_answer_view(AskAnswerView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_ask_group_view(AskGroupView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_ask_query_view(AskQueryView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_ask_reply_view(AskReplyView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_ask_row_view(AskRowView self, SseSerializer serializer);
+
+  @protected
   void sse_encode_asset_view(AssetView self, SseSerializer serializer);
 
   @protected
@@ -1210,6 +1359,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_bool(bool self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_ai_settings_view(
+    AiSettingsView self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_ask_query_view(
+    AskQueryView self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_box_autoadd_bool(bool self, SseSerializer serializer);
@@ -1240,6 +1401,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_box_autoadd_f_64(double self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_failure_view(
+    FailureView self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_box_autoadd_form_view(
@@ -1383,6 +1550,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_day_cell(DayCell self, SseSerializer serializer);
 
   @protected
+  void sse_encode_draft_view(DraftView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_drafts_view(DraftsView self, SseSerializer serializer);
+
+  @protected
   void sse_encode_drain_summary(DrainSummary self, SseSerializer serializer);
 
   @protected
@@ -1396,6 +1569,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_f_64(double self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_failure_view(FailureView self, SseSerializer serializer);
 
   @protected
   void sse_encode_form_view(FormView self, SseSerializer serializer);
@@ -1458,6 +1634,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_list_ask_group_view(
+    List<AskGroupView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_ask_row_view(
+    List<AskRowView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_list_asset_view(
     List<AssetView> self,
     SseSerializer serializer,
@@ -1516,6 +1704,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_list_day_cell(List<DayCell> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_draft_view(
+    List<DraftView> self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_list_due_view(List<DueView> self, SseSerializer serializer);
@@ -1698,6 +1892,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_opt_String(String? self, SseSerializer serializer);
 
   @protected
+  void sse_encode_opt_box_autoadd_ask_query_view(
+    AskQueryView? self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_opt_box_autoadd_bool(bool? self, SseSerializer serializer);
 
   @protected
@@ -1714,6 +1914,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_opt_box_autoadd_f_64(double? self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_opt_box_autoadd_failure_view(
+    FailureView? self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_opt_box_autoadd_i_32(int? self, SseSerializer serializer);
@@ -1897,6 +2103,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_trend_view(TrendView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_u_16(int self, SseSerializer serializer);
 
   @protected
   void sse_encode_u_32(int self, SseSerializer serializer);

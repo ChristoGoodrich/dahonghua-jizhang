@@ -150,6 +150,12 @@ void main() {
   group('the cycle start', () {
     testWidgets('is stored and shown', (tester) async {
       await show(tester);
+      // below the fold since AI got its section
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('cycle-current')),
+        300,
+      );
+      await tester.pumpAndSettle();
       expect(textOf(tester, 'cycle-current'), contains('1'));
 
       await tapSetting(tester, const Key('cycle-15'));
