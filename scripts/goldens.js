@@ -66,7 +66,10 @@ for (const m of wanted) {
     .replace(/\r\n/g, '\n')
     .split('\n');
 
-  const goldOut = fs.readFileSync(goldenPath, 'utf8').split('\n');
+  const goldOut = fs
+    .readFileSync(goldenPath, 'utf8')
+    .replace(/\r\n/g, '\n')
+    .split('\n');
 
   const n = Math.max(rustOut.length, goldOut.length);
   const diffs = [];

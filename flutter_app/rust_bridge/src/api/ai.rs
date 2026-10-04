@@ -40,7 +40,6 @@ pub struct AiSettingsView {
     pub vision_model: String,
 }
 
-
 fn settings_lock() -> MutexGuard<'static, AiSettingsView> {
     static S: OnceLock<Mutex<AiSettingsView>> = OnceLock::new();
     S.get_or_init(|| Mutex::new(AiSettingsView::default()))
