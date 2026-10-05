@@ -147,7 +147,10 @@ pub fn merge_document(json: String) -> SyncReport {
 
     let local = match parse_checked(&snapshot_entries()) {
         Some(Value::Arr(rows)) => rows,
-        _ => Vec::new(),
+        // A local snapshot that will not parse is not "no local rows". Merging
+        // against empty would treat every remote row as an addition and drop
+        // whatever this device had that the document does not.
+        _ => return SyncReport::failed("this device's ledger could not be read"),
     };
 
     let result = merge_by_id(&local, remote);

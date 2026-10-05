@@ -55,10 +55,17 @@ Future<Directory> backupDir() async {
 Future<File> createBackup({int? keep}) async {
   final dir = await backupDir();
   final now = DateTime.now().millisecondsSinceEpoch.toDouble();
+  final json = backup.buildBackup(ts: now);
+  if (json.isEmpty) {
+    // The core refuses to assemble a document it cannot read back. Writing
+    // the empty string would be a file that looks like a backup and holds
+    // nothing — worse than no file at all.
+    throw StateError('backup could not be built');
+  }
   final file = File(
     '${dir.path}/${backup.backupName(ts: now, encrypted: false)}',
   );
-  await file.writeAsString(backup.buildBackup(ts: now));
+  await file.writeAsString(json);
 
   final names = await _names(dir);
   for (final gone in backup.pruneBackups(

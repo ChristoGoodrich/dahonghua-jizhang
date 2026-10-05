@@ -16,7 +16,7 @@
 //! and belongs outside a crate that compiles for both Android and wasm.
 
 use crate::entry::Patch;
-use crate::ledger::Ledger;
+use crate::ledger::{stamp, Ledger};
 use crate::model::{Asset, Budgets, Loan, Sub, Template};
 use crate::money::Currencies;
 use crate::num::{round2, to_fixed};
@@ -74,42 +74,42 @@ pub fn set_base_currency(d: Denominated<'_>, code: &str, now: i64) -> BaseSwitch
     // field times. Unstamped, none of it would ever upload, and the next pull's
     // equal-timestamp tiebreak would mix old-base and new-base amounts row by
     // row — corrupting every synced device rather than just this one.
-    let ids: Vec<String> = d.ledger.all().iter().map(|e| e.id.clone()).collect();
-    for id in ids {
-        let (amt, fee, discount, rb_amt, refund, was_foreign) = {
-            let e = d.ledger.get(&id).expect("id came from this ledger");
+    //
+    // By position, not by id: `Ledger::get` is first-wins, so a ledger that
+    // somehow holds two rows with one id would convert the first twice and
+    // leave the second alone. Rebuilding from `all()` visits each row once.
+    let entries: Vec<crate::entry::Entry> = d
+        .ledger
+        .all()
+        .iter()
+        .map(|e| {
             let native = e.cur.as_deref() == Some(code);
-            (
-                // an entry originally typed in the incoming currency round-trips
-                // exactly, rather than being divided back through a rate
-                match (native, e.orig_amt) {
-                    (true, Some(orig)) => orig,
-                    _ => conv(e.amt),
-                },
-                e.fee.map(conv),
-                e.discount.map(conv),
-                e.rb_amt.map(conv),
-                e.refund.map(conv),
-                native,
-            )
-        };
-
-        let mut patch = Patch {
-            amt: Some(amt),
-            fee,
-            discount,
-            rb_amt,
-            refund,
-            ..Default::default()
-        };
-        if was_foreign {
-            // it is not "foreign" any more once its own currency became the
-            // base; clearing also stamps the clear
-            patch.clear.push("cur");
-            patch.clear.push("origAmt");
-        }
-        d.ledger.update(&id, &patch, now);
-    }
+            let mut patch = Patch {
+                amt: Some(
+                    // an entry originally typed in the incoming currency
+                    // round-trips exactly, rather than being divided back
+                    // through a rate
+                    match (native, e.orig_amt) {
+                        (true, Some(orig)) => orig,
+                        _ => conv(e.amt),
+                    },
+                ),
+                fee: e.fee.map(conv),
+                discount: e.discount.map(conv),
+                rb_amt: e.rb_amt.map(conv),
+                refund: e.refund.map(conv),
+                ..Default::default()
+            };
+            if native {
+                // it is not "foreign" any more once its own currency became the
+                // base; clearing also stamps the clear
+                patch.clear.push("cur");
+                patch.clear.push("origAmt");
+            }
+            stamp(e, &patch, now)
+        })
+        .collect();
+    *d.ledger = Ledger::from_entries(entries);
 
     for a in d.accounts.iter_mut() {
         a.balance = conv(a.balance);
@@ -436,6 +436,31 @@ mod tests {
         assert_eq!(w.currencies.rates["CNY"], to_fixed(1.0 / 7.2, 6));
         // and everything else is re-expressed: 1 JPY = 0.048/7.2 USD
         assert_eq!(w.currencies.rates["JPY"], to_fixed(0.048 / 7.2, 6));
+    }
+
+    #[test]
+    fn a_duplicated_id_is_converted_once_each_not_once_per_occurrence() {
+        // `Ledger::get` is first-wins. Looking rows up by id would convert the
+        // first copy once per occurrence and never touch the second.
+        let mut w = world();
+        w.ledger = Ledger::from_entries(vec![
+            Entry {
+                id: "dup".into(),
+                amt: 720.0,
+                ..Default::default()
+            },
+            Entry {
+                id: "dup".into(),
+                amt: 1440.0,
+                ..Default::default()
+            },
+        ]);
+        set_base_currency(w.denominated(), "USD", 9_000);
+
+        let all = w.ledger.all();
+        assert_eq!(all.len(), 2);
+        assert_eq!(all[0].amt, 100.0);
+        assert_eq!(all[1].amt, 200.0);
     }
 
     #[test]

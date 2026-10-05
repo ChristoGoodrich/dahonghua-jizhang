@@ -16,6 +16,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'src/rust/api/db.dart' as db;
@@ -27,6 +28,15 @@ class Persistence {
   final Directory _dir;
   final Duration _debounce;
   Timer? _timer;
+
+  /// What the UI should say about storage right now, or null when all is well.
+  ///
+  /// `openError` and `lastSaveError` keep the raw strings for tests and for a
+  /// screen that wants the detail; this is the one the shell listens to. Set
+  /// when the database will not open *or* when a save failed, cleared when a
+  /// save lands — a problem the user cannot see is a problem they cannot fix,
+  /// and for two releases this file set these and nothing read them.
+  final ValueNotifier<String?> storageNotice = ValueNotifier<String?>(null);
 
   /// Set when the database could not be opened or read.
   ///
@@ -60,17 +70,22 @@ class Persistence {
     return p;
   }
 
+  void _failOpen(String message) {
+    openError = message;
+    storageNotice.value = message;
+  }
+
   Future<void> _start() async {
     final err = db.openStore(path: _dbFile.path);
     if (err.isNotEmpty) {
-      openError = err;
+      _failOpen(err);
       return;
     }
 
     await _migrate();
 
     if (db.loadFromStore() < 0) {
-      openError = 'the ledger database could not be read';
+      _failOpen('the ledger database could not be read');
     }
   }
 
@@ -98,7 +113,7 @@ class Persistence {
       if (hasEntries) entries = await _legacyEntries.readAsString();
       if (hasConfig) config = await _legacyConfig.readAsString();
     } catch (e) {
-      openError = 'the old ledger files could not be read: $e';
+      _failOpen('the old ledger files could not be read: $e');
       return;
     }
 
@@ -107,17 +122,19 @@ class Persistence {
     // because an absent file and an empty one both arrive as "". The
     // distinction is file-shaped, so it is drawn on the side that holds files.
     if (hasEntries && entries.trim().isEmpty) {
-      openError = 'the old ledger file is empty, which is not the same as '
-          'having no entries';
+      _failOpen(
+        'the old ledger file is empty, which is not the same as '
+        'having no entries',
+      );
       return;
     }
     if (hasConfig && config.trim().isEmpty) {
-      openError = 'the old config file is empty';
+      _failOpen('the old config file is empty');
       return;
     }
 
     final err = db.migrateFromJson(entriesJson: entries, configJson: config);
-    if (err.isNotEmpty) openError = err;
+    if (err.isNotEmpty) _failOpen(err);
   }
 
   /// Note that something changed. The write happens after the debounce.
@@ -150,6 +167,11 @@ class Persistence {
     if (!healthy) return;
     final err = db.flushStore();
     lastSaveError = err.isEmpty ? null : err;
+    if (lastSaveError != null) {
+      storageNotice.value = lastSaveError;
+    } else if (openError == null) {
+      storageNotice.value = null;
+    }
   }
 
   /// How many rows the next save would write. `-1` means all of them.

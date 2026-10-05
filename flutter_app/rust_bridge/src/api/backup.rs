@@ -12,9 +12,10 @@
 
 use dahonghua_core::backup as core;
 use dahonghua_core::jsval::{parse_checked, stable, Value};
+use dahonghua_core::rows::entry_to_value;
 use flutter_rust_bridge::frb;
 
-use super::store::{load_config, load_entries, snapshot_config, snapshot_entries};
+use super::store::{load_config, load_entries, snapshot_config, store};
 
 /// One snapshot, as read back off a directory listing.
 #[derive(Debug, Clone, PartialEq)]
@@ -69,10 +70,23 @@ pub fn max_backups() -> u32 {
 /// `version` is the **app's** schema version and not the file format's — an
 /// importer needs to know which shape the ledger is in, which is a different
 /// question from which shape the wrapper is in.
+///
+/// Returns an empty string when the snapshot cannot be produced. Writing a
+/// document that *looks* like a backup and holds an empty ledger is worse than
+/// writing nothing: the user believes they are covered, and the first restore
+/// is the discovery. The caller refuses the empty string.
 #[frb(sync)]
 pub fn build_backup(ts: f64) -> String {
-    let entries = parse_checked(&snapshot_entries()).unwrap_or(Value::Arr(vec![]));
-    let config = parse_checked(&snapshot_config()).unwrap_or(Value::Obj(vec![]));
+    // Entries are built from the rows themselves. Re-reading their JSON only
+    // to parse it back invites exactly the failure this function must not
+    // paper over.
+    let entries = Value::Arr(store().ledger.all().iter().map(entry_to_value).collect());
+    let Some(config) = parse_checked(&snapshot_config()) else {
+        return String::new();
+    };
+    if !matches!(config, Value::Obj(_)) {
+        return String::new();
+    }
     stable(&Value::Obj(vec![
         ("app".into(), Value::Str("dahonghua".into())),
         (

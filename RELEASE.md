@@ -15,6 +15,19 @@ git push origin v1.1.0
 - Bump `version:` in `flutter_app/pubspec.yaml`. The part after `+` is the
   versionCode, and Android refuses an update whose versionCode did not increase.
 
+## Which APK
+
+CI runs `node scripts/build-apk.js`, the same script this repo tells a person
+to run, and attaches **`app-arm64-v8a-release.apk`** — the split that goes on
+a phone. Not the universal `app-release.apk`: that file is 67MB of three
+copies of the same libraries, and its versionCode is **1** where the arm64
+split is **2001**. Android refuses to install a lower versionCode over a
+higher one, so a phone that once took the split can never be updated by the
+universal — the way out is an uninstall, which on a debug-signed build takes
+the ledger with it. The choice is made once and kept.
+
+Local builds should use `npm run apk` for the same reason.
+
 ## Signing
 
 CI needs two secrets. Without them the build still succeeds, stamps

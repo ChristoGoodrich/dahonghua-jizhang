@@ -570,6 +570,38 @@ void main() {
     });
   });
 
+  group('the shell is told', () {
+    // The defect: `openError` and `lastSaveError` were set for two releases
+    // and nothing in the UI ever read them. A user whose database would not
+    // open recorded a day of entries into thin air and was told nothing.
+    testWidgets('an open failure raises the notice the shell watches', (
+      tester,
+    ) async {
+      final p = await Persistence.open(
+        dir: Directory('${dir.path}/nope/deeper'),
+      );
+      expect(p.healthy, isFalse);
+      expect(p.storageNotice.value, isNotNull);
+      p.dispose();
+    });
+
+    testWidgets('a failed save raises it, a good one clears it', (
+      tester,
+    ) async {
+      final p = await open();
+      add('e1', 35);
+      p.save();
+      expect(p.storageNotice.value, isNull);
+      expect(p.lastSaveError, isNull);
+
+      db.resetStoreHandle();
+      p.save();
+      expect(p.lastSaveError, isNotNull);
+      expect(p.storageNotice.value, p.lastSaveError);
+      p.dispose();
+    });
+  });
+
   group('every write reaches the disk', () {
     // The defect this group exists for: `record.rs` wrote through a plain
     // `store()` and marked nothing, so an entry recorded through the sheet —

@@ -93,6 +93,28 @@ void main() {
       expect(body, contains('"config"'));
     });
 
+    testWidgets('an empty ledger still produces a real document', (
+      tester,
+    ) async {
+      // "I could not assemble this" is an empty string and the caller
+      // refuses it. "There is nothing in the ledger" is still a document —
+      // conflating the two is how a backup of nothing gets written when
+      // the snapshot failed to parse.
+      final json = backup.buildBackup(ts: now.toDouble());
+      expect(json, isNotEmpty);
+      expect(json, startsWith('{'));
+      expect(json, contains('"entries"'));
+      expect(json, contains('"config"'));
+    });
+
+    testWidgets('createBackup never leaves an empty file behind', (
+      tester,
+    ) async {
+      spend('e1', 35);
+      final f = await createBackup();
+      expect(await f.readAsString(), isNotEmpty);
+    });
+
     testWidgets('prunes to the newest, oldest first', (tester) async {
       // written by hand so the times are known rather than milliseconds apart
       for (final ts in [100, 200, 300, 400]) {

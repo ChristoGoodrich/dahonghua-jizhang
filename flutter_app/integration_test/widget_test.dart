@@ -11,6 +11,7 @@
 
 import 'package:flutter_app/budget_widget.dart';
 import 'package:flutter_app/src/rust/api/budget.dart' as budget;
+import 'package:flutter_app/src/rust/api/privacy.dart' as privacy;
 import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -188,6 +189,35 @@ void main() {
       final host = FakeHost();
       await refreshWidget(zh: true, host: host);
       expect(host.calls, 1);
+    });
+  });
+
+  group('the eye', () {
+    // A home screen is a surface a shoulder reads as easily as the phone.
+    // Hiding 明细's totals and leaving the widget's spent/remaining in the
+    // clear hid nothing that mattered.
+    testWidgets('hides the amounts the widget would otherwise show', (
+      tester,
+    ) async {
+      privacy.setHideAmounts(hidden: true);
+      setBudget(1000);
+      spend('a', 300);
+
+      final d = widgetData(zh: true);
+      expect(d.spent, contains('****'));
+      expect(d.spent, isNot(contains('300')));
+      expect(d.left, contains('****'));
+      expect(d.left, isNot(contains('700')));
+    });
+
+    testWidgets('and shows them again when opened', (tester) async {
+      privacy.setHideAmounts(hidden: false);
+      setBudget(1000);
+      spend('a', 300);
+
+      final d = widgetData(zh: true);
+      expect(d.spent, contains('300'));
+      expect(d.left, contains('700'));
     });
   });
 }

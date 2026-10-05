@@ -15,8 +15,8 @@
 
 import 'package:flutter/services.dart';
 
+import 'amounts.dart' as amounts;
 import 'src/rust/api/budget.dart' as budget;
-import 'src/rust/api/money.dart' as money;
 import 'src/rust/api/store.dart' as store;
 
 /// What the widget is told. Everything is already decided and already
@@ -80,18 +80,21 @@ WidgetData widgetData({required bool zh}) {
 
   return WidgetData(
     title: zh ? '本月预算' : 'This month',
+    // `shownAmount`, not `money.fmt`: the home screen is a surface a
+    // shoulder can read as easily as the phone, and the eye that hides
+    // 明细's totals has to hide these or it hides nothing that matters.
     spent: zh
-        ? '已花 ${money.fmt(n: status.used, symbol: sym)}'
-        : 'Spent ${money.fmt(n: status.used, symbol: sym)}',
+        ? '已花 ${amounts.shownAmount(status.used, sym)}'
+        : 'Spent ${amounts.shownAmount(status.used, sym)}',
     // Over budget, "剩余 -200" is arithmetic rather than language. What a
     // person wants to read at that point is how far over they are.
     left: status.over
         ? (zh
-            ? '超支 ${money.fmt(n: -status.left, symbol: sym)}'
-            : 'Over by ${money.fmt(n: -status.left, symbol: sym)}')
+            ? '超支 ${amounts.shownAmount(-status.left, sym)}'
+            : 'Over by ${amounts.shownAmount(-status.left, sym)}')
         : (zh
-            ? '剩余 ${money.fmt(n: status.left, symbol: sym)}'
-            : '${money.fmt(n: status.left, symbol: sym)} left'),
+            ? '剩余 ${amounts.shownAmount(status.left, sym)}'
+            : '${amounts.shownAmount(status.left, sym)} left'),
     pct: status.pct.isFinite ? status.pct.round() : 0,
     over: status.over,
     hasBudget: status.limit > 0,

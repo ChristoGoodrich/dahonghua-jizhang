@@ -37,8 +37,13 @@ const SEND = 'app-arm64-v8a-release.apk';
 
 // Gradle unpacks to the system temp directory, and the default one on this
 // machine sits under a path long enough to break the build. Same value the
-// README gives for building by hand.
-const TEMP = process.env.DAHONGHUA_BUILD_TEMP || 'C:\\Temp\\dahonghua-build';
+// README gives for building by hand. Elsewhere the platform temp is fine —
+// a Windows path on a Linux runner is not a shortcut, it is a broken build.
+const TEMP =
+  process.env.DAHONGHUA_BUILD_TEMP ||
+  (process.platform === 'win32'
+    ? 'C:\\Temp\\dahonghua-build'
+    : path.join(require('node:os').tmpdir(), 'dahonghua-build'));
 
 function mb(file) {
   return (fs.statSync(file).size / 1048576).toFixed(1);

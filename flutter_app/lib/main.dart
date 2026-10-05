@@ -15,6 +15,7 @@
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -100,6 +101,70 @@ bool _seedIfEmpty() {
 const paper = '#FBF7F0';
 const card = '#FFFFFF';
 const ink = '#2B2622';
+
+/// The strip that says storage is not working, for as long as it is not.
+///
+/// Sits at the top of the shell rather than as a toast, and in the warning
+/// hue rather than the flower's: this is the one thing the app says that is
+/// not "recorded", and a red that is never the leaf's green is how the rest
+/// of the app says "too much" as well.
+class StorageNotice extends StatelessWidget {
+  const StorageNotice({super.key, required this.notice, required this.zh});
+
+  final ValueListenable<String?> notice;
+  final bool zh;
+
+  @override
+  Widget build(BuildContext context) => ValueListenableBuilder<String?>(
+    valueListenable: notice,
+    builder: (context, message, _) {
+      if (message == null) return const SizedBox.shrink();
+      final p = palette;
+      return Material(
+        color: p.warn.withValues(alpha: 0.14),
+        child: SafeArea(
+          bottom: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.error_outline, size: 18, color: p.warnDeep),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        zh ? '存储出现问题' : 'Storage problem',
+                        style: TextStyle(
+                          color: p.warnDeep,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        zh
+                            ? '改动可能不会写入磁盘。$message'
+                            : 'Changes may not be written to disk. $message',
+                        style: TextStyle(
+                          color: p.ink,
+                          fontSize: 12,
+                          height: 1.35,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
 
 /// The root, and the only thing that can rebuild `MaterialApp.theme`.
 ///
@@ -476,15 +541,27 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) => Scaffold(
     backgroundColor: palette.paper,
-    body: IndexedStack(
-      index: _tab,
+    body: Column(
       children: [
-        for (final (i, tab) in _tabs().indexed)
-          // A tab that is not showing does not tick. `IndexedStack` keeps all
-          // four alive, and a chart's reveal or a lens's spring running on one
-          // nobody can see was a frame scheduled for nothing — while a screen
-          // pushed over the lot was trying to have that frame.
-          TickerMode(enabled: i == _tab, child: tab),
+        // Storage trouble is not a toast: a toast goes away and the problem
+        // does not. While the database will not open, saves are refused —
+        // without this strip the user records a day of entries into thin air.
+        if (widget.store != null)
+          StorageNotice(notice: widget.store!.storageNotice, zh: _zh),
+        Expanded(
+          child: IndexedStack(
+            index: _tab,
+            children: [
+              for (final (i, tab) in _tabs().indexed)
+                // A tab that is not showing does not tick. `IndexedStack`
+                // keeps all four alive, and a chart's reveal or a lens's
+                // spring running on one nobody can see was a frame scheduled
+                // for nothing — while a screen pushed over the lot was trying
+                // to have that frame.
+                TickerMode(enabled: i == _tab, child: tab),
+            ],
+          ),
+        ),
       ],
     ),
     // The bar floats over the content rather than sitting under it, which is
