@@ -19,6 +19,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'diagnostics.dart';
 import 'src/rust/api/db.dart' as db;
 import 'src/rust/api/store.dart' as store;
 
@@ -73,6 +74,7 @@ class Persistence {
   void _failOpen(String message) {
     openError = message;
     storageNotice.value = message;
+    diag.note('open failed: $message');
   }
 
   Future<void> _start() async {
@@ -169,6 +171,7 @@ class Persistence {
     lastSaveError = err.isEmpty ? null : err;
     if (lastSaveError != null) {
       storageNotice.value = lastSaveError;
+      diag.note('save failed: $lastSaveError');
     } else if (openError == null) {
       storageNotice.value = null;
     }

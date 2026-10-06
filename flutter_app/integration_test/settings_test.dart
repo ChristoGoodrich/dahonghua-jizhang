@@ -9,6 +9,7 @@
 // would translate the app a screen at a time.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/diagnostics.dart';
 import 'package:flutter_app/main.dart';
 import 'package:flutter_app/settings_screen.dart';
 import 'package:flutter_app/src/rust/api/budget.dart' as budget;
@@ -216,6 +217,34 @@ void main() {
         if (!sentence.contains('导出')) continue;
         expect(sentence, contains('xlsx'), reason: 'CSV export is here');
       }
+    });
+  });
+
+  group('the diagnostic trail', () {
+    testWidgets('is on the screen and carries no amounts or notes', (
+      tester,
+    ) async {
+      await show(tester);
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('export-diagnostics')),
+        300,
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('export-diagnostics')), findsOneWidget);
+
+      // The trail is times and errors. A note or an amount in it would make
+      // "attach this to a public issue" into a privacy problem.
+      final dump = diag.dump();
+      expect(dump, isNot(contains('午饭')));
+      expect(dump, contains('dahonghua diagnostics'));
+    });
+
+    testWidgets('grows when storage complains', (tester) async {
+      final before = diag.dump();
+      diag.note('save failed: disk full');
+      final after = diag.dump();
+      expect(after, contains('disk full'));
+      expect(after, isNot(equals(before)));
     });
   });
 }

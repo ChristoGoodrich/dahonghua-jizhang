@@ -1,13 +1,7 @@
 // 设置 — the preferences that need nothing but the store.
 //
-// Deliberately short. The shipping settings screen also carries an app lock,
-// daily reminders, weekly and monthly reports, a theme picker, and CSV/XLSX
-// export — every one of which needs a platform plugin this build does not have
-// yet, and a row that does nothing when pressed is worse than no row. They
-// arrive with their plugins.
-//
-// What is here is the two preferences that are pure store: which language the
-// app speaks, and which day of the month the budget cycle turns over.
+// What is here is what a person actually changes: language, the budget cycle
+// day, the flower and the room, the lock, reminders, AI, and getting data out.
 
 import 'dart:io';
 
@@ -16,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'ai.dart';
+import 'diagnostics.dart';
 import 'src/rust/api/ai.dart' as ai;
 import 'src/rust/api/budget.dart' as budget;
 // `export` is a reserved word in Dart, so the prefix cannot be the module name.
@@ -221,6 +216,40 @@ class _SettingsScreenState extends State<SettingsScreen> {
           () => _flash = widget.zh
               ? '已导出 ${live.length} 条'
               : 'Exported ${live.length}',
+        );
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(
+          () => _flash = widget.zh ? '导出失败了' : 'The export did not go through',
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  /// The diagnostic trail, as a file for the share sheet.
+  Future<void> _exportDiagnostics() async {
+    setState(() {
+      _busy = true;
+      _flash = null;
+    });
+    try {
+      final dir = await getTemporaryDirectory();
+      const name = 'dahonghua-diagnostics.txt';
+      final file = File('${dir.path}/$name');
+      await file.writeAsString(diag.dump());
+      if (widget.share != null) {
+        await widget.share!(file.path);
+      } else {
+        await SharePlus.instance.share(
+          ShareParams(files: [XFile(file.path)], fileNameOverrides: [name]),
+        );
+      }
+      if (mounted) {
+        setState(
+          () => _flash = widget.zh ? '诊断已导出' : 'Diagnostics exported',
         );
       }
     } catch (_) {
@@ -718,6 +747,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onPressed: _busy ? null : _export,
               icon: const Icon(Icons.ios_share, size: 18),
               label: Text(zh ? '导出 CSV' : 'Export CSV'),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              zh
+                  ? '出问题时,可以把本地诊断日志导出,附在 issue 里。只记时间和错误,没有金额和备注。'
+                  : 'If something went wrong, export the local diagnostic trail '
+                        'and attach it to an issue. Times and errors only — no '
+                        'amounts, no notes.',
+              style: TextStyle(fontSize: 12, color: palette.inkSoft),
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              key: const Key('export-diagnostics'),
+              onPressed: _busy ? null : _exportDiagnostics,
+              icon: const Icon(Icons.bug_report_outlined, size: 18),
+              label: Text(zh ? '导出诊断' : 'Export diagnostics'),
             ),
             if (_flash != null)
               Padding(
