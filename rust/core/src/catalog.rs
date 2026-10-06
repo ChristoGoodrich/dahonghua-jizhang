@@ -261,6 +261,13 @@ pub fn add_custom_cat(list: &mut Vec<Category>, key: String, name: &str, emoji: 
     c
 }
 
+/// Drop a custom category. Entries already filed under it keep their key and
+/// fall through [`cat_of`]'s last-category fallback when shown — same as the
+/// shipping app, which never rewrote history on a category delete.
+pub fn remove_custom_cat(list: &mut Vec<Category>, key: &str) {
+    list.retain(|c| c.k != key);
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct Subcat {
     pub k: String,
@@ -444,6 +451,18 @@ mod tests {
         assert_eq!(c.en, "宠物");
         assert_eq!(c.e, "🐈");
         assert_eq!(c.custom, Some(true));
+    }
+
+    #[test]
+    fn removing_a_custom_category_leaves_the_rest() {
+        let mut list = vec![];
+        add_custom_cat(&mut list, "c1".into(), "宠物", "🐈");
+        add_custom_cat(&mut list, "c2".into(), "旅行", "✈️");
+        remove_custom_cat(&mut list, "c1");
+        assert_eq!(list.len(), 1);
+        assert_eq!(list[0].k, "c2");
+        remove_custom_cat(&mut list, "c1");
+        assert_eq!(list.len(), 1);
     }
 
     #[test]

@@ -416,6 +416,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<SubView> dco_decode_list_sub_view(dynamic raw);
 
   @protected
+  List<SubcatView> dco_decode_list_subcat_view(dynamic raw);
+
+  @protected
   List<TemplateView> dco_decode_list_template_view(dynamic raw);
 
   @protected
@@ -587,6 +590,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   SubView dco_decode_sub_view(dynamic raw);
+
+  @protected
+  SubcatView dco_decode_subcat_view(dynamic raw);
 
   @protected
   SyncReport dco_decode_sync_report(dynamic raw);
@@ -1045,6 +1051,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<SubView> sse_decode_list_sub_view(SseDeserializer deserializer);
 
   @protected
+  List<SubcatView> sse_decode_list_subcat_view(SseDeserializer deserializer);
+
+  @protected
   List<TemplateView> sse_decode_list_template_view(
     SseDeserializer deserializer,
   );
@@ -1240,6 +1249,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   SubView sse_decode_sub_view(SseDeserializer deserializer);
+
+  @protected
+  SubcatView sse_decode_subcat_view(SseDeserializer deserializer);
 
   @protected
   SyncReport sse_decode_sync_report(SseDeserializer deserializer);
@@ -1835,6 +1847,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_list_sub_view(List<SubView> self, SseSerializer serializer);
 
   @protected
+  void sse_encode_list_subcat_view(
+    List<SubcatView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_list_template_view(
     List<TemplateView> self,
     SseSerializer serializer,
@@ -2067,6 +2085,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_sub_view(SubView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_subcat_view(SubcatView self, SseSerializer serializer);
 
   @protected
   void sse_encode_sync_report(SyncReport self, SseSerializer serializer);

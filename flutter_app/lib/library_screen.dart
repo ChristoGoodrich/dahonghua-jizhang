@@ -20,6 +20,7 @@ import 'src/rust/api/money.dart' as money;
 import 'glass.dart';
 import 'empty_note.dart';
 import 'tap.dart';
+import 'cats.dart';
 import 'theme.dart';
 
 class TagsScreen extends StatefulWidget {
@@ -36,6 +37,8 @@ class _TagsScreenState extends State<TagsScreen> {
   List<String> _tags = const [];
   List<String> _active = const [];
   List<String> _archived = const [];
+  List<catalog.CategoryView> _customExp = const [];
+  List<catalog.CategoryView> _customInc = const [];
 
   @override
   void initState() {
@@ -48,6 +51,8 @@ class _TagsScreenState extends State<TagsScreen> {
       _tags = catalog.tags();
       _active = catalog.pickableLedgers(keep: catalog.currentLedger());
       _archived = catalog.archivedLedgers();
+      _customExp = catalog.customCats(io: 'exp');
+      _customInc = catalog.customCats(io: 'inc');
     });
   }
 
@@ -137,9 +142,93 @@ class _TagsScreenState extends State<TagsScreen> {
               builder: (l) => _archivedChip(l, zh),
             ),
           ],
+          const SizedBox(height: 24),
+          _head(
+            zh ? '支出分类' : 'Expense categories',
+            'add-cat-exp',
+            () => _addCustomCat('exp'),
+            zh,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 2, bottom: 8),
+            child: Text(
+              zh
+                  ? '内置分类之外,自己加的会跟在后面。点一下管理子分类。'
+                  : 'Yours sit after the built-ins. Tap one to manage its subcategories.',
+              style: TextStyle(fontSize: 11.5, color: palette.inkSoft),
+            ),
+          ),
+          _chips(
+            _customExp.map((c) => c.k).toList(),
+            empty: zh ? '还没有自定义分类' : 'No custom categories yet',
+            emptyKey: 'no-cats-exp',
+            builder: (k) {
+              final c = _customExp.firstWhere((x) => x.k == k);
+              return _chip(
+                '${c.e} ${catalog.catName(cat: c, zh: zh)}',
+                keyName: 'cat-exp-$k',
+                onRemove: () {
+                  catalog.removeCustomCat(io: 'exp', key: k);
+                  _changed();
+                },
+                onTap: () => _subcats(k, zh),
+              );
+            },
+          ),
+          const SizedBox(height: 24),
+          _head(
+            zh ? '收入分类' : 'Income categories',
+            'add-cat-inc',
+            () => _addCustomCat('inc'),
+            zh,
+          ),
+          _chips(
+            _customInc.map((c) => c.k).toList(),
+            empty: zh ? '还没有自定义分类' : 'No custom categories yet',
+            emptyKey: 'no-cats-inc',
+            builder: (k) {
+              final c = _customInc.firstWhere((x) => x.k == k);
+              return _chip(
+                '${c.e} ${catalog.catName(cat: c, zh: zh)}',
+                keyName: 'cat-inc-$k',
+                onRemove: () {
+                  catalog.removeCustomCat(io: 'inc', key: k);
+                  _changed();
+                },
+                onTap: () => _subcats(k, zh),
+              );
+            },
+          ),
         ],
       ),
     );
+  }
+
+  Future<void> _addCustomCat(String io) async {
+    final zh = widget.zh;
+    final name = await showDialog<String>(
+      context: context,
+      builder: (_) => _NameDialog(
+        zh: zh,
+        title: zh ? '新建分类' : 'New category',
+        label: zh ? '名称' : 'Name',
+      ),
+    );
+    if (name == null || !mounted) return;
+    // Key is the caller's, as everywhere: `'c' + Date.now()` was the
+    // shipping one, and a clock is the platform's to read.
+    final key = 'c${DateTime.now().millisecondsSinceEpoch}';
+    catalog.addCustomCat(io: io, key: key, name: name, emoji: '🌸');
+    _changed();
+  }
+
+  Future<void> _subcats(String catKey, bool zh) async {
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: palette.card,
+      builder: (ctx) => _SubcatsSheet(catKey: catKey, zh: zh),
+    );
+    if (mounted) _changed();
   }
 
   Widget _head(String title, String? key, VoidCallback? onAdd, bool zh) =>
@@ -205,6 +294,7 @@ class _TagsScreenState extends State<TagsScreen> {
     String name, {
     required String keyName,
     required VoidCallback onRemove,
+    VoidCallback? onTap,
     IconData icon = Icons.close,
     Color? tone,
   }) => Container(
@@ -218,12 +308,16 @@ class _TagsScreenState extends State<TagsScreen> {
     child: Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          name,
-          style: TextStyle(
-            fontSize: 12.5,
-            fontWeight: FontWeight.w600,
-            color: palette.ink,
+        Tap(
+          onTap: onTap,
+          filled: false,
+          child: Text(
+            name,
+            style: TextStyle(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w600,
+              color: palette.ink,
+            ),
           ),
         ),
         IconButton(
@@ -393,7 +487,7 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
   }
 
   Widget _row(catalog.TemplateView t, bool zh) {
-    final c = catalog.catOf(io: t.io, key: t.cat, custom: const []);
+    final c = catOf(io: t.io, key: t.cat);
     final name = t.name.isEmpty ? catalog.catName(cat: c, zh: zh) : t.name;
     final note = t.note ?? '';
     return Padding(
@@ -461,6 +555,119 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
               ),
               onPressed: () => _confirmDelete(t),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Subcategories of one category, as a sheet over the library.
+class _SubcatsSheet extends StatefulWidget {
+  const _SubcatsSheet({required this.catKey, required this.zh});
+
+  final String catKey;
+  final bool zh;
+
+  @override
+  State<_SubcatsSheet> createState() => _SubcatsSheetState();
+}
+
+class _SubcatsSheetState extends State<_SubcatsSheet> {
+  List<catalog.SubcatView> _list = const [];
+
+  @override
+  void initState() {
+    super.initState();
+    _list = catalog.subcatsOf(catKey: widget.catKey);
+  }
+
+  Future<void> _add() async {
+    final name = await showDialog<String>(
+      context: context,
+      builder: (_) => _NameDialog(
+        zh: widget.zh,
+        title: widget.zh ? '新建子分类' : 'New subcategory',
+        label: widget.zh ? '名称' : 'Name',
+      ),
+    );
+    if (name == null || !mounted) return;
+    final id = 'sc${DateTime.now().millisecondsSinceEpoch}';
+    catalog.addSubcat(catKey: widget.catKey, id: id, name: name);
+    setState(() => _list = catalog.subcatsOf(catKey: widget.catKey));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final zh = widget.zh;
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(22, 18, 22, 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    zh ? '子分类' : 'Subcategories',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: palette.ink,
+                    ),
+                  ),
+                ),
+                Tap(
+                  key: const Key('add-subcat'),
+                  onTap: _add,
+                  filled: false,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 6,
+                    ),
+                    child: Text(
+                      zh ? '添加' : 'Add',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: palette.hibiscus,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            if (_list.isEmpty)
+              Text(
+                zh ? '还没有子分类' : 'No subcategories yet',
+                key: const Key('no-subcats'),
+                style: TextStyle(fontSize: 12.5, color: palette.inkSoft),
+              )
+            else
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  for (final s in _list)
+                    Chip(
+                      key: Key('subcat-${s.k}'),
+                      label: Text(s.name),
+                      deleteIcon: const Icon(Icons.close, size: 15),
+                      onDeleted: () {
+                        catalog.removeSubcat(catKey: widget.catKey, k: s.k);
+                        setState(
+                          () => _list = catalog.subcatsOf(
+                            catKey: widget.catKey,
+                          ),
+                        );
+                      },
+                    ),
+                ],
+              ),
           ],
         ),
       ),

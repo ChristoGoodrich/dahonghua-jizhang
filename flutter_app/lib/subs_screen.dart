@@ -23,6 +23,7 @@ import 'tap.dart';
 import 'glass.dart';
 import 'empty_note.dart';
 import 'amounts.dart';
+import 'cats.dart';
 import 'theme.dart';
 
 /// `YYYY-M-D` with a **0-indexed** month, inherited from v7 — the encoding the
@@ -341,7 +342,7 @@ class _NewSubDialogState extends State<_NewSubDialog> {
     // refuses it the same way — by doing nothing
     if (amt <= 0) return;
 
-    final cat = catalog.catOf(io: 'exp', key: _cat, custom: const []);
+    final cat = catOf(io: 'exp', key: _cat);
     subs.addSub(
       sub: subs.NewSub(
         name: name,
@@ -372,7 +373,7 @@ class _NewSubDialogState extends State<_NewSubDialog> {
   @override
   Widget build(BuildContext context) {
     final zh = widget.zh;
-    final cats = catalog.allCats(io: 'exp', custom: const []);
+    final cats = catsOf('exp');
     return AlertDialog(
       key: const Key('new-sub-dialog'),
       backgroundColor: palette.card,

@@ -84,7 +84,7 @@ tag.
 - **Budget** — a monthly pot with a configurable cycle start day, progress, forecast and an insight banner.
 - **Subscriptions** — recurring charges posted automatically, with the next due date. Charge ids are derived from (subscription, charge instant), so two devices converge on one row instead of double-charging.
 - **Reimbursements** — mark an entry pending, confirm it when the money comes back.
-- **Multiple ledgers and tags** — for separating work from personal, or a trip from the rest of the month. (Sub-categories exist in the model and in every entry, but this build has no control that creates one yet.)
+- **Multiple ledgers, tags, custom categories and sub-categories** — for separating work from personal, or a trip from the rest of the month. Your own categories sit after the built-ins in every picker.
 
 ### Reading the numbers
 

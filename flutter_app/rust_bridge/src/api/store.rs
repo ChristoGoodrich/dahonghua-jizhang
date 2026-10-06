@@ -813,6 +813,50 @@ pub fn snapshot_entries() -> String {
 
 /// The config as JSON: accounts, the current account, the currency table.
 ///
+/// A custom category, as the config blob carries it.
+fn cat_value(c: &dahonghua_core::catalog::Category) -> Value {
+    Value::Obj(vec![
+        ("k".into(), Value::Str(c.k.clone())),
+        ("e".into(), Value::Str(c.e.clone())),
+        ("zh".into(), Value::Str(c.zh.clone())),
+        ("en".into(), Value::Str(c.en.clone())),
+        ("c".into(), Value::Str(c.c.clone())),
+    ])
+}
+
+fn cat_from(v: &Value) -> dahonghua_core::catalog::Category {
+    dahonghua_core::catalog::Category {
+        k: str_of(v.get("k")),
+        e: str_of(v.get("e")),
+        zh: str_of(v.get("zh")),
+        en: str_of(v.get("en")),
+        c: str_of(v.get("c")),
+        custom: Some(true),
+    }
+}
+
+fn subcats_value(m: &dahonghua_core::catalog::Subcats) -> Value {
+    Value::Obj(
+        m.iter()
+            .map(|(k, list)| {
+                (
+                    k.clone(),
+                    Value::Arr(
+                        list.iter()
+                            .map(|s| {
+                                Value::Obj(vec![
+                                    ("k".into(), Value::Str(s.k.clone())),
+                                    ("name".into(), Value::Str(s.name.clone())),
+                                ])
+                            })
+                            .collect(),
+                    ),
+                )
+            })
+            .collect(),
+    )
+}
+
 /// Separate from the ledger deliberately, and the React Native build splits it
 /// the same way (`dhh_entries_v1` and `dhh_config_v1`). Renaming an account
 /// should not rewrite ten thousand entries, and a write that fails halfway
@@ -994,6 +1038,20 @@ pub fn snapshot_config() -> String {
                 ("ledger".into(), strs(&lib.tags.ledger)),
             ]),
         ),
+        (
+            "customCats".into(),
+            Value::Obj(vec![
+                (
+                    "exp".into(),
+                    Value::Arr(lib.custom_cats.exp.iter().map(cat_value).collect()),
+                ),
+                (
+                    "inc".into(),
+                    Value::Arr(lib.custom_cats.inc.iter().map(cat_value).collect()),
+                ),
+            ]),
+        ),
+        ("subcats".into(), subcats_value(&lib.subcats)),
         ("templates".into(), Value::Arr(templates)),
         ("curLedger".into(), Value::Str(lib.current_ledger.clone())),
         ("lang".into(), Value::Str(language())),
@@ -1128,6 +1186,32 @@ pub fn load_config(json: String) -> bool {
             };
             lib.tags.normal = list("normal");
             lib.tags.ledger = list("ledger");
+            touched = true;
+        }
+        if let Some(c @ Value::Obj(_)) = v.get("customCats") {
+            let list = |k: &str| match c.get(k) {
+                Some(Value::Arr(items)) => items.iter().map(cat_from).collect(),
+                _ => Vec::new(),
+            };
+            lib.custom_cats.exp = list("exp");
+            lib.custom_cats.inc = list("inc");
+            touched = true;
+        }
+        if let Some(Value::Obj(items)) = v.get("subcats") {
+            let mut m = dahonghua_core::catalog::Subcats::new();
+            for (k, val) in items {
+                if let Value::Arr(list) = val {
+                    let rows = list
+                        .iter()
+                        .map(|s| dahonghua_core::catalog::Subcat {
+                            k: str_of(s.get("k")),
+                            name: str_of(s.get("name")),
+                        })
+                        .collect();
+                    m.insert(k.clone(), rows);
+                }
+            }
+            lib.subcats = m;
             touched = true;
         }
         if let Some(Value::Arr(items)) = v.get("templates") {

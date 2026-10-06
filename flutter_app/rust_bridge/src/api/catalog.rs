@@ -136,6 +136,35 @@ pub(crate) struct Library {
     pub archived: Option<Vec<String>>,
     pub current_ledger: String,
     pub templates: Vec<Template>,
+    /// The user's own categories, per direction. Built-ins are in the core;
+    /// these ride along behind them in every picker.
+    pub custom_cats: CustomCats,
+    /// Subcategories, keyed by the category they hang off.
+    pub subcats: core::Subcats,
+}
+
+/// `Record<IO, Category[]>` from the shipping config, as two lists.
+#[frb(ignore)]
+#[derive(Debug, Clone, Default)]
+pub(crate) struct CustomCats {
+    pub exp: Vec<core::Category>,
+    pub inc: Vec<core::Category>,
+}
+
+impl CustomCats {
+    fn of(&self, io: Io) -> &Vec<core::Category> {
+        match io {
+            Io::Inc => &self.inc,
+            _ => &self.exp,
+        }
+    }
+
+    fn of_mut(&mut self, io: Io) -> &mut Vec<core::Category> {
+        match io {
+            Io::Inc => &mut self.inc,
+            _ => &mut self.exp,
+        }
+    }
 }
 
 pub(crate) fn library() -> MutexGuard<'static, Library> {
@@ -224,6 +253,81 @@ pub fn archive_ledger(name: String, archive: bool) {
     let mut l = library();
     let lib = &mut *l;
     core::archive_ledger(&mut lib.archived, &name, archive, &mut lib.current_ledger);
+}
+
+/// The user's own categories for one direction, in picker order after the
+/// built-ins.
+#[frb(sync)]
+pub fn custom_cats(io: String) -> Vec<CategoryView> {
+    let io = Io::parse(&io).unwrap_or(Io::Exp);
+    library()
+        .custom_cats
+        .of(io)
+        .iter()
+        .cloned()
+        .map(Into::into)
+        .collect()
+}
+
+/// Create a custom category. `key` is the caller's — `'c' + Date.now()` was
+/// the shipping one. The accent is chosen by how many customs that direction
+/// already has, so a fresh one never repeats its neighbour.
+#[frb(sync)]
+pub fn add_custom_cat(io: String, key: String, name: String, emoji: String) -> CategoryView {
+    let io = Io::parse(&io).unwrap_or(Io::Exp);
+    let mut l = library();
+    let list = l.custom_cats.of_mut(io);
+    core::add_custom_cat(list, key, &name, &emoji).into()
+}
+
+/// Drop a custom category. Entries filed under it keep their key and fall
+/// through the lookup's last-category fallback when shown.
+#[frb(sync)]
+pub fn remove_custom_cat(io: String, key: String) {
+    let io = Io::parse(&io).unwrap_or(Io::Exp);
+    let mut l = library();
+    let lib = &mut *l;
+    core::remove_custom_cat(lib.custom_cats.of_mut(io), &key);
+    // Its subcategories are the category's, and the category is gone.
+    lib.subcats.remove(&key);
+}
+
+/// One subcategory, as Dart holds it.
+#[derive(Debug, Clone, PartialEq)]
+pub struct SubcatView {
+    pub k: String,
+    pub name: String,
+}
+
+impl From<core::Subcat> for SubcatView {
+    fn from(s: core::Subcat) -> Self {
+        SubcatView {
+            k: s.k,
+            name: s.name,
+        }
+    }
+}
+
+/// Subcategories of one category, in insertion order.
+#[frb(sync)]
+pub fn subcats_of(cat_key: String) -> Vec<SubcatView> {
+    library()
+        .subcats
+        .get(&cat_key)
+        .map(|v| v.iter().cloned().map(Into::into).collect())
+        .unwrap_or_default()
+}
+
+#[frb(sync)]
+pub fn add_subcat(cat_key: String, id: String, name: String) {
+    let mut l = library();
+    core::add_subcat(&mut l.subcats, &cat_key, id, &name);
+}
+
+#[frb(sync)]
+pub fn remove_subcat(cat_key: String, k: String) {
+    let mut l = library();
+    core::remove_subcat(&mut l.subcats, &cat_key, &k);
 }
 
 #[frb(sync)]

@@ -31,6 +31,11 @@ int maxBackups() => RustLib.instance.api.crateApiBackupMaxBackups();
 /// `version` is the **app's** schema version and not the file format's — an
 /// importer needs to know which shape the ledger is in, which is a different
 /// question from which shape the wrapper is in.
+///
+/// Returns an empty string when the snapshot cannot be produced. Writing a
+/// document that *looks* like a backup and holds an empty ledger is worse than
+/// writing nothing: the user believes they are covered, and the first restore
+/// is the discovery. The caller refuses the empty string.
 String buildBackup({required double ts}) =>
     RustLib.instance.api.crateApiBackupBuildBackup(ts: ts);
 

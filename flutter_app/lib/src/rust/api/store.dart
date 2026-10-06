@@ -6,7 +6,7 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `as_str`, `by_id`, `currencies_lock`, `currencies_of`, `lang_lock`, `lock`, `parse_day`, `set_currencies_inner`, `set_settings_inner`, `settings_lock`, `settings_of`, `show_day`, `store_marked`, `store_mut`, `store`, `str_of`
+// These functions are ignored because they are not marked as `pub`: `as_str`, `by_id`, `cat_from`, `cat_value`, `currencies_lock`, `currencies_of`, `lang_lock`, `lock`, `parse_day`, `set_currencies_inner`, `set_settings_inner`, `settings_lock`, `settings_of`, `show_day`, `store_marked`, `store_mut`, `store`, `str_of`, `subcats_value`
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `StoreRef`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `deref`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`, `from`
 
@@ -166,8 +166,6 @@ int loadEntries({required String json}) =>
 /// row on the next restore.
 String snapshotEntries() => RustLib.instance.api.crateApiStoreSnapshotEntries();
 
-/// The config as JSON: accounts, the current account, the currency table.
-///
 /// Separate from the ledger deliberately, and the React Native build splits it
 /// the same way (`dhh_entries_v1` and `dhh_config_v1`). Renaming an account
 /// should not rewrite ten thousand entries, and a write that fails halfway

@@ -25,6 +25,7 @@ import 'date_field.dart';
 import 'glass.dart';
 import 'segmented.dart';
 import 'tap.dart';
+import 'cats.dart';
 import 'theme.dart';
 
 /// The refusals `validate_form` can answer, spelled.
@@ -469,7 +470,7 @@ class _RecordSheetState extends State<RecordSheet> {
   );
 
   Widget _categories(bool zh, Color accent) {
-    final cats = catalog.allCats(io: _form.io, custom: const []);
+    final cats = catsOf(_form.io);
     return Wrap(
       spacing: 8,
       runSpacing: 8,
@@ -628,7 +629,7 @@ class _RecordSheetState extends State<RecordSheet> {
           separatorBuilder: (_, _) => const SizedBox(width: 8),
           itemBuilder: (_, i) {
             final t = list[i];
-            final c = catalog.catOf(io: t.io, key: t.cat, custom: const []);
+            final c = catOf(io: t.io, key: t.cat);
             final label = t.name.isEmpty
                 ? catalog.catName(cat: c, zh: zh)
                 : t.name;

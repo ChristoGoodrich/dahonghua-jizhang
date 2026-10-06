@@ -15,6 +15,7 @@ import 'src/rust/api/catalog.dart' as catalog;
 import 'src/rust/api/home.dart' as home;
 import 'src/rust/api/money.dart' as money;
 import 'tap.dart';
+import 'cats.dart';
 import 'theme.dart';
 
 class HomeHeader extends StatelessWidget {
@@ -566,12 +567,7 @@ class TemplateChips extends StatelessWidget {
             separatorBuilder: (_, _) => const SizedBox(width: 8),
             itemBuilder: (context, i) {
               final t = templates[i];
-              final label = catalog.catLabel(
-                io: t.io,
-                key: t.cat,
-                zh: zh,
-                custom: const [],
-              );
+              final label = catLabelOf(io: t.io, key: t.cat, zh: zh);
               final tone = parseHex(label.color);
               return Tap(
                 key: Key('tpl-chip-${t.id}'),

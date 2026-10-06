@@ -6,10 +6,10 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `custom_of`, `kind_of`, `library_of`, `library`, `set_library_inner`
-// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `Library`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`
-// These functions are ignored (category: IgnoreBecauseOwnerTyShouldIgnore): `default`
+// These functions are ignored because they are not marked as `pub`: `custom_of`, `kind_of`, `library_of`, `library`, `of_mut`, `of`, `set_library_inner`
+// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `CustomCats`, `Library`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`, `from`
+// These functions are ignored (category: IgnoreBecauseOwnerTyShouldIgnore): `default`, `default`
 
 /// Every category for one direction, in picker order: built-ins then custom.
 List<CategoryView> allCats({
@@ -72,6 +72,48 @@ void archiveLedger({required String name, required bool archive}) => RustLib
     .instance
     .api
     .crateApiCatalogArchiveLedger(name: name, archive: archive);
+
+/// The user's own categories for one direction, in picker order after the
+/// built-ins.
+List<CategoryView> customCats({required String io}) =>
+    RustLib.instance.api.crateApiCatalogCustomCats(io: io);
+
+/// Create a custom category. `key` is the caller's — `'c' + Date.now()` was
+/// the shipping one. The accent is chosen by how many customs that direction
+/// already has, so a fresh one never repeats its neighbour.
+CategoryView addCustomCat({
+  required String io,
+  required String key,
+  required String name,
+  required String emoji,
+}) => RustLib.instance.api.crateApiCatalogAddCustomCat(
+  io: io,
+  key: key,
+  name: name,
+  emoji: emoji,
+);
+
+/// Drop a custom category. Entries filed under it keep their key and fall
+/// through the lookup's last-category fallback when shown.
+void removeCustomCat({required String io, required String key}) =>
+    RustLib.instance.api.crateApiCatalogRemoveCustomCat(io: io, key: key);
+
+/// Subcategories of one category, in insertion order.
+List<SubcatView> subcatsOf({required String catKey}) =>
+    RustLib.instance.api.crateApiCatalogSubcatsOf(catKey: catKey);
+
+void addSubcat({
+  required String catKey,
+  required String id,
+  required String name,
+}) => RustLib.instance.api.crateApiCatalogAddSubcat(
+  catKey: catKey,
+  id: id,
+  name: name,
+);
+
+void removeSubcat({required String catKey, required String k}) =>
+    RustLib.instance.api.crateApiCatalogRemoveSubcat(catKey: catKey, k: k);
 
 String currentLedger() => RustLib.instance.api.crateApiCatalogCurrentLedger();
 
@@ -175,6 +217,25 @@ class CategoryView {
           en == other.en &&
           c == other.c &&
           custom == other.custom;
+}
+
+/// One subcategory, as Dart holds it.
+class SubcatView {
+  final String k;
+  final String name;
+
+  const SubcatView({required this.k, required this.name});
+
+  @override
+  int get hashCode => k.hashCode ^ name.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SubcatView &&
+          runtimeType == other.runtimeType &&
+          k == other.k &&
+          name == other.name;
 }
 
 /// What logging a template would produce, before the ledger stamps it.

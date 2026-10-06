@@ -23,6 +23,7 @@ import 'src/rust/api/ai.dart' as ai;
 import 'src/rust/api/catalog.dart' as catalog;
 import 'src/rust/api/money.dart' as money;
 import 'tap.dart';
+import 'cats.dart';
 import 'theme.dart';
 
 /// Where a picture comes from. The camera or the gallery by default; a test
@@ -190,7 +191,7 @@ class _AiEntryScreenState extends State<AiEntryScreen> {
   }
 
   Future<void> _editCategory(_Row r) async {
-    final cats = catalog.allCats(io: r.d.io, custom: const []);
+    final cats = catsOf(r.d.io);
     final k = await showModalBottomSheet<String>(
       context: context,
       backgroundColor: palette.card,

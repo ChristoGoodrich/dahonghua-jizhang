@@ -21,6 +21,7 @@ import 'src/rust/api/money.dart' as money;
 import 'src/rust/api/report.dart' as report;
 import 'glass.dart';
 import 'amounts.dart';
+import 'cats.dart';
 import 'theme.dart';
 
 /// `YYYY-M-D`, a **1-indexed** month — the spelling `parse_day` on the other
@@ -168,7 +169,7 @@ class _ReportScreenState extends State<ReportScreen> {
     final topName = top == null
         ? null
         : catalog.catName(
-            cat: catalog.catOf(io: 'exp', key: top, custom: const []),
+            cat: catOf(io: 'exp', key: top),
             zh: zh,
           );
     return Container(

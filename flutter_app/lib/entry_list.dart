@@ -32,6 +32,7 @@ import 'src/rust/api/store.dart' as store;
 import 'reimburse_screen.dart';
 import 'tap.dart';
 import 'amounts.dart';
+import 'cats.dart';
 import 'theme.dart';
 import 'toast.dart';
 
@@ -415,12 +416,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
     _reload();
     if (!mounted) return;
     final zh = widget.zh;
-    final label = catalog.catLabel(
-      io: d.io,
-      key: d.cat,
-      zh: zh,
-      custom: const [],
-    );
+    final label = catLabelOf(io: d.io, key: d.cat, zh: zh);
     final what = d.note.isEmpty ? label.name : d.note;
     showToast(
       context,
@@ -932,12 +928,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
   /// What a delete is about to take, in the words of the row: its category,
   /// its note, its amount and its day.
   String _describe(store.EntryView e, bool zh) {
-    final label = catalog.catLabel(
-      io: e.io,
-      key: e.cat,
-      zh: zh,
-      custom: const [],
-    );
+    final label = catLabelOf(io: e.io, key: e.cat, zh: zh);
     final d = DateTime.fromMillisecondsSinceEpoch(e.ts);
     final note = (e.note ?? '').isEmpty ? '' : ' · ${e.note}';
     final day = zh ? '${d.month}月${d.day}日' : '${d.month}/${d.day}';
@@ -980,12 +971,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
     // One call for the emoji, the name and the accent — the lookup has a
     // fallback rule (the *last* category, not a generic "other") that is not
     // worth a second implementation.
-    final label = catalog.catLabel(
-      io: e.io,
-      key: e.cat,
-      zh: zh,
-      custom: const [],
-    );
+    final label = catLabelOf(io: e.io, key: e.cat, zh: zh);
     final accent = parseHex(label.color);
     final picked = _picked?.contains(e.id) ?? false;
     // One node saying one sentence, which is what the React Native row does:
@@ -1342,7 +1328,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
   /// The grid is whichever side the selection is on — `sharedIo` already
   /// answered that — so an expense selection is never offered 工资.
   Future<void> _batchCategory(String io, bool zh) async {
-    final cats = catalog.allCats(io: io, custom: const []);
+    final cats = catsOf(io);
     final key = await showModalBottomSheet<String>(
       context: context,
       backgroundColor: palette.card,

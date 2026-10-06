@@ -262,6 +262,60 @@ void main() {
     });
   });
 
+  group('custom categories', () {
+    testWidgets('are added and removed through the screen', (tester) async {
+      await showTags(tester);
+      expect(find.byKey(const Key('no-cats-exp')), findsOneWidget);
+
+      await tester.tap(find.byKey(const Key('add-cat-exp')));
+      await tester.pumpAndSettle();
+      await enterName(tester, '宠物');
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('no-cats-exp')), findsNothing);
+      expect(catalog.customCats(io: 'exp'), hasLength(1));
+      final added = catalog.customCats(io: 'exp').single;
+      expect(added.k, startsWith('c'));
+      expect(catalog.customCats(io: 'inc'), isEmpty);
+
+      await tester.tap(find.byKey(Key('cat-exp-${added.k}-remove')));
+      await tester.pumpAndSettle();
+      expect(catalog.customCats(io: 'exp'), isEmpty);
+    });
+
+    testWidgets('appear in the picker after the built-ins', (tester) async {
+      catalog.addCustomCat(io: 'exp', key: 'c1', name: '宠物', emoji: '🐈');
+      final cats = catalog.allCats(
+        io: 'exp',
+        custom: catalog.customCats(io: 'exp'),
+      );
+      expect(cats.last.k, 'c1');
+      expect(cats.last.custom, isTrue);
+      // and they do not leak into the other direction
+      expect(
+        catalog
+            .allCats(io: 'inc', custom: catalog.customCats(io: 'inc'))
+            .any((c) => c.k == 'c1'),
+        isFalse,
+      );
+    });
+
+    testWidgets('carry subcategories', (tester) async {
+      catalog.addCustomCat(io: 'exp', key: 'c1', name: '宠物', emoji: '🐈');
+      catalog.addSubcat(catKey: 'c1', id: 'sc1', name: '猫粮');
+      catalog.addSubcat(catKey: 'c1', id: 'sc2', name: '疫苗');
+      expect(catalog.subcatsOf(catKey: 'c1').map((s) => s.name),
+          ['猫粮', '疫苗']);
+
+      catalog.removeSubcat(catKey: 'c1', k: 'sc1');
+      expect(catalog.subcatsOf(catKey: 'c1').single.name, '疫苗');
+
+      // removing the category takes its subcategories with it
+      catalog.removeCustomCat(io: 'exp', key: 'c1');
+      expect(catalog.subcatsOf(catKey: 'c1'), isEmpty);
+    });
+  });
+
   group('all of it survives', () {
     testWidgets('a snapshot and a reload', (tester) async {
       catalog.addTag(kind: 'normal', name: '报销');
@@ -271,11 +325,14 @@ void main() {
       catalog.setCurrentLedger(name: '家用');
       catalog.addTemplate(
           id: 't1', io: 'exp', cat: 'food', amt: 35, note: '午饭', name: 'X');
+      catalog.addCustomCat(io: 'exp', key: 'c1', name: '宠物', emoji: '🐈');
+      catalog.addSubcat(catKey: 'c1', id: 'sc1', name: '猫粮');
       final json = store.snapshotConfig();
 
       store.reset();
       expect(catalog.tags(), isEmpty);
       expect(catalog.templates(), isEmpty);
+      expect(catalog.customCats(io: 'exp'), isEmpty);
 
       expect(store.loadConfig(json: json), isTrue);
       expect(catalog.tags(), ['报销']);
@@ -284,6 +341,8 @@ void main() {
       expect(catalog.currentLedger(), '家用');
       expect(catalog.templates().single.name, 'X');
       expect(catalog.templates().single.note, '午饭');
+      expect(catalog.customCats(io: 'exp').single.k, 'c1');
+      expect(catalog.subcatsOf(catKey: 'c1').single.name, '猫粮');
     });
 
     testWidgets('and an empty archive list is written as absent, not as []',
