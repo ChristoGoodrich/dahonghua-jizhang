@@ -20,6 +20,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
 
+import 'bloom.dart';
 import 'src/rust/api/lock.dart' as lock;
 import 'theme.dart';
 
@@ -190,7 +191,11 @@ class _LockGateState extends State<LockGate> with WidgetsBindingObserver {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('🌺', style: const TextStyle(fontSize: 56)),
+                  // The app's own mark, not 🌺. That emoji is somebody
+                  // else's drawing on every phone that renders it, and it
+                  // was not the flower on the launcher icon the user had
+                  // just left. Same reason 明细's empty state uses `Bloom`.
+                  const Bloom(size: 56),
                   const SizedBox(height: 16),
                   Text(
                     zh ? '大红花记账已锁定' : 'Red Blossom is locked',

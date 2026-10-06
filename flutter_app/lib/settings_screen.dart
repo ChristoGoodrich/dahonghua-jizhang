@@ -347,23 +347,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
               runSpacing: 8,
               children: [
                 for (final o in theme.themeOptions())
-                  GestureDetector(
+                  // 48dp of hit area around a 34dp swatch. A bare
+                  // `GestureDetector` on the circle itself was below every
+                  // phone's comfortable target and had no press feedback.
+                  Tap(
                     key: Key('theme-${o.key}'),
                     onTap: () => _setTheme(o.key, _dark),
-                    child: Container(
-                      width: 34,
-                      height: 34,
-                      decoration: BoxDecoration(
-                        color: parseHex(o.swatch),
-                        shape: BoxShape.circle,
-                        // The chosen one is ringed rather than ticked: a tick
-                        // in the middle of a swatch hides the colour being
-                        // chosen.
-                        border: Border.all(
-                          color: _themeKey == o.key
-                              ? palette.ink
-                              : palette.line,
-                          width: _themeKey == o.key ? 2.5 : 1,
+                    filled: false,
+                    semanticLabel: o.key,
+                    child: SizedBox(
+                      width: 48,
+                      height: 48,
+                      child: Center(
+                        child: Container(
+                          width: 34,
+                          height: 34,
+                          decoration: BoxDecoration(
+                            color: parseHex(o.swatch),
+                            shape: BoxShape.circle,
+                            // The chosen one is ringed rather than ticked: a tick
+                            // in the middle of a swatch hides the colour being
+                            // chosen.
+                            border: Border.all(
+                              color: _themeKey == o.key
+                                  ? palette.ink
+                                  : palette.line,
+                              width: _themeKey == o.key ? 2.5 : 1,
+                            ),
+                          ),
                         ),
                       ),
                     ),

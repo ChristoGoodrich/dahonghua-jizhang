@@ -19,6 +19,7 @@ import 'src/rust/api/catalog.dart' as catalog;
 import 'src/rust/api/money.dart' as money;
 import 'glass.dart';
 import 'empty_note.dart';
+import 'tap.dart';
 import 'theme.dart';
 
 class TagsScreen extends StatefulWidget {
@@ -157,15 +158,22 @@ class _TagsScreenState extends State<TagsScreen> {
               ),
             ),
             if (key != null)
-              GestureDetector(
+              Tap(
                 key: Key(key),
                 onTap: onAdd,
-                child: Text(
-                  zh ? '添加' : 'Add',
-                  style: TextStyle(
-                    fontSize: 12.5,
-                    fontWeight: FontWeight.w600,
-                    color: palette.hibiscus,
+                filled: false,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 6,
+                  ),
+                  child: Text(
+                    zh ? '添加' : 'Add',
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w600,
+                      color: palette.hibiscus,
+                    ),
                   ),
                 ),
               ),
@@ -220,7 +228,7 @@ class _TagsScreenState extends State<TagsScreen> {
         ),
         IconButton(
           key: Key('$keyName-remove'),
-          constraints: const BoxConstraints(minWidth: 30, minHeight: 30),
+          constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
           padding: EdgeInsets.zero,
           iconSize: 15,
           icon: Icon(icon, color: tone ?? palette.inkSoft),
@@ -246,7 +254,7 @@ class _TagsScreenState extends State<TagsScreen> {
         IconButton(
           key: Key('archived-$l-restore'),
           tooltip: zh ? '取消归档' : 'Unarchive',
-          constraints: const BoxConstraints(minWidth: 30, minHeight: 30),
+          constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
           padding: EdgeInsets.zero,
           iconSize: 15,
           icon: Icon(Icons.unarchive_outlined, color: palette.inkSoft),
@@ -258,7 +266,7 @@ class _TagsScreenState extends State<TagsScreen> {
         IconButton(
           key: Key('archived-$l-delete'),
           tooltip: zh ? '删除' : 'Delete',
-          constraints: const BoxConstraints(minWidth: 30, minHeight: 30),
+          constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
           padding: EdgeInsets.zero,
           iconSize: 15,
           icon: Icon(Icons.delete_outline, color: palette.inkSoft),
