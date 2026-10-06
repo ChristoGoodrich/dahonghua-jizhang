@@ -152,4 +152,29 @@ mod tests {
         assert!(burst_length(&b) < 1170.0);
         assert_eq!(burst_length(&[]), 0.0);
     }
+
+    /// A seed is just a `u32`. Whatever it is, the flowers are drawable: finite
+    /// offsets, a fan that reads left to right (`dx`, not `rot` — that one is
+    /// the flower's own spin), and a length the animator can schedule against.
+    #[test]
+    fn any_seed_draws_a_sane_burst() {
+        for seed in [0u32, 1, 7, 42, 12345, 0x7fff_ffff, 0xffff_ffff] {
+            let b = burst(seed);
+            assert_eq!(b.len(), 12, "seed={seed}");
+            for p in &b {
+                assert!(p.dx.is_finite() && p.rise.is_finite(), "seed={seed}");
+                assert!(p.size.is_finite() && p.size > 0.0, "seed={seed}");
+                assert!(p.rot.is_finite(), "seed={seed}");
+                assert!(p.duration > 0.0 && p.delay >= 0.0, "seed={seed}");
+            }
+            // left half is left of right half, as the shipping shape requires
+            let left = b[..6].iter().map(|p| p.dx).fold(f64::MIN, f64::max);
+            let right = b[6..].iter().map(|p| p.dx).fold(f64::MAX, f64::min);
+            assert!(left < right, "seed={seed} fan collapsed");
+            assert!(b[0].dx < 0.0, "seed={seed} first flower went right");
+            assert!(b[11].dx > 0.0, "seed={seed} last flower went left");
+            let len = burst_length(&b);
+            assert!(len.is_finite() && len > 0.0 && len < 2000.0, "seed={seed} len={len}");
+        }
+    }
 }

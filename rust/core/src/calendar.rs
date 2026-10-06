@@ -63,11 +63,17 @@ pub struct CalMonth {
 /// and lifts the ordinary days to where they can be told apart, which is what
 /// a heat map is for. Nothing spent is no shade at all, however small `max`.
 pub fn heat(exp: f64, max: f64) -> f64 {
-    // NaN in either is no shade, which the `<=` alone would not say
+    // NaN in either is no shade, which the `<=` alone would not say. So is a
+    // ratio that will not come out finite — `inf / inf` is NaN, and a shade
+    // of NaN is not a shade.
     if exp.is_nan() || max.is_nan() || exp <= 0.0 || max <= 0.0 {
         return 0.0;
     }
-    (exp / max).clamp(0.0, 1.0).sqrt()
+    let share = (exp / max).clamp(0.0, 1.0);
+    if !share.is_finite() {
+        return 0.0;
+    }
+    share.sqrt()
 }
 
 /// The cycle containing `anchor`, day by day.
@@ -224,5 +230,69 @@ mod tests {
         // the last day of a cycle is still inside it
         assert!(!can_page_forward(c(2026, 9, 5), 1, c(2026, 9, 30)));
         assert!(can_page_forward(c(2026, 9, 5), 1, c(2026, 10, 1)));
+    }
+
+    // ---- properties over many inputs ------------------------------------
+    //
+    // Goldens pin answers; these pin *shape*. A calendar that drops a day, or
+    // a heat map that can leave [0,1], looks fine on the four cases above and
+    // wrong the first time a user has a 31-day cycle.
+
+    #[test]
+    fn heat_stays_a_shade_however_odd_the_numbers() {
+        for exp in [-1.0, 0.0, 0.01, 1.0, 40.0, 2800.0, 1e12, f64::NAN, f64::INFINITY] {
+            for max in [-1.0, 0.0, 0.01, 1.0, 2800.0, 1e12, f64::NAN, f64::INFINITY] {
+                let h = heat(exp, max);
+                assert!((0.0..=1.0).contains(&h), "heat({exp},{max}) = {h}");
+                assert!(h.is_finite());
+            }
+        }
+    }
+
+    #[test]
+    fn a_bigger_day_is_never_a_lighter_shade() {
+        for max in [1.0, 10.0, 2800.0] {
+            let mut prev = -1.0;
+            for e in [0.0, 0.25, 1.0, 2.5, 5.0, 9.99] {
+                let h = heat(e * max / 10.0, max);
+                assert!(h >= prev, "exp grew, shade shrank at {e}");
+                prev = h;
+            }
+        }
+    }
+
+    #[test]
+    fn every_cycle_day_appears_exactly_once_and_in_order() {
+        for (y, m, d) in [(2026, 1, 1), (2026, 2, 10), (2026, 4, 15), (2026, 12, 31)] {
+            for cycle_start in [1, 5, 15, 28] {
+                let mth = cal_month(&[], c(y, m, d), cycle_start, c(y, m, d));
+                assert!(!mth.cells.is_empty(), "{y}-{m} cs={cycle_start}");
+                for w in mth.cells.windows(2) {
+                    assert_eq!(
+                        w[1].day.day_number(),
+                        w[0].day.day_number() + 1,
+                        "a day went missing at {y}-{m} cs={cycle_start}"
+                    );
+                }
+                assert_eq!(mth.cells.len() as i64, {
+                    let r = cycle_range(c(y, m, d), cycle_start);
+                    r.end.day_number() - r.start.day_number()
+                });
+            }
+        }
+    }
+
+    #[test]
+    fn the_month_totals_match_the_rows_that_landed_in_it() {
+        let anchor = c(2026, 9, 20);
+        let rows = [
+            exp(c(2026, 9, 1), 10.0),
+            exp(c(2026, 9, 15), 20.5),
+            exp(c(2026, 8, 31), 999.0), // outside
+            exp(c(2026, 10, 1), 888.0), // outside
+        ];
+        let m = cal_month(&rows, anchor, 1, anchor);
+        assert_eq!(m.exp, 30.5);
+        assert_eq!(m.cells.iter().map(|c| c.exp).sum::<f64>(), 30.5);
     }
 }

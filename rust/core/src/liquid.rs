@@ -316,4 +316,54 @@ mod tests {
             l
         );
     }
+
+    // ---- properties over many inputs ------------------------------------
+
+    /// A finger can put `x` anywhere, including past both ends and into the
+    /// junk a fling reports. The answer is still a valid tab index.
+    #[test]
+    fn tab_and_snap_stay_inside_the_bar() {
+        let s = spec();
+        for count in [0usize, 1, 2, 4, 7] {
+            for item_w in [0.0, -1.0, 1.0, 50.0, 200.0] {
+                for x in [-1e6, -50.0, -0.1, 0.0, 1.0, 75.0, 199.0, 1e6, f64::NAN] {
+                    let t = tab_at(x, item_w, count);
+                    if count == 0 {
+                        assert_eq!(t, 0);
+                    } else {
+                        assert!(t < count, "tab_at({x},{item_w},{count}) = {t}");
+                    }
+                    for v in [f64::NAN, -1e6, -1200.0, 0.0, 3.0, 1e6] {
+                        let sn = snap(&s, x, item_w, count, v);
+                        if count == 0 {
+                            assert_eq!(sn, 0);
+                        } else {
+                            assert!(sn < count, "snap({x},{item_w},{count},{v}) = {sn}");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /// The area rule, and that the sheen never leaves the lens.
+    #[test]
+    fn the_lens_never_folds_or_leaks() {
+        for dark in [false, true] {
+            let s = liquid_spec(dark);
+            for v in [-1e6, -2000.0, -1.0, 0.0, 1.0, 2000.0, 1e6, f64::NAN, f64::INFINITY] {
+                let l = lens(&s, v);
+                assert!(l.scale_x.is_finite() && l.scale_x > 0.0);
+                assert!(l.scale_y.is_finite() && l.scale_y > 0.0);
+                if v != 0.0 && v.is_finite() {
+                    assert!(
+                        (l.scale_x * l.scale_y - 1.0).abs() < 1e-9,
+                        "v={v} area moved"
+                    );
+                }
+                assert!((0.0..=1.0).contains(&l.sheen_at), "sheen {v}");
+                assert!(l.trail.is_finite());
+            }
+        }
+    }
 }
