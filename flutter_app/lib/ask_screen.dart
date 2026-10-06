@@ -18,6 +18,7 @@ import 'glass.dart';
 import 'src/rust/api/ai.dart' as ai;
 import 'src/rust/api/money.dart' as money;
 import 'tap.dart';
+import 'amounts.dart';
 import 'theme.dart';
 
 class AskScreen extends StatefulWidget {
@@ -271,7 +272,7 @@ class _AnswerCard extends StatelessWidget {
   final bool zh;
   final ValueChanged<String>? onOpen;
 
-  String _m(double v) => money.fmt(n: v, symbol: zh ? '￥' : '\$');
+  String _m(double v) => money.fmt(n: v, symbol: baseSymbol());
 
   /// This year's days without the year, which every one of them would repeat.
   String _day(String ymd) {

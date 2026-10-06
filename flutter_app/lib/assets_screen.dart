@@ -59,7 +59,7 @@ class _AssetsScreenState extends State<AssetsScreen> {
     _reload();
   }
 
-  String _m(double v) => shownAmount(v, widget.zh ? '￥' : '\$');
+  String _m(double v) => shownAmount(v, baseSymbol());
 
   Future<void> _manageAccounts() async {
     await Navigator.of(context).push(

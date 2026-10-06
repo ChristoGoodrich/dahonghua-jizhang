@@ -405,6 +405,47 @@ void main() {
       p.dispose();
     });
 
+    testWidgets('recording from the sheet queues that row alone', (
+      tester,
+    ) async {
+      // `save_form` used to take `store_mut`, which marks the whole ledger:
+      // every entry recorded through the sheet scheduled a full rewrite on
+      // the next flush. The sheet is the app's primary way of creating one.
+      final p = await open();
+      for (var i = 0; i < 20; i++) {
+        add('e$i', 10);
+      }
+      p.save();
+
+      record.saveForm(
+        form: record.FormView(
+          io: 'exp',
+          cat: 'food',
+          amt: '42',
+          note: '午饭',
+          acct: '',
+          acctTo: '',
+          fee: '',
+          discount: '',
+          tags: const [],
+          ledger: '',
+          cur: 'CNY',
+          subcat: '',
+          ts: t0 + 1,
+        ),
+        editId: '',
+        id: 'sheet-narrow',
+        now: t0 + 1,
+        rateWasCached: false,
+      );
+      expect(
+        p.pendingRows,
+        1,
+        reason: 'one new entry must not queue the whole ledger',
+      );
+      p.dispose();
+    });
+
     testWidgets('a load is not a change', (tester) async {
       var p = await open();
       for (var i = 0; i < 5; i++) {

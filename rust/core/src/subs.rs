@@ -206,6 +206,13 @@ pub fn run_subscriptions(
         return out;
     }
 
+    // One set of the ids already present. A `get` per candidate charge was
+    // a linear scan per charge — quadratic at the exact moment the app is
+    // also appending rows, which is every launch with overdue subscriptions.
+    // Owned, because pushing a charge has to grow the set too.
+    let mut existing: std::collections::HashSet<String> =
+        ledger.all().iter().map(|e| e.id.clone()).collect();
+
     for sub in subs.iter_mut() {
         let DueResult {
             charges,
@@ -227,9 +234,10 @@ pub fn run_subscriptions(
         for due in &to_apply {
             let ts = to_epoch(*due);
             let id = format!("sub_{}_{}", sub.id, ts);
-            if ledger.get(&id).is_some() {
+            if existing.contains(&id) {
                 continue; // already charged locally
             }
+            existing.insert(id.clone());
 
             let is_transfer = sub.is_transfer == Some(true);
             let entry = match (is_transfer, sub.from.as_deref(), sub.to.as_deref()) {

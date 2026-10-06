@@ -24,6 +24,7 @@ import 'src/rust/api/money.dart' as money;
 import 'src/rust/api/stats.dart' as stats;
 import 'tap.dart';
 import 'glass.dart';
+import 'amounts.dart';
 import 'theme.dart';
 
 String _day(DateTime d) => '${d.year}-${d.month}-${d.day}';
@@ -179,7 +180,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
   /// one it should be following, and which side of the cap the dashes land.
   Widget _outlookCard(budget.OutlookView o, bool zh) {
     final p = palette;
-    final sym = zh ? '￥' : '\$';
+    final sym = baseSymbol();
     String m(double v) => money.fmt(n: v, symbol: sym);
     final heading = o.onTrack ? p.leafDeep : p.warnDeep;
     Widget figure(String key, String label, String value, [Color? tone]) =>
@@ -388,7 +389,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
     required VoidCallback onTap,
   }) {
     final zh = widget.zh;
-    final sym = zh ? '￥' : '\$';
+    final sym = baseSymbol();
     // over is its own colour; under is the leaf, because a budget you are
     // inside is not a warning
     final tone = tier.over ? palette.warn : palette.leafDeep;
@@ -506,7 +507,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
   );
 
   Widget _catRow(budget.CatBudgetView c, bool zh) {
-    final sym = zh ? '￥' : '\$';
+    final sym = baseSymbol();
     final tone = c.status.over ? palette.warn : parseHex(c.color);
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),

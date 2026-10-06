@@ -22,6 +22,7 @@ import 'src/rust/api/subscriptions.dart' as subs;
 import 'tap.dart';
 import 'glass.dart';
 import 'empty_note.dart';
+import 'amounts.dart';
 import 'theme.dart';
 
 /// `YYYY-M-D` with a **0-indexed** month, inherited from v7 — the encoding the
@@ -279,7 +280,7 @@ class _SubsScreenState extends State<SubsScreen> {
               ),
             ),
             Text(
-              money.fmtShort(n: s.amt, symbol: zh ? '￥' : '\$'),
+              money.fmtShort(n: s.amt, symbol: baseSymbol()),
               key: Key('sub-${s.id}-amt'),
               style: TextStyle(
                 fontSize: 15,

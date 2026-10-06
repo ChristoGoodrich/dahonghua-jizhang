@@ -76,7 +76,7 @@ WidgetData widgetData({required bool zh}) {
 
   final s = budget.settings();
   final status = budget.monthlyStatus(ids: ids, budget: s.budget);
-  final sym = zh ? '￥' : '\$';
+  final sym = amounts.baseSymbol();
 
   return WidgetData(
     title: zh ? '本月预算' : 'This month',

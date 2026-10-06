@@ -567,9 +567,10 @@ pub fn add_transfer(transfer: NewTransfer, id: String, now: i64) -> String {
         id,
         now,
     );
-    // A transfer is a pair of rows and only one id comes back. Marking
-    // everything is the honest answer to not knowing the other.
-    db::mark_all();
+    // One row, not a pair — `core::Store::add_transfer` writes a single `xfer`
+    // entry. The current account always moves, which is a config write.
+    db::mark(&out);
+    db::mark_config();
     out
 }
 

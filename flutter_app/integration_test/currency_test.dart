@@ -12,6 +12,7 @@
 // cannot do moves NOTHING.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/amounts.dart';
 import 'package:flutter_app/currency_screen.dart';
 import 'package:flutter_app/src/rust/api/accounts.dart' as accounts;
 import 'package:flutter_app/src/rust/api/budget.dart' as budget;
@@ -295,6 +296,29 @@ void main() {
       expect(store.loadConfig(json: json), isTrue);
       expect(cur.baseCurrency(), 'USD');
       expect(cur.rates().firstWhere((r) => r.code == 'CNY').rate, isNot(0));
+    });
+  });
+
+  group('the symbol', () {
+    // Tying the glyph to `zh` meant a Chinese UI keeping a USD ledger still
+    // printed ￥. The symbol belongs to the base, not to the language.
+    testWidgets('follows the base currency, not the language', (tester) async {
+      expect(cur.baseCurrency(), 'CNY');
+      expect(baseSymbol(), '￥');
+
+      cur.addRate(code: 'USD');
+      cur.setRate(code: 'USD', rate: 7.2);
+      expect(cur.setBaseCurrency(code: 'USD', now: now), 'ok');
+      expect(baseSymbol(), '\$');
+    });
+
+    testWidgets('an unknown code falls back to the code itself', (
+      tester,
+    ) async {
+      cur.addRate(code: 'XYZ');
+      cur.setRate(code: 'XYZ', rate: 1);
+      expect(cur.setBaseCurrency(code: 'XYZ', now: now), 'ok');
+      expect(baseSymbol(), contains('XYZ'));
     });
   });
 }

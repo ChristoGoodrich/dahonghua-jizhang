@@ -20,6 +20,7 @@ import 'src/rust/api/statement.dart' as statement;
 import 'src/rust/api/store.dart' as store;
 import 'glass.dart';
 import 'empty_note.dart';
+import 'amounts.dart';
 import 'theme.dart';
 
 String _acctEmoji(String kind) => switch (kind) {
@@ -79,7 +80,7 @@ class AccountDetailScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  money.fmt(n: owed ? -bal : bal, symbol: zh ? '￥' : '\$'),
+                  money.fmt(n: owed ? -bal : bal, symbol: baseSymbol()),
                   key: const Key('acct-detail-balance-value'),
                   style: TextStyle(
                     color: p.paper,
@@ -209,7 +210,7 @@ class AccountDetailScreen extends StatelessWidget {
               ),
             ),
             Text(
-              money.fmt(n: r.delta, symbol: zh ? '￥' : '\$'),
+              money.fmt(n: r.delta, symbol: baseSymbol()),
               key: Key('acct-row-${e.id}-delta'),
               style: TextStyle(
                 fontSize: 15,

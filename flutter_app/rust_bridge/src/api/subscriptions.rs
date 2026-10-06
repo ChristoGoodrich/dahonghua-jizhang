@@ -276,6 +276,10 @@ pub fn subs_commit(
     // A subscription that comes due writes a real entry, and those were being
     // lost with everything else.
     let mut s = store_mut();
+    // Ids already present, once. A `get` per candidate charge was a linear
+    // scan per charge.
+    let mut existing: std::collections::HashSet<String> =
+        s.ledger.all().iter().map(|e| e.id.clone()).collect();
     for (i, sub) in list.iter_mut().enumerate() {
         let Some(start) = starts.get(i).and_then(|x| parse_day(x)) else {
             continue;
@@ -294,9 +298,10 @@ pub fn subs_commit(
                 continue;
             };
             let id = format!("sub_{}_{}", sub.id, ts);
-            if s.ledger.get(&id).is_some() {
+            if existing.contains(&id) {
                 continue; // already charged locally
             }
+            existing.insert(id.clone());
             s.ledger.push_raw(charge_entry(sub, id, ts, now));
             fired.push(sub.name.clone());
         }

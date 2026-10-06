@@ -2,9 +2,10 @@
 <!--
   What Android may copy out of this app, on API 31 and up.
 
-  The manifest says the only thing this app reaches the network for is an
-  exchange rate, and that the ledger leaves the device because someone put it
-  somewhere, not because the app sent it. That was not true: `allowBackup`
+  The manifest lists what this app reaches the network for: an exchange rate,
+  and — only if the user turned it on and gave it a key — the AI service they
+  chose. Neither carries the ledger. The ledger leaves the device because
+  someone put it somewhere, not because the app sent it. That was not true: `allowBackup`
   defaults to **on**, so Android's own Auto Backup had been uploading the
   SQLite ledger — every transaction, every account — to the user's cloud
   backup without anyone choosing it.

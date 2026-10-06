@@ -31,6 +31,7 @@ import 'src/rust/api/search.dart' as search;
 import 'src/rust/api/store.dart' as store;
 import 'reimburse_screen.dart';
 import 'tap.dart';
+import 'amounts.dart';
 import 'theme.dart';
 import 'toast.dart';
 
@@ -484,7 +485,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
   /// The calendar face: the cycle's grid, and the picked day's rows under it.
   Widget _calendarBody(bool zh, TitledBody b) {
     final m = _cal!;
-    final sym = zh ? '￥' : '\$';
+    final sym = baseSymbol();
     calendar.CalCellView? cell;
     for (final c in m.cells) {
       if (c.day == _calPicked) cell = c;
@@ -668,9 +669,9 @@ class _EntryListScreenState extends State<EntryListScreen> {
   Widget? _sums(batch.BatchTally t, bool zh) {
     final parts = <String>[
       if (t.exp > 0)
-        '${zh ? '支出' : 'Exp'} ${money.fmt(n: t.exp, symbol: zh ? '￥' : '\$')}',
+        '${zh ? '支出' : 'Exp'} ${money.fmt(n: t.exp, symbol: baseSymbol())}',
       if (t.inc > 0)
-        '${zh ? '收入' : 'Inc'} ${money.fmt(n: t.inc, symbol: zh ? '￥' : '\$')}',
+        '${zh ? '收入' : 'Inc'} ${money.fmt(n: t.inc, symbol: baseSymbol())}',
     ];
     if (parts.isEmpty) return null;
     return Text(
@@ -949,7 +950,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
     final showsExp = item.exp > 0 || item.inc == 0;
     final amount = money.fmt(
       n: showsExp ? item.exp : item.inc,
-      symbol: zh ? '￥' : '\$',
+      symbol: baseSymbol(),
     );
     final side =
         '${showsExp ? (zh ? '支出' : 'Exp') : (zh ? '收入' : 'Inc')} $amount';

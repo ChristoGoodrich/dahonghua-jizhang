@@ -50,9 +50,21 @@ give us a reasonable window to ship a fix before disclosing publicly.
 This is what the app does today, stated so that a report can say where it differs.
 
 - **The ledger stays on the phone**, in the app's own storage.
-- **The network is used for one thing:** fetching exchange rates, from
-  `api.frankfurter.app` and `api.exchangerate-api.com`. Nothing from the ledger is
-  sent with the request. There is no account, no server and no cloud sync.
+- **The network is used for two things.** Neither carries the ledger:
+
+  1. **Exchange rates** — a currency pair and a date, to `api.frankfurter.app`
+     and `api.exchangerate-api.com`. Nothing from the ledger is sent with the
+     request.
+  2. **AI, only if you turn it on** — off by default, and dead until the user
+     enables it in 设置 and supplies their own key. Even then it only sends
+     when they press something: the sentence typed for 一句话记账, the picture
+     chosen for 拍小票, or the question asked for 问账本 — plus today's date
+     and the category names, and nothing else. A question never carries the
+     ledger's rows; it comes back as a query that is counted on the phone.
+     The key lives in Android's encrypted store, not in the config, so it is
+     in no backup, sync file or export.
+
+  There is no account, no server and no cloud sync.
 - **It leaves only when you send it** — 备份 → 导出, 同步's document, or a CSV
   export, each through the system share sheet to wherever you choose.
 - **Android's cloud Auto Backup is turned off** (`data_extraction_rules.xml`,
@@ -124,7 +136,18 @@ This is what the app does today, stated so that a report can say where it differ
 下面是 app 现在的实际行为。写清楚,是为了让报告能指出哪里和这里不一样。
 
 - **账本留在手机上**,存在 app 自己的存储空间里。
-- **联网只做一件事:** 从 `api.frankfurter.app` 和 `api.exchangerate-api.com` 取汇率。请求里不带任何账本内容。没有账号、没有服务器,也没有云同步。
+- **联网只做两件事,两件都不带账本:**
+
+  1. **取汇率** —— 一对币种和一个日期,发给 `api.frankfurter.app` 和
+     `api.exchangerate-api.com`。请求里不带任何账本内容。
+  2. **AI,而且只有你打开才有** —— 默认关闭;要在设置里打开并填入你自己的
+     密钥才会工作。即便打开了,也只有你按下按钮时才会发:一句话记账里打的
+     那句话、拍小票里选的那张图、问账本里问的那个问题 —— 再加上今天的日期
+     和分类名称,没有别的。问账本永远不会把账本的行发出去;问题会变成一条
+     查询,在手机上算完。密钥存在 Android 的加密存储里,不在配置中,因此
+     不会出现在任何备份、同步文件或导出里。
+
+  没有账号、没有服务器,也没有云同步。
 - **只有你发送时它才会离开** —— 备份里的「导出」、同步生成的文件、CSV 导出,都经过系统的分享面板,发到你自己选的地方。
 - **Android 的云端自动备份是关闭的**(`data_extraction_rules.xml`、`backup_rules.xml`)。设备之间的直接迁移(你在两台手里的手机之间搬自己的数据)在 Android 12 及以上保留开启。
 - **备份文件和同步文件都没有加密**,是普通的 JSON。导出的文件请像对待账本本身一样对待。(React Native 版的备份是加密的;重写版还没有移植这部分,备份页面上也写明了。)

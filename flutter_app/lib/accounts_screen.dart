@@ -249,7 +249,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
         ),
         const SizedBox(height: 3),
         Text(
-          shownAmount(_total, zh ? '￥' : '\$'),
+          shownAmount(_total, baseSymbol()),
           key: const Key('acct-total'),
           style: TextStyle(
             fontSize: 24,
@@ -272,7 +272,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
   List<Widget> _statementLine(accounts.AccountBalance a, bool zh) {
     final st = _statements[a.id];
     if (st == null) return const [];
-    final sym = zh ? '￥' : '\$';
+    final sym = baseSymbol();
     final bits = <String>[
       zh
           ? '本期待还 ${shownAmount(st.billedDue, sym)}'
@@ -360,7 +360,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
   );
 
   String _dueBannerLine(statement.DueView d, bool zh) {
-    final amt = shownAmount(d.billedDue, zh ? '￥' : '\$');
+    final amt = shownAmount(d.billedDue, baseSymbol());
     if (d.daysToDue < 0) {
       return zh
           ? '${d.accountName} $amt · 逾期 ${-d.daysToDue} 天'
@@ -429,7 +429,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      shownAmount(a.balance, zh ? '￥' : '\$'),
+                      shownAmount(a.balance, baseSymbol()),
                       key: Key('acct-${a.id}-bal'),
                       style: TextStyle(
                         fontSize: 15.5,

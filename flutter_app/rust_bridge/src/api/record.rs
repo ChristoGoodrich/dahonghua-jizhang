@@ -18,7 +18,7 @@ use dahonghua_core::record::{self as core, Draft, FormDefaults, FormFields};
 use dahonghua_core::store::TransferOpts;
 use flutter_rust_bridge::frb;
 
-use super::store::{currencies_of, set_currencies_inner, store, store_mut};
+use super::store::{currencies_of, set_currencies_inner, store, store_marked};
 
 /// The record sheet's fields, as Dart holds them.
 ///
@@ -155,12 +155,13 @@ pub fn save_form(
     };
 
     let editing = !edit_id.is_empty();
-    // `store_mut`, and this line is the defect that lost every entry the app
-    // recorded: it wrote through a plain `store()` and marked nothing, so the
-    // rows lived in memory and never reached the database. Six mutators in
-    // `store.rs` were audited when the dirty set was written and nobody
-    // checked whether other modules reached past them. Five did.
-    let mut s = store_mut();
+    // Narrow mark, not `store_mut`. Recording one entry is the hottest write
+    // path in the app, and a wide mark means the next flush rewrites every
+    // row in the ledger. (It used to write through a plain `store()` and mark
+    // nothing at all, which is how every entry the sheet recorded was lost.)
+    // The config follows for free: `flush_store` diffs it against what is on
+    // disk rather than trusting a mark.
+    let mut s = store_marked();
     let written = match d {
         Draft::Xfer {
             from,
@@ -266,6 +267,11 @@ pub fn save_form(
             }
         }
     };
+    super::db::mark(&written);
+    // `add_entry` and `add_transfer` both move `current_account`. The config
+    // snapshot would catch it on the way out; marking it here is the honest
+    // answer to "what did this call touch", and costs one row.
+    super::db::mark_config();
 
     SaveResult {
         rejected: None,

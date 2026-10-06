@@ -30,6 +30,7 @@ import 'src/rust/api/money.dart' as money;
 import 'src/rust/api/period.dart' as period;
 import 'src/rust/api/stats.dart' as stats;
 import 'tap.dart';
+import 'amounts.dart';
 import 'theme.dart';
 
 /// `y-m-d` for a local calendar day — the one conversion that needs a timezone,
@@ -173,7 +174,7 @@ class _StatsScreenState extends State<StatsScreen>
   }
 
   Color get _accent => _io == 'exp' ? palette.hibiscus : palette.leafDeep;
-  String get _sym => widget.zh ? '￥' : '\$';
+  String get _sym => baseSymbol();
   String _money(double n) => money.fmt(n: n, symbol: _sym);
   String _short(double n) => money.fmtShort(n: n, symbol: _sym);
 

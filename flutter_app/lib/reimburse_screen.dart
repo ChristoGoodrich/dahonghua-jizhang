@@ -17,6 +17,7 @@ import 'src/rust/api/money.dart' as money;
 import 'src/rust/api/reimburse.dart' as rb;
 import 'glass.dart';
 import 'empty_note.dart';
+import 'amounts.dart';
 import 'theme.dart';
 
 class ReimburseScreen extends StatefulWidget {
@@ -45,7 +46,7 @@ class _ReimburseScreenState extends State<ReimburseScreen> {
     _reload();
   }
 
-  String _m(double v) => money.fmt(n: v, symbol: widget.zh ? '￥' : '\$');
+  String _m(double v) => money.fmt(n: v, symbol: baseSymbol());
 
   @override
   Widget build(BuildContext context) {

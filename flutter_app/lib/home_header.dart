@@ -120,7 +120,7 @@ class _SummaryCard extends StatelessWidget {
     final flower = Color.lerp(p.hibiscus, on, 0.3)!;
     final spent = on.withValues(alpha: 0.92);
     final incTone = Color.lerp(p.leaf, on, 0.3)!;
-    final sym = zh ? '￥' : '\$';
+    final sym = baseSymbol();
     String m(double v) => hidden ? hiddenAmount : money.fmt(n: v, symbol: sym);
     final share = view.expShare;
 
@@ -351,7 +351,7 @@ class _BudgetPot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final p = palette;
-    final sym = zh ? '￥' : '\$';
+    final sym = baseSymbol();
     String s(double v) =>
         hidden ? hiddenAmount : money.fmtShort(n: v, symbol: sym);
     // The shipping card's three states. The dry browns are not the theme's:

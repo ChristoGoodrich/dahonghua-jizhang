@@ -35,6 +35,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
       - name: Set up Java 17
         uses: actions/setup-java@v5
         with:
@@ -46,10 +51,38 @@ jobs:
         with:
           channel: stable
 
-      - name: Set up Rust for the Android targets
+      # Host toolchain for the tests, Android targets for the build. One
+      # rustup can hold both; the tests are host binaries and would not run
+      # under a target-only install.
+      - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
         with:
+          components: rustfmt, clippy
           targets: aarch64-linux-android,armv7-linux-androideabi,i686-linux-android,x86_64-linux-android
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            rust/target
+            flutter_app/rust_bridge/target
+          key: release-cargo-${{ hashFiles('rust/**/Cargo.toml', 'rust/**/Cargo.lock', 'flutter_app/rust_bridge/Cargo.lock') }}
+          restore-keys: release-cargo-
+
+      # A tag is not a licence to skip the checks. The goldens are the core's
+      # contract with the app that shipped; the unit tests are its contract
+      # with itself. Both are cheaper than a release that has to be un-tagged.
+      - name: Core gate
+        run: |
+          npm run rust:fmt
+          npm run rust:clippy
+          npm run rust:test
+          npm run bridge:fmt
+          npm run bridge:clippy
+          npm run goldens
+          npm run tests:check
 
       - name: Restore the signing key
         if: env.HAVE_KEY == 'true'

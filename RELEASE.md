@@ -15,6 +15,10 @@ git push origin v1.1.0
 - Bump `version:` in `flutter_app/pubspec.yaml`. The part after `+` is the
   versionCode, and Android refuses an update whose versionCode did not increase.
 
+CI's release workflow re-runs the core gate (goldens, unit tests, clippy) before
+it builds. It does not re-run the emulator suite — that is what the push CI is
+for, so tag a commit that is already green there.
+
 ## Which APK
 
 CI runs `node scripts/build-apk.js`, the same script this repo tells a person
