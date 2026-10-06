@@ -70,10 +70,12 @@ This is what the app does today, stated so that a report can say where it differ
 - **Android's cloud Auto Backup is turned off** (`data_extraction_rules.xml`,
   `backup_rules.xml`). Device-to-device transfer, where you move your data between
   two phones you are holding, is left on for Android 12 and later.
-- **Backups and sync documents are not encrypted.** They are plain JSON. Treat an
-  exported file the way you would treat the ledger itself. (The React Native app
-  encrypted backups; the rewrite has not ported that yet, and the backup screen
-  says so.)
+- **Backups can be sealed with a password.** An encrypted snapshot is
+  AES-256-GCM over a PBKDF2-SHA256 key; without the password the file cannot
+  be opened, and a wrong password is refused rather than half-restored. A
+  plain snapshot is still plain JSON — treat an exported file the way you
+  would treat the ledger itself. Sync documents are always plain: moving one
+  between two phones is already the user carrying their own data.
 - **The app lock uses the phone's own biometric or screen-lock credential**
   (`local_auth`). The app never sees or stores a fingerprint or a password.
 - **Auto-capture reads notifications only from Alipay, WeChat and banks**, and
@@ -150,7 +152,10 @@ This is what the app does today, stated so that a report can say where it differ
   没有账号、没有服务器,也没有云同步。
 - **只有你发送时它才会离开** —— 备份里的「导出」、同步生成的文件、CSV 导出,都经过系统的分享面板,发到你自己选的地方。
 - **Android 的云端自动备份是关闭的**(`data_extraction_rules.xml`、`backup_rules.xml`)。设备之间的直接迁移(你在两台手里的手机之间搬自己的数据)在 Android 12 及以上保留开启。
-- **备份文件和同步文件都没有加密**,是普通的 JSON。导出的文件请像对待账本本身一样对待。(React Native 版的备份是加密的;重写版还没有移植这部分,备份页面上也写明了。)
+- **备份可以设口令。** 加密快照用的是 AES-256-GCM，密钥由 PBKDF2-SHA256
+  从口令导出；没有口令打不开，口令错了会拒绝，不会恢复一半。普通快照
+  仍是明文 JSON —— 导出的文件请像对待账本本身一样对待。同步文件始终是
+  明文：在两台手机之间搬它，本来就是你自己带着自己的数据走。
 - **应用锁用的是手机自己的指纹或锁屏密码**(`local_auth`)。app 看不到、也不保存任何指纹或密码。
 - **自动记账只读支付宝、微信和银行的通知**,而且要你先在系统设置里给了通知权限才会读。其余通知一律忽略,什么都不存。
 

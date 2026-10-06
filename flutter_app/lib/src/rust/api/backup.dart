@@ -6,7 +6,39 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `eq`, `eq`, `fmt`, `fmt`
+// These functions are ignored because they are not marked as `pub`: `as_str`, `b64`, `derive_key`, `unb64`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`
+
+/// Wrap `plaintext` in a password-sealed envelope.
+///
+/// Returns an empty string when the password is empty — there is no such
+/// thing as an unsealed sealed file, and writing one would look like success.
+///
+/// The envelope is a small JSON object: format version, KDF name and
+/// iterations, salt, nonce and ciphertext. Salt and nonce are not secret;
+/// they only have to be unique per file.
+String encryptBackup({required String plaintext, required String password}) =>
+    RustLib.instance.api.crateApiBackupEncryptBackup(
+      plaintext: plaintext,
+      password: password,
+    );
+
+/// Is this document a sealed envelope rather than a plain backup?
+bool isEncryptedDoc({required String json}) =>
+    RustLib.instance.api.crateApiBackupIsEncryptedDoc(json: json);
+
+/// Open a sealed envelope with `password`.
+///
+/// Refuses rather than returning a fragment: AES-GCM's authentication tag is
+/// the whole point, and a "successful" decrypt of damaged or wrong-password
+/// data is not a thing this algorithm produces.
+DecryptResult decryptBackup({
+  required String envelope,
+  required String password,
+}) => RustLib.instance.api.crateApiBackupDecryptBackup(
+  envelope: envelope,
+  password: password,
+);
 
 /// What a backup taken now is called.
 String backupName({required double ts, required bool encrypted}) =>
@@ -74,6 +106,37 @@ class BackupInfoView {
           name == other.name &&
           time == other.time &&
           encrypted == other.encrypted;
+}
+
+/// What `decrypt_backup` answers.
+class DecryptResult {
+  /// False when the envelope would not open. Nothing is restored in that
+  /// case — a half-restored ledger is worse than a refused one.
+  final bool ok;
+
+  /// The document, present only when `ok`.
+  final String json;
+
+  /// Why it failed, for the screen to show. Empty on success.
+  final String error;
+
+  const DecryptResult({
+    required this.ok,
+    required this.json,
+    required this.error,
+  });
+
+  @override
+  int get hashCode => ok.hashCode ^ json.hashCode ^ error.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DecryptResult &&
+          runtimeType == other.runtimeType &&
+          ok == other.ok &&
+          json == other.json &&
+          error == other.error;
 }
 
 /// What restoring a document did.

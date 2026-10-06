@@ -16,5 +16,15 @@ dahonghua-core = { path = "../../rust/core" }
 # source for each rather than trusting whatever libsqlite3 the phone ships.
 dahonghua-store = { path = "../../rust/store" }
 
+# Backup encryption. Here rather than in `core`: a cipher is not a decision the
+# ledger needs to own, and `core` keeps its one dependency. AES-256-GCM over a
+# PBKDF2-SHA256 key — what the shipping app used, with the iteration count
+# carried in the envelope so it can be raised without breaking old files.
+aes-gcm = "0.10"
+pbkdf2 = { version = "0.12", features = ["hmac"] }
+sha2 = "0.10"
+rand = "0.8"
+base64 = "0.22"
+
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }

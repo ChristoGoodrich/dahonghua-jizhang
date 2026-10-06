@@ -97,7 +97,7 @@ tag.
 
 - **Bill import** — Alipay and WeChat CSV exports, including their GBK encoding, with duplicate detection against what you already have.
 - **Auto-capture** — an optional notification listener reads payment notifications, parses them, and queues anything it isn't sure about for you to confirm or dismiss.
-- **Backups** — snapshots you can restore, and this app also reads the previous app's v7 backup JSON.
+- **Backups** — snapshots you can restore, optionally sealed with a password (AES-256-GCM). This app also reads the previous app's v7 backup JSON.
 - **CSV export** of the whole ledger.
 
 ### Two devices, no server
@@ -134,12 +134,11 @@ The React Native app had these; this one does not.
 | --- | --- |
 | **iOS and web** | Nobody has an iOS device to test on, and shipping a binary nobody has run is not shipping. |
 | **Cloud sync (Supabase)** | Replaced by file sync, above. The merge logic is the same code, and far better tested. |
-| **Encrypted backups** | The snapshot is written but not encrypted yet; the app still *reads* encrypted backups from the old one. |
 | **PDF monthly report** | The report exists as a screen. Rendering it to a PDF does not. |
 | **xlsx export** | CSV opens in every spreadsheet, and writing xlsx would cost the core a pile of dependencies for no decision. |
 
-AI 一句话记账 / 问账本 / 拍小票, and the calendar face of 明细, **are** in this
-build — an earlier list here said they were not, and the list was wrong.
+AI 一句话记账 / 问账本 / 拍小票, the calendar face of 明细, and password-sealed
+backups **are** in this build — an earlier list here said they were not.
 
 
 ## Getting started

@@ -228,6 +228,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   DayCell dco_decode_day_cell(dynamic raw);
 
   @protected
+  DecryptResult dco_decode_decrypt_result(dynamic raw);
+
+  @protected
   DraftView dco_decode_draft_view(dynamic raw);
 
   @protected
@@ -839,6 +842,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   DayCell sse_decode_day_cell(SseDeserializer deserializer);
+
+  @protected
+  DecryptResult sse_decode_decrypt_result(SseDeserializer deserializer);
 
   @protected
   DraftView sse_decode_draft_view(SseDeserializer deserializer);
@@ -1558,6 +1564,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_day_cell(DayCell self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_decrypt_result(DecryptResult self, SseSerializer serializer);
 
   @protected
   void sse_encode_draft_view(DraftView self, SseSerializer serializer);

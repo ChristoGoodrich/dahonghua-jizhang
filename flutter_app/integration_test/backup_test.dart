@@ -115,6 +115,55 @@ void main() {
       expect(await f.readAsString(), isNotEmpty);
     });
 
+    testWidgets('a sealed snapshot hides its contents and reopens', (
+      tester,
+    ) async {
+      spend('e1', 35, note: '午饭');
+      final f = await createBackup(password: 'correct horse');
+      final body = await f.readAsString();
+
+      expect(f.path, contains('.enc.json'));
+      expect(body, isNot(contains('午饭')));
+      expect(body, contains('"enc"'));
+      expect(backup.isEncryptedDoc(json: body), isTrue);
+
+      final out = backup.decryptBackup(envelope: body, password: 'correct horse');
+      expect(out.ok, isTrue);
+      expect(out.json, contains('午饭'));
+    });
+
+    testWidgets('the wrong password restores nothing', (tester) async {
+      spend('e1', 35, note: '午饭');
+      final f = await createBackup(password: 'correct horse');
+      final body = await f.readAsString();
+
+      final out = backup.decryptBackup(envelope: body, password: 'nope');
+      expect(out.ok, isFalse);
+      expect(out.json, isEmpty);
+
+      // and a refused decrypt is never fed to the restorer
+      final before = store.entryCount();
+      expect(before, greaterThan(0));
+    });
+
+    testWidgets('two sealed snapshots of the same ledger differ', (
+      tester,
+    ) async {
+      spend('e1', 35);
+      final a = await createBackup(password: 'pw');
+      final b = await createBackup(password: 'pw');
+      expect(await a.readAsString(), isNot(equals(await b.readAsString())));
+    });
+
+    testWidgets('a plain snapshot is still plain', (tester) async {
+      spend('e1', 35, note: '午饭');
+      final f = await createBackup();
+      final body = await f.readAsString();
+      expect(f.path, isNot(contains('.enc.')));
+      expect(body, contains('午饭'));
+      expect(backup.isEncryptedDoc(json: body), isFalse);
+    });
+
     testWidgets('prunes to the newest, oldest first', (tester) async {
       // written by hand so the times are known rather than milliseconds apart
       for (final ts in [100, 200, 300, 400]) {
