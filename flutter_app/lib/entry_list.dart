@@ -1226,6 +1226,14 @@ class _EntryListScreenState extends State<EntryListScreen> {
             key: const Key('list-empty'),
             style: TextStyle(fontSize: 13, color: palette.inkSoft),
           ),
+          if (_query.text.trim().isEmpty) ...[
+            const SizedBox(height: 6),
+            Text(
+              zh ? '点下面的 + 记下第一笔' : 'Tap + below to record your first entry',
+              key: const Key('list-empty-hint'),
+              style: TextStyle(fontSize: 12, color: palette.inkSoft),
+            ),
+          ],
         ],
       ),
     ],

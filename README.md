@@ -133,12 +133,13 @@ The React Native app had these; this one does not.
 | | Why |
 | --- | --- |
 | **iOS and web** | Nobody has an iOS device to test on, and shipping a binary nobody has run is not shipping. |
-| **AI quick entry, receipt scan** | Needed a model API key and a network round trip for something the calculator keypad already does in two taps. |
 | **Cloud sync (Supabase)** | Replaced by file sync, above. The merge logic is the same code, and far better tested. |
 | **Encrypted backups** | The snapshot is written but not encrypted yet; the app still *reads* encrypted backups from the old one. |
 | **PDF monthly report** | The report exists as a screen. Rendering it to a PDF does not. |
-| **Calendar view** | The activity list and statistics cover what it did. |
 | **xlsx export** | CSV opens in every spreadsheet, and writing xlsx would cost the core a pile of dependencies for no decision. |
+
+AI 一句话记账 / 问账本 / 拍小票, and the calendar face of 明细, **are** in this
+build — an earlier list here said they were not, and the list was wrong.
 
 
 ## Getting started

@@ -18,6 +18,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'assets_screen.dart';
 import 'ask_screen.dart';
@@ -56,46 +57,11 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await RustLib.init();
   final store = await Persistence.open();
-  // Seeding writes rows, and rows that are never written to disk are seeded
-  // again on the next launch — which looks exactly like persistence working
-  // while nothing is being saved at all. That is what a screenshot showed and
-  // an `ls` of the app directory disproved.
-  if (_seedIfEmpty()) await store.flush();
   // Catch up any subscription charges that came due while the app was closed.
   // Before the first frame, so the list does not visibly gain rows a moment
   // after it is drawn.
   if (runDueCharges().isNotEmpty) await store.flush();
   runApp(App(store: store));
-}
-
-/// A few rows on a genuinely empty ledger, so a fresh install has something to
-/// look at. Written through the ordinary commands — there is no back door into
-/// the store, and this is not one.
-///
-/// It runs after the load, so it can tell "nothing saved yet" from "saved, and
-/// empty" — a user who deleted their last entry does not get it handed back.
-/// True when it actually seeded, so the caller knows there is something to
-/// write.
-bool _seedIfEmpty() {
-  if (store.entryCount() > 0) return false;
-  final now = DateTime.now().millisecondsSinceEpoch;
-  const day = 86400000;
-  final rows = <(String, String, double, String?, int)>[
-    ('exp', 'food', 35.5, '午饭', now),
-    ('exp', 'trans', 12, '打车', now - 3600 * 1000),
-    ('inc', 'salary', 9000, null, now - day),
-    ('exp', 'shop', 218.4, '毛衣', now - day),
-    ('exp', 'home', 1800, '房租', now - day * 3),
-  ];
-  for (var i = 0; i < rows.length; i++) {
-    final (io, cat, amt, note, ts) = rows[i];
-    store.addEntry(
-      entry: store.NewEntry(io: io, cat: cat, amt: amt, note: note, ts: ts),
-      id: 'seed-$i',
-      now: now + i,
-    );
-  }
-  return true;
 }
 
 const paper = '#FBF7F0';
@@ -184,25 +150,38 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   @override
-  Widget build(BuildContext context) => MaterialApp(
-    title: '大红花记账',
-    debugShowCheckedModeBanner: false,
-    theme: appTheme(),
-    // The gate wraps the shell rather than replacing it: covering the app
-    // keeps the navigator mounted, so unlocking returns to wherever the user
-    // was rather than to the first tab.
-    // The outermost declaration of the system bars' colours. An `AppBar` puts
-    // its own region deeper in the tree and wins where there is one; this is
-    // what answers for the two tabs that have no header at all, and it
-    // rebuilds with the root when the flower or the room changes.
-    home: AnnotatedRegion<SystemUiOverlayStyle>(
-      value: systemOverlay,
-      child: LockGate(
-        zh: store.language() != 'en',
-        child: Home(store: widget.store, onThemeChanged: () => setState(() {})),
+  Widget build(BuildContext context) {
+    final zh = store.language() != 'en';
+    return MaterialApp(
+      title: '大红花记账',
+      debugShowCheckedModeBanner: false,
+      theme: appTheme(),
+      // Material's own strings — the text-selection menu, the back tooltip.
+      // The app has been bilingual throughout while this chrome stayed
+      // English, because `MaterialApp` was never told which locale it is in.
+      locale: Locale(zh ? 'zh' : 'en'),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [Locale('zh'), Locale('en')],
+      // The gate wraps the shell rather than replacing it: covering the app
+      // keeps the navigator mounted, so unlocking returns to wherever the user
+      // was rather than to the first tab.
+      // The outermost declaration of the system bars' colours. An `AppBar` puts
+      // its own region deeper in the tree and wins where there is one; this is
+      // what answers for the two tabs that have no header at all, and it
+      // rebuilds with the root when the flower or the room changes.
+      home: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: systemOverlay,
+        child: LockGate(
+          zh: zh,
+          child: Home(store: widget.store, onThemeChanged: () => setState(() {})),
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 /// The shell: four tabs, a record button, and routes behind the hubs.
