@@ -17,6 +17,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+/// Pop the route under test.
+///
+/// `tester.pageBack` looks for an English `Back` tooltip and then a Cupertino
+/// back button. That is right for a stock `MaterialApp` and wrong the moment
+/// this one is told it speaks Chinese — the tooltip becomes 返回, and the
+/// finder asserts "one back button expected" at a screen that has one.
+Future<void> goBack(WidgetTester tester) async {
+  final candidates = <Finder>[
+    find.byTooltip('Back'),
+    find.byTooltip('返回'),
+    find.byType(BackButton),
+    find.byIcon(Icons.arrow_back),
+    find.byIcon(Icons.arrow_back_ios),
+  ];
+  for (final f in candidates) {
+    if (f.evaluate().isNotEmpty) {
+      await tester.tap(f.first);
+      await tester.pumpAndSettle();
+      return;
+    }
+  }
+  fail('no back button on screen');
+}
+
 /// Bring `target` into view *and* out from under the header, then settle.
 ///
 /// The header's own rectangle is the boundary rather than a computed inset:

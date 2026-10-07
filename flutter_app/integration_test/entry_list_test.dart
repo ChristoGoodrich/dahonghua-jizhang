@@ -161,7 +161,9 @@ void main() {
 
     expect(find.text('Food'), findsOneWidget);
     expect(find.text('Today'), findsOneWidget);
-    expect(find.text('Exp \$35.50'), findsOneWidget);
+    // The symbol is the *base currency's*, not the language's: an English
+    // UI keeping a CNY ledger still reads ￥35.50.
+    expect(find.text('Exp ￥35.50'), findsOneWidget);
   });
 
   testWidgets('every row carries an accessibility label', (tester) async {

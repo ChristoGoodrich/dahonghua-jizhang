@@ -19,6 +19,7 @@ import 'package:flutter_app/theme.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'rust_init.dart';
+import 'scroll.dart';
 
 int get now => DateTime.now().millisecondsSinceEpoch;
 
@@ -320,7 +321,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('add-account')), findsOneWidget);
 
-      await tester.pageBack();
+      await goBack(tester);
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('net-worth')), findsOneWidget);
     });

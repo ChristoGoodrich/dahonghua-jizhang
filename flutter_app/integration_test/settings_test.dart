@@ -124,7 +124,7 @@ void main() {
       await tapMeRow(tester, 'me-settings');
       await tester.tap(find.byKey(const Key('lang-en')));
       await tester.pumpAndSettle();
-      await tester.pageBack();
+      await goBack(tester);
       await tester.pumpAndSettle();
 
       // the hub, the tab bar and the rows all moved together

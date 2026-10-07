@@ -16,6 +16,7 @@ import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'rust_init.dart';
+import 'scroll.dart';
 
 int get now => DateTime.now().millisecondsSinceEpoch;
 
@@ -68,7 +69,7 @@ void main() {
       await press(tester, '4');
       await press(tester, '2');
       await press(tester, 'save');
-      await tester.pageBack();
+      await goBack(tester);
       await tester.pump();
       // At least once: in the frame after the pop the sheet's own Scaffold is
       // still on its way out, and the messenger shows the word on both.
@@ -91,7 +92,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('record-button')));
       await tester.pumpAndSettle();
-      await tester.pageBack();
+      await goBack(tester);
       await tester.pumpAndSettle();
       expect(PetalBurst.planted, before);
       expect(find.text('贴上一朵花'), findsNothing);
@@ -116,7 +117,7 @@ void main() {
       await tester.tap(find.text('午饭'));
       await tester.pumpAndSettle();
       await press(tester, 'save');
-      await tester.pageBack();
+      await goBack(tester);
       await tester.pumpAndSettle();
       expect(PetalBurst.planted, before);
     });

@@ -313,6 +313,10 @@ void main() {
 
       await tester.tap(find.byKey(const Key('take-backup')));
       await tester.pumpAndSettle();
+      // The seal dialog is up. Empty password is a deliberate plain snapshot.
+      expect(find.byKey(const Key('password-dialog')), findsOneWidget);
+      await tester.tap(find.byKey(const Key('password-ok')));
+      await tester.pumpAndSettle();
 
       expect(find.byKey(const Key('backup-flash')), findsOneWidget);
       expect(find.byKey(const Key('no-backups')), findsNothing);
@@ -361,16 +365,55 @@ void main() {
       expect((await listBackups()).length, before + 1);
     });
 
-    testWidgets('an encrypted snapshot offers no restore it cannot do', (
+    testWidgets('an encrypted snapshot offers a restore that asks for a password', (
       tester,
     ) async {
-      await writeRaw('backup_100.enc.json', 'ciphertext');
+      // It used to disable the button, because nothing here could decrypt.
+      // Now restore is live and the password dialog is the gate — a disabled
+      // button would be a feature that looks broken rather than locked.
+      spend('e1', 35, note: '午饭');
+      await createBackup(password: 'correct horse');
+      store.reset();
       await show(tester);
 
+      final name = (await listBackups()).single.name;
       final btn = tester.widget<TextButton>(
-        find.byKey(const Key('backup-backup_100.enc.json-restore')),
+        find.byKey(Key('backup-$name-restore')),
       );
-      expect(btn.onPressed, isNull);
+      expect(btn.onPressed, isNotNull);
+
+      await tester.tap(find.textContaining('恢复').first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('restore-ok')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('password-dialog')), findsOneWidget);
+
+      await tester.enterText(
+        find.byKey(const Key('password-field')),
+        'correct horse',
+      );
+      await tester.tap(find.byKey(const Key('password-ok')));
+      await tester.pumpAndSettle();
+      expect(store.entryCount(), 1);
+    });
+
+    testWidgets('and a wrong password restores nothing', (tester) async {
+      spend('e1', 35, note: '午饭');
+      await createBackup(password: 'correct horse');
+      store.reset();
+      spend('keep', 1);
+      await show(tester);
+
+      await tester.tap(find.textContaining('恢复').first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('restore-ok')));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(const Key('password-field')), 'nope');
+      await tester.tap(find.byKey(const Key('password-ok')));
+      await tester.pumpAndSettle();
+
+      expect(store.getEntry(id: 'keep'), isNotNull);
+      expect(store.getEntry(id: 'e1'), isNull);
     });
 
     testWidgets('says what is deliberately absent', (tester) async {
@@ -402,12 +445,10 @@ void main() {
       );
     });
 
-    /// Unlike restore, which cannot read an encrypted snapshot, exporting one
-    /// is just moving bytes — and a snapshot nothing here can read is exactly
-    /// the one worth getting off the phone.
-    testWidgets('including an encrypted one it cannot itself read', (
-      tester,
-    ) async {
+    /// Unlike restore, which needs the password, exporting a sealed snapshot
+    /// is just moving bytes — and a snapshot nothing here can open without
+    /// the password is exactly the one worth getting off the phone.
+    testWidgets('including a sealed one', (tester) async {
       await writeRaw('backup_100.enc.json', 'ciphertext');
       await show(tester);
       final export = tester.widget<TextButton>(

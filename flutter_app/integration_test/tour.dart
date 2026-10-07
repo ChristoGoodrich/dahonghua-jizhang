@@ -186,7 +186,7 @@ void main() {
       ),
     );
     await shot(tester, name);
-    await tester.pageBack();
+    await goBack(tester);
     await tester.pumpAndSettle();
   }
 
@@ -256,7 +256,7 @@ void main() {
 
       await tester.tap(find.byKey(const Key('record-button')));
       await shot(tester, '$room-03-record');
-      await tester.pageBack();
+      await goBack(tester);
       await tester.pumpAndSettle();
 
       await tab(tester, '统计');
@@ -282,7 +282,7 @@ void main() {
       await shot(tester, '$room-05-assets');
       await tester.tap(find.byKey(const Key('manage-accounts')));
       await shot(tester, '$room-06-accounts');
-      await tester.pageBack();
+      await goBack(tester);
       await tester.pumpAndSettle();
 
       await tab(tester, '我的');
@@ -324,7 +324,7 @@ void main() {
       );
       await tester.tap(find.byKey(const Key('ai-read')));
       await shot(tester, '$room-20-ai-entry');
-      await tester.pageBack();
+      await goBack(tester);
       await tester.pumpAndSettle();
       await scrollAndTap(
         tester,
@@ -338,7 +338,7 @@ void main() {
       await tester.enterText(find.byKey(const Key('ask-field')), '上个月餐饮花了多少');
       await tester.tap(find.byKey(const Key('ask-send')));
       await shot(tester, '$room-21-ask');
-      await tester.pageBack();
+      await goBack(tester);
       await tester.pumpAndSettle();
     });
   }

@@ -15,6 +15,7 @@ import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'rust_init.dart';
+import 'scroll.dart';
 import 'package:flutter_app/tap.dart';
 
 int get now => DateTime.now().millisecondsSinceEpoch;
@@ -94,7 +95,7 @@ Future<List<String>> meRowKeys(WidgetTester tester) async {
 /// built when the list is left part way down. The pop and the scroll belong
 /// together, or the next assertion is about the wrong thing.
 Future<void> backToHub(WidgetTester tester) async {
-  await tester.pageBack();
+  await goBack(tester);
   await tester.pumpAndSettle();
   await tester.scrollUntilVisible(
     find.text('记账工具'),
@@ -193,7 +194,7 @@ void main() {
       expect(store.entryCount(), 1);
 
       // and going back lands on the list, with the row on it
-      await tester.pageBack();
+      await goBack(tester);
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('tab-明细')), findsOneWidget);
       expect(find.text('-42.00'), findsOneWidget);
@@ -216,7 +217,7 @@ void main() {
 
       await tester.tap(find.byKey(const Key('key-save')));
       await tester.pumpAndSettle();
-      await tester.pageBack();
+      await goBack(tester);
       await tester.pumpAndSettle();
 
       expect(store.entryCount(), 1); // edited in place, not written twice
@@ -291,7 +292,7 @@ void main() {
       }
       await tester.tap(find.byKey(const Key('key-save')));
       await tester.pumpAndSettle();
-      await tester.pageBack();
+      await goBack(tester);
       await tester.pumpAndSettle();
 
       // the net-worth screen was built before the entry existed, and has to

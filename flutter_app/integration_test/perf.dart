@@ -100,7 +100,7 @@ void main() {
         await wait(700);
         await tester.flingFrom(middle, const Offset(0, 300), 1500);
         await wait(700);
-        await tester.pageBack();
+        await goBack(tester);
         await wait(700);
       }, reportKey: id);
     }
