@@ -151,6 +151,12 @@ kotlin {
 
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
+    // JVM unit tests for the two Kotlin components. The rules worth pinning
+    // are small and pure — which notifications to keep, which colour the
+    // widget paints — and a rule that lives only in a screenshot is a rule
+    // nobody notices break.
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:2.0.21")
 }
 
 flutter {

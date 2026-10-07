@@ -21,14 +21,21 @@ class NotifCaptureService : NotificationListenerService() {
   override fun onNotificationPosted(sbn: StatusBarNotification?) {
     val notification = sbn ?: return
     if (!NotifStore.isCapturing(this)) return
-    if (notification.packageName == packageName) return // never capture ourselves
-    if (notification.packageName !in NotifStore.watchedPackages(this)) return
-
     val extras = notification.notification?.extras ?: return
     val title = extras.getCharSequence(Notification.EXTRA_TITLE)?.toString()
     val body = extras.getCharSequence(Notification.EXTRA_TEXT)?.toString()
     val bigText = extras.getCharSequence(Notification.EXTRA_BIG_TEXT)?.toString()
-    if (title == null && body == null && bigText == null) return
+    if (!shouldCapture(
+        pkg = notification.packageName,
+        selfPkg = packageName,
+        watched = NotifStore.watchedPackages(this),
+        title = title,
+        body = body,
+        bigText = bigText,
+      )
+    ) {
+      return
+    }
 
     NotifStore.insert(this, notification.packageName, title, body, bigText, notification.postTime)
   }
@@ -42,6 +49,29 @@ class NotifCaptureService : NotificationListenerService() {
   override fun onListenerDisconnected() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
       requestRebind(ComponentName(this, NotifCaptureService::class.java))
+    }
+  }
+
+  companion object {
+    /**
+     * Whether a posted notification is one this app stores.
+     *
+     * Deliberately narrow: whitelist package, never ourselves, and at least one
+     * text field present. Content rules belong in `core::notif`, where the
+     * parity corpus can hold them; this is only the gate that keeps the queue
+     * from filling with launchers and chat apps the user never asked for.
+     */
+    fun shouldCapture(
+      pkg: String,
+      selfPkg: String,
+      watched: Set<String>,
+      title: String?,
+      body: String?,
+      bigText: String?,
+    ): Boolean {
+      if (pkg == selfPkg) return false
+      if (pkg !in watched) return false
+      return title != null || body != null || bigText != null
     }
   }
 }

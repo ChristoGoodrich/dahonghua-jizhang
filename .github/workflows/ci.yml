@@ -66,6 +66,11 @@ jobs:
       - name: Integration suite is complete
         run: npm run tests:check
 
+      # The two Kotlin components' own rules — which notifications to keep,
+      # which colour the widget paints. JVM-only; no emulator.
+      - name: Kotlin unit tests
+        run: cd flutter_app/android && ./gradlew :app:testDebugUnitTest --console=plain
+
   flutter:
     runs-on: ubuntu-latest
     timeout-minutes: 45

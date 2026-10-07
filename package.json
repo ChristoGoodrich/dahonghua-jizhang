@@ -9,6 +9,7 @@
     "rust:clippy": "cargo clippy --manifest-path rust/Cargo.toml --all-targets -- -D warnings",
     "bridge:fmt": "cargo fmt --manifest-path flutter_app/rust_bridge/Cargo.toml --check",
     "bridge:clippy": "cargo clippy --manifest-path flutter_app/rust_bridge/Cargo.toml --all-targets -- -D warnings",
+    "kotlin:test": "cd flutter_app/android && gradlew.bat :app:testDebugUnitTest --console=plain",
     "tests:check": "node scripts/gen-all-tests.js --check",
     "goldens": "node scripts/goldens.js",
     "apk": "node scripts/build-apk.js"

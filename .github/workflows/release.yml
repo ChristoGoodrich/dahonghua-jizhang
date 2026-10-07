@@ -83,6 +83,7 @@ jobs:
           npm run bridge:clippy
           npm run goldens
           npm run tests:check
+          cd flutter_app/android && ./gradlew :app:testDebugUnitTest --console=plain
 
       - name: Restore the signing key
         if: env.HAVE_KEY == 'true'

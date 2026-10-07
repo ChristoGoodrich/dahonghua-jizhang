@@ -60,24 +60,38 @@ class BudgetWidgetProvider : AppWidgetProvider() {
       views.setTextViewText(R.id.widget_month, prefs.getString(KEY_TITLE, "") ?: "")
       views.setTextViewText(R.id.widget_spent, prefs.getString(KEY_SPENT, "") ?: "")
       views.setTextViewText(R.id.widget_remaining, prefs.getString(KEY_LEFT, "") ?: "")
-      views.setTextViewText(R.id.widget_percentage, if (hasBudget) "$pct%" else "—")
+      views.setTextViewText(
+        R.id.widget_percentage,
+        percentageLabel(hasBudget, pct)
+      )
       views.setProgressBar(R.id.widget_progress, 100, pct, false)
 
-      // The shipping build painted over-budget and normal the SAME red, so the
-      // orange warning appeared at 81% and vanished again at 101% — the state
-      // that matters most looked exactly like the state that matters least.
-      // Nothing chose that; it is two branches of a `when` that were never
-      // compared. Over budget is now the loudest of the three.
-      views.setTextColor(
-        R.id.widget_percentage,
-        when {
-          over -> OVER
-          pct > 80 -> CLOSE
-          else -> FINE
-        }
-      )
+      views.setTextColor(R.id.widget_percentage, accent(over, pct))
 
       manager.updateAppWidget(widgetId, views)
+    }
+
+    /**
+     * What the percentage cell reads. No budget is a dash, not "0%" — claiming
+     * a cap of zero is a different sentence from having none.
+     */
+    fun percentageLabel(hasBudget: Boolean, pct: Int): String =
+      if (hasBudget) "$pct%" else "—"
+
+    /**
+     * The shipping build painted over-budget and normal the SAME red, so the
+     * orange warning appeared at 81% and vanished again at 101% — the state
+     * that matters most looked exactly like the state that matters least.
+     * Nothing chose that; it is two branches of a `when` that were never
+     * compared. Over budget is now the loudest of the three.
+     *
+     * `pct` here is the **unclamped** one: 100 and 140 both draw a full bar,
+     * and the colour is the only place that difference survives.
+     */
+    fun accent(over: Boolean, pct: Int): Int = when {
+      over -> OVER
+      pct > 80 -> CLOSE
+      else -> FINE
     }
 
     /** Redraw every placed instance. Called after the app writes new numbers. */
@@ -89,8 +103,8 @@ class BudgetWidgetProvider : AppWidgetProvider() {
       for (id in ids) draw(context, manager, id)
     }
 
-    private const val OVER = 0xFFC62828.toInt()  // deep red — over the cap
-    private const val CLOSE = 0xFFFF9800.toInt() // orange — close to it
-    private const val FINE = 0xFFE8384F.toInt()  // 大红花, the ordinary state
+    const val OVER = 0xFFC62828.toInt()  // deep red — over the cap
+    const val CLOSE = 0xFFFF9800.toInt() // orange — close to it
+    const val FINE = 0xFFE8384F.toInt()  // 大红花, the ordinary state
   }
 }
