@@ -37,6 +37,18 @@ Future<void> type(WidgetTester tester, String digits) async {
   }
 }
 
+/// 再记: save and stay, the amount cleared for the next of the same kind.
+Future<void> saveAgain(WidgetTester tester) async {
+  await tester.tap(find.byKey(const Key('record-again')));
+  await tester.pumpAndSettle();
+}
+
+/// 保存: write the row and close the sheet.
+Future<void> saveAndClose(WidgetTester tester) async {
+  await tester.tap(find.byKey(const Key('key-save')));
+  await tester.pumpAndSettle();
+}
+
 /// The expression as the amount panel shows it.
 String expr(WidgetTester tester) =>
     tester.widget<Text>(find.byKey(const Key('amount-expr'))).data!;
@@ -97,7 +109,7 @@ void main() {
       await press(tester, '×');
       await type(tester, '3');
       expect(expr(tester), '12×3');
-      await press(tester, 'save');
+      await saveAgain(tester);
       expect(store.liveEntries().first.amt, 36);
     });
 
@@ -145,10 +157,12 @@ void main() {
   });
 
   group('saving', () {
-    testWidgets('writes the entry and clears for the next one', (tester) async {
+    testWidgets('再记 writes and stays, clearing the amount for the next', (
+      tester,
+    ) async {
       await show(tester);
       await type(tester, '35');
-      await press(tester, 'save');
+      await saveAgain(tester);
 
       expect(store.entryCount(), 1);
       final e = store.liveEntries().first;
@@ -160,6 +174,18 @@ void main() {
       expect(flash(tester), '已保存');
     });
 
+    testWidgets('保存 writes and closes — the form is cleared by going away', (
+      tester,
+    ) async {
+      await show(tester);
+      await type(tester, '35');
+      await saveAndClose(tester);
+
+      expect(store.entryCount(), 1);
+      // the sheet is gone, so there is no form left to hold the last entry
+      expect(find.byType(RecordSheet), findsNothing);
+    });
+
     testWidgets('evaluates the expression rather than storing the text', (
       tester,
     ) async {
@@ -167,7 +193,7 @@ void main() {
       await type(tester, '12');
       await press(tester, '+');
       await type(tester, '8');
-      await press(tester, 'save');
+      await saveAgain(tester);
       expect(store.liveEntries().first.amt, 20);
     });
 
@@ -175,7 +201,7 @@ void main() {
       tester,
     ) async {
       await show(tester);
-      await press(tester, 'save');
+      await saveAgain(tester);
 
       expect(store.entryCount(), 0);
       expect(flash(tester), '请输入金额'); // spelled here, decided in Rust
@@ -186,7 +212,7 @@ void main() {
     ) async {
       await show(tester);
       await type(tester, '0');
-      await press(tester, 'save');
+      await saveAgain(tester);
       expect(store.entryCount(), 0);
       expect(flash(tester), '请输入金额');
     });
@@ -196,7 +222,7 @@ void main() {
     ) async {
       // a complaint that outlives what it complained about is worse than none
       await show(tester);
-      await press(tester, 'save');
+      await saveAgain(tester);
       expect(flash(tester), '请输入金额');
       await type(tester, '5');
       expect(flash(tester), isNull);
@@ -209,7 +235,7 @@ void main() {
       await type(tester, '5');
       await press(tester, '-');
       await type(tester, '9');
-      await press(tester, 'save');
+      await saveAgain(tester);
       expect(store.entryCount(), 0);
     });
   });
@@ -237,7 +263,7 @@ void main() {
       await show(tester);
       await tapText(tester, '转账');
       await type(tester, '50');
-      await press(tester, 'save');
+      await saveAgain(tester);
 
       expect(store.entryCount(), 0);
       expect(flash(tester), '请选择转入账户');
@@ -250,7 +276,7 @@ void main() {
       await show(tester);
       // the form opens on the base currency; put it on one with no rate
       await type(tester, '10');
-      await press(tester, 'save'); // saves fine in the base currency
+      await saveAgain(tester); // saves fine in the base currency
       expect(store.entryCount(), 1);
     });
 
@@ -280,7 +306,7 @@ void main() {
     testWidgets('English draws the same form differently', (tester) async {
       await show(tester, zh: false);
       expect(find.text('Expense'), findsOneWidget);
-      await press(tester, 'save');
+      await saveAgain(tester);
       expect(flash(tester), 'Enter an amount');
     });
   });
@@ -315,7 +341,7 @@ void main() {
       expect(dateLabel(tester), '昨天');
 
       await type(tester, '42');
-      await press(tester, 'save');
+      await saveAgain(tester);
 
       final saved = dayOf(store.liveEntries().first.ts);
       final yesterday = DateTime.now().subtract(const Duration(days: 1));
@@ -332,7 +358,7 @@ void main() {
       final before = DateTime.now();
       await pickBack(tester, 2);
       await type(tester, '10');
-      await press(tester, 'save');
+      await saveAgain(tester);
 
       final saved = dayOf(store.liveEntries().first.ts);
       expect(saved.hour, before.hour);
@@ -346,11 +372,11 @@ void main() {
       await show(tester);
       await pickBack(tester, 1);
       await type(tester, '10');
-      await press(tester, 'save');
+      await saveAgain(tester);
 
       expect(dateLabel(tester), '昨天');
       await type(tester, '20');
-      await press(tester, 'save');
+      await saveAgain(tester);
 
       final days = store.liveEntries().map((e) => dayOf(e.ts).day).toSet();
       expect(days, hasLength(1), reason: 'both on the same day');

@@ -499,7 +499,7 @@ void main() {
         await tester.tap(find.byKey(Key('key-$k')));
         await tester.pumpAndSettle();
       }
-      await tester.tap(find.byKey(const Key('key-save')));
+      await tester.tap(find.byKey(const Key('record-again')));
       await tester.pumpAndSettle();
 
       expect(find.byKey(const Key('flash')), findsOneWidget);

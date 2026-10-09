@@ -429,14 +429,16 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   Future<void> _record({String? editId, int? at}) async {
     var saved = 0;
     var smart = false;
+    var usedStaleRate = false;
     await _cover(
       MaterialPageRoute<void>(
         builder: (ctx) => sheet.RecordSheet(
           editId: editId,
           initialTs: at,
           zh: _zh,
-          onSaved: ({required staleRate}) {
+          onSaved: ({required bool staleRate}) {
             saved++;
+            usedStaleRate = staleRate;
             _entriesChanged();
           },
           // 一句话记账, from the sheet's own bar: the sheet goes and the
@@ -458,7 +460,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     // the sheet has gone, where the + button it comes out of can be seen.
     // Not for an edit, which planted nothing.
     if (saved > 0 && editId == null && mounted) {
-      _celebrate(toast: _zh ? '贴上一朵花' : 'One more flower');
+      _celebrate(
+        toast: usedStaleRate
+            ? (_zh ? '已记 · 用了缓存汇率' : 'Saved · used a cached rate')
+            : (_zh ? '贴上一朵花' : 'One more flower'),
+      );
     }
   }
 

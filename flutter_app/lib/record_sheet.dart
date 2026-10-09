@@ -219,7 +219,7 @@ class _RecordSheetState extends State<RecordSheet> {
     });
   }
 
-  Future<void> _save() async {
+  Future<void> _save({bool stay = false}) async {
     final now = DateTime.now().millisecondsSinceEpoch;
     final cached = record.cachedRate(code: _form.cur);
     final base = record.baseCurrency();
@@ -279,12 +279,14 @@ class _RecordSheetState extends State<RecordSheet> {
     // pretend otherwise — the TypeScript treated the two the same and wrote the
     // row twice when a user pressed save again.
     widget.onSaved?.call(staleRate: r.staleRate);
-    if (widget.editId != null) {
-      // an edit is finished when it is saved; there is no next one of the same
-      // kind to type
-      setState(() => _flash = widget.zh ? '已保存' : 'Saved');
+    if (widget.editId != null || !stay) {
+      // Done. 保存 closes — the form is cleared by going away, which is what
+      // "保存后自动清空" means when there is not another entry to type. An
+      // edit is always finished by its save.
+      if (mounted) Navigator.of(context).pop();
       return;
     }
+    // 再记: the same kind again, so the kind stays and the entry goes.
     setState(() {
       _form = record.clearForNext(form: _form);
       _note.clear();
@@ -339,6 +341,19 @@ class _RecordSheetState extends State<RecordSheet> {
               style: TextStyle(color: palette.inkSoft, fontSize: 13),
             ),
           ),
+          // 再记: the shipping pair of 保存. One closes — the form going away
+          // is the clear — and this one stays, so a run of similar entries
+          // goes in one sitting.
+          if (widget.editId == null)
+            TextButton.icon(
+              key: const Key('record-again'),
+              onPressed: _fetching ? null : () => _save(stay: true),
+              icon: Icon(Icons.repeat, size: 18, color: palette.inkSoft),
+              label: Text(
+                zh ? '再记' : 'Again',
+                style: TextStyle(color: palette.inkSoft, fontSize: 13),
+              ),
+            ),
           const SizedBox(width: 6),
         ],
       ),

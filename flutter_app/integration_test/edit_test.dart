@@ -232,7 +232,7 @@ void main() {
       expect(store.getEntry(id: 'e1')!.ts, 1700000000000);
     });
 
-    testWidgets('an edit does not clear the form the way 再记 does', (
+    testWidgets('an edit is finished by its save, the sheet goes', (
       tester,
     ) async {
       add('e1', 35.5);
@@ -242,12 +242,10 @@ void main() {
       await tester.pumpAndSettle();
       await press(tester, 'save');
 
-      // still showing what was saved, rather than a blank sheet — there is no
-      // "next one of the same kind" when the thing being typed already exists
-      final amt = tester
-          .widget<Text>(find.byKey(const Key('amount-expr')))
-          .data;
-      expect(amt, '35.5');
+      // there is no "next one of the same kind" when the thing being typed
+      // already exists — the edit is done, and so is the sheet
+      expect(find.byType(RecordSheet), findsNothing);
+      expect(store.getEntry(id: 'e1')!.amt, 35.5);
     });
 
     testWidgets('switching target reloads the fields', (tester) async {

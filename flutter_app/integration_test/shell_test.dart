@@ -188,14 +188,10 @@ void main() {
       await tester.tap(find.byKey(const Key('key-save')));
       await tester.pumpAndSettle();
 
-      // still on the sheet — saving a NEW entry clears for the next one rather
-      // than leaving, which is what makes recording three things in a row work
-      expect(find.byKey(const Key('flash')), findsOneWidget);
+      // 保存 closes — the form going away is the clear. Going back lands on
+      // the list, with the row on it.
+      expect(find.byKey(const Key('flash')), findsNothing);
       expect(store.entryCount(), 1);
-
-      // and going back lands on the list, with the row on it
-      await goBack(tester);
-      await tester.pumpAndSettle();
       expect(find.byKey(const Key('tab-明细')), findsOneWidget);
       expect(find.text('-42.00'), findsOneWidget);
     });
@@ -216,8 +212,6 @@ void main() {
       );
 
       await tester.tap(find.byKey(const Key('key-save')));
-      await tester.pumpAndSettle();
-      await goBack(tester);
       await tester.pumpAndSettle();
 
       expect(store.entryCount(), 1); // edited in place, not written twice
@@ -291,8 +285,6 @@ void main() {
         await tester.pumpAndSettle();
       }
       await tester.tap(find.byKey(const Key('key-save')));
-      await tester.pumpAndSettle();
-      await goBack(tester);
       await tester.pumpAndSettle();
 
       // the net-worth screen was built before the entry existed, and has to

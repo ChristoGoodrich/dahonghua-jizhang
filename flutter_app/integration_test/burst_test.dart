@@ -69,7 +69,7 @@ void main() {
       await press(tester, '4');
       await press(tester, '2');
       await press(tester, 'save');
-      await goBack(tester);
+      // 保存 closes the sheet itself — no second pop
       await tester.pump();
       // At least once: in the frame after the pop the sheet's own Scaffold is
       // still on its way out, and the messenger shows the word on both.
@@ -117,7 +117,7 @@ void main() {
       await tester.tap(find.text('午饭'));
       await tester.pumpAndSettle();
       await press(tester, 'save');
-      await goBack(tester);
+      // edit save closes the sheet
       await tester.pumpAndSettle();
       expect(PetalBurst.planted, before);
     });

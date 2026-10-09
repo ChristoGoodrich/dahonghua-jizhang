@@ -248,7 +248,9 @@ void main() {
       await tester.tap(find.byKey(const Key('cur-USD')));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byKey(const Key('key-save')));
+      // 再记, so the sheet stays and the notice about the rate is on it.
+      // 保存 would close and hand the notice to the shell's toast.
+      await tester.tap(find.byKey(const Key('record-again')));
       await tester.pumpAndSettle();
 
       expect(store.entryCount(), 1, reason: 'the row is not lost to a bad network');
