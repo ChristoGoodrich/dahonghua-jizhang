@@ -131,13 +131,14 @@ void main() {
   });
 
   group('pinning one from the sheet', () {
-    testWidgets('a long press on save takes a name and stores it',
-        (tester) async {
+    testWidgets('the pin in the bar takes a name and stores it', (
+      tester,
+    ) async {
       await sheet(tester);
       for (final k in ['3', '5']) {
         await press(tester, k);
       }
-      await tester.longPress(find.byKey(const Key('key-save')));
+      await tester.tap(find.byKey(const Key('record-pin')));
       await tester.pumpAndSettle();
 
       expect(find.byKey(const Key('tpl-name-dialog')), findsOneWidget);
@@ -149,6 +150,20 @@ void main() {
       expect(t.name, '午饭');
       expect(t.amt, 35);
       expect(store.entryCount(), 0); // pinning is not recording
+    });
+
+    testWidgets('a long press on save still works too', (tester) async {
+      await sheet(tester);
+      for (final k in ['3', '5']) {
+        await press(tester, k);
+      }
+      await tester.longPress(find.byKey(const Key('key-save')));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('tpl-name-dialog')), findsOneWidget);
+      await tester.tap(find.byKey(const Key('tpl-name-ok')));
+      await tester.pumpAndSettle();
+      expect(catalog.templates(), hasLength(1));
     });
 
     testWidgets('an empty name is allowed, because the list falls back',

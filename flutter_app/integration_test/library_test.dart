@@ -269,7 +269,8 @@ void main() {
 
       await tester.tap(find.byKey(const Key('add-cat-exp')));
       await tester.pumpAndSettle();
-      await enterName(tester, '宠物');
+      await tester.enterText(find.byKey(const Key('cat-name')), '宠物');
+      await tester.tap(find.byKey(const Key('cat-ok')));
       await tester.pumpAndSettle();
 
       expect(find.byKey(const Key('no-cats-exp')), findsNothing);
@@ -281,6 +282,31 @@ void main() {
       await tester.tap(find.byKey(Key('cat-exp-${added.k}-remove')));
       await tester.pumpAndSettle();
       expect(catalog.customCats(io: 'exp'), isEmpty);
+    });
+
+    testWidgets('carry the emoji the picker was set to', (tester) async {
+      await showTags(tester);
+      await tester.tap(find.byKey(const Key('add-cat-exp')));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(const Key('cat-name')), '咖啡');
+      await tester.tap(find.byKey(const Key('cat-emoji-☕')));
+      await tester.tap(find.byKey(const Key('cat-ok')));
+      await tester.pumpAndSettle();
+
+      expect(catalog.customCats(io: 'exp').single.e, '☕');
+    });
+
+    testWidgets('an empty name does not create a category', (tester) async {
+      await showTags(tester);
+      await tester.tap(find.byKey(const Key('add-cat-exp')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('cat-ok')));
+      await tester.pumpAndSettle();
+      // dialog is still up, nothing created
+      expect(find.byKey(const Key('cat-dialog')), findsOneWidget);
+      expect(catalog.customCats(io: 'exp'), isEmpty);
+      await tester.tap(find.byKey(const Key('cat-cancel')));
+      await tester.pumpAndSettle();
     });
 
     testWidgets('appear in the picker after the built-ins', (tester) async {

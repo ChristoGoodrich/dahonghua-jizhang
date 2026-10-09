@@ -206,19 +206,16 @@ class _TagsScreenState extends State<TagsScreen> {
 
   Future<void> _addCustomCat(String io) async {
     final zh = widget.zh;
-    final name = await showDialog<String>(
+    final picked = await showDialog<(String, String)>(
       context: context,
-      builder: (_) => _NameDialog(
-        zh: zh,
-        title: zh ? '新建分类' : 'New category',
-        label: zh ? '名称' : 'Name',
-      ),
+      builder: (_) => _CatDialog(zh: zh),
     );
-    if (name == null || !mounted) return;
+    if (picked == null || !mounted) return;
+    final (name, emoji) = picked;
     // Key is the caller's, as everywhere: `'c' + Date.now()` was the
     // shipping one, and a clock is the platform's to read.
     final key = 'c${DateTime.now().millisecondsSinceEpoch}';
-    catalog.addCustomCat(io: io, key: key, name: name, emoji: '🌸');
+    catalog.addCustomCat(io: io, key: key, name: name, emoji: emoji);
     _changed();
   }
 
@@ -671,6 +668,134 @@ class _SubcatsSheetState extends State<_SubcatsSheet> {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Name and emoji for a new custom category.
+///
+/// A short, curated grid rather than a system emoji keyboard: a category is
+/// one of a few dozen things, and scrolling every pictogram on the phone to
+/// find the bowl of noodles is the wrong tool for that job.
+class _CatDialog extends StatefulWidget {
+  const _CatDialog({required this.zh});
+
+  final bool zh;
+
+  @override
+  State<_CatDialog> createState() => _CatDialogState();
+}
+
+class _CatDialogState extends State<_CatDialog> {
+  static const _emojis = [
+    '🌸', '🍜', '🛒', '🚇', '🏠', '🎮', '💊', '📚',
+    '🎁', '✈️', '🐱', '🐶', '👕', '💇', '🎬', '📱',
+    '💰', '🏥', '🍵', '🧁', '⚽', '🎨', '🚗', '📦',
+    '☕', '🎓', '💼', '🛠️', '🎵', '📷', '🌱', '🐟',
+  ];
+
+  final _name = TextEditingController();
+  String _emoji = '🌸';
+
+  @override
+  void dispose() {
+    _name.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    final name = _name.text.trim().replaceAll(RegExp('[<>]'), '');
+    final capped = name.length > 16 ? name.substring(0, 16) : name;
+    if (capped.isEmpty) return;
+    Navigator.pop(context, (capped, _emoji));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final zh = widget.zh;
+    return AlertDialog(
+      key: const Key('cat-dialog'),
+      backgroundColor: palette.card,
+      title: Text(
+        zh ? '新建分类' : 'New category',
+        style: TextStyle(fontSize: 16, color: palette.ink),
+      ),
+      content: SizedBox(
+        width: 320,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                key: const Key('cat-name'),
+                controller: _name,
+                autofocus: true,
+                cursorColor: palette.stamen,
+                decoration: InputDecoration(
+                  labelText: zh ? '名称' : 'Name',
+                  labelStyle: TextStyle(color: palette.inkSoft),
+                  floatingLabelStyle: TextStyle(color: palette.stamen),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: palette.stamen, width: 2),
+                  ),
+                ),
+                onSubmitted: (_) => _submit(),
+              ),
+              const SizedBox(height: 14),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  zh ? '图标' : 'Icon',
+                  style: TextStyle(fontSize: 12, color: palette.inkSoft),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 6,
+                runSpacing: 6,
+                children: [
+                  for (final e in _emojis)
+                    Tap(
+                      key: Key('cat-emoji-$e'),
+                      filled: false,
+                      onTap: () => setState(() => _emoji = e),
+                      child: Container(
+                        width: 36,
+                        height: 36,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: _emoji == e
+                              ? palette.stamen.withValues(alpha: 0.18)
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: _emoji == e ? palette.stamen : palette.line,
+                            width: _emoji == e ? 1.5 : 1,
+                          ),
+                        ),
+                        child: Text(e, style: const TextStyle(fontSize: 18)),
+                      ),
+                    ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          key: const Key('cat-cancel'),
+          onPressed: () => Navigator.pop(context),
+          style: TextButton.styleFrom(foregroundColor: palette.inkSoft),
+          child: Text(zh ? '取消' : 'Cancel'),
+        ),
+        TextButton(
+          key: const Key('cat-ok'),
+          onPressed: _submit,
+          style: TextButton.styleFrom(foregroundColor: palette.hibiscus),
+          child: Text(zh ? '确定' : 'OK'),
+        ),
+      ],
     );
   }
 }

@@ -328,6 +328,17 @@ class _RecordSheetState extends State<RecordSheet> {
                 style: TextStyle(color: palette.hibiscus),
               ),
             ),
+          // Visible, not only a long press on 保存: a gesture nobody is told
+          // about is a feature that does not exist. The long press still works.
+          TextButton.icon(
+            key: const Key('record-pin'),
+            onPressed: _fetching ? null : _saveAsTemplate,
+            icon: Icon(Icons.push_pin_outlined, size: 18, color: palette.inkSoft),
+            label: Text(
+              zh ? '存模板' : 'Pin',
+              style: TextStyle(color: palette.inkSoft, fontSize: 13),
+            ),
+          ),
           const SizedBox(width: 6),
         ],
       ),
@@ -789,8 +800,8 @@ class _RecordSheetState extends State<RecordSheet> {
 
   /// Pin what is on the sheet as a template.
   ///
-  /// A long press on the save key, which is where the shipping app puts it and
-  /// which is why the templates screen says so when it is empty.
+  /// A long press on the save key still works — that is where the shipping
+  /// app put it — and the pin in the bar is the version a person can find.
   Future<void> _saveAsTemplate() async {
     final zh = widget.zh;
     final amt = calc.evalExpr(expr: _form.amt);
