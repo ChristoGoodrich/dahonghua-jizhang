@@ -17,6 +17,7 @@ pub mod calendar;
 pub mod capture;
 pub mod catalog;
 pub mod currency;
+pub mod day;
 pub mod db;
 pub mod export;
 pub mod glass;

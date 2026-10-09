@@ -20,22 +20,14 @@
 //!   thing here entitled to an opinion about what it means.
 
 use flutter_rust_bridge::frb;
+use super::day::parse_day;
 
 use dahonghua_core::bills::{parse_bills, BillSource};
-use dahonghua_core::civil::Civil;
 use dahonghua_core::dedup::{existing_row, to_candidates, ExistingRow};
 use dahonghua_core::encoding::decode_bill_text;
 use dahonghua_core::num::round2;
 
 use super::store::{by_id, store};
-
-fn parse_day(s: &str) -> Civil {
-    let mut it = s.split('-');
-    let y = it.next().and_then(|v| v.parse().ok()).unwrap_or(1970);
-    let m: i32 = it.next().and_then(|v| v.parse().ok()).unwrap_or(1);
-    let d = it.next().and_then(|v| v.parse().ok()).unwrap_or(1);
-    Civil::new(y, m - 1, d)
-}
 
 /// One row the import would add, or has recognised as already present.
 #[derive(Debug, Clone, PartialEq)]

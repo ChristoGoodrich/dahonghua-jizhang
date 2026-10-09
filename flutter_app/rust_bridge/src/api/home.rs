@@ -7,6 +7,7 @@
 //! each would otherwise carry the ledger across to answer one question.
 
 use dahonghua_core::budget::{self, DayRow, PotMood, TierStatus};
+use super::day::{parse_day, show_day};
 use dahonghua_core::civil::Civil;
 use dahonghua_core::cycle::cycle_range;
 use dahonghua_core::entry::Entry;
@@ -15,18 +16,6 @@ use flutter_rust_bridge::frb;
 
 use super::report::{insight_of, InsightCopyView, InsightView};
 use super::store::{by_id, settings_of, store};
-
-fn parse_day(s: &str) -> Civil {
-    let mut it = s.split('-');
-    let y = it.next().and_then(|v| v.parse().ok()).unwrap_or(1970);
-    let m: i32 = it.next().and_then(|v| v.parse().ok()).unwrap_or(1);
-    let d = it.next().and_then(|v| v.parse().ok()).unwrap_or(1);
-    Civil::new(y, m - 1, d)
-}
-
-fn show_day(d: Civil) -> String {
-    format!("{}-{}-{}", d.y, d.m + 1, d.d)
-}
 
 /// One of the two budget pots.
 #[derive(Debug, Clone, PartialEq)]

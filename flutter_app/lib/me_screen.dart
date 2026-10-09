@@ -129,6 +129,9 @@ class MeScreen extends StatelessWidget {
     key: r.id == null ? null : Key('me-${r.id}'),
     onTap: r.onTap,
     radius: Rad.lg,
+    // One label for the whole row: a reader otherwise hears the title and
+    // the description as two loose sentences and not as a button.
+    semanticLabel: '${r.title}, ${r.desc}',
     child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       child: Row(

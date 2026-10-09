@@ -11,21 +11,13 @@
 //! This is the shape conversion and the id list.
 
 use flutter_rust_bridge::frb;
+use super::day::parse_day;
 
-use dahonghua_core::civil::Civil;
 use dahonghua_core::entry::Io;
 use dahonghua_core::filter::{matches_filter, parse_search_query, FilterState};
 use dahonghua_core::search::matches_search;
 
 use super::store::{by_id, store};
-
-fn parse_day(s: &str) -> Civil {
-    let mut it = s.split('-');
-    let y = it.next().and_then(|v| v.parse().ok()).unwrap_or(1970);
-    let m: i32 = it.next().and_then(|v| v.parse().ok()).unwrap_or(1);
-    let d = it.next().and_then(|v| v.parse().ok()).unwrap_or(1);
-    Civil::new(y, m - 1, d)
-}
 
 /// A wall-clock instant the platform has yet to place. `mo` is 1-based,
 /// matching `DateTime`, not the core's 0-based month.

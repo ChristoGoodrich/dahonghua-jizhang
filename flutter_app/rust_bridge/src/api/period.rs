@@ -9,23 +9,12 @@
 //! `money.rs`. What crosses is the window and how to step it.
 
 use flutter_rust_bridge::frb;
+use super::day::{parse_day, show_day};
 
 use dahonghua_core::civil::Civil;
 use dahonghua_core::period::{period_range, shift_period, Period};
 
 use super::store::{by_id, settings_of, store};
-
-fn parse_day(s: &str) -> Civil {
-    let mut it = s.split('-');
-    let y = it.next().and_then(|v| v.parse().ok()).unwrap_or(1970);
-    let m: i32 = it.next().and_then(|v| v.parse().ok()).unwrap_or(1);
-    let d = it.next().and_then(|v| v.parse().ok()).unwrap_or(1);
-    Civil::new(y, m - 1, d)
-}
-
-fn show_day(c: Civil) -> String {
-    format!("{}-{}-{}", c.y, c.m + 1, c.d)
-}
 
 fn period_of(s: &str) -> Period {
     Period::parse(s).unwrap_or(Period::Month)

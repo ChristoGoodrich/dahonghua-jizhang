@@ -146,9 +146,12 @@ pub fn store_is_open() -> bool {
     handle().db.is_some()
 }
 
-/// Close the database, discarding nothing — a flush is the caller's job.
+/// Close the database. Flushes first: a caller that remembered to save and a
+/// caller that forgot should end in the same place, and "the process is going
+/// away" is exactly when forgetting is most likely.
 #[frb(sync)]
 pub fn close_store() {
+    let _ = flush_store();
     handle().db = None;
 }
 

@@ -10,6 +10,7 @@
 //! built on, and the reason `days_of` is parallel to `ids` in all three calls.
 
 use dahonghua_core::budget::DayRow;
+use super::day::parse_day;
 use dahonghua_core::civil::Civil;
 use dahonghua_core::entry::Entry;
 use dahonghua_core::insight::{self, InsightCopy};
@@ -18,14 +19,6 @@ use dahonghua_core::weekly::{self, WeekRow};
 use flutter_rust_bridge::frb;
 
 use super::store::{by_id, settings_of, store};
-
-fn parse_day(s: &str) -> Civil {
-    let mut it = s.split('-');
-    let y = it.next().and_then(|v| v.parse().ok()).unwrap_or(1970);
-    let m: i32 = it.next().and_then(|v| v.parse().ok()).unwrap_or(1);
-    let d = it.next().and_then(|v| v.parse().ok()).unwrap_or(1);
-    Civil::new(y, m - 1, d)
-}
 
 /// The entries named by `ids`, paired with the day Dart resolved for each.
 fn rows(ids: &[String], days_of: &[String]) -> (Vec<Entry>, Vec<Civil>) {

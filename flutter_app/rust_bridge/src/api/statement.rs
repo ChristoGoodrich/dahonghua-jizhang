@@ -10,24 +10,12 @@
 //! what is left over offsets the unbilled charges.
 
 use flutter_rust_bridge::frb;
+use super::day::{parse_day, show_day};
 
-use dahonghua_core::civil::Civil;
 use dahonghua_core::entry::Entry;
 use dahonghua_core::statement::{due_soon, statement_summary, DatedEntry};
 
 use super::store::{by_id, store};
-
-fn parse_day(s: &str) -> Civil {
-    let mut it = s.split('-');
-    let y = it.next().and_then(|v| v.parse().ok()).unwrap_or(1970);
-    let m: i32 = it.next().and_then(|v| v.parse().ok()).unwrap_or(1);
-    let d = it.next().and_then(|v| v.parse().ok()).unwrap_or(1);
-    Civil::new(y, m - 1, d)
-}
-
-fn show_day(c: Civil) -> String {
-    format!("{}-{}-{}", c.y, c.m + 1, c.d)
-}
 
 /// The entries named by `ids`, paired with the day Dart resolved for each.
 fn dated(ids: &[String], days_of: &[String]) -> Vec<DatedEntry> {

@@ -166,6 +166,22 @@ class _AppState extends State<App> {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [Locale('zh'), Locale('en')],
+      // Larger type, without chips and the keypad flying apart. Flutter
+      // already scales text; the screens use fixed heights that a 2x setting
+      // would clip mid-glyph. 1.4 is the point where a date chip is still a
+      // chip.
+      builder: (context, child) {
+        final mq = MediaQuery.of(context);
+        return MediaQuery(
+          data: mq.copyWith(
+            textScaler: mq.textScaler.clamp(
+              minScaleFactor: 1.0,
+              maxScaleFactor: 1.4,
+            ),
+          ),
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
       // The gate wraps the shell rather than replacing it: covering the app
       // keeps the navigator mounted, so unlocking returns to wherever the user
       // was rather than to the first tab.

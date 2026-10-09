@@ -10,8 +10,8 @@
 //! crosses is the answer.
 
 use dahonghua_core::budget::{self as core, TierStatus};
+use super::day::parse_day;
 use dahonghua_core::catalog;
-use dahonghua_core::civil::Civil;
 use dahonghua_core::entry::{Entry, Io};
 use flutter_rust_bridge::frb;
 
@@ -77,14 +77,6 @@ pub fn cycle_ids(ids: Vec<String>, days_of: Vec<String>, today: String) -> Vec<S
         .filter(|i| dahonghua_core::cycle::in_cycle(parse_day(&days_of[*i]), anchor, start))
         .map(|i| ids[i].clone())
         .collect()
-}
-
-fn parse_day(s: &str) -> Civil {
-    let mut it = s.split('-');
-    let y = it.next().and_then(|v| v.parse().ok()).unwrap_or(1970);
-    let m: i32 = it.next().and_then(|v| v.parse().ok()).unwrap_or(1);
-    let d = it.next().and_then(|v| v.parse().ok()).unwrap_or(1);
-    Civil::new(y, m - 1, d)
 }
 
 /// A spend total against a cap.

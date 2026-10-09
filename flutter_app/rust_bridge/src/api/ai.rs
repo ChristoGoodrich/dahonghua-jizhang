@@ -12,13 +12,13 @@
 //! cluster a Token Plan key belongs to.
 
 use std::sync::{Mutex, MutexGuard, OnceLock};
+use super::day::{parse_day, show_day};
 
 use dahonghua_core::ai::ask::{self, AskQuery, AskRow, Group, Metric};
 use dahonghua_core::ai::quick::{self, Custom, QuickDraft};
 use dahonghua_core::ai::wire::{self, Failure};
 use dahonghua_core::ai::words;
 use dahonghua_core::catalog::{cat_name, cat_of};
-use dahonghua_core::civil::Civil;
 use dahonghua_core::entry::{Entry, Io};
 use dahonghua_core::jsval::Value;
 use flutter_rust_bridge::frb;
@@ -117,18 +117,6 @@ pub struct AiRequest {
     pub url: String,
     pub body: String,
     pub timeout_secs: u32,
-}
-
-fn parse_day(s: &str) -> Civil {
-    let mut it = s.split('-');
-    let y = it.next().and_then(|v| v.parse().ok()).unwrap_or(1970);
-    let m: i32 = it.next().and_then(|v| v.parse().ok()).unwrap_or(1);
-    let d = it.next().and_then(|v| v.parse().ok()).unwrap_or(1);
-    Civil::new(y, m - 1, d)
-}
-
-fn show_day(d: Civil) -> String {
-    format!("{}-{}-{}", d.y, d.m + 1, d.d)
 }
 
 /// The port has no user-defined categories yet, so there is nothing of the

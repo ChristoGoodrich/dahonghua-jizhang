@@ -6,22 +6,10 @@
 //! each is shaded, and whether the next cycle may be paged to.
 
 use dahonghua_core::calendar::{self, CalRow};
-use dahonghua_core::civil::Civil;
+use super::day::{parse_day, show_day};
 use flutter_rust_bridge::frb;
 
 use super::store::{by_id, settings_of, store};
-
-fn parse_day(s: &str) -> Civil {
-    let mut it = s.split('-');
-    let y = it.next().and_then(|v| v.parse().ok()).unwrap_or(1970);
-    let m: i32 = it.next().and_then(|v| v.parse().ok()).unwrap_or(1);
-    let d = it.next().and_then(|v| v.parse().ok()).unwrap_or(1);
-    Civil::new(y, m - 1, d)
-}
-
-fn show_day(d: Civil) -> String {
-    format!("{}-{}-{}", d.y, d.m + 1, d.d)
-}
 
 /// One day of the grid.
 #[derive(Debug, Clone, PartialEq)]

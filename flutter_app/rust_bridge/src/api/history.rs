@@ -8,6 +8,7 @@
 //! calendar days and a calendar day is a question about the device's zone.
 
 use flutter_rust_bridge::frb;
+use super::day::parse_day;
 
 use dahonghua_core::civil::Civil;
 use dahonghua_core::entry::Io;
@@ -15,14 +16,6 @@ use dahonghua_core::notes::note_suggestions;
 use dahonghua_core::streak::streak_days;
 
 use super::store::store;
-
-fn parse_day(s: &str) -> Civil {
-    let mut it = s.split('-');
-    let y = it.next().and_then(|v| v.parse().ok()).unwrap_or(1970);
-    let m: i32 = it.next().and_then(|v| v.parse().ok()).unwrap_or(1);
-    let d = it.next().and_then(|v| v.parse().ok()).unwrap_or(1);
-    Civil::new(y, m - 1, d)
-}
 
 /// How many days in a row end today, counting back.
 ///

@@ -17,7 +17,6 @@
 //! learns the first already did. With random ids both rows survive the merge
 //! and the user is billed twice; with `sub_{id}_{ts}` they are the same row.
 
-use dahonghua_core::civil::Civil;
 use dahonghua_core::model::{Sub, SubFreq};
 use dahonghua_core::subs;
 use flutter_rust_bridge::frb;
@@ -186,16 +185,7 @@ pub fn remove_sub(id: String) -> bool {
 pub fn sub_next_due(id: String, from: String) -> Option<String> {
     let s = subs_lock();
     let sub = s.iter().find(|x| x.id == id)?;
-    Some(subs::encode(subs::next_due_date(sub, parse_day(&from)?)))
-}
-
-/// `YYYY-M-D` with a 0-indexed month, as the cursor is written.
-fn parse_day(s: &str) -> Option<Civil> {
-    let mut it = s.split('-');
-    let y = it.next()?.parse().ok()?;
-    let m = it.next()?.parse().ok()?;
-    let d = it.next()?.parse().ok()?;
-    Some(Civil::new(y, m, d))
+    Some(subs::encode(subs::next_due_date(sub, subs::decode(&from)?)))
 }
 
 /// Every date that would be charged, and every cursor that would move.
@@ -221,13 +211,13 @@ pub struct PendingCharges {
 
 #[frb(sync)]
 pub fn subs_pending(starts: Vec<String>, today: String) -> PendingCharges {
-    let Some(today) = parse_day(&today) else {
+    let Some(today) = subs::decode(&today) else {
         return PendingCharges::default();
     };
     let list = subs_of();
     let mut out = PendingCharges::default();
     for (i, sub) in list.iter().enumerate() {
-        let Some(start) = starts.get(i).and_then(|s| parse_day(s)) else {
+        let Some(start) = starts.get(i).and_then(|s| subs::decode(s)) else {
             continue;
         };
         let due = subs::compute_due_charges(sub, start, today);
@@ -262,7 +252,7 @@ pub fn subs_commit(
     epochs: Vec<i64>,
     now: i64,
 ) -> Vec<String> {
-    let Some(today_c) = parse_day(&today) else {
+    let Some(today_c) = subs::decode(&today) else {
         return Vec::new();
     };
     let epoch_of = |d: &str| {
@@ -281,7 +271,7 @@ pub fn subs_commit(
     let mut existing: std::collections::HashSet<String> =
         s.ledger.all().iter().map(|e| e.id.clone()).collect();
     for (i, sub) in list.iter_mut().enumerate() {
-        let Some(start) = starts.get(i).and_then(|x| parse_day(x)) else {
+        let Some(start) = starts.get(i).and_then(|x| subs::decode(x)) else {
             continue;
         };
         let due = subs::compute_due_charges(sub, start, today_c);

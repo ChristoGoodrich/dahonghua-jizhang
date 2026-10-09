@@ -10,6 +10,7 @@
 //! crate does not own one.
 
 use dahonghua_core::chart::{self, SeriesType};
+use super::day::{parse_day, show_day};
 use dahonghua_core::civil::Civil;
 use dahonghua_core::entry::{Entry, Io};
 use dahonghua_core::period::{period_range, period_trend, trend_axis, Grain, Period};
@@ -18,18 +19,6 @@ use dahonghua_core::trends::{self, TrendRow};
 use flutter_rust_bridge::frb;
 
 use super::store::{by_id, settings_of, store};
-
-fn parse_day(s: &str) -> Civil {
-    let mut it = s.split('-');
-    let y = it.next().and_then(|v| v.parse().ok()).unwrap_or(1970);
-    let m: i32 = it.next().and_then(|v| v.parse().ok()).unwrap_or(1);
-    let d = it.next().and_then(|v| v.parse().ok()).unwrap_or(1);
-    Civil::new(y, m - 1, d)
-}
-
-fn show_day(d: Civil) -> String {
-    format!("{}-{}-{}", d.y, d.m + 1, d.d)
-}
 
 /// Expense, income, balance and how many rows are in range.
 #[derive(Debug, Clone, PartialEq)]

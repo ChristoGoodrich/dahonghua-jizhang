@@ -362,7 +362,6 @@ class _RecordSheetState extends State<RecordSheet> {
                         _noteField(zh),
                         _tagRow(zh, accent),
                         _ledgerRow(zh, accent),
-                        if (_flash != null) _flashLine(),
                       ],
                     ),
                   ),
@@ -376,6 +375,9 @@ class _RecordSheetState extends State<RecordSheet> {
                 ],
               ),
             ),
+            // Above the keypad, not in the scroll: "已保存" scrolled out of
+            // view is a save the user never saw happen.
+            if (_flash != null) _flashLine(),
             _keypad(zh, accent),
           ],
         ),
