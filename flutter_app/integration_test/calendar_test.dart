@@ -145,6 +145,28 @@ void main() {
     expect(d.hour, 12);
   });
 
+  testWidgets('看流水 leaves the calendar for the list at that day', (
+    tester,
+  ) async {
+    add('a', 30, note: '牛肉面');
+    final t = DateTime.now();
+    await openCalendar(tester);
+    await tester.tap(find.byKey(Key('cal-${ymd(t)}')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('cal-day-head')), findsOneWidget);
+
+    await scrollAndTap(
+      tester,
+      find.byKey(const Key('cal-to-list')),
+      scrollable: calList(),
+    );
+    await tester.pumpAndSettle();
+
+    // the grid is gone, and the day is on screen in the ordinary list
+    expect(find.byKey(const Key('cal-day-head')), findsNothing);
+    expect(find.text('牛肉面'), findsOneWidget);
+  });
+
   testWidgets('a day ahead of today cannot be picked', (tester) async {
     add('a', 30);
     final t = DateTime.now();

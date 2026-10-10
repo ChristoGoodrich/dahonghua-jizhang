@@ -635,26 +635,70 @@ class _EntryListScreenState extends State<EntryListScreen> {
           if (!cell.future)
             Padding(
               padding: const EdgeInsets.fromLTRB(22, 10, 22, 0),
-              child: FilledButton.tonalIcon(
-                key: const Key('cal-add'),
-                onPressed: widget.onRecordAt == null
-                    ? null
-                    : () {
-                        final d = cell!.day.split('-').map(int.parse).toList();
-                        // Noon, as the shipping calendar did: a day picked
-                        // after the fact has no time of its own, and noon
-                        // sorts a backfilled lunch where lunch goes.
-                        widget.onRecordAt!(
-                          DateTime(d[0], d[1], d[2], 12).millisecondsSinceEpoch,
-                        );
-                      },
-                icon: const Icon(Icons.add_rounded, size: 18),
-                label: Text(zh ? '补记这天' : 'Add to this day'),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: FilledButton.tonalIcon(
+                      key: const Key('cal-add'),
+                      onPressed: widget.onRecordAt == null
+                          ? null
+                          : () {
+                              final d = cell!.day
+                                  .split('-')
+                                  .map(int.parse)
+                                  .toList();
+                              // Noon, as the shipping calendar did: a day
+                              // picked after the fact has no time of its own,
+                              // and noon sorts a backfilled lunch where lunch
+                              // goes.
+                              widget.onRecordAt!(
+                                DateTime(d[0], d[1], d[2], 12)
+                                    .millisecondsSinceEpoch,
+                              );
+                            },
+                      icon: const Icon(Icons.add_rounded, size: 18),
+                      label: Text(zh ? '补记这天' : 'Add to this day'),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  // The calendar panel is a peek. The list is where a day is
+                  // lived in — swipe to delete, filters, the day's own header.
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      key: const Key('cal-to-list'),
+                      onPressed: () => _dayToList(cell!.day),
+                      icon: const Icon(Icons.list_alt, size: 18),
+                      label: Text(zh ? '看流水' : 'View entries'),
+                    ),
+                  ),
+                ],
               ),
             ),
         ],
       ],
     );
+  }
+
+  /// Leave the calendar face and put that day under the thumb in the list.
+  ///
+  /// A `GlobalKey` rather than `find`: this is production code, and a test
+  /// finder has no business running on a phone.
+  final _dayKeys = <String, GlobalKey>{};
+
+  Future<void> _dayToList(String day) async {
+    setState(() {
+      _calendar = false;
+      _calPicked = null;
+    });
+    _keepCal();
+    final key = _dayKeys.putIfAbsent(day, GlobalKey.new);
+    await WidgetsBinding.instance.endOfFrame;
+    if (!mounted) return;
+    final ctx = key.currentContext;
+    if (ctx == null || !mounted) return;
+    // The key's context is the day row, not this State's; mounted is checked.
+    // ignore: use_build_context_synchronously
+    await Scrollable.ensureVisible(ctx, alignment: 0.08);
   }
 
   /// What the selection comes to, under its count.
@@ -689,7 +733,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
     decoration: InputDecoration(
       border: InputBorder.none,
       isDense: true,
-      hintText: zh ? '找一笔:上周、支出、星巴克' : 'last week · income · coffee',
+      hintText: zh ? '找一笔:上周、星巴克、>100' : 'last week · coffee · >100',
       hintStyle: TextStyle(fontSize: 15, color: palette.inkSoft),
     ),
     onChanged: (_) => _reload(),
@@ -952,6 +996,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
       color: palette.inkSoft,
     );
     return Padding(
+      key: _dayKeys.putIfAbsent(item.day, GlobalKey.new),
       padding: const EdgeInsets.fromLTRB(26, 12, 26, 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

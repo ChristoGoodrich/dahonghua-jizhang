@@ -111,6 +111,18 @@ void main() {
       expect(hits, ['a']);
     });
 
+    testWidgets('an amount operator filters numerically', (tester) async {
+      add('small', amt: 12);
+      add('big', amt: 120);
+
+      expect(search.searchIds(ids: const ['small', 'big'], text: '>100', zh: true),
+          ['big']);
+      expect(search.searchIds(ids: const ['small', 'big'], text: '<20', zh: true),
+          ['small']);
+      expect(search.searchIds(ids: const ['small', 'big'], text: '>=12', zh: true),
+          ['small', 'big']);
+    });
+
     testWidgets('the order given is the order returned', (tester) async {
       add('a', note: '咖啡一');
       add('b', note: '咖啡二');
@@ -262,7 +274,7 @@ void main() {
       await tester.tap(find.byKey(const Key('search-toggle')));
       await tester.pumpAndSettle();
 
-      expect(find.text('last week · income · coffee'), findsOneWidget);
+      expect(find.text('last week · coffee · >100'), findsOneWidget);
     });
   });
 }
