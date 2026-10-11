@@ -140,6 +140,10 @@ pub fn row_to_entry(r: &DbEntry) -> Entry {
         refund_of: r.refund_of.clone(),
         from_sub: r.from_sub,
         src: r.src.as_deref().and_then(EntrySource::parse),
+        // Not in the sync row: a receipt is a file on one phone, and the
+        // document two devices pass is JSON. The name lives on the entry
+        // side (`entry_to_value`) where the local store keeps it.
+        photo: None,
         deleted_at: r.deleted_at,
         field_ts: r.field_ts.clone(),
     }
@@ -344,6 +348,10 @@ pub fn entry_to_value(e: &Entry) -> Value {
     push_str("acctTo", &e.acct_to);
     push_str("ledger", &e.ledger);
     push_str("refundOf", &e.refund_of);
+    // The photo's **name** only. The file lives on the phone; the ledger
+    // points at it. Omitted when absent, so a row without a receipt looks
+    // exactly as it did before this field existed.
+    push_str("photo", &e.photo);
     let mut push_num = |k: &str, v: Option<f64>| {
         if let Some(n) = v {
             out.push((k.to_string(), Value::Num(n)));
@@ -407,6 +415,7 @@ pub fn entry_from_value(v: &Value) -> Entry {
             _ => None,
         },
         src: str_of(v.get("src")).as_deref().and_then(EntrySource::parse),
+        photo: str_of(v.get("photo")),
         deleted_at: ms_of(v.get("deletedAt")),
         updated_at: ms_of(v.get("updatedAt")),
         field_ts: stamps_of(v.get("fieldTs")),
@@ -454,6 +463,21 @@ mod tests {
         e.field_ts = Some(BTreeMap::from([("amt".to_string(), 8000)]));
 
         assert_eq!(row_to_entry(&entry_to_row(&e, "u1")), e);
+    }
+
+    #[test]
+    fn a_photo_travels_in_the_json_but_not_the_sync_row() {
+        // The JSON is the local store's shape and keeps the name. The sync
+        // row is what two devices pass as text, and a JPEG is not text — so
+        // the name does not cross, and a restored-from-sync row has none.
+        let mut e = entry();
+        e.photo = Some("r1.jpg".into());
+        let v = entry_to_value(&e);
+        assert_eq!(v.get("photo"), Some(&Value::Str("r1.jpg".into())));
+        assert_eq!(entry_from_value(&v).photo, Some("r1.jpg".into()));
+
+        let plain = entry_to_value(&entry());
+        assert!(plain.get("photo").is_none(), "absent stays absent");
     }
 
     #[test]

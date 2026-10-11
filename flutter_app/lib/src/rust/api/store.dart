@@ -434,6 +434,9 @@ class EntryView {
 
   /// `"bill" | "notif"`, or absent when typed by hand.
   final String? src;
+
+  /// Receipt filename under the attachments directory.
+  final String? photo;
   final PlatformInt64? deletedAt;
   final PlatformInt64? updatedAt;
 
@@ -460,6 +463,7 @@ class EntryView {
     this.refundOf,
     this.fromSub,
     this.src,
+    this.photo,
     this.deletedAt,
     this.updatedAt,
   });
@@ -488,6 +492,7 @@ class EntryView {
       refundOf.hashCode ^
       fromSub.hashCode ^
       src.hashCode ^
+      photo.hashCode ^
       deletedAt.hashCode ^
       updatedAt.hashCode;
 
@@ -518,6 +523,7 @@ class EntryView {
           refundOf == other.refundOf &&
           fromSub == other.fromSub &&
           src == other.src &&
+          photo == other.photo &&
           deletedAt == other.deletedAt &&
           updatedAt == other.updatedAt;
 }

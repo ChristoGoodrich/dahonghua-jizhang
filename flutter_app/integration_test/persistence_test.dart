@@ -432,6 +432,7 @@ void main() {
           cur: 'CNY',
           subcat: '',
           ts: t0 + 1,
+          photo: '',
         ),
         editId: '',
         id: 'sheet-narrow',
@@ -673,6 +674,7 @@ void main() {
           cur: 'CNY',
           subcat: '',
           ts: t0,
+          photo: '',
         );
 
     testWidgets('an entry from the record sheet survives a restart', (

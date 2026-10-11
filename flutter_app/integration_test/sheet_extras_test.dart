@@ -287,4 +287,13 @@ void main() {
       expect(find.byKey(const Key('ledger-chip-旅行')), findsOneWidget);
     });
   });
+  group("a receipt on the sheet", () {
+    testWidgets("offers a picker", (tester) async {
+      // The system picker is not driven here — a camera has no place in a
+      // test harness — only that the control is on the sheet.
+      await sheet(tester);
+      expect(find.byKey(const Key("record-photo")), findsOneWidget);
+    });
+  });
+
 }

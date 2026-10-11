@@ -155,6 +155,10 @@ class FormView {
   /// When it happened. `None` is "now", resolved at save time.
   final PlatformInt64? ts;
 
+  /// Filename of a receipt under the attachments directory. Empty is none.
+  /// Not a `FormFields` concern — the core never sees a file.
+  final String photo;
+
   const FormView({
     required this.io,
     required this.cat,
@@ -169,6 +173,7 @@ class FormView {
     required this.cur,
     required this.subcat,
     this.ts,
+    required this.photo,
   });
 
   static Future<FormView> default_() =>
@@ -188,7 +193,8 @@ class FormView {
       ledger.hashCode ^
       cur.hashCode ^
       subcat.hashCode ^
-      ts.hashCode;
+      ts.hashCode ^
+      photo.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -207,7 +213,8 @@ class FormView {
           ledger == other.ledger &&
           cur == other.cur &&
           subcat == other.subcat &&
-          ts == other.ts;
+          ts == other.ts &&
+          photo == other.photo;
 }
 
 /// What a save did.

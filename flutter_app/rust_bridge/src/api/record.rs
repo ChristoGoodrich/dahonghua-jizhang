@@ -40,6 +40,9 @@ pub struct FormView {
     pub subcat: String,
     /// When it happened. `None` is "now", resolved at save time.
     pub ts: Option<i64>,
+    /// Filename of a receipt under the attachments directory. Empty is none.
+    /// Not a `FormFields` concern — the core never sees a file.
+    pub photo: String,
 }
 
 impl From<FormView> for FormFields {
@@ -78,6 +81,7 @@ impl From<FormFields> for FormView {
             cur: f.cur,
             subcat: f.subcat,
             ts: f.ts,
+            photo: String::new(),
         }
     }
 }
@@ -130,6 +134,14 @@ pub fn save_form(
     rate_override: Option<f64>,
     rate_was_cached: bool,
 ) -> SaveResult {
+    let photo = {
+        let p = form.photo.trim().to_string();
+        if p.is_empty() {
+            None
+        } else {
+            Some(p)
+        }
+    };
     let f: FormFields = form.into();
     let c = currencies_of();
     if let Some(r) = core::validate(&f, &c.base, &c.rates) {
@@ -237,6 +249,7 @@ pub fn save_form(
                     cur,
                     orig_amt,
                     rate,
+                    photo: photo.clone(),
                     ..Default::default()
                 };
                 p.ts = core::should_patch_ts(s.ledger.get(&edit_id).map(|e| e.ts), f.ts)
@@ -258,6 +271,7 @@ pub fn save_form(
                         cur,
                         orig_amt,
                         rate,
+                        photo,
                         ..Default::default()
                     },
                     id,
@@ -308,7 +322,7 @@ pub fn initial_form(
         .first()
         .map(|c| c.k.clone())
         .unwrap_or_default();
-    core::initial_fields(
+    let mut view: FormView = core::initial_fields(
         source.as_ref(),
         editing,
         &FormDefaults {
@@ -319,7 +333,14 @@ pub fn initial_form(
             initial_ts,
         },
     )
-    .into()
+    .into();
+    // The receipt's name, when the row being edited has one. A duplicate is a
+    // new row and starts without a photo, the same way it starts without the
+    // source's date.
+    if editing {
+        view.photo = source.and_then(|s| s.photo).unwrap_or_default();
+    }
+    view
 }
 
 /// What changes when a direction is picked.

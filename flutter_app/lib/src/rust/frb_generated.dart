@@ -8865,8 +8865,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   EntryView dco_decode_entry_view(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 24)
-      throw Exception('unexpected arr length: expect 24 but see ${arr.length}');
+    if (arr.length != 25)
+      throw Exception('unexpected arr length: expect 25 but see ${arr.length}');
     return EntryView(
       id: dco_decode_String(arr[0]),
       ts: dco_decode_i_64(arr[1]),
@@ -8890,8 +8890,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       refundOf: dco_decode_opt_String(arr[19]),
       fromSub: dco_decode_opt_box_autoadd_bool(arr[20]),
       src: dco_decode_opt_String(arr[21]),
-      deletedAt: dco_decode_opt_box_autoadd_i_64(arr[22]),
-      updatedAt: dco_decode_opt_box_autoadd_i_64(arr[23]),
+      photo: dco_decode_opt_String(arr[22]),
+      deletedAt: dco_decode_opt_box_autoadd_i_64(arr[23]),
+      updatedAt: dco_decode_opt_box_autoadd_i_64(arr[24]),
     );
   }
 
@@ -8917,8 +8918,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   FormView dco_decode_form_view(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 13)
-      throw Exception('unexpected arr length: expect 13 but see ${arr.length}');
+    if (arr.length != 14)
+      throw Exception('unexpected arr length: expect 14 but see ${arr.length}');
     return FormView(
       io: dco_decode_String(arr[0]),
       cat: dco_decode_String(arr[1]),
@@ -8933,6 +8934,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       cur: dco_decode_String(arr[10]),
       subcat: dco_decode_String(arr[11]),
       ts: dco_decode_opt_box_autoadd_i_64(arr[12]),
+      photo: dco_decode_String(arr[13]),
     );
   }
 
@@ -11155,6 +11157,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_refundOf = sse_decode_opt_String(deserializer);
     var var_fromSub = sse_decode_opt_box_autoadd_bool(deserializer);
     var var_src = sse_decode_opt_String(deserializer);
+    var var_photo = sse_decode_opt_String(deserializer);
     var var_deletedAt = sse_decode_opt_box_autoadd_i_64(deserializer);
     var var_updatedAt = sse_decode_opt_box_autoadd_i_64(deserializer);
     return EntryView(
@@ -11180,6 +11183,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       refundOf: var_refundOf,
       fromSub: var_fromSub,
       src: var_src,
+      photo: var_photo,
       deletedAt: var_deletedAt,
       updatedAt: var_updatedAt,
     );
@@ -11215,6 +11219,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_cur = sse_decode_String(deserializer);
     var var_subcat = sse_decode_String(deserializer);
     var var_ts = sse_decode_opt_box_autoadd_i_64(deserializer);
+    var var_photo = sse_decode_String(deserializer);
     return FormView(
       io: var_io,
       cat: var_cat,
@@ -11229,6 +11234,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       cur: var_cur,
       subcat: var_subcat,
       ts: var_ts,
+      photo: var_photo,
     );
   }
 
@@ -13801,6 +13807,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_opt_String(self.refundOf, serializer);
     sse_encode_opt_box_autoadd_bool(self.fromSub, serializer);
     sse_encode_opt_String(self.src, serializer);
+    sse_encode_opt_String(self.photo, serializer);
     sse_encode_opt_box_autoadd_i_64(self.deletedAt, serializer);
     sse_encode_opt_box_autoadd_i_64(self.updatedAt, serializer);
   }
@@ -13834,6 +13841,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_String(self.cur, serializer);
     sse_encode_String(self.subcat, serializer);
     sse_encode_opt_box_autoadd_i_64(self.ts, serializer);
+    sse_encode_String(self.photo, serializer);
   }
 
   @protected

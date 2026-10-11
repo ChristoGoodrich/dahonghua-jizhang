@@ -8745,6 +8745,7 @@ impl SseDecode for crate::api::store::EntryView {
         let mut var_refundOf = <Option<String>>::sse_decode(deserializer);
         let mut var_fromSub = <Option<bool>>::sse_decode(deserializer);
         let mut var_src = <Option<String>>::sse_decode(deserializer);
+        let mut var_photo = <Option<String>>::sse_decode(deserializer);
         let mut var_deletedAt = <Option<i64>>::sse_decode(deserializer);
         let mut var_updatedAt = <Option<i64>>::sse_decode(deserializer);
         return crate::api::store::EntryView {
@@ -8770,6 +8771,7 @@ impl SseDecode for crate::api::store::EntryView {
             refund_of: var_refundOf,
             from_sub: var_fromSub,
             src: var_src,
+            photo: var_photo,
             deleted_at: var_deletedAt,
             updated_at: var_updatedAt,
         };
@@ -8811,6 +8813,7 @@ impl SseDecode for crate::api::record::FormView {
         let mut var_cur = <String>::sse_decode(deserializer);
         let mut var_subcat = <String>::sse_decode(deserializer);
         let mut var_ts = <Option<i64>>::sse_decode(deserializer);
+        let mut var_photo = <String>::sse_decode(deserializer);
         return crate::api::record::FormView {
             io: var_io,
             cat: var_cat,
@@ -8825,6 +8828,7 @@ impl SseDecode for crate::api::record::FormView {
             cur: var_cur,
             subcat: var_subcat,
             ts: var_ts,
+            photo: var_photo,
         };
     }
 }
@@ -11970,6 +11974,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::store::EntryView {
             self.refund_of.into_into_dart().into_dart(),
             self.from_sub.into_into_dart().into_dart(),
             self.src.into_into_dart().into_dart(),
+            self.photo.into_into_dart().into_dart(),
             self.deleted_at.into_into_dart().into_dart(),
             self.updated_at.into_into_dart().into_dart(),
         ]
@@ -12019,6 +12024,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::record::FormView {
             self.cur.into_into_dart().into_dart(),
             self.subcat.into_into_dart().into_dart(),
             self.ts.into_into_dart().into_dart(),
+            self.photo.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -13846,6 +13852,7 @@ impl SseEncode for crate::api::store::EntryView {
         <Option<String>>::sse_encode(self.refund_of, serializer);
         <Option<bool>>::sse_encode(self.from_sub, serializer);
         <Option<String>>::sse_encode(self.src, serializer);
+        <Option<String>>::sse_encode(self.photo, serializer);
         <Option<i64>>::sse_encode(self.deleted_at, serializer);
         <Option<i64>>::sse_encode(self.updated_at, serializer);
     }
@@ -13882,6 +13889,7 @@ impl SseEncode for crate::api::record::FormView {
         <String>::sse_encode(self.cur, serializer);
         <String>::sse_encode(self.subcat, serializer);
         <Option<i64>>::sse_encode(self.ts, serializer);
+        <String>::sse_encode(self.photo, serializer);
     }
 }
 

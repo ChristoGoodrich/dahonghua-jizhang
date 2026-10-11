@@ -10,7 +10,10 @@
 // operator after an operator — is behaviour the shipping app has and a second
 // implementation would approximate.
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'src/rust/api/accounts.dart' as accounts;
 import 'src/rust/api/calc.dart' as calc;
@@ -26,6 +29,7 @@ import 'glass.dart';
 import 'segmented.dart';
 import 'tap.dart';
 import 'cats.dart';
+import 'photos.dart';
 import 'theme.dart';
 
 /// The refusals `validate_form` can answer, spelled.
@@ -71,6 +75,7 @@ extension FormEdit on record.FormView {
     String? ledger,
     String? cur,
     String? subcat,
+    String? photo,
   }) => record.FormView(
     io: io ?? this.io,
     cat: cat ?? this.cat,
@@ -85,6 +90,7 @@ extension FormEdit on record.FormView {
     cur: cur ?? this.cur,
     subcat: subcat ?? this.subcat,
     ts: ts,
+    photo: photo ?? this.photo,
   );
 
   /// The same form on another day. Separate from [copyWith] because `ts` is
@@ -106,6 +112,7 @@ extension FormEdit on record.FormView {
     cur: this.cur,
     subcat: subcat,
     ts: ts,
+    photo: photo,
   );
 }
 
@@ -288,7 +295,7 @@ class _RecordSheetState extends State<RecordSheet> {
     }
     // 再记: the same kind again, so the kind stays and the entry goes.
     setState(() {
-      _form = record.clearForNext(form: _form);
+      _form = record.clearForNext(form: _form).copyWith(photo: '');
       _note.clear();
       _flash = r.staleRate
           ? (widget.zh ? '已保存 · 使用了缓存汇率' : 'Saved · used a cached rate')
@@ -328,6 +335,29 @@ class _RecordSheetState extends State<RecordSheet> {
               label: Text(
                 zh ? '一句话' : 'Sentence',
                 style: TextStyle(color: palette.hibiscus),
+              ),
+            ),
+          // A receipt, when there is one to keep. The picker asks for no
+          // permission the user has not already given by pressing it.
+          if (widget.editId == null || _form.photo.isNotEmpty)
+            TextButton.icon(
+              key: const Key('record-photo'),
+              onPressed: _pickPhoto,
+              icon: Icon(
+                _form.photo.isEmpty
+                    ? Icons.photo_camera_outlined
+                    : Icons.photo,
+                size: 18,
+                color: _form.photo.isEmpty ? palette.inkSoft : palette.hibiscus,
+              ),
+              label: Text(
+                _form.photo.isEmpty
+                    ? (zh ? '小票' : 'Receipt')
+                    : (zh ? '已附小票' : 'Receipt'),
+                style: TextStyle(
+                  color: _form.photo.isEmpty ? palette.inkSoft : palette.hibiscus,
+                  fontSize: 13,
+                ),
               ),
             ),
           // Visible, not only a long press on 保存: a gesture nobody is told
@@ -386,6 +416,7 @@ class _RecordSheetState extends State<RecordSheet> {
                         const SizedBox(height: 14),
                         ..._currencyRow(zh, accent),
                         _noteField(zh),
+                        if (_form.photo.isNotEmpty) _photoStrip(zh),
                         _tagRow(zh, accent),
                         _ledgerRow(zh, accent),
                       ],
@@ -813,6 +844,21 @@ class _RecordSheetState extends State<RecordSheet> {
     ),
   );
 
+  Future<void> _pickPhoto() async {
+    final picker = ImagePicker();
+    final shot = await picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 1600,
+      imageQuality: 85,
+    );
+    if (shot == null || !mounted) return;
+    final name = await saveAttachment(
+      shot,
+      'r${DateTime.now().millisecondsSinceEpoch}',
+    );
+    setState(() => _form = _form.copyWith(photo: name));
+  }
+
   /// Pin what is on the sheet as a template.
   ///
   /// A long press on the save key still works — that is where the shipping
@@ -912,6 +958,44 @@ class _RecordSheetState extends State<RecordSheet> {
       const SizedBox(height: 14),
     ];
   }
+
+  /// The receipt, as a thumbnail with a way to take it off again.
+  Widget _photoStrip(bool zh) => Padding(
+    padding: const EdgeInsets.only(top: 12),
+    child: Row(
+      children: [
+        FutureBuilder<File?>(
+          future: attachmentFile(_form.photo),
+          builder: (ctx, snap) {
+            final f = snap.data;
+            if (f == null) {
+              return const SizedBox.shrink();
+            }
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.file(f, width: 56, height: 56, fit: BoxFit.cover),
+            );
+          },
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            zh ? '小票已附上' : 'Receipt attached',
+            style: TextStyle(fontSize: 12, color: palette.inkSoft),
+          ),
+        ),
+        Tap(
+          key: const Key('photo-clear'),
+          filled: false,
+          onTap: () => setState(() => _form = _form.copyWith(photo: '')),
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Icon(Icons.close, size: 18, color: palette.inkSoft),
+          ),
+        ),
+      ],
+    ),
+  );
 
   Widget _noteField(bool zh) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,

@@ -260,6 +260,8 @@ pub struct EntryView {
     pub from_sub: Option<bool>,
     /// `"bill" | "notif"`, or absent when typed by hand.
     pub src: Option<String>,
+    /// Receipt filename under the attachments directory.
+    pub photo: Option<String>,
     pub deleted_at: Option<i64>,
     pub updated_at: Option<i64>,
 }
@@ -289,6 +291,7 @@ impl From<&Entry> for EntryView {
             refund_of: e.refund_of.clone(),
             from_sub: e.from_sub,
             src: e.src.map(|s| s.as_str().to_string()),
+            photo: e.photo.clone(),
             deleted_at: e.deleted_at,
             updated_at: e.updated_at,
         }

@@ -124,6 +124,11 @@ pub struct Entry {
     pub refund_of: Option<String>,
     pub from_sub: Option<bool>,
     pub src: Option<EntrySource>,
+    /// A receipt image's filename, under the app's own attachments directory.
+    /// The bytes never enter this crate — only the name, so the ledger can
+    /// point at a photo without learning what a JPEG is. Absent from the JSON
+    /// when there is none, like every other optional field here.
+    pub photo: Option<String>,
 
     // ---- sync metadata ----
     /// Soft delete. Present means tombstoned; every display and calculation
@@ -195,6 +200,7 @@ pub struct Patch {
     pub refund_of: Option<String>,
     pub from_sub: Option<bool>,
     pub src: Option<EntrySource>,
+    pub photo: Option<String>,
     pub deleted_at: Option<i64>,
     /// Field names to reset to absent. JavaScript expresses this by patching a
     /// key to `undefined`, which is indistinguishable from "not in the patch"
@@ -236,6 +242,7 @@ impl Patch {
             refund_of => "refundOf",
             from_sub => "fromSub",
             src => "src",
+            photo => "photo",
             deleted_at => "deletedAt",
         );
         for name in &self.clear {
@@ -265,7 +272,7 @@ impl Patch {
         }
         set_if!(
             io, note, acct, acct_to, fee, discount, subcat, cur, orig_amt, rate, tags, ledger, rb,
-            rb_amt, refund, refund_of, from_sub, src, deleted_at,
+            rb_amt, refund, refund_of, from_sub, src, photo, deleted_at,
         );
 
         for name in &self.clear {
@@ -287,6 +294,7 @@ impl Patch {
                 "refundOf" => e.refund_of = None,
                 "fromSub" => e.from_sub = None,
                 "src" => e.src = None,
+                "photo" => e.photo = None,
                 "deletedAt" => e.deleted_at = None,
                 "io" => e.io = None,
                 other => debug_assert!(false, "Patch::clear names an unknown field: {other}"),
