@@ -5,6 +5,7 @@
 
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
+import 'stats.dart';
 
 // These functions are ignored because they are not marked as `pub`: `assets_lock`, `assets_of`, `loans_lock`, `loans_of`, `set_assets_inner`, `set_loans_inner`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `from`, `from`
@@ -66,6 +67,13 @@ void removeLoan({required String id}) =>
     RustLib.instance.api.crateApiNetworthRemoveLoan(id: id);
 
 NetWorthView netWorth() => RustLib.instance.api.crateApiNetworthNetWorth();
+
+/// Net worth at each instant in `cutoffs`, oldest first.
+///
+/// `x` is the sample's index (0..n-1), `y` the net at that instant. The
+/// platform knows which days those are; the core only walks the ledger.
+List<ChartPoint> netWorthSeries({required Int64List cutoffs}) =>
+    RustLib.instance.api.crateApiNetworthNetWorthSeries(cutoffs: cutoffs);
 
 /// Something owned or owed that is not an account — a flat, a car, a mortgage.
 class AssetView {

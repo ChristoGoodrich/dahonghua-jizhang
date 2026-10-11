@@ -102,6 +102,21 @@ void main() {
     });
   });
 
+  group('the history curve', () {
+    testWidgets('draws when there is something to walk', (tester) async {
+      openAccount('招行', balance: 1000);
+      spend('e1', 100);
+      await show(tester);
+      expect(find.byKey(const Key('net-worth-spark')), findsOneWidget);
+    });
+
+    testWidgets('stays quiet on a brand-new ledger', (tester) async {
+      // one point is not a curve
+      await show(tester);
+      expect(find.byKey(const Key('net-worth-spark')), findsNothing);
+    });
+  });
+
   group('other assets', () {
     testWidgets('add to the total, and a liability subtracts', (tester) async {
       asset('房子', 500000);

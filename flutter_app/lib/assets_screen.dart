@@ -10,12 +10,16 @@
 // Managing accounts lives one level down. Reading a balance is the frequent
 // thing; creating and deleting accounts is not.
 
+
 import 'package:flutter/material.dart';
+import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart'
+    show Int64List;
 
 import 'accounts_screen.dart';
 import 'amounts.dart';
 import 'src/rust/api/accounts.dart' as accounts;
 import 'src/rust/api/networth.dart' as nw;
+import 'src/rust/api/stats.dart' as stats;
 import 'src/rust/api/privacy.dart' as privacy;
 import 'tap.dart';
 import 'glass.dart';
@@ -35,6 +39,7 @@ class AssetsScreen extends StatefulWidget {
 
 class _AssetsScreenState extends State<AssetsScreen> {
   late nw.NetWorthView _net;
+  List<stats.ChartPoint> _series = const [];
   List<accounts.AccountBalance> _accounts = const [];
   List<nw.AssetView> _assets = const [];
   List<nw.LoanView> _loans = const [];
@@ -48,6 +53,7 @@ class _AssetsScreenState extends State<AssetsScreen> {
   void _reload() {
     setState(() {
       _net = nw.netWorth();
+      _series = nw.netWorthSeries(cutoffs: Int64List.fromList(_monthEnds(12)));
       _accounts = accounts.balances().where((a) => !a.archived).toList();
       _assets = nw.assets();
       _loans = nw.loans();
@@ -57,6 +63,19 @@ class _AssetsScreenState extends State<AssetsScreen> {
   void _changed() {
     widget.onChanged?.call();
     _reload();
+  }
+
+  /// Month-ends for the last n full months, then right now, so the curve
+  /// ends at today rather than at last month's close.
+  List<int> _monthEnds(int n) {
+    final now = DateTime.now();
+    final out = <int>[];
+    for (var i = n - 1; i >= 1; i--) {
+      final firstNext = DateTime(now.year, now.month - i + 1, 1);
+      out.add(firstNext.subtract(const Duration(milliseconds: 1)).millisecondsSinceEpoch);
+    }
+    out.add(now.millisecondsSinceEpoch);
+    return out;
   }
 
   String _m(double v) => shownAmount(v, baseSymbol());
@@ -222,6 +241,31 @@ class _AssetsScreenState extends State<AssetsScreen> {
             color: _onSlab,
           ),
         ),
+        // Twelve zeros are not a history. Draw when something moved —
+        // or when there is anything at all to be worth something.
+        if (_series.length >= 2 && _series.any((p) => p.y != 0)) ...[
+          const SizedBox(height: 12),
+          SizedBox(
+            height: 48,
+            width: double.infinity,
+            child: CustomPaint(
+              key: const Key('net-worth-spark'),
+              painter: _Spark(
+                points: _series,
+                line: _onSlab.withValues(alpha: 0.85),
+                fill: _onSlab.withValues(alpha: 0.12),
+              ),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            zh ? '近 12 个月 · 账户流水 + 今天的资产' : "Last 12 months · cash history + today's assets",
+            style: TextStyle(
+              fontSize: 10,
+              color: _onSlab.withValues(alpha: 0.5),
+            ),
+          ),
+        ],
         const SizedBox(height: 14),
         Row(
           children: [
@@ -820,4 +864,54 @@ class _RepayDialogState extends State<_RepayDialog> {
       ],
     );
   }
+}
+
+/// A quiet line under the big number. Points are already decided in Rust;
+/// this only strokes them.
+class _Spark extends CustomPainter {
+  _Spark({required this.points, required this.line, required this.fill});
+
+  final List<stats.ChartPoint> points;
+  final Color line;
+  final Color fill;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (points.length < 2) return;
+    var minY = points.first.y;
+    var maxY = points.first.y;
+    for (final p in points) {
+      if (p.y < minY) minY = p.y;
+      if (p.y > maxY) maxY = p.y;
+    }
+    // a flat month still draws a line, not a divide-by-zero
+    final span = (maxY - minY).abs() < 1e-9 ? 1.0 : maxY - minY;
+    final dx = size.width / (points.length - 1);
+    Offset at(int i) {
+      final t = (points[i].y - minY) / span;
+      return Offset(i * dx, size.height - 4 - t * (size.height - 8));
+    }
+
+    final path = Path()..moveTo(at(0).dx, at(0).dy);
+    for (var i = 1; i < points.length; i++) {
+      path.lineTo(at(i).dx, at(i).dy);
+    }
+    final area = Path.from(path)
+      ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height)
+      ..close();
+    canvas.drawPath(area, Paint()..color = fill);
+    canvas.drawPath(
+      path,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.6
+        ..strokeCap = StrokeCap.round
+        ..color = line,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_Spark old) =>
+      old.points != points || old.line != line || old.fill != fill;
 }

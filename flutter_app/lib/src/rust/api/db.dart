@@ -20,7 +20,9 @@ String openStore({required String path}) =>
 
 bool storeIsOpen() => RustLib.instance.api.crateApiDbStoreIsOpen();
 
-/// Close the database, discarding nothing — a flush is the caller's job.
+/// Close the database. Flushes first: a caller that remembered to save and a
+/// caller that forgot should end in the same place, and "the process is going
+/// away" is exactly when forgetting is most likely.
 void closeStore() => RustLib.instance.api.crateApiDbCloseStore();
 
 /// The schema version of the open database, or of a fresh one when none is

@@ -216,9 +216,26 @@ pub fn net_worth_parts(
     assets: &[Asset],
     loans: &[Loan],
 ) -> NetWorthParts {
+    net_worth_at(accounts, data, assets, loans, None)
+}
+
+/// [`net_worth_parts`] valued at an instant.
+///
+/// Only the **account** side is historical: assets and loans carry their
+/// current values backwards, because nothing in this model records when a
+/// house was bought or a loan was taken. The curve is therefore "what the
+/// cash would have been, plus what is held today" — the honest shape, and
+/// the one a person can still read a trend off.
+pub fn net_worth_at(
+    accounts: &[Account],
+    data: &[Entry],
+    assets: &[Asset],
+    loans: &[Loan],
+    as_of: Option<i64>,
+) -> NetWorthParts {
     let mut asset_sum = 0.0;
     let mut liab_sum = 0.0;
-    let balances = acct_balances(accounts, data, None);
+    let balances = acct_balances(accounts, data, as_of);
     for a in accounts {
         let b = balances
             .iter()
@@ -254,6 +271,111 @@ pub fn net_worth_parts(
         liab: liab_sum,
         net: asset_sum - liab_sum,
     }
+}
+
+/// Net worth at each of `cutoffs`, oldest first.
+///
+/// One scan of the ledger rather than one per sample: a year of month-ends
+/// against ten thousand rows was a second of work the first time this was
+/// written as a loop of `net_worth_at`.
+pub fn net_worth_series(
+    accounts: &[Account],
+    data: &[Entry],
+    assets: &[Asset],
+    loans: &[Loan],
+    cutoffs: &[i64],
+) -> Vec<f64> {
+    // The constant half: what assets and loans are worth *today*, held flat
+    // across the curve (see [`net_worth_at`]).
+    let mut const_asset = 0.0;
+    let mut const_liab = 0.0;
+    for a in assets {
+        if a.no_count == Some(true) {
+            continue;
+        }
+        if a.kind == AssetKind::Liab {
+            const_liab += a.val;
+        } else {
+            const_asset += a.val;
+        }
+    }
+    for l in loans {
+        let rem = loan_remaining(l);
+        if l.kind == LoanKind::Lend {
+            const_asset += rem;
+        } else {
+            const_liab += rem;
+        }
+    }
+
+    let mut bal: Vec<(String, f64)> = accounts
+        .iter()
+        .map(|a| {
+            (
+                a.id.clone(),
+                if a.balance != 0.0 && !a.balance.is_nan() {
+                    a.balance
+                } else {
+                    0.0
+                },
+            )
+        })
+        .collect();
+    let is_credit = |id: &str| {
+        accounts
+            .iter()
+            .find(|a| a.id == id)
+            .map(|a| a.kind == Some(AccountKind::Credit))
+            .unwrap_or(false)
+    };
+
+    // Walk cutoffs and entries together, both already sorted by time.
+    let mut live: Vec<&Entry> = data
+        .iter()
+        .filter(|e| !e.deleted_at.is_some_and(|v| v != 0))
+        .collect();
+    live.sort_by_key(|e| e.ts);
+
+    let mut out = Vec::with_capacity(cutoffs.len());
+    let mut i = 0;
+    for &cut in cutoffs {
+        while i < live.len() && live[i].ts <= cut {
+            let d = live[i];
+            let mut add = |id: &str, delta: f64| {
+                if let Some((_, v)) = bal.iter_mut().find(|(k, _)| k == id) {
+                    *v += delta;
+                }
+            };
+            if d.io == Some(Io::Xfer) {
+                if let Some(from) = d.acct.as_deref().filter(|s| !s.is_empty()) {
+                    add(from, -(d.amt + d.fee.unwrap_or(0.0)));
+                }
+                if let Some(to) = d.acct_to.as_deref().filter(|s| !s.is_empty()) {
+                    add(to, d.amt + d.discount.unwrap_or(0.0));
+                }
+            } else {
+                let id = d
+                    .acct
+                    .as_deref()
+                    .filter(|s| !s.is_empty())
+                    .unwrap_or("default");
+                add(id, if d.io == Some(Io::Inc) { d.amt } else { -d.amt });
+            }
+            i += 1;
+        }
+
+        let mut asset_sum = const_asset;
+        let mut liab_sum = const_liab;
+        for (id, v) in &bal {
+            if is_credit(id) && *v < 0.0 {
+                liab_sum += -*v;
+            } else {
+                asset_sum += *v;
+            }
+        }
+        out.push(asset_sum - liab_sum);
+    }
+    out
 }
 
 #[cfg(test)]
@@ -402,5 +524,59 @@ mod tests {
         add_loan(&mut v, "l0".into(), "张三".into(), LoanKind::Lend, 1.0, 0);
         remove_loan(&mut v, "l0");
         assert!(v.is_empty());
+    }
+
+    fn acct(id: &str, opening: f64) -> Account {
+        Account {
+            id: id.into(),
+            name: id.into(),
+            balance: opening,
+            kind: None,
+            ..Default::default()
+        }
+    }
+
+    fn exp(ts: i64, amt: f64) -> Entry {
+        Entry {
+            id: format!("e{ts}"),
+            ts,
+            io: Some(Io::Exp),
+            cat: "food".into(),
+            amt,
+            acct: Some("a".into()),
+            ..Default::default()
+        }
+    }
+
+    #[test]
+    fn the_series_walks_the_ledger_and_never_rewinds() {
+        let accounts = vec![acct("a", 100.0)];
+        // three months of spending
+        let data = vec![exp(1000, 10.0), exp(2000, 20.0), exp(3000, 30.0)];
+        let v = net_worth_series(&accounts, &data, &[], &[], &[0, 1500, 2500, 4000]);
+        assert_eq!(v, vec![100.0, 90.0, 70.0, 40.0]);
+    }
+
+    #[test]
+    fn the_series_agrees_with_the_parts_at_the_end() {
+        let accounts = vec![acct("a", 100.0)];
+        let data = vec![exp(1000, 10.0), exp(2000, 20.0)];
+        let assets = vec![Asset {
+            id: "as".into(),
+            name: "房".into(),
+            kind: AssetKind::Asset,
+            val: 5000.0,
+            no_count: None,
+        }];
+        let cut = 9999;
+        let s = net_worth_series(&accounts, &data, &assets, &[], &[cut]);
+        let p = net_worth_at(&accounts, &data, &assets, &[], Some(cut));
+        assert_eq!(s[0], p.net);
+        assert_eq!(s[0], 5000.0 + 70.0);
+    }
+
+    #[test]
+    fn an_empty_cutoff_list_says_nothing_rather_than_panicking() {
+        assert!(net_worth_series(&[], &[], &[], &[], &[]).is_empty());
     }
 }

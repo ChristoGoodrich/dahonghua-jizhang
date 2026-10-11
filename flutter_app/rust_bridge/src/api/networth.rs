@@ -207,3 +207,26 @@ pub fn net_worth() -> NetWorthView {
         net: p.net,
     }
 }
+
+/// Net worth at each instant in `cutoffs`, oldest first.
+///
+/// `x` is the sample's index (0..n-1), `y` the net at that instant. The
+/// platform knows which days those are; the core only walks the ledger.
+#[frb(sync)]
+pub fn net_worth_series(cutoffs: Vec<i64>) -> Vec<super::stats::ChartPoint> {
+    let s = store();
+    core::net_worth_series(
+        &s.accounts,
+        s.ledger.all(),
+        &assets_of(),
+        &loans_of(),
+        &cutoffs,
+    )
+    .into_iter()
+    .enumerate()
+    .map(|(i, y)| super::stats::ChartPoint {
+        x: i as f64,
+        y,
+    })
+    .collect()
+}
