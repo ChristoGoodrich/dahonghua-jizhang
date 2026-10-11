@@ -677,6 +677,36 @@ void main() {
           photo: '',
         );
 
+    testWidgets("photo travels to the entry and back from disk", (tester) async {
+      var p = await open();
+      record.saveForm(
+        form: record.FormView(
+          io: "exp",
+          cat: "food",
+          amt: "42",
+          note: "",
+          acct: "",
+          acctTo: "",
+          fee: "",
+          discount: "",
+          tags: const [],
+          ledger: "",
+          cur: "CNY",
+          subcat: "",
+          ts: t0,
+          photo: "r1.jpg",
+        ),
+        editId: "",
+        id: "sheet-photo",
+        now: t0,
+        rateWasCached: false,
+      );
+      expect(store.getEntry(id: "sheet-photo")!.photo, "r1.jpg");
+      p = await restart(p);
+      expect(store.getEntry(id: "sheet-photo")!.photo, "r1.jpg");
+      p.dispose();
+    });
+
     testWidgets('an entry from the record sheet survives a restart', (
       tester,
     ) async {

@@ -324,4 +324,5 @@ void main() {
       expect(bloom.core, isNull);
     });
   });
+
 }

@@ -33,6 +33,7 @@ import 'reimburse_screen.dart';
 import 'tap.dart';
 import 'amounts.dart';
 import 'cats.dart';
+import 'photos.dart';
 import 'theme.dart';
 import 'toast.dart';
 
@@ -1008,6 +1009,38 @@ class _EntryListScreenState extends State<EntryListScreen> {
     );
   }
 
+
+  /// Full-screen receipt. InteractiveViewer so a pinch can look at the
+  /// small print on a paper that was photographed across a table.
+  Future<void> _showPhoto(store.EntryView e) async {
+    final f = await attachmentFile(e.photo);
+    if (f == null || !mounted) return;
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) => Dialog(
+        backgroundColor: Colors.black,
+        insetPadding: const EdgeInsets.all(12),
+        child: Stack(
+          children: [
+            InteractiveViewer(
+              maxScale: 4,
+              child: Center(child: Image.file(f, fit: BoxFit.contain)),
+            ),
+            Positioned(
+              top: 8,
+              right: 8,
+              child: IconButton(
+                key: const Key('photo-close'),
+                icon: const Icon(Icons.close, color: Colors.white),
+                onPressed: () => Navigator.pop(ctx),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _entryCard(
     store.EntryView e,
     bool zh, {
@@ -1146,6 +1179,20 @@ class _EntryListScreenState extends State<EntryListScreen> {
                                   zh ? '退款' : 'Refund',
                                   palette.hibiscus,
                                   0.15,
+                                ),
+                              if (e.photo != null && e.photo!.isNotEmpty)
+                                Tap(
+                                  key: Key('row-photo-${e.id}'),
+                                  filled: false,
+                                  onTap: () => _showPhoto(e),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 2),
+                                    child: Icon(
+                                      Icons.photo_camera_outlined,
+                                      size: 14,
+                                      color: palette.inkSoft,
+                                    ),
+                                  ),
                                 ),
                             ],
                           ),

@@ -34,8 +34,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'src/rust/api/backup.dart' as backup;
+import 'src/rust/api/store.dart' as store;
 import 'glass.dart';
 import 'empty_note.dart';
+import 'photos.dart';
 import 'theme.dart';
 
 /// Where snapshots live: a subdirectory of the app's own storage.
@@ -74,6 +76,25 @@ Future<File> createBackup({int? keep, String? password}) async {
     '${dir.path}/${backup.backupName(ts: now, encrypted: sealed)}',
   );
   await file.writeAsString(json);
+
+  // Receipts travel with the snapshot: a JSON that names a photo nobody has
+  // is a backup of a word. Same stem, a sibling folder.
+  final photos = <String>{
+    for (final e in store.liveEntries())
+      if (e.photo != null && e.photo!.isNotEmpty) e.photo!,
+  };
+  if (photos.isNotEmpty) {
+    final stem = file.uri.pathSegments.last.replaceAll('.json', '');
+    final pack = Directory('${dir.path}/${stem}_files');
+    await pack.create(recursive: true);
+    final src = await attachmentsDir();
+    for (final name in photos) {
+      final f = File('${src.path}/$name');
+      if (await f.exists()) {
+        await f.copy('${pack.path}/$name');
+      }
+    }
+  }
 
   final names = await _names(dir);
   for (final gone in backup.pruneBackups(
@@ -166,8 +187,16 @@ class _BackupScreenState extends State<BackupScreen> {
       setState(() => _flash = widget.zh ? '这份快照不见了' : 'That snapshot is gone');
       return;
     }
+    final stem = b.name.replaceAll('.json', '');
+    final pack = Directory('${dir.path}/${stem}_files');
+    final extra = <XFile>[XFile(file.path)];
+    if (await pack.exists()) {
+      for (final f in pack.listSync().whereType<File>()) {
+        extra.add(XFile(f.path));
+      }
+    }
     await SharePlus.instance.share(
-      ShareParams(files: [XFile(file.path)], text: b.name),
+      ShareParams(files: extra, text: b.name),
     );
   }
 
@@ -234,6 +263,17 @@ class _BackupScreenState extends State<BackupScreen> {
       json = unlocked.json;
     }
     final r = backup.restoreBackup(json: json);
+    if (r.ok) {
+      // Put the receipts back where the names point.
+      final stem = b.name.replaceAll('.json', '');
+      final pack = Directory('${dir.path}/${stem}_files');
+      if (await pack.exists()) {
+        final dest = await attachmentsDir();
+        for (final f in pack.listSync().whereType<File>()) {
+          await f.copy('${dest.path}/${f.uri.pathSegments.last}');
+        }
+      }
+    }
     await _reload();
     if (!mounted) return;
     setState(() {
