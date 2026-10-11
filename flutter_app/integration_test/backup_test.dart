@@ -302,6 +302,21 @@ void main() {
   });
 
   group('the screen', () {
+    testWidgets("says how long since the last one", (tester) async {
+      await show(tester);
+      expect(find.byKey(const Key("backup-age")), findsOneWidget);
+      expect(await daysSinceLastBackup(), isNull);
+
+      spend("e1", 35);
+      await createBackup();
+      expect(await daysSinceLastBackup(), 0);
+
+      await show(tester);
+      // the strip is on the screen; the number is pinned by the helper above
+      expect(find.byKey(const Key("backup-age")), findsOneWidget);
+    });
+
+
     testWidgets('says so when there is nothing', (tester) async {
       await show(tester);
       expect(find.byKey(const Key('no-backups')), findsOneWidget);

@@ -632,6 +632,18 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     );
   }
 
+  /// Days since the newest snapshot, for the 备份 row. Null is "never", not "today".
+  int? _backupAge;
+  bool _backupAgeLoaded = false;
+
+  void _loadBackupAge() {
+    if (_backupAgeLoaded) return;
+    _backupAgeLoaded = true;
+    daysSinceLastBackup().then((d) {
+      if (mounted) setState(() => _backupAge = d);
+    });
+  }
+
   List<(String, List<MeRow>)> _meGroups() {
     final zh = _zh;
     return [
@@ -750,7 +762,15 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             id: 'backup',
             icon: Icons.archive_outlined,
             title: zh ? '备份' : 'Backups',
-            desc: zh ? '存一份现在的样子,随时回去' : 'Snapshots you can go back to',
+            desc: _backupAge == null
+                ? (zh ? '还没有备份' : 'No snapshot yet')
+                : (_backupAge! >= 7
+                      ? (zh
+                            ? '上次备份 $_backupAge 天前 — 该存一份了'
+                            : 'Last snapshot $_backupAge days ago')
+                      : (zh
+                            ? '上次备份 $_backupAge 天前'
+                            : 'Last snapshot $_backupAge days ago')),
             onTap: () => _push(
               BackupScreen(
                 zh: zh,
@@ -794,7 +814,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   Widget _bar() => BottomNav(
     addKey: _addKey,
     active: _tab,
-    onChange: (i) => setState(() => _tab = i),
+    onChange: (i) {
+              if (i == 3) _loadBackupAge();
+              setState(() => _tab = i);
+            },
     onAdd: () => _record(),
     onAddLong: _smart,
     labels: _zh

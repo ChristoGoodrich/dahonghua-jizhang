@@ -113,6 +113,34 @@ Future<List<String>> _names(Directory dir) async => dir
     .toList();
 
 /// Every snapshot on disk, newest first.
+
+/// Days since the newest snapshot, or null when there is none.
+///
+/// Null is "never backed up", which is a different sentence from "backed up
+/// 0 days ago" — the reminder should say which.
+Future<int?> daysSinceLastBackup() async {
+  final list = await listBackups();
+  if (list.isEmpty) return null;
+  // Prefer the name's stamp; fall back to the file's mtime when the name
+  // carries no number. Either way the answer is "how long ago", not "is
+  // there one".
+  var ms = list.first.time;
+  if (ms.isNaN) {
+    try {
+      final dir = await backupDir();
+      ms = (await File('${dir.path}/${list.first.name}').stat())
+          .modified
+          .millisecondsSinceEpoch
+          .toDouble();
+    } catch (_) {
+      return 0;
+    }
+  }
+  return DateTime.now().difference(
+    DateTime.fromMillisecondsSinceEpoch(ms.toInt()),
+  ).inDays;
+}
+
 Future<List<backup.BackupInfoView>> listBackups() async {
   final dir = await backupDir();
   return backup.listBackups(names: await _names(dir));
@@ -133,6 +161,7 @@ class BackupScreen extends StatefulWidget {
 
 class _BackupScreenState extends State<BackupScreen> {
   List<backup.BackupInfoView> _rows = const [];
+  int? _ageDays;
   String? _flash;
   bool _busy = false;
 
@@ -144,7 +173,13 @@ class _BackupScreenState extends State<BackupScreen> {
 
   Future<void> _reload() async {
     final list = await listBackups();
-    if (mounted) setState(() => _rows = list);
+    final age = await daysSinceLastBackup();
+    if (mounted) {
+      setState(() {
+        _rows = list;
+        _ageDays = age;
+      });
+    }
   }
 
   Future<void> _create() async {
@@ -320,6 +355,23 @@ class _BackupScreenState extends State<BackupScreen> {
                 : 'Snapshots live on this phone. The newest '
                       '${backup.maxBackups()} are kept; older ones go first.',
             style: TextStyle(fontSize: 12.5, color: palette.inkSoft),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            _ageDays == null
+                ? (zh ? '还没有备份' : 'No snapshot yet')
+                : (_ageDays! >= 7
+                      ? (zh
+                            ? '上次备份 $_ageDays 天前 — 该存一份了'
+                            : 'Last snapshot $_ageDays days ago — worth taking one')
+                      : (zh ? '上次备份 $_ageDays 天前' : 'Last snapshot $_ageDays days ago')),
+            key: const Key('backup-age'),
+            style: TextStyle(
+              fontSize: 12,
+              color: (_ageDays == null || _ageDays! >= 7)
+                  ? palette.warnDeep
+                  : palette.inkSoft,
+            ),
           ),
           if (_flash != null) ...[
             const SizedBox(height: 10),
