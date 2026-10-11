@@ -128,7 +128,7 @@ class _ImportScreenState extends State<ImportScreen> {
     return switch (src) {
       'alipay' => zh ? '支付宝' : 'Alipay',
       'wechat' => zh ? '微信支付' : 'WeChat Pay',
-      _ => zh ? '通用 CSV' : 'Generic CSV',
+      _ => zh ? '通用 CSV / 本应用导出' : 'Generic CSV / this app\'s export',
     };
   }
 

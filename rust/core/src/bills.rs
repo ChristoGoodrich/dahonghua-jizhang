@@ -159,12 +159,12 @@ pub fn parse_csv(text: &str) -> Vec<Vec<String>> {
 
 // Keyword to field. Order matters: the first keyword that matches a header cell
 // wins, so the specific labels come before the generic ones.
-const TS_KEYS: &[&str] = &["交易时间", "交易创建时间", "付款时间", "时间", "日期"];
-const AMT_KEYS: &[&str] = &["金额", "发生金额", "交易金额"];
-const IO_KEYS: &[&str] = &["收/支", "收支", "收/付"];
-const CAT_KEYS: &[&str] = &["交易分类", "交易类型", "类型", "分类"];
-const PARTY_KEYS: &[&str] = &["交易对方", "对方", "商户名称"];
-const DESC_KEYS: &[&str] = &["商品说明", "商品名称", "商品", "说明", "摘要", "备注"];
+const TS_KEYS: &[&str] = &["交易时间", "交易创建时间", "付款时间", "时间", "日期", "date"];
+const AMT_KEYS: &[&str] = &["金额", "发生金额", "交易金额", "amount"];
+const IO_KEYS: &[&str] = &["收/支", "收支", "收/付", "type"];
+const CAT_KEYS: &[&str] = &["交易分类", "交易类型", "类型", "分类", "category"];
+const PARTY_KEYS: &[&str] = &["交易对方", "对方", "商户名称", "account"];
+const DESC_KEYS: &[&str] = &["商品说明", "商品名称", "商品", "说明", "摘要", "备注", "note"];
 const METHOD_KEYS: &[&str] = &["收/付款方式", "付款方式", "支付方式", "收款方式"];
 const STATUS_KEYS: &[&str] = &["交易状态", "当前状态", "状态"];
 
@@ -349,6 +349,19 @@ pub fn parse_io(s: Option<&str>) -> Option<Io> {
     None
 }
 
+/// The short codes this app's own export writes in its `type` column.
+///
+/// Separate from [`parse_io`] on purpose: the shipping corpus pins
+/// `parse_io("exp")` to **null**, and a golden is not a suggestion. Only the
+/// `type` header gets these.
+fn parse_io_short(s: Option<&str>) -> Option<Io> {
+    match js_trim(s?).to_ascii_lowercase().as_str() {
+        "exp" | "expense" => Some(Io::Exp),
+        "inc" | "income" => Some(Io::Inc),
+        _ => parse_io(s),
+    }
+}
+
 /// A transaction status meaning the money never actually moved.
 fn dead_status() -> &'static Regex {
     static R: OnceLock<Regex> = OnceLock::new();
@@ -397,6 +410,23 @@ pub fn parse_bills(text: &str) -> ParseResult {
         }
     };
 
+    let header = &rows[header_row as usize];
+    // Our export's `type` column holds `exp`/`inc`/`xfer`. The wallet's 收/支
+    // column does not, and the goldens pin that — so the short codes are
+    // read only when the header itself says `type`.
+    let type_col = columns.io >= 0
+        && header
+            .get(columns.io as usize)
+            .map(|h| js_trim(h).eq_ignore_ascii_case("type"))
+            .unwrap_or(false);
+    let io_of = |row: &[String]| {
+        if type_col {
+            parse_io_short(cell(row, columns.io))
+        } else {
+            parse_io(cell(row, columns.io))
+        }
+    };
+
     let mut bills = Vec::new();
     let mut errors = Vec::new();
     let mut data_rows = 0;
@@ -408,7 +438,7 @@ pub fn parse_bills(text: &str) -> ParseResult {
         }
         data_rows += 1;
 
-        let io = parse_io(cell(row, columns.io));
+        let io = io_of(row);
         let amt = parse_amount(cell(row, columns.amt));
         let at = parse_date(cell(row, columns.ts));
         let status = cell(row, columns.status);
@@ -642,6 +672,12 @@ mod tests {
     fn direction_reads_the_chinese_or_the_english() {
         assert_eq!(parse_io(Some("支出")), Some(Io::Exp));
         assert_eq!(parse_io(Some("收入")), Some(Io::Inc));
+        // The short codes are NOT in `parse_io` — the goldens say null.
+        assert_eq!(parse_io(Some("exp")), None);
+        assert_eq!(parse_io(Some("inc")), None);
+        assert_eq!(parse_io_short(Some("exp")), Some(Io::Exp));
+        assert_eq!(parse_io_short(Some("inc")), Some(Io::Inc));
+        assert_eq!(parse_io_short(Some("xfer")), None);
         assert_eq!(parse_io(Some("Expense")), Some(Io::Exp));
         assert_eq!(parse_io(Some("不计收支")), None);
         assert_eq!(parse_io(Some("/")), None);
@@ -689,4 +725,18 @@ mod tests {
         assert!(r.columns.is_none());
         assert!(r.bills.is_empty());
     }
+    #[test]
+    fn this_apps_own_export_can_be_read_back() {
+        // date,type,category,account,amount,note — the header `export.rs` writes
+        let text = "date,type,category,account,amount,note\n2026-1-21,exp,food,现金,35.5,午饭\n2026-1-22,inc,salary,现金,9000,";
+        let r = parse_bills(text);
+        assert!(r.header_row >= 0);
+        assert_eq!(r.bills.len(), 2, "errors: {:?}", r.errors);
+        assert_eq!(r.bills[0].io, Io::Exp);
+        assert_eq!(r.bills[0].amt, 35.5);
+        assert_eq!(r.bills[0].desc.as_deref(), Some("午饭"));
+        assert_eq!(r.bills[1].io, Io::Inc);
+        assert_eq!(r.bills[1].amt, 9000.0);
+    }
+
 }
