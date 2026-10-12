@@ -293,7 +293,26 @@ void main() {
       expect(find.byKey(const Key('insight')), findsOneWidget);
     });
 
-    testWidgets('leaves the banner out when there is no sentence',
+testWidgets("the year span recaps the calendar year", (tester) async {
+      // an entry from last year must not count
+      final now = DateTime.now();
+      final lastYear = DateTime(now.year - 1, 6, 15).millisecondsSinceEpoch;
+      store.addEntry(
+        entry: store.NewEntry(io: "exp", cat: "food", amt: 999, ts: lastYear),
+        id: "old",
+        now: lastYear,
+      );
+      spend("e1", 40);
+      await show(tester);
+      await tester.ensureVisible(find.byKey(const Key("report-span-year")));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key("report-span-year")));
+      await tester.pumpAndSettle();
+      expect(textOf(tester, "recap-exp"), contains("40"));
+      expect(textOf(tester, "recap-exp"), isNot(contains("999")));
+    });
+
+        testWidgets('leaves the banner out when there is no sentence',
         (tester) async {
       spend('e1', 10);
       await show(tester);

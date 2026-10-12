@@ -22,6 +22,7 @@ import 'src/rust/api/report.dart' as report;
 import 'glass.dart';
 import 'amounts.dart';
 import 'cats.dart';
+import 'segmented.dart';
 import 'theme.dart';
 
 /// `YYYY-M-D`, a **1-indexed** month — the spelling `parse_day` on the other
@@ -70,6 +71,8 @@ class _ReportScreenState extends State<ReportScreen> {
   late report.RecapView _recap;
   late report.WeeklyView _week;
   report.InsightView? _insight;
+  /// 本月 or 今年. The cycle is the budget's; the year is the calendar's.
+  bool _year = false;
 
   @override
   void initState() {
@@ -85,7 +88,18 @@ class _ReportScreenState extends State<ReportScreen> {
 
     // The cycle is not the calendar month — it turns over on `cycleStart` — so
     // which entries count is the core's answer, not a date range built here.
-    final cycle = budget.cycleIds(ids: ids, daysOf: days, today: today);
+    final List<String> cycle;
+    if (_year) {
+      final y = DateTime.now().year.toString();
+      cycle = [
+        for (var i = 0; i < ids.length; i++)
+          if (days[i].startsWith(y)) ids[i],
+      ];
+    } else {
+      // The cycle is not the calendar month — it turns over on `cycleStart` —
+      // so which entries count is the core's answer, not a date range built here.
+      cycle = budget.cycleIds(ids: ids, daysOf: days, today: today);
+    }
     // A set: `contains` on the list was a scan per row, over every row.
     final inCycle = cycle.toSet();
     final cycleDays = [
@@ -130,7 +144,21 @@ class _ReportScreenState extends State<ReportScreen> {
       body: ListView(
         padding: EdgeInsets.fromLTRB(22, headerInset(context) + 6, 22, 120),
         children: [
-          if (_insight != null) _banner(_insight!),
+          if (!_year && _insight != null) _banner(_insight!),
+          const SizedBox(height: 8),
+          Segmented(
+            keyPrefix: 'report-span',
+            items: [
+              ('month', zh ? '本月' : 'Month'),
+              ('year', zh ? '今年' : 'Year'),
+            ],
+            value: _year ? 'year' : 'month',
+            onChanged: (v) => setState(() {
+              _year = v == 'year';
+              _reload();
+            }),
+          ),
+          const SizedBox(height: 14),
           _recapCard(zh),
           const SizedBox(height: 16),
           _weekCard(zh),
@@ -183,7 +211,7 @@ class _ReportScreenState extends State<ReportScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            zh ? '这个周期' : 'This cycle',
+            (_year ? (zh ? '今年' : 'This year') : (zh ? '这个周期' : 'This cycle')),
             style: TextStyle(fontSize: 12, color: palette.inkSoft),
           ),
           const SizedBox(height: 4),
