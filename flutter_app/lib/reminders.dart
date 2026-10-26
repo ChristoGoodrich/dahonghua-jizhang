@@ -59,7 +59,9 @@ class DeviceNotifier implements Notifier {
     tz.setLocalLocation(await deviceZone());
     await _plugin.initialize(
       settings: const InitializationSettings(
-        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+        // A silhouette: the status bar draws a small icon from its alpha, and
+        // the launcher icon, opaque edge to edge, came out a grey square.
+        android: AndroidInitializationSettings('@drawable/ic_stat_flower'),
       ),
     );
     _ready = true;

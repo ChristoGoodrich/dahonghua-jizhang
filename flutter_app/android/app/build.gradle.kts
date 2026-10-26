@@ -159,11 +159,11 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:2.0.21")
 }
 
-// A test reads Dart — the channel name Dart listens on — and Gradle cannot
-// see that. Without this it calls the test up to date after the Dart changes,
-// and skips the run that would fail.
+// Two of the tests read Dart — the channel name Dart listens on, the icon the
+// reminders name — and Gradle cannot see that. Without these it calls the
+// tests up to date after the Dart changes, and skips the run that would fail.
 tasks.withType<Test>().configureEach {
-    inputs.files("../../lib/power.dart")
+    inputs.files("../../lib/power.dart", "../../lib/reminders.dart")
 }
 
 flutter {
