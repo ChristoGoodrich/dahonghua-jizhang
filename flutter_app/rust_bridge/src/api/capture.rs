@@ -159,10 +159,13 @@ pub fn drain_captures(raws: Vec<RawNotifView>, now: i64) -> DrainSummary {
 
     // No custom categories: this port has no editor for them yet. The core
     // already takes them and prefers a custom keyword over a built-in one.
-    let outcome = {
+    let mut outcome = {
         let s = store();
         drain(&raw, &inbox, s.ledger.all(), &[])
     };
+    // A chat or a code is not text nobody understood. Dropped before it is
+    // kept and before it is counted, so 没看懂 stops counting chats.
+    outcome.forget_non_payments();
     inbox.absorb(&outcome);
 
     let (post_n, queue_n, unparsed_n) = outcome.counts();
@@ -302,6 +305,9 @@ pub fn load_inbox(json: String) -> bool {
             });
         }
     }
+    // An earlier build kept the chats, word for word. They go on the way in,
+    // and the next save writes the file without them.
+    inbox.forget_non_payments();
     true
 }
 

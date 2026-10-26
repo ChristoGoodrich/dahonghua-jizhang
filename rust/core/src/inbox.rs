@@ -18,8 +18,8 @@
 use crate::catalog::Category;
 use crate::entry::{Entry, EntrySource, Io};
 use crate::notif::{
-    full_text, is_duplicate, parse_notification, to_entry_draft, NotifEntryDraft, NotifSource,
-    PaymentKey, RawNotif, DUP_WINDOW_MS,
+    full_text, is_duplicate, is_not_payment, parse_notification, to_entry_draft, NotifEntryDraft,
+    NotifSource, PaymentKey, RawNotif, DUP_WINDOW_MS,
 };
 
 /// A parsed payment that was not confident enough to post unattended.
@@ -38,12 +38,29 @@ pub struct PendingItem {
 /// region, and there is no way to write rules for text nobody has seen — this
 /// list is how the real strings on a real phone become visible so the parser
 /// can be tightened against them.
+///
+/// What the parser understood as something else — a chat, a code — is not
+/// text nobody understood, and [`DrainOutcome::forget_non_payments`] takes it
+/// out again.
 #[derive(Debug, Clone, PartialEq)]
 pub struct UnparsedItem {
     pub id: String,
     pub pkg: String,
     pub raw: String,
     pub posted_at: i64,
+}
+
+impl UnparsedItem {
+    /// [`is_not_payment`], for what was kept. `raw` is [`full_text`] of the
+    /// capture, and every check that recognises a non-payment reads only the
+    /// package and that text, so this is the answer the capture itself had.
+    fn is_not_payment(&self) -> bool {
+        is_not_payment(&RawNotif {
+            pkg: self.pkg.clone(),
+            text: Some(self.raw.clone()),
+            ..Default::default()
+        })
+    }
 }
 
 /// How many unparsed captures to keep. Bounded because this grows without
@@ -71,6 +88,23 @@ impl DrainOutcome {
     /// The counts the UI reports, matching `DrainResult` in the TypeScript.
     pub fn counts(&self) -> (usize, usize, usize) {
         (self.post.len(), self.queue.len(), self.unparsed.len())
+    }
+
+    /// Drop from the unparsed pile what the parser recognised as not a
+    /// payment at all — a chat, a code, marketing, nothing. See
+    /// [`is_not_payment`].
+    ///
+    /// The pile is "text no rule understood", and a WeChat chat was
+    /// understood perfectly well: as a chat. Kept anyway, the last thirty
+    /// chats sat word for word in the inbox file and counted under 没看懂,
+    /// from a package the listener watches by default.
+    ///
+    /// A step after [`drain`] rather than a change inside it. `drain` is the
+    /// shipping app's `drainInbox`, pinned line for line by the parity
+    /// goldens, and they record it keeping chats. This is a decision the
+    /// shipping app did not make, laid over the one it did.
+    pub fn forget_non_payments(&mut self) {
+        self.unparsed.retain(|u| !u.is_not_payment());
     }
 }
 
@@ -224,6 +258,12 @@ impl Inbox {
     pub fn clear_unparsed(&mut self) {
         self.unparsed.clear();
     }
+
+    /// [`DrainOutcome::forget_non_payments`], for a pile an earlier build
+    /// saved with the chats still in it.
+    pub fn forget_non_payments(&mut self) {
+        self.unparsed.retain(|u| !u.is_not_payment());
+    }
 }
 
 /// The edits the confirm sheet may make. Every field absent means "as parsed".
@@ -320,6 +360,88 @@ mod tests {
         assert_eq!(out.unparsed.len(), 1);
         assert_eq!(out.unparsed[0].pkg, "com.eg.android.AlipayGphone");
         assert_eq!(out.unparsed[0].posted_at, 1_000);
+    }
+
+    /// `n1^wx^支付宝^您有一条新消息^_^1000`: line 28 of the inbox golden.
+    fn golden_28() -> RawNotif {
+        raw("n1", "com.tencent.mm", "支付宝", "您有一条新消息", 1_000)
+    }
+
+    #[test]
+    fn drain_alone_still_answers_what_the_shipping_app_did() {
+        let out = drain(&[golden_28()], &Inbox::default(), &[], &[]);
+        assert_eq!(out.unparsed.len(), 1);
+        assert_eq!(out.unparsed[0].pkg, "com.tencent.mm");
+    }
+
+    #[test]
+    fn a_chat_is_dropped_by_the_step_after_drain() {
+        let mut out = drain(&[golden_28()], &Inbox::default(), &[], &[]);
+        out.forget_non_payments();
+        assert!(out.unparsed.is_empty());
+        assert_eq!(out.counts(), (0, 0, 0), "and is not counted as 没看懂");
+    }
+
+    #[test]
+    fn a_wallet_push_with_no_amount_is_still_kept() {
+        let r = raw(
+            "n1",
+            "com.eg.android.AlipayGphone",
+            "支付宝",
+            "您有一条新消息",
+            1_000,
+        );
+        let mut out = drain(&[r], &Inbox::default(), &[], &[]);
+        out.forget_non_payments();
+        assert_eq!(out.unparsed.len(), 1);
+    }
+
+    #[test]
+    fn a_verification_code_is_dropped() {
+        let r = raw(
+            "n1",
+            "com.eg.android.AlipayGphone",
+            "支付宝",
+            "验证码 382910,5分钟内有效,请勿泄露",
+            1_000,
+        );
+        let mut out = drain(&[r], &Inbox::default(), &[], &[]);
+        assert_eq!(out.unparsed.len(), 1, "drain alone keeps it");
+        out.forget_non_payments();
+        assert!(out.unparsed.is_empty());
+    }
+
+    #[test]
+    fn a_payment_beside_a_chat_is_untouched() {
+        let batch = vec![
+            confident("n1", "35.50", 1_000),
+            raw("n2", "com.tencent.mm", "老王", "350元那个我转你", 1_100),
+        ];
+        let mut out = drain(&batch, &Inbox::default(), &[], &[]);
+        out.forget_non_payments();
+        assert_eq!(out.counts(), (1, 0, 0));
+    }
+
+    #[test]
+    fn a_saved_pile_loses_its_chats_and_keeps_the_rest() {
+        let item = |id: &str, pkg: &str, raw: &str| UnparsedItem {
+            id: id.into(),
+            pkg: pkg.into(),
+            raw: raw.into(),
+            posted_at: 0,
+        };
+        let mut inbox = Inbox {
+            pending: vec![],
+            unparsed: vec![
+                item("u1", "com.tencent.mm", "老王 晚上吃啥"),
+                item("u2", "com.eg.android.AlipayGphone", "支付宝 您有一条新消息"),
+                item("u3", "com.eg.android.AlipayGphone", ""),
+                item("u4", "com.eg.android.AlipayGphone", "支付宝 验证码 1234"),
+            ],
+        };
+        inbox.forget_non_payments();
+        let ids: Vec<&str> = inbox.unparsed.iter().map(|u| u.id.as_str()).collect();
+        assert_eq!(ids, ["u2"]);
     }
 
     #[test]

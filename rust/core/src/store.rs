@@ -116,6 +116,10 @@ pub struct TransferOpts {
     pub ledger: Option<String>,
     /// When the transfer happened; the caller's clock when absent.
     pub ts: Option<i64>,
+    /// A receipt's filename, as on any other entry. Moving money has
+    /// paperwork too — a bank slip, a rent receipt — and the record sheet
+    /// offers 小票 in every direction.
+    pub photo: Option<String>,
 }
 
 /// One row of a bill import, after the candidate has been accepted.
@@ -161,6 +165,7 @@ impl Store {
                 .filter(|s| !s.is_empty())
                 .map(str::to_string),
             ledger: p.ledger.filter(|l| !l.is_empty()),
+            photo: p.photo.filter(|f| !f.is_empty()),
             updated_at: Some(now),
             ..Default::default()
         };
@@ -347,6 +352,25 @@ mod tests {
             amt,
             ..Default::default()
         }
+    }
+
+    #[test]
+    fn a_transfer_keeps_its_receipt() {
+        let mut s = Store::new();
+        let opts = TransferOpts {
+            photo: Some("r1.jpg".into()),
+            ..transfer("a1", "a2", 100.0)
+        };
+        s.add_transfer(opts, "t0".into(), 5_000);
+        assert_eq!(s.ledger.all()[0].photo.as_deref(), Some("r1.jpg"));
+
+        // and an empty name is none, as the sheet sends "no receipt"
+        let opts = TransferOpts {
+            photo: Some(String::new()),
+            ..transfer("a1", "a2", 100.0)
+        };
+        s.add_transfer(opts, "t1".into(), 5_000);
+        assert_eq!(s.ledger.all()[1].photo, None);
     }
 
     #[test]

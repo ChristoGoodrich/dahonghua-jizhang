@@ -11,6 +11,7 @@
 // still in flight.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/main.dart' show App;
 import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_app/src/rust/api/subscriptions.dart' as subs;
 import 'package:flutter_app/subs_screen.dart';
@@ -169,6 +170,26 @@ void main() {
       makeSub(cat: '', day: today.day > 28 ? 28 : today.day, daysAgo: 40);
       runDueCharges();
       expect(store.liveEntries().first.cat, 'home');
+    });
+
+    testWidgets('also runs on coming back to the app, and the list shows it',
+        (tester) async {
+      // It ran in `main()` and nowhere else, and Android keeps a backgrounded
+      // app alive for days. A charge due today waited for the process to be
+      // killed and started again.
+      await tester.pumpWidget(const App());
+      await tester.pumpAndSettle();
+      final today = DateTime.now();
+      makeSub(day: today.day > 28 ? 28 : today.day, daysAgo: 40);
+      expect(store.entryCount(), 0);
+      expect(find.text('音乐'), findsNothing);
+
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pumpAndSettle();
+
+      expect(store.entryCount(), greaterThan(0));
+      expect(find.text('音乐'), findsWidgets, reason: '明细 has to read it');
     });
   });
 

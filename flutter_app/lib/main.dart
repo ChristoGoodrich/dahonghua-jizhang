@@ -278,6 +278,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    // The home-screen widget is told about changes, and a new cycle is not
+    // one: a phone left alone into a new month showed the old month's
+    // spending until the next entry. After the first frame, so the launch
+    // does not wait on it.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _pushWidget());
     unawaited(_drain());
   }
 
@@ -306,7 +311,22 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         state == AppLifecycleState.detached) {
       widget.store?.flush();
     }
-    if (state == AppLifecycleState.resumed) unawaited(_drain());
+    if (state == AppLifecycleState.resumed) _resumed();
+  }
+
+  /// Back in the foreground — possibly days later, because Android keeps a
+  /// backgrounded process alive and `main()` does not run again. What
+  /// `main()` catches up on at launch has to be caught up on here as well.
+  void _resumed() {
+    // Subscriptions that came due in the meantime. `_entriesChanged` pushes
+    // the widget along with everything else.
+    if (runDueCharges().isNotEmpty) {
+      _entriesChanged();
+    } else {
+      // Nothing was written, but the cycle may have turned all the same.
+      _pushWidget();
+    }
+    unawaited(_drain());
   }
 
   /// The home-screen widget shows the budget, and the budget is a function of

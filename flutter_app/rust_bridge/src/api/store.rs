@@ -566,6 +566,7 @@ pub fn add_transfer(transfer: NewTransfer, id: String, now: i64) -> String {
             note: transfer.note,
             ledger: transfer.ledger,
             ts: transfer.ts,
+            photo: None,
         },
         id,
         now,

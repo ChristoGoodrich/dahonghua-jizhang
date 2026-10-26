@@ -216,6 +216,20 @@ pub fn prune_backups(names: Vec<String>, keep: u32) -> Vec<String> {
         .collect()
 }
 
+/// The folder a snapshot's receipts travel in, or `None` when it carries
+/// none — a sealed snapshot, or a name that is not a snapshot.
+#[frb(sync)]
+pub fn pack_name(name: String) -> Option<String> {
+    core::pack_name(&name)
+}
+
+/// The receipt folders in a listing that no snapshot carries any more.
+/// `files` and `dirs` are the backup directory's two halves, by name.
+#[frb(sync)]
+pub fn stray_packs(files: Vec<String>, dirs: Vec<String>) -> Vec<String> {
+    core::stray_packs(&files, &dirs)
+}
+
 /// How many snapshots are kept by default.
 #[frb(sync)]
 pub fn max_backups() -> u32 {

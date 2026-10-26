@@ -307,6 +307,7 @@ fn run(script: &str) -> String {
                     note: arg(args.get(5)).map(|s| s.to_string()),
                     ledger: arg(args.get(6)).map(|s| s.to_string()),
                     ts: arg(args.get(7)).map(|s| s.parse().unwrap()),
+                    photo: None,
                 };
                 let id = format!("e{seq}");
                 seq += 1;

@@ -30,6 +30,16 @@ List<String> cycleIds({
   today: today,
 );
 
+/// The day the cycle after the one containing `today` begins.
+///
+/// The home-screen widget is handed the next cycle's numbers beside this
+/// one's, so that the launcher's hourly redraw can turn the page on its own
+/// at the start of a month nobody opened the app in. Which day that is is the
+/// cycle's to say; the instant it begins is local midnight, and the timezone
+/// is Dart's.
+String nextCycle({required String today}) =>
+    RustLib.instance.api.crateApiBudgetNextCycle(today: today);
+
 /// The cycle's expense against the cycle's cap.
 TierView monthlyStatus({required List<String> ids, required double budget}) =>
     RustLib.instance.api.crateApiBudgetMonthlyStatus(ids: ids, budget: budget);

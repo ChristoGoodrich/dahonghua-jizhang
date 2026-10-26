@@ -9,7 +9,10 @@
 // AND the formatting in Kotlin, where nothing could reach it — and it shipped
 // two defects as a result. Both are asserted against here.
 
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_app/budget_widget.dart';
+import 'package:flutter_app/main.dart';
 import 'package:flutter_app/src/rust/api/budget.dart' as budget;
 import 'package:flutter_app/src/rust/api/privacy.dart' as privacy;
 import 'package:flutter_app/src/rust/api/store.dart' as store;
@@ -41,13 +44,13 @@ void spend(String id, double amt) {
   );
 }
 
-void setBudget(double monthly) {
+void setBudget(double monthly, {int? cycleStart}) {
   final s = budget.settings();
   budget.setSettings(
     view: budget.SettingsView(
       budget: monthly,
       dailyBudget: s.dailyBudget,
-      cycleStart: s.cycleStart,
+      cycleStart: cycleStart ?? s.cycleStart,
       capCats: s.capCats,
       capAmounts: s.capAmounts,
     ),
@@ -182,13 +185,108 @@ void main() {
       expect(map['pct'], isA<int>());
       expect(map['over'], isA<bool>());
       expect(map['hasBudget'], isA<bool>());
-      expect(map.length, 6, reason: 'nothing else needs to cross');
+      // The same six again for the next cycle, and the instant it begins —
+      // a comparison is the one thing the Kotlin is trusted with.
+      expect(map['nextAt'], isA<int>());
+      expect(map['nextTitle'], isA<String>());
+      expect(map['nextSpent'], isA<String>());
+      expect(map['nextLeft'], isA<String>());
+      expect(map['nextPct'], isA<int>());
+      expect(map['nextOver'], isA<bool>());
+      expect(map['nextHasBudget'], isA<bool>());
+      expect(map.length, 13, reason: 'nothing else needs to cross');
     });
 
     testWidgets('happens once per refresh', (tester) async {
       final host = FakeHost();
       await refreshWidget(zh: true, host: host);
       expect(host.calls, 1);
+    });
+  });
+
+  group('when the cycle turns', () {
+    // The launcher redraws the widget hourly, from whatever it was last
+    // handed — and it was last handed this cycle's numbers. Nothing changes
+    // at midnight on the 1st, so a phone nobody opened showed last month's
+    // spending well into this one. So it is handed the next cycle as well,
+    // already worked out, and the instant to switch.
+    testWidgets('it is handed the next one, starting at local midnight', (
+      tester,
+    ) async {
+      setBudget(1000);
+      spend('a', 300);
+
+      final now = DateTime.now();
+      final map = widgetData(zh: true).toMap();
+      expect(
+        map['nextAt'],
+        DateTime(now.year, now.month + 1, 1).millisecondsSinceEpoch,
+      );
+      expect(map['spent'], contains('300'));
+      expect(map['nextSpent'], isNot(contains('300')));
+      expect(map['nextPct'], 0);
+      expect(map['nextOver'], isFalse);
+      expect(map['nextHasBudget'], isTrue);
+      expect(map['nextTitle'], map['title']);
+    });
+
+    testWidgets('on the cycle the budget uses, not the calendar month', (
+      tester,
+    ) async {
+      setBudget(1000, cycleStart: 15);
+      final now = DateTime.now();
+      final turns = now.day < 15
+          ? DateTime(now.year, now.month, 15)
+          : DateTime(now.year, now.month + 1, 15);
+      expect(widgetData(zh: true).toMap()['nextAt'], turns.millisecondsSinceEpoch);
+    });
+
+    testWidgets('and the eye covers the next one too', (tester) async {
+      privacy.setHideAmounts(hidden: true);
+      addTearDown(() => privacy.setHideAmounts(hidden: false));
+      setBudget(1000);
+      final map = widgetData(zh: true).toMap();
+      expect(map['nextLeft'], contains('****'));
+      expect(map['nextLeft'], isNot(contains('1000')));
+      expect(map['nextLeft'], isNot(contains('1,000')));
+    });
+  });
+
+  group('the shell keeps it current', () {
+    // It was told only when something changed, and the start of a new
+    // cycle is not a change anybody makes. Opening the app is the moment
+    // the numbers can be worked out again, so that is when it is told.
+    List<Map<Object?, Object?>> listen(WidgetTester tester) {
+      const channel = MethodChannel('com.dahonghua/widget');
+      final sent = <Map<Object?, Object?>>[];
+      final m = tester.binding.defaultBinaryMessenger;
+      m.setMockMethodCallHandler(channel, (call) async {
+        if (call.method == 'update') {
+          sent.add(call.arguments as Map<Object?, Object?>);
+        }
+        return null;
+      });
+      addTearDown(() => m.setMockMethodCallHandler(channel, null));
+      return sent;
+    }
+
+    testWidgets('on launch', (tester) async {
+      final sent = listen(tester);
+      await tester.pumpWidget(const App());
+      await tester.pumpAndSettle();
+      expect(sent, isNotEmpty);
+    });
+
+    testWidgets('and on coming back to the foreground', (tester) async {
+      final sent = listen(tester);
+      await tester.pumpWidget(const App());
+      await tester.pumpAndSettle();
+      sent.clear();
+
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pumpAndSettle();
+      expect(sent, isNotEmpty);
     });
   });
 

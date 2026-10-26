@@ -308,10 +308,7 @@ pub fn parse_merchant(text: &str) -> Option<String> {
 pub fn parse_notification(n: &RawNotif) -> Option<NotifCandidate> {
     let source = classify_source(n)?;
     let text = full_text(n);
-    if text.is_empty() || noise().is_match(&text) {
-        return None;
-    }
-    if source == NotifSource::Wechat && !wechat_payment().is_match(&text) {
+    if recognised_not_payment(Some(source), &text) {
         return None;
     }
 
@@ -327,6 +324,25 @@ pub fn parse_notification(n: &RawNotif) -> Option<NotifCandidate> {
         source,
         posted_at: n.posted_at,
     })
+}
+
+/// True when `n` is positively recognised as **not a payment**: it says
+/// nothing at all, it is marketing, a reminder or a code (`noise`), or it is
+/// a WeChat push with no word for money in it — a chat.
+///
+/// Narrower than "did not parse", on purpose. A wallet or bank push with no
+/// amount and no verb is not known to be anything: it is the parser missing
+/// something, and the inbox keeps it so the miss can be seen. These three are
+/// the checks [`parse_notification`] itself makes before it gives up, and both
+/// ask `recognised_not_payment`, so the two cannot disagree about which.
+pub fn is_not_payment(n: &RawNotif) -> bool {
+    recognised_not_payment(classify_source(n), &full_text(n))
+}
+
+fn recognised_not_payment(source: Option<NotifSource>, text: &str) -> bool {
+    text.is_empty()
+        || noise().is_match(text)
+        || (source == Some(NotifSource::Wechat) && !wechat_payment().is_match(text))
 }
 
 /// Resolve a candidate against the user's categories into an entry-shaped draft.
@@ -412,6 +428,60 @@ mod tests {
             posted_at: 1_000,
             ..Default::default()
         }
+    }
+
+    #[test]
+    fn what_is_recognised_as_not_a_payment_never_parses_as_one() {
+        // Every whole notification in the parity corpus. A predicate that
+        // flagged something the parser reads as a payment would drop a
+        // payment's text from the inbox — the one thing it must not do.
+        let corpus = include_str!("../../parity/notif-corpus.tsv");
+        let mut flagged = 0;
+        for line in corpus.lines() {
+            let Some(arg) = line.trim_end_matches('\r').strip_prefix("parse\t") else {
+                continue;
+            };
+            let f: Vec<&str> = arg.split('|').collect();
+            let opt = |i: usize| f.get(i).filter(|s| !s.is_empty()).map(|s| s.to_string());
+            let n = RawNotif {
+                id: "n0".into(),
+                pkg: f[0].to_string(),
+                title: opt(1),
+                text: opt(2),
+                big_text: opt(3),
+                posted_at: 0,
+            };
+            if is_not_payment(&n) {
+                flagged += 1;
+                assert!(parse_notification(&n).is_none(), "{arg}");
+            }
+        }
+        // and the corpus exercised it, or this test proves nothing
+        assert!(flagged > 10, "only {flagged} flagged");
+    }
+
+    #[test]
+    fn a_chat_a_code_and_nothing_are_not_payments() {
+        let mut chat = alipay("老王: 350元那个我转你");
+        chat.pkg = "com.tencent.mm".into();
+        assert!(is_not_payment(&chat));
+        assert!(is_not_payment(&alipay("验证码 382910,5分钟内有效")));
+        assert!(is_not_payment(&RawNotif {
+            pkg: "com.eg.android.AlipayGphone".into(),
+            ..Default::default()
+        }));
+    }
+
+    #[test]
+    fn a_wallet_push_nothing_reads_is_not_known_to_be_anything() {
+        // no amount, no verb — the parser missed it, which is not the same as
+        // it being something else
+        assert!(parse_notification(&alipay("您有一条新消息")).is_none());
+        assert!(!is_not_payment(&alipay("您有一条新消息")));
+        // and a WeChat payment is a payment
+        let mut pay = alipay("微信支付 付款成功 ¥35.00");
+        pay.pkg = "com.tencent.mm".into();
+        assert!(!is_not_payment(&pay));
     }
 
     #[test]

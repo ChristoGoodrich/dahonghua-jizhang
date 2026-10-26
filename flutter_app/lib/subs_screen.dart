@@ -50,9 +50,11 @@ String startOf(subs.SubView s) => s.lastCharged.isNotEmpty
 
 /// Post every charge that is due. Returns the names that fired.
 ///
-/// Runs at launch and after a subscription is added — the shipping app charges
-/// immediately if today is already a due day, and waiting until tomorrow would
-/// be a visible difference.
+/// Runs at launch, on every return to the foreground, and after a
+/// subscription is added — the shipping app charges immediately if today is
+/// already a due day, and waiting until tomorrow would be a visible
+/// difference. The foreground is not the launch on Android: a backgrounded
+/// process lives for days, and a charge used to wait for it to be killed.
 List<String> runDueCharges({DateTime? today}) {
   final now = today ?? DateTime.now();
   final list = subs.subs();
