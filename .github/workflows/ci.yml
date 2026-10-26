@@ -142,7 +142,15 @@ jobs:
           api-level: 34
           target: google_apis
           arch: x86_64
-          disable-animations: true
+          # The phone the suite is written and checked on. With no profile the
+          # AVD is 320x640, narrower than any phone this app targets, and 50
+          # tests failed on overflows and on taps that landed off screen.
+          profile: pixel_7
+          # Off, because "remove animations" is not neutral here: the app reads
+          # it as reduce-motion and draws the glass solid, skips the petal
+          # burst and the stats reveal — the things bridge_test, burst_test and
+          # stats_test exist to check. The suite was 76 red with it on.
+          disable-animations: false
           working-directory: flutter_app
           script: flutter test integration_test/all_test.dart
 
