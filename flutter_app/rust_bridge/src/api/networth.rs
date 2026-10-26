@@ -224,9 +224,6 @@ pub fn net_worth_series(cutoffs: Vec<i64>) -> Vec<super::stats::ChartPoint> {
     )
     .into_iter()
     .enumerate()
-    .map(|(i, y)| super::stats::ChartPoint {
-        x: i as f64,
-        y,
-    })
+    .map(|(i, y)| super::stats::ChartPoint { x: i as f64, y })
     .collect()
 }

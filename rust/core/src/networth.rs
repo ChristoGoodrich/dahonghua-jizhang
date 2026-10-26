@@ -332,7 +332,7 @@ pub fn net_worth_series(
     // Walk cutoffs and entries together, both already sorted by time.
     let mut live: Vec<&Entry> = data
         .iter()
-        .filter(|e| !e.deleted_at.is_some_and(|v| v != 0))
+        .filter(|e| e.deleted_at.is_none_or(|v| v == 0))
         .collect();
     live.sort_by_key(|e| e.ts);
 

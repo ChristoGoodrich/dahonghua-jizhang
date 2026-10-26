@@ -11,8 +11,8 @@
 //! [`ai_default_base_url`], which reads its first three characters to pick the
 //! cluster a Token Plan key belongs to.
 
-use std::sync::{Mutex, MutexGuard, OnceLock};
 use super::day::{parse_day, show_day};
+use std::sync::{Mutex, MutexGuard, OnceLock};
 
 use dahonghua_core::ai::ask::{self, AskQuery, AskRow, Group, Metric};
 use dahonghua_core::ai::quick::{self, Custom, QuickDraft};

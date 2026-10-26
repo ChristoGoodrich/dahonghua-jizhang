@@ -7,8 +7,8 @@
 //! The days are the platform's, as always — "consecutive" is a claim about
 //! calendar days and a calendar day is a question about the device's zone.
 
-use flutter_rust_bridge::frb;
 use super::day::parse_day;
+use flutter_rust_bridge::frb;
 
 use dahonghua_core::civil::Civil;
 use dahonghua_core::entry::Io;

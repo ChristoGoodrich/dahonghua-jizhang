@@ -19,8 +19,8 @@
 //!   morning is a wall time that does not exist, and the platform is the only
 //!   thing here entitled to an opinion about what it means.
 
-use flutter_rust_bridge::frb;
 use super::day::parse_day;
+use flutter_rust_bridge::frb;
 
 use dahonghua_core::bills::{parse_bills, BillSource};
 use dahonghua_core::dedup::{existing_row, to_candidates, ExistingRow};

@@ -9,8 +9,8 @@
 //! what a card does. A repaid bill stops showing 待还 and stops reminding; only
 //! what is left over offsets the unbilled charges.
 
-use flutter_rust_bridge::frb;
 use super::day::{parse_day, show_day};
+use flutter_rust_bridge::frb;
 
 use dahonghua_core::entry::Entry;
 use dahonghua_core::statement::{due_soon, statement_summary, DatedEntry};

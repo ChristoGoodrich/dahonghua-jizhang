@@ -9,8 +9,8 @@
 //! everywhere else: projecting an instant onto a day needs a timezone, and this
 //! crate does not own one.
 
-use dahonghua_core::chart::{self, SeriesType};
 use super::day::{parse_day, show_day};
+use dahonghua_core::chart::{self, SeriesType};
 use dahonghua_core::civil::Civil;
 use dahonghua_core::entry::{Entry, Io};
 use dahonghua_core::period::{period_range, period_trend, trend_axis, Grain, Period};

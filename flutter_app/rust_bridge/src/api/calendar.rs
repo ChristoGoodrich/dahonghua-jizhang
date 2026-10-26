@@ -5,8 +5,8 @@
 //! each day spent and took in, which is today, which are ahead of it, how deep
 //! each is shaded, and whether the next cycle may be paged to.
 
-use dahonghua_core::calendar::{self, CalRow};
 use super::day::{parse_day, show_day};
+use dahonghua_core::calendar::{self, CalRow};
 use flutter_rust_bridge::frb;
 
 use super::store::{by_id, settings_of, store};

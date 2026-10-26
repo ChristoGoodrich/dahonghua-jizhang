@@ -10,8 +10,8 @@
 //! and `filter::parse_search_query` are ported and under corpora of their own.
 //! This is the shape conversion and the id list.
 
-use flutter_rust_bridge::frb;
 use super::day::parse_day;
+use flutter_rust_bridge::frb;
 
 use dahonghua_core::entry::Io;
 use dahonghua_core::filter::{matches_filter, parse_search_query, FilterState};

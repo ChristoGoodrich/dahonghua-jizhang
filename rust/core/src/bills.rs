@@ -159,12 +159,27 @@ pub fn parse_csv(text: &str) -> Vec<Vec<String>> {
 
 // Keyword to field. Order matters: the first keyword that matches a header cell
 // wins, so the specific labels come before the generic ones.
-const TS_KEYS: &[&str] = &["交易时间", "交易创建时间", "付款时间", "时间", "日期", "date"];
+const TS_KEYS: &[&str] = &[
+    "交易时间",
+    "交易创建时间",
+    "付款时间",
+    "时间",
+    "日期",
+    "date",
+];
 const AMT_KEYS: &[&str] = &["金额", "发生金额", "交易金额", "amount"];
 const IO_KEYS: &[&str] = &["收/支", "收支", "收/付", "type"];
 const CAT_KEYS: &[&str] = &["交易分类", "交易类型", "类型", "分类", "category"];
 const PARTY_KEYS: &[&str] = &["交易对方", "对方", "商户名称", "account"];
-const DESC_KEYS: &[&str] = &["商品说明", "商品名称", "商品", "说明", "摘要", "备注", "note"];
+const DESC_KEYS: &[&str] = &[
+    "商品说明",
+    "商品名称",
+    "商品",
+    "说明",
+    "摘要",
+    "备注",
+    "note",
+];
 const METHOD_KEYS: &[&str] = &["收/付款方式", "付款方式", "支付方式", "收款方式"];
 const STATUS_KEYS: &[&str] = &["交易状态", "当前状态", "状态"];
 
@@ -738,5 +753,4 @@ mod tests {
         assert_eq!(r.bills[1].io, Io::Inc);
         assert_eq!(r.bills[1].amt, 9000.0);
     }
-
 }
