@@ -192,8 +192,11 @@ void main() {
 
     testWidgets('a notification nothing understands is kept, not discarded',
         (tester) async {
+      // From a wallet, with no amount and no word for money moving: nothing
+      // says it is a payment and nothing says it is not. The pile is where
+      // the strings the parser misses become visible.
       final native = FakeNative(queue: [
-        notif(pkg: wechat, title: '微信', text: '你有一条新消息'),
+        notif(title: '支付宝', text: '您有一条新消息'),
       ]);
       final inbox = await freshInbox(native);
 
@@ -202,6 +205,57 @@ void main() {
       expect(r.unparsed, 1);
       expect(inbox.unparsed.single.raw, contains('新消息'));
       expect(store.entryCount(), 0);
+    });
+
+    // A WeChat push that is not about money is a chat, and the parser says
+    // so. It used to be kept anyway — the last thirty chats, word for word,
+    // in the inbox file and under 没看懂, from the package the listener
+    // watches by default.
+    testWidgets('a chat is recognised, and neither kept nor counted', (
+      tester,
+    ) async {
+      final native = FakeNative(queue: [
+        notif(pkg: wechat, title: '老王', text: '350元那个我转你'),
+        notif(pkg: wechat, title: '微信', text: '你有一条新消息'),
+      ]);
+      final inbox = await freshInbox(native);
+
+      final r = await inbox.drain();
+
+      expect(r.unparsed, 0);
+      expect(inbox.unparsed, isEmpty);
+      expect(native.consumed.length, 2, reason: 'still taken off the queue');
+    });
+
+    testWidgets('a verification code is recognised and not kept either', (
+      tester,
+    ) async {
+      final native = FakeNative(queue: [
+        notif(title: '支付宝', text: '验证码 382910,5分钟内有效,请勿泄露'),
+      ]);
+      final inbox = await freshInbox(native);
+
+      final r = await inbox.drain();
+
+      expect(r.unparsed, 0);
+      expect(inbox.unparsed, isEmpty);
+    });
+
+    testWidgets('chats an earlier build kept are dropped when it loads', (
+      tester,
+    ) async {
+      await File('${tmp.path}/inbox.json').writeAsString(jsonEncode({
+        'pending': [],
+        'unparsed': [
+          {'id': 'u1', 'pkg': wechat, 'raw': '老王 晚上吃啥', 'postedAt': 1000},
+          {'id': 'u2', 'pkg': alipay, 'raw': '支付宝 您有一条新消息', 'postedAt': 1001},
+        ],
+      }));
+      final inbox = Inbox(native: FakeNative(), dir: tmp);
+
+      await inbox.load();
+
+      expect(inbox.unparsed.map((u) => u.id), ['u2']);
     });
 
     testWidgets('the same payment pushed twice is recorded once',
@@ -336,7 +390,7 @@ void main() {
       final bound = capture.maxUnparsed();
       final native = FakeNative(queue: [
         for (var i = 0; i < bound + 8; i++)
-          notif(pkg: wechat, title: '微信', text: '你有一条新消息 $i'),
+          notif(title: '支付宝', text: '您有一条新消息 $i'),
       ]);
       final inbox = await freshInbox(native);
 
@@ -461,7 +515,7 @@ void main() {
 
     testWidgets('the unparsed list can be cleared', (tester) async {
       final native = FakeNative(queue: [
-        notif(pkg: wechat, title: '微信', text: '你有一条新消息'),
+        notif(title: '支付宝', text: '您有一条新消息'),
       ]);
       final inbox = await freshInbox(native);
       await show(tester, native: native, inbox: inbox);
