@@ -15,6 +15,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_app/main.dart';
 import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_test/flutter_test.dart';
@@ -57,32 +58,11 @@ class Overflows {
   void stop() => FlutterError.onError = _binding;
 }
 
-/// The screen's own vertical list: the largest one a finger can reach, which
-/// leaves out the tabs and routes underneath and the chip rows across it.
-Finder? page(WidgetTester tester) {
-  final all = find
-      .byWidgetPredicate(
-        (w) =>
-            w is Scrollable &&
-            axisDirectionToAxis(w.axisDirection) == Axis.vertical,
-      )
-      .hitTestable();
-  final n = all.evaluate().length;
-  if (n == 0) return null;
-  var best = 0;
-  for (var i = 1; i < n; i++) {
-    final a = tester.getSize(all.at(i));
-    final b = tester.getSize(all.at(best));
-    if (a.width * a.height > b.width * b.height) best = i;
-  }
-  return all.at(best);
-}
-
 /// Scroll the screen to its end a screenful at a time. A row that is never
 /// built is never laid out, and a row that is never laid out cannot overflow.
 Future<void> walkDown(WidgetTester tester) async {
   for (var i = 0; i < 40; i++) {
-    final list = page(tester);
+    final list = pageList(tester);
     if (list == null) return;
     final at = tester.state<ScrollableState>(list).position;
     if (at.pixels >= at.maxScrollExtent - 1) return;
@@ -93,7 +73,7 @@ Future<void> walkDown(WidgetTester tester) async {
 
 /// And back, so the next step finds what it expects at the top.
 Future<void> walkUp(WidgetTester tester) async {
-  final list = page(tester);
+  final list = pageList(tester);
   if (list == null) return;
   await tester.drag(list, const Offset(0, 6000));
   await tester.pumpAndSettle();
@@ -102,12 +82,12 @@ Future<void> walkUp(WidgetTester tester) async {
 /// Scroll the screen down from its top until [target] is out in the open.
 ///
 /// From the top, because a lazy list has not built what is above where it was
-/// left. And the list is pinned to its element first: [page] picks by what a
-/// finger can reach, and a scroll changes that, so a finder that asked again
+/// left. And the list is pinned to its element first: [pageList] picks by what
+/// a finger can reach, and a scroll changes that, so a finder that asked again
 /// half way down could come back with nothing.
 Future<void> reach(WidgetTester tester, Finder target) async {
   await walkUp(tester);
-  final list = page(tester)!.evaluate().single;
+  final list = pageList(tester)!.evaluate().single;
   await scrollTo(
     tester,
     target,
@@ -261,6 +241,20 @@ void main() {
     at360('记一笔', (tester, o) async {
       o.at = '记一笔';
       await tap(tester, 'record-button');
+      // A title squeezed to nothing is not an overflow — the bar ellipsizes
+      // it away without a word — and this one was, on every phone, behind
+      // four labelled actions. So it is asked for by width.
+      final title = tester.renderObject<RenderParagraph>(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.text(zh ? '记一笔' : 'Record'),
+        ),
+      );
+      expect(
+        title.size.width,
+        greaterThanOrEqualTo(title.getMaxIntrinsicWidth(double.infinity) - 1),
+        reason: 'the title is squeezed out of the bar',
+      );
       // as wide a number as anybody keeps
       for (final k in '1234567.89'.split('')) {
         await tester.tap(find.byKey(Key('key-$k')));

@@ -343,34 +343,7 @@ class _RecordSheetState extends State<RecordSheet> {
             fontWeight: FontWeight.w700,
           ),
         ),
-        // The actions are the bar: on any phone they push the title out, and
-        // the slot they stand in can be as wide as the screen. On a 360dp one
-        // that is wider than the room beside the back arrow — in English by
-        // 19dp, and in Chinese they slid over the arrow itself. Scaled down to
-        // that room instead. The room ends at the arrow's own edge, 48dp
-        // centred in a 56dp slot: a Pixel 7's actions already reach just into
-        // the slot, and measured to the slot they shrank by a pixel there.
-        actions: [
-          ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth:
-                  MediaQuery.sizeOf(context).width -
-                  (kToolbarHeight + kMinInteractiveDimension) / 2,
-            ),
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerRight,
-              child: SizedBox(
-                height: kToolbarHeight,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: _barActions(zh),
-                ),
-              ),
-            ),
-          ),
-        ],
+        actions: _barActions(zh),
       ),
       body: SafeArea(
         child: LayoutBuilder(
@@ -436,62 +409,52 @@ class _RecordSheetState extends State<RecordSheet> {
     );
   }
 
-  /// What stands in the bar beside the back arrow, left to right.
+  /// What stands in the bar after the title, as icons, the way 明细's head
+  /// draws its own. They were four labelled buttons, 355dp of them in
+  /// Chinese: on a Pixel 7 that pushed the title out of the bar entirely, and
+  /// on a 360dp phone it was wider than the bar — in English by 19dp, in
+  /// Chinese by sliding over the back arrow. Four icons are 192dp, which
+  /// leaves 记一笔 its room on both, in both languages. The words are still
+  /// there: a long press says each one, and a screen reader reads it.
   List<Widget> _barActions(bool zh) => [
     if (widget.onSmart != null)
-      TextButton.icon(
+      IconButton(
         key: const Key('record-smart'),
         onPressed: widget.onSmart,
-        icon: Icon(Icons.auto_awesome, size: 18, color: palette.hibiscus),
-        label: Text(
-          zh ? '一句话' : 'Sentence',
-          style: TextStyle(color: palette.hibiscus),
-        ),
+        tooltip: zh ? '一句话记账' : 'Record from a sentence',
+        icon: Icon(Icons.auto_awesome, color: palette.hibiscus),
       ),
     // A receipt, when there is one to keep. The picker asks for no
     // permission the user has not already given by pressing it.
     if (widget.editId == null || _form.photo.isNotEmpty)
-      TextButton.icon(
+      IconButton(
         key: const Key('record-photo'),
         onPressed: _pickPhoto,
+        tooltip: _form.photo.isEmpty
+            ? (zh ? '小票' : 'Receipt')
+            : (zh ? '已附小票' : 'Receipt attached'),
         icon: Icon(
           _form.photo.isEmpty ? Icons.photo_camera_outlined : Icons.photo,
-          size: 18,
           color: _form.photo.isEmpty ? palette.inkSoft : palette.hibiscus,
-        ),
-        label: Text(
-          _form.photo.isEmpty
-              ? (zh ? '小票' : 'Receipt')
-              : (zh ? '已附小票' : 'Receipt'),
-          style: TextStyle(
-            color: _form.photo.isEmpty ? palette.inkSoft : palette.hibiscus,
-            fontSize: 13,
-          ),
         ),
       ),
     // Visible, not only a long press on 保存: a gesture nobody is told
     // about is a feature that does not exist. The long press still works.
-    TextButton.icon(
+    IconButton(
       key: const Key('record-pin'),
       onPressed: _fetching ? null : _saveAsTemplate,
-      icon: Icon(Icons.push_pin_outlined, size: 18, color: palette.inkSoft),
-      label: Text(
-        zh ? '存模板' : 'Pin',
-        style: TextStyle(color: palette.inkSoft, fontSize: 13),
-      ),
+      tooltip: zh ? '存为模板' : 'Pin as a template',
+      icon: Icon(Icons.push_pin_outlined, color: palette.inkSoft),
     ),
     // 再记: the shipping pair of 保存. One closes — the form going away
     // is the clear — and this one stays, so a run of similar entries
     // goes in one sitting.
     if (widget.editId == null)
-      TextButton.icon(
+      IconButton(
         key: const Key('record-again'),
         onPressed: _fetching ? null : () => _save(stay: true),
-        icon: Icon(Icons.repeat, size: 18, color: palette.inkSoft),
-        label: Text(
-          zh ? '再记' : 'Again',
-          style: TextStyle(color: palette.inkSoft, fontSize: 13),
-        ),
+        tooltip: zh ? '保存并再记一笔' : 'Save and record another',
+        icon: Icon(Icons.repeat, color: palette.inkSoft),
       ),
     const SizedBox(width: 6),
   ];

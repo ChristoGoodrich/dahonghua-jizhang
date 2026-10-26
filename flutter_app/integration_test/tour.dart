@@ -41,6 +41,27 @@ void main() {
     await binding.takeScreenshot(name);
   }
 
+  /// Bring [target] out where a finger can press it, if it is not already.
+  ///
+  /// On a Pixel 7 everything the tour presses is in view and this moves
+  /// nothing; `scrollTo` would, since it ends by scrolling the target to the
+  /// top, and the shots would stop being comparable with earlier ones. On a
+  /// 640dp screen (`wm size 1080x1920`, `wm density 480`) the head is most of
+  /// the screen, and what is pressed is below it.
+  ///
+  /// From the top of the page's own list, pinned to its element — the
+  /// arrangement `narrow_test` walks 640dp with: a lazy list has not built
+  /// what is above where it was left, and a selection rebuilds the page
+  /// around the list.
+  Future<void> nearby(WidgetTester tester, Finder target) async {
+    if (target.hitTestable().evaluate().isNotEmpty) return;
+    final list = pageList(tester)!.evaluate().single;
+    final pinned = find.byElementPredicate((e) => e == list);
+    await tester.drag(pinned, const Offset(0, 6000));
+    await tester.pumpAndSettle();
+    await scrollTo(tester, target, scrollable: pinned);
+  }
+
   Future<void> tab(WidgetTester tester, String label) async {
     await tester.tap(find.byKey(Key('tab-$label')));
     await tester.pumpAndSettle();
@@ -86,30 +107,27 @@ void main() {
       await tester.tap(find.byKey(const Key('calendar-toggle')));
       await shot(tester, '$room-01c-calendar');
       final today = DateTime.now();
-      await tester.tap(
-        find.byKey(Key('cal-${today.year}-${today.month}-${today.day}')),
+      final calList = find.descendant(
+        of: find.byKey(const Key('cal-list')),
+        matching: find.byType(Scrollable),
       );
+      final cell = find.byKey(
+        Key('cal-${today.year}-${today.month}-${today.day}'),
+      );
+      await nearby(tester, cell);
+      await tester.tap(cell);
       await tester.pumpAndSettle();
-      await tester.drag(
-        find.descendant(
-          of: find.byKey(const Key('cal-list')),
-          matching: find.byType(Scrollable),
-        ),
-        const Offset(0, -500),
-      );
+      await tester.drag(calList, const Offset(0, -500));
       await shot(tester, '$room-01d-calendar-day');
       await tester.tap(find.byKey(const Key('calendar-toggle')));
       await tester.pumpAndSettle();
 
       // a delete: it asks, and then says so with 撤销 — which is used, so the
-      // shots after this one have the same month in them
-      await tester.drag(
-        find.ancestor(
-          of: find.text('早餐 豆浆油条'),
-          matching: find.byType(Dismissible),
-        ),
-        const Offset(-500, 0),
-      );
+      // shots after this one have the same month in them. The rows by key
+      // (month.dart): tour-0 is 早餐 豆浆油条, tour-1 午饭 牛肉面, tour-3 咖啡.
+      Finder row(int i) => find.byKey(Key('row-tour-$i'));
+      await nearby(tester, row(0));
+      await tester.drag(row(0), const Offset(-500, 0));
       await shot(tester, '$room-01e-delete-asks');
       await tester.tap(find.byKey(const Key('entry-delete-ok')));
       await shot(tester, '$room-01f-deleted');
@@ -117,9 +135,11 @@ void main() {
       await tester.pumpAndSettle();
 
       // a selection, since it is its own screen in all but name
-      await tester.longPress(find.text('午饭 牛肉面'));
+      await nearby(tester, row(1));
+      await tester.longPress(row(1));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('咖啡'));
+      await nearby(tester, row(3));
+      await tester.tap(row(3));
       await shot(tester, '$room-02-selecting');
       await tester.tap(find.byKey(const Key('select-close')));
       await tester.pumpAndSettle();

@@ -325,14 +325,20 @@ collects every overflow and where the walk was when it happened, instead of
 stopping at the first.
 
 At 360 two things were too wide, and both only in English, which the suite
-otherwise visits for a screen or two. The first is the record sheet's four
-bar actions. They are wider than the bar: on any phone they push the title
-out, and the trailing slot can be as wide as the screen. At 360 that is
-wider than the room beside the back arrow. In English the actions
-overflowed by 19dp, and in Chinese they slid over the arrow, which no
-overflow check sees. They now scale down to that room. The second is 预算's
-"Where this cycle is heading" heading next to an "over at this pace" pill,
-66dp too wide. The title now wraps instead of sitting beside a `Spacer`.
+otherwise visits for a screen or two. The first is the record sheet's bar.
+Its four labelled actions took 355dp, which pushed 记一笔 out of the bar even
+on a Pixel 7. At 360 they overflowed by 19dp in English and slid over the
+back arrow in Chinese. They are now icons with tooltips, like 明细's head,
+and `narrow_test` checks that the title is laid out at its full width. A
+squeezed title is not an overflow, so nothing else notices it. The second is
+预算's "Where this cycle is heading" heading next to an "over at this pace"
+pill, 66dp too wide. The title now wraps instead of sitting beside a
+`Spacer`.
+
+The tour runs at 360×640 too (`wm size 1080x1920`, `wm density 480` on the
+Pixel 7 AVD). There it found one thing no check would: on 报销 a claim's name
+was ellipsized to a single glyph beside its 待报销 chip. Below 100dp the chip
+now moves under the name.
 Everything else that broke was at 640, and it was the height. Every one of
 those cases had a keyboard or a sheet in it:
 

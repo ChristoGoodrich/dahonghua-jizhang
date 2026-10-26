@@ -41,6 +41,27 @@ Future<void> goBack(WidgetTester tester) async {
   fail('no back button on screen');
 }
 
+/// The screen's own vertical list: the largest one a finger can reach, which
+/// leaves out the tabs and routes underneath and the chip rows across it.
+Finder? pageList(WidgetTester tester) {
+  final all = find
+      .byWidgetPredicate(
+        (w) =>
+            w is Scrollable &&
+            axisDirectionToAxis(w.axisDirection) == Axis.vertical,
+      )
+      .hitTestable();
+  final n = all.evaluate().length;
+  if (n == 0) return null;
+  var best = 0;
+  for (var i = 1; i < n; i++) {
+    final a = tester.getSize(all.at(i));
+    final b = tester.getSize(all.at(best));
+    if (a.width * a.height > b.width * b.height) best = i;
+  }
+  return all.at(best);
+}
+
 /// Bring `target` into view *and* out from under the header, then settle.
 ///
 /// The header's own rectangle is the boundary rather than a computed inset:
