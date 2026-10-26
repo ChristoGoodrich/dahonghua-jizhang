@@ -68,7 +68,11 @@ jobs:
 
   flutter:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    # Measured on 2026-10-26, on a runner with no GPU: about 12 minutes to the
+    # first test (Flutter, the emulator, the debug build), about 32 for the
+    # suite with animations on — the blur is rendered in software — and then
+    # the release build. 45 cut the release build off 36 seconds in.
+    timeout-minutes: 90
 
     steps:
       - name: Checkout
