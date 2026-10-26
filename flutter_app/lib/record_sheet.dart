@@ -959,21 +959,47 @@ class _RecordSheetState extends State<RecordSheet> {
     ];
   }
 
+  /// The receipt's file, looked up once per photo rather than once per build.
+  ///
+  /// A `FutureBuilder` handed a new future resubscribes, and this sheet
+  /// rebuilds on every press of the keypad — each press was a platform call
+  /// for the directory and two checks on the disk, for a file that had not
+  /// moved.
+  String _receiptName = '';
+  Future<File?>? _receiptFile;
+
+  Future<File?> _receipt(String name) {
+    if (_receiptFile == null || name != _receiptName) {
+      _receiptName = name;
+      _receiptFile = attachmentFile(name);
+    }
+    return _receiptFile!;
+  }
+
   /// The receipt, as a thumbnail with a way to take it off again.
   Widget _photoStrip(bool zh) => Padding(
     padding: const EdgeInsets.only(top: 12),
     child: Row(
       children: [
         FutureBuilder<File?>(
-          future: attachmentFile(_form.photo),
+          future: _receipt(_form.photo),
           builder: (ctx, snap) {
             final f = snap.data;
             if (f == null) {
               return const SizedBox.shrink();
             }
+            const size = 56.0;
             return ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: Image.file(f, width: 56, height: 56, fit: BoxFit.cover),
+              child: Image(
+                image: ReceiptThumb(
+                  f,
+                  (size * MediaQuery.devicePixelRatioOf(ctx)).round(),
+                ),
+                width: size,
+                height: size,
+                fit: BoxFit.cover,
+              ),
             );
           },
         ),
