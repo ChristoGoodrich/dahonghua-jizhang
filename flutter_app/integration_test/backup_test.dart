@@ -10,6 +10,7 @@
 // wrong files — and which order a listing comes back in is not something a
 // filesystem promises.
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -172,7 +173,10 @@ void main() {
       expect(body, contains('"enc"'));
       expect(backup.isEncryptedDoc(json: body), isTrue);
 
-      final out = backup.decryptBackup(envelope: body, password: 'correct horse');
+      final out = await backup.decryptBackup(
+        envelope: body,
+        password: 'correct horse',
+      );
       expect(out.ok, isTrue);
       expect(out.json, contains('午饭'));
     });
@@ -182,7 +186,7 @@ void main() {
       final f = await createBackup(password: 'correct horse');
       final body = await f.readAsString();
 
-      final out = backup.decryptBackup(envelope: body, password: 'nope');
+      final out = await backup.decryptBackup(envelope: body, password: 'nope');
       expect(out.ok, isFalse);
       expect(out.json, isEmpty);
 
@@ -198,6 +202,50 @@ void main() {
       final a = await createBackup(password: 'pw');
       final b = await createBackup(password: 'pw');
       expect(await a.readAsString(), isNot(equals(await b.readAsString())));
+    });
+
+    /// Sealing is 600,000 rounds of PBKDF2 — about 47ms on a desktop and
+    /// more on a phone — and it ran as a sync call on the UI thread, so the
+    /// screen froze for as long as it took. Wrapped in `Future.value` so the
+    /// test reads the same whichever way the call is shaped: a call that
+    /// blocks has finished before the first frame can be asked for.
+    Future<int> framesWhile(
+      WidgetTester tester,
+      FutureOr<Object?> Function() work,
+    ) async {
+      await tester.pumpWidget(
+        const MaterialApp(home: Scaffold(body: CircularProgressIndicator())),
+      );
+      var done = false;
+      final pending = Future<Object?>.value(work()).whenComplete(
+        () => done = true,
+      );
+      var frames = 0;
+      while (!done) {
+        await tester.pump(const Duration(milliseconds: 16));
+        if (!done) frames++;
+      }
+      await pending;
+      return frames;
+    }
+
+    testWidgets('sealing leaves the screen drawing', (tester) async {
+      final doc = backup.buildBackup(ts: now.toDouble());
+      final frames = await framesWhile(
+        tester,
+        () => backup.encryptBackup(plaintext: doc, password: 'pw'),
+      );
+      expect(frames, greaterThan(0), reason: 'no frame while it sealed');
+    });
+
+    testWidgets('and so does unlocking', (tester) async {
+      spend('e1', 35);
+      final body = await (await createBackup(password: 'pw')).readAsString();
+      final frames = await framesWhile(
+        tester,
+        () => backup.decryptBackup(envelope: body, password: 'pw'),
+      );
+      expect(frames, greaterThan(0), reason: 'no frame while it unlocked');
     });
 
     testWidgets('a plain snapshot is still plain', (tester) async {
@@ -594,6 +642,48 @@ void main() {
 
       expect(store.getEntry(id: 'keep'), isNotNull);
       expect(store.getEntry(id: 'e1'), isNull);
+    });
+
+    /// Unlocking takes long enough to see, and the screen said nothing while
+    /// it ran — it could not, frozen under a sync call. Now it says it is
+    /// working, and nothing has been replaced until the work is done.
+    testWidgets('says it is unlocking while it unlocks', (tester) async {
+      spend('e1', 35, note: '午饭');
+      await createBackup(password: 'correct horse');
+      store.reset();
+      await show(tester);
+
+      await tester.tap(find.textContaining('恢复').first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('restore-ok')));
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const Key('password-field')),
+        'correct horse',
+      );
+      await tester.tap(find.byKey(const Key('password-ok')));
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.byKey(const Key('backup-busy')), findsOneWidget);
+      expect(store.entryCount(), 0, reason: 'nothing replaced mid-unlock');
+      expect(
+        tester
+            .widget<TextButton>(find.byKey(Key(
+              'backup-${(await listBackups()).last.name}-restore',
+            )))
+            .onPressed,
+        isNull,
+        reason: 'a second restore cannot start under the first',
+      );
+
+      // An indeterminate spinner never settles, so wait on the work instead.
+      for (var i = 0; i < 600 && store.entryCount() == 0; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+      await tester.pumpAndSettle();
+      expect(store.entryCount(), 1);
+      expect(find.byKey(const Key('backup-busy')), findsNothing);
     });
 
     testWidgets('says what is deliberately absent', (tester) async {

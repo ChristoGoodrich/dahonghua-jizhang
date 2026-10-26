@@ -17,11 +17,19 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 /// The envelope is a small JSON object: format version, KDF name and
 /// iterations, salt, nonce and ciphertext. Salt and nonce are not secret;
 /// they only have to be unique per file.
-String encryptBackup({required String plaintext, required String password}) =>
-    RustLib.instance.api.crateApiBackupEncryptBackup(
-      plaintext: plaintext,
-      password: password,
-    );
+///
+/// Not `sync`, unlike nearly everything else here. 600,000 rounds of PBKDF2
+/// are slow on purpose — about 47ms on a desktop, more on a phone — and as a
+/// sync call they ran on Dart's UI thread, which froze the screen for every
+/// one of them. Async runs it on the bridge's own pool, and the screen draws
+/// while it works.
+Future<String> encryptBackup({
+  required String plaintext,
+  required String password,
+}) => RustLib.instance.api.crateApiBackupEncryptBackup(
+  plaintext: plaintext,
+  password: password,
+);
 
 /// Is this document a sealed envelope rather than a plain backup?
 bool isEncryptedDoc({required String json}) =>
@@ -32,7 +40,10 @@ bool isEncryptedDoc({required String json}) =>
 /// Refuses rather than returning a fragment: AES-GCM's authentication tag is
 /// the whole point, and a "successful" decrypt of damaged or wrong-password
 /// data is not a thing this algorithm produces.
-DecryptResult decryptBackup({
+///
+/// Async for the reason [`encrypt_backup`] is: the key derivation is the
+/// slow part, and it is the same derivation.
+Future<DecryptResult> decryptBackup({
   required String envelope,
   required String password,
 }) => RustLib.instance.api.crateApiBackupDecryptBackup(

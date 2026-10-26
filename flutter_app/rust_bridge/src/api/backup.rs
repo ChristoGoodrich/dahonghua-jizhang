@@ -68,7 +68,12 @@ pub struct DecryptResult {
 /// The envelope is a small JSON object: format version, KDF name and
 /// iterations, salt, nonce and ciphertext. Salt and nonce are not secret;
 /// they only have to be unique per file.
-#[frb(sync)]
+///
+/// Not `sync`, unlike nearly everything else here. 600,000 rounds of PBKDF2
+/// are slow on purpose — about 47ms on a desktop, more on a phone — and as a
+/// sync call they ran on Dart's UI thread, which froze the screen for every
+/// one of them. Async runs it on the bridge's own pool, and the screen draws
+/// while it works.
 pub fn encrypt_backup(plaintext: String, password: String) -> String {
     if password.is_empty() {
         return String::new();
@@ -111,7 +116,9 @@ pub fn is_encrypted_doc(json: String) -> bool {
 /// Refuses rather than returning a fragment: AES-GCM's authentication tag is
 /// the whole point, and a "successful" decrypt of damaged or wrong-password
 /// data is not a thing this algorithm produces.
-#[frb(sync)]
+///
+/// Async for the reason [`encrypt_backup`] is: the key derivation is the
+/// slow part, and it is the same derivation.
 pub fn decrypt_backup(envelope: String, password: String) -> DecryptResult {
     let fail = |error: &str| DecryptResult {
         ok: false,
@@ -132,13 +139,13 @@ pub fn decrypt_backup(envelope: String, password: String) -> DecryptResult {
     } else {
         return fail("not an encrypted backup");
     };
-    let Some(salt) = doc.get("salt").and_then(as_str).and_then(|s| unb64(s)) else {
+    let Some(salt) = doc.get("salt").and_then(as_str).and_then(unb64) else {
         return fail("not an encrypted backup");
     };
-    let Some(iv) = doc.get("iv").and_then(as_str).and_then(|s| unb64(s)) else {
+    let Some(iv) = doc.get("iv").and_then(as_str).and_then(unb64) else {
         return fail("not an encrypted backup");
     };
-    let Some(ct) = doc.get("ct").and_then(as_str).and_then(|s| unb64(s)) else {
+    let Some(ct) = doc.get("ct").and_then(as_str).and_then(unb64) else {
         return fail("not an encrypted backup");
     };
     if salt.is_empty() || iv.len() != NONCE_LEN || ct.is_empty() {

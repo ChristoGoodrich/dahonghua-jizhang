@@ -383,7 +383,7 @@ abstract class RustLibApi extends BaseApi {
 
   String crateApiRecordDayName({required String day, required String today});
 
-  DecryptResult crateApiBackupDecryptBackup({
+  Future<DecryptResult> crateApiBackupDecryptBackup({
     required String envelope,
     required String password,
   });
@@ -411,7 +411,7 @@ abstract class RustLibApi extends BaseApi {
     required PlatformInt64 withinDays,
   });
 
-  String crateApiBackupEncryptBackup({
+  Future<String> crateApiBackupEncryptBackup({
     required String plaintext,
     required String password,
   });
@@ -2861,17 +2861,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "day_name", argNames: ["day", "today"]);
 
   @override
-  DecryptResult crateApiBackupDecryptBackup({
+  Future<DecryptResult> crateApiBackupDecryptBackup({
     required String envelope,
     required String password,
   }) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_String(envelope, serializer);
           sse_encode_String(password, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 68)!;
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 68,
+            port: port_,
+          );
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_decrypt_result,
@@ -3032,17 +3037,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   );
 
   @override
-  String crateApiBackupEncryptBackup({
+  Future<String> crateApiBackupEncryptBackup({
     required String plaintext,
     required String password,
   }) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_String(plaintext, serializer);
           sse_encode_String(password, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 74)!;
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 74,
+            port: port_,
+          );
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_String,

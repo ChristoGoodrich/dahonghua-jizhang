@@ -71,7 +71,8 @@ Future<File> createBackup({int? keep, String? password}) async {
   }
   final sealed = password != null && password.isNotEmpty;
   if (sealed) {
-    json = backup.encryptBackup(plaintext: json, password: password);
+    // Off the UI thread: the key derivation is slow on purpose.
+    json = await backup.encryptBackup(plaintext: json, password: password);
     if (json.isEmpty) throw StateError('backup could not be sealed');
   }
   final name = backup.backupName(ts: now, encrypted: sealed);
@@ -322,7 +323,15 @@ class _BackupScreenState extends State<BackupScreen> {
         builder: (ctx) => _PasswordDialog(zh: zh, unlocking: true),
       );
       if (password == null || !mounted) return;
-      final unlocked = backup.decryptBackup(envelope: json, password: password);
+      // The slow part, and the screen says so while it runs. Nothing is
+      // replaced until it is done.
+      setState(() => _busy = true);
+      final unlocked = await backup.decryptBackup(
+        envelope: json,
+        password: password,
+      );
+      if (!mounted) return;
+      setState(() => _busy = false);
       if (!unlocked.ok) {
         setState(
           () => _flash = zh
@@ -376,11 +385,26 @@ class _BackupScreenState extends State<BackupScreen> {
         ),
       ),
       actions: [
-        IconButton(
-          key: const Key('take-backup'),
-          icon: Icon(Icons.add, color: palette.ink),
-          onPressed: _busy ? null : _create,
-        ),
+        // Sealing and unlocking take long enough to see, and they no longer
+        // freeze the screen, so it says it is working — where the + was.
+        if (_busy)
+          Padding(
+            key: const Key('backup-busy'),
+            padding: const EdgeInsets.all(14),
+            child: SizedBox.square(
+              dimension: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: palette.hibiscus,
+              ),
+            ),
+          )
+        else
+          IconButton(
+            key: const Key('take-backup'),
+            icon: Icon(Icons.add, color: palette.ink),
+            onPressed: _create,
+          ),
       ],
       body: ListView(
         padding: EdgeInsets.fromLTRB(22, headerInset(context) + 6, 22, 120),
@@ -479,13 +503,15 @@ class _BackupScreenState extends State<BackupScreen> {
           ),
           TextButton(
             key: Key('backup-${b.name}-export'),
-            onPressed: () => _export(b),
+            onPressed: _busy ? null : () => _export(b),
             style: TextButton.styleFrom(foregroundColor: palette.inkSoft),
             child: Text(zh ? '导出' : 'Export'),
           ),
           TextButton(
             key: Key('backup-${b.name}-restore'),
-            onPressed: () => _restore(b),
+            // A second restore under one still unlocking would race it for
+            // the ledger.
+            onPressed: _busy ? null : () => _restore(b),
             style: TextButton.styleFrom(foregroundColor: palette.hibiscus),
             child: Text(zh ? '恢复' : 'Restore'),
           ),
