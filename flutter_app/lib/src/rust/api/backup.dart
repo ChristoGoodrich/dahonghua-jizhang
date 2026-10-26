@@ -55,6 +55,18 @@ List<BackupInfoView> listBackups({required List<String> names}) =>
 List<String> pruneBackups({required List<String> names, required int keep}) =>
     RustLib.instance.api.crateApiBackupPruneBackups(names: names, keep: keep);
 
+/// The folder a snapshot's receipts travel in, or `None` when it carries
+/// none — a sealed snapshot, or a name that is not a snapshot.
+String? packName({required String name}) =>
+    RustLib.instance.api.crateApiBackupPackName(name: name);
+
+/// The receipt folders in a listing that no snapshot carries any more.
+/// `files` and `dirs` are the backup directory's two halves, by name.
+List<String> strayPacks({
+  required List<String> files,
+  required List<String> dirs,
+}) => RustLib.instance.api.crateApiBackupStrayPacks(files: files, dirs: dirs);
+
 /// How many snapshots are kept by default.
 int maxBackups() => RustLib.instance.api.crateApiBackupMaxBackups();
 

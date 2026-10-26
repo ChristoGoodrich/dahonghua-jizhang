@@ -14,7 +14,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/backup_screen.dart';
+import 'package:flutter_app/photos.dart';
+import 'package:flutter_app/record_sheet.dart' show FormEdit;
 import 'package:flutter_app/src/rust/api/backup.dart' as backup;
+import 'package:flutter_app/src/rust/api/record.dart' as record;
 import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -31,12 +34,44 @@ void spend(String id, double amt, {String? note}) {
   );
 }
 
+/// An entry with a receipt, written the way the sheet writes one, and the
+/// receipt's bytes where the sheet would have put them.
+Future<void> spendWithReceipt(String id, String photo) async {
+  final dir = await attachmentsDir();
+  await File('${dir.path}/$photo').writeAsString('the receipt for $id');
+  final r = record.saveForm(
+    form: record
+        .initialForm(sourceId: '', editing: false, ledger: '')
+        .copyWith(amt: '35', photo: photo),
+    editId: '',
+    id: id,
+    now: now,
+    rateWasCached: false,
+  );
+  expect(r.rejected, isNull);
+  expect(store.getEntry(id: id)!.photo, photo);
+}
+
+/// The folder a snapshot's receipts travel in.
+Future<Directory> packOf(File snapshot) async {
+  final stem = snapshot.uri.pathSegments.last.replaceAll('.json', '');
+  return Directory('${(await backupDir()).path}/${stem}_files');
+}
+
+/// Two snapshots taken in one millisecond share a name, and the second
+/// overwrites the first — which is not what a test of two snapshots means.
+Future<File> nextBackup({int? keep, String? password}) async {
+  await Future<void>.delayed(const Duration(milliseconds: 5));
+  return createBackup(keep: keep, password: password);
+}
+
 /// Start from an empty backup directory, so one test's files are not another's
-/// fixture.
+/// fixture. Folders too: a receipt pack left by one test is exactly what
+/// another one counts.
 Future<void> clearBackups() async {
   final dir = await backupDir();
-  for (final f in dir.listSync().whereType<File>()) {
-    f.deleteSync();
+  for (final f in dir.listSync()) {
+    f.deleteSync(recursive: true);
   }
 }
 
@@ -197,6 +232,126 @@ void main() {
       expect(backup.pruneBackups(names: await namesOnDisk(), keep: 0), [
         'backup_100.json',
       ]);
+    });
+  });
+
+  group('the receipts beside a snapshot', () {
+    testWidgets('a plain snapshot carries them', (tester) async {
+      await spendWithReceipt('e1', 'r1.jpg');
+      final f = await createBackup();
+      final pack = await packOf(f);
+      expect(await File('${pack.path}/r1.jpg').readAsString(), 'the receipt for e1');
+    });
+
+    testWidgets('pruning a snapshot takes its receipts with it', (tester) async {
+      // Every snapshot copies every receipt, and the prune deleted only the
+      // `.json` — so the folders piled up one per snapshot ever taken, each
+      // a full copy of the receipts, for as long as the app was installed.
+      await spendWithReceipt('e1', 'r1.jpg');
+      final old = await createBackup(keep: 1);
+      final oldPack = await packOf(old);
+      expect(await oldPack.exists(), isTrue);
+
+      final kept = await nextBackup(keep: 1);
+      expect(await old.exists(), isFalse, reason: 'the prune has to have run');
+      expect(await oldPack.exists(), isFalse);
+      expect(await (await packOf(kept)).exists(), isTrue);
+    });
+
+    testWidgets('a folder whose snapshot is already gone is swept too', (
+      tester,
+    ) async {
+      // what every build before this one left behind
+      final dir = await backupDir();
+      final orphan = Directory('${dir.path}/backup_100_files');
+      await orphan.create();
+      await File('${orphan.path}/r1.jpg').writeAsString('old');
+      final sealed = Directory('${dir.path}/backup_200.enc_files');
+      await sealed.create();
+      // and the plain copies an older build put beside a sealed snapshot,
+      // which the snapshot itself outlives
+      await writeRaw('backup_300.enc.json', 'ciphertext');
+      final leak = Directory('${dir.path}/backup_300.enc_files');
+      await leak.create();
+      await File('${leak.path}/r1.jpg').writeAsString('plain');
+
+      await spendWithReceipt('e1', 'r1.jpg');
+      final kept = await createBackup();
+
+      expect(await orphan.exists(), isFalse);
+      expect(await sealed.exists(), isFalse);
+      expect(await leak.exists(), isFalse);
+      expect(await File('${dir.path}/backup_300.enc.json').exists(), isTrue);
+      expect(await (await packOf(kept)).exists(), isTrue);
+    });
+
+    testWidgets('a folder is never taken for a snapshot', (tester) async {
+      // `_names` lists files only. A directory that happens to be named like
+      // a snapshot is not one, and handing it to the prune would ask Dart to
+      // delete a folder as a file.
+      final dir = await backupDir();
+      await Directory('${dir.path}/backup_300.json').create();
+      expect(await listBackups(), isEmpty);
+      await createBackup(keep: 1);
+      expect((await listBackups()).length, 1);
+    });
+
+    testWidgets('a sealed snapshot does not carry them in the clear', (
+      tester,
+    ) async {
+      // The JSON was sealed and the photos beside it were plain copies, which
+      // 导出 then handed to the share sheet with it — the most private thing
+      // in the ledger, sent out under a password that did not cover it.
+      await spendWithReceipt('e1', 'r1.jpg');
+      final f = await createBackup(password: 'correct horse');
+      expect(f.path, contains('.enc.json'));
+
+      final dir = await backupDir();
+      final everything = dir.listSync(recursive: true).whereType<File>();
+      expect(everything.map((e) => e.uri.pathSegments.last), [
+        f.uri.pathSegments.last,
+      ]);
+    });
+
+    testWidgets('exporting a sealed one hands out the document alone', (
+      tester,
+    ) async {
+      // A sealed snapshot from an older build still has its plain folder on
+      // disk. The export is where that would leave the phone.
+      final dir = await backupDir();
+      await writeRaw('backup_100.enc.json', 'ciphertext');
+      final pack = Directory('${dir.path}/backup_100.enc_files');
+      await pack.create();
+      await File('${pack.path}/r1.jpg').writeAsString('plain');
+      await writeRaw('backup_200.json', '{}');
+      final plain = Directory('${dir.path}/backup_200_files');
+      await plain.create();
+      await File('${plain.path}/r2.jpg').writeAsString('plain');
+
+      final sealed = await filesToExport('backup_100.enc.json');
+      expect(sealed.map((f) => f.uri.pathSegments.last), [
+        'backup_100.enc.json',
+      ]);
+      final open = await filesToExport('backup_200.json');
+      expect(open.map((f) => f.uri.pathSegments.last).toList()..sort(), [
+        'backup_200.json',
+        'r2.jpg',
+      ]);
+    });
+
+    testWidgets('the seal dialog says the receipts stay behind', (
+      tester,
+    ) async {
+      await show(tester);
+      await tester.tap(find.byKey(const Key('take-backup')));
+      await tester.pumpAndSettle();
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('password-dialog')),
+          matching: find.textContaining('小票'),
+        ),
+        findsOneWidget,
+      );
     });
   });
 

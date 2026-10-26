@@ -98,6 +98,39 @@ pub fn prune(list: &[BackupInfo], keep: usize) -> Vec<&BackupInfo> {
     list[keep..].iter().collect()
 }
 
+/// The folder a snapshot's receipts travel in, beside it: `backup_123.json`
+/// carries `backup_123_files`.
+///
+/// `None` for a name that is not a snapshot, and for a **sealed** one. The
+/// receipts are copied as they are, and a folder of plain photos beside an
+/// encrypted document is the document's privacy undone by its neighbour —
+/// 导出 handed the two to the share sheet together. Sealing the photos as
+/// well would buy nothing a restore can use: the attachments a snapshot names
+/// are never deleted, so the restore finds them where they already are.
+pub fn pack_name(name: &str) -> Option<String> {
+    let b = parse_backup_name(name)?;
+    if b.encrypted {
+        return None;
+    }
+    Some(format!("{}_files", name.strip_suffix(".json")?))
+}
+
+/// The receipt folders among `dirs` that no snapshot in `files` carries.
+///
+/// Three kinds, and the prune made all of them: the folders of the snapshots
+/// it just deleted, the folders every earlier build left behind when it
+/// deleted theirs (it removed only the `.json`), and the plain folders those
+/// builds put beside a sealed snapshot. A folder not shaped like a receipt
+/// folder is not this function's to answer for.
+pub fn stray_packs(files: &[String], dirs: &[String]) -> Vec<String> {
+    let carried: Vec<String> = files.iter().filter_map(|f| pack_name(f)).collect();
+    dirs.iter()
+        .filter(|d| d.starts_with("backup_") && d.ends_with("_files"))
+        .filter(|d| !carried.contains(d))
+        .cloned()
+        .collect()
+}
+
 /// How many snapshots are kept by default.
 pub const MAX_BACKUPS: usize = 10;
 
@@ -114,6 +147,48 @@ mod tests {
 
     fn names(v: &[&str]) -> Vec<String> {
         v.iter().map(|s| s.to_string()).collect()
+    }
+
+    #[test]
+    fn a_plain_snapshot_carries_its_receipts_beside_it() {
+        // the spelling every earlier build used, so the folders already on
+        // phones are still found
+        assert_eq!(
+            pack_name("backup_1700.json").as_deref(),
+            Some("backup_1700_files")
+        );
+        assert_eq!(
+            pack_name("backup_12.5.json").as_deref(),
+            Some("backup_12.5_files")
+        );
+    }
+
+    #[test]
+    fn a_sealed_snapshot_carries_none_and_nothing_else_has_a_folder() {
+        assert_eq!(pack_name("backup_1700.enc.json"), None);
+        assert_eq!(pack_name("entries.json"), None);
+        assert_eq!(pack_name("backup_1700_files"), None);
+    }
+
+    #[test]
+    fn a_folder_no_plain_snapshot_carries_is_stray() {
+        let files = names(&["backup_100.json", "backup_200.enc.json", "entries.json"]);
+        let dirs = names(&[
+            "backup_100_files",     // its snapshot is here: kept
+            "backup_50_files",      // its snapshot was pruned
+            "backup_200.enc_files", // plain copies beside a sealed one
+            "backup_300.enc_files", // and of one already gone
+            "attachments",          // not a receipt folder at all
+            "backup_400.json",      // a folder named like a snapshot
+        ]);
+        assert_eq!(
+            stray_packs(&files, &dirs),
+            names(&[
+                "backup_50_files",
+                "backup_200.enc_files",
+                "backup_300.enc_files"
+            ])
+        );
     }
 
     #[test]

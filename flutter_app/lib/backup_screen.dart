@@ -26,6 +26,8 @@
 // Sealing is optional. AES-256-GCM over a PBKDF2 key, done in the bridge —
 // a cipher is not a decision the ledger needs to own. Empty password on the
 // way out means a plain snapshot; on the way back in there is no empty path.
+// A sealed snapshot leaves the receipt photos out rather than putting plain
+// copies beside a sealed document, and the seal dialog says so.
 
 import 'dart:io';
 
@@ -72,37 +74,43 @@ Future<File> createBackup({int? keep, String? password}) async {
     json = backup.encryptBackup(plaintext: json, password: password);
     if (json.isEmpty) throw StateError('backup could not be sealed');
   }
-  final file = File(
-    '${dir.path}/${backup.backupName(ts: now, encrypted: sealed)}',
-  );
+  final name = backup.backupName(ts: now, encrypted: sealed);
+  final file = File('${dir.path}/$name');
   await file.writeAsString(json);
 
-  // Receipts travel with the snapshot: a JSON that names a photo nobody has
-  // is a backup of a word. Same stem, a sibling folder.
+  // Receipts travel with a plain snapshot: a JSON that names a photo nobody
+  // has is a backup of a word. Same stem, a sibling folder.
+  //
+  // A sealed one goes without them — `packName` is null for it. The photos
+  // are copied as they are, and plain receipts beside a sealed document undo
+  // the seal: 导出 handed both to the share sheet. Sealing them too would buy
+  // a restore nothing, because the attachments a snapshot names are never
+  // deleted and the restore finds them where they already are.
+  final packName = backup.packName(name: name);
   final photos = <String>{
-    for (final e in store.liveEntries())
-      if (e.photo != null && e.photo!.isNotEmpty) e.photo!,
+    if (packName != null)
+      for (final e in store.liveEntries())
+        if (e.photo != null && e.photo!.isNotEmpty) e.photo!,
   };
-  if (photos.isNotEmpty) {
-    final stem = file.uri.pathSegments.last.replaceAll('.json', '');
-    final pack = Directory('${dir.path}/${stem}_files');
+  if (packName != null && photos.isNotEmpty) {
+    final pack = Directory('${dir.path}/$packName');
     await pack.create(recursive: true);
     final src = await attachmentsDir();
-    for (final name in photos) {
-      final f = File('${src.path}/$name');
+    for (final photo in photos) {
+      final f = File('${src.path}/$photo');
       if (await f.exists()) {
-        await f.copy('${pack.path}/$name');
+        await f.copy('${pack.path}/$photo');
       }
     }
   }
 
-  final names = await _names(dir);
   for (final gone in backup.pruneBackups(
-    names: names,
+    names: await _names(dir),
     keep: keep ?? backup.maxBackups(),
   )) {
     await File('${dir.path}/$gone').delete();
   }
+  await _sweepPacks(dir);
   return file;
 }
 
@@ -111,6 +119,24 @@ Future<List<String>> _names(Directory dir) async => dir
     .whereType<File>()
     .map((f) => f.uri.pathSegments.last)
     .toList();
+
+/// Delete the receipt folders no snapshot carries any more.
+///
+/// The prune used to delete only the `.json`, so every snapshot ever taken
+/// left a full copy of the receipts behind for as long as the app was
+/// installed. This takes those, the folders of what the prune just deleted,
+/// and the plain folders an earlier build put beside a sealed snapshot.
+/// Which folders those are is Rust's — the same reason the prune's list is.
+Future<void> _sweepPacks(Directory dir) async {
+  final dirs = [
+    for (final d in dir.listSync().whereType<Directory>())
+      d.uri.pathSegments.lastWhere((s) => s.isNotEmpty),
+  ];
+  if (dirs.isEmpty) return;
+  for (final stray in backup.strayPacks(files: await _names(dir), dirs: dirs)) {
+    await Directory('${dir.path}/$stray').delete(recursive: true);
+  }
+}
 
 /// Every snapshot on disk, newest first.
 
@@ -144,6 +170,23 @@ Future<int?> daysSinceLastBackup() async {
 Future<List<backup.BackupInfoView>> listBackups() async {
   final dir = await backupDir();
   return backup.listBackups(names: await _names(dir));
+}
+
+/// What 导出 hands the share sheet for the snapshot called `name`: the
+/// document, and its receipts when it is a plain one.
+///
+/// Asked of `packName` rather than of the disk, because a sealed snapshot
+/// taken by an earlier build still has a folder of plain photos beside it
+/// until the next snapshot sweeps it, and the export is exactly where that
+/// folder would leave the phone.
+Future<List<File>> filesToExport(String name) async {
+  final dir = await backupDir();
+  final out = [File('${dir.path}/$name')];
+  final packName = backup.packName(name: name);
+  if (packName == null) return out;
+  final pack = Directory('${dir.path}/$packName');
+  if (await pack.exists()) out.addAll(pack.listSync().whereType<File>());
+  return out;
 }
 
 class BackupScreen extends StatefulWidget {
@@ -222,16 +265,9 @@ class _BackupScreenState extends State<BackupScreen> {
       setState(() => _flash = widget.zh ? '这份快照不见了' : 'That snapshot is gone');
       return;
     }
-    final stem = b.name.replaceAll('.json', '');
-    final pack = Directory('${dir.path}/${stem}_files');
-    final extra = <XFile>[XFile(file.path)];
-    if (await pack.exists()) {
-      for (final f in pack.listSync().whereType<File>()) {
-        extra.add(XFile(f.path));
-      }
-    }
+    final files = await filesToExport(b.name);
     await SharePlus.instance.share(
-      ShareParams(files: extra, text: b.name),
+      ShareParams(files: [for (final f in files) XFile(f.path)], text: b.name),
     );
   }
 
@@ -298,10 +334,10 @@ class _BackupScreenState extends State<BackupScreen> {
       json = unlocked.json;
     }
     final r = backup.restoreBackup(json: json);
-    if (r.ok) {
+    final packName = backup.packName(name: b.name);
+    if (r.ok && packName != null) {
       // Put the receipts back where the names point.
-      final stem = b.name.replaceAll('.json', '');
-      final pack = Directory('${dir.path}/${stem}_files');
+      final pack = Directory('${dir.path}/$packName');
       if (await pack.exists()) {
         final dest = await attachmentsDir();
         for (final f in pack.listSync().whereType<File>()) {
@@ -530,9 +566,13 @@ class _PasswordDialogState extends State<_PasswordDialog> {
             widget.unlocking
                 ? (zh ? '这份快照是加密的。' : 'This snapshot is sealed.')
                 : (zh
-                      ? '留空就是不加密的普通快照。忘了口令,加密的备份就打不开了。'
-                      : 'Leave empty for a plain snapshot. A sealed one cannot '
-                            'be opened without its password.'),
+                      ? '留空就是不加密的普通快照。加密的快照只存账目和设置,'
+                            '不带小票照片 —— 照片还在手机里,恢复后照样能看。'
+                            '忘了口令,加密的备份就打不开了。'
+                      : 'Leave empty for a plain snapshot. A sealed one holds '
+                            'the entries and settings but not the receipt '
+                            'photos, which stay on this phone. It cannot be '
+                            'opened without its password.'),
             style: TextStyle(fontSize: 12.5, color: palette.inkSoft),
           ),
           const SizedBox(height: 12),
