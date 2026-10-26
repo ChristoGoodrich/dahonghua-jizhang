@@ -23,11 +23,22 @@
 // and this is the only thing standing between the app and a silent return to
 // a fifth-of-a-second hitch.
 //
-// The bound is set where it separates the two rather than where it is tight.
-// Measured on the emulator at 8,000 rows: about 110ms linear against about
-// 550ms quadratic. 300ms is three times the real figure and half the broken
-// one, which is enough margin to survive a busy machine and still catch the
-// regression.
+// What it bounds is growth, not milliseconds. Each operation is timed at a
+// quarter of the ledger and again at all of it: linear work takes about four
+// times as long for four times the rows, a little more where there is a sort,
+// and the quadratic shape takes sixteen — less in practice, because the
+// linear part still counts at a quarter. Measured on the emulator: 2.6× to
+// 5.6× for the code as it is, 13.5× with `list_items` put back to a scan per
+// id. The bound is eight, between them.
+//
+// It used to be 300ms flat, set between about 110ms linear and about 550ms
+// quadratic on the emulator it was measured on. Milliseconds belong to the
+// machine: CI's emulator renders in software, and there the LINEAR list took
+// 361ms and failed. A ratio taken on one machine, in one run, cancels the
+// machine out. Each size is the fastest of three runs, so the first call's
+// warm-up or a collection mid-run is not what gets measured.
+
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/entry_list.dart';
@@ -44,9 +55,14 @@ int get now => DateTime.now().millisecondsSinceEpoch;
 /// Three years of a ledger somebody actually keeps.
 const big = 8000;
 
-void fill(int n, {String prefix = 'e'}) {
+/// The smaller ledger each timing is compared against.
+const quarter = big ~/ 4;
+
+/// Add [n] entries, numbered from [from] — so a second fill carries on where
+/// the first stopped, with new ids and older days.
+void fill(int n, {String prefix = 'e', int from = 0}) {
   final t = now;
-  for (var i = 0; i < n; i++) {
+  for (var i = from; i < from + n; i++) {
     store.addEntry(
       entry: store.NewEntry(
         io: i % 5 == 0 ? 'inc' : 'exp',
@@ -63,6 +79,41 @@ void fill(int n, {String prefix = 'e'}) {
 }
 
 List<String> idsOf(List<store.EntryView> live) => [for (final e in live) e.id];
+
+/// The fastest of three runs of [timed], which returns microseconds.
+int fastest(int Function() timed) =>
+    [for (var i = 0; i < 3; i++) timed()].reduce(math.min);
+
+typedef Growth = ({double ratio, int small, int large});
+
+/// How many times longer [timed] takes over [big] rows than over [quarter].
+///
+/// Starts from an empty ledger, so a test can call it more than once.
+Growth growth(int Function() timed) {
+  store.reset();
+  fill(quarter);
+  final small = fastest(timed);
+  fill(big - quarter, from: quarter);
+  final large = fastest(timed);
+  return (ratio: large / math.max(small, 1), small: small, large: large);
+}
+
+/// Four times the rows may cost about four times the time, not sixteen.
+void expectLinear(Growth g, String what, {String? why}) {
+  final said =
+      '$what: ${g.small}µs over $quarter rows, ${g.large}µs over $big — '
+      '${g.ratio.toStringAsFixed(1)}× for 4× the rows';
+  // Printed on a pass too: the margin is worth seeing in a CI log before it
+  // is gone, rather than after.
+  debugPrint(said);
+  expect(
+    g.ratio,
+    lessThan(8),
+    reason:
+        '$said. Linear is about 4×, quadratic 16×.'
+        '${why == null ? '' : ' $why'}',
+  );
+}
 
 List<String> daysOf(List<store.EntryView> live) => [
   for (final e in live) localDay(DateTime.fromMillisecondsSinceEpoch(e.ts)),
@@ -89,101 +140,123 @@ void main() {
 
   group('a ledger of $big', () {
     testWidgets('the day grouping stays linear', (tester) async {
-      fill(big);
-      final live = store.liveEntries();
-      final ids = idsOf(live);
-      final days = daysOf(live);
+      var rows = 0;
+      final g = growth(() {
+        final live = store.liveEntries();
+        final ids = idsOf(live);
+        final days = daysOf(live);
+        final clock = Stopwatch()..start();
+        final items = store.listItems(
+          ids: ids,
+          days: days,
+          today: localDay(DateTime.now()),
+          columns: 1,
+        );
+        final us = clock.elapsedMicroseconds;
+        rows = items.length;
+        return us;
+      });
 
-      final clock = Stopwatch()..start();
-      final items = store.listItems(
-        ids: ids,
-        days: days,
-        today: localDay(DateTime.now()),
-        columns: 1,
-      );
-      final ms = clock.elapsedMilliseconds;
-
-      expect(items.length, greaterThan(big));
-      expect(
-        ms,
-        lessThan(300),
-        reason:
-            'listItems took ${ms}ms over $big rows. A per-id `ledger.get` is '
-            'a linear scan and this is where it turns quadratic.',
+      expect(rows, greaterThan(big));
+      expectLinear(
+        g,
+        'listItems',
+        why:
+            'A per-id `ledger.get` is a linear scan and this is where it '
+            'turns quadratic.',
       );
     });
 
     testWidgets('and so does searching', (tester) async {
-      fill(big);
-      final ids = idsOf(store.liveEntries());
+      var found = 0;
+      final g = growth(() {
+        final ids = idsOf(store.liveEntries());
+        final clock = Stopwatch()..start();
+        final hits = search.searchIds(ids: ids, text: '条目 7', zh: true);
+        final us = clock.elapsedMicroseconds;
+        found = hits.length;
+        return us;
+      });
 
-      final clock = Stopwatch()..start();
-      final hits = search.searchIds(ids: ids, text: '条目 7', zh: true);
-      final ms = clock.elapsedMilliseconds;
-
-      expect(hits, isNotEmpty);
-      expect(ms, lessThan(300), reason: 'searchIds took ${ms}ms');
+      expect(found, greaterThan(0));
+      expectLinear(g, 'searchIds');
     });
 
     testWidgets('and the statistics', (tester) async {
-      fill(big);
-      final ids = idsOf(store.liveEntries());
+      var sliced = 0;
+      final g = growth(() {
+        final ids = idsOf(store.liveEntries());
+        final clock = Stopwatch()..start();
+        final slices = stats.categorySlices(ids: ids, io: 'exp', zh: true);
+        final us = clock.elapsedMicroseconds;
+        sliced = slices.length;
+        return us;
+      });
 
-      final clock = Stopwatch()..start();
-      final slices = stats.categorySlices(ids: ids, io: 'exp', zh: true);
-      final ms = clock.elapsedMilliseconds;
-
-      expect(slices, isNotEmpty);
-      expect(ms, lessThan(300), reason: 'categorySlices took ${ms}ms');
+      expect(sliced, greaterThan(0));
+      expectLinear(g, 'categorySlices');
     });
 
     /// `rows_of` in the stats bridge was a `find` per id over the ledger —
     /// the same quadratic shape, missed when the other twelve were fixed.
     testWidgets('and the trend', (tester) async {
-      fill(big);
-      final live = store.liveEntries();
       final today = localDay(DateTime.now());
+      var points = 0;
+      final g = growth(() {
+        final live = store.liveEntries();
+        final ids = idsOf(live);
+        final days = daysOf(live);
+        final clock = Stopwatch()..start();
+        final pts = stats.dailyTrend(
+          ids: ids,
+          daysOf: days,
+          days: 30,
+          today: today,
+        );
+        final us = clock.elapsedMicroseconds;
+        points = pts.length;
+        return us;
+      });
 
-      final clock = Stopwatch()..start();
-      final pts = stats.dailyTrend(
-        ids: idsOf(live),
-        daysOf: daysOf(live),
-        days: 30,
-        today: today,
-      );
-      final ms = clock.elapsedMilliseconds;
-
-      expect(pts, hasLength(30));
-      expect(ms, lessThan(300), reason: 'dailyTrend took ${ms}ms');
+      expect(points, 30);
+      expectLinear(g, 'dailyTrend');
     });
 
     /// The whole stats screen is one call now, over every live row: the
     /// window, the trend, six windows, the comparison, the top five and the
     /// habits. A year is its most expensive window.
     testWidgets('and the whole stats page', (tester) async {
-      fill(big);
-      final live = store.liveEntries();
-      final at = [
-        for (final e in live) DateTime.fromMillisecondsSinceEpoch(e.ts),
-      ];
       final today = localDay(DateTime.now());
 
       for (final period in ['month', 'year']) {
-        final clock = Stopwatch()..start();
-        final page = stats.statsPage(
-          ids: idsOf(live),
-          daysOf: daysOf(live),
-          dows: [for (final d in at) d.weekday % 7],
-          hours: [for (final d in at) d.hour],
-          anchor: today,
-          period: period,
-          io: 'exp',
-          today: today,
-          zh: true,
-        );
-        final ms = clock.elapsedMilliseconds;
-        expect(page.overview.count, greaterThan(0));
-        expect(ms, lessThan(300), reason: 'statsPage($period) took ${ms}ms');
+        var counted = 0;
+        final g = growth(() {
+          final live = store.liveEntries();
+          final at = [
+            for (final e in live) DateTime.fromMillisecondsSinceEpoch(e.ts),
+          ];
+          final ids = idsOf(live);
+          final days = daysOf(live);
+          final dows = [for (final d in at) d.weekday % 7];
+          final hours = [for (final d in at) d.hour];
+          final clock = Stopwatch()..start();
+          final page = stats.statsPage(
+            ids: ids,
+            daysOf: days,
+            dows: dows,
+            hours: hours,
+            anchor: today,
+            period: period,
+            io: 'exp',
+            today: today,
+            zh: true,
+          );
+          final us = clock.elapsedMicroseconds;
+          counted = page.overview.count;
+          return us;
+        });
+        expect(counted, greaterThan(0));
+        expectLinear(g, 'statsPage($period)');
       }
     });
 

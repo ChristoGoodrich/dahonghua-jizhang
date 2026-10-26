@@ -174,7 +174,10 @@ mod tests {
             assert!(b[0].dx < 0.0, "seed={seed} first flower went right");
             assert!(b[11].dx > 0.0, "seed={seed} last flower went left");
             let len = burst_length(&b);
-            assert!(len.is_finite() && len > 0.0 && len < 2000.0, "seed={seed} len={len}");
+            assert!(
+                len.is_finite() && len > 0.0 && len < 2000.0,
+                "seed={seed} len={len}"
+            );
         }
     }
 }

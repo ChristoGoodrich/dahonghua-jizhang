@@ -9,8 +9,8 @@
 //! All of that is `dahonghua_core::budget`, pinned by a 4,210-case corpus. What
 //! crosses is the answer.
 
-use dahonghua_core::budget::{self as core, TierStatus};
 use super::day::parse_day;
+use dahonghua_core::budget::{self as core, TierStatus};
 use dahonghua_core::catalog;
 use dahonghua_core::entry::{Entry, Io};
 use flutter_rust_bridge::frb;

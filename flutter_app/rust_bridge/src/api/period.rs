@@ -8,8 +8,8 @@
 //! text and belongs to the UI, the same reason `curOf` stayed behind in
 //! `money.rs`. What crosses is the window and how to step it.
 
-use flutter_rust_bridge::frb;
 use super::day::{parse_day, show_day};
+use flutter_rust_bridge::frb;
 
 use dahonghua_core::civil::Civil;
 use dahonghua_core::period::{period_range, shift_period, Period};

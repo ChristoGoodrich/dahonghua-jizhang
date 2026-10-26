@@ -458,6 +458,21 @@ void main() {
   });
 
   group('the picker on the record sheet', () {
+    /// Press an account chip, scrolling it into view first.
+    ///
+    /// The integration binding drives the real on-screen keyboard, and the
+    /// test before these types into a dialog. On a freshly booted emulator
+    /// the keyboard was still sliding away when the sheet was pumped, so the
+    /// body was a keyboard shorter, the chip sat behind the keypad, and a
+    /// bare tap pressed a key instead — this group's one failure in the suite,
+    /// never on its own. Same shape as `tapOnSheet` in sheet_extras_test.
+    Future<void> pick(WidgetTester tester, String key) async {
+      final f = find.byKey(Key(key));
+      await tester.ensureVisible(f);
+      await tester.pumpAndSettle();
+      await tester.tap(f);
+    }
+
     testWidgets('records against the account that was picked', (tester) async {
       open('招行', balance: 1000);
       await tester.pumpWidget(
@@ -465,7 +480,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byKey(const Key('acct-招行')));
+      await pick(tester, 'acct-招行');
       await tester.pumpAndSettle();
       for (final k in ['3', '5']) {
         await tester.tap(find.byKey(Key('key-$k')));
@@ -491,9 +506,9 @@ void main() {
 
       await tester.tap(find.text('转账'));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('acct-招行')));
+      await pick(tester, 'acct-招行');
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('acct-to-支付宝')));
+      await pick(tester, 'acct-to-支付宝');
       await tester.pumpAndSettle();
       for (final k in ['1', '0', '0']) {
         await tester.tap(find.byKey(Key('key-$k')));
@@ -566,9 +581,9 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('转账'));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('acct-招行')));
+      await pick(tester, 'acct-招行');
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('acct-to-招行')));
+      await pick(tester, 'acct-to-招行');
       await tester.pumpAndSettle();
       for (final k in ['5', '0']) {
         await tester.tap(find.byKey(Key('key-$k')));

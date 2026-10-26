@@ -6,8 +6,8 @@
 //! all of it, like `stats_page`, because the list redraws on every record and
 //! each would otherwise carry the ledger across to answer one question.
 
-use dahonghua_core::budget::{self, DayRow, PotMood, TierStatus};
 use super::day::{parse_day, show_day};
+use dahonghua_core::budget::{self, DayRow, PotMood, TierStatus};
 use dahonghua_core::civil::Civil;
 use dahonghua_core::cycle::cycle_range;
 use dahonghua_core::entry::Entry;

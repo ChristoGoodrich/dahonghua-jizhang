@@ -10,12 +10,15 @@
 // is an interface and these answer for it.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_app/reminders.dart';
 import 'package:flutter_app/settings_screen.dart';
 import 'package:flutter_app/src/rust/api/remind.dart' as remind;
 import 'package:flutter_app/src/rust/api/store.dart' as store;
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:timezone/timezone.dart' as tz;
 import 'rust_init.dart';
 import 'scroll.dart';
 
@@ -321,6 +324,68 @@ void main() {
       expect(store.loadConfig(json: '{"remindAt":"nonsense"}'), isTrue);
 
       expect(remind.dailyReminderAt(), isEmpty);
+    });
+  });
+
+  // The fakes above say which schedules the app asks for. These two are the
+  // only tests that hand one to Android, because both failures live there:
+  // the alarm went to a receiver the manifest never declared, and the time
+  // was built in UTC — so had it arrived, 21:00 would have been 05:00 in
+  // China. Neither was visible to a test that never reached the plugin.
+  group('on the device', () {
+    testWidgets('a due schedule reaches the app', (tester) async {
+      final plugin = FlutterLocalNotificationsPlugin();
+      // Through the app's own notifier, so the plugin is set up as it is in
+      // use. The id is not one of ours, and nothing is under it.
+      const probe = 9901;
+      expect(remind.allIds(), isNot(contains(probe)));
+      await DeviceNotifier().cancel(probe);
+
+      // One-shot: when the receiver runs it drops the request from the
+      // plugin's pending list, which is the only trace of delivery a test
+      // can see without the notification permission a test cannot grant.
+      await plugin.zonedSchedule(
+        id: probe,
+        title: 'probe',
+        body: 'probe',
+        scheduledDate: tz.TZDateTime.now(tz.UTC).add(const Duration(seconds: 3)),
+        notificationDetails: const NotificationDetails(
+          android: AndroidNotificationDetails('dahonghua_reminders', '记账提醒'),
+        ),
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      );
+      Future<bool> waiting() async => (await plugin.pendingNotificationRequests())
+          .any((r) => r.id == probe);
+      // otherwise the wait below would pass for a schedule never made
+      expect(await waiting(), isTrue);
+
+      // Inexact: Android may hold a short alarm back by a few seconds.
+      final deadline = DateTime.now().add(const Duration(seconds: 90));
+      while (await waiting() && DateTime.now().isBefore(deadline)) {
+        await tester.runAsync(
+          () => Future<void>.delayed(const Duration(seconds: 1)),
+        );
+      }
+      final arrived = !await waiting();
+      await plugin.cancel(id: probe);
+      expect(arrived, isTrue, reason: 'the alarm never reached the receiver');
+    });
+
+    testWidgets('a schedule is built in the phone\'s own zone', (tester) async {
+      await DeviceNotifier().cancel(9902);
+
+      // What the schedule's clock says now against what the phone's says.
+      // UTC gave 0 here, which on a phone in China is eight hours out.
+      expect(
+        tz.TZDateTime.now(tz.local).timeZoneOffset,
+        DateTime.now().timeZoneOffset,
+      );
+      // And by name, which is the half that can fail on a phone set to UTC:
+      // the offset agreeing there proves nothing about where it came from.
+      final id = await const MethodChannel(
+        'com.dahonghua/zone',
+      ).invokeMethod<String>('id');
+      expect(tz.local.name, id);
     });
   });
 }

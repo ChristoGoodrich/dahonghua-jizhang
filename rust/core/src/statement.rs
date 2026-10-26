@@ -119,10 +119,8 @@ pub fn statement_summary(
     // A map, not a vec scanned per entry: `acct_balances_with` calls `day_of`
     // once per row, and a linear find made the whole summary quadratic. Same
     // shape AGENTS.md names for `Ledger::get` inside a loop over ids.
-    let by_id: std::collections::HashMap<&str, Civil> = rows
-        .iter()
-        .map(|r| (r.entry.id.as_str(), r.day))
-        .collect();
+    let by_id: std::collections::HashMap<&str, Civil> =
+        rows.iter().map(|r| (r.entry.id.as_str(), r.day)).collect();
     let day_of = |e: &Entry| {
         by_id
             .get(e.id.as_str())

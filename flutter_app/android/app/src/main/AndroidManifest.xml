@@ -27,6 +27,12 @@
       holding rather than this app sending anything anywhere.
     -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!--
+      Reminders. AlarmManager forgets every alarm at a reboot; the
+      notification plugin keeps its own list and puts them back when the boot
+      receiver below wakes it.
+    -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <application
         android:label="@string/app_name"
         android:name="${applicationName}"
@@ -88,6 +94,31 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_budget_info" />
+        </receiver>
+        <!--
+          记账提醒 and the two reports. flutter_local_notifications sets each
+          alarm as an explicit intent for its own receiver, and declares
+          neither receiver itself: the app has to. Until these were here every
+          reminder was scheduled, accepted, and then delivered to a class
+          Android had never been told about — which is silence, not an error.
+          ReminderManifestTest holds them.
+
+          Not exported: the only senders are this app's own alarms and the
+          system's boot broadcasts, which reach an unexported receiver anyway.
+        -->
+        <receiver
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver"
+            android:exported="false" />
+        <receiver
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <!-- an update clears the app's alarms as a reboot does -->
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
         </receiver>
 
         <!-- Don't delete the meta-data below.

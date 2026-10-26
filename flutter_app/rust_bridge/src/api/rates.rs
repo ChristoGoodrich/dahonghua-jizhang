@@ -14,8 +14,8 @@
 //! answer "1 base = X target", so every usable answer is inverted here rather
 //! than at the call site.
 
-use flutter_rust_bridge::frb;
 use super::day::parse_day;
+use flutter_rust_bridge::frb;
 
 use dahonghua_core::rates::{invert, is_recent, resolve, Source};
 

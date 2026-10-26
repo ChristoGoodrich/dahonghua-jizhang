@@ -9,8 +9,8 @@
 //! a day needs a timezone and this crate has none — the rule the whole port is
 //! built on, and the reason `days_of` is parallel to `ids` in all three calls.
 
-use dahonghua_core::budget::DayRow;
 use super::day::parse_day;
+use dahonghua_core::budget::DayRow;
 use dahonghua_core::civil::Civil;
 use dahonghua_core::entry::Entry;
 use dahonghua_core::insight::{self, InsightCopy};

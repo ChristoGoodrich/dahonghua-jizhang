@@ -351,7 +351,17 @@ mod tests {
     fn the_lens_never_folds_or_leaks() {
         for dark in [false, true] {
             let s = liquid_spec(dark);
-            for v in [-1e6, -2000.0, -1.0, 0.0, 1.0, 2000.0, 1e6, f64::NAN, f64::INFINITY] {
+            for v in [
+                -1e6,
+                -2000.0,
+                -1.0,
+                0.0,
+                1.0,
+                2000.0,
+                1e6,
+                f64::NAN,
+                f64::INFINITY,
+            ] {
                 let l = lens(&s, v);
                 assert!(l.scale_x.is_finite() && l.scale_x > 0.0);
                 assert!(l.scale_y.is_finite() && l.scale_y > 0.0);

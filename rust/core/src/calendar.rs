@@ -240,7 +240,17 @@ mod tests {
 
     #[test]
     fn heat_stays_a_shade_however_odd_the_numbers() {
-        for exp in [-1.0, 0.0, 0.01, 1.0, 40.0, 2800.0, 1e12, f64::NAN, f64::INFINITY] {
+        for exp in [
+            -1.0,
+            0.0,
+            0.01,
+            1.0,
+            40.0,
+            2800.0,
+            1e12,
+            f64::NAN,
+            f64::INFINITY,
+        ] {
             for max in [-1.0, 0.0, 0.01, 1.0, 2800.0, 1e12, f64::NAN, f64::INFINITY] {
                 let h = heat(exp, max);
                 assert!((0.0..=1.0).contains(&h), "heat({exp},{max}) = {h}");

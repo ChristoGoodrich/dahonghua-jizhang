@@ -1,6 +1,7 @@
 package com.dahonghua.flutter_app
 
 import com.dahonghua.flutter_app.notif.NotifChannel
+import com.dahonghua.flutter_app.remind.ZoneChannel
 import com.dahonghua.flutter_app.widget.WidgetChannel
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -21,5 +22,7 @@ class MainActivity : FlutterActivity() {
       flutterEngine.dartExecutor.binaryMessenger,
       applicationContext,
     )
+    // Which zone a reminder's 21:00 is in. See ZoneChannel.
+    ZoneChannel.register(flutterEngine.dartExecutor.binaryMessenger)
   }
 }

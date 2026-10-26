@@ -9,6 +9,16 @@
 # packages, and plugins designed to encourage good coding practices.
 include: package:flutter_lints/flutter.yaml
 
+analyzer:
+  exclude:
+    # Vendored cargokit: a Dart package of its own, whose dependencies are
+    # fetched by the first native build rather than by `pub get` here. A fresh
+    # checkout — which is what CI analyzes — has none of them, so analyzing it
+    # reports 66 errors that are not this app's. Locally it passed only because
+    # a build had already fetched them, which is how CI was red for weeks while
+    # every local run said "No issues found".
+    - rust_builder/cargokit/**
+
 linter:
   # The lint rules applied to this project can be customized in the
   # section below to disable rules from the `package:flutter_lints/flutter.yaml`

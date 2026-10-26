@@ -16,8 +16,8 @@
 //! there so it does, without a code page being guessed at Chinese category
 //! names.
 
-use flutter_rust_bridge::frb;
 use super::day::parse_day;
+use flutter_rust_bridge::frb;
 
 use dahonghua_core::export::{to_csv, CustomCats, ExportRow};
 
