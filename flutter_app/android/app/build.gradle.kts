@@ -159,6 +159,13 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:2.0.21")
 }
 
+// A test reads Dart — the channel name Dart listens on — and Gradle cannot
+// see that. Without this it calls the test up to date after the Dart changes,
+// and skips the run that would fail.
+tasks.withType<Test>().configureEach {
+    inputs.files("../../lib/power.dart")
+}
+
 flutter {
     source = "../.."
 }

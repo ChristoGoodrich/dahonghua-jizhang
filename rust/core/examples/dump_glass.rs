@@ -85,8 +85,10 @@ fn main() {
             }
             // the TypeScript half pins the platform to native; is_web is
             // covered by its own corpus rows below
-            "tier" => resolve_tier(f[0] == "1", false).as_str().to_string(),
-            "tierweb" => resolve_tier(f[0] == "1", f[1] == "1").as_str().to_string(),
+            "tier" => resolve_tier(f[0] == "1", false, false).as_str().to_string(),
+            "tierweb" => resolve_tier(f[0] == "1", false, f[1] == "1")
+                .as_str()
+                .to_string(),
             "touch" => touch_light_color(&theme(f[0] == "1", "#FFFFFF", "#FBF7F0")).to_string(),
             other => panic!("unknown corpus kind {other}"),
         };

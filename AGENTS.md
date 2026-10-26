@@ -166,6 +166,15 @@ seen through it — instead of `sigma`, the step it adds when nested. The masks
 make the two the same picture, and the tour is how that was checked: the
 emulator cannot measure it (below), so it was looked at.
 
+**And under battery saver there is none of it.** The blur dropped out only for
+移除动画; battery saver is the phone asked to spend less, and it now resolves
+to `Wash` — the wash and the ramp, no blur — in `core::glass::resolve_tier`.
+`lib/power.dart` carries the phone's answer from a Kotlin event channel
+(`PowerChannel`) to an inherited widget above the app, and every surface asks
+`glassTier(context)` rather than resolving its own: the lens did, and blurred
+in every tier. `power_test` holds the whole shell to no `BackdropFilter` under
+battery saver, and to some without it.
+
 The ramp lives in the `fade` at the shallow end and holds full depth beyond it.
 A scrim is sized to the chrome it belongs to plus that fade, and for a header
 with a hard bottom edge it is sized to the header alone — otherwise the

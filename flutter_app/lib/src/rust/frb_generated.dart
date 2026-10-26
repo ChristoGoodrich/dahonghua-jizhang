@@ -779,6 +779,7 @@ abstract class RustLibApi extends BaseApi {
 
   GlassTier crateApiGlassResolveTier({
     required bool reduceTransparency,
+    required bool powerSave,
     required bool isWeb,
   });
 
@@ -6314,6 +6315,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @override
   GlassTier crateApiGlassResolveTier({
     required bool reduceTransparency,
+    required bool powerSave,
     required bool isWeb,
   }) {
     return handler.executeSync(
@@ -6321,6 +6323,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         callFfi: () {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_bool(reduceTransparency, serializer);
+          sse_encode_bool(powerSave, serializer);
           sse_encode_bool(isWeb, serializer);
           return pdeCallFfi(
             generalizedFrbRustBinding,
@@ -6333,7 +6336,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           decodeErrorData: null,
         ),
         constMeta: kCrateApiGlassResolveTierConstMeta,
-        argValues: [reduceTransparency, isWeb],
+        argValues: [reduceTransparency, powerSave, isWeb],
         apiImpl: this,
       ),
     );
@@ -6341,7 +6344,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiGlassResolveTierConstMeta => const TaskConstMeta(
     debugName: "resolve_tier",
-    argNames: ["reduceTransparency", "isWeb"],
+    argNames: ["reduceTransparency", "powerSave", "isWeb"],
   );
 
   @override

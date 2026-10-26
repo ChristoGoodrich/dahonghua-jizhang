@@ -6090,11 +6090,13 @@ fn wire__crate__api__glass__resolve_tier_impl(
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_reduce_transparency = <bool>::sse_decode(&mut deserializer);
+            let api_power_save = <bool>::sse_decode(&mut deserializer);
             let api_is_web = <bool>::sse_decode(&mut deserializer);
             deserializer.end();
             transform_result_sse::<_, ()>((move || {
                 let output_ok = Result::<_, ()>::Ok(crate::api::glass::resolve_tier(
                     api_reduce_transparency,
+                    api_power_save,
                     api_is_web,
                 ))?;
                 Ok(output_ok)

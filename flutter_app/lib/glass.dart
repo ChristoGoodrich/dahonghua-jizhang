@@ -36,8 +36,22 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
+import 'power.dart';
 import 'src/rust/api/glass.dart' as g;
 import 'theme.dart';
+
+/// How much of the material to draw here: the core's answer to what the phone
+/// says.
+///
+/// One function rather than the call spelled out in each surface. It was four
+/// copies, and adding battery saver to them was four chances to miss one — the
+/// surface that missed it would be the one blur left on a phone that asked
+/// for none.
+g.GlassTier glassTier(BuildContext context) => g.resolveTier(
+  reduceTransparency: MediaQuery.maybeDisableAnimationsOf(context) ?? false,
+  powerSave: PowerSaving.of(context),
+  isWeb: false,
+);
 
 /// A surface made of the app's glass.
 ///
@@ -87,10 +101,7 @@ class Glass extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = palette;
 
-    final tier = g.resolveTier(
-      reduceTransparency: MediaQuery.maybeDisableAnimationsOf(context) ?? false,
-      isWeb: false,
-    );
+    final tier = glassTier(context);
     final spec = g.glassSpec(isDark: p.isDark, level: level);
     final alpha = g.readabilityAlpha(
       isDark: p.isDark,
@@ -395,11 +406,7 @@ class _GlassScrimState extends State<GlassScrim> {
     final flipped = widget.flipped;
     final under = widget.under;
     final p = palette;
-    final tier = g.resolveTier(
-      reduceTransparency: MediaQuery.maybeDisableAnimationsOf(context) ?? false,
-      isWeb: false,
-    );
-    final spec = g.scrimSpec(isDark: p.isDark, tier: tier);
+    final spec = g.scrimSpec(isDark: p.isDark, tier: glassTier(context));
     final ramp = g.scrimRamp(wash: spec.wash, bands: spec.bands);
     final tint = under == null ? p.paper : parseHex(under);
 
@@ -556,14 +563,7 @@ class ScrimBandMask extends CustomPainter {
 /// `ScrimSpec::foot`.
 ({double foot, double ramp}) scrimFoot(BuildContext context, double surface) {
   final foot = g
-      .scrimSpec(
-        isDark: palette.isDark,
-        tier: g.resolveTier(
-          reduceTransparency:
-              MediaQuery.maybeDisableAnimationsOf(context) ?? false,
-          isWeb: false,
-        ),
-      )
+      .scrimSpec(isDark: palette.isDark, tier: glassTier(context))
       .foot;
   return (foot: foot, ramp: g.footRamp(foot: foot, surface: surface));
 }
@@ -573,16 +573,8 @@ class ScrimBandMask extends CustomPainter {
 /// The caller adds its own height: the bar knows how tall it is and the header
 /// knows the status bar's inset, and neither is arithmetic worth crossing the
 /// boundary for.
-double scrimFade(BuildContext context) => g
-    .scrimSpec(
-      isDark: palette.isDark,
-      tier: g.resolveTier(
-        reduceTransparency:
-            MediaQuery.maybeDisableAnimationsOf(context) ?? false,
-        isWeb: false,
-      ),
-    )
-    .fade;
+double scrimFade(BuildContext context) =>
+    g.scrimSpec(isDark: palette.isDark, tier: glassTier(context)).fade;
 
 /// How far down a screen's content has to start so its first row is not born
 /// under the header.

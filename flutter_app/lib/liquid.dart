@@ -30,6 +30,8 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
+import 'glass.dart';
+import 'src/rust/api/glass.dart' as g;
 import 'src/rust/api/liquid.dart' as q;
 import 'theme.dart';
 
@@ -71,17 +73,28 @@ class LiquidLens extends StatelessWidget {
     // velocity, which is exactly when it is being looked at.
     final lead = 1 - lens.sheenAt;
 
+    // A second blur over the bar's own, at the tier the bar is at: under
+    // battery saver or 移除动画 the bar has none, and a lens blurring on its
+    // own would be the one capture left on the screen.
+    final blurs = glassTier(context) == g.GlassTier.full;
+
+    Widget frosted(Widget child) => blurs
+        ? BackdropFilter(
+            // Small — this is a thin lens, not a sheet — but without it the
+            // pill is a colour and not a material.
+            filter: ui.ImageFilter.blur(
+              sigmaX: 6,
+              sigmaY: 6,
+              tileMode: TileMode.decal,
+            ),
+            child: child,
+          )
+        : child;
+
     final body = ClipRRect(
       borderRadius: shape,
-      child: BackdropFilter(
-        // A second blur over the bar's own. Small — this is a thin lens, not a
-        // sheet — but without it the pill is a colour and not a material.
-        filter: ui.ImageFilter.blur(
-          sigmaX: 6,
-          sigmaY: 6,
-          tileMode: TileMode.decal,
-        ),
-        child: Stack(
+      child: frosted(
+        Stack(
           children: [
             // Unpositioned, so the Stack sizes to it rather than taking its
             // whole constraints. Three places in this codebase have made that

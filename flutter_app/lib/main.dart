@@ -37,6 +37,7 @@ import 'inbox.dart';
 import 'lock_gate.dart';
 import 'import_screen.dart';
 import 'persistence.dart';
+import 'power.dart';
 import 'record_sheet.dart' as sheet;
 import 'reimburse_screen.dart';
 import 'settings_screen.dart';
@@ -61,6 +62,7 @@ Future<void> main() async {
   // Before the first frame, so the list does not visibly gain rows a moment
   // after it is drawn.
   if (runDueCharges().isNotEmpty) await store.flush();
+  watchPowerSaving();
   runApp(App(store: store));
 }
 
@@ -152,6 +154,12 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     final zh = store.language() != 'en';
+    // Above the app, so every route sees battery saver; and a change reaches
+    // only the glass that depends on it, not this root.
+    return FollowPowerSaving(child: _app(zh));
+  }
+
+  Widget _app(bool zh) {
     return MaterialApp(
       title: '大红花记账',
       debugShowCheckedModeBanner: false,

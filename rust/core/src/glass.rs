@@ -206,14 +206,22 @@ pub fn glass_spec(t: &GlassTheme, level: GlassLevel) -> GlassSpec {
 
 /// Which tier to render.
 ///
-/// `is_web` is the platform's answer, not this crate's: react-native-web maps
-/// the blur onto `backdrop-filter`, which costs a compositing layer per
-/// surface, and over our own flat backgrounds the wash tier looks nearly
-/// identical.
-pub fn resolve_tier(reduce_transparency: bool, is_web: bool) -> GlassTier {
+/// Every input is the platform's answer, not this crate's. `is_web`: the
+/// shipping build's react-native-web mapped the blur onto `backdrop-filter`,
+/// which costs a compositing layer per surface, and over our own flat
+/// backgrounds the wash tier looks nearly identical.
+///
+/// `power_save` is Android's battery saver, and it drops to the same tier for
+/// a related reason. A backdrop blur is the most expensive thing this app
+/// draws — on a phone's GPU each one is a break in the render pass — and
+/// battery saver is the user asking the phone to spend less. The wash keeps
+/// the material's colour and its separation from the content; only the blur
+/// goes. Asking for less transparency still wins: solid is less work again,
+/// and it is what that user asked for.
+pub fn resolve_tier(reduce_transparency: bool, power_save: bool, is_web: bool) -> GlassTier {
     if reduce_transparency {
         GlassTier::Solid
-    } else if is_web {
+    } else if power_save || is_web {
         GlassTier::Wash
     } else {
         GlassTier::Full
@@ -817,11 +825,23 @@ mod tests {
 
     #[test]
     fn the_tier_answers_the_platform_and_the_user() {
-        assert_eq!(resolve_tier(false, false), GlassTier::Full);
-        assert_eq!(resolve_tier(false, true), GlassTier::Wash);
+        assert_eq!(resolve_tier(false, false, false), GlassTier::Full);
+        assert_eq!(resolve_tier(false, false, true), GlassTier::Wash);
         // asking for less transparency outranks the platform
-        assert_eq!(resolve_tier(true, true), GlassTier::Solid);
-        assert_eq!(resolve_tier(true, false), GlassTier::Solid);
+        assert_eq!(resolve_tier(true, false, true), GlassTier::Solid);
+        assert_eq!(resolve_tier(true, false, false), GlassTier::Solid);
+    }
+
+    #[test]
+    fn battery_saver_keeps_the_wash_and_drops_the_blur() {
+        assert_eq!(resolve_tier(false, true, false), GlassTier::Wash);
+        // and the wash tier really has no blur in it: the scrim's sigma is
+        // what the screens build their BackdropFilters from
+        assert_eq!(scrim_spec(&light(), GlassTier::Wash).sigma, 0.0);
+        // less transparency is less work again, and what that user asked for
+        assert_eq!(resolve_tier(true, true, false), GlassTier::Solid);
+        assert_eq!(resolve_tier(true, true, true), GlassTier::Solid);
+        assert_eq!(resolve_tier(false, true, true), GlassTier::Wash);
     }
 
     #[test]
