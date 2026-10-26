@@ -312,6 +312,58 @@ is spaced with `pump`. Use `tester.fling` and `tester.drag`. `pumpWidget`
 twice in one test also reuses the element and therefore the lens's position —
 give the two trees different keys.
 
+## Fitting a small phone
+
+The suite runs on a Pixel 7, 412×915dp (locally, and in CI since #34), and
+that much room hides a row that does not fit. **360×640 is the smallest phone the app is laid out for**: 360
+is the narrowest width still common, and 640 is a 16:9 phone of that width.
+`narrow_test` walks every screen there, in both languages, with the tour's
+month in it (`integration_test/month.dart`), and puts a keyboard up under
+every form. The keyboard is faked with `tester.view.viewInsets`, because
+whether an emulator shows its own depends on how it was started. The test
+collects every overflow and where the walk was when it happened, instead of
+stopping at the first.
+
+At 360 two things were too wide, and both only in English, which the suite
+otherwise visits for a screen or two. The first is the record sheet's four
+bar actions. They are wider than the bar: on any phone they push the title
+out, and the trailing slot can be as wide as the screen. At 360 that is
+wider than the room beside the back arrow. In English the actions
+overflowed by 19dp, and in Chinese they slid over the arrow, which no
+overflow check sees. They now scale down to that room. The second is 预算's
+"Where this cycle is heading" heading next to an "over at this pace" pill,
+66dp too wide. The title now wraps instead of sitting beside a `Spacer`.
+Everything else that broke was at 640, and it was the height. Every one of
+those cases had a keyboard or a sheet in it:
+
+* **A bottom sheet stops at 9/16 of the screen** unless it sets
+  `isScrollControlled`. On a 640dp phone that is 360dp, and the date
+  picker's month needs about 400.
+* **A dialog with a text field needs a scroll view around its content.**
+  With the keyboard up a 640dp phone leaves the content about 100dp, and a
+  dialog that overflows loses its buttons. `_NewAccountDialog` already did
+  this; the others now copy it.
+* **The record sheet's keypad steps aside** when the phone's own keyboard
+  leaves it no room. The keypad is 325dp, and a 640dp phone with a keyboard
+  up has about 260dp for the whole sheet. A Pixel 7 has room for both, so it
+  keeps both.
+
+320dp is not supported. The one CI run on a 320dp emulator found rows that
+need up to 37dp more than that.
+
+## Less motion
+
+When Android's 移除动画 is on, Flutter sees `disableAnimations`, and three
+things respond. The glass goes solid: `resolve_tier` treats the setting as a
+request for less transparency, so there is no backdrop blur anywhere and
+every wash is opaque. Every surface, the tab lens included, gets this
+through `glassTier(context)`. When battery saver is also on, 移除动画 wins:
+`Solid` is less work than `Wash`, and it is what that user asked for. A new
+entry plants no flowers. 统计's charts appear fully drawn
+instead of drawing themselves in. CI runs with animations on, so
+`motion_test` is the only thing that takes this path. Each of its checks has
+a counterpart with motion on, so a check that cannot fail would show up.
+
 ## Changing the store under a screen
 
 "The screens 我的 opens stutter" was measured before anything was changed, with

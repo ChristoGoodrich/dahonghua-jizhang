@@ -399,32 +399,39 @@ class _RefundDialogState extends State<_RefundDialog> {
         zh ? '退款' : 'Refund',
         style: TextStyle(fontSize: 16, color: palette.ink),
       ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            key: const Key('refund-amt'),
-            controller: _amt,
-            autofocus: true,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            cursorColor: palette.stamen,
-            decoration: InputDecoration(
-              labelText: zh ? '金额' : 'Amount',
-              labelStyle: TextStyle(color: palette.inkSoft),
-              floatingLabelStyle: TextStyle(color: palette.stamen),
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: palette.stamen, width: 2),
+      // Scrollable for the reason the new-account dialog is: with the keyboard
+      // up a 640dp phone leaves this about 100dp, and a dialog that overflows
+      // loses its buttons.
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              key: const Key('refund-amt'),
+              controller: _amt,
+              autofocus: true,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              cursorColor: palette.stamen,
+              decoration: InputDecoration(
+                labelText: zh ? '金额' : 'Amount',
+                labelStyle: TextStyle(color: palette.inkSoft),
+                floatingLabelStyle: TextStyle(color: palette.stamen),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: palette.stamen, width: 2),
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            zh
-                ? '会记一笔收入，原来那笔不动'
-                : 'Logs an income; the original entry is left alone',
-            style: TextStyle(fontSize: 11.5, color: palette.inkSoft),
-          ),
-        ],
+            const SizedBox(height: 8),
+            Text(
+              zh
+                  ? '会记一笔收入，原来那笔不动'
+                  : 'Logs an income; the original entry is left alone',
+              style: TextStyle(fontSize: 11.5, color: palette.inkSoft),
+            ),
+          ],
+        ),
       ),
       actions: [
         TextButton(

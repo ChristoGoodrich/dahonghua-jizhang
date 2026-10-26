@@ -25,9 +25,9 @@ import 'package:flutter_app/src/rust/api/theme.dart' as theme;
 import 'package:flutter_app/theme.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'month.dart';
 import 'rust_init.dart';
 import 'scroll.dart';
-import 'tour.dart' show seed;
 
 const _rows = int.fromEnvironment('PERF_ROWS');
 

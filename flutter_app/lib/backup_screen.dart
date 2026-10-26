@@ -585,58 +585,63 @@ class _PasswordDialogState extends State<_PasswordDialog> {
             : (zh ? '给备份设口令' : 'Seal with a password'),
         style: TextStyle(fontSize: 16, color: palette.ink),
       ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            widget.unlocking
-                ? (zh ? '这份快照是加密的。' : 'This snapshot is sealed.')
-                : (zh
-                      ? '留空就是不加密的普通快照。加密的快照只存账目和设置，'
-                            '不带小票照片 —— 照片还在手机里，恢复后照样能看。'
-                            '忘了口令，加密的备份就打不开了。'
-                      : 'Leave empty for a plain snapshot. A sealed one holds '
-                            'the entries and settings but not the receipt '
-                            'photos, which stay on this phone. It cannot be '
-                            'opened without its password.'),
-            style: TextStyle(fontSize: 12.5, color: palette.inkSoft),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            key: const Key('password-field'),
-            controller: _password,
-            autofocus: true,
-            obscureText: true,
-            cursorColor: palette.stamen,
-            decoration: InputDecoration(
-              labelText: zh ? '口令' : 'Password',
-              labelStyle: TextStyle(color: palette.inkSoft),
+      // Scrollable for the reason the new-account dialog is: with the keyboard
+      // up a 640dp phone leaves this about 100dp, and a dialog that overflows
+      // loses its buttons.
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              widget.unlocking
+                  ? (zh ? '这份快照是加密的。' : 'This snapshot is sealed.')
+                  : (zh
+                        ? '留空就是不加密的普通快照。加密的快照只存账目和设置，'
+                              '不带小票照片 —— 照片还在手机里，恢复后照样能看。'
+                              '忘了口令，加密的备份就打不开了。'
+                        : 'Leave empty for a plain snapshot. A sealed one holds '
+                              'the entries and settings but not the receipt '
+                              'photos, which stay on this phone. It cannot be '
+                              'opened without its password.'),
+              style: TextStyle(fontSize: 12.5, color: palette.inkSoft),
             ),
-            onSubmitted: (_) => widget.unlocking ? _submit() : null,
-          ),
-          if (!widget.unlocking) ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             TextField(
-              key: const Key('password-confirm'),
-              controller: _confirm,
+              key: const Key('password-field'),
+              controller: _password,
+              autofocus: true,
               obscureText: true,
               cursorColor: palette.stamen,
               decoration: InputDecoration(
-                labelText: zh ? '再输一遍' : 'Again',
+                labelText: zh ? '口令' : 'Password',
                 labelStyle: TextStyle(color: palette.inkSoft),
               ),
-              onSubmitted: (_) => _submit(),
+              onSubmitted: (_) => widget.unlocking ? _submit() : null,
             ),
+            if (!widget.unlocking) ...[
+              const SizedBox(height: 8),
+              TextField(
+                key: const Key('password-confirm'),
+                controller: _confirm,
+                obscureText: true,
+                cursorColor: palette.stamen,
+                decoration: InputDecoration(
+                  labelText: zh ? '再输一遍' : 'Again',
+                  labelStyle: TextStyle(color: palette.inkSoft),
+                ),
+                onSubmitted: (_) => _submit(),
+              ),
+            ],
+            if (_error != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                _error!,
+                key: const Key('password-error'),
+                style: TextStyle(fontSize: 12, color: palette.warnDeep),
+              ),
+            ],
           ],
-          if (_error != null) ...[
-            const SizedBox(height: 8),
-            Text(
-              _error!,
-              key: const Key('password-error'),
-              style: TextStyle(fontSize: 12, color: palette.warnDeep),
-            ),
-          ],
-        ],
+        ),
       ),
       actions: [
         TextButton(
