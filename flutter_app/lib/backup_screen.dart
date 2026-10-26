@@ -326,7 +326,7 @@ class _BackupScreenState extends State<BackupScreen> {
       if (!unlocked.ok) {
         setState(
           () => _flash = zh
-              ? '口令不对,或者文件坏了 — 没有改动'
+              ? '口令不对，或者文件坏了 — 没有改动'
               : 'Wrong password, or the file is damaged — nothing changed',
         );
         return;
@@ -350,7 +350,7 @@ class _BackupScreenState extends State<BackupScreen> {
     setState(() {
       _flash = r.ok
           ? (widget.zh ? '已恢复 ${r.entries} 条' : 'Restored ${r.entries} entries')
-          : (widget.zh ? '这份文件读不了,没有改动' : 'Unreadable — nothing changed');
+          : (widget.zh ? '这份文件读不了，没有改动' : 'Unreadable — nothing changed');
     });
     if (r.ok) widget.onRestored?.call();
   }
@@ -387,7 +387,7 @@ class _BackupScreenState extends State<BackupScreen> {
         children: [
           Text(
             zh
-                ? '快照存在这台手机上,最多留 ${backup.maxBackups()} 份,超出的从最旧的开始删。'
+                ? '快照存在这台手机上，最多留 ${backup.maxBackups()} 份，超出的从最旧的开始删。'
                 : 'Snapshots live on this phone. The newest '
                       '${backup.maxBackups()} are kept; older ones go first.',
             style: TextStyle(fontSize: 12.5, color: palette.inkSoft),
@@ -429,8 +429,8 @@ class _BackupScreenState extends State<BackupScreen> {
           const SizedBox(height: 24),
           Text(
             zh
-                ? '快照在这个 app 的存储里,卸载会一起没有 —— 装正式签名的版本就要先卸载,'
-                      '所以换版本前请先「导出」一份。可以给备份设口令;忘了口令就打不开了。'
+                ? '快照在这个 app 的存储里，卸载会一起没有 —— 装正式签名的版本就要先卸载，'
+                      '所以换版本前请先「导出」一份。可以给备份设口令；忘了口令就打不开了。'
                 : 'Snapshots live in this app storage and an uninstall takes '
                       'them — which is what installing a properly signed build '
                       'needs. Export one first. You can seal a snapshot with a '
@@ -566,9 +566,9 @@ class _PasswordDialogState extends State<_PasswordDialog> {
             widget.unlocking
                 ? (zh ? '这份快照是加密的。' : 'This snapshot is sealed.')
                 : (zh
-                      ? '留空就是不加密的普通快照。加密的快照只存账目和设置,'
-                            '不带小票照片 —— 照片还在手机里,恢复后照样能看。'
-                            '忘了口令,加密的备份就打不开了。'
+                      ? '留空就是不加密的普通快照。加密的快照只存账目和设置，'
+                            '不带小票照片 —— 照片还在手机里，恢复后照样能看。'
+                            '忘了口令，加密的备份就打不开了。'
                       : 'Leave empty for a plain snapshot. A sealed one holds '
                             'the entries and settings but not the receipt '
                             'photos, which stay on this phone. It cannot be '

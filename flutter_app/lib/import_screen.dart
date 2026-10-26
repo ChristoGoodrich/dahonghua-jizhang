@@ -197,9 +197,9 @@ class _ImportScreenState extends State<ImportScreen> {
   Widget _intro(bool zh) {
     final steps = zh
         ? [
-            ('选文件', '支付宝或微信导出的账单 CSV,编码不用管,认得出来'),
-            ('先看一遍', '读出来的每一行都列出来,已经记过的会标出来'),
-            ('再确认', '只导入新的那些,确认之前一笔都不记'),
+            ('选文件', '支付宝或微信导出的账单 CSV，编码不用管，认得出来'),
+            ('先看一遍', '读出来的每一行都列出来，已经记过的会标出来'),
+            ('再确认', '只导入新的那些，确认之前一笔都不记'),
           ]
         : [
             (
@@ -327,7 +327,7 @@ class _ImportScreenState extends State<ImportScreen> {
       Text(
         key: const Key('import-meta'),
         zh
-            ? '${p.candidates.length} 行,其中 ${p.dupCount} 行已经记过'
+            ? '${p.candidates.length} 行，其中 ${p.dupCount} 行已经记过'
                   '${p.skipped > 0 ? ",${p.skipped} 行读不了" : ""}'
             : '${p.candidates.length} rows · ${p.dupCount} already recorded'
                   '${p.skipped > 0 ? " · ${p.skipped} unreadable" : ""}',
@@ -403,7 +403,7 @@ class _ImportScreenState extends State<ImportScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                c.note.isEmpty ? (zh ? '(无备注)' : '(no note)') : c.note,
+                c.note.isEmpty ? (zh ? '（无备注）' : '(no note)') : c.note,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(

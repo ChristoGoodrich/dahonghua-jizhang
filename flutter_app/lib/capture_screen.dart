@@ -136,7 +136,7 @@ class _CaptureScreenState extends State<CaptureScreen> {
           if (!_native.supported)
             Text(
               zh
-                  ? '这台设备没有通知监听,自动记账用不了。账单导入可以做同样的事,晚一点而已。'
+                  ? '这台设备没有通知监听，自动记账用不了。账单导入可以做同样的事，晚一点而已。'
                   : 'This device has no notification listener, so auto-capture '
                         'is unavailable. Importing a bill export does the same '
                         'job, just later.',
@@ -237,7 +237,7 @@ class _CaptureScreenState extends State<CaptureScreen> {
             const SizedBox(height: 12),
             Text(
               zh
-                  ? '支付通知一到就记下来,不用打开这个 app。'
+                  ? '支付通知一到就记下来，不用打开这个 app。'
                   : 'A payment notification becomes an entry without '
                         'opening the app.',
               style: TextStyle(fontSize: 13, color: palette.ink),
@@ -258,7 +258,7 @@ class _CaptureScreenState extends State<CaptureScreen> {
                 Expanded(
                   child: Text(
                     zh
-                        ? '只看支付宝、微信和银行的通知,别的一概不存。'
+                        ? '只看支付宝、微信和银行的通知，别的一概不存。'
                         : 'Only Alipay, WeChat and bank notifications are '
                               'read; nothing else is stored.',
                     style: TextStyle(fontSize: 12, color: palette.inkSoft),
@@ -278,7 +278,7 @@ class _CaptureScreenState extends State<CaptureScreen> {
     if (!_granted) ...[
       Text(
         zh
-            ? '还没有通知权限。这个权限只能在系统设置里给,app 弹不出来。'
+            ? '还没有通知权限。这个权限只能在系统设置里给，app 弹不出来。'
             : 'Notification access has not been granted. It can only be '
                   'given in system settings — no app can ask for it.',
         key: const Key('capture-not-granted'),
@@ -314,7 +314,7 @@ class _CaptureScreenState extends State<CaptureScreen> {
           subtitle: Text(
             _capturing
                 ? (zh ? '开着' : 'On')
-                : (zh ? '权限有了,还没开' : 'Granted, but not on'),
+                : (zh ? '权限有了，还没开' : 'Granted, but not on'),
             style: TextStyle(fontSize: 12, color: palette.inkSoft),
           ),
         ),
@@ -344,7 +344,7 @@ class _CaptureScreenState extends State<CaptureScreen> {
       const SizedBox(height: 4),
       Text(
         zh
-            ? '这些看懂了金额,没看出商家。记下来的备注会是下面这个。'
+            ? '这些看懂了金额，没看出商家。记下来的备注会是下面这个。'
             : 'The amount was read but no merchant was. The note would be what '
                   'is shown below.',
         style: TextStyle(fontSize: 11.5, color: palette.inkSoft),
@@ -444,7 +444,7 @@ class _CaptureScreenState extends State<CaptureScreen> {
       ),
       Text(
         zh
-            ? '留着是为了看清真实的通知长什么样,规则才能改对。这些不会变成账。'
+            ? '留着是为了看清真实的通知长什么样，规则才能改对。这些不会变成账。'
             : 'Kept so the real wording can be read and the rules improved. '
                   'None of these become entries.',
         style: TextStyle(fontSize: 11.5, color: palette.inkSoft),

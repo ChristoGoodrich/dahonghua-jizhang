@@ -50,6 +50,7 @@ refuses to run without `src/` for exactly that reason.
     npm run rust:clippy   -D warnings
     npm run bridge:clippy the bridge is a separate cargo project
     npm run tests:check   all_test.dart is not stale
+    npm run zh:check      Chinese strings use ，；：（）, not ASCII
     npm run apk           the release APKs, one per architecture
 
     cd flutter_app

@@ -172,7 +172,7 @@ class _LockGateState extends State<LockGate> with WidgetsBindingObserver {
   }
 
   String _noticeText(String n, bool zh) => switch (n) {
-    'failed' => zh ? '没通过,再试一次' : 'Not recognised — try again',
+    'failed' => zh ? '没通过，再试一次' : 'Not recognised — try again',
     _ => zh ? '现在没法验证' : 'Cannot verify right now',
   };
 

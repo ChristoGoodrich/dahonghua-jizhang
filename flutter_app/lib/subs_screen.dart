@@ -439,7 +439,7 @@ class _NewSubDialogState extends State<_NewSubDialog> {
                     controller: _periods,
                     keyboardType: TextInputType.number,
                     cursorColor: palette.stamen,
-                    decoration: _field(zh ? '分期数(可空)' : 'Instalments'),
+                    decoration: _field(zh ? '分期数（可空）' : 'Instalments'),
                   ),
                 ),
               ],

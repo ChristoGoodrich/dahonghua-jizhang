@@ -255,9 +255,9 @@ class _BudgetScreenState extends State<BudgetScreen> {
                 ),
                 child: Text(
                   o.onTrack
-                      ? (zh ? '照这样花,守得住' : 'On track')
+                      ? (zh ? '照这样花，守得住' : 'On track')
                       : (zh
-                            ? '照这样花,会超 ${money.fmtShort(n: o.over, symbol: sym)}'
+                            ? '照这样花，会超 ${money.fmtShort(n: o.over, symbol: sym)}'
                             : '${money.fmtShort(n: o.over, symbol: sym)} over at this pace'),
                   style: TextStyle(
                     fontSize: 11.5,

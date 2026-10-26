@@ -584,7 +584,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
           Padding(
             padding: const EdgeInsets.fromLTRB(26, 16, 26, 0),
             child: Text(
-              zh ? '点一天,看那天的每一笔' : 'Tap a day to see what happened on it',
+              zh ? '点一天，看那天的每一笔' : 'Tap a day to see what happened on it',
               style: TextStyle(fontSize: 12.5, color: p.inkSoft),
             ),
           )
@@ -734,7 +734,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
     decoration: InputDecoration(
       border: InputBorder.none,
       isDense: true,
-      hintText: zh ? '找一笔:上周、星巴克、>100' : 'last week · coffee · >100',
+      hintText: zh ? '找一笔：上周、星巴克、>100' : 'last week · coffee · >100',
       hintStyle: TextStyle(fontSize: 15, color: palette.inkSoft),
     ),
     onChanged: (_) => _reload(),

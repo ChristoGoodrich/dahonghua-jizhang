@@ -40,7 +40,7 @@ import 'theme.dart';
 String rejectionText(String kind, bool zh) {
   if (kind.startsWith('noRate:')) {
     final cur = kind.substring(7);
-    return zh ? '$cur 暂无汇率,无法换算' : 'No exchange rate for $cur';
+    return zh ? '$cur 暂无汇率，无法换算' : 'No exchange rate for $cur';
   }
   switch (kind) {
     case 'amount':
@@ -1217,7 +1217,7 @@ class _TemplateNameDialogState extends State<_TemplateNameDialog> {
         autofocus: true,
         cursorColor: palette.stamen,
         decoration: InputDecoration(
-          labelText: zh ? '名字(可空)' : 'Name (optional)',
+          labelText: zh ? '名字（可空）' : 'Name (optional)',
           labelStyle: TextStyle(color: palette.inkSoft),
           floatingLabelStyle: TextStyle(color: palette.stamen),
           focusedBorder: UnderlineInputBorder(

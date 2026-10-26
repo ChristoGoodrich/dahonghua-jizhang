@@ -703,7 +703,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             icon: Icons.insights_outlined,
             title: zh ? '回顾' : 'Report',
             desc: zh
-                ? '这个周期和这一周,过得怎么样'
+                ? '这个周期和这一周，过得怎么样'
                 : 'How the cycle and the week are going',
             onTap: () => _push(ReportScreen(zh: zh)),
           ),
@@ -711,7 +711,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             id: 'reimburse',
             icon: Icons.receipt_long_outlined,
             title: zh ? '报销' : 'Reimbursements',
-            desc: zh ? '垫的钱,和收回来的' : 'What you fronted, and what came back',
+            desc: zh ? '垫的钱，和收回来的' : 'What you fronted, and what came back',
             onTap: () =>
                 _push(ReimburseScreen(zh: zh, onChanged: _entriesChanged)),
           ),
@@ -741,7 +741,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             id: 'currency',
             icon: Icons.currency_exchange,
             title: zh ? '币种与汇率' : 'Currencies',
-            desc: zh ? '记账单位,和别的币种怎么换' : 'The base unit, and the rates',
+            desc: zh ? '记账单位，和别的币种怎么换' : 'The base unit, and the rates',
             onTap: () => _push(
               CurrencyScreen(
                 zh: zh,
@@ -754,7 +754,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             id: 'tags',
             icon: Icons.label_outline,
             title: zh ? '标签与账本' : 'Tags and ledgers',
-            desc: zh ? '给记录分组,或者分成几本账' : 'Group entries, or split the books',
+            desc: zh ? '给记录分组，或者分成几本账' : 'Group entries, or split the books',
             onTap: () => _push(TagsScreen(zh: zh, onChanged: _configChanged)),
           ),
         ],
@@ -804,7 +804,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             icon: Icons.sync_alt,
             title: zh ? '同步' : 'Sync',
             desc: zh
-                ? '通过一个文件,和另一台设备合并'
+                ? '通过一个文件，和另一台设备合并'
                 : 'Merge with another device, through a file',
             onTap: () => _push(
               SyncScreen(

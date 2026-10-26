@@ -94,7 +94,7 @@ class _ReimburseScreenState extends State<ReimburseScreen> {
               icon: Icons.receipt_long_outlined,
               text: zh ? '还没有报销' : 'Nothing to claim',
               hint: zh
-                  ? '在明细里长按一笔,再点下面的「报销」'
+                  ? '在明细里长按一笔，再点下面的「报销」'
                   : 'Long-press an entry, then tap Claim on the bar',
             ),
           for (final c in _claims.items) _row(c, zh),
@@ -303,7 +303,7 @@ Future<bool> showEntryActions(
               style: TextStyle(fontSize: 15, color: palette.ink),
             ),
             subtitle: Text(
-              zh ? '退回一部分或全部,并记一笔收入' : 'Log the money coming back',
+              zh ? '退回一部分或全部，并记一笔收入' : 'Log the money coming back',
               style: TextStyle(fontSize: 12, color: palette.inkSoft),
             ),
             onTap: () => Navigator.pop(ctx, 'refund'),
@@ -420,7 +420,7 @@ class _RefundDialogState extends State<_RefundDialog> {
           const SizedBox(height: 8),
           Text(
             zh
-                ? '会记一笔收入,原来那笔不动'
+                ? '会记一笔收入，原来那笔不动'
                 : 'Logs an income; the original entry is left alone',
             style: TextStyle(fontSize: 11.5, color: palette.inkSoft),
           ),

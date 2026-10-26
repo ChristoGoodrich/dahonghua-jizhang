@@ -37,9 +37,9 @@ String reportDay(DateTime d) => '${d.year}-${d.month}-${d.day}';
 report.InsightCopyView insightCopy(bool zh) => zh
     ? const report.InsightCopyView(
         overBudget: '预算已经花完了',
-        nearBudget: '预算用掉 %d%,悠着点',
+        nearBudget: '预算用掉 %d%，悠着点',
         dailyOver: '今天超了 %s',
-        catOver: '%s 花了 %a,超过 %b 的上限',
+        catOver: '%s 花了 %a，超过 %b 的上限',
         topCat: '%s 占了这个周期的 %d%',
         creditDue: '%s %w 要还 %a',
         daysLeft: '还有 %d 天',

@@ -66,6 +66,11 @@ jobs:
       - name: Integration suite is complete
         run: npm run tests:check
 
+      # Chinese text takes ，；：（）. Fifty-two strings had drifted to ASCII
+      # before anything looked.
+      - name: Chinese punctuation
+        run: npm run zh:check
+
   flutter:
     runs-on: ubuntu-latest
     # Measured on 2026-10-26, on a runner with no GPU: about 12 minutes to the
