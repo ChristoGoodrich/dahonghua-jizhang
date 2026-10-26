@@ -38,7 +38,17 @@ void spend(String id, double amt, {String? note}) {
 /// receipt's bytes where the sheet would have put them.
 Future<void> spendWithReceipt(String id, String photo) async {
   final dir = await attachmentsDir();
-  await File('${dir.path}/$photo').writeAsString('the receipt for $id');
+  final f = File('${dir.path}/$photo');
+  final existed = await f.exists();
+  await f.writeAsString('the receipt for $id');
+  // Not an image, and the attachments directory outlives this file: a later
+  // test that opens the sheet on a receipt of the same name finds it and
+  // fails decoding it, which is how this was found.
+  if (!existed) {
+    addTearDown(() async {
+      if (await f.exists()) await f.delete();
+    });
+  }
   final r = record.saveForm(
     form: record
         .initialForm(sourceId: '', editing: false, ledger: '')
