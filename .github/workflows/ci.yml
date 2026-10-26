@@ -122,6 +122,17 @@ jobs:
           flutter build apk --debug --config-only
           cd android && ./gradlew :app:testDebugUnitTest --console=plain
 
+      # GitHub's Linux runners have /dev/kvm, but not for the runner's user.
+      # Without it the emulator falls back to software emulation (`-accel
+      # off`) and does not finish booting inside the ten-minute timeout — the
+      # log says "This user doesn't have permissions to use KVM". The rule is
+      # the one android-emulator-runner's README gives.
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
       # The whole suite in one entrypoint. Per file it was 33 APK builds and
       # about twenty minutes; this is one build and about five, which is what
       # makes running it on every push affordable at all.
