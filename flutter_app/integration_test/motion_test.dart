@@ -25,9 +25,17 @@ import 'rust_init.dart';
 import 'scroll.dart';
 
 /// The phone's 移除动画, as Flutter hears it.
-void still(WidgetTester tester) {
+void still(WidgetTester tester) => _motion(tester, off: true);
+
+/// And the counterparts' motion, said rather than assumed: an emulator
+/// started with its animations off — main's CI did that — would otherwise
+/// turn every counterpart into a second copy of the check it is there to
+/// prove can fail.
+void moving(WidgetTester tester) => _motion(tester, off: false);
+
+void _motion(WidgetTester tester, {required bool off}) {
   tester.platformDispatcher.accessibilityFeaturesTestValue =
-      const FakeAccessibilityFeatures(disableAnimations: true);
+      FakeAccessibilityFeatures(disableAnimations: off);
   addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
 }
 
@@ -105,6 +113,7 @@ void main() {
     testWidgets('with motion on, the same shell blurs and lets light through', (
       tester,
     ) async {
+      moving(tester);
       await tester.pumpWidget(const App());
       await tester.pumpAndSettle();
 
@@ -171,6 +180,7 @@ void main() {
       tester,
     ) async {
       lunch();
+      moving(tester);
       await tester.pumpWidget(const MaterialApp(home: StatsScreen()));
       expect(donutProgress(tester), lessThan(1.0));
       await tester.pumpAndSettle();
