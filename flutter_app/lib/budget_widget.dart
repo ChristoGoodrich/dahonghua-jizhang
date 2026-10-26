@@ -16,8 +16,8 @@
 import 'package:flutter/services.dart';
 
 import 'amounts.dart' as amounts;
+import 'ledger_days.dart';
 import 'src/rust/api/budget.dart' as budget;
-import 'src/rust/api/store.dart' as store;
 
 /// What the widget is told. Everything is already decided and already
 /// formatted — the Kotlin has no way to disagree with the app because it is
@@ -30,6 +30,8 @@ class WidgetData {
     required this.pct,
     required this.over,
     required this.hasBudget,
+    this.next,
+    this.nextAt = 0,
   });
 
   final String title;
@@ -47,6 +49,17 @@ class WidgetData {
   /// The widget shows a dash rather than claiming 0%.
   final bool hasBudget;
 
+  /// What the widget should say once the next cycle has begun, worked out
+  /// now, and the instant that is — local midnight, epoch milliseconds.
+  ///
+  /// The launcher redraws the widget hourly from what it was last handed, and
+  /// a new cycle is not a change anybody makes: nothing pushes at midnight on
+  /// the 1st. So the page is turned in advance and the Kotlin is trusted with
+  /// one comparison against the clock. It does no arithmetic, and it is never
+  /// asked to work out which day a cycle starts on.
+  final WidgetData? next;
+  final int nextAt;
+
   Map<String, Object?> toMap() => {
         'title': title,
         'spent': spent,
@@ -54,24 +67,52 @@ class WidgetData {
         'pct': pct,
         'over': over,
         'hasBudget': hasBudget,
+        if (next case final n?) ...{
+          'nextAt': nextAt,
+          'nextTitle': n.title,
+          'nextSpent': n.spent,
+          'nextLeft': n.left,
+          'nextPct': n.pct,
+          'nextOver': n.over,
+          'nextHasBudget': n.hasBudget,
+        },
       };
 }
 
-/// Build what the widget should show from the ledger as it stands.
+/// Build what the widget should show from the ledger as it stands, for the
+/// cycle containing `now` and for the one after it.
 ///
-/// `ids` are the entries in the current cycle, which the budget screen works
-/// out the same way — the cycle is a calendar question and the days come from
-/// Dart, as everywhere.
-WidgetData widgetData({required bool zh}) {
-  final live = store.liveEntries();
-  final now = DateTime.now();
+/// The cycle is a calendar question and the days come from Dart, as
+/// everywhere — from `LedgerDays`, which the screens share, rather than from
+/// a fresh read of the whole ledger on every push.
+WidgetData widgetData({required bool zh, DateTime? now}) {
+  final at = now ?? DateTime.now();
+  final ledger = LedgerDays.current();
+  // `y-m-d`, the day the next cycle starts on; the core says which day,
+  // and its midnight is this phone's.
+  final p = budget.nextCycle(today: dayKey(at)).split('-').map(int.parse).toList();
+  final turns = DateTime(p[0], p[1], p[2]);
+  return _face(
+    zh,
+    ledger,
+    at,
+    next: _face(zh, ledger, turns),
+    nextAt: turns.millisecondsSinceEpoch,
+  );
+}
+
+/// The six things the widget shows, for the cycle containing `day`.
+WidgetData _face(
+  bool zh,
+  LedgerDays ledger,
+  DateTime day, {
+  WidgetData? next,
+  int nextAt = 0,
+}) {
   final ids = budget.cycleIds(
-    ids: live.map((e) => e.id).toList(),
-    daysOf: live.map((e) {
-      final d = DateTime.fromMillisecondsSinceEpoch(e.ts);
-      return '${d.year}-${d.month}-${d.day}';
-    }).toList(),
-    today: '${now.year}-${now.month}-${now.day}',
+    ids: ledger.ids,
+    daysOf: ledger.days,
+    today: dayKey(day),
   );
 
   final s = budget.settings();
@@ -98,6 +139,8 @@ WidgetData widgetData({required bool zh}) {
     pct: status.pct.isFinite ? status.pct.round() : 0,
     over: status.over,
     hasBudget: status.limit > 0,
+    next: next,
+    nextAt: nextAt,
   );
 }
 
@@ -128,7 +171,10 @@ class AndroidWidgetHost implements WidgetHost {
 
 /// Push the current budget to the home screen.
 ///
-/// Called whenever the ledger or the budget changes. Cheap enough not to
+/// Called whenever the ledger or the budget changes, and on every launch and
+/// return to the foreground — the cycle can turn with nothing changed, and
+/// the widget's own page-turn is only as good as the last time it was told
+/// where the next cycle starts. Cheap enough not to
 /// debounce: it is one channel call and a preferences write, and a widget that
 /// lags the app by a few seconds is the thing being avoided.
 Future<void> refreshWidget({required bool zh, WidgetHost? host}) async {

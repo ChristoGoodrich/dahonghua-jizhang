@@ -1,6 +1,9 @@
 package com.dahonghua.flutter_app.widget
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
@@ -54,5 +57,39 @@ class BudgetWidgetProviderTest {
     assertEquals("—", BudgetWidgetProvider.percentageLabel(hasBudget = false, pct = 55))
     assertEquals("0%", BudgetWidgetProvider.percentageLabel(hasBudget = true, pct = 0))
     assertEquals("55%", BudgetWidgetProvider.percentageLabel(hasBudget = true, pct = 55))
+  }
+
+  /**
+   * The third decision, and the only new one: which of the two cycles Dart
+   * left behind to draw. The hourly redraw used to draw last month's strings
+   * all through a month nobody opened the app in.
+   */
+  @Test
+  fun the_page_turns_at_the_instant_dart_named_and_not_before() {
+    val at = 1_793_491_200_000L
+    assertFalse(BudgetWidgetProvider.showsNext(now = at - 1, nextAt = at))
+    assertTrue(BudgetWidgetProvider.showsNext(now = at, nextAt = at))
+    assertTrue(BudgetWidgetProvider.showsNext(now = at + 86_400_000L * 40, nextAt = at))
+  }
+
+  @Test
+  fun what_an_older_build_left_behind_never_turns() {
+    // no instant was written, and "never" is the only safe reading of that
+    assertFalse(BudgetWidgetProvider.showsNext(now = 1_793_491_200_000L, nextAt = 0L))
+  }
+
+  @Test
+  fun the_next_cycle_is_kept_apart_from_this_one() {
+    for (k in listOf(
+      BudgetWidgetProvider.KEY_TITLE,
+      BudgetWidgetProvider.KEY_PCT,
+      BudgetWidgetProvider.KEY_SPENT,
+      BudgetWidgetProvider.KEY_LEFT,
+      BudgetWidgetProvider.KEY_OVER,
+      BudgetWidgetProvider.KEY_SET,
+    )) {
+      assertNotEquals(k, BudgetWidgetProvider.nextKey(k))
+      assertNotEquals(BudgetWidgetProvider.KEY_NEXT_AT, BudgetWidgetProvider.nextKey(k))
+    }
   }
 }

@@ -9,7 +9,7 @@
 //! All of that is `dahonghua_core::budget`, pinned by a 4,210-case corpus. What
 //! crosses is the answer.
 
-use super::day::parse_day;
+use super::day::{parse_day, show_day};
 use dahonghua_core::budget::{self as core, TierStatus};
 use dahonghua_core::catalog;
 use dahonghua_core::entry::{Entry, Io};
@@ -77,6 +77,19 @@ pub fn cycle_ids(ids: Vec<String>, days_of: Vec<String>, today: String) -> Vec<S
         .filter(|i| dahonghua_core::cycle::in_cycle(parse_day(&days_of[*i]), anchor, start))
         .map(|i| ids[i].clone())
         .collect()
+}
+
+/// The day the cycle after the one containing `today` begins.
+///
+/// The home-screen widget is handed the next cycle's numbers beside this
+/// one's, so that the launcher's hourly redraw can turn the page on its own
+/// at the start of a month nobody opened the app in. Which day that is is the
+/// cycle's to say; the instant it begins is local midnight, and the timezone
+/// is Dart's.
+#[frb(sync)]
+pub fn next_cycle(today: String) -> String {
+    let start = settings_of().cycle_start;
+    show_day(dahonghua_core::cycle::cycle_range(parse_day(&today), start).end)
 }
 
 /// A spend total against a cap.

@@ -26,6 +26,12 @@ import com.dahonghua.flutter_app.R
  * often after the app has been killed, so it can read only what was left
  * behind for it — which is why the numbers are cached in preferences rather
  * than asked for.
+ *
+ * Two sets of them: this cycle's and the next one's, with the instant the
+ * next one begins. The launcher's hourly `onUpdate` used to redraw last
+ * month's strings all through a month nobody opened the app in. Dart works
+ * out both and when the page turns; this compares that instant with the
+ * clock, and that comparison is the whole of what it decides.
  */
 class BudgetWidgetProvider : AppWidgetProvider() {
 
@@ -46,20 +52,34 @@ class BudgetWidgetProvider : AppWidgetProvider() {
     const val KEY_OVER = "over"
     const val KEY_SET = "has_budget"
 
+    /** When the next cycle begins, epoch milliseconds. Absent is never. */
+    const val KEY_NEXT_AT = "next_at"
+
+    /** The next cycle's copy of `key`. */
+    fun nextKey(key: String): String = "next_$key"
+
+    /**
+     * Whether the page has turned. An absent instant — what a build before
+     * this one left behind — never has, so its strings are drawn as they were.
+     */
+    fun showsNext(now: Long, nextAt: Long): Boolean = nextAt > 0 && now >= nextAt
+
     fun draw(context: Context, manager: AppWidgetManager, widgetId: Int) {
       val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
       val views = RemoteViews(context.packageName, R.layout.widget_budget)
+      val next = showsNext(System.currentTimeMillis(), prefs.getLong(KEY_NEXT_AT, 0L))
+      fun key(k: String) = if (next) nextKey(k) else k
 
       // Clamped for the progress bar only. The colour below is chosen from
       // `over`, which is not derivable from a clamped percentage — 100% and
       // 140% both arrive here as 100.
-      val pct = prefs.getInt(KEY_PCT, 0).coerceIn(0, 100)
-      val over = prefs.getBoolean(KEY_OVER, false)
-      val hasBudget = prefs.getBoolean(KEY_SET, false)
+      val pct = prefs.getInt(key(KEY_PCT), 0).coerceIn(0, 100)
+      val over = prefs.getBoolean(key(KEY_OVER), false)
+      val hasBudget = prefs.getBoolean(key(KEY_SET), false)
 
-      views.setTextViewText(R.id.widget_month, prefs.getString(KEY_TITLE, "") ?: "")
-      views.setTextViewText(R.id.widget_spent, prefs.getString(KEY_SPENT, "") ?: "")
-      views.setTextViewText(R.id.widget_remaining, prefs.getString(KEY_LEFT, "") ?: "")
+      views.setTextViewText(R.id.widget_month, prefs.getString(key(KEY_TITLE), "") ?: "")
+      views.setTextViewText(R.id.widget_spent, prefs.getString(key(KEY_SPENT), "") ?: "")
+      views.setTextViewText(R.id.widget_remaining, prefs.getString(key(KEY_LEFT), "") ?: "")
       views.setTextViewText(
         R.id.widget_percentage,
         percentageLabel(hasBudget, pct)
