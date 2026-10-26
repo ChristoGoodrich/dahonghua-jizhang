@@ -12,6 +12,7 @@
 // three unrelated switches were toggled. "Cancel all" is also a claim over
 // notifications this app never posted.
 
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
@@ -51,6 +52,11 @@ class DeviceNotifier implements Notifier {
     // The zone database has to be loaded before a zoned schedule can be built,
     // and a repeating local-time schedule is a zoned one by definition.
     tzdata.initializeTimeZones();
+    // Loading the database also sets `tz.local` to UTC, and a schedule built
+    // in UTC fires at the UTC hour: a reminder for 21:00 was set for 05:00
+    // the next morning in China. Which zone the phone is in is the phone's
+    // to say.
+    tz.setLocalLocation(await deviceZone());
     await _plugin.initialize(
       settings: const InitializationSettings(
         android: AndroidInitializationSettings('@mipmap/ic_launcher'),
@@ -122,6 +128,32 @@ class DeviceNotifier implements Notifier {
     await _init();
     await _plugin.cancel(id: id);
   }
+}
+
+/// The phone's time zone, as the tz database knows it.
+///
+/// Android names it (`Asia/Shanghai`); Dart alone has an abbreviation and an
+/// offset, neither of which the database can look up. A name it does not know
+/// falls back to a zone with the phone's offset now — right today, if not
+/// across a daylight-saving change.
+Future<tz.Location> deviceZone() async {
+  try {
+    final id = await const MethodChannel(
+      'com.dahonghua/zone',
+    ).invokeMethod<String>('id');
+    if (id != null) return tz.getLocation(id);
+  } on PlatformException {
+    // the offset below still answers
+  } on MissingPluginException {
+    // no platform side: a host test, or a platform with no reminders
+  } on tz.LocationNotFoundException {
+    // a zone newer than the bundled database
+  }
+  final offset = DateTime.now().timeZoneOffset;
+  for (final l in tz.timeZoneDatabase.locations.values) {
+    if (tz.TZDateTime.now(l).timeZoneOffset == offset) return l;
+  }
+  return tz.UTC;
 }
 
 /// What each reminder says.
