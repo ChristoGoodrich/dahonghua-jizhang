@@ -7,6 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/record_sheet.dart';
+import 'package:flutter_app/src/rust/api/accounts.dart' as accounts;
 import 'package:flutter_app/src/rust/api/record.dart' as record;
 import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_test/flutter_test.dart';
@@ -267,6 +268,97 @@ void main() {
 
       expect(store.entryCount(), 0);
       expect(flash(tester), '请选择转入账户');
+    });
+  });
+
+  group('a receipt on a transfer', () {
+    // The sheet offers 小票 in every direction, and in 转账 the picked image
+    // was copied into attachments and then named on nothing: `save_form`
+    // built a transfer from `TransferOpts`, which had no photo, and the edit
+    // patch for a transfer left it out as well. Switching to 转账 also
+    // dropped one already picked, because the form came back from
+    // `pick_direction` without it.
+    setUp(
+      () => accounts.addAccount(id: 'bank', name: '银行', balance: 0, kind: 'cash'),
+    );
+
+    int now() => DateTime.now().millisecondsSinceEpoch;
+
+    record.FormView fresh() =>
+        record.initialForm(sourceId: '', editing: false, ledger: '');
+
+    record.FormView transfer({String photo = ''}) => record
+        .pickDirection(next: 'xfer', form: fresh())
+        .copyWith(amt: '200', acct: 'default', acctTo: 'bank', photo: photo);
+
+    void save(record.FormView form, {String editId = ''}) {
+      final r = record.saveForm(
+        form: form,
+        editId: editId,
+        id: 't1',
+        now: now(),
+        rateWasCached: false,
+      );
+      expect(r.rejected, isNull);
+    }
+
+    /// A transfer that already has a receipt, made without the path under
+    /// test: an expense with one, turned into a transfer by an edit. That edit
+    /// never touched the field, so the receipt rode along.
+    void transferWithReceipt() {
+      save(fresh().copyWith(amt: '200', photo: 'r1.jpg'));
+      save(
+        record
+            .pickDirection(
+              next: 'xfer',
+              form: record.initialForm(sourceId: 't1', editing: true, ledger: ''),
+            )
+            .copyWith(acct: 'default', acctTo: 'bank', photo: 'r1.jpg'),
+        editId: 't1',
+      );
+      final e = store.getEntry(id: 't1')!;
+      expect(e.io, 'xfer');
+      expect(e.photo, 'r1.jpg');
+    }
+
+    testWidgets('a new one keeps it', (tester) async {
+      save(transfer(photo: 'r1.jpg'));
+      final e = store.getEntry(id: 't1')!;
+      expect(e.io, 'xfer', reason: 'it has to have been saved as a transfer');
+      expect(e.photo, 'r1.jpg');
+    });
+
+    testWidgets('switching to 转账 keeps one already picked', (tester) async {
+      final form = record.pickDirection(
+        next: 'xfer',
+        form: fresh().copyWith(photo: 'r1.jpg'),
+      );
+      expect(form.io, 'xfer');
+      expect(form.photo, 'r1.jpg');
+    });
+
+    testWidgets('an edit can change it', (tester) async {
+      transferWithReceipt();
+      final edit = record.initialForm(sourceId: 't1', editing: true, ledger: '');
+      expect(edit.photo, 'r1.jpg', reason: 'the sheet opens with it');
+      save(edit.copyWith(photo: 'r2.jpg'), editId: 't1');
+      expect(store.getEntry(id: 't1')!.photo, 'r2.jpg');
+    });
+
+    testWidgets('an edit can take it off', (tester) async {
+      transferWithReceipt();
+      final edit = record.initialForm(sourceId: 't1', editing: true, ledger: '');
+      save(edit.copyWith(photo: ''), editId: 't1');
+      expect(store.getEntry(id: 't1')!.photo, isNull);
+    });
+
+    testWidgets('an edit that leaves it alone keeps it', (tester) async {
+      transferWithReceipt();
+      final edit = record.initialForm(sourceId: 't1', editing: true, ledger: '');
+      save(edit.copyWith(amt: '300'), editId: 't1');
+      final e = store.getEntry(id: 't1')!;
+      expect(e.amt, 300, reason: 'the edit itself has to have landed');
+      expect(e.photo, 'r1.jpg');
     });
   });
 

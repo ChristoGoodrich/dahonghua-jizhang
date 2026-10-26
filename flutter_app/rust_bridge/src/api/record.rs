@@ -198,9 +198,17 @@ pub fn save_form(
                     discount: (discount != 0.0).then_some(discount),
                     note: (!note.is_empty()).then_some(note),
                     ledger: (!ledger.is_empty()).then_some(ledger),
+                    photo: photo.clone(),
                     ..Default::default()
                 };
-                p.ts = core::should_patch_ts(s.ledger.get(&edit_id).map(|e| e.ts), f.ts)
+                let was = s.ledger.get(&edit_id);
+                // `None` in a patch is "leave it"; the sheet's ✕ is not that.
+                // Only when there was one, so an edit that never had a
+                // receipt does not stamp a field it never touched.
+                if photo.is_none() && was.is_some_and(|e| e.photo.is_some()) {
+                    p.clear.push("photo");
+                }
+                p.ts = core::should_patch_ts(was.map(|e| e.ts), f.ts)
                     .then_some(f.ts)
                     .flatten();
                 s.update_entry(&edit_id, &p, now);
@@ -216,6 +224,7 @@ pub fn save_form(
                         note: Some(note),
                         ledger: Some(ledger),
                         ts,
+                        photo,
                     },
                     id,
                     now,
@@ -358,6 +367,10 @@ pub fn initial_form(
 /// needs a *second* account, and which accounts exist is state this side owns.
 #[frb(sync)]
 pub fn pick_direction(next: String, form: FormView) -> FormView {
+    // The receipt is not a field any direction owns, and the core's form has
+    // no photo to carry through: picked before 转账 was pressed, it is still
+    // the receipt for whatever this turns out to be.
+    let photo = form.photo.clone();
     let s = store();
     let ids: Vec<String> = s
         .accounts
@@ -368,13 +381,15 @@ pub fn pick_direction(next: String, form: FormView) -> FormView {
     let current = s.current_account.clone();
     let io = Io::parse(&next).unwrap_or(Io::Exp);
     drop(s);
-    core::pick_io(io, &form.into(), &ids, &current, |i| {
+    let mut view: FormView = core::pick_io(io, &form.into(), &ids, &current, |i| {
         catalog::all_cats(i, &[])
             .first()
             .map(|c| c.k.clone())
             .unwrap_or_default()
     })
-    .into()
+    .into();
+    view.photo = photo;
+    view
 }
 
 /// What clears after 再记, so the next entry of the same kind can be typed.
