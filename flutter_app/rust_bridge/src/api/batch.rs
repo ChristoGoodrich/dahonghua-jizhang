@@ -18,7 +18,8 @@ use dahonghua_core::entry::Io;
 use dahonghua_core::reimburse;
 use flutter_rust_bridge::frb;
 
-use super::store::{by_id, store, store_mut, EntryPatch, UndoToken};
+use super::store::{by_id, store, store_marked, EntryPatch, UndoToken};
+use crate::api::db;
 
 /// What the selection header says.
 #[derive(Debug, Clone, PartialEq, Default)]
@@ -145,20 +146,24 @@ pub fn set_claim(ids: Vec<String>, to: ClaimTo, now: i64) -> u32 {
     if targets.is_empty() {
         return 0;
     }
-    // One wide mark for the whole batch rather than one narrow mark per row:
-    // the reimburse commands take the wide mark anyway, and taking it once is
-    // the cheaper of the two.
-    let mut s = store_mut();
-    let mut n = 0;
-    for id in &targets {
-        let ok = match to {
-            ClaimTo::Pending => reimburse::toggle_reimburse(&mut s.ledger, id, now),
-            ClaimTo::Done => reimburse::confirm_reimburse(&mut s.ledger, id, now),
-            ClaimTo::Cleared => reimburse::unmark_reimburse(&mut s.ledger, id, now),
-        };
-        if ok {
-            n += 1;
+    // Each command writes the one row it is handed, so the rows it reports
+    // writing are the rows to mark — not the ledger, which is what a claim
+    // on three rows used to queue.
+    let mut written = Vec::with_capacity(targets.len());
+    {
+        let mut s = store_marked();
+        for id in targets {
+            let ok = match to {
+                ClaimTo::Pending => reimburse::toggle_reimburse(&mut s.ledger, &id, now),
+                ClaimTo::Done => reimburse::confirm_reimburse(&mut s.ledger, &id, now),
+                ClaimTo::Cleared => reimburse::unmark_reimburse(&mut s.ledger, &id, now),
+            };
+            if ok {
+                written.push(id);
+            }
         }
     }
+    let n = written.len() as u32;
+    db::mark_many(written);
     n
 }

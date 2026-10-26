@@ -602,9 +602,9 @@ pub fn import_bills(
             ts: ts[i],
         })
         .collect();
-    let n = store_marked().import_bills(&bills, &ids, now) as u32;
-    db::mark_all();
-    n
+    // A bulk import, which marks everything rather than counting (see
+    // `db.rs`). The same marks it always took, spelled as the default.
+    store_mut().import_bills(&bills, &ids, now) as u32
 }
 
 /// Where the next entry defaults to.

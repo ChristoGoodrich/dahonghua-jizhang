@@ -16,13 +16,29 @@
 //!   through `add_entry`. It therefore carries `updatedAt` but no `fieldTs`,
 //!   and it does not move the current account. Routing it through `add` would
 //!   have been tidier and would have changed behaviour on both counts.
+//!
+//! Every command here writes the row it was handed, and a refund the one
+//! income it logs as well, so each marks exactly those. They took the wide
+//! mark until the audit measured it: one tap on 报销 rewrote the whole ledger
+//! on the next save, 17ms at 3,000 rows and up to 135ms at 8,000, on the UI
+//! thread.
 
 use dahonghua_core::catalog;
 use dahonghua_core::entry::{Io, Reimburse};
 use dahonghua_core::reimburse as core;
 use flutter_rust_bridge::frb;
 
-use super::store::{store, store_mut};
+use super::store::{store, store_marked};
+use crate::api::db;
+
+/// Mark `id` when the command wrote it. A `false` is an id the ledger does
+/// not have, and nothing changed.
+fn marked(id: &str, wrote: bool) -> bool {
+    if wrote {
+        db::mark(id);
+    }
+    wrote
+}
 
 /// One claim, as the screen draws it.
 #[derive(Debug, Clone, PartialEq)]
@@ -99,19 +115,22 @@ pub fn claims(zh: bool) -> ClaimList {
 /// Only `pending` clears. A settled claim re-opens rather than disappearing.
 #[frb(sync)]
 pub fn toggle_reimburse(id: String, now: i64) -> bool {
-    core::toggle_reimburse(&mut store_mut().ledger, &id, now)
+    let wrote = core::toggle_reimburse(&mut store_marked().ledger, &id, now);
+    marked(&id, wrote)
 }
 
 /// Settle a claim, recording what came back.
 #[frb(sync)]
 pub fn confirm_reimburse(id: String, now: i64) -> bool {
-    core::confirm_reimburse(&mut store_mut().ledger, &id, now)
+    let wrote = core::confirm_reimburse(&mut store_marked().ledger, &id, now);
+    marked(&id, wrote)
 }
 
 /// Drop the claim entirely, state and amount together.
 #[frb(sync)]
 pub fn unmark_reimburse(id: String, now: i64) -> bool {
-    core::unmark_reimburse(&mut store_mut().ledger, &id, now)
+    let wrote = core::unmark_reimburse(&mut store_marked().ledger, &id, now);
+    marked(&id, wrote)
 }
 
 /// Refund part or all of an expense. Returns how much was actually refunded.
@@ -121,9 +140,27 @@ pub fn unmark_reimburse(id: String, now: i64) -> bool {
 /// first would be a second implementation of it.
 #[frb(sync)]
 pub fn refund_entry(id: String, amount: f64, zh: bool, new_id: String, now: i64) -> f64 {
-    let mut s = store_mut();
-    let acct = s.current_account.clone();
-    core::refund_entry(&mut s.ledger, &id, amount, zh, &[], &acct, new_id, now)
+    let r = {
+        let mut s = store_marked();
+        let acct = s.current_account.clone();
+        core::refund_entry(
+            &mut s.ledger,
+            &id,
+            amount,
+            zh,
+            &[],
+            &acct,
+            new_id.clone(),
+            now,
+        )
+    };
+    // The core writes both rows or neither, and says neither with a zero —
+    // its own test is `r <= 0.0`, so a NaN that slipped past it wrote.
+    if r > 0.0 || r.is_nan() {
+        db::mark(&id);
+        db::mark(&new_id);
+    }
+    r
 }
 
 /// How much of an expense has already come back, and how much still could.

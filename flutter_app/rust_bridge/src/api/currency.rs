@@ -109,9 +109,6 @@ pub fn remove_rate(code: String) {
 /// What a base switch did: `ok` | `same` | `noRate`.
 #[frb(sync)]
 pub fn set_base_currency(code: String, now: i64) -> String {
-    // Changing the base currency re-denominates every entry in the
-    // ledger, which is as bulk as a change gets.
-    db::mark_all();
     // Five guards, held in this order and this order only:
     //
     //   store → subscriptions → networth(assets) → networth(loans)
@@ -127,9 +124,12 @@ pub fn set_base_currency(code: String, now: i64) -> String {
     // does internally, rather than relying on it to have decided before it
     // mutates. The caller is Dart's one UI isolate, so there is nothing to
     // race with in between.
-    // Changing the base re-denominates every entry, so the wide mark is
-    // exactly right here rather than merely safe.
-    let mut s = super::store::store_mut();
+    // The wide mark is taken below, and only for a switch that happened. An
+    // accepted one re-denominates every entry, so marking them all is exactly
+    // right rather than merely safe; a refused one — the current base, or a
+    // code with no rate — is decided before the core touches anything, and
+    // used to rewrite the whole ledger to say so.
+    let mut s = super::store::store_marked();
     let mut subs = super::subscriptions::subs_lock();
     let mut assets = super::networth::assets_lock();
     let mut loans = super::networth::loans_lock();
@@ -166,6 +166,7 @@ pub fn set_base_currency(code: String, now: i64) -> String {
     // A refusal must leave these exactly as they were, or "refusing beats
     // corrupting" is a slogan rather than a property.
     if result == core::BaseSwitch::Ok {
+        db::mark_all();
         set_currencies_inner(currencies);
         set_settings_inner(super::store::BudgetSettings {
             budget: budgets.budget,
