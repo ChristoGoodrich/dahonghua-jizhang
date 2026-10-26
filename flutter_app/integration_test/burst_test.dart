@@ -68,12 +68,20 @@ void main() {
       await tester.pumpAndSettle();
       await press(tester, '4');
       await press(tester, '2');
-      await press(tester, 'save');
-      // 保存 closes the sheet itself — no second pop
-      await tester.pump();
-      // At least once: in the frame after the pop the sheet's own Scaffold is
-      // still on its way out, and the messenger shows the word on both.
-      expect(find.text('贴上一朵花'), findsWidgets);
+      // 保存 closes the sheet itself — no second pop. Not `press`: that
+      // settles first, and the word is only up for 1.6s. On CI's emulator,
+      // which renders in software, settling the pop, the flowers and the tabs'
+      // refresh took longer than that, so the word had come and gone before
+      // anything looked. Watched for while it is up instead.
+      await tester.tap(find.byKey(const Key('key-save')));
+      var said = false;
+      for (var i = 0; i < 40 && !said; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+        // At least once: in the frame after the pop the sheet's own Scaffold
+        // is still on its way out, and the messenger shows the word on both.
+        said = find.text('贴上一朵花').evaluate().isNotEmpty;
+      }
+      expect(said, isTrue, reason: 'the word that says the entry landed');
 
       await tester.pumpAndSettle();
       expect(PetalBurst.planted, before + 1);
