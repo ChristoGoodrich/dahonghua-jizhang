@@ -12,6 +12,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/record_sheet.dart';
 import 'package:flutter_app/src/rust/api/catalog.dart' as catalog;
+import 'package:flutter_app/src/rust/api/record.dart' as record;
 import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -293,6 +294,48 @@ void main() {
       // test harness — only that the control is on the sheet.
       await sheet(tester);
       expect(find.byKey(const Key("record-photo")), findsOneWidget);
+    });
+
+    /// An entry with a receipt, written the way the sheet writes one.
+    void withReceipt(String id) {
+      final form = record
+          .initialForm(sourceId: '', editing: false, ledger: '')
+          .copyWith(amt: '35', photo: 'r1.jpg');
+      final r = record.saveForm(
+        form: form,
+        editId: '',
+        id: id,
+        now: now,
+        rateWasCached: false,
+      );
+      expect(r.rejected, isNull);
+      // otherwise the tests below could pass by never having had one
+      expect(store.getEntry(id: id)!.photo, 'r1.jpg');
+    }
+
+    testWidgets('taken off in an edit, stays off', (tester) async {
+      // The ✕ emptied the sheet's field, and the save turned "empty" into
+      // "not in the patch" — which means "leave it". The receipt was back
+      // the next time the entry was opened.
+      withReceipt('p1');
+      await sheet(tester, editId: 'p1');
+      await tapOnSheet(tester, const Key('photo-clear'));
+      await tester.tap(find.byKey(const Key('key-save')));
+      await tester.pumpAndSettle();
+
+      expect(store.getEntry(id: 'p1')!.photo, isNull);
+    });
+
+    testWidgets('an edit that leaves it alone keeps it', (tester) async {
+      withReceipt('p1');
+      await sheet(tester, editId: 'p1');
+      await tapOnSheet(tester, const Key('key-0'));
+      await tester.tap(find.byKey(const Key('key-save')));
+      await tester.pumpAndSettle();
+
+      final e = store.getEntry(id: 'p1')!;
+      expect(e.amt, 350, reason: 'the edit itself has to have landed');
+      expect(e.photo, 'r1.jpg');
     });
   });
 

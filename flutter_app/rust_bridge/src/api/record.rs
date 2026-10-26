@@ -252,7 +252,16 @@ pub fn save_form(
                     photo: photo.clone(),
                     ..Default::default()
                 };
-                p.ts = core::should_patch_ts(s.ledger.get(&edit_id).map(|e| e.ts), f.ts)
+                let was = s.ledger.get(&edit_id);
+                // `None` in a patch is "leave it", and an emptied field is not
+                // that: it is the ✕ on the sheet taking the receipt off, which
+                // used to come back the next time the entry was opened. Only
+                // when there was one, so an edit to a row without a receipt
+                // does not stamp a field it never touched.
+                if photo.is_none() && was.is_some_and(|e| e.photo.is_some()) {
+                    p.clear.push("photo");
+                }
+                p.ts = core::should_patch_ts(was.map(|e| e.ts), f.ts)
                     .then_some(f.ts)
                     .flatten();
                 s.update_entry(&edit_id, &p, now);
