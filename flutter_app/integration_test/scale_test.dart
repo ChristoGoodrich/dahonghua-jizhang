@@ -23,19 +23,28 @@
 // and this is the only thing standing between the app and a silent return to
 // a fifth-of-a-second hitch.
 //
-// What it bounds is growth, not milliseconds. Each operation is timed at a
-// quarter of the ledger and again at all of it: linear work takes about four
-// times as long for four times the rows, a little more where there is a sort,
-// and the quadratic shape takes sixteen — less in practice, because the
-// linear part still counts at a quarter. Measured on the emulator: 2.6× to
-// 5.6× for the code as it is, 13.5× with `list_items` put back to a scan per
-// id. The bound is eight, between them.
+// What it bounds is growth, not milliseconds. Each operation is timed over
+// 1,000 rows and again over 16,000. Sixteen times the rows costs linear work
+// about sixteen times the time — more where there is a sort — and quadratic
+// work up to 256, less in practice because its linear part still counts at
+// 1,000 rows. A ratio taken on one machine, in one run, cancels the
+// machine out: the bound used to be 300ms flat, set on one emulator, and on
+// CI's emulator, which renders in software, the LINEAR list took 361ms.
 //
-// It used to be 300ms flat, set between about 110ms linear and about 550ms
-// quadratic on the emulator it was measured on. Milliseconds belong to the
-// machine: CI's emulator renders in software, and there the LINEAR list took
-// 361ms and failed. A ratio taken on one machine, in one run, cancels the
-// machine out. Each size is the fastest of three runs, so the first call's
+// The spread is wide on purpose. The first version compared 2,000 rows with
+// 8,000 against a bound of 8, and the code as it is measured up to 7.8 there
+// — it failed now and then on nothing. Measured on the emulator, six rounds
+// each, fastest of five runs per size:
+//
+//                      the code as it is      list_items scanning per id
+//     2,000 → 8,000    2.4× – 7.8×           13.0× – 14.5×
+//     1,000 → 16,000   7.8× – 54×            123× – 163×
+//
+// The wider spread takes the gap between the worst of one and the best of the
+// other from 1.7× to 2.3×. The bound is 90: 1.65
+// times the worst the real code did (the list, which sorts) and 1.37 times
+// under the best the regression did — leaning toward the side that has
+// actually failed. Each size is the fastest of five runs, so the first call's
 // warm-up or a collection mid-run is not what gets measured.
 
 import 'dart:math' as math;
@@ -52,11 +61,15 @@ import 'rust_init.dart';
 const day = 86400000;
 int get now => DateTime.now().millisecondsSinceEpoch;
 
-/// Three years of a ledger somebody actually keeps.
-const big = 8000;
+/// Seven years at six a day. Bigger than most ledgers on purpose: the gap
+/// between linear and quadratic widens with the spread. See the header.
+const big = 16000;
 
 /// The smaller ledger each timing is compared against.
-const quarter = big ~/ 4;
+const little = big ~/ 16;
+
+/// How many times longer [big] rows may take than [little]. See the header.
+const bound = 90;
 
 /// Add [n] entries, numbered from [from] — so a second fill carries on where
 /// the first stopped, with new ids and older days.
@@ -80,38 +93,38 @@ void fill(int n, {String prefix = 'e', int from = 0}) {
 
 List<String> idsOf(List<store.EntryView> live) => [for (final e in live) e.id];
 
-/// The fastest of three runs of [timed], which returns microseconds.
+/// The fastest of five runs of [timed], which returns microseconds.
 int fastest(int Function() timed) =>
-    [for (var i = 0; i < 3; i++) timed()].reduce(math.min);
+    [for (var i = 0; i < 5; i++) timed()].reduce(math.min);
 
 typedef Growth = ({double ratio, int small, int large});
 
-/// How many times longer [timed] takes over [big] rows than over [quarter].
+/// How many times longer [timed] takes over [big] rows than over [little].
 ///
 /// Starts from an empty ledger, so a test can call it more than once.
 Growth growth(int Function() timed) {
   store.reset();
-  fill(quarter);
+  fill(little);
   final small = fastest(timed);
-  fill(big - quarter, from: quarter);
+  fill(big - little, from: little);
   final large = fastest(timed);
   return (ratio: large / math.max(small, 1), small: small, large: large);
 }
 
-/// Four times the rows may cost about four times the time, not sixteen.
+/// Sixteen times the rows may cost a few dozen times the time, not hundreds.
 void expectLinear(Growth g, String what, {String? why}) {
   final said =
-      '$what: ${g.small}µs over $quarter rows, ${g.large}µs over $big — '
-      '${g.ratio.toStringAsFixed(1)}× for 4× the rows';
+      '$what: ${g.small}µs over $little rows, ${g.large}µs over $big — '
+      '${g.ratio.toStringAsFixed(1)}× for 16× the rows';
   // Printed on a pass too: the margin is worth seeing in a CI log before it
   // is gone, rather than after.
   debugPrint(said);
   expect(
     g.ratio,
-    lessThan(8),
+    lessThan(bound),
     reason:
-        '$said. Linear is about 4×, quadratic 16×.'
-        '${why == null ? '' : ' $why'}',
+        '$said. The code as it is measured up to 54×, a quadratic list '
+        '123× and more.${why == null ? '' : ' $why'}',
   );
 }
 
