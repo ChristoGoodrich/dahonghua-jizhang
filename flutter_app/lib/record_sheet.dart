@@ -169,6 +169,20 @@ class _RecordSheetState extends State<RecordSheet> {
   String? _flash;
   bool _flashIsError = false;
 
+  /// The keypad's rows of keys, and its height: laid out from the same
+  /// numbers, so the room it is said to need is the room it takes.
+  static const _keyRows = 5;
+  static const _keyHeight = 52.0;
+  static const _keyGap = 4.0;
+  static const _padTop = 10.0;
+  static const _padBottom = 14.0;
+  static const _keypadHeight = // and the rule across its top
+      _keyRows * (_keyHeight + 2 * _keyGap) + _padTop + _padBottom + 1;
+
+  /// What the fields keep before the keypad gives way to the phone's own
+  /// keyboard: enough to see the note being typed and the row above it.
+  static const _fieldsAtLeast = 120.0;
+
   @override
   void initState() {
     super.initState();
@@ -310,6 +324,9 @@ class _RecordSheetState extends State<RecordSheet> {
     final total = calc.evalExpr(expr: _form.amt);
     final showsTotal = calc.hasOperator(expr: _form.amt);
     final accent = _form.io == 'inc' ? palette.leafDeep : palette.hibiscus;
+    // Read here, above the Scaffold: the body's own MediaQuery has the
+    // keyboard taken out, because the Scaffold has already made room for it.
+    final typing = MediaQuery.viewInsetsOf(context).bottom > 0;
 
     return Scaffold(
       backgroundColor: palette.paper,
@@ -326,121 +343,121 @@ class _RecordSheetState extends State<RecordSheet> {
             fontWeight: FontWeight.w700,
           ),
         ),
-        actions: [
-          if (widget.onSmart != null)
-            TextButton.icon(
-              key: const Key('record-smart'),
-              onPressed: widget.onSmart,
-              icon: Icon(Icons.auto_awesome, size: 18, color: palette.hibiscus),
-              label: Text(
-                zh ? '一句话' : 'Sentence',
-                style: TextStyle(color: palette.hibiscus),
-              ),
-            ),
-          // A receipt, when there is one to keep. The picker asks for no
-          // permission the user has not already given by pressing it.
-          if (widget.editId == null || _form.photo.isNotEmpty)
-            TextButton.icon(
-              key: const Key('record-photo'),
-              onPressed: _pickPhoto,
-              icon: Icon(
-                _form.photo.isEmpty
-                    ? Icons.photo_camera_outlined
-                    : Icons.photo,
-                size: 18,
-                color: _form.photo.isEmpty ? palette.inkSoft : palette.hibiscus,
-              ),
-              label: Text(
-                _form.photo.isEmpty
-                    ? (zh ? '小票' : 'Receipt')
-                    : (zh ? '已附小票' : 'Receipt'),
-                style: TextStyle(
-                  color: _form.photo.isEmpty ? palette.inkSoft : palette.hibiscus,
-                  fontSize: 13,
-                ),
-              ),
-            ),
-          // Visible, not only a long press on 保存: a gesture nobody is told
-          // about is a feature that does not exist. The long press still works.
-          TextButton.icon(
-            key: const Key('record-pin'),
-            onPressed: _fetching ? null : _saveAsTemplate,
-            icon: Icon(Icons.push_pin_outlined, size: 18, color: palette.inkSoft),
-            label: Text(
-              zh ? '存模板' : 'Pin',
-              style: TextStyle(color: palette.inkSoft, fontSize: 13),
-            ),
-          ),
-          // 再记: the shipping pair of 保存. One closes — the form going away
-          // is the clear — and this one stays, so a run of similar entries
-          // goes in one sitting.
-          if (widget.editId == null)
-            TextButton.icon(
-              key: const Key('record-again'),
-              onPressed: _fetching ? null : () => _save(stay: true),
-              icon: Icon(Icons.repeat, size: 18, color: palette.inkSoft),
-              label: Text(
-                zh ? '再记' : 'Again',
-                style: TextStyle(color: palette.inkSoft, fontSize: 13),
-              ),
-            ),
-          const SizedBox(width: 6),
-        ],
+        actions: _barActions(zh),
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            // The fields dissolve into the keypad rather than being sliced
-            // off by it. They fill the space above it exactly, so 标签 and
-            // 账本 sit below the fold — and a chip cut in half at a hard edge
-            // reads as a rendering fault, where the same chip fading out
-            // reads as "there is more here". Same scrim as under the nav bar
-            // and the headers, the other way up.
-            Expanded(
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 22),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        _templateRow(zh),
-                        _directions(zh),
-                        const SizedBox(height: 14),
-                        _amount(total, showsTotal, accent),
-                        const SizedBox(height: 14),
-                        if (_form.io != 'xfer') _categories(zh, accent),
-                        const SizedBox(height: 14),
-                        _accountRow(zh, accent),
-                        const SizedBox(height: 14),
-                        ..._currencyRow(zh, accent),
-                        _noteField(zh),
-                        if (_form.photo.isNotEmpty) _photoStrip(zh),
-                        _tagRow(zh, accent),
-                        _ledgerRow(zh, accent),
-                      ],
+        child: LayoutBuilder(
+          builder: (context, room) => Column(
+            children: [
+              // The fields dissolve into the keypad rather than being sliced
+              // off by it. They fill the space above it exactly, so 标签 and
+              // 账本 sit below the fold — and a chip cut in half at a hard edge
+              // reads as a rendering fault, where the same chip fading out
+              // reads as "there is more here". Same scrim as under the nav bar
+              // and the headers, the other way up.
+              Expanded(
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(horizontal: 22),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _templateRow(zh),
+                          _directions(zh),
+                          const SizedBox(height: 14),
+                          _amount(total, showsTotal, accent),
+                          const SizedBox(height: 14),
+                          if (_form.io != 'xfer') _categories(zh, accent),
+                          const SizedBox(height: 14),
+                          _accountRow(zh, accent),
+                          const SizedBox(height: 14),
+                          ..._currencyRow(zh, accent),
+                          _noteField(zh),
+                          if (_form.photo.isNotEmpty) _photoStrip(zh),
+                          _tagRow(zh, accent),
+                          _ledgerRow(zh, accent),
+                        ],
+                      ),
                     ),
-                  ),
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    height: scrimFade(context),
-                    child: GlassScrim(under: palette.paperWarmHex),
-                  ),
-                ],
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      height: scrimFade(context),
+                      child: GlassScrim(under: palette.paperWarmHex),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            // Above the keypad, not in the scroll: "已保存" scrolled out of
-            // view is a save the user never saw happen.
-            if (_flash != null) _flashLine(),
-            _keypad(zh, accent),
-          ],
+              // Above the keypad, not in the scroll: "已保存" scrolled out of
+              // view is a save the user never saw happen.
+              if (_flash != null) _flashLine(),
+              // With the phone's keyboard up — a note, or a dialog over the
+              // sheet asking for a name — a 640dp phone has about 260dp left
+              // for all of this, and the keypad alone is 325. It steps aside
+              // rather than overflowing: what is being typed then is text, and
+              // the keypad is back when the keyboard goes. A Pixel 7 has the
+              // room, and keeps it.
+              if (!typing || room.maxHeight - _keypadHeight >= _fieldsAtLeast)
+                _keypad(zh, accent),
+            ],
+          ),
         ),
       ),
     );
   }
+
+  /// What stands in the bar after the title, as icons, the way 明细's head
+  /// draws its own. They were four labelled buttons, 355dp of them in
+  /// Chinese: on a Pixel 7 that pushed the title out of the bar entirely, and
+  /// on a 360dp phone it was wider than the bar — in English by 19dp, in
+  /// Chinese by sliding over the back arrow. Four icons are 192dp, which
+  /// leaves 记一笔 its room on both, in both languages. The words are still
+  /// there: a long press says each one, and a screen reader reads it.
+  List<Widget> _barActions(bool zh) => [
+    if (widget.onSmart != null)
+      IconButton(
+        key: const Key('record-smart'),
+        onPressed: widget.onSmart,
+        tooltip: zh ? '一句话记账' : 'Record from a sentence',
+        icon: Icon(Icons.auto_awesome, color: palette.hibiscus),
+      ),
+    // A receipt, when there is one to keep. The picker asks for no
+    // permission the user has not already given by pressing it.
+    if (widget.editId == null || _form.photo.isNotEmpty)
+      IconButton(
+        key: const Key('record-photo'),
+        onPressed: _pickPhoto,
+        tooltip: _form.photo.isEmpty
+            ? (zh ? '小票' : 'Receipt')
+            : (zh ? '已附小票' : 'Receipt attached'),
+        icon: Icon(
+          _form.photo.isEmpty ? Icons.photo_camera_outlined : Icons.photo,
+          color: _form.photo.isEmpty ? palette.inkSoft : palette.hibiscus,
+        ),
+      ),
+    // Visible, not only a long press on 保存: a gesture nobody is told
+    // about is a feature that does not exist. The long press still works.
+    IconButton(
+      key: const Key('record-pin'),
+      onPressed: _fetching ? null : _saveAsTemplate,
+      tooltip: zh ? '存为模板' : 'Pin as a template',
+      icon: Icon(Icons.push_pin_outlined, color: palette.inkSoft),
+    ),
+    // 再记: the shipping pair of 保存. One closes — the form going away
+    // is the clear — and this one stays, so a run of similar entries
+    // goes in one sitting.
+    if (widget.editId == null)
+      IconButton(
+        key: const Key('record-again'),
+        onPressed: _fetching ? null : () => _save(stay: true),
+        tooltip: zh ? '保存并再记一笔' : 'Save and record another',
+        icon: Icon(Icons.repeat, color: palette.inkSoft),
+      ),
+    const SizedBox(width: 6),
+  ];
 
   Widget _directions(bool zh) => Segmented(
     keyPrefix: 'dir',
@@ -1127,8 +1144,9 @@ class _RecordSheetState extends State<RecordSheet> {
       [('.', '.'), ('0', '0'), ('⌫', 'back'), ('+', '+')],
       [('C', 'clear'), ('=', 'eq'), ('保存', 'save')],
     ];
+    assert(rows.length == _keyRows);
     return Container(
-      padding: const EdgeInsets.fromLTRB(14, 10, 14, 14),
+      padding: const EdgeInsets.fromLTRB(14, _padTop, 14, _padBottom),
       decoration: BoxDecoration(
         color: palette.paperWarm,
         border: Border(top: BorderSide(color: palette.line)),
@@ -1143,7 +1161,7 @@ class _RecordSheetState extends State<RecordSheet> {
                     // the save key takes the width the fourth column would
                     flex: k == 'save' ? 2 : 1,
                     child: Padding(
-                      padding: const EdgeInsets.all(4),
+                      padding: const EdgeInsets.all(_keyGap),
                       child: _key2(label, k, zh, accent),
                     ),
                   ),
@@ -1181,7 +1199,7 @@ class _RecordSheetState extends State<RecordSheet> {
         onTap: () => isSave ? (_fetching ? null : _save()) : _key(k),
         onLongPress: isSave ? _saveAsTemplate : null,
         child: Container(
-          height: 52,
+          height: _keyHeight,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: isSave ? accent : palette.card,

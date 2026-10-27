@@ -650,42 +650,49 @@ class _NewAssetDialogState extends State<_NewAssetDialog> {
         zh ? '添加资产' : 'Add asset',
         style: TextStyle(fontSize: 16, color: palette.ink),
       ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            key: const Key('asset-name'),
-            controller: _name,
-            autofocus: true,
-            cursorColor: palette.stamen,
-            decoration: fieldStyle(zh ? '名称' : 'Name'),
-          ),
-          TextField(
-            key: const Key('asset-val'),
-            controller: _val,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            cursorColor: palette.stamen,
-            decoration: fieldStyle(zh ? '价值' : 'Value'),
-          ),
-          const SizedBox(height: 14),
-          Wrap(
-            spacing: 8,
-            children: [
-              pickChip(
-                key: 'asset-kind-asset',
-                label: zh ? '资产' : 'Asset',
-                on: _kind == 'asset',
-                onTap: () => setState(() => _kind = 'asset'),
+      // Scrollable for the reason the new-account dialog is: with the keyboard
+      // up a 640dp phone leaves this about 100dp, and a dialog that overflows
+      // loses its buttons.
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              key: const Key('asset-name'),
+              controller: _name,
+              autofocus: true,
+              cursorColor: palette.stamen,
+              decoration: fieldStyle(zh ? '名称' : 'Name'),
+            ),
+            TextField(
+              key: const Key('asset-val'),
+              controller: _val,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
               ),
-              pickChip(
-                key: 'asset-kind-liab',
-                label: zh ? '负债' : 'Liability',
-                on: _kind == 'liab',
-                onTap: () => setState(() => _kind = 'liab'),
-              ),
-            ],
-          ),
-        ],
+              cursorColor: palette.stamen,
+              decoration: fieldStyle(zh ? '价值' : 'Value'),
+            ),
+            const SizedBox(height: 14),
+            Wrap(
+              spacing: 8,
+              children: [
+                pickChip(
+                  key: 'asset-kind-asset',
+                  label: zh ? '资产' : 'Asset',
+                  on: _kind == 'asset',
+                  onTap: () => setState(() => _kind = 'asset'),
+                ),
+                pickChip(
+                  key: 'asset-kind-liab',
+                  label: zh ? '负债' : 'Liability',
+                  on: _kind == 'liab',
+                  onTap: () => setState(() => _kind = 'liab'),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
       actions: [
         TextButton(
@@ -748,42 +755,49 @@ class _NewLoanDialogState extends State<_NewLoanDialog> {
         zh ? '添加借贷' : 'Add loan',
         style: TextStyle(fontSize: 16, color: palette.ink),
       ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            key: const Key('loan-who'),
-            controller: _who,
-            autofocus: true,
-            cursorColor: palette.stamen,
-            decoration: fieldStyle(zh ? '谁' : 'Who'),
-          ),
-          TextField(
-            key: const Key('loan-amt'),
-            controller: _amt,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            cursorColor: palette.stamen,
-            decoration: fieldStyle(zh ? '金额' : 'Amount'),
-          ),
-          const SizedBox(height: 14),
-          Wrap(
-            spacing: 8,
-            children: [
-              pickChip(
-                key: 'loan-kind-lend',
-                label: zh ? '借出' : 'Lent',
-                on: _kind == 'lend',
-                onTap: () => setState(() => _kind = 'lend'),
+      // Scrollable for the reason the new-account dialog is: with the keyboard
+      // up a 640dp phone leaves this about 100dp, and a dialog that overflows
+      // loses its buttons.
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              key: const Key('loan-who'),
+              controller: _who,
+              autofocus: true,
+              cursorColor: palette.stamen,
+              decoration: fieldStyle(zh ? '谁' : 'Who'),
+            ),
+            TextField(
+              key: const Key('loan-amt'),
+              controller: _amt,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
               ),
-              pickChip(
-                key: 'loan-kind-borrow',
-                label: zh ? '借入' : 'Borrowed',
-                on: _kind == 'borrow',
-                onTap: () => setState(() => _kind = 'borrow'),
-              ),
-            ],
-          ),
-        ],
+              cursorColor: palette.stamen,
+              decoration: fieldStyle(zh ? '金额' : 'Amount'),
+            ),
+            const SizedBox(height: 14),
+            Wrap(
+              spacing: 8,
+              children: [
+                pickChip(
+                  key: 'loan-kind-lend',
+                  label: zh ? '借出' : 'Lent',
+                  on: _kind == 'lend',
+                  onTap: () => setState(() => _kind = 'lend'),
+                ),
+                pickChip(
+                  key: 'loan-kind-borrow',
+                  label: zh ? '借入' : 'Borrowed',
+                  on: _kind == 'borrow',
+                  onTap: () => setState(() => _kind = 'borrow'),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
       actions: [
         TextButton(

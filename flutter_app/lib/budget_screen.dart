@@ -237,15 +237,20 @@ class _BudgetScreenState extends State<BudgetScreen> {
         children: [
           Row(
             children: [
-              Text(
-                zh ? '本期走势' : 'Where this cycle is heading',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  color: p.ink,
+              // Not beside a Spacer: in English the title and an "over"
+              // verdict are wider than a 360dp card, and the title is the one
+              // that can take a second line.
+              Expanded(
+                child: Text(
+                  zh ? '本期走势' : 'Where this cycle is heading',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: p.ink,
+                  ),
                 ),
               ),
-              const Spacer(),
+              const SizedBox(width: 8),
               Container(
                 key: const Key('outlook-verdict'),
                 padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),

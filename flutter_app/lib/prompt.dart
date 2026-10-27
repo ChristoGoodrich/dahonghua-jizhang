@@ -80,29 +80,34 @@ class _PromptState extends State<_Prompt> {
   Widget build(BuildContext context) => AlertDialog(
     backgroundColor: palette.card,
     title: Text(widget.title),
-    content: Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TextField(
-          key: widget.fieldKey,
-          controller: _c,
-          autofocus: true,
-          obscureText: widget.obscure,
-          autocorrect: !widget.obscure,
-          enableSuggestions: !widget.obscure,
-          keyboardType: widget.keyboard,
-          onSubmitted: (v) => Navigator.pop(context, v),
-          decoration: InputDecoration(hintText: widget.hint),
-        ),
-        if (widget.note != null) ...[
-          const SizedBox(height: 10),
-          Text(
-            widget.note!,
-            style: TextStyle(fontSize: 12, color: palette.inkSoft),
+    // Scrollable for the reason the new-account dialog is: with the keyboard
+    // up a 640dp phone leaves this about 100dp, and a dialog that overflows
+    // loses its buttons.
+    content: SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextField(
+            key: widget.fieldKey,
+            controller: _c,
+            autofocus: true,
+            obscureText: widget.obscure,
+            autocorrect: !widget.obscure,
+            enableSuggestions: !widget.obscure,
+            keyboardType: widget.keyboard,
+            onSubmitted: (v) => Navigator.pop(context, v),
+            decoration: InputDecoration(hintText: widget.hint),
           ),
+          if (widget.note != null) ...[
+            const SizedBox(height: 10),
+            Text(
+              widget.note!,
+              style: TextStyle(fontSize: 12, color: palette.inkSoft),
+            ),
+          ],
         ],
-      ],
+      ),
     ),
     actions: [
       TextButton(

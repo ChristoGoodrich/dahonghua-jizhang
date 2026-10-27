@@ -135,6 +135,31 @@ class _ReimburseScreenState extends State<ReimburseScreen> {
     // A settled claim that came back for less than it cost says both numbers.
     // One of them alone would be a different fact.
     final shortfall = !pending && c.rbAmt != c.amt;
+    final chip = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+      decoration: BoxDecoration(
+        color: pending ? const Color(0xFFF2DEC8) : const Color(0xFFD6E8DD),
+        borderRadius: BorderRadius.circular(Rad.pill),
+      ),
+      child: Text(
+        pending ? (zh ? '待报销' : 'Pending') : (zh ? '已报销' : 'Done'),
+        key: Key('claim-${c.id}-state'),
+        style: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w700,
+          color: pending ? const Color(0xFF9A7B45) : palette.leafDeep,
+        ),
+      ),
+    );
+    final sub = Text(
+      shortfall
+          ? (zh
+                ? '${date.month}月${date.day}日 · 花了 ${_m(c.amt)}'
+                : '${date.month}/${date.day} · spent ${_m(c.amt)}')
+          : (zh ? '${date.month}月${date.day}日' : '${date.month}/${date.day}'),
+      key: Key('claim-${c.id}-sub'),
+      style: TextStyle(fontSize: 11.5, color: palette.inkSoft),
+    );
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Container(
@@ -158,64 +183,47 @@ class _ReimburseScreenState extends State<ReimburseScreen> {
             ),
             const SizedBox(width: 11),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+              // On a 360dp phone the amount and its two buttons leave the name
+              // about 77dp, and beside the chip it was cut to one glyph. Below
+              // 100dp the chip moves down beside the date and the name has the
+              // line to itself; a Pixel 7 leaves 129, and keeps it beside the
+              // name.
+              child: LayoutBuilder(
+                builder: (context, room) {
+                  final beside = room.maxWidth >= 100;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Flexible(
-                        child: Text(
-                          c.note.isEmpty ? c.name : c.note,
-                          key: Key('claim-${c.id}-name'),
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 14.5,
-                            fontWeight: FontWeight.w600,
-                            color: palette.ink,
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              c.note.isEmpty ? c.name : c.note,
+                              key: Key('claim-${c.id}-name'),
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 14.5,
+                                fontWeight: FontWeight.w600,
+                                color: palette.ink,
+                              ),
+                            ),
                           ),
-                        ),
+                          if (beside) ...[const SizedBox(width: 6), chip],
+                        ],
                       ),
-                      const SizedBox(width: 6),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 1,
+                      const SizedBox(height: 2),
+                      if (beside)
+                        sub
+                      else
+                        Wrap(
+                          spacing: 6,
+                          runSpacing: 2,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [sub, chip],
                         ),
-                        decoration: BoxDecoration(
-                          color: pending
-                              ? const Color(0xFFF2DEC8)
-                              : const Color(0xFFD6E8DD),
-                          borderRadius: BorderRadius.circular(Rad.pill),
-                        ),
-                        child: Text(
-                          pending
-                              ? (zh ? '待报销' : 'Pending')
-                              : (zh ? '已报销' : 'Done'),
-                          key: Key('claim-${c.id}-state'),
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            color: pending
-                                ? const Color(0xFF9A7B45)
-                                : palette.leafDeep,
-                          ),
-                        ),
-                      ),
                     ],
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    shortfall
-                        ? (zh
-                              ? '${date.month}月${date.day}日 · 花了 ${_m(c.amt)}'
-                              : '${date.month}/${date.day} · spent ${_m(c.amt)}')
-                        : (zh
-                              ? '${date.month}月${date.day}日'
-                              : '${date.month}/${date.day}'),
-                    key: Key('claim-${c.id}-sub'),
-                    style: TextStyle(fontSize: 11.5, color: palette.inkSoft),
-                  ),
-                ],
+                  );
+                },
               ),
             ),
             Text(
@@ -399,32 +407,39 @@ class _RefundDialogState extends State<_RefundDialog> {
         zh ? '退款' : 'Refund',
         style: TextStyle(fontSize: 16, color: palette.ink),
       ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            key: const Key('refund-amt'),
-            controller: _amt,
-            autofocus: true,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            cursorColor: palette.stamen,
-            decoration: InputDecoration(
-              labelText: zh ? '金额' : 'Amount',
-              labelStyle: TextStyle(color: palette.inkSoft),
-              floatingLabelStyle: TextStyle(color: palette.stamen),
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: palette.stamen, width: 2),
+      // Scrollable for the reason the new-account dialog is: with the keyboard
+      // up a 640dp phone leaves this about 100dp, and a dialog that overflows
+      // loses its buttons.
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              key: const Key('refund-amt'),
+              controller: _amt,
+              autofocus: true,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              cursorColor: palette.stamen,
+              decoration: InputDecoration(
+                labelText: zh ? '金额' : 'Amount',
+                labelStyle: TextStyle(color: palette.inkSoft),
+                floatingLabelStyle: TextStyle(color: palette.stamen),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: palette.stamen, width: 2),
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            zh
-                ? '会记一笔收入，原来那笔不动'
-                : 'Logs an income; the original entry is left alone',
-            style: TextStyle(fontSize: 11.5, color: palette.inkSoft),
-          ),
-        ],
+            const SizedBox(height: 8),
+            Text(
+              zh
+                  ? '会记一笔收入，原来那笔不动'
+                  : 'Logs an income; the original entry is left alone',
+              style: TextStyle(fontSize: 11.5, color: palette.inkSoft),
+            ),
+          ],
+        ),
       ),
       actions: [
         TextButton(

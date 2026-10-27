@@ -117,6 +117,11 @@ class DateChip extends StatelessWidget {
           context: context,
           backgroundColor: p.card,
           showDragHandle: true,
+          // A month is seven rows of days, and a bottom sheet stops at 9/16
+          // of the screen unless told otherwise: on a 640dp phone that is
+          // 360, and the month needs about 400. Sized to its content instead,
+          // which on a taller phone is the same sheet it always was.
+          isScrollControlled: true,
           builder: (_) => _DatePicker(selected: _when, accent: accent, zh: zh),
         );
         if (picked != null) onChanged(onDay(_when, picked));
@@ -224,7 +229,8 @@ class _DatePickerState extends State<_DatePicker> {
     }
 
     return SafeArea(
-      child: Padding(
+      // and scrolls when even the whole screen is not enough — on its side
+      child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
