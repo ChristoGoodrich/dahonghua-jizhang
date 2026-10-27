@@ -22,7 +22,8 @@ use dahonghua_core::subs;
 use flutter_rust_bridge::frb;
 use std::sync::{Mutex, MutexGuard, OnceLock};
 
-use super::store::store_mut;
+use super::store::store_marked;
+use crate::api::db;
 
 pub(crate) fn subs_lock() -> MutexGuard<'static, Vec<Sub>> {
     static S: OnceLock<Mutex<Vec<Sub>>> = OnceLock::new();
@@ -264,8 +265,11 @@ pub fn subs_commit(
     let mut list = subs_of();
     let mut fired = Vec::new();
     // A subscription that comes due writes a real entry, and those were being
-    // lost with everything else.
-    let mut s = store_mut();
+    // lost with everything else. Marked by id, which this function chose: the
+    // charges it pushes are the only rows it writes, and the sweep runs at
+    // every launch and every return to the app.
+    let mut posted = Vec::new();
+    let mut s = store_marked();
     // Ids already present, once. A `get` per candidate charge was a linear
     // scan per charge.
     let mut existing: std::collections::HashSet<String> =
@@ -292,6 +296,7 @@ pub fn subs_commit(
                 continue; // already charged locally
             }
             existing.insert(id.clone());
+            posted.push(id.clone());
             s.ledger.push_raw(charge_entry(sub, id, ts, now));
             fired.push(sub.name.clone());
         }
@@ -304,6 +309,7 @@ pub fn subs_commit(
         }
     }
     drop(s);
+    db::mark_many(posted);
     set_subs_inner(list);
     fired
 }

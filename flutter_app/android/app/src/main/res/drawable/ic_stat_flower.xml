@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The reminder's small icon: the launcher's flower as a silhouette.
+
+  The status bar draws a small icon from its alpha alone, in a colour it
+  chooses, so this is one shape in opaque white on nothing. The launcher icon
+  it replaces is opaque edge to edge and arrived as a grey square.
+
+  Five petals and the heart that joins them, every circle wound the same way
+  so they fill as one shape. Named in lib/reminders.dart, which is how
+  ReminderIconTest finds it.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <path
+      android:fillColor="#FFFFFFFF"
+      android:pathData="M7.6,6.4a4.4,4.4 0,1 0,8.8,0a4.4,4.4 0,1 0,-8.8,0ZM13.487,10.677a4.4,4.4 0,1 0,8.8,0a4.4,4.4 0,1 0,-8.8,0ZM11.238,17.598a4.4,4.4 0,1 0,8.8,0a4.4,4.4 0,1 0,-8.8,0ZM3.962,17.598a4.4,4.4 0,1 0,8.8,0a4.4,4.4 0,1 0,-8.8,0ZM1.713,10.677a4.4,4.4 0,1 0,8.8,0a4.4,4.4 0,1 0,-8.8,0ZM6.5,12.59a5.5,5.5 0,1 0,11,0a5.5,5.5 0,1 0,-11,0Z" />
+</vector>

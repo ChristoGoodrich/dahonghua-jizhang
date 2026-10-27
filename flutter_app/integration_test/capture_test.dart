@@ -424,7 +424,7 @@ void main() {
 
       expect(find.byKey(const Key('capture-not-granted')), findsNothing);
       expect(find.byKey(const Key('capture-toggle')), findsOneWidget);
-      expect(find.text('权限有了,还没开'), findsOneWidget);
+      expect(find.text('权限有了，还没开'), findsOneWidget);
     });
 
     testWidgets('turning it on drains what was already queued', (tester) async {

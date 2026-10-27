@@ -159,6 +159,13 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:2.0.21")
 }
 
+// Two of the tests read Dart — the channel name Dart listens on, the icon the
+// reminders name — and Gradle cannot see that. Without these it calls the
+// tests up to date after the Dart changes, and skips the run that would fail.
+tasks.withType<Test>().configureEach {
+    inputs.files("../../lib/power.dart", "../../lib/reminders.dart")
+}
+
 flutter {
     source = "../.."
 }

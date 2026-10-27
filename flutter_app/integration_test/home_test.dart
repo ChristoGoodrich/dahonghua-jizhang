@@ -270,7 +270,7 @@ void main() {
       setBudget(monthly: 100);
       add('a', 'exp', 30);
       await show(tester);
-      expect(text(tester, 'pot-month-line'), '已花 ￥30,还剩 ￥70');
+      expect(text(tester, 'pot-month-line'), '已花 ￥30，还剩 ￥70');
 
       store.reset();
       setBudget(monthly: 100);
@@ -279,7 +279,9 @@ void main() {
         const MaterialApp(key: ValueKey('over'), home: EntryListScreen()),
       );
       await tester.pumpAndSettle();
-      expect(text(tester, 'pot-month-line'), startsWith('超了 ￥30'));
+      // The whole line, Chinese comma and all: it said "超了 ￥30,下月…"
+      // with the ASCII one until zh:check went through the strings.
+      expect(text(tester, 'pot-month-line'), '超了 ￥30，下月再争取小红花');
     });
 
     /// With only a daily cap, today leads the flower.

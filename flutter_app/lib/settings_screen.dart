@@ -738,7 +738,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              zh ? '当前:$_cycleStart 号' : 'Currently: day $_cycleStart',
+              zh ? '当前：$_cycleStart 号' : 'Currently: day $_cycleStart',
               key: const Key('cycle-current'),
               style: TextStyle(fontSize: 12.5, color: palette.inkSoft),
             ),
@@ -747,7 +747,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _group(zh ? '数据' : 'Data', [
             Text(
               zh
-                  ? '导出成 CSV,Excel 和别的记账 app 都读得了。日期是本机的日期,不是格林威治的。'
+                  ? '导出成 CSV，Excel 和别的记账 app 都读得了。日期是本机的日期，不是格林威治的。'
                   : 'Export as CSV, which Excel and other ledgers can read. '
                         'The dates are the ones this phone shows, not UTC.',
               style: TextStyle(fontSize: 12, color: palette.inkSoft),
@@ -762,7 +762,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const SizedBox(height: 16),
             Text(
               zh
-                  ? '出问题时,可以把本地诊断日志导出,附在 issue 里。只记时间和错误,没有金额和备注。'
+                  ? '出问题时，可以把本地诊断日志导出，附在 issue 里。只记时间和错误，没有金额和备注。'
                   : 'If something went wrong, export the local diagnostic trail '
                         'and attach it to an issue. Times and errors only — no '
                         'amounts, no notes.',

@@ -104,7 +104,7 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
     if (r.rate <= 0) {
       setState(
         () => _flash = zh
-            ? '${r.code} 还没有汇率,先填一个'
+            ? '${r.code} 还没有汇率，先填一个'
             : 'No rate for ${r.code} yet — set one first',
       );
       return;
@@ -121,7 +121,7 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
         ),
         content: Text(
           zh
-              ? '每一笔记录、每个账户余额、资产、借贷、订阅、模板和预算都会按 1 ${r.code} = ${r.rate} $_base 重新换算。这不是改个标签,是改单位。'
+              ? '每一笔记录、每个账户余额、资产、借贷、订阅、模板和预算都会按 1 ${r.code} = ${r.rate} $_base 重新换算。这不是改个标签，是改单位。'
               : 'Every entry, balance, asset, loan, subscription, template and '
                     'budget is re-expressed at 1 ${r.code} = ${r.rate} $_base. '
                     'This changes the unit, not the label.',
@@ -157,7 +157,7 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
         // of the two happened rather than reporting a generic failure.
         _ =>
           zh
-              ? '${r.code} 没有可用汇率,没有改动'
+              ? '${r.code} 没有可用汇率，没有改动'
               : 'No usable rate for ${r.code} — nothing changed',
       };
     });
@@ -246,7 +246,7 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
               icon: Icons.currency_exchange,
               text: zh ? '还没有别的币种' : 'No other currencies yet',
               hint: zh
-                  ? '出国或海淘时点右上角加一个,记账时就能选'
+                  ? '出国或海淘时点右上角加一个，记账时就能选'
                   : 'Add one with + to record in it',
             ),
           for (final r in _rates) _row(r, zh),

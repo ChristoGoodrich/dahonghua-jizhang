@@ -111,7 +111,7 @@ class DateChip extends StatelessWidget {
     return Tap(
       key: const Key('date-chip'),
       radius: Rad.pill,
-      semanticLabel: zh ? '日期:$label' : 'Date: $label',
+      semanticLabel: zh ? '日期：$label' : 'Date: $label',
       onTap: () async {
         final picked = await showModalBottomSheet<DateTime>(
           context: context,

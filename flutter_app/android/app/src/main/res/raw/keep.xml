@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Resources named only from Dart. The reminder's small icon reaches the
+  notification plugin as a string, so nothing in the build can see it is used,
+  and resource shrinking — off today — would remove it and break every
+  reminder at startup rather than at build time.
+-->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/ic_stat_flower" />

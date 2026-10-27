@@ -112,7 +112,7 @@ class _TagsScreenState extends State<TagsScreen> {
             padding: const EdgeInsets.only(left: 2, bottom: 8),
             child: Text(
               zh
-                  ? '账本先归档,归档后才能删除 — 删掉的账本会让它下面的记录无处可归'
+                  ? '账本先归档，归档后才能删除 — 删掉的账本会让它下面的记录无处可归'
                   : 'A ledger archives first and deletes only once archived.',
               style: TextStyle(fontSize: 11.5, color: palette.inkSoft),
             ),
@@ -153,7 +153,7 @@ class _TagsScreenState extends State<TagsScreen> {
             padding: const EdgeInsets.only(left: 2, bottom: 8),
             child: Text(
               zh
-                  ? '内置分类之外,自己加的会跟在后面。点一下管理子分类。'
+                  ? '内置分类之外，自己加的会跟在后面。点一下管理子分类。'
                   : 'Yours sit after the built-ins. Tap one to manage its subcategories.',
               style: TextStyle(fontSize: 11.5, color: palette.inkSoft),
             ),
@@ -466,7 +466,7 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
                   icon: Icons.bolt_outlined,
                   text: zh ? '还没有模板' : 'No templates yet',
                   hint: zh
-                      ? '在记一笔里长按「保存」,就能存成模板'
+                      ? '在记一笔里长按「保存」，就能存成模板'
                       : 'Long-press Save on the record sheet to pin one here',
                 ),
               ],

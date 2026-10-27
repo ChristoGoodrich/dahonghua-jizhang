@@ -13,7 +13,7 @@
 //!   reference as `acct`; the TypeScript's own comment records that v7 left
 //!   those dangling.
 
-use crate::entry::Patch;
+use crate::entry::{Entry, Patch};
 use crate::ledger::Ledger;
 
 pub const DEFAULT_ACCOUNT: &str = "default";
@@ -136,6 +136,7 @@ pub fn remove_account(
     let touched: Vec<(String, bool, bool)> = ledger
         .all()
         .iter()
+        .filter(|e| names(e, id))
         .map(|e| {
             (
                 e.id.clone(),
@@ -143,7 +144,6 @@ pub fn remove_account(
                 e.acct_to.as_deref() == Some(id),
             )
         })
-        .filter(|(_, from, to)| *from || *to)
         .collect();
 
     for (entry_id, from, to) in touched {
@@ -160,6 +160,28 @@ pub fn remove_account(
         *current = DEFAULT_ACCOUNT.to_string();
     }
     true
+}
+
+/// The rows [`remove_account`] moves to `default`: every one that names `id`
+/// at either end.
+///
+/// Asked apart from the removal so a caller that writes only what changed is
+/// told which rows those are by the same test that moves them, rather than by
+/// a second copy of it. Removing an account used to rewrite the whole ledger
+/// for want of this.
+pub fn referencing(entries: &[Entry], id: &str) -> Vec<String> {
+    if id == DEFAULT_ACCOUNT {
+        return Vec::new();
+    }
+    entries
+        .iter()
+        .filter(|e| names(e, id))
+        .map(|e| e.id.clone())
+        .collect()
+}
+
+fn names(e: &Entry, id: &str) -> bool {
+    e.acct.as_deref() == Some(id) || e.acct_to.as_deref() == Some(id)
 }
 
 /// Archive or unarchive. Returns `false` for `default`, which stays visible
@@ -247,6 +269,42 @@ mod tests {
             },
         ]);
         (accounts, ledger, "a1".to_string())
+    }
+
+    /// The bridge saves only the rows this names, so it has to name every row
+    /// the removal changes and nothing else. Checked against what changed,
+    /// not against the predicate restated.
+    #[test]
+    fn referencing_names_exactly_the_rows_a_removal_rewrites() {
+        let (mut accounts, mut ledger, mut current) = seed();
+        let before = ledger.all().to_vec();
+        let named = referencing(ledger.all(), "a1");
+
+        assert!(remove_account(
+            &mut accounts,
+            &mut ledger,
+            &mut current,
+            "a1",
+            1_000
+        ));
+        let changed: Vec<String> = ledger
+            .all()
+            .iter()
+            .zip(&before)
+            .filter(|(after, before)| after != before)
+            .map(|(after, _)| after.id.clone())
+            .collect();
+
+        // e0 spends from a1 and e1 transfers into it; e2 never named it
+        assert_eq!(named, vec!["e0".to_string(), "e1".to_string()]);
+        assert_eq!(named, changed);
+    }
+
+    #[test]
+    fn default_is_never_referencing_anything_to_move() {
+        let (_, ledger, _) = seed();
+        // `remove_account` refuses `default`, so nothing would move
+        assert!(referencing(ledger.all(), DEFAULT_ACCOUNT).is_empty());
     }
 
     #[test]

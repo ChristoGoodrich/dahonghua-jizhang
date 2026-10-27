@@ -96,9 +96,10 @@ void main() {
     });
 
     test('an enum survives the round trip in both directions', () {
-      expect(glass.resolveTier(reduceTransparency: false, isWeb: false), glass.GlassTier.full);
-      expect(glass.resolveTier(reduceTransparency: false, isWeb: true), glass.GlassTier.wash);
-      expect(glass.resolveTier(reduceTransparency: true, isWeb: true), glass.GlassTier.solid);
+      expect(glass.resolveTier(reduceTransparency: false, powerSave: false, isWeb: false), glass.GlassTier.full);
+      expect(glass.resolveTier(reduceTransparency: false, powerSave: false, isWeb: true), glass.GlassTier.wash);
+      expect(glass.resolveTier(reduceTransparency: true, powerSave: false, isWeb: true), glass.GlassTier.solid);
+      expect(glass.resolveTier(reduceTransparency: false, powerSave: true, isWeb: false), glass.GlassTier.wash);
     });
 
     test('a struct comes back whole', () {

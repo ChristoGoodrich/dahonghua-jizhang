@@ -146,8 +146,8 @@ pub fn glass_spec(is_dark: bool, level: GlassLevel) -> GlassSpec {
 }
 
 #[frb(sync)]
-pub fn resolve_tier(reduce_transparency: bool, is_web: bool) -> GlassTier {
-    core::resolve_tier(reduce_transparency, is_web).into()
+pub fn resolve_tier(reduce_transparency: bool, power_save: bool, is_web: bool) -> GlassTier {
+    core::resolve_tier(reduce_transparency, power_save, is_web).into()
 }
 
 /// 感知交互行为 — the bloom that answers a touch.

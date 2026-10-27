@@ -15,6 +15,8 @@ import 'dart:typed_data';
 
 import 'package:flutter_app/persistence.dart';
 import 'package:flutter_app/src/rust/api/accounts.dart' as accounts;
+import 'package:flutter_app/src/rust/api/batch.dart' as batch;
+import 'package:flutter_app/src/rust/api/capture.dart' as capture;
 import 'package:flutter_app/src/rust/api/currency.dart' as currency;
 import 'package:flutter_app/src/rust/api/db.dart' as db;
 import 'package:flutter_app/src/rust/api/record.dart' as record;
@@ -29,6 +31,7 @@ import 'package:flutter_app/src/rust/api/privacy.dart' as privacy;
 import 'package:flutter_app/src/rust/api/remind.dart' as remind;
 import 'package:flutter_app/src/rust/api/subscriptions.dart' as subs;
 import 'package:flutter_app/src/rust/api/theme.dart' as theme;
+import 'package:flutter_app/subs_screen.dart' show runDueCharges;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'rust_init.dart';
@@ -467,9 +470,14 @@ void main() {
     ) async {
       final p = await open();
       add('a', 10);
+      currency.addRate(code: 'USD');
+      currency.setRate(code: 'USD', rate: 0.14);
       p.save();
 
-      currency.setBaseCurrency(code: 'USD', now: t0 + 1);
+      // Accepted, not refused: this used to switch to a code with no rate,
+      // which writes nothing, and passed only because the refusal took the
+      // wide mark too.
+      expect(currency.setBaseCurrency(code: 'USD', now: t0 + 1), 'ok');
       expect(
         p.pendingRows,
         -1,
@@ -487,6 +495,261 @@ void main() {
       expect(p.pendingRows, greaterThanOrEqualTo(1));
       p.dispose();
     });
+  });
+
+  /// The actions that took the wide mark to change a row or two.
+  ///
+  /// `store_mut` marks every row, so each of these rewrote the whole ledger on
+  /// the next save — every row deleted and inserted again, on the UI thread:
+  /// 17ms at 3,000 rows and up to 135ms at 8,000 on a desktop, against about
+  /// 0.05ms for the one row that changed. Each now marks only the rows it
+  /// touched, which is precisely the mistake the wide mark was there to make
+  /// impossible. So each is held twice: to queue exactly its own rows, and to
+  /// have those rows come back from a real restart. The first fails when an
+  /// action over-marks; the second is the one that fails when it under-marks.
+  group('a one-row action writes its own rows', () {
+    const alipay = 'com.eg.android.AlipayGphone';
+
+    capture.RawNotifView notif(String id, String text) => capture.RawNotifView(
+      id: id,
+      pkg: alipay,
+      title: '支付宝',
+      text: text,
+      postedAt: t0,
+    );
+
+    /// How many entries a subscription sweep posted, which depends on the
+    /// calendar: one or two charges, by where today falls.
+    var charged = 0;
+
+    final cases = <_RowCase>[
+      _RowCase(
+        '报销: marking a claim',
+        act: () => rb.toggleReimburse(id: 'e3', now: t0 + 1),
+        rows: () => 1,
+        check: () => expect(store.getEntry(id: 'e3')!.rb, 'pending'),
+      ),
+      _RowCase(
+        '报销: settling it',
+        arrange: () => rb.toggleReimburse(id: 'e3', now: t0 + 1),
+        act: () => rb.confirmReimburse(id: 'e3', now: t0 + 2),
+        rows: () => 1,
+        check: () {
+          final e = store.getEntry(id: 'e3')!;
+          expect((e.rb, e.rbAmt), ('done', 10));
+        },
+      ),
+      _RowCase(
+        '报销: dropping it',
+        arrange: () {
+          rb.toggleReimburse(id: 'e3', now: t0 + 1);
+          rb.confirmReimburse(id: 'e3', now: t0 + 2);
+        },
+        act: () => rb.unmarkReimburse(id: 'e3', now: t0 + 3),
+        rows: () => 1,
+        check: () {
+          final e = store.getEntry(id: 'e3')!;
+          expect((e.rb, e.rbAmt), (null, null));
+        },
+      ),
+      _RowCase(
+        '退款: the expense and the income it logs',
+        act: () => rb.refundEntry(
+          id: 'e3',
+          amount: 4,
+          zh: true,
+          newId: 'refund-1',
+          now: t0 + 1,
+        ),
+        rows: () => 2,
+        check: () {
+          expect(store.getEntry(id: 'e3')!.refund, 4);
+          final r = store.getEntry(id: 'refund-1')!;
+          expect((r.io, r.amt, r.refundOf), ('inc', 4, 'e3'));
+        },
+      ),
+      _RowCase(
+        '批量处理: a claim on three rows',
+        act: () => batch.setClaim(
+          ids: const ['e1', 'e2', 'e3'],
+          to: batch.ClaimTo.pending,
+          now: t0 + 1,
+        ),
+        rows: () => 3,
+        check: () {
+          for (final id in ['e1', 'e2', 'e3']) {
+            expect(store.getEntry(id: id)!.rb, 'pending', reason: id);
+          }
+          expect(store.getEntry(id: 'e4')!.rb, isNull);
+        },
+      ),
+      _RowCase(
+        '账户: adding one',
+        act: () => accounts.addAccount(
+          id: 'wallet',
+          name: '钱包',
+          balance: 50,
+          kind: 'cash',
+        ),
+        rows: () => 0,
+        check: () => expect(
+          accounts.balances().map((a) => a.id),
+          contains('wallet'),
+        ),
+      ),
+      _RowCase(
+        '账户: archiving one',
+        arrange: () => accounts.addAccount(
+          id: 'wallet',
+          name: '钱包',
+          balance: 50,
+          kind: 'cash',
+        ),
+        act: () => accounts.archiveAccount(id: 'wallet', archived: true),
+        rows: () => 0,
+        check: () => expect(
+          accounts.balances().firstWhere((a) => a.id == 'wallet').archived,
+          isTrue,
+        ),
+      ),
+      _RowCase(
+        '账户: removing one moves the rows that named it',
+        arrange: () {
+          accounts.addAccount(id: 'card', name: '卡', balance: 0, kind: 'cash');
+          store.addEntry(
+            entry: store.NewEntry(
+              io: 'exp',
+              cat: 'food',
+              amt: 8,
+              acct: 'card',
+              ts: t0,
+            ),
+            id: 'on-card',
+            now: t0,
+          );
+          store.addTransfer(
+            transfer: store.NewTransfer(
+              from: 'default',
+              to: 'card',
+              amt: 100,
+              ts: t0,
+            ),
+            id: 'to-card',
+            now: t0,
+          );
+        },
+        act: () => accounts.removeAccount(id: 'card', now: t0 + 1),
+        rows: () => 2,
+        check: () {
+          expect(store.getEntry(id: 'on-card')!.acct, 'default');
+          expect(store.getEntry(id: 'to-card')!.acctTo, 'default');
+          expect(accounts.balances().map((a) => a.id), isNot(contains('card')));
+        },
+      ),
+      _RowCase(
+        '币种: a switch that is refused writes nothing',
+        // No USD rate, so the core refuses before it touches a row.
+        act: () => expect(
+          currency.setBaseCurrency(code: 'USD', now: t0 + 1),
+          'noRate',
+        ),
+        rows: () => 0,
+        check: () {
+          expect(currency.baseCurrency(), 'CNY');
+          expect(store.getEntry(id: 'e3')!.amt, 10);
+        },
+      ),
+      _RowCase(
+        '自动记账: a payment the drain posts',
+        arrange: capture.resetInbox,
+        act: () => capture.drainCaptures(
+          raws: [notif('q1', '向星巴克(国贸店)付款35.00元')],
+          now: t0 + 1,
+        ),
+        rows: () => 1,
+        check: () => expect(
+          store.liveEntries().where((e) => e.amt == 35 && e.src == 'notif'),
+          hasLength(1),
+        ),
+      ),
+      _RowCase(
+        '自动记账: a waiting payment accepted',
+        arrange: () {
+          capture.resetInbox();
+          // No merchant, so it waits for a tap instead of posting.
+          capture.drainCaptures(
+            raws: [notif('q2', '付款成功12.00元')],
+            now: t0 + 1,
+          );
+        },
+        act: () => expect(capture.confirmPending(id: 'q2', now: t0 + 2), isTrue),
+        rows: () => 1,
+        check: () => expect(
+          store.liveEntries().where((e) => e.amt == 12 && e.src == 'notif'),
+          hasLength(1),
+        ),
+      ),
+      _RowCase(
+        '订阅: the charges a sweep posts',
+        arrange: () {
+          final today = DateTime.now();
+          subs.addSub(
+            sub: subs.NewSub(
+              name: '音乐',
+              amt: 15,
+              freq: 'monthly',
+              day: today.day > 28 ? 28 : today.day,
+              cat: 'fun',
+              emoji: '🎵',
+              isTransfer: false,
+            ),
+            id: 'sub-music',
+            now: today
+                .subtract(const Duration(days: 40))
+                .millisecondsSinceEpoch,
+          );
+        },
+        act: () {
+          final before = store.entryCount();
+          expect(runDueCharges(), isNotEmpty);
+          charged = store.entryCount() - before;
+        },
+        rows: () => charged,
+        check: () => expect(
+          store.liveEntries().where((e) => e.fromSub == true),
+          hasLength(charged),
+        ),
+      ),
+    ];
+
+    /// Twenty rows, so a wide mark has something to be wide about.
+    Future<Persistence> arrange(_RowCase c) async {
+      final p = await open();
+      for (var i = 0; i < 20; i++) {
+        add('e$i', 10);
+      }
+      c.arrange?.call();
+      p.save();
+      expect(p.pendingRows, 0, reason: 'the save wrote the arrangement');
+      return p;
+    }
+
+    for (final c in cases) {
+      testWidgets('${c.name}: queues only what it touched', (tester) async {
+        final p = await arrange(c);
+        c.act();
+        expect(p.pendingRows, c.rows(), reason: '-1 is the whole ledger');
+        p.dispose();
+      });
+
+      testWidgets('${c.name}: survives a restart', (tester) async {
+        var p = await arrange(c);
+        c.act();
+        p = await restart(p);
+        c.check();
+        p.dispose();
+      });
+    }
   });
 
   group('coming from the JSON files', () {
@@ -817,4 +1080,26 @@ void main() {
       p.dispose();
     });
   });
+}
+
+/// One action a screen takes, what it should queue, and what a restart should
+/// still show of it.
+class _RowCase {
+  const _RowCase(
+    this.name, {
+    this.arrange,
+    required this.act,
+    required this.rows,
+    required this.check,
+  });
+
+  final String name;
+
+  /// Anything the action needs first. Saved before [act], so it is not counted.
+  final void Function()? arrange;
+  final void Function() act;
+
+  /// Asked after [act], for the one case whose count the calendar decides.
+  final int Function() rows;
+  final void Function() check;
 }

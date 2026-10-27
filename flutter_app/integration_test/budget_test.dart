@@ -373,7 +373,7 @@ void main() {
         of: find.byKey(const Key('outlook-verdict')),
         matching: find.byType(Text),
       );
-      expect(tester.widget<Text>(verdict).data, startsWith('照这样花,会超'));
+      expect(tester.widget<Text>(verdict).data, startsWith('照这样花，会超'));
     });
 
     testWidgets('a pace inside the cap says it will hold', (tester) async {
@@ -384,7 +384,7 @@ void main() {
         of: find.byKey(const Key('outlook-verdict')),
         matching: find.byType(Text),
       );
-      expect(tester.widget<Text>(verdict).data, '照这样花,守得住');
+      expect(tester.widget<Text>(verdict).data, '照这样花，守得住');
       expect(find.byKey(const Key('fc-rate')), findsOneWidget);
       expect(find.byKey(const Key('fc-projected')), findsOneWidget);
     });

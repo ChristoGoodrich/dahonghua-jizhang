@@ -383,7 +383,7 @@ abstract class RustLibApi extends BaseApi {
 
   String crateApiRecordDayName({required String day, required String today});
 
-  DecryptResult crateApiBackupDecryptBackup({
+  Future<DecryptResult> crateApiBackupDecryptBackup({
     required String envelope,
     required String password,
   });
@@ -411,7 +411,7 @@ abstract class RustLibApi extends BaseApi {
     required PlatformInt64 withinDays,
   });
 
-  String crateApiBackupEncryptBackup({
+  Future<String> crateApiBackupEncryptBackup({
     required String plaintext,
     required String password,
   });
@@ -779,6 +779,7 @@ abstract class RustLibApi extends BaseApi {
 
   GlassTier crateApiGlassResolveTier({
     required bool reduceTransparency,
+    required bool powerSave,
     required bool isWeb,
   });
 
@@ -2860,17 +2861,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "day_name", argNames: ["day", "today"]);
 
   @override
-  DecryptResult crateApiBackupDecryptBackup({
+  Future<DecryptResult> crateApiBackupDecryptBackup({
     required String envelope,
     required String password,
   }) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_String(envelope, serializer);
           sse_encode_String(password, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 68)!;
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 68,
+            port: port_,
+          );
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_decrypt_result,
@@ -3031,17 +3037,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   );
 
   @override
-  String crateApiBackupEncryptBackup({
+  Future<String> crateApiBackupEncryptBackup({
     required String plaintext,
     required String password,
   }) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_String(plaintext, serializer);
           sse_encode_String(password, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 74)!;
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 74,
+            port: port_,
+          );
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_String,
@@ -6314,6 +6325,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @override
   GlassTier crateApiGlassResolveTier({
     required bool reduceTransparency,
+    required bool powerSave,
     required bool isWeb,
   }) {
     return handler.executeSync(
@@ -6321,6 +6333,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         callFfi: () {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_bool(reduceTransparency, serializer);
+          sse_encode_bool(powerSave, serializer);
           sse_encode_bool(isWeb, serializer);
           return pdeCallFfi(
             generalizedFrbRustBinding,
@@ -6333,7 +6346,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           decodeErrorData: null,
         ),
         constMeta: kCrateApiGlassResolveTierConstMeta,
-        argValues: [reduceTransparency, isWeb],
+        argValues: [reduceTransparency, powerSave, isWeb],
         apiImpl: this,
       ),
     );
@@ -6341,7 +6354,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiGlassResolveTierConstMeta => const TaskConstMeta(
     debugName: "resolve_tier",
-    argNames: ["reduceTransparency", "isWeb"],
+    argNames: ["reduceTransparency", "powerSave", "isWeb"],
   );
 
   @override

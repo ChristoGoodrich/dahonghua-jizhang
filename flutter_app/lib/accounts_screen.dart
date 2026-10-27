@@ -158,7 +158,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
         ),
         content: Text(
           zh
-              ? '「${_name(a)}」上的记录会移到默认账户,不会被删除。'
+              ? '「${_name(a)}」上的记录会移到默认账户，不会被删除。'
               : 'Entries on "${_name(a)}" move to the default account. Nothing is deleted.',
           style: TextStyle(fontSize: 14, color: palette.inkSoft),
         ),
@@ -224,7 +224,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                 _showArchived
                     ? (zh ? '隐藏已归档' : 'Hide archived')
                     : (zh
-                          ? '显示已归档($archivedCount)'
+                          ? '显示已归档（$archivedCount）'
                           : 'Show archived ($archivedCount)'),
               ),
             ),
@@ -494,7 +494,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                   ? null
                   : Text(
                       zh
-                          ? '不出现在记账里,历史和余额保留'
+                          ? '不出现在记账里，历史和余额保留'
                           : 'Hidden when recording; history and balance kept',
                     ),
               onTap: () => Navigator.pop(ctx, 'archive'),

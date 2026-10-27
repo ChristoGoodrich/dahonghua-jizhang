@@ -418,10 +418,10 @@ class _BudgetPot extends StatelessWidget {
                     Text(
                       monthly.over
                           ? (zh
-                                ? '超了 ${s(-monthly.left)},下月再争取小红花'
+                                ? '超了 ${s(-monthly.left)}，下月再争取小红花'
                                 : '${s(-monthly.left)} over — aim for more flowers next month')
                           : (zh
-                                ? '已花 ${s(monthly.used)},还剩 ${s(monthly.left)}'
+                                ? '已花 ${s(monthly.used)}，还剩 ${s(monthly.left)}'
                                 : '${s(monthly.used)} spent, ${s(monthly.left)} left'),
                       key: const Key('pot-month-line'),
                       maxLines: 1,

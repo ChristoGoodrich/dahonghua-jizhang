@@ -2228,15 +2228,16 @@ fn wire__crate__api__record__day_name_impl(
     )
 }
 fn wire__crate__api__backup__decrypt_backup_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
     data_len_: i32,
-) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
             debug_name: "decrypt_backup",
-            port: None,
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
         },
         move || {
             let message = unsafe {
@@ -2251,13 +2252,15 @@ fn wire__crate__api__backup__decrypt_backup_impl(
             let api_envelope = <String>::sse_decode(&mut deserializer);
             let api_password = <String>::sse_decode(&mut deserializer);
             deserializer.end();
-            transform_result_sse::<_, ()>((move || {
-                let output_ok = Result::<_, ()>::Ok(crate::api::backup::decrypt_backup(
-                    api_envelope,
-                    api_password,
-                ))?;
-                Ok(output_ok)
-            })())
+            move |context| {
+                transform_result_sse::<_, ()>((move || {
+                    let output_ok = Result::<_, ()>::Ok(crate::api::backup::decrypt_backup(
+                        api_envelope,
+                        api_password,
+                    ))?;
+                    Ok(output_ok)
+                })())
+            }
         },
     )
 }
@@ -2428,15 +2431,16 @@ fn wire__crate__api__statement__due_within_impl(
     )
 }
 fn wire__crate__api__backup__encrypt_backup_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
     data_len_: i32,
-) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
             debug_name: "encrypt_backup",
-            port: None,
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
         },
         move || {
             let message = unsafe {
@@ -2451,13 +2455,15 @@ fn wire__crate__api__backup__encrypt_backup_impl(
             let api_plaintext = <String>::sse_decode(&mut deserializer);
             let api_password = <String>::sse_decode(&mut deserializer);
             deserializer.end();
-            transform_result_sse::<_, ()>((move || {
-                let output_ok = Result::<_, ()>::Ok(crate::api::backup::encrypt_backup(
-                    api_plaintext,
-                    api_password,
-                ))?;
-                Ok(output_ok)
-            })())
+            move |context| {
+                transform_result_sse::<_, ()>((move || {
+                    let output_ok = Result::<_, ()>::Ok(crate::api::backup::encrypt_backup(
+                        api_plaintext,
+                        api_password,
+                    ))?;
+                    Ok(output_ok)
+                })())
+            }
         },
     )
 }
@@ -6090,11 +6096,13 @@ fn wire__crate__api__glass__resolve_tier_impl(
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_reduce_transparency = <bool>::sse_decode(&mut deserializer);
+            let api_power_save = <bool>::sse_decode(&mut deserializer);
             let api_is_web = <bool>::sse_decode(&mut deserializer);
             deserializer.end();
             transform_result_sse::<_, ()>((move || {
                 let output_ok = Result::<_, ()>::Ok(crate::api::glass::resolve_tier(
                     api_reduce_transparency,
+                    api_power_save,
                     api_is_web,
                 ))?;
                 Ok(output_ok)
@@ -10944,6 +10952,8 @@ fn pde_ffi_dispatcher_primary_impl(
         49 => {
             wire__crate__api__reimburse__claim_list_default_impl(port, ptr, rust_vec_len, data_len)
         }
+        68 => wire__crate__api__backup__decrypt_backup_impl(port, ptr, rust_vec_len, data_len),
+        74 => wire__crate__api__backup__encrypt_backup_impl(port, ptr, rust_vec_len, data_len),
         76 => wire__crate__api__store__entry_patch_default_impl(port, ptr, rust_vec_len, data_len),
         85 => wire__crate__api__record__form_view_default_impl(port, ptr, rust_vec_len, data_len),
         97 => wire__crate__api__init__init_app_impl(port, ptr, rust_vec_len, data_len),
@@ -11035,13 +11045,11 @@ fn pde_ffi_dispatcher_sync_impl(
         65 => wire__crate__api__stats__daily_trend_impl(ptr, rust_vec_len, data_len),
         66 => wire__crate__api__record__date_grid_impl(ptr, rust_vec_len, data_len),
         67 => wire__crate__api__record__day_name_impl(ptr, rust_vec_len, data_len),
-        68 => wire__crate__api__backup__decrypt_backup_impl(ptr, rust_vec_len, data_len),
         69 => wire__crate__api__db__dirty_entry_count_impl(ptr, rust_vec_len, data_len),
         70 => wire__crate__api__capture__dismiss_pending_impl(ptr, rust_vec_len, data_len),
         71 => wire__crate__api__ai__drafts_reply_impl(ptr, rust_vec_len, data_len),
         72 => wire__crate__api__capture__drain_captures_impl(ptr, rust_vec_len, data_len),
         73 => wire__crate__api__statement__due_within_impl(ptr, rust_vec_len, data_len),
-        74 => wire__crate__api__backup__encrypt_backup_impl(ptr, rust_vec_len, data_len),
         75 => wire__crate__api__store__entry_count_impl(ptr, rust_vec_len, data_len),
         77 => wire__crate__api__calc__eval_expr_impl(ptr, rust_vec_len, data_len),
         78 => wire__crate__api__export__export_csv_impl(ptr, rust_vec_len, data_len),

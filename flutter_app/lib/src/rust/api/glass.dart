@@ -51,9 +51,11 @@ GlassSpec glassSpec({required bool isDark, required GlassLevel level}) =>
 
 GlassTier resolveTier({
   required bool reduceTransparency,
+  required bool powerSave,
   required bool isWeb,
 }) => RustLib.instance.api.crateApiGlassResolveTier(
   reduceTransparency: reduceTransparency,
+  powerSave: powerSave,
   isWeb: isWeb,
 );
 

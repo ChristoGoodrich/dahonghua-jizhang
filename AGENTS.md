@@ -50,6 +50,7 @@ refuses to run without `src/` for exactly that reason.
     npm run rust:clippy   -D warnings
     npm run bridge:clippy the bridge is a separate cargo project
     npm run tests:check   all_test.dart is not stale
+    npm run zh:check      Chinese strings use ，；：（）, not ASCII
     npm run apk           the release APKs, one per architecture
 
     cd flutter_app
@@ -101,6 +102,23 @@ The type is what makes it findable: making `store()` read-only turned twenty
 silent data-loss sites into twenty compile errors. Forgetting now means taking
 the wide mark, which costs a slower save rather than the data.
 
+**And "slower" was measured, and it was the ordinary taps.** The wide mark
+makes the next save `DELETE FROM entries` and every row back in, on the UI
+thread: 17ms at 3,000 rows and 42–135ms at 8,000 on a desktop, against
+0.05ms for one row. 报销, 退款, 批量报销, adding, archiving or removing an
+account, every auto-captured payment and every subscription charge took it
+for a row or two. Each now takes `store_marked()` and marks what it wrote —
+the id it was handed, the id it chose, or, for an account removal,
+`core::accounts::referencing`, the same predicate the removal moves rows by.
+A base-currency switch keeps the wide mark, and takes it only when the switch
+happened. Bill import keeps it too: it is bulk.
+
+A narrow mark is exactly the mistake the wide one exists to prevent, so each
+of these is in `persistence_test`'s "a one-row action writes its own rows"
+twice: once for `pendingRows` — what it queues — and once through a real
+restart, which is the one that fails when a mark is missing. Add a write,
+add it to that table.
+
 **The config had the same hole, and nobody looked.** It was written only when
 `dirty_config` was set, and four setters set it — the currency table, the
 current account, accounts, sync. The theme, the budget, templates, tags,
@@ -147,6 +165,15 @@ transition draws two screens. So each scrim keys its bands to one
 seen through it — instead of `sigma`, the step it adds when nested. The masks
 make the two the same picture, and the tour is how that was checked: the
 emulator cannot measure it (below), so it was looked at.
+
+**And under battery saver there is none of it.** The blur dropped out only for
+移除动画; battery saver is the phone asked to spend less, and it now resolves
+to `Wash` — the wash and the ramp, no blur — in `core::glass::resolve_tier`.
+`lib/power.dart` carries the phone's answer from a Kotlin event channel
+(`PowerChannel`) to an inherited widget above the app, and every surface asks
+`glassTier(context)` rather than resolving its own: the lens did, and blurred
+in every tier. `power_test` holds the whole shell to no `BackdropFilter` under
+battery saver, and to some without it.
 
 The ramp lives in the `fade` at the shallow end and holds full depth beyond it.
 A scrim is sized to the chrome it belongs to plus that fade, and for a header

@@ -5,7 +5,12 @@
 // and the assertions read what came out. What is being checked is the seam:
 // that a decision made in Rust arrives on screen and in the store intact.
 
+import 'dart:async';
+import 'dart:io';
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
+import 'package:flutter_app/photos.dart';
 import 'package:flutter_app/record_sheet.dart';
 import 'package:flutter_app/src/rust/api/accounts.dart' as accounts;
 import 'package:flutter_app/src/rust/api/record.dart' as record;
@@ -400,6 +405,122 @@ void main() {
       expect(find.text('Expense'), findsOneWidget);
       await saveAgain(tester);
       expect(flash(tester), 'Enter an amount');
+    });
+  });
+
+  group('the receipt on the sheet', () {
+    // A 56dp thumbnail of a photo saved at up to 1600px. It was decoded
+    // whole — about 13MB of pixels for a portrait receipt, held for as long
+    // as the sheet was open — and the file behind it was looked up again on
+    // every build, which on this sheet is every press of the keypad.
+    File? saved;
+
+    tearDown(() async {
+      if (saved != null && await saved!.exists()) await saved!.delete();
+      saved = null;
+    });
+
+    /// An entry carrying a `w`×`h` receipt, opened for editing.
+    Future<void> withReceipt(WidgetTester tester, int w, int h) async {
+      final name = 'thumb-${DateTime.now().microsecondsSinceEpoch}.png';
+      final bytes = await tester.runAsync(() async {
+        final rec = ui.PictureRecorder();
+        Canvas(rec).drawRect(
+          Rect.fromLTWH(0, 0, w.toDouble(), h.toDouble()),
+          Paint()..color = const Color(0xFFE8D5B7),
+        );
+        final img = await rec.endRecording().toImage(w, h);
+        final data = await img.toByteData(format: ui.ImageByteFormat.png);
+        final dir = await attachmentsDir();
+        saved = File('${dir.path}/$name');
+        await saved!.writeAsBytes(data!.buffer.asUint8List());
+        return data.lengthInBytes;
+      });
+      expect(bytes, greaterThan(0));
+
+      final now = DateTime.now().millisecondsSinceEpoch;
+      final r = record.saveForm(
+        form: record
+            .initialForm(sourceId: '', editing: false, ledger: '')
+            .copyWith(amt: '42', photo: name),
+        editId: '',
+        id: 'with-receipt',
+        now: now,
+        rateWasCached: false,
+      );
+      expect(r.rejected, isNull);
+
+      await tester.pumpWidget(
+        const MaterialApp(home: RecordSheet(editId: 'with-receipt')),
+      );
+      // The lookup is real file I/O, which settling alone does not wait for.
+      for (var i = 0; i < 20 && find.byType(Image).evaluate().isEmpty; i++) {
+        await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 50)),
+        );
+        await tester.pumpAndSettle();
+      }
+      expect(find.byType(Image), findsOneWidget, reason: 'the thumbnail');
+    }
+
+    Future<({int width, int height})> decoded(WidgetTester tester) async {
+      final provider = tester.widget<Image>(find.byType(Image)).image;
+      final size = await tester.runAsync(() {
+        final done = Completer<({int width, int height})>();
+        final stream = provider.resolve(ImageConfiguration.empty);
+        late final ImageStreamListener l;
+        l = ImageStreamListener(
+          (info, _) {
+            stream.removeListener(l);
+            done.complete((width: info.image.width, height: info.image.height));
+          },
+          onError: (e, s) => done.completeError(e, s),
+        );
+        stream.addListener(l);
+        return done.future;
+      });
+      return size!;
+    }
+
+    testWidgets('is decoded at the size it is drawn, not the photo', (
+      tester,
+    ) async {
+      await withReceipt(tester, 1600, 1200);
+      final side = (56 * tester.view.devicePixelRatio).round();
+
+      final got = await decoded(tester);
+      // The short side at the size drawn, the long side in proportion: the
+      // thumbnail covers its square, so squashing both to `side` would
+      // distort it, and fitting the long side would leave it soft.
+      expect(got.height, side);
+      expect(got.width, closeTo(side * 1600 / 1200, 1));
+    });
+
+    testWidgets('a portrait receipt is cut on its long side too', (
+      tester,
+    ) async {
+      await withReceipt(tester, 1200, 1600);
+      final side = (56 * tester.view.devicePixelRatio).round();
+
+      final got = await decoded(tester);
+      expect(got.width, side);
+      expect(got.height, closeTo(side * 1600 / 1200, 1));
+    });
+
+    testWidgets('typing does not look for the file again', (tester) async {
+      await withReceipt(tester, 400, 300);
+      final before = attachmentLookups;
+
+      for (final k in ['1', '2', '+', '3']) {
+        await press(tester, k);
+      }
+
+      expect(
+        attachmentLookups,
+        before,
+        reason: 'the photo did not change, so neither did its file',
+      );
+      expect(find.byType(Image), findsOneWidget);
     });
   });
 

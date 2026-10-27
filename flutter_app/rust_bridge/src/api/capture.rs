@@ -28,7 +28,8 @@ use dahonghua_core::jsval::{parse_checked, stable, Value};
 use dahonghua_core::notif::{NotifEntryDraft, NotifSource, RawNotif};
 use dahonghua_core::store::ImportedBill;
 
-use super::store::{store, store_mut};
+use super::store::{store, store_marked};
+use crate::api::db;
 
 /// The inbox, which is device-local and is not part of the config blob.
 ///
@@ -144,7 +145,12 @@ fn post(drafts: &[NotifEntryDraft], now: i64, tag: &str) -> u32 {
     let ids: Vec<String> = (0..bills.len())
         .map(|i| format!("n{now}{tag}{i}"))
         .collect();
-    store_mut().post_captured(&bills, &ids, now) as u32
+    // New rows under the ids handed over, one per draft and in order, so the
+    // ones that landed are the first `n`. A drain runs on every return to the
+    // app, and the wide mark here rewrote the ledger for a coffee.
+    let n = store_marked().post_captured(&bills, &ids, now);
+    db::mark_many(ids.into_iter().take(n));
+    n as u32
 }
 
 /// Drain the native queue: classify, record what is confident, keep the rest.
