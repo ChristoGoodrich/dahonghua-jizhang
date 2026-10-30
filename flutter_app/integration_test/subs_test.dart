@@ -264,7 +264,13 @@ void main() {
 
       expect(textOf(tester, 'sub-s-音乐-0-due'), contains('今天扣款'));
       expect(textOf(tester, 'sub-s-音乐-0-due'), isNot(contains('下次')));
-    });
+    },
+        // A subscription's day is kept to 1–28 — `add_sub` clamps it, as the
+        // form does — so on the 29th, 30th and 31st nothing can be due today:
+        // the one made above is stored as the 28th and reads "下次" next
+        // month. It failed CI on 30 October for that and proved nothing.
+        // Skipped, not passed: a run on those days makes no claim about this.
+        skip: DateTime.now().day > 28);
 
     testWidgets('shows an instalment plan as a fraction', (tester) async {
       makeSub(periods: 12);
