@@ -78,6 +78,16 @@ List<String> strayPacks({
   required List<String> dirs,
 }) => RustLib.instance.api.crateApiBackupStrayPacks(files: files, dirs: dirs);
 
+/// The list of receipts a sealed snapshot writes beside it, or `None` for a
+/// plain snapshot — whose folder carries copies — and for a name that is not
+/// a snapshot.
+String? receiptsName({required String name}) =>
+    RustLib.instance.api.crateApiBackupReceiptsName(name: name);
+
+/// The receipt lists in a listing whose snapshot is gone.
+List<String> strayLists({required List<String> files}) =>
+    RustLib.instance.api.crateApiBackupStrayLists(files: files);
+
 /// How many snapshots are kept by default.
 int maxBackups() => RustLib.instance.api.crateApiBackupMaxBackups();
 

@@ -29,6 +29,7 @@ import 'budget_screen.dart';
 import 'petal_burst.dart';
 import 'budget_widget.dart';
 import 'currency_screen.dart';
+import 'diagnostics.dart';
 import 'entry_list.dart';
 import 'library_screen.dart';
 import 'me_screen.dart';
@@ -37,6 +38,7 @@ import 'inbox.dart';
 import 'lock_gate.dart';
 import 'import_screen.dart';
 import 'persistence.dart';
+import 'photos.dart';
 import 'power.dart';
 import 'record_sheet.dart' as sheet;
 import 'reimburse_screen.dart';
@@ -62,6 +64,16 @@ Future<void> main() async {
   // Before the first frame, so the list does not visibly gain rows a moment
   // after it is drawn.
   if (runDueCharges().isNotEmpty) await store.flush();
+  // Receipts nothing names any more. Not awaited: the first frame does not
+  // wait on a folder, and a receipt picked meanwhile is held. A sweep that
+  // fails has deleted at most some of what it should have, and the next
+  // launch asks again.
+  unawaited(
+    sweepReceipts(store).catchError((Object e) {
+      diag.note('receipts: sweep failed: $e');
+      return const <String>[];
+    }),
+  );
   watchPowerSaving();
   runApp(App(store: store));
 }

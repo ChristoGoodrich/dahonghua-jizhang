@@ -480,6 +480,36 @@ not fail — the injection found it), and a 问账本 request contains none of t
 ledger's notes or amounts. `examples/ai_smoke.rs` builds and reads the real
 bodies for checking against the live service by hand.
 
+## Receipts on the disk
+
+An entry's `photo` is a name; the file is in `attachments/`. Nothing deleted
+those files: a delete, an edit that changed the receipt and a sheet closed
+after a photo was picked each left one that nothing named. The fix is a
+referenced set rather than a delete on each path — two rows can name one file —
+and `sweepReceipts` asks it once a launch, from `main`, **only when the ledger
+loaded**: a ledger that could not be read names nothing, so every receipt
+would look like rubbish.
+
+What still needs a file is written down in `core::receipts`. Two of its rules
+are easy to get wrong:
+
+* **A tombstone keeps its receipt for thirty days.** 撤销 brings the row back
+  with its name, and so can a sync.
+* **A sealed snapshot keeps what it names**, through the list it writes
+  beside it (`backup_<ts>.enc.receipts`), because its restore expects the files
+  where they are — plain copies beside it would undo the seal. A sealed
+  snapshot with no list that reads — every one from before the list existed —
+  is given the folder as it stands (`core::receipts::adopt`), written before
+  anything is swept. That is safe only because nothing deleted a receipt
+  before the sweep, and the sweep deletes nothing while such a snapshot is
+  kept; if the list cannot be written, nothing is swept and 诊断 says why.
+  A plain snapshot keeps nothing: its folder carries copies, and its restore
+  puts them back.
+
+`receipts_test` drives each of these on a device. The paths that leave a file
+behind and the tombstone's thirty days go through a restart; the snapshot
+cases do not.
+
 ## What the port dropped
 
 The rewrite ported every screen, and the screenshot tour is how a missing

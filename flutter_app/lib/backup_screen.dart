@@ -27,32 +27,21 @@
 // a cipher is not a decision the ledger needs to own. Empty password on the
 // way out means a plain snapshot; on the way back in there is no empty path.
 // A sealed snapshot leaves the receipt photos out rather than putting plain
-// copies beside a sealed document, and the seal dialog says so.
+// copies beside a sealed document, and the seal dialog says so. It writes
+// down which ones it names instead, so the receipt sweep keeps them.
 
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'src/rust/api/backup.dart' as backup;
-import 'src/rust/api/store.dart' as store;
+import 'src/rust/api/receipts.dart' as receipts;
+import 'folders.dart';
 import 'glass.dart';
 import 'empty_note.dart';
 import 'photos.dart';
 import 'theme.dart';
-
-/// Where snapshots live: a subdirectory of the app's own storage.
-///
-/// The same place the ledger is written, for the same reason — Dart alone
-/// cannot find the Android app-private directory and a hardcoded path is not
-/// one.
-Future<Directory> backupDir() async {
-  final base = await getApplicationDocumentsDirectory();
-  final dir = Directory('${base.path}/backups');
-  if (!await dir.exists()) await dir.create(recursive: true);
-  return dir;
-}
 
 /// Take a snapshot and prune the old ones. Returns the file written.
 ///
@@ -69,6 +58,9 @@ Future<File> createBackup({int? keep, String? password}) async {
     // nothing — worse than no file at all.
     throw StateError('backup could not be built');
   }
+  // The receipts that document names, asked of the same ledger before the
+  // seal below awaits — a save can land while it does.
+  final photos = receipts.carriedReceipts();
   final sealed = password != null && password.isNotEmpty;
   if (sealed) {
     // Off the UI thread: the key derivation is slow on purpose.
@@ -76,23 +68,14 @@ Future<File> createBackup({int? keep, String? password}) async {
     if (json.isEmpty) throw StateError('backup could not be sealed');
   }
   final name = backup.backupName(ts: now, encrypted: sealed);
-  final file = File('${dir.path}/$name');
-  await file.writeAsString(json);
 
+  // What a restore will look for is written before the snapshot is, so a
+  // snapshot on the disk vouches for it. One cut off halfway leaves a folder
+  // or a list with no snapshot, and the sweep below takes those.
+  //
   // Receipts travel with a plain snapshot: a JSON that names a photo nobody
   // has is a backup of a word. Same stem, a sibling folder.
-  //
-  // A sealed one goes without them — `packName` is null for it. The photos
-  // are copied as they are, and plain receipts beside a sealed document undo
-  // the seal: 导出 handed both to the share sheet. Sealing them too would buy
-  // a restore nothing, because the attachments a snapshot names are never
-  // deleted and the restore finds them where they already are.
   final packName = backup.packName(name: name);
-  final photos = <String>{
-    if (packName != null)
-      for (final e in store.liveEntries())
-        if (e.photo != null && e.photo!.isNotEmpty) e.photo!,
-  };
   if (packName != null && photos.isNotEmpty) {
     final pack = Directory('${dir.path}/$packName');
     await pack.create(recursive: true);
@@ -104,6 +87,21 @@ Future<File> createBackup({int? keep, String? password}) async {
       }
     }
   }
+  // A sealed one goes without them — `packName` is null for it. The photos
+  // are copied as they are, and plain receipts beside a sealed document undo
+  // the seal: 导出 handed both to the share sheet. Its restore finds them
+  // where they already are instead, and the list says which they are, so the
+  // receipt sweep keeps them for as long as the snapshot is kept. Written
+  // when empty too: a sealed snapshot with no list could name anything.
+  final listName = backup.receiptsName(name: name);
+  if (listName != null) {
+    await File(
+      '${dir.path}/$listName',
+    ).writeAsString(receipts.receiptList(names: photos));
+  }
+
+  final file = File('${dir.path}/$name');
+  await file.writeAsString(json);
 
   for (final gone in backup.pruneBackups(
     names: await _names(dir),
@@ -112,6 +110,9 @@ Future<File> createBackup({int? keep, String? password}) async {
     await File('${dir.path}/$gone').delete();
   }
   await _sweepPacks(dir);
+  for (final stray in backup.strayLists(files: await _names(dir))) {
+    await File('${dir.path}/$stray').delete();
+  }
   return file;
 }
 

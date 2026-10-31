@@ -237,6 +237,20 @@ pub fn stray_packs(files: Vec<String>, dirs: Vec<String>) -> Vec<String> {
     core::stray_packs(&files, &dirs)
 }
 
+/// The list of receipts a sealed snapshot writes beside it, or `None` for a
+/// plain snapshot — whose folder carries copies — and for a name that is not
+/// a snapshot.
+#[frb(sync)]
+pub fn receipts_name(name: String) -> Option<String> {
+    core::receipts_name(&name)
+}
+
+/// The receipt lists in a listing whose snapshot is gone.
+#[frb(sync)]
+pub fn stray_lists(files: Vec<String>) -> Vec<String> {
+    core::stray_lists(&files)
+}
+
 /// How many snapshots are kept by default.
 #[frb(sync)]
 pub fn max_backups() -> u32 {

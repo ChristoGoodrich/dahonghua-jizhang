@@ -28,6 +28,7 @@ import 'api/networth.dart';
 import 'api/period.dart';
 import 'api/privacy.dart';
 import 'api/rates.dart';
+import 'api/receipts.dart';
 import 'api/record.dart';
 import 'api/reimburse.dart';
 import 'api/remind.dart';
@@ -399,6 +400,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<RawNotifView> dco_decode_list_raw_notif_view(dynamic raw);
 
   @protected
+  List<ReceiptList> dco_decode_list_receipt_list(dynamic raw);
+
+  @protected
   List<(String, double)> dco_decode_list_record_string_f_64(dynamic raw);
 
   @protected
@@ -549,6 +553,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   RecapView dco_decode_recap_view(dynamic raw);
+
+  @protected
+  ReceiptList dco_decode_receipt_list(dynamic raw);
 
   @protected
   (String, double) dco_decode_record_string_f_64(dynamic raw);
@@ -1031,6 +1038,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  List<ReceiptList> sse_decode_list_receipt_list(SseDeserializer deserializer);
+
+  @protected
   List<(String, double)> sse_decode_list_record_string_f_64(
     SseDeserializer deserializer,
   );
@@ -1211,6 +1221,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   RecapView sse_decode_recap_view(SseDeserializer deserializer);
+
+  @protected
+  ReceiptList sse_decode_receipt_list(SseDeserializer deserializer);
 
   @protected
   (String, double) sse_decode_record_string_f_64(SseDeserializer deserializer);
@@ -1821,6 +1834,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_list_receipt_list(
+    List<ReceiptList> self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_list_record_string_f_64(
     List<(String, double)> self,
     SseSerializer serializer,
@@ -2047,6 +2066,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_recap_view(RecapView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_receipt_list(ReceiptList self, SseSerializer serializer);
 
   @protected
   void sse_encode_record_string_f_64(
