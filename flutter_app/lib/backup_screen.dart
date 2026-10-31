@@ -33,27 +33,15 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'src/rust/api/backup.dart' as backup;
 import 'src/rust/api/receipts.dart' as receipts;
+import 'folders.dart';
 import 'glass.dart';
 import 'empty_note.dart';
 import 'photos.dart';
 import 'theme.dart';
-
-/// Where snapshots live: a subdirectory of the app's own storage.
-///
-/// The same place the ledger is written, for the same reason — Dart alone
-/// cannot find the Android app-private directory and a hardcoded path is not
-/// one.
-Future<Directory> backupDir() async {
-  final base = await getApplicationDocumentsDirectory();
-  final dir = Directory('${base.path}/backups');
-  if (!await dir.exists()) await dir.create(recursive: true);
-  return dir;
-}
 
 /// Take a snapshot and prune the old ones. Returns the file written.
 ///

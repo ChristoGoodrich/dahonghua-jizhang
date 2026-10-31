@@ -6,7 +6,21 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
+// These functions are ignored because they are not marked as `pub`: `pairs`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`
+
+/// The lists to write, before sweeping, for the kept sealed snapshots that
+/// have none that reads. Each names every file in `files`; why that is safe
+/// is on `core::receipts::adopt`.
+Future<List<ReceiptList>> adoptLists({
+  required List<String> files,
+  required List<String> backups,
+  required List<ReceiptList> lists,
+}) => RustLib.instance.api.crateApiReceiptsAdoptLists(
+  files: files,
+  backups: backups,
+  lists: lists,
+);
 
 /// The receipts in `files` — the attachments folder, by name — that nothing
 /// can show or bring back. `backups` is the backup folder's files, `lists`

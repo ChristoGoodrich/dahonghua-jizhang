@@ -13,6 +13,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/backup_screen.dart';
+import 'package:flutter_app/diagnostics.dart';
+import 'package:flutter_app/folders.dart';
 import 'package:flutter_app/persistence.dart';
 import 'package:flutter_app/photos.dart';
 import 'package:flutter_app/record_sheet.dart' show FormEdit;
@@ -162,7 +164,7 @@ void main() {
     testWidgets('keeps a deleted row\'s receipt while it can come back', (
       tester,
     ) async {
-      final p = await open();
+      var p = await open();
       await receipt('r1.jpg');
       spendWith('e1', 'r1.jpg');
       final undo = store.removeEntry(id: 'e1', now: now)!;
@@ -173,8 +175,14 @@ void main() {
       expect(store.getEntry(id: 'e1')!.deletedAt, isNull);
       expect(await attachmentFile(store.getEntry(id: 'e1')!.photo), isNotNull);
 
-      // deleted again, and asked about after the grace is over
+      // deleted again, and the app closed and opened within the thirty days
       store.removeEntry(id: 'e1', now: now);
+      p = await restart(p);
+      expect(store.getEntry(id: 'e1')!.deletedAt, isNotNull);
+      expect(await sweepReceipts(p), isEmpty);
+      expect(await onDisk(), {'r1.jpg'});
+
+      // and asked about after the grace is over
       expect(await sweepReceipts(p, now: now + 31 * day), ['r1.jpg']);
       p.dispose();
     });
@@ -217,8 +225,12 @@ void main() {
       spendWith('e1', 'r1.jpg');
       final sealed = await createBackup(password: 'correct horse');
       store.removeEntry(id: 'e1', now: now - 40 * day);
+      // Something the sweep must take, so the list is shown to be read. With
+      // r1.jpg alone, a list the sweep could not find would stop it, and
+      // "nothing swept" would pass for the wrong reason.
+      await receipt('other.jpg');
 
-      expect(await sweepReceipts(p), isEmpty);
+      expect(await sweepReceipts(p), ['other.jpg']);
       expect(await onDisk(), {'r1.jpg'});
 
       final unlocked = await backup.decryptBackup(
@@ -257,20 +269,62 @@ void main() {
       p.dispose();
     });
 
-    testWidgets('a sealed one that never wrote a list stops the sweep', (
+    testWidgets('a sealed one that never wrote a list is given the folder', (
       tester,
     ) async {
-      // what the builds before the list wrote: it could name anything
+      // what every sealed snapshot before the list was: it could name any
+      // receipt on the phone, and nothing had ever deleted one
       final p = await open();
-      final old = File('${(await backupDir()).path}/backup_100.enc.json');
+      final shelf = await backupDir();
+      final old = File('${shelf.path}/backup_100.enc.json');
       await old.writeAsString('ciphertext');
       await receipt('r1.jpg');
 
       expect(await sweepReceipts(p), isEmpty);
+      final list = File('${shelf.path}/backup_100.enc.receipts');
+      expect(await list.readAsString(), '["r1.jpg"]');
+
+      // a receipt orphaned after that goes, and the one it was given stays
+      await receipt('r2.jpg');
+      expect(await sweepReceipts(p), ['r2.jpg']);
       expect(await onDisk(), {'r1.jpg'});
 
+      // until the snapshot is gone
       await old.delete();
       expect(await sweepReceipts(p), ['r1.jpg']);
+      p.dispose();
+    });
+
+    testWidgets('so is one whose list will not read', (tester) async {
+      final p = await open();
+      final shelf = await backupDir();
+      await File('${shelf.path}/backup_100.enc.json').writeAsString('x');
+      final list = File('${shelf.path}/backup_100.enc.receipts');
+      await list.writeAsString('["r1'); // cut off halfway
+      await receipt('r1.jpg');
+      await receipt('r2.jpg');
+
+      expect(await sweepReceipts(p), isEmpty);
+      expect(await list.readAsString(), '["r1.jpg","r2.jpg"]');
+      p.dispose();
+    });
+
+    testWidgets('a list that cannot be written sweeps nothing, and says so', (
+      tester,
+    ) async {
+      final p = await open();
+      final shelf = await backupDir();
+      await File('${shelf.path}/backup_100.enc.json').writeAsString('x');
+      // a folder where the list would go, so the write fails
+      await Directory('${shelf.path}/backup_100.enc.receipts').create();
+      await receipt('r1.jpg');
+
+      expect(await sweepReceipts(p), isEmpty);
+      expect(await onDisk(), {'r1.jpg'});
+      expect(
+        diag.dump(),
+        contains('could not write backup_100.enc.receipts, swept nothing'),
+      );
       p.dispose();
     });
 

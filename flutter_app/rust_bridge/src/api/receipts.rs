@@ -17,6 +17,24 @@ pub struct ReceiptList {
     pub text: String,
 }
 
+fn pairs(lists: Vec<ReceiptList>) -> Vec<(String, String)> {
+    lists.into_iter().map(|l| (l.name, l.text)).collect()
+}
+
+/// The lists to write, before sweeping, for the kept sealed snapshots that
+/// have none that reads. Each names every file in `files`; why that is safe
+/// is on `core::receipts::adopt`.
+pub fn adopt_lists(
+    files: Vec<String>,
+    backups: Vec<String>,
+    lists: Vec<ReceiptList>,
+) -> Vec<ReceiptList> {
+    core::adopt(&files, &backups, &pairs(lists))
+        .into_iter()
+        .map(|(name, text)| ReceiptList { name, text })
+        .collect()
+}
+
 /// The receipts in `files` — the attachments folder, by name — that nothing
 /// can show or bring back. `backups` is the backup folder's files, `lists`
 /// the receipt lists found among them, and `in_use` the names the platform
@@ -31,13 +49,18 @@ pub fn sweep_receipts(
     in_use: Vec<String>,
     now: i64,
 ) -> Vec<String> {
-    let lists: Vec<(String, String)> = lists.into_iter().map(|l| (l.name, l.text)).collect();
-    let holds = core::Holds {
-        backups: &backups,
-        lists: &lists,
-        in_use: &in_use,
+    // The lists are read before the store is locked, and the lock is held
+    // only while the ledger's names are copied out: every other call into the
+    // store waits on it, and this runs while the first frames are drawn.
+    let Some(sealed) = core::sealed(&backups, &pairs(lists)) else {
+        return Vec::new();
     };
-    core::sweep(&files, store().ledger.all(), now, &holds)
+    let named: Vec<String> = core::referenced(store().ledger.all(), now)
+        .into_iter()
+        .map(str::to_string)
+        .collect();
+    let referenced = named.iter().map(String::as_str).collect();
+    core::left_over(&files, &referenced, &sealed, &in_use)
 }
 
 /// The receipts a snapshot taken now carries: every live row's, once each.

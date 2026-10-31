@@ -17,8 +17,8 @@ import 'package:flutter/painting.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'backup_screen.dart' show backupDir;
 import 'diagnostics.dart';
+import 'folders.dart';
 import 'persistence.dart';
 import 'src/rust/api/backup.dart' as backup;
 import 'src/rust/api/receipts.dart' as receipts;
@@ -86,6 +86,32 @@ Future<List<String>> sweepReceipts(Persistence store, {int? now}) async {
     } on FileSystemException {
       continue;
     }
+  }
+
+  // Every snapshot sealed before lists existed has none. The core gives each
+  // one the folder as it stands, and why that is safe is on
+  // `core::receipts::adopt`. Written before anything is swept; a list that
+  // cannot be written means nothing is.
+  final adopted = await receipts.adoptLists(
+    files: files,
+    backups: backups,
+    lists: lists,
+  );
+  for (final list in adopted) {
+    try {
+      await File(
+        "${shelf.path}/${list.name}",
+      ).writeAsString(list.text, flush: true);
+    } on FileSystemException catch (e) {
+      diag.note('receipts: could not write ${list.name}, swept nothing: $e');
+      return const [];
+    }
+    lists
+      ..removeWhere((l) => l.name == list.name)
+      ..add(list);
+  }
+  if (adopted.isNotEmpty) {
+    diag.note('receipts: wrote lists for ${adopted.length} sealed snapshots');
   }
 
   final gone = await receipts.sweepReceipts(

@@ -24,8 +24,10 @@
 //!   would undo the seal, so its restore expects the receipts where they are,
 //!   and the names are in the list written beside it
 //!   ([`crate::backup::receipts_name`]). A sealed snapshot whose list is
-//!   missing or will not read could name anything, and while one is kept
-//!   **nothing** is swept — the safe way not to know.
+//!   missing or will not read — every one sealed before the list existed —
+//!   is given one by [`adopt`], from the folder as it stands, before anything
+//!   is swept. If that list cannot be written, nothing is swept: a sealed
+//!   snapshot with no list could name anything.
 //! * **What the platform has in hand**: a photo picked on a sheet that is
 //!   still open is named by no row yet.
 //!
@@ -119,35 +121,90 @@ pub struct Holds<'a> {
     pub in_use: &'a [String],
 }
 
+/// The kept sealed snapshots among `backups`, each with the list file it
+/// should have beside it.
+fn sealed_lists(backups: &[String]) -> impl Iterator<Item = String> + '_ {
+    backups
+        .iter()
+        .filter(|n| parse_backup_name(n).is_some_and(|b| b.encrypted))
+        .filter_map(|n| receipts_name(n))
+}
+
+/// The text `lists` has for the list called `name`, read — `None` when it is
+/// missing or will not read.
+fn list_of(lists: &[(String, String)], name: &str) -> Option<Vec<String>> {
+    let (_, text) = lists.iter().find(|(n, _)| n == name)?;
+    read_list(text)
+}
+
 /// The names every kept sealed snapshot holds, or `None` when one of them
-/// cannot say.
-fn sealed(holds: &Holds) -> Option<BTreeSet<String>> {
+/// cannot say. `lists` is each list the platform found and read, as
+/// `(file name, text)`.
+pub fn sealed(backups: &[String], lists: &[(String, String)]) -> Option<BTreeSet<String>> {
     let mut out = BTreeSet::new();
-    for name in holds.backups {
-        if !parse_backup_name(name).is_some_and(|b| b.encrypted) {
-            continue;
-        }
-        let list = receipts_name(name)?;
-        let (_, text) = holds.lists.iter().find(|(n, _)| *n == list)?;
-        out.extend(read_list(text)?);
+    for list in sealed_lists(backups) {
+        out.extend(list_of(lists, &list)?);
     }
     Some(out)
 }
 
-/// Which of `files` — the attachments folder, by name — nothing can show or
-/// bring back. Every rule is in the module comment.
-pub fn sweep(files: &[String], entries: &[Entry], now: i64, holds: &Holds) -> Vec<String> {
-    let Some(sealed) = sealed(holds) else {
-        return Vec::new();
-    };
-    let referenced = referenced(entries, now);
+/// The lists to write for kept sealed snapshots that have none that reads, as
+/// `(file name, text)`. Each names every file in the folder now.
+///
+/// Every snapshot sealed before the list existed has none, and answering for
+/// it from the folder is safe because of two facts. Nothing deleted a receipt
+/// before the sweep existed, and the sweep deletes nothing while a sealed
+/// snapshot it cannot read is kept. So whatever such a snapshot names that is
+/// on the phone at all is in `files`, and the list is a superset of what its
+/// restore can find. A list that has stopped reading is answered the same way:
+/// while it read, the sweep kept what it named, and since then it has kept
+/// everything. Anything that deletes a receipt some other way breaks this
+/// argument.
+///
+/// The platform writes these before it sweeps, and sweeps nothing if it
+/// cannot write them.
+pub fn adopt(
+    files: &[String],
+    backups: &[String],
+    lists: &[(String, String)],
+) -> Vec<(String, String)> {
+    let mut everything = files.to_vec();
+    everything.sort();
+    everything.dedup();
+    sealed_lists(backups)
+        .filter(|list| list_of(lists, list).is_none())
+        .map(|list| (list, list_doc(&everything)))
+        .collect()
+}
+
+/// Which of `files` none of the others claims: not `referenced` by the ledger
+/// ([`referenced`]), not held by a `sealed` snapshot ([`sealed`]), and not
+/// `in_use`.
+pub fn left_over(
+    files: &[String],
+    referenced: &BTreeSet<&str>,
+    sealed: &BTreeSet<String>,
+    in_use: &[String],
+) -> Vec<String> {
     files
         .iter()
         .filter(|f| !referenced.contains(f.as_str()))
         .filter(|f| !sealed.contains(*f))
-        .filter(|f| !holds.in_use.contains(f))
+        .filter(|f| !in_use.contains(f))
         .cloned()
         .collect()
+}
+
+/// Which of `files` — the attachments folder, by name — nothing can show or
+/// bring back. Every rule is in the module comment.
+///
+/// The three steps are public so the bridge can read the lists before it
+/// takes the store's lock and hold that lock only for [`referenced`].
+pub fn sweep(files: &[String], entries: &[Entry], now: i64, holds: &Holds) -> Vec<String> {
+    let Some(sealed) = sealed(holds.backups, holds.lists) else {
+        return Vec::new();
+    };
+    left_over(files, &referenced(entries, now), &sealed, holds.in_use)
 }
 
 #[cfg(test)]
@@ -286,8 +343,8 @@ mod tests {
 
     #[test]
     fn a_sealed_snapshot_that_cannot_say_stops_the_sweep() {
+        // what is left when a list `adopt` asked for could not be written
         let files = ["r1.jpg", "r2.jpg"];
-        // taken before lists were written
         let backups = names(&["backup_100.enc.json"]);
         let holds = Holds {
             backups: &backups,
@@ -306,6 +363,65 @@ mod tests {
             };
             assert!(swept(&files, &[], &holds).is_empty(), "{text}");
         }
+    }
+
+    #[test]
+    fn a_sealed_snapshot_without_a_list_is_given_the_folder() {
+        let files = names(&["r2.jpg", "r1.jpg"]);
+        let everything = list_doc(&names(&["r1.jpg", "r2.jpg"]));
+        let backups = names(&[
+            "backup_100.enc.json", // sealed before lists existed
+            "backup_200.enc.json", // its list was cut off halfway
+            "backup_200.enc.receipts",
+            "backup_300.enc.json", // its list reads: left alone
+            "backup_300.enc.receipts",
+            "backup_400.json",         // plain: its folder has copies
+            "backup_500.enc.receipts", // a list whose snapshot is gone
+        ]);
+        let lists = vec![
+            ("backup_200.enc.receipts".to_string(), r#"["r1"#.to_string()),
+            (
+                "backup_300.enc.receipts".to_string(),
+                list_doc(&names(&["r1.jpg"])),
+            ),
+            (
+                "backup_500.enc.receipts".to_string(),
+                r#"not a list"#.to_string(),
+            ),
+        ];
+        assert_eq!(
+            adopt(&files, &backups, &lists),
+            vec![
+                ("backup_100.enc.receipts".to_string(), everything.clone()),
+                ("backup_200.enc.receipts".to_string(), everything),
+            ]
+        );
+        // every list reads, so there is nothing to adopt
+        assert!(adopt(&files, &names(&["backup_300.enc.json"]), &lists).is_empty());
+    }
+
+    #[test]
+    fn once_adopted_the_sweep_runs_and_keeps_what_was_there() {
+        let backups = names(&["backup_100.enc.json"]);
+        let before = names(&["r1.jpg"]);
+        let lists = adopt(&before, &backups, &[]);
+        assert_eq!(lists.len(), 1);
+        // a receipt orphaned later goes; the ones there at adoption stay
+        let holds = Holds {
+            backups: &backups,
+            lists: &lists,
+            ..Default::default()
+        };
+        assert_eq!(
+            swept(&["r1.jpg", "r2.jpg"], &[], &holds),
+            names(&["r2.jpg"])
+        );
+        // and once the snapshot is pruned, its list holds nothing
+        let holds = Holds {
+            lists: &lists,
+            ..Default::default()
+        };
+        assert_eq!(swept(&["r1.jpg"], &[], &holds), names(&["r1.jpg"]));
     }
 
     #[test]

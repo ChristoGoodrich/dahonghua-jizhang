@@ -498,11 +498,17 @@ are easy to get wrong:
 * **A sealed snapshot keeps what it names**, through the list it writes
   beside it (`backup_<ts>.enc.receipts`), because its restore expects the files
   where they are — plain copies beside it would undo the seal. A sealed
-  snapshot with no list, from before the list existed, stops the sweep
-  entirely for as long as it is kept. A plain snapshot keeps nothing: its
-  folder carries copies, and its restore puts them back.
+  snapshot with no list that reads — every one from before the list existed —
+  is given the folder as it stands (`core::receipts::adopt`), written before
+  anything is swept. That is safe only because nothing deleted a receipt
+  before the sweep, and the sweep deletes nothing while such a snapshot is
+  kept; if the list cannot be written, nothing is swept and 诊断 says why.
+  A plain snapshot keeps nothing: its folder carries copies, and its restore
+  puts them back.
 
-`receipts_test` drives each of these on a device, through a restart.
+`receipts_test` drives each of these on a device. The paths that leave a file
+behind and the tombstone's thirty days go through a restart; the snapshot
+cases do not.
 
 ## What the port dropped
 
