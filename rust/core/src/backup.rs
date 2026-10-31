@@ -104,15 +104,51 @@ pub fn prune(list: &[BackupInfo], keep: usize) -> Vec<&BackupInfo> {
 /// `None` for a name that is not a snapshot, and for a **sealed** one. The
 /// receipts are copied as they are, and a folder of plain photos beside an
 /// encrypted document is the document's privacy undone by its neighbour —
-/// 导出 handed the two to the share sheet together. Sealing the photos as
-/// well would buy nothing a restore can use: the attachments a snapshot names
-/// are never deleted, so the restore finds them where they already are.
+/// 导出 handed the two to the share sheet together. A sealed snapshot's
+/// restore finds its receipts where they already are instead, and
+/// [`receipts_name`] is what keeps them there.
 pub fn pack_name(name: &str) -> Option<String> {
     let b = parse_backup_name(name)?;
     if b.encrypted {
         return None;
     }
     Some(format!("{}_files", name.strip_suffix(".json")?))
+}
+
+/// The list of receipts a **sealed** snapshot names, beside it:
+/// `backup_123.enc.json` has `backup_123.enc.receipts`.
+///
+/// Receipts that nothing names any more are deleted
+/// ([`crate::receipts::sweep`]), and a sealed snapshot names some that its
+/// restore expects to find — but which ones cannot be read without its
+/// password. So they are written down when it is taken. The list stays in the
+/// app's own storage beside the receipts themselves, which are no more private
+/// than their names, and 导出 does not hand it out.
+///
+/// Not `.json`, so it is never mistaken for a snapshot. `None` for a plain
+/// snapshot, whose folder carries copies and holds nothing here, and for a
+/// name that is not a snapshot.
+pub fn receipts_name(name: &str) -> Option<String> {
+    let b = parse_backup_name(name)?;
+    if !b.encrypted {
+        return None;
+    }
+    Some(format!("{}.receipts", name.strip_suffix(".json")?))
+}
+
+/// The receipt lists among `files` whose snapshot is not.
+///
+/// The prune deletes a snapshot and nothing beside it, so this is what takes
+/// its list too — and a list written for a snapshot that never was, when the
+/// app stopped between the two writes.
+pub fn stray_lists(files: &[String]) -> Vec<String> {
+    let kept: Vec<String> = files.iter().filter_map(|f| receipts_name(f)).collect();
+    files
+        .iter()
+        .filter(|f| f.starts_with("backup_") && f.ends_with(".receipts"))
+        .filter(|f| !kept.contains(f))
+        .cloned()
+        .collect()
 }
 
 /// The receipt folders among `dirs` that no snapshot in `files` carries.
@@ -189,6 +225,31 @@ mod tests {
                 "backup_300.enc_files"
             ])
         );
+    }
+
+    #[test]
+    fn only_a_sealed_snapshot_writes_down_its_receipts() {
+        assert_eq!(
+            receipts_name("backup_1700.enc.json").as_deref(),
+            Some("backup_1700.enc.receipts")
+        );
+        // its folder carries copies, so it holds nothing in the attachments
+        assert_eq!(receipts_name("backup_1700.json"), None);
+        assert_eq!(receipts_name("entries.json"), None);
+        // and the list is not itself a snapshot
+        assert!(parse_backup_name("backup_1700.enc.receipts").is_none());
+    }
+
+    #[test]
+    fn a_list_whose_snapshot_is_gone_is_stray() {
+        let files = names(&[
+            "backup_100.enc.json",
+            "backup_100.enc.receipts", // its snapshot is here: kept
+            "backup_50.enc.receipts",  // its snapshot was pruned
+            "backup_200.json",
+            "notes.receipts", // not a list this app wrote
+        ]);
+        assert_eq!(stray_lists(&files), names(&["backup_50.enc.receipts"]));
     }
 
     #[test]

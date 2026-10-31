@@ -365,10 +365,16 @@ void main() {
       expect(f.path, contains('.enc.json'));
 
       final dir = await backupDir();
+      final name = f.uri.pathSegments.last;
+      final list = backup.receiptsName(name: name)!;
       final everything = dir.listSync(recursive: true).whereType<File>();
-      expect(everything.map((e) => e.uri.pathSegments.last), [
-        f.uri.pathSegments.last,
+      expect(everything.map((e) => e.uri.pathSegments.last).toList()..sort(), [
+        name,
+        list,
       ]);
+      // Beside it, the names of what its restore will look for — which keeps
+      // them from the receipt sweep — and not the photos.
+      expect(await File('${dir.path}/$list').readAsString(), '["r1.jpg"]');
     });
 
     testWidgets('exporting a sealed one hands out the document alone', (

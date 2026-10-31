@@ -51,6 +51,7 @@ pub mod num;
 pub mod period;
 pub mod rates;
 pub mod recap;
+pub mod receipts;
 pub mod record;
 pub mod reimburse;
 pub mod remind;

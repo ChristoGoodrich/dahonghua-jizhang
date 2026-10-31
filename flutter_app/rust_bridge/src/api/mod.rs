@@ -32,6 +32,7 @@ pub mod networth;
 pub mod period;
 pub mod privacy;
 pub mod rates;
+pub mod receipts;
 pub mod record;
 pub mod reimburse;
 pub mod remind;
