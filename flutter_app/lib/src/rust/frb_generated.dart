@@ -681,6 +681,7 @@ abstract class RustLibApi extends BaseApi {
   List<String> crateApiBackupPruneBackups({
     required List<String> names,
     required int keep,
+    String? spare,
   });
 
   List<DraftView> crateApiAiQuickOffline({
@@ -5578,6 +5579,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   List<String> crateApiBackupPruneBackups({
     required List<String> names,
     required int keep,
+    String? spare,
   }) {
     return handler.executeSync(
       SyncTask(
@@ -5585,6 +5587,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_list_String(names, serializer);
           sse_encode_u_32(keep, serializer);
+          sse_encode_opt_String(spare, serializer);
           return pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
@@ -5596,7 +5599,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           decodeErrorData: null,
         ),
         constMeta: kCrateApiBackupPruneBackupsConstMeta,
-        argValues: [names, keep],
+        argValues: [names, keep, spare],
         apiImpl: this,
       ),
     );
@@ -5604,7 +5607,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiBackupPruneBackupsConstMeta => const TaskConstMeta(
     debugName: "prune_backups",
-    argNames: ["names", "keep"],
+    argNames: ["names", "keep", "spare"],
   );
 
   @override
