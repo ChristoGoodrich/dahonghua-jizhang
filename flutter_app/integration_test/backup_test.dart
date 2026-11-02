@@ -24,6 +24,7 @@ import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'rust_init.dart';
+import 'scroll.dart';
 
 int get now => DateTime.now().millisecondsSinceEpoch;
 
@@ -263,7 +264,11 @@ void main() {
       for (final ts in [100, 200, 300, 400]) {
         await writeRaw('backup_$ts.json', '[]');
       }
-      final gone = backup.pruneBackups(names: await namesOnDisk(), keep: 2);
+      final gone = backup.pruneBackups(
+        names: await namesOnDisk(),
+        keep: 2,
+        spare: null,
+      );
 
       expect(gone, ['backup_200.json', 'backup_100.json']);
     });
@@ -281,6 +286,7 @@ void main() {
           'backup_300.json',
         ],
         keep: 1,
+        spare: null,
       );
       expect(gone, ['backup_300.json', 'backup_200.json', 'backup_100.json']);
     });
@@ -288,9 +294,10 @@ void main() {
     testWidgets('leaves files that are not backups alone', (tester) async {
       await writeRaw('entries.json', '[]');
       await writeRaw('backup_100.json', '[]');
-      expect(backup.pruneBackups(names: await namesOnDisk(), keep: 0), [
-        'backup_100.json',
-      ]);
+      expect(
+        backup.pruneBackups(names: await namesOnDisk(), keep: 0, spare: null),
+        ['backup_100.json'],
+      );
     });
   });
 
@@ -598,6 +605,43 @@ void main() {
       expect(store.getEntry(id: 'new'), isNull);
       // the pre-restore state is on disk
       expect((await listBackups()).length, before + 1);
+    });
+
+    testWidgets('restores the oldest of a full shelf, and keeps it', (
+      tester,
+    ) async {
+      // The snapshot taken before a restore prunes like any other, and with
+      // the shelf full it took the oldest — which, when that was the one
+      // being restored, was read a moment after it had been deleted. Nothing
+      // was restored, nothing was said, and the snapshot was gone.
+      await spendWithReceipt('old', 'r-old.jpg');
+      final oldest = await nextBackup();
+      final name = oldest.uri.pathSegments.last;
+      store.reset();
+      spend('new', 999);
+      for (var i = 1; i < backup.maxBackups(); i++) {
+        await nextBackup();
+      }
+      expect((await listBackups()).length, backup.maxBackups());
+      expect((await listBackups()).last.name, name);
+      // the receipt is in the oldest one's folder and nowhere else
+      await File('${(await attachmentsDir()).path}/r-old.jpg').delete();
+
+      await show(tester);
+      await scrollAndTap(tester, find.byKey(Key('backup-$name-restore')));
+      await tester.tap(find.byKey(const Key('restore-ok')));
+      await tester.pumpAndSettle();
+
+      expect(store.getEntry(id: 'old'), isNotNull);
+      expect(store.getEntry(id: 'new'), isNull);
+      expect(await attachmentFile('r-old.jpg'), isNotNull);
+      // and the snapshot is still there to restore again, folder and all
+      expect(await oldest.exists(), isTrue);
+      expect(await (await packOf(oldest)).exists(), isTrue);
+      // one over the shelf, until the next snapshot prunes it back
+      expect((await listBackups()).length, backup.maxBackups() + 1);
+      await nextBackup();
+      expect((await listBackups()).length, backup.maxBackups());
     });
 
     testWidgets('an encrypted snapshot offers a restore that asks for a password', (

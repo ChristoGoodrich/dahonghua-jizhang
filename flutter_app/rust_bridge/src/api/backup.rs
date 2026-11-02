@@ -213,11 +213,12 @@ pub fn list_backups(names: Vec<String>) -> Vec<BackupInfoView> {
         .collect()
 }
 
-/// Which files to delete so that `keep` remain. Newest-first input.
+/// Which files to delete so that `keep` remain, never `spare` — the snapshot
+/// a restore is about to read. Newest-first input.
 #[frb(sync)]
-pub fn prune_backups(names: Vec<String>, keep: u32) -> Vec<String> {
+pub fn prune_backups(names: Vec<String>, keep: u32, spare: Option<String>) -> Vec<String> {
     let list = core::list_backups(&names);
-    core::prune(&list, keep as usize)
+    core::prune_sparing(&list, keep as usize, spare.as_deref().unwrap_or(""))
         .into_iter()
         .map(|b| b.name.clone())
         .collect()

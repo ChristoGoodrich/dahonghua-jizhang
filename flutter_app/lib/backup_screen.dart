@@ -48,7 +48,10 @@ import 'theme.dart';
 /// `password` seals the document; omit it for a plain JSON snapshot. An empty
 /// password is refused on the Rust side rather than writing a file that looks
 /// sealed and is not.
-Future<File> createBackup({int? keep, String? password}) async {
+///
+/// `spare` is a snapshot the prune must leave, whatever its age: the one a
+/// restore is about to read.
+Future<File> createBackup({int? keep, String? password, String? spare}) async {
   final dir = await backupDir();
   final now = DateTime.now().millisecondsSinceEpoch.toDouble();
   var json = backup.buildBackup(ts: now);
@@ -106,6 +109,7 @@ Future<File> createBackup({int? keep, String? password}) async {
   for (final gone in backup.pruneBackups(
     names: await _names(dir),
     keep: keep ?? backup.maxBackups(),
+    spare: spare,
   )) {
     await File('${dir.path}/$gone').delete();
   }
@@ -312,7 +316,9 @@ class _BackupScreenState extends State<BackupScreen> {
 
     // Take a snapshot of what is about to be replaced. Restoring is the one
     // action here with no undo, and the cheapest undo is another backup.
-    await createBackup();
+    // Sparing this one: with the shelf full, that snapshot's prune took the
+    // oldest, and restoring the oldest then read a file it had just deleted.
+    await createBackup(spare: b.name);
     if (!mounted) return;
 
     final dir = await backupDir();

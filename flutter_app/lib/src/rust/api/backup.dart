@@ -62,9 +62,17 @@ String backupName({required double ts, required bool encrypted}) =>
 List<BackupInfoView> listBackups({required List<String> names}) =>
     RustLib.instance.api.crateApiBackupListBackups(names: names);
 
-/// Which files to delete so that `keep` remain. Newest-first input.
-List<String> pruneBackups({required List<String> names, required int keep}) =>
-    RustLib.instance.api.crateApiBackupPruneBackups(names: names, keep: keep);
+/// Which files to delete so that `keep` remain, never `spare` — the snapshot
+/// a restore is about to read. Newest-first input.
+List<String> pruneBackups({
+  required List<String> names,
+  required int keep,
+  String? spare,
+}) => RustLib.instance.api.crateApiBackupPruneBackups(
+  names: names,
+  keep: keep,
+  spare: spare,
+);
 
 /// The folder a snapshot's receipts travel in, or `None` when it carries
 /// none — a sealed snapshot, or a name that is not a snapshot.

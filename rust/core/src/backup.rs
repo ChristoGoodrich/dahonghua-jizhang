@@ -98,6 +98,21 @@ pub fn prune(list: &[BackupInfo], keep: usize) -> Vec<&BackupInfo> {
     list[keep..].iter().collect()
 }
 
+/// [`prune`], less the snapshot called `spare`.
+///
+/// A restore takes a snapshot of what it is about to replace, and that one
+/// prunes like any other. With the shelf full, the snapshot it pushed out was
+/// the oldest — and when the oldest was the one being restored, the restore
+/// went to read a file that had just been deleted: the snapshot gone, the
+/// ledger untouched, and nothing said. Spared, the shelf holds one more than
+/// `keep` until the next snapshot prunes it back.
+pub fn prune_sparing<'a>(list: &'a [BackupInfo], keep: usize, spare: &str) -> Vec<&'a BackupInfo> {
+    prune(list, keep)
+        .into_iter()
+        .filter(|b| b.name != spare)
+        .collect()
+}
+
 /// The folder a snapshot's receipts travel in, beside it: `backup_123.json`
 /// carries `backup_123_files`.
 ///
@@ -355,5 +370,24 @@ mod tests {
     fn keeping_none_deletes_everything() {
         let l = list_backups(&names(&["backup_100.json", "backup_200.json"]));
         assert_eq!(prune(&l, 0).len(), 2);
+    }
+
+    #[test]
+    fn the_snapshot_being_restored_is_never_pruned() {
+        // the shelf was full and the restore is of the oldest; the snapshot
+        // the restore just took is backup_400
+        let l = list_backups(&names(&[
+            "backup_100.enc.json",
+            "backup_200.json",
+            "backup_300.json",
+            "backup_400.json",
+        ]));
+        assert!(prune_sparing(&l, 3, "backup_100.enc.json").is_empty());
+        // the shelf is one over until the next snapshot prunes it back
+        let gone = prune_sparing(&l, 2, "backup_100.enc.json");
+        assert_eq!(gone.iter().map(|b| b.time).collect::<Vec<_>>(), [200.0]);
+        // sparing what the prune would not have taken changes nothing
+        assert_eq!(prune_sparing(&l, 3, "backup_400.json"), prune(&l, 3));
+        assert_eq!(prune_sparing(&l, 3, ""), prune(&l, 3));
     }
 }

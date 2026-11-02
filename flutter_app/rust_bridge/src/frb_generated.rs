@@ -5270,10 +5270,12 @@ fn wire__crate__api__backup__prune_backups_impl(
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_names = <Vec<String>>::sse_decode(&mut deserializer);
             let api_keep = <u32>::sse_decode(&mut deserializer);
+            let api_spare = <Option<String>>::sse_decode(&mut deserializer);
             deserializer.end();
             transform_result_sse::<_, ()>((move || {
-                let output_ok =
-                    Result::<_, ()>::Ok(crate::api::backup::prune_backups(api_names, api_keep))?;
+                let output_ok = Result::<_, ()>::Ok(crate::api::backup::prune_backups(
+                    api_names, api_keep, api_spare,
+                ))?;
                 Ok(output_ok)
             })())
         },
