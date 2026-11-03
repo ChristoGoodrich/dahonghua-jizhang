@@ -85,6 +85,14 @@ so an arm64 phone accepted the file and then found no engine it could load.
 so that file is refused at install instead — but the one to send is still the
 one the script names.
 
+**设置 › 关于大红花 says which of these a phone holds.** The version comes
+from the package manager (`AppInfoChannel`), not from pubspec, because the
+versionCode a phone holds is the split's 2001 and Gradle stamps
+`-debugsigned` onto the name after Flutter has handed it over. A
+debug-signed build gets a warning there in the warning hue: it is the build
+that no update can reach without an uninstall. The diagnostic export starts
+with the same line, and 复制版本信息 copies it for the bug template.
+
 ## Writing to the store
 
 `store()` hands out a **read-only** reference. Writing goes through

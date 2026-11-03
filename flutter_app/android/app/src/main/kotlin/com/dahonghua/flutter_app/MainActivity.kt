@@ -1,5 +1,6 @@
 package com.dahonghua.flutter_app
 
+import com.dahonghua.flutter_app.about.AppInfoChannel
 import com.dahonghua.flutter_app.notif.NotifChannel
 import com.dahonghua.flutter_app.power.PowerChannel
 import com.dahonghua.flutter_app.remind.ZoneChannel
@@ -28,6 +29,11 @@ class MainActivity : FlutterActivity() {
     // `applicationContext` again, for the receiver it registers: one held by
     // the activity would leak each time the activity is recreated.
     PowerChannel.register(
+      flutterEngine.dartExecutor.binaryMessenger,
+      applicationContext,
+    )
+    // Which build this is, for 关于大红花 and the diagnostic trail.
+    AppInfoChannel.register(
       flutterEngine.dartExecutor.binaryMessenger,
       applicationContext,
     )

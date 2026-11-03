@@ -65,8 +65,8 @@ body:
     id: version
     attributes:
       label: App version · 应用版本
-      description: Settings → About Big Red Flower · 设置 → 关于大红花
-      placeholder: "1.0.0"
+      description: Me → Settings → About Big Red Flower → Copy version · 我的 → 设置 → 关于大红花 → 复制版本信息
+      placeholder: "1.0.0 (2001)"
     validations:
       required: false
 

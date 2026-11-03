@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import 'app_info.dart';
 import 'assets_screen.dart';
 import 'ask_screen.dart';
 import 'ai_entry_screen.dart';
@@ -75,6 +76,9 @@ Future<void> main() async {
     }),
   );
   watchPowerSaving();
+  // Which build this is, for 关于大红花 and the head of the diagnostic trail.
+  // Not awaited: nothing on the first frame shows it.
+  unawaited(loadAppInfo());
   runApp(App(store: store));
 }
 
