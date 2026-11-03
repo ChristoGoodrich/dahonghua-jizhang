@@ -2,7 +2,7 @@
 
 <img src="assets/images/icon.png" width="112" alt="大红花记账 图标" />
 
-# 大红花记账 · Red Blossom
+# 大红花记账 · Big Red Flower
 
 **一个离线优先的个人记账 App（Android），中英双语 —— 隐私不是靠承诺，是靠构造。**
 

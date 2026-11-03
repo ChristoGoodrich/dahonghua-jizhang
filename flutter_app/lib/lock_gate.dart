@@ -153,7 +153,7 @@ class _LockGateState extends State<LockGate> with WidgetsBindingObserver {
       if (!has || !enrolled) return; // the core already opened the gate
 
       final ok = await _auth.authenticate(
-        widget.zh ? '解锁大红花记账' : 'Unlock Red Blossom',
+        widget.zh ? '解锁大红花记账' : 'Unlock Big Red Flower',
       );
       if (!mounted) return;
       _apply(
@@ -198,7 +198,7 @@ class _LockGateState extends State<LockGate> with WidgetsBindingObserver {
                   const Bloom(size: 56),
                   const SizedBox(height: 16),
                   Text(
-                    zh ? '大红花记账已锁定' : 'Red Blossom is locked',
+                    zh ? '大红花记账已锁定' : 'Big Red Flower is locked',
                     style: TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.w700,

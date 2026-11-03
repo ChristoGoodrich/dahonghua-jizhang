@@ -65,7 +65,7 @@ body:
     id: version
     attributes:
       label: App version · 应用版本
-      description: Settings → About Red Blossom · 设置 → 关于大红花
+      description: Settings → About Big Red Flower · 设置 → 关于大红花
       placeholder: "1.0.0"
     validations:
       required: false

@@ -193,6 +193,34 @@ void main() {
 
     at360('明细', (tester, o) async {
       o.at = '明细';
+      // The app's name beside three buttons. "Big Red Flower" is about 6dp
+      // wider than the room 360dp leaves it, and an ellipsized title is not
+      // an overflow, so it is asked for: laid out whole, shrunk by no more
+      // than a tenth, and clear of the first button.
+      final name = find.descendant(
+        of: find.byType(AppBar),
+        matching: find.text(zh ? '大红花记账' : 'Big Red Flower'),
+      );
+      final title = tester.renderObject<RenderParagraph>(name);
+      final whole = title.getMaxIntrinsicWidth(double.infinity);
+      expect(
+        title.size.width,
+        greaterThanOrEqualTo(whole - 1),
+        reason: 'the title is cut short',
+      );
+      final drawn = tester.getRect(name);
+      expect(
+        drawn.width,
+        greaterThanOrEqualTo(whole * 0.9),
+        reason: 'the title is shrunk to fit',
+      );
+      expect(
+        drawn.right,
+        lessThanOrEqualTo(
+          tester.getRect(find.byKey(const Key('select-toggle'))).left,
+        ),
+        reason: 'the title runs under the buttons',
+      );
       await walkDown(tester);
       await walkUp(tester);
 

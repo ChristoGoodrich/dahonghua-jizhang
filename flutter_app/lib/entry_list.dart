@@ -288,7 +288,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
       child: TitledScaffold(
         title: t != null
             ? (zh ? '已选中 ${t.count} 项' : '${t.count} selected')
-            : (zh ? '大红花记账' : 'Red Blossom'),
+            : (zh ? '大红花记账' : 'Big Red Flower'),
         titleKey: t != null ? const Key('select-count') : null,
         subtitle: t == null ? null : _sums(t, zh),
         // Hidden while searching — unless rows are being ticked, when the
