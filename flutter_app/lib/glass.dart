@@ -769,20 +769,28 @@ class _TitledScaffoldState extends State<TitledScaffold> {
         leading: widget.leading,
         automaticallyImplyLeading: false,
         titleSpacing: widget.leading == null ? 22 : 0,
+        // A title a little wider than the room beside the actions shrinks to
+        // fit instead of losing its end. "Big Red Flower" is 172dp at 26px
+        // and a 360dp phone leaves 明细 166dp next to its three buttons, so it
+        // was "Big Red Flow…" there. narrow_test holds it whole and at least
+        // 90% of its size.
         title:
             widget.barTitle ??
             (widget.largeTitle
-                ? Text(
-                    widget.title,
-                    key: widget.titleKey,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 26,
-                      height: 1.15,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: -0.2,
-                      color: palette.ink,
+                ? FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Text(
+                      widget.title,
+                      key: widget.titleKey,
+                      maxLines: 1,
+                      style: TextStyle(
+                        fontSize: 26,
+                        height: 1.15,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.2,
+                        color: palette.ink,
+                      ),
                     ),
                   )
                 : null),

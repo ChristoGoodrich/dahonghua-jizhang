@@ -268,7 +268,7 @@ void main() {
         (tester) async {
       await show(tester, auth: FakeAuth(result: false), zh: false);
 
-      expect(find.text('Red Blossom is locked'), findsOneWidget);
+      expect(find.text('Big Red Flower is locked'), findsOneWidget);
       expect(find.text('Try again'), findsOneWidget);
     });
   });

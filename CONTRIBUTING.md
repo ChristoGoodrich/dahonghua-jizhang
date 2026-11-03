@@ -1,4 +1,4 @@
-# Contributing to 大红花记账 · Red Blossom
+# Contributing to 大红花记账 · Big Red Flower
 
 Thanks for taking the time. This covers setting the project up, what a good
 change looks like here, and how to get it merged.

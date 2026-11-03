@@ -12,6 +12,8 @@
 
 import 'package:flutter/foundation.dart';
 
+import 'app_info.dart';
+
 class Diagnostics {
   Diagnostics._();
 
@@ -34,9 +36,16 @@ class Diagnostics {
   }
 
   /// The trail as plain text, for the share sheet.
+  ///
+  /// Headed by the build, even when the trail is empty: a report that says
+  /// nothing went wrong still has to say on which version.
   String dump() {
-    if (_lines.isEmpty) return 'no diagnostics recorded\n';
     final b = StringBuffer('dahonghua diagnostics\n');
+    b.writeln('app=${appInfo.value?.line ?? 'unknown'}');
+    if (_lines.isEmpty) {
+      b.writeln('no diagnostics recorded');
+      return b.toString();
+    }
     b.writeln('lines=${_lines.length} (kept last $_cap)');
     b.writeln('---');
     for (final l in _lines) {

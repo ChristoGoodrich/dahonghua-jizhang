@@ -2,14 +2,17 @@
 //
 // What is here is what a person actually changes: language, the budget cycle
 // day, the flower and the room, the lock, reminders, AI, and getting data out.
+// And at the end, which build this is — the bug template sends people here.
 
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'ai.dart';
+import 'app_info.dart';
 import 'diagnostics.dart';
 import 'src/rust/api/ai.dart' as ai;
 import 'src/rust/api/budget.dart' as budget;
@@ -24,6 +27,7 @@ import 'reminders.dart';
 import 'tap.dart';
 import 'glass.dart';
 import 'theme.dart';
+import 'toast.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({
@@ -32,6 +36,7 @@ class SettingsScreen extends StatefulWidget {
     this.onChanged,
     this.share,
     this.notifier,
+    this.info,
   });
 
   final bool zh;
@@ -47,6 +52,11 @@ class SettingsScreen extends StatefulWidget {
   /// Who receives the schedules. A test cannot drive the notification
   /// service; what is worth testing is which schedules it is handed.
   final Notifier? notifier;
+
+  /// Which build to describe, instead of the one the phone says. A test
+  /// cannot install a debug-signed release; what is worth testing is what
+  /// this screen says about one.
+  final AppInfo? info;
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -276,6 +286,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
     AiKey.read().then((k) {
       if (mounted && k != null) setState(() => _aiKey = AiKey.masked(k));
     });
+    if (widget.info == null && appInfo.value == null) {
+      loadAppInfo().then((_) {
+        if (mounted) setState(() {});
+      });
+    }
+  }
+
+  AppInfo? get _info => widget.info ?? appInfo.value;
+
+  Future<void> _copyVersion(AppInfo info) async {
+    await Clipboard.setData(ClipboardData(text: info.line));
+    if (!mounted) return;
+    showToast(
+      context,
+      key: const Key('about-copied'),
+      text: widget.zh ? '版本信息已复制' : 'Version copied',
+    );
   }
 
   void _setCycle(int day) {
@@ -795,9 +822,71 @@ class _SettingsScreenState extends State<SettingsScreen> {
             key: const Key('settings-note'),
             style: TextStyle(fontSize: 11.5, color: palette.inkSoft),
           ),
+          const SizedBox(height: 24),
+          _about(zh),
         ],
       ),
     );
+  }
+
+  /// 关于大红花: which build this is, for a bug report — and the one thing
+  /// about it a person has to know before installing another.
+  Widget _about(bool zh) {
+    final info = _info;
+    return _group(zh ? '关于大红花' : 'About Big Red Flower', [
+      Row(
+        children: [
+          Text(
+            zh ? '版本' : 'Version',
+            style: TextStyle(fontSize: 15, color: palette.ink),
+          ),
+          const Spacer(),
+          Text(
+            info == null ? '—' : '${info.version} (${info.code})',
+            key: const Key('about-version'),
+            style: TextStyle(
+              fontSize: 15,
+              fontFeatures: tabular,
+              color: palette.inkSoft,
+            ),
+          ),
+        ],
+      ),
+      if (info != null && info.debuggable) ...[
+        const SizedBox(height: 8),
+        Text(
+          zh
+              ? '这是开发版，装在正式版旁边，不会替换它。'
+              : 'A development build. It installs beside the real app, not '
+                    'over it.',
+          key: const Key('about-dev'),
+          style: TextStyle(fontSize: 12, color: palette.inkSoft),
+        ),
+      ],
+      // The warning hue: this is the build that cannot be updated without
+      // an uninstall, and the uninstall takes the ledger.
+      if (info != null && info.debugSigned) ...[
+        const SizedBox(height: 8),
+        Text(
+          zh
+              ? '这个版本是用调试密钥签名的。正式签名的版本不能直接装在它上面，'
+                    '只能先卸载，而卸载会把账本一起删掉。换版本之前，先在「备份」里「导出」一份。'
+              : 'This build is signed with the debug key. A properly signed '
+                    'build cannot be installed over it, only after an '
+                    'uninstall, and the uninstall takes the ledger with it. '
+                    'Before switching, export a snapshot from Backups.',
+          key: const Key('about-debugsigned'),
+          style: TextStyle(fontSize: 12, color: palette.warnDeep),
+        ),
+      ],
+      const SizedBox(height: 12),
+      OutlinedButton.icon(
+        key: const Key('about-copy'),
+        onPressed: info == null ? null : () => _copyVersion(info),
+        icon: const Icon(Icons.copy, size: 18),
+        label: Text(zh ? '复制版本信息' : 'Copy version'),
+      ),
+    ]);
   }
 
   Widget _group(String title, List<Widget> children) => Column(

@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="assets/images/icon.png" width="112" alt="Red Blossom app icon" />
+<img src="assets/images/icon.png" width="112" alt="Big Red Flower app icon" />
 
-# 大红花记账 · Red Blossom
+# 大红花记账 · Big Red Flower
 
 **An offline-first personal ledger for Android — bilingual (中文 / English), and private not by policy but by construction.**
 
@@ -18,7 +18,7 @@
 
 ---
 
-Every entry you log plants a flower. 大红花 ("big red blossom") is the sticker Chinese
+Every entry you log plants a flower. 大红花 ("big red flower") is the sticker Chinese
 schoolchildren get for doing well — the app turns bookkeeping into that same small daily
 reward: a bloom per entry, a streak, a garden that fills up over the month.
 

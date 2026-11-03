@@ -9,6 +9,8 @@
 // would translate the app a screen at a time.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_app/app_info.dart';
 import 'package:flutter_app/diagnostics.dart';
 import 'package:flutter_app/main.dart';
 import 'package:flutter_app/settings_screen.dart';
@@ -21,8 +23,12 @@ import 'scroll.dart';
 
 int get now => DateTime.now().millisecondsSinceEpoch;
 
-Future<void> show(WidgetTester tester, {bool zh = true}) async {
-  await tester.pumpWidget(MaterialApp(home: SettingsScreen(zh: zh)));
+Future<void> show(WidgetTester tester, {bool zh = true, AppInfo? info}) async {
+  await tester.pumpWidget(
+    MaterialApp(
+      home: SettingsScreen(zh: zh, info: info),
+    ),
+  );
   await tester.pumpAndSettle();
 }
 
@@ -190,7 +196,7 @@ void main() {
       tester,
     ) async {
       await show(tester);
-      // The note is the last thing on a screen that keeps growing, and a
+      // The note is near the end of a screen that keeps growing, and a
       // ListView does not build what is off screen.
       await tester.scrollUntilVisible(
         find.byKey(const Key('settings-note')),
@@ -245,6 +251,93 @@ void main() {
       final after = diag.dump();
       expect(after, contains('disk full'));
       expect(after, isNot(equals(before)));
+    });
+
+    testWidgets('is headed by the build, even when there is nothing in it', (
+      tester,
+    ) async {
+      await loadAppInfo();
+      diag.clear();
+      final dump = diag.dump();
+      expect(dump, contains('app=${appInfo.value!.line}'));
+      expect(dump, contains('no diagnostics recorded'));
+    });
+  });
+
+  // The bug template asks for a version and sends people to 设置 › 关于大红花
+  // for it, and for a long time there was nothing there.
+  group('关于大红花', () {
+    const debugSigned = AppInfo(
+      version: '1.0.0',
+      code: 2001,
+      debugSigned: true,
+    );
+    const signed = AppInfo(version: '1.2.0', code: 2003);
+
+    Future<void> reach(WidgetTester tester) async {
+      await tester.scrollUntilVisible(find.byKey(const Key('about-copy')), 300);
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('says which build the phone installed', (tester) async {
+      // The real channel. A name that drifted from Kotlin's, or a channel
+      // MainActivity never registered, leaves this null.
+      await loadAppInfo();
+      final info = appInfo.value;
+      expect(info, isNotNull, reason: 'the phone did not say');
+      // `flutter test` installs a debug build, which Gradle does not stamp
+      expect(info!.debuggable, isTrue, reason: 'the suite runs a debug build');
+      expect(info.debugSigned, isFalse);
+
+      await show(tester);
+      await reach(tester);
+      expect(
+        textOf(tester, 'about-version'),
+        matches(RegExp(r'^\d+\.\d+\.\d+ \(\d+\)$')),
+      );
+      expect(textOf(tester, 'about-version'), '${info.version} (${info.code})');
+      expect(find.byKey(const Key('about-dev')), findsOneWidget);
+    });
+
+    testWidgets('warns about a debug-signed build', (tester) async {
+      await show(tester, info: debugSigned);
+      await reach(tester);
+      expect(textOf(tester, 'about-version'), '1.0.0 (2001)');
+      expect(textOf(tester, 'about-debugsigned'), contains('卸载'));
+      expect(find.byKey(const Key('about-dev')), findsNothing);
+    });
+
+    testWidgets('and says nothing more about a properly signed one', (
+      tester,
+    ) async {
+      await show(tester, info: signed, zh: false);
+      await reach(tester);
+      expect(find.text('About Big Red Flower'), findsOneWidget);
+      expect(textOf(tester, 'about-version'), '1.2.0 (2003)');
+      expect(find.byKey(const Key('about-debugsigned')), findsNothing);
+      expect(find.byKey(const Key('about-dev')), findsNothing);
+    });
+
+    testWidgets('copies the line a bug report asks for', (tester) async {
+      // Caught rather than read back: the phone's own clipboard belongs to
+      // whoever is running the suite, and reading it is Android's to refuse.
+      final copied = <String>[];
+      final messenger = tester.binding.defaultBinaryMessenger;
+      messenger.setMockMethodCallHandler(SystemChannels.platform, (call) async {
+        if (call.method == 'Clipboard.setData') {
+          copied.add((call.arguments as Map)['text'] as String);
+        }
+        return null;
+      });
+      addTearDown(
+        () => messenger.setMockMethodCallHandler(SystemChannels.platform, null),
+      );
+
+      await show(tester, info: debugSigned);
+      await reach(tester);
+      await tapSetting(tester, const Key('about-copy'));
+      expect(copied, ['1.0.0 (2001) debug-signed']);
+      expect(find.byKey(const Key('about-copied')), findsOneWidget);
     });
   });
 }
