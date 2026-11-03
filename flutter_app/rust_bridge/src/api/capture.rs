@@ -145,11 +145,14 @@ fn post(drafts: &[NotifEntryDraft], now: i64, tag: &str) -> u32 {
     let ids: Vec<String> = (0..bills.len())
         .map(|i| format!("n{now}{tag}{i}"))
         .collect();
-    // New rows under the ids handed over, one per draft and in order, so the
-    // ones that landed are the first `n`. A drain runs on every return to the
-    // app, and the wide mark here rewrote the ledger for a coffee.
-    let n = store_marked().post_captured(&bills, &ids, now);
-    db::mark_many(ids.into_iter().take(n));
+    // New rows, one per draft and in order, marked by the ids they landed on:
+    // the ones handed over, unless another row already held one, when the
+    // core moved it to a free id and the handed id would mark the wrong row.
+    // A drain runs on every return to the app, and the wide mark here rewrote
+    // the ledger for a coffee.
+    let landed = store_marked().post_captured(&bills, &ids, now);
+    let n = landed.len();
+    db::mark_many(landed);
     n as u32
 }
 

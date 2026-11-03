@@ -19,6 +19,17 @@
 //! Tombstones are the other thing to know. Deleting does not remove a row; it
 //! stamps `deleted_at` and leaves it in place so the deletion can be pushed to
 //! other devices. Every display and calculation path filters on `is_live`.
+//!
+//! **One row per id.** The ledger used to hold whatever it was given, and an id
+//! that appeared twice was read three ways: [`Ledger::get`] found the first,
+//! the entry list (a Dart map) drew the last, and SQLite, keyed on the id,
+//! saved whichever came last and lost the other on the next launch. Ids are
+//! the platform's (`e<ms>x<hash>`), so two entries recorded in one millisecond
+//! could share one. Now nothing that enters the ledger can repeat an id: a
+//! load collapses repeats ([`Ledger::from_entries`]) and a new row that names a
+//! taken id lands on a free one ([`Ledger::add`], [`Ledger::push_raw`]).
+
+use std::collections::{HashMap, HashSet};
 
 use crate::entry::{Entry, Patch};
 
@@ -46,6 +57,17 @@ pub struct RemoveUndo {
     pub refunded_id: Option<String>,
     /// That counter's value before the delete.
     pub prev_refund: Option<f64>,
+}
+
+/// `id`, or the first of `id-2`, `id-3`, … that `taken` does not claim.
+fn first_free(id: &str, taken: impl Fn(&str) -> bool) -> String {
+    if !taken(id) {
+        return id.to_string();
+    }
+    (2u64..)
+        .map(|n| format!("{id}-{n}"))
+        .find(|c| !taken(c))
+        .expect("an unbounded range runs out of nothing")
 }
 
 /// Stamp a patch onto an entry: apply it, then record `now` against every field
@@ -76,8 +98,27 @@ impl Ledger {
 
     /// Build from rows already on disk or pulled from sync. No stamping — these
     /// carry their own metadata.
+    ///
+    /// A repeated id collapses to its **last** copy, kept in the place of its
+    /// first. That is what the shipping app did with a backup that named an id
+    /// twice — `mergeById` read each side through `new Map(...)`, which keeps
+    /// the last value at the first key's position (see
+    /// [`crate::merge::merge_by_id`]) — and what SQLite, writing the rows in
+    /// order under a primary key, would have kept anyway. Keeping both would
+    /// leave the three readers above disagreeing; the database cannot.
     pub fn from_entries(entries: Vec<Entry>) -> Self {
-        Ledger { entries }
+        let mut at: HashMap<String, usize> = HashMap::with_capacity(entries.len());
+        let mut kept: Vec<Entry> = Vec::with_capacity(entries.len());
+        for e in entries {
+            match at.get(&e.id) {
+                Some(&i) => kept[i] = e,
+                None => {
+                    at.insert(e.id.clone(), kept.len());
+                    kept.push(e);
+                }
+            }
+        }
+        Ledger { entries: kept }
     }
 
     /// Every row, tombstones included. Sync needs the tombstones; display does
@@ -93,6 +134,17 @@ impl Ledger {
 
     pub fn get(&self, id: &str) -> Option<&Entry> {
         self.entries.iter().find(|e| e.id == id)
+    }
+
+    /// `id` when no row holds it, else the first of `id-2`, `id-3`, … that none
+    /// does. A tombstone holds its id: reusing one would make a new entry and a
+    /// deletion that sync is still carrying the same row.
+    ///
+    /// Public so a caller that must know the id before the row is written —
+    /// to mark it for saving — can ask first and hand over an id that will
+    /// land as given.
+    pub fn free_id(&self, id: &str) -> String {
+        first_free(id, |c| self.get(c).is_some())
     }
 
     pub fn len(&self) -> usize {
@@ -111,8 +163,11 @@ impl Ledger {
     /// undefined. Treating `0` as "absent" — which an earlier version of this
     /// did — quietly rewrites an entry dated at the epoch. Absurd as a real
     /// date, ordinary as a bug, and the parity harness found it.
+    ///
+    /// An `id` another row already holds is not overwritten or repeated: the
+    /// entry lands on [`Ledger::free_id`], and the returned entry says which.
     pub fn add(&mut self, mut entry: Entry, id: String, ts: Option<i64>, now: i64) -> &Entry {
-        entry.id = id;
+        entry.id = self.free_id(&id);
         entry.ts = ts.unwrap_or(now);
         entry.updated_at = Some(now);
         self.entries.push(entry);
@@ -126,8 +181,31 @@ impl Ledger {
     /// `updated_at` but no `field_ts`, and the current account does not move.
     /// Routing it through [`Ledger::add`] would be tidier and would change
     /// behaviour on both counts, so the seam is kept explicit instead.
-    pub fn push_raw(&mut self, entry: Entry) {
+    ///
+    /// Exactly as given except for one thing: an id another row holds lands
+    /// on [`Ledger::free_id`] instead. Returns the id it landed on, which is
+    /// the one a caller must mark for saving.
+    pub fn push_raw(&mut self, mut entry: Entry) -> String {
+        entry.id = self.free_id(&entry.id);
+        let id = entry.id.clone();
         self.entries.push(entry);
+        id
+    }
+
+    /// [`Ledger::push_raw`] for a batch, in order, with one set of the ids
+    /// in use rather than a scan per row — an import of a thousand bills into
+    /// eight thousand entries is otherwise eight million comparisons. Returns
+    /// the ids the rows landed on, in the same order.
+    pub fn push_all(&mut self, rows: Vec<Entry>) -> Vec<String> {
+        let mut taken: HashSet<String> = self.entries.iter().map(|e| e.id.clone()).collect();
+        let mut landed = Vec::with_capacity(rows.len());
+        for mut e in rows {
+            e.id = first_free(&e.id, |c| taken.contains(c));
+            taken.insert(e.id.clone());
+            landed.push(e.id.clone());
+            self.entries.push(e);
+        }
+        landed
     }
 
     /// Patch one entry. Unknown ids are ignored, matching the TypeScript's
@@ -473,5 +551,89 @@ mod tests {
         l.remove("a", 9_000);
         assert_eq!(l.live().map(|e| e.id.as_str()).collect::<Vec<_>>(), ["b"]);
         assert_eq!(l.all().len(), 2);
+    }
+
+    // ---- one row per id ----
+
+    fn ids(l: &Ledger) -> Vec<&str> {
+        l.all().iter().map(|e| e.id.as_str()).collect()
+    }
+
+    #[test]
+    fn a_load_keeps_one_row_per_id_the_last_copy_in_the_first_place() {
+        // `new Map(rows.map(r => [r.id, r]))`: the key keeps its first
+        // position, the value is the last one written
+        let l = Ledger::from_entries(vec![
+            expense("a", 1.0),
+            expense("b", 2.0),
+            expense("a", 3.0),
+        ]);
+        assert_eq!(ids(&l), ["a", "b"]);
+        assert_eq!(l.get("a").unwrap().amt, 3.0);
+        assert_eq!(l.get("b").unwrap().amt, 2.0);
+    }
+
+    #[test]
+    fn a_load_with_no_repeats_is_kept_exactly() {
+        let l = Ledger::from_entries(vec![expense("b", 2.0), expense("a", 1.0)]);
+        assert_eq!(ids(&l), ["b", "a"]);
+    }
+
+    #[test]
+    fn adding_under_a_taken_id_keeps_both_entries() {
+        let mut l = seeded();
+        let landed = l.add(expense("", 12.0), "a".into(), None, 7_000).id.clone();
+        assert_eq!(landed, "a-2");
+        assert_eq!(ids(&l), ["a", "b", "a-2"]);
+        // the one that was there is untouched, and the new one is findable
+        assert_eq!(l.get("a").unwrap().amt, 100.0);
+        assert_eq!(l.get("a-2").unwrap().amt, 12.0);
+    }
+
+    #[test]
+    fn a_free_id_is_used_as_given() {
+        let mut l = seeded();
+        assert_eq!(l.add(expense("", 1.0), "c".into(), None, 1).id, "c");
+        assert_eq!(l.push_raw(expense("d", 1.0)), "d");
+    }
+
+    #[test]
+    fn a_tombstone_holds_its_id() {
+        // reusing it would make a new entry and a deletion sync is still
+        // carrying one row
+        let mut l = seeded();
+        l.remove("a", 9_000);
+        assert_eq!(l.add(expense("", 1.0), "a".into(), None, 9_100).id, "a-2");
+        assert!(l.get("a").unwrap().deleted_at.is_some());
+    }
+
+    #[test]
+    fn raw_rows_land_on_the_next_free_id_and_say_which() {
+        let mut l = seeded();
+        assert_eq!(l.push_raw(expense("a", 1.0)), "a-2");
+        assert_eq!(l.push_raw(expense("a", 2.0)), "a-3");
+        // a suffix that is itself taken is skipped, not repeated
+        assert_eq!(l.push_raw(expense("b-2", 3.0)), "b-2");
+        assert_eq!(l.push_raw(expense("b", 4.0)), "b-3");
+        assert_eq!(ids(&l), ["a", "b", "a-2", "a-3", "b-2", "b-3"]);
+    }
+
+    #[test]
+    fn a_batch_lands_where_one_row_at_a_time_would() {
+        // one set instead of a scan per row, and the same answer: repeats
+        // within the batch and against the ledger both move
+        let rows = vec![
+            expense("a", 1.0),
+            expense("c", 2.0),
+            expense("c", 3.0),
+            expense("a-2", 4.0),
+        ];
+        let mut batched = seeded();
+        let landed = batched.push_all(rows.clone());
+        let mut single = seeded();
+        let one_by_one: Vec<String> = rows.into_iter().map(|e| single.push_raw(e)).collect();
+        assert_eq!(landed, one_by_one);
+        assert_eq!(landed, ["a-2", "c", "c-2", "a-2-2"]);
+        assert_eq!(ids(&batched), ids(&single));
     }
 }

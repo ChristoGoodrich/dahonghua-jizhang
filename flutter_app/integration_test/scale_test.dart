@@ -297,33 +297,25 @@ void main() {
       expect(store.liveEntries().length, 201);
     });
 
-    /// A map built by `collect` keeps the LAST row with a given id; the scan
-    /// it replaced returned the FIRST. Ids are unique in practice and a
-    /// duplicate is a bug somewhere else — but a performance change that
-    /// quietly answers differently in the one case nobody tests is not a
-    /// performance change, so `by_id` uses `or_insert` and this holds it to
-    /// that.
+    /// Two entries recorded under one id are two rows under two ids.
     ///
-    /// ## Why this goes through the statistics and not the screen
+    /// This used to hold `by_id` to the scan's first-wins answer for a ledger
+    /// that held one id twice: a `collect` keeps the last row, the scan found
+    /// the first. It went through the statistics rather than the screen
+    /// because the screen could not answer at all — the list draws from Dart's
+    /// `{for (e in live) e.id: e}`, where the last repeat wins, so one of the
+    /// two entries was never shown. SQLite, keyed on the id, kept only the
+    /// last of them past a restart.
     ///
-    /// An earlier version rendered the list and counted the notes. It failed
-    /// two runs in three, and it was not flaky so much as wrong: the list
-    /// draws its rows from Dart's own `{for (e in live) e.id: e}`, where the
-    /// LAST duplicate wins, so `by_id` never decided what text appeared at
-    /// all. It passed only when a millisecond ticked between the two
-    /// `addEntry` calls, because `now` is a getter — a later timestamp sorted
-    /// the second row first, and Dart's last-wins then happened to land on
-    /// the first. The test was tracking the emulator's clock.
-    ///
-    /// `categorySlices` reads through `by_id` and its answer differs between
-    /// the two rules: resolve both ids to 餐饮 10 and the slice is 餐饮 20;
-    /// resolve both to 交通 99 and it is 交通 198. One fixed timestamp for both
-    /// rows, so nothing here depends on how fast the machine is.
-    testWidgets('a duplicated id resolves the way the scan did — first wins', (
+    /// The ledger cannot hold a repeat any more (`core::ledger`): the second
+    /// entry lands on `same-2`, and every reader — `get`, `by_id`, the list's
+    /// map, the database — sees the same two rows. One fixed timestamp for
+    /// both, so nothing here depends on the machine's clock.
+    testWidgets('a second entry under a taken id lands on a free one', (
       tester,
     ) async {
       final t = now;
-      store.addEntry(
+      final first = store.addEntry(
         entry: store.NewEntry(
           io: 'exp',
           cat: 'food',
@@ -334,7 +326,7 @@ void main() {
         id: 'same',
         now: t,
       );
-      store.addEntry(
+      final second = store.addEntry(
         entry: store.NewEntry(
           io: 'exp',
           cat: 'trans',
@@ -345,19 +337,26 @@ void main() {
         id: 'same',
         now: t,
       );
+      expect(first, 'same');
+      expect(second, 'same-2', reason: 'moved off the id the first holds');
       expect(store.entryCount(), 2, reason: 'the ledger holds both rows');
+      expect(
+        store.getEntry(id: 'same')!.note,
+        '第一个',
+        reason: 'and the first is untouched',
+      );
+      expect(store.getEntry(id: 'same-2')!.note, '第二个');
 
-      // The scan's answer, which is the rule being matched.
-      expect(store.getEntry(id: 'same')!.note, '第一个');
+      // the list's own map, which a repeat used to collapse to one row
+      final shown = {for (final e in store.liveEntries()) e.id: e.note};
+      expect(shown, {'same': '第一个', 'same-2': '第二个'});
 
       final slices = stats.categorySlices(
-        ids: ['same', 'same'],
+        ids: [first, second],
         io: 'exp',
         zh: true,
       );
-      expect(slices, hasLength(1), reason: 'both ids resolve to one row');
-      expect(slices.single.cat, 'food', reason: 'the first row, not the last');
-      expect(slices.single.amt, 20);
+      expect({for (final s in slices) s.cat: s.amt}, {'food': 10, 'trans': 99});
     });
   });
 }

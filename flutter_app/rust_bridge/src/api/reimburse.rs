@@ -140,10 +140,15 @@ pub fn unmark_reimburse(id: String, now: i64) -> bool {
 /// first would be a second implementation of it.
 #[frb(sync)]
 pub fn refund_entry(id: String, amount: f64, zh: bool, new_id: String, now: i64) -> f64 {
-    let r = {
+    let (r, new_id) = {
         let mut s = store_marked();
         let acct = s.current_account.clone();
-        core::refund_entry(
+        // An id no row holds, chosen under the same lock as the write, so the
+        // row lands on exactly the id marked below. Handed a taken one, the
+        // core would have moved the income elsewhere and this would have
+        // saved the other row instead.
+        let new_id = s.ledger.free_id(&new_id);
+        let r = core::refund_entry(
             &mut s.ledger,
             &id,
             amount,
@@ -152,7 +157,8 @@ pub fn refund_entry(id: String, amount: f64, zh: bool, new_id: String, now: i64)
             &acct,
             new_id.clone(),
             now,
-        )
+        );
+        (r, new_id)
     };
     // The core writes both rows or neither, and says neither with a zero —
     // its own test is `r <= 0.0`, so a NaN that slipped past it wrote.

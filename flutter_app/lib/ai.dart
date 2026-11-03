@@ -300,7 +300,9 @@ List<String> saveDrafts(List<ai.DraftView> drafts) {
       rateOverride: null,
       rateWasCached: false,
     );
-    if (r.rejected == null) written.add(id);
+    // the id it landed on, not the one handed over: 撤销 removes these, and
+    // the core moves an entry off an id another row already holds
+    if (r.rejected == null) written.add(r.id ?? id);
   }
   return written;
 }

@@ -720,6 +720,99 @@ void main() {
           hasLength(charged),
         ),
       ),
+
+      // An id another row holds. The core lands the new row on a free one
+      // (`e3-2`), and each of these marks for saving by the id it was handed
+      // — so each must be handed back the one that landed, or the restart
+      // keeps `e3` and loses the entry just made.
+      _RowCase(
+        '记一笔: under an id another row holds',
+        act: () {
+          final r = record.saveForm(
+            form: record.FormView(
+              io: 'exp',
+              cat: 'food',
+              amt: '42',
+              note: '撞了',
+              acct: '',
+              acctTo: '',
+              fee: '',
+              discount: '',
+              tags: const [],
+              ledger: '',
+              cur: 'CNY',
+              subcat: '',
+              ts: t0 + 1,
+              photo: '',
+            ),
+            editId: '',
+            id: 'e3',
+            now: t0 + 1,
+            rateWasCached: false,
+          );
+          expect(r.id, 'e3-2');
+        },
+        rows: () => 1,
+        check: () {
+          expect(store.getEntry(id: 'e3')!.amt, 10, reason: 'untouched');
+          expect(store.getEntry(id: 'e3-2')!.note, '撞了');
+        },
+      ),
+      _RowCase(
+        '转账: under an id another row holds',
+        act: () => expect(
+          store.addTransfer(
+            transfer: store.NewTransfer(
+              from: 'default',
+              to: 'default',
+              amt: 100,
+              ts: t0,
+            ),
+            id: 'e3',
+            now: t0 + 1,
+          ),
+          'e3-2',
+        ),
+        rows: () => 1,
+        check: () {
+          expect(store.getEntry(id: 'e3')!.io, 'exp', reason: 'untouched');
+          expect(store.getEntry(id: 'e3-2')!.io, 'xfer');
+        },
+      ),
+      _RowCase(
+        '退款: an income under an id another row holds',
+        act: () => rb.refundEntry(
+          id: 'e3',
+          amount: 4,
+          zh: true,
+          newId: 'e4',
+          now: t0 + 1,
+        ),
+        rows: () => 2,
+        check: () {
+          final e4 = store.getEntry(id: 'e4')!;
+          expect((e4.io, e4.amt, e4.refundOf), ('exp', 10, null));
+          final income = store.liveEntries().where((e) => e.refundOf == 'e3');
+          expect(income.map((e) => (e.id, e.amt)), [('e4-2', 4)]);
+        },
+      ),
+      _RowCase(
+        '自动记账: a payment under an id another row holds',
+        arrange: () {
+          capture.resetInbox();
+          // the id the drain below will choose for its first payment
+          add('n${t0 + 1}i0', 10);
+        },
+        act: () => capture.drainCaptures(
+          raws: [notif('q3', '向星巴克(国贸店)付款35.00元')],
+          now: t0 + 1,
+        ),
+        rows: () => 1,
+        check: () {
+          expect(store.getEntry(id: 'n${t0 + 1}i0')!.amt, 10);
+          expect(store.getEntry(id: 'n${t0 + 1}i0-2')!.amt, 35);
+        },
+      ),
     ];
 
     /// Twenty rows, so a wide mark has something to be wide about.

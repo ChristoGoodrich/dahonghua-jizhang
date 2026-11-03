@@ -296,8 +296,8 @@ pub fn subs_commit(
                 continue; // already charged locally
             }
             existing.insert(id.clone());
-            posted.push(id.clone());
-            s.ledger.push_raw(charge_entry(sub, id, ts, now));
+            // the id it landed on, which `existing` has already made `id`
+            posted.push(s.ledger.push_raw(charge_entry(sub, id, ts, now)));
             fired.push(sub.name.clone());
         }
         sub.last_charged = Some(due.last_charged);
