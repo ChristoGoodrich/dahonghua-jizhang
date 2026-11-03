@@ -21,6 +21,7 @@ import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'rust_init.dart';
+import 'scroll.dart';
 
 int get now => DateTime.now().millisecondsSinceEpoch;
 
@@ -349,6 +350,17 @@ void main() {
       await tester.pumpAndSettle();
     }
 
+    /// Pressed through `scrollAndTap`, not a bare tap. [show] leaves
+    /// 'ai-privacy' at the top of the viewport, and the switch, the key and
+    /// 测试连接 sit above it: they were on screen only because the page ended
+    /// close enough below to stop the scroll. 关于大红花 at the end of 设置
+    /// was enough to move that end, and the taps landed above the screen.
+    Future<void> press(WidgetTester tester, String key) => scrollAndTap(
+      tester,
+      find.byKey(Key(key)),
+      scrollable: find.byType(Scrollable).first,
+    );
+
     testWidgets('off by default, and says what would be sent', (tester) async {
       await show(tester);
       expect(
@@ -366,10 +378,8 @@ void main() {
       tester,
     ) async {
       await show(tester);
-      await tester.tap(find.byKey(const Key('ai-toggle')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('ai-key-edit')));
-      await tester.pumpAndSettle();
+      await press(tester, 'ai-toggle');
+      await press(tester, 'ai-key-edit');
       await tester.enterText(
         find.byKey(const Key('ai-key-field')),
         'tp-abcdefghijkl9876',
@@ -394,16 +404,14 @@ void main() {
       aiOn();
       Ai.send = answering('OK');
       await show(tester);
-      await tester.tap(find.byKey(const Key('ai-ping')));
-      await tester.pumpAndSettle();
+      await press(tester, 'ai-ping');
       expect(
         tester.widget<Text>(find.byKey(const Key('ai-ping-result'))).data,
         contains('连上了'),
       );
 
       Ai.send = answering('', status: 401);
-      await tester.tap(find.byKey(const Key('ai-ping')));
-      await tester.pumpAndSettle();
+      await press(tester, 'ai-ping');
       expect(
         tester.widget<Text>(find.byKey(const Key('ai-ping-result'))).data,
         contains('API Key'),
