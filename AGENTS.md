@@ -655,6 +655,13 @@ is not scoped either, and there the shipping app did scope it — only because
 it counted the same filtered array — on a tab that shows no bar to explain
 why the number had changed.
 
+下月预测 was dropped whole while the README went on listing it: the shipping
+洞察 screen (`src/app/insights.tsx`, over `src/ai/forecast.ts`).
+`core::forecast` is that file ported with its own tests — a least-squares
+line through the three cycles before this one, read one on, and the same per
+category; no model, despite the folder. It adds `enough`: the shipping screen
+read a confidence of zero as no history, and 100, 300, 100 has exactly that.
+
 Worth checking the rest of `rn-final` the same way when something feels thin.
 The tag is not on GitHub; the tree is the parent of `b477954` (`chore!: remove
 the React Native app`), so `git show b477954^:src/...` reads any file of it.

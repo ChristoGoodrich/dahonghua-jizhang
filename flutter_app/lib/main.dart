@@ -27,6 +27,7 @@ import 'ai_entry_screen.dart';
 import 'account_detail_screen.dart';
 import 'backup_screen.dart';
 import 'budget_warn.dart';
+import 'forecast_screen.dart';
 import 'bottom_nav.dart';
 import 'budget_screen.dart';
 import 'petal_burst.dart';
@@ -790,6 +791,15 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                 ? '这个周期和这一周，过得怎么样'
                 : 'How the cycle and the week are going',
             onTap: () => _push(ReportScreen(zh: zh)),
+          ),
+          MeRow(
+            id: 'forecast',
+            icon: Icons.trending_up_rounded,
+            title: zh ? '下月预测' : 'Next cycle',
+            desc: zh
+                ? '照前三个周期的走势，下个周期大概花多少'
+                : 'What the next cycle will likely cost, from the last three',
+            onTap: () => _push(ForecastScreen(zh: zh)),
           ),
           MeRow(
             id: 'reimburse',

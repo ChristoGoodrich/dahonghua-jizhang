@@ -29,6 +29,7 @@ pub mod engine;
 pub mod entry;
 pub mod export;
 pub mod filter;
+pub mod forecast;
 pub mod gbk_table;
 pub mod glass;
 pub mod inbox;
