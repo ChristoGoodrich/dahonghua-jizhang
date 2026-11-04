@@ -439,9 +439,12 @@ mod tests {
     }
 
     #[test]
-    fn a_duplicated_id_is_converted_once_each_not_once_per_occurrence() {
-        // `Ledger::get` is first-wins. Looking rows up by id would convert the
-        // first copy once per occurrence and never touch the second.
+    fn a_repeated_id_is_one_row_and_is_converted_once() {
+        // This used to hold two rows with one id and check each was converted
+        // once: `Ledger::get` is first-wins, so converting by id would have
+        // done the first copy twice and the second never. A ledger cannot hold
+        // two any more — the repeat collapses to its last copy — and that one
+        // row is converted once: 1440 / 7.2, not 1440 / 7.2 / 7.2.
         let mut w = world();
         w.ledger = Ledger::from_entries(vec![
             Entry {
@@ -458,9 +461,8 @@ mod tests {
         set_base_currency(w.denominated(), "USD", 9_000);
 
         let all = w.ledger.all();
-        assert_eq!(all.len(), 2);
-        assert_eq!(all[0].amt, 100.0);
-        assert_eq!(all[1].amt, 200.0);
+        assert_eq!(all.len(), 1);
+        assert_eq!(all[0].amt, 200.0);
     }
 
     #[test]

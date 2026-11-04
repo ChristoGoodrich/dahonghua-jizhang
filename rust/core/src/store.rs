@@ -169,10 +169,10 @@ impl Store {
             updated_at: Some(now),
             ..Default::default()
         };
-        let entry_id = entry.id.clone();
         // pushed rather than routed through Ledger::add, which would re-assign
-        // the id and the stamp this has already set
-        self.ledger.push_raw(entry);
+        // the stamp this has already set. The id is the one it landed on, which
+        // is `id` unless another row already held that.
+        let entry_id = self.ledger.push_raw(entry);
         self.current_account = p.from;
         entry_id
     }
@@ -189,7 +189,7 @@ impl Store {
     /// nothing in the TypeScript because the TypeScript generates its own; the
     /// caller is expected to supply one id per bill.
     pub fn import_bills(&mut self, bills: &[ImportedBill], ids: &[String], now: i64) -> usize {
-        self.push_batch(bills, ids, now, EntrySource::Bill)
+        self.push_batch(bills, ids, now, EntrySource::Bill).len()
     }
 
     /// Record payments the notification listener captured. Returns how many
@@ -200,7 +200,15 @@ impl Store {
     /// `src == notif` to know which ledger rows already stand for a captured
     /// payment. An entry written without it would be invisible to the dedup and
     /// the next drain would post it again.
-    pub fn post_captured(&mut self, drafts: &[ImportedBill], ids: &[String], now: i64) -> usize {
+    ///
+    /// Returns the ids the rows landed on — `ids`, unless one was already
+    /// taken — because those, not the ones handed in, are what to save.
+    pub fn post_captured(
+        &mut self,
+        drafts: &[ImportedBill],
+        ids: &[String],
+        now: i64,
+    ) -> Vec<String> {
         self.push_batch(drafts, ids, now, EntrySource::Notif)
     }
 
@@ -214,14 +222,16 @@ impl Store {
         ids: &[String],
         now: i64,
         src: EntrySource,
-    ) -> usize {
+    ) -> Vec<String> {
         if bills.is_empty() {
-            return 0;
+            return Vec::new();
         }
-        let n = bills.len().min(ids.len());
-        for (i, b) in bills.iter().take(n).enumerate() {
-            self.ledger.push_raw(Entry {
-                id: ids[i].clone(),
+        let rows = bills
+            .iter()
+            .zip(ids)
+            .enumerate()
+            .map(|(i, (b, id))| Entry {
+                id: id.clone(),
                 ts: b.ts,
                 io: Some(b.io),
                 cat: b.cat.clone(),
@@ -230,9 +240,9 @@ impl Store {
                 src: Some(src),
                 updated_at: Some(now + i as i64),
                 ..Default::default()
-            });
-        }
-        n
+            })
+            .collect();
+        self.ledger.push_all(rows)
     }
 }
 
@@ -452,6 +462,30 @@ mod tests {
             note: note.into(),
             ts,
         }
+    }
+
+    #[test]
+    fn a_transfer_under_a_taken_id_says_where_it_landed() {
+        // the bridge marks the id this returns for saving; returning the one
+        // it was handed would save the other row and lose this one
+        let mut s = Store::new();
+        let first = s.add_transfer(transfer("default", "card", 10.0), "e1".into(), 1_000);
+        let second = s.add_transfer(transfer("default", "card", 20.0), "e1".into(), 1_000);
+        assert_eq!((first.as_str(), second.as_str()), ("e1", "e1-2"));
+        assert_eq!(s.ledger.get(&second).unwrap().amt, 20.0);
+    }
+
+    #[test]
+    fn captured_payments_say_where_they_landed() {
+        let mut s = Store::new();
+        s.add_entry(Entry::default(), "n1".into(), None, 1_000);
+        let landed = s.post_captured(
+            &[bill("food", 1.0, "", 0), bill("food", 2.0, "", 0)],
+            &["n1".to_string(), "n2".to_string()],
+            2_000,
+        );
+        assert_eq!(landed, ["n1-2", "n2"]);
+        assert_eq!(s.ledger.len(), 3);
     }
 
     #[test]

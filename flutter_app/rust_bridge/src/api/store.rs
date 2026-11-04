@@ -124,12 +124,12 @@ pub fn revision() -> u32 {
 /// One pass to build this, then constant-time lookups: O(n) for the whole
 /// screen instead.
 ///
-/// **First wins, not last.** `get` returns the first row with a matching id,
-/// and a `collect` into a map would keep the last. Ids are unique in practice
-/// and a duplicate would be a bug elsewhere — but a performance change that
-/// quietly answers differently in the one case nobody tests is not a
-/// performance change, so `or_insert` keeps the same row `get` would have
-/// found.
+/// **First wins, not last** — though there is no longer a second to lose to.
+/// `get` returns the first row with a matching id and a `collect` would keep
+/// the last, so `or_insert` was chosen to answer as `get` did. Since then the
+/// ledger holds one row per id (`core::ledger`): a load collapses repeats and
+/// a new row under a taken id lands on a free one. `or_insert` stays because
+/// it costs nothing and agrees with `get` whatever the ledger holds.
 ///
 /// Borrows from the caller's guard rather than taking its own, so the guard
 /// outlives the map.

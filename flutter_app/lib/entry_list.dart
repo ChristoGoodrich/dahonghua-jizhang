@@ -398,8 +398,10 @@ class _EntryListScreenState extends State<EntryListScreen> {
     final d = catalog.templateDraft(id: id);
     if (d == null) return;
     final now = DateTime.now().millisecondsSinceEpoch;
-    final entryId = 'e${now}t${id.hashCode.toUnsigned(20)}';
-    store.addEntry(
+    // The id it landed on, which is what 撤销 must remove: the core moves an
+    // entry off an id another row holds, and removing the one handed over
+    // would take that other row instead.
+    final entryId = store.addEntry(
       entry: store.NewEntry(
         io: d.io,
         cat: d.cat,
@@ -409,7 +411,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
         ledger: d.ledger,
         ts: now,
       ),
-      id: entryId,
+      id: 'e${now}t${id.hashCode.toUnsigned(20)}',
       now: now,
     );
     widget.onChanged?.call();

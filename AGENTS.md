@@ -418,8 +418,8 @@ every record, every delete and every keystroke in the search box — and 统计,
 
 `api::store::by_id` builds the map once and hands out constant-time lookups.
 If you are about to write `ledger.get(id)` inside a loop over ids, take that
-instead. It uses `or_insert` rather than `collect` so a duplicated id resolves
-to the same row the scan would have found — first, not last.
+instead. It uses `or_insert` rather than `collect`, which once decided which
+copy of a duplicated id it found; the ledger can no longer hold one (below).
 
 The sweep missed one. `rows_of` in `api/stats.rs` did the same thing with
 `iter().find` instead of `get`, so a search for `ledger.get` did not find it,
@@ -430,14 +430,29 @@ id inside a loop over ids — not for one spelling of it.
 timing assertion is the right tool for once: a quadratic list and a linear one
 return byte-identical answers, so no correctness test can tell them apart.
 
-**Duplicate ids are not coherent, and that predates `by_id`.** `Ledger::add`
-pushes without checking, so a ledger can hold two rows with one id. Rust
-resolves them first-wins (`get`, `by_id`); the entry list draws from a Dart map
-literal, which is last-wins. Tap a duplicated row and the sheet opens the
-other copy. Nothing creates duplicates on purpose, and `get` already returns
-tombstones — this is a core-level question pinned by goldens, not a bridge
-fix. Written down so the next person does not rediscover it through a test
-that passes when a millisecond happens to tick.
+**One row per id.** `Ledger::add` used to push without checking, so a ledger
+could hold two rows with one id, and three readers answered three ways: `get`
+and `by_id` found the first, the entry list's Dart map drew the last, and
+SQLite — keyed on the id — saved the last and lost the other on the next
+launch. Ids are the platform's (`e<ms>x<hash>`), so two entries recorded in one
+millisecond could share one.
+
+`core::ledger` now holds one row per id. A load (`from_entries`: a restore, a
+sync file, the legacy import) collapses a repeat to its **last** copy in the
+place of its first — what the shipping app's `mergeById` did with a backup,
+through `new Map(...)`, and what the database would have kept. A new row
+under a taken id (`add`, `push_raw`, `push_all`) lands on `id-2`, `id-3`, …,
+a tombstone's id counting as taken, and returns the id it landed on.
+
+That return is the part to remember. **A narrow mark marks the id that
+landed, not the one handed over**, or the restart keeps the old row and loses
+the new one — the exact failure the dirty set exists to prevent.
+`persistence_test`'s one-row table has an "another row holds" case for 记一笔,
+转账, 退款 and 自动记账, and when only the mark is wrong it is the restart
+half that fails. A bridge path that must know the id before writing asks
+`Ledger::free_id` under the same lock (退款 does). Dart uses the returned id
+for whatever it does next: 撤销 after a template press or 一句话记账 removes
+by it, and removing the id it handed over would take the other row.
 
 ## Where the ledger can go
 
