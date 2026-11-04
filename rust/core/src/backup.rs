@@ -187,6 +187,73 @@ pub fn stray_packs(files: &[String], dirs: &[String]) -> Vec<String> {
 /// How many snapshots are kept by default.
 pub const MAX_BACKUPS: usize = 10;
 
+/// 自动备份: how often a launch takes a snapshot on its own.
+///
+/// The shipping app had the switch and the frequency in its settings —
+/// `autoBackup`, and `backupFrequency` of `daily` or `weekly` — and took the
+/// snapshot at boot. The port dropped both, so the only snapshots were the
+/// ones somebody remembered to take.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum AutoBackup {
+    #[default]
+    Off,
+    Daily,
+    Weekly,
+}
+
+impl AutoBackup {
+    /// Anything that is not `daily` or `weekly` is off.
+    pub fn parse(s: &str) -> AutoBackup {
+        match s {
+            "daily" => AutoBackup::Daily,
+            "weekly" => AutoBackup::Weekly,
+            _ => AutoBackup::Off,
+        }
+    }
+
+    pub fn as_str(self) -> &'static str {
+        match self {
+            AutoBackup::Off => "off",
+            AutoBackup::Daily => "daily",
+            AutoBackup::Weekly => "weekly",
+        }
+    }
+
+    /// How long the newest snapshot lasts before a launch takes another, in
+    /// milliseconds — twenty-four hours, as the shipping `runAutoBackup` had
+    /// it, not a calendar day.
+    fn interval_ms(self) -> Option<f64> {
+        const DAY_MS: f64 = 864e5;
+        match self {
+            AutoBackup::Off => None,
+            AutoBackup::Daily => Some(DAY_MS),
+            AutoBackup::Weekly => Some(7.0 * DAY_MS),
+        }
+    }
+}
+
+/// Whether this launch should take a snapshot: automatic backup is on, and
+/// the newest snapshot on the shelf — any snapshot, taken by hand or not — is
+/// at least an interval old, or there is none.
+///
+/// One difference from the shipping rule, which was `now - newest <
+/// interval` and nothing else: a newest snapshot dated **after** `now` is due.
+/// Its time is the phone's clock when it was taken, and a clock that was
+/// wrong then, or was set back since, would otherwise hold off every
+/// automatic snapshot until the clock caught up — a year of none, for a clock
+/// a year fast. A snapshot whose name carries no time (`NaN`, which
+/// [`list_backups`] sorts last) is not one to measure from.
+pub fn auto_due(freq: AutoBackup, names: &[String], now: f64) -> bool {
+    let Some(interval) = freq.interval_ms() else {
+        return false;
+    };
+    match list_backups(names).iter().find(|b| !b.time.is_nan()) {
+        None => true,
+        Some(newest) if newest.time > now => true,
+        Some(newest) => now - newest.time >= interval,
+    }
+}
+
 /// The version stamped into a backup document.
 ///
 /// Eight, and not the file format's own `version: 1` — `buildBackup` writes the
@@ -246,6 +313,82 @@ mod tests {
     }
 
     use super::*;
+
+    // ---------- auto_due ----------
+
+    const DAY: f64 = 864e5;
+
+    fn shelf(times: &[f64]) -> Vec<String> {
+        times.iter().map(|t| backup_name(*t, false)).collect()
+    }
+
+    #[test]
+    fn off_is_never_due() {
+        assert!(!auto_due(AutoBackup::Off, &[], 10.0 * DAY));
+        assert!(!auto_due(AutoBackup::Off, &shelf(&[0.0]), 10.0 * DAY));
+    }
+
+    #[test]
+    fn an_empty_shelf_is_due() {
+        assert!(auto_due(AutoBackup::Daily, &[], 10.0 * DAY));
+        assert!(auto_due(AutoBackup::Weekly, &[], 10.0 * DAY));
+    }
+
+    #[test]
+    fn due_once_the_newest_is_an_interval_old() {
+        let now = 100.0 * DAY;
+        let names = shelf(&[now - 30.0 * DAY, now - DAY + 1.0]);
+        // the newest is a millisecond short of a day: not yet
+        assert!(!auto_due(AutoBackup::Daily, &names, now));
+        assert!(auto_due(AutoBackup::Daily, &shelf(&[now - DAY]), now));
+        // a week is seven of them
+        assert!(!auto_due(
+            AutoBackup::Weekly,
+            &shelf(&[now - 6.0 * DAY]),
+            now
+        ));
+        assert!(auto_due(
+            AutoBackup::Weekly,
+            &shelf(&[now - 7.0 * DAY]),
+            now
+        ));
+    }
+
+    #[test]
+    fn a_sealed_snapshot_counts_as_one() {
+        let now = 100.0 * DAY;
+        let names = vec![backup_name(now - 3600.0, true)];
+        assert!(!auto_due(AutoBackup::Daily, &names, now));
+    }
+
+    #[test]
+    fn a_snapshot_from_the_future_does_not_hold_it_off() {
+        // the clock was a year fast when it was taken, or has been set back
+        let now = 100.0 * DAY;
+        assert!(auto_due(
+            AutoBackup::Daily,
+            &shelf(&[now + 365.0 * DAY]),
+            now
+        ));
+    }
+
+    #[test]
+    fn a_name_with_no_time_is_not_measured_from() {
+        let now = 100.0 * DAY;
+        let names = vec!["backup_draft.json".to_string()];
+        assert!(auto_due(AutoBackup::Daily, &names, now));
+        let mut names = names;
+        names.push(backup_name(now - 60.0, false));
+        assert!(!auto_due(AutoBackup::Daily, &names, now));
+    }
+
+    #[test]
+    fn the_setting_reads_back_as_written() {
+        for f in [AutoBackup::Off, AutoBackup::Daily, AutoBackup::Weekly] {
+            assert_eq!(AutoBackup::parse(f.as_str()), f);
+        }
+        assert_eq!(AutoBackup::parse("hourly"), AutoBackup::Off);
+    }
 
     fn names(v: &[&str]) -> Vec<String> {
         v.iter().map(|s| s.to_string()).collect()

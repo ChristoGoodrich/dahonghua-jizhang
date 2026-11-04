@@ -124,6 +124,110 @@ void main() {
     await clearBackups();
   });
 
+  group('自动备份', () {
+    // The shipping app took a snapshot at boot when the switch was on and the
+    // last one was a day or a week old. The port had the button and nothing
+    // else, so the only snapshots were the ones somebody remembered.
+    const day = 86400000;
+
+    /// A snapshot on the shelf from `ago` milliseconds back.
+    Future<void> oldSnapshot(int ago) async {
+      final dir = await backupDir();
+      final ts = (now - ago).toDouble();
+      await File(
+        '${dir.path}/${backup.backupName(ts: ts, encrypted: false)}',
+      ).writeAsString(backup.buildBackup(ts: ts));
+    }
+
+    testWidgets('is off to begin with, and takes nothing', (tester) async {
+      spend('e1', 35);
+      expect(backup.autoBackup(), 'off');
+      expect(await runAutoBackup(healthy: true), isNull);
+      expect(await listBackups(), isEmpty);
+    });
+
+    testWidgets('daily takes one when there is none, and not twice a day', (
+      tester,
+    ) async {
+      spend('e1', 35);
+      backup.setAutoBackup(frequency: 'daily');
+
+      final f = await runAutoBackup(healthy: true);
+      expect(f, isNotNull);
+      expect(await f!.readAsString(), contains('e1'));
+      expect(await runAutoBackup(healthy: true), isNull);
+      expect(await listBackups(), hasLength(1));
+    });
+
+    testWidgets('and again once the newest is a day old', (tester) async {
+      spend('e1', 35);
+      backup.setAutoBackup(frequency: 'daily');
+      await oldSnapshot(day + 60000);
+
+      expect(await runAutoBackup(healthy: true), isNotNull);
+      expect(await listBackups(), hasLength(2));
+    });
+
+    testWidgets('weekly waits out the week', (tester) async {
+      spend('e1', 35);
+      backup.setAutoBackup(frequency: 'weekly');
+      await oldSnapshot(2 * day);
+      expect(await runAutoBackup(healthy: true), isNull);
+
+      await clearBackups();
+      await oldSnapshot(8 * day);
+      expect(await runAutoBackup(healthy: true), isNotNull);
+    });
+
+    testWidgets('takes nothing when the ledger did not load', (tester) async {
+      // An unread ledger is an empty one, and a snapshot of it pushes a good
+      // one off the shelf when the prune comes round.
+      backup.setAutoBackup(frequency: 'daily');
+      expect(await runAutoBackup(healthy: false), isNull);
+      expect(await listBackups(), isEmpty);
+    });
+
+    testWidgets('the setting is kept under the shipping keys', (tester) async {
+      backup.setAutoBackup(frequency: 'weekly');
+      final json = store.snapshotConfig();
+      expect(json, contains('"autoBackup":true'));
+      expect(json, contains('"backupFrequency":"weekly"'));
+
+      store.reset();
+      expect(backup.autoBackup(), 'off');
+      expect(store.loadConfig(json: json), isTrue);
+      expect(backup.autoBackup(), 'weekly');
+
+      // the shipping default: on, with no frequency written, is daily
+      final bare = json.replaceFirst(
+        RegExp(r'"backupFrequency":"weekly",?'),
+        '',
+      );
+      expect(bare, isNot(contains('backupFrequency')));
+      store.reset();
+      expect(store.loadConfig(json: bare), isTrue);
+      expect(backup.autoBackup(), 'daily');
+    });
+
+    testWidgets('the screen sets it, and says it is set', (tester) async {
+      var changed = 0;
+      await tester.pumpWidget(
+        MaterialApp(home: BackupScreen(onChanged: () => changed++)),
+      );
+      await tester.pumpAndSettle();
+      expect(find.textContaining('打开后'), findsOneWidget);
+
+      await scrollAndTap(tester, find.byKey(const Key('auto-backup-weekly')));
+
+      expect(backup.autoBackup(), 'weekly');
+      expect(changed, 1, reason: 'the config has to be written');
+      expect(find.textContaining('满一周'), findsOneWidget);
+
+      await scrollAndTap(tester, find.byKey(const Key('auto-backup-off')));
+      expect(backup.autoBackup(), 'off');
+    });
+  });
+
   group('taking one', () {
     testWidgets('writes a file named for the moment', (tester) async {
       spend('e1', 35);

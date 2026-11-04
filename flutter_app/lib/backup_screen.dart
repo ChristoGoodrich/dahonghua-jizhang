@@ -50,6 +50,7 @@ import 'folders.dart';
 import 'glass.dart';
 import 'empty_note.dart';
 import 'photos.dart';
+import 'tap.dart';
 import 'theme.dart';
 
 /// Take a snapshot and prune the old ones. Returns the file written.
@@ -127,6 +128,25 @@ Future<File> createBackup({int? keep, String? password, String? spare}) async {
     await File('${dir.path}/$stray').delete();
   }
   return file;
+}
+
+/// 自动备份, once a launch: a snapshot when the setting is on and the newest
+/// one on the shelf — taken by hand or not — is a day or a week old.
+/// `backup.autoBackupDue` decides both. Null when none was due.
+///
+/// Plain, as the shipping one was: it has no password to seal with, and it
+/// lives in the app's own storage either way. It counts towards the
+/// [backup.maxBackups] like any other, so the oldest go first.
+///
+/// Only when the ledger loaded. A ledger that could not be read is an empty
+/// one, and a snapshot of it is a good snapshot pushed off the shelf when the
+/// prune comes round — the receipt sweep refuses for the same reason.
+Future<File?> runAutoBackup({required bool healthy}) async {
+  if (!healthy) return null;
+  final dir = await backupDir();
+  final now = DateTime.now().millisecondsSinceEpoch.toDouble();
+  if (!backup.autoBackupDue(names: await _names(dir), now: now)) return null;
+  return createBackup();
 }
 
 Future<List<String>> _names(Directory dir) async => dir
@@ -220,10 +240,14 @@ class BackupScreen extends StatefulWidget {
     super.key,
     this.zh = true,
     this.onRestored,
+    this.onChanged,
     this.pickFiles,
   });
 
   final bool zh;
+
+  /// A setting on this screen changed — 自动备份 — so the config needs writing.
+  final VoidCallback? onChanged;
 
   /// A restore replaced the ledger and the config, so both files need writing
   /// and every screen needs rebuilding.
@@ -242,6 +266,7 @@ class _BackupScreenState extends State<BackupScreen> {
   int? _ageDays;
   String? _flash;
   bool _busy = false;
+  String _auto = backup.autoBackup();
 
   @override
   void initState() {
@@ -519,6 +544,81 @@ class _BackupScreenState extends State<BackupScreen> {
     return zh ? '${d.month}月${d.day}日 $hh:$mm' : '${d.month}/${d.day} $hh:$mm';
   }
 
+  /// 自动备份 — 关, 每天, 每周. The shipping screen had it, and the port kept
+  /// only the button, so the only snapshots were the ones somebody remembered.
+  Widget _autoRow(bool zh) {
+    Widget chip(String f, String label) {
+      final on = _auto == f;
+      return Tap(
+        key: Key('auto-backup-$f'),
+        radius: Rad.pill,
+        onTap: () {
+          backup.setAutoBackup(frequency: f);
+          setState(() => _auto = backup.autoBackup());
+          widget.onChanged?.call();
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: on
+                ? palette.stamen.withValues(alpha: 0.18)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(Rad.pill),
+            border: Border.all(color: on ? palette.stamen : palette.line),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(fontSize: 12.5, color: palette.ink),
+          ),
+        ),
+      );
+    }
+
+    final often = _auto == 'weekly'
+        ? (zh ? '一周' : 'a week')
+        : (zh ? '一天' : 'a day');
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          zh ? '自动备份' : 'Automatic snapshots',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: palette.ink,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          children: [
+            chip('off', zh ? '关' : 'Off'),
+            chip('daily', zh ? '每天' : 'Daily'),
+            chip('weekly', zh ? '每周' : 'Weekly'),
+          ],
+        ),
+        const SizedBox(height: 6),
+        Text(
+          _auto == 'off'
+              ? (zh
+                    ? '打开后，每次打开 app 时，离上一份满一天（或一周）就自动存一份。'
+                    : 'When on, opening the app takes a snapshot once the '
+                          'last one is a day (or a week) old.')
+              : (zh
+                    ? '打开 app 时，离上一份满$often就自动存一份。不加密，和手动的一样计入上面的份数，'
+                          '卸载时也会一起删掉，所以换手机前还是要导出。'
+                    : 'Opening the app takes one once the last is $often old. '
+                          'Not sealed; counted with the ones above, and gone '
+                          'with an uninstall like them — export before '
+                          'changing phones.'),
+          key: const Key('auto-backup-note'),
+          style: TextStyle(fontSize: 12, color: palette.inkSoft),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final zh = widget.zh;
@@ -580,6 +680,8 @@ class _BackupScreenState extends State<BackupScreen> {
                   : palette.inkSoft,
             ),
           ),
+          const SizedBox(height: 16),
+          _autoRow(zh),
           const SizedBox(height: 12),
           Align(
             alignment: Alignment.centerLeft,

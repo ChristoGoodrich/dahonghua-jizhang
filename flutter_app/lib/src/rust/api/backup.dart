@@ -6,7 +6,7 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `as_str`, `b64`, `derive_key`, `unb64`
+// These functions are ignored because they are not marked as `pub`: `as_str`, `auto_backup_settings`, `auto_lock`, `b64`, `derive_key`, `load_auto_backup`, `unb64`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`
 
 /// Wrap `plaintext` in a password-sealed envelope.
@@ -108,6 +108,19 @@ List<String> strayLists({required List<String> files}) =>
 
 /// How many snapshots are kept by default.
 int maxBackups() => RustLib.instance.api.crateApiBackupMaxBackups();
+
+/// `"off"`, `"daily"` or `"weekly"`.
+String autoBackup() => RustLib.instance.api.crateApiBackupAutoBackup();
+
+/// Anything but `"daily"` or `"weekly"` turns it off. The save notices on its
+/// own — see `db::flush_store` — so there is nothing to mark.
+void setAutoBackup({required String frequency}) =>
+    RustLib.instance.api.crateApiBackupSetAutoBackup(frequency: frequency);
+
+/// Whether this launch should take a snapshot, given what is on the shelf.
+/// `core::backup::auto_due`, which also decides which snapshot is the newest.
+bool autoBackupDue({required List<String> names, required double now}) =>
+    RustLib.instance.api.crateApiBackupAutoBackupDue(names: names, now: now);
 
 /// The document a backup holds: the whole store, stamped.
 ///

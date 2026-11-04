@@ -286,6 +286,66 @@ pub fn max_backups() -> u32 {
     core::MAX_BACKUPS as u32
 }
 
+// ---------- 自动备份 ----------
+
+/// The setting, held here and written into the config under the shipping
+/// app's own keys — `settings.autoBackup` and `settings.backupFrequency` — so
+/// a config restored from it keeps the choice. A device setting: 同步 does
+/// not carry it.
+fn auto_lock() -> std::sync::MutexGuard<'static, core::AutoBackup> {
+    static A: std::sync::OnceLock<std::sync::Mutex<core::AutoBackup>> = std::sync::OnceLock::new();
+    A.get_or_init(Default::default)
+        .lock()
+        .unwrap_or_else(|e| e.into_inner())
+}
+
+/// `"off"`, `"daily"` or `"weekly"`.
+#[frb(sync)]
+pub fn auto_backup() -> String {
+    auto_lock().as_str().to_string()
+}
+
+/// Anything but `"daily"` or `"weekly"` turns it off. The save notices on its
+/// own — see `db::flush_store` — so there is nothing to mark.
+#[frb(sync)]
+pub fn set_auto_backup(frequency: String) {
+    *auto_lock() = core::AutoBackup::parse(&frequency);
+}
+
+/// Whether this launch should take a snapshot, given what is on the shelf.
+/// `core::backup::auto_due`, which also decides which snapshot is the newest.
+#[frb(sync)]
+pub fn auto_backup_due(names: Vec<String>, now: f64) -> bool {
+    core::auto_due(*auto_lock(), &names, now)
+}
+
+/// The two keys this setting adds to the config's `settings`.
+pub(crate) fn auto_backup_settings() -> Vec<(String, Value)> {
+    let a = *auto_lock();
+    let mut out = vec![(
+        "autoBackup".to_string(),
+        Value::Bool(a != core::AutoBackup::Off),
+    )];
+    if a != core::AutoBackup::Off {
+        out.push(("backupFrequency".to_string(), Value::Str(a.as_str().into())));
+    }
+    out
+}
+
+/// Read back from a config's `settings`. On with no frequency is daily, the
+/// shipping default; off, or absent, is off.
+pub(crate) fn load_auto_backup(settings: Option<&Value>) {
+    let on = matches!(
+        settings.and_then(|s| s.get("autoBackup")),
+        Some(Value::Bool(true))
+    );
+    let freq = match settings.and_then(|s| s.get("backupFrequency")) {
+        Some(Value::Str(f)) if f == "weekly" => core::AutoBackup::Weekly,
+        _ => core::AutoBackup::Daily,
+    };
+    *auto_lock() = if on { freq } else { core::AutoBackup::Off };
+}
+
 /// The document a backup holds: the whole store, stamped.
 ///
 /// `version` is the **app's** schema version and not the file format's — an

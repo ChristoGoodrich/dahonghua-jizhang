@@ -22,6 +22,7 @@ import 'package:flutter_app/src/rust/api/db.dart' as db;
 import 'package:flutter_app/src/rust/api/record.dart' as record;
 import 'package:flutter_app/src/rust/api/reimburse.dart' as rb;
 import 'package:flutter_app/src/rust/api/ai.dart' as ai;
+import 'package:flutter_app/src/rust/api/backup.dart' as backup;
 import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_app/src/rust/api/budget.dart' as budget;
 import 'package:flutter_app/src/rust/api/catalog.dart' as catalog;
@@ -257,6 +258,15 @@ void main() {
         (s.enabled, s.baseUrl, s.model, s.visionModel),
         (true, 'https://example.test/v1', 'm-1', 'v-1'),
       );
+      p.dispose();
+    });
+
+    testWidgets('自动备份', (tester) async {
+      var p = await open();
+      backup.setAutoBackup(frequency: 'weekly');
+
+      p = await restartAll(p);
+      expect(backup.autoBackup(), 'weekly');
       p.dispose();
     });
 
