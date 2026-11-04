@@ -10,11 +10,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/bloom.dart';
 import 'package:flutter_app/entry_list.dart';
 import 'package:flutter_app/glass.dart';
+import 'package:flutter_app/home_header.dart';
+import 'package:flutter_app/src/rust/api/catalog.dart' as catalog;
+import 'package:flutter_app/src/rust/api/home.dart' as home;
 import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_app/theme.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'rust_init.dart';
+import 'scroll.dart';
 
 const day = 86400000;
 
@@ -325,4 +329,91 @@ void main() {
     });
   });
 
+  // 账本筛选 — the shipping list's `LedgerFilter`, which the port left out.
+  // The bridge kept `current_ledger` the whole time and nothing ever set it,
+  // so a second ledger could be made and filed into but never looked at alone.
+  group('the ledger filter', () {
+    void entry(String id, double amt, {String? ledger, String note = '午饭'}) =>
+        store.addEntry(
+          entry: store.NewEntry(
+            io: 'exp',
+            cat: 'food',
+            amt: amt,
+            note: note,
+            ledger: ledger,
+            ts: now,
+          ),
+          id: id,
+          now: now,
+        );
+
+    home.HomeView head(WidgetTester tester) =>
+        tester.widget<HomeHeader>(find.byType(HomeHeader)).view;
+
+    // The page's own list: the bar and the templates scroll sideways, so
+    // `Scrollable` alone names three.
+    Future<void> pick(WidgetTester tester, String key) => scrollAndTap(
+      tester,
+      find.byKey(Key(key)),
+      scrollable: pageList(tester),
+    );
+
+    testWidgets('is not there until there is a ledger to pick', (tester) async {
+      entry('e1', 30);
+      await show(tester);
+      expect(find.byKey(const Key('ledger-bar')), findsNothing);
+    });
+
+    testWidgets('a ledger picked scopes the rows and the head to it', (
+      tester,
+    ) async {
+      catalog.addTag(kind: 'ledger', name: '旅行');
+      entry('trip', 30, ledger: '旅行');
+      entry('home', 50);
+      await show(tester);
+      expect(head(tester).exp, 80);
+
+      await pick(tester, 'ledger-filter-旅行');
+      expect(catalog.currentLedger(), '旅行');
+      expect(find.byKey(const Key('row-trip')), findsOneWidget);
+      expect(find.byKey(const Key('row-home')), findsNothing);
+      expect(head(tester).exp, 30, reason: 'the head counts the same slice');
+
+      await pick(tester, 'ledger-all');
+      expect(catalog.currentLedger(), '');
+      expect(find.byKey(const Key('row-home')), findsOneWidget);
+      expect(head(tester).exp, 80);
+    });
+
+    testWidgets('an empty ledger keeps the bar, so 全部 is one tap away', (
+      tester,
+    ) async {
+      catalog.addTag(kind: 'ledger', name: '家用');
+      entry('e1', 30);
+      await show(tester);
+
+      await pick(tester, 'ledger-filter-家用');
+      expect(find.text('「家用」里还没有账'), findsOneWidget);
+      expect(find.byKey(const Key('row-e1')), findsNothing);
+
+      await pick(tester, 'ledger-all');
+      expect(find.byKey(const Key('row-e1')), findsOneWidget);
+    });
+
+    testWidgets('a search stays inside the ledger', (tester) async {
+      catalog.addTag(kind: 'ledger', name: '旅行');
+      entry('trip', 30, ledger: '旅行');
+      entry('home', 50);
+      catalog.setCurrentLedger(name: '旅行');
+      await show(tester);
+
+      await tester.tap(find.byKey(const Key('search-toggle')));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(const Key('search-field')), '午饭');
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('row-trip')), findsOneWidget);
+      expect(find.byKey(const Key('row-home')), findsNothing);
+    });
+  });
 }

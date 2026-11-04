@@ -18,6 +18,7 @@ import 'package:http/http.dart' as http;
 import 'ledger_days.dart';
 import 'record_sheet.dart' show FormEdit;
 import 'src/rust/api/ai.dart' as ai;
+import 'src/rust/api/catalog.dart' as catalog;
 import 'src/rust/api/record.dart' as record;
 
 /// The key, in Android's encrypted store — never in the config, so never in a
@@ -280,7 +281,13 @@ List<String> saveDrafts(List<ai.DraftView> drafts) {
   final written = <String>[];
   final now = DateTime.now();
   for (final (i, d) in drafts.indexed) {
-    var f = record.initialForm(sourceId: '', editing: false, ledger: '');
+    // into the ledger 明细 is on, as the record sheet's entries go: the
+    // shipping app read a sentence into that same form
+    var f = record.initialForm(
+      sourceId: '',
+      editing: false,
+      ledger: catalog.currentLedger(),
+    );
     f = record.pickDirection(next: d.io, form: f);
     f = f.copyWith(cat: d.cat, amt: _amt(d.amt), note: d.note);
     final day = d.day;

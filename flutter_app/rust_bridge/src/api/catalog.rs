@@ -340,6 +340,28 @@ pub fn set_current_ledger(name: String) {
     library().current_ledger = name;
 }
 
+/// Of the `ids` given, the ones whose entry is in `ledger`, in their order —
+/// every one of them when `ledger` is empty, which is 全部.
+///
+/// 明细 scopes its head, its list and a search to the ledger picked in its
+/// filter bar, and asks this once rather than reading `ledger` off each row:
+/// whether an entry is in a ledger is `core::in_ledger`'s to say. An id the
+/// store does not hold is not in any ledger.
+#[frb(sync)]
+pub fn ids_in_ledger(ids: Vec<String>, ledger: String) -> Vec<String> {
+    if ledger.is_empty() {
+        return ids;
+    }
+    let s = super::store::store();
+    let by = super::store::by_id(&s);
+    ids.into_iter()
+        .filter(|id| {
+            by.get(id.as_str())
+                .is_some_and(|e| core::in_ledger(e.ledger.as_deref(), &ledger))
+        })
+        .collect()
+}
+
 /// A pinned entry the record sheet offers as a one-tap chip.
 #[derive(Debug, Clone, PartialEq)]
 pub struct TemplateView {

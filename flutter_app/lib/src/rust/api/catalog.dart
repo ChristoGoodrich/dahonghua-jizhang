@@ -120,6 +120,16 @@ String currentLedger() => RustLib.instance.api.crateApiCatalogCurrentLedger();
 void setCurrentLedger({required String name}) =>
     RustLib.instance.api.crateApiCatalogSetCurrentLedger(name: name);
 
+/// Of the `ids` given, the ones whose entry is in `ledger`, in their order —
+/// every one of them when `ledger` is empty, which is 全部.
+///
+/// 明细 scopes its head, its list and a search to the ledger picked in its
+/// filter bar, and asks this once rather than reading `ledger` off each row:
+/// whether an entry is in a ledger is `core::in_ledger`'s to say. An id the
+/// store does not hold is not in any ledger.
+List<String> idsInLedger({required List<String> ids, required String ledger}) =>
+    RustLib.instance.api.crateApiCatalogIdsInLedger(ids: ids, ledger: ledger);
+
 List<TemplateView> templates() =>
     RustLib.instance.api.crateApiCatalogTemplates();
 

@@ -78,6 +78,7 @@ class EntryListScreen extends StatefulWidget {
     this.onOpenBudget,
     this.onOpenStats,
     this.onPrivacy,
+    this.onLedger,
     this.onRecordAt,
     this.onLogged,
   });
@@ -105,6 +106,10 @@ class EntryListScreen extends StatefulWidget {
   /// The eye was pressed. The shell saves the setting and redraws the tabs
   /// that show totals.
   final VoidCallback? onPrivacy;
+
+  /// The filter bar moved to another ledger. It is the config's `curLedger`,
+  /// so the shell saves it as it saves the eye.
+  final VoidCallback? onLedger;
 
   /// 补记这天: record a new entry on a day the calendar was showing, as an
   /// instant at noon on it.
@@ -146,9 +151,15 @@ class _EntryListScreenState extends State<EntryListScreen> {
   /// 上周 and saw an empty list deserves to know it was understood.
   search.ParsedQueryView? _parsed;
 
-  /// 明细's head, for the cycle today is in — over the whole ledger, not the
-  /// search's slice of it.
+  /// 明细's head, for the cycle today is in — over the ledger the filter bar
+  /// is on, not the search's slice of it.
   home.HomeView? _home;
+
+  /// The ledger the filter bar is on, empty for 全部, and the ledgers it
+  /// offers. Read on every reload: picking one elsewhere — archiving it on
+  /// 账本, which clears it — has to show here.
+  String _scope = '';
+  List<String> _ledgers = const [];
 
   /// 明细's other face: the cycle as a grid. Kept in the route's page storage
   /// rather than only here, because the shell rebuilds this screen after
@@ -195,8 +206,24 @@ class _EntryListScreenState extends State<EntryListScreen> {
     // them.
     final l = LedgerDays.current();
     final live = l.entries;
-    var ids = l.ids;
-    var days = l.days;
+    final allIds = l.ids;
+    final allDays = l.days;
+    var ids = allIds;
+    var days = allDays;
+
+    // The ledger the filter bar is on, or 全部. The head, the rows and a
+    // search are its slice, as they were in the shipping list; the calendar
+    // is the whole ledger, which the shipping one was too — the bar is not
+    // over it.
+    final scope = catalog.currentLedger();
+    if (scope.isNotEmpty) {
+      (ids, days) = _only(
+        ids,
+        days,
+        catalog.idsInLedger(ids: ids, ledger: scope).toSet(),
+      );
+    }
+    final ledgers = catalog.pickableLedgers(keep: scope);
 
     final head = home.home(
       ids: ids,
@@ -206,13 +233,11 @@ class _EntryListScreenState extends State<EntryListScreen> {
       copy: insightCopy(widget.zh),
     );
     final cal = calendar.calendarMonth(
-      ids: ids,
-      daysOf: days,
+      ids: allIds,
+      daysOf: allDays,
       anchor: _calAnchor,
       today: localDay(DateTime.now()),
     );
-    final allIds = ids;
-    final allDays = days;
 
     final q = _query.text.trim();
     search.ParsedQueryView? parsed;
@@ -230,12 +255,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
             zh: widget.zh,
           )
           .toSet();
-      final kept = [
-        for (var i = 0; i < ids.length; i++)
-          if (keep.contains(ids[i])) i,
-      ];
-      ids = [for (final i in kept) ids[i]];
-      days = [for (final i in kept) days[i]];
+      (ids, days) = _only(ids, days, keep);
     }
 
     final items = store.listItems(
@@ -252,7 +272,30 @@ class _EntryListScreenState extends State<EntryListScreen> {
       _cal = cal;
       _allIds = allIds;
       _allDays = allDays;
+      _scope = scope;
+      _ledgers = ledgers;
     });
+  }
+
+  /// `ids` and the `days` beside them, cut to the ids in `keep`, in order.
+  static (List<String>, List<String>) _only(
+    List<String> ids,
+    List<String> days,
+    Set<String> keep,
+  ) {
+    final kept = [
+      for (var i = 0; i < ids.length; i++)
+        if (keep.contains(ids[i])) i,
+    ];
+    return ([for (final i in kept) ids[i]], [for (final i in kept) days[i]]);
+  }
+
+  /// The filter bar's answer. 全部 is the empty name.
+  void _pickLedger(String name) {
+    if (name == _scope) return;
+    catalog.setCurrentLedger(name: name);
+    _reload();
+    widget.onLedger?.call();
   }
 
   static int? _msOf(search.WallTime? t) => t == null
@@ -353,6 +396,9 @@ class _EntryListScreenState extends State<EntryListScreen> {
                                 onOpenStats: widget.onOpenStats,
                                 templates: catalog.templates(),
                                 onTemplate: _logTemplate,
+                                ledgers: _ledgers,
+                                ledger: _scope,
+                                onLedger: _pickLedger,
                               ),
                           ],
                         ),
@@ -1266,6 +1312,17 @@ class _EntryListScreenState extends State<EntryListScreen> {
     padding: EdgeInsets.fromLTRB(22, b.top, 22, 0),
     children: [
       b.header,
+      // An empty ledger picked in the bar is still a list with a bar over
+      // it: without one here there would be no way back to 全部.
+      if (!_searching && _ledgers.isNotEmpty) ...[
+        LedgerBar(
+          ledgers: _ledgers,
+          current: _scope,
+          zh: zh,
+          onPick: _pickLedger,
+        ),
+        const SizedBox(height: 12),
+      ],
       // A first launch may already have templates — imported, or synced from
       // another phone — and one press is the quickest first entry there is.
       if (!_searching && catalog.templates().isNotEmpty)
@@ -1300,16 +1357,25 @@ class _EntryListScreenState extends State<EntryListScreen> {
           // same thing. Telling a user who is searching that they have never
           // recorded anything is worse than saying nothing.
           Text(
-            _query.text.trim().isEmpty
-                ? (zh ? '还没有记账' : 'Nothing recorded yet')
-                : (zh ? '没有找到' : 'Nothing matched'),
+            _query.text.trim().isNotEmpty
+                ? (zh ? '没有找到' : 'Nothing matched')
+                // a ledger with nothing in it yet is not an empty app
+                : _scope.isNotEmpty
+                ? (zh ? '「$_scope」里还没有账' : 'Nothing in $_scope yet')
+                : (zh ? '还没有记账' : 'Nothing recorded yet'),
             key: const Key('list-empty'),
             style: TextStyle(fontSize: 13, color: palette.inkSoft),
           ),
           if (_query.text.trim().isEmpty) ...[
             const SizedBox(height: 6),
             Text(
-              zh ? '点下面的 + 记下第一笔' : 'Tap + below to record your first entry',
+              _scope.isNotEmpty
+                  ? (zh
+                        ? '点下面的 + 记一笔，就记在这个账本里'
+                        : 'Tap + below and it goes into this book')
+                  : (zh
+                        ? '点下面的 + 记下第一笔'
+                        : 'Tap + below to record your first entry'),
               key: const Key('list-empty-hint'),
               style: TextStyle(fontSize: 12, color: palette.inkSoft),
             ),

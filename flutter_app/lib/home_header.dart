@@ -29,9 +29,18 @@ class HomeHeader extends StatelessWidget {
     this.onOpenStats,
     this.templates = const [],
     this.onTemplate,
+    this.ledgers = const [],
+    this.ledger = '',
+    this.onLedger,
   });
 
   final home.HomeView view;
+
+  /// The ledgers the filter bar offers, the one in force (empty is 全部), and
+  /// what picking one does. No bar when there are none to offer.
+  final List<String> ledgers;
+  final String ledger;
+  final ValueChanged<String>? onLedger;
 
   /// The saved templates, as one-press chips under the head — the shipping
   /// list's `TemplateChips`.
@@ -65,6 +74,17 @@ class HomeHeader extends StatelessWidget {
         if (view.insight != null) ...[
           const SizedBox(height: 10),
           _Insight(icon: view.insight!.icon, text: view.insight!.text),
+        ],
+        // Under the insight and over the templates, where the shipping list
+        // had its `LedgerFilter`.
+        if (ledgers.isNotEmpty && onLedger != null) ...[
+          const SizedBox(height: 12),
+          LedgerBar(
+            ledgers: ledgers,
+            current: ledger,
+            zh: zh,
+            onPick: onLedger!,
+          ),
         ],
         if (templates.isNotEmpty && onTemplate != null) ...[
           const SizedBox(height: 12),
@@ -521,6 +541,87 @@ class _Insight extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// 明细's filter bar — the shipping list's `LedgerFilter`: 全部, then each
+/// ledger. Picking one scopes the head, the rows and a search to it
+/// (`core::catalog::in_ledger`), and a new entry goes into it.
+///
+/// It lists `pickable_ledgers(keep: current)`: the unarchived ledgers, plus
+/// the one in force even once it is archived, so the scope never changes
+/// under the reader without a word. Scrolls sideways, as the templates do.
+class LedgerBar extends StatelessWidget {
+  const LedgerBar({
+    super.key,
+    required this.ledgers,
+    required this.current,
+    required this.zh,
+    required this.onPick,
+  });
+
+  final List<String> ledgers;
+
+  /// The ledger in force. Empty is 全部.
+  final String current;
+  final bool zh;
+
+  /// The ledger picked, or empty for 全部.
+  final ValueChanged<String> onPick;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = palette;
+    Widget chip(String key, String label, String value, String spoken) {
+      final on = current == value;
+      return Semantics(
+        selected: on,
+        child: Tap(
+          key: Key(key),
+          radius: Rad.pill,
+          onTap: () => onPick(value),
+          semanticLabel: spoken,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
+            decoration: BoxDecoration(
+              color: on ? p.hibiscus.withValues(alpha: 0.14) : p.card,
+              borderRadius: BorderRadius.circular(Rad.pill),
+              border: Border.all(color: on ? p.hibiscus : p.line),
+            ),
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: on ? FontWeight.w700 : FontWeight.w500,
+                color: p.ink,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return SizedBox(
+      height: 36,
+      child: ListView.separated(
+        key: const Key('ledger-bar'),
+        scrollDirection: Axis.horizontal,
+        itemCount: ledgers.length + 1,
+        separatorBuilder: (_, _) => const SizedBox(width: 7),
+        itemBuilder: (context, i) {
+          if (i == 0) {
+            return chip(
+              'ledger-all',
+              zh ? '全部' : 'All',
+              '',
+              zh ? '全部账本' : 'All books',
+            );
+          }
+          final l = ledgers[i - 1];
+          return chip('ledger-filter-$l', l, l, zh ? '只看账本 $l' : 'Only $l');
+        },
       ),
     );
   }

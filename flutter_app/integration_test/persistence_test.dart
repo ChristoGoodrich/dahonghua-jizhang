@@ -315,6 +315,16 @@ void main() {
       p.dispose();
     });
 
+    testWidgets('the ledger 明细 is filtered to', (tester) async {
+      var p = await open();
+      catalog.addTag(kind: 'ledger', name: '旅行');
+      catalog.setCurrentLedger(name: '旅行');
+
+      p = await restartAll(p);
+      expect(catalog.currentLedger(), '旅行');
+      p.dispose();
+    });
+
     testWidgets('an asset and a loan', (tester) async {
       var p = await open();
       nw.addAsset(id: 'as-house', name: '房子', kind: 'asset', val: 500000);

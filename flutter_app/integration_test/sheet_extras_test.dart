@@ -253,6 +253,38 @@ void main() {
       expect(store.liveEntries().single.ledger, '旅行');
     });
 
+    testWidgets('a new entry starts in the ledger 明细 is filtered to', (
+      tester,
+    ) async {
+      // recorded anywhere else, it would vanish from the list it was
+      // recorded on
+      catalog.addTag(kind: 'ledger', name: '旅行');
+      catalog.setCurrentLedger(name: '旅行');
+      await sheet(tester);
+
+      await press(tester, '5');
+      await press(tester, 'save');
+
+      expect(store.liveEntries().single.ledger, '旅行');
+    });
+
+    testWidgets('an edit keeps its own ledger, whatever 明细 is on', (
+      tester,
+    ) async {
+      catalog.addTag(kind: 'ledger', name: '旅行');
+      store.addEntry(
+        entry: store.NewEntry(io: 'exp', cat: 'food', amt: 8, ts: 1000),
+        id: 'e1',
+        now: 1000,
+      );
+      catalog.setCurrentLedger(name: '旅行');
+      await sheet(tester, editId: 'e1');
+
+      await press(tester, 'save');
+
+      expect(store.getEntry(id: 'e1')!.ledger, anyOf(isNull, ''));
+    });
+
     testWidgets('tapping the one already picked clears it', (tester) async {
       // single-select with no "none" chip: the way back out is the same tap
       catalog.addTag(kind: 'ledger', name: '旅行');
