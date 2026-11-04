@@ -443,6 +443,18 @@ class _EntryListScreenState extends State<EntryListScreen> {
   void _logTemplate(String id) {
     final d = catalog.templateDraft(id: id);
     if (d == null) return;
+    // One pinned as a transfer before the sheet stopped offering it would log
+    // a transfer with nowhere to go.
+    if (!catalog.templatable(io: d.io)) {
+      showToast(
+        context,
+        key: const Key('template-cannot-log'),
+        text: widget.zh
+            ? '转账模板没法一键记，可以在「模板」里删掉'
+            : 'A transfer template cannot be logged in one press',
+      );
+      return;
+    }
     final now = DateTime.now().millisecondsSinceEpoch;
     // The id it landed on, which is what 撤销 must remove: the core moves an
     // entry off an id another row holds, and removing the one handed over
@@ -1592,6 +1604,8 @@ class _EntryListScreenState extends State<EntryListScreen> {
       amt: e.amt,
       isPending: e.rb == 'pending',
       zh: zh,
+      // the core's answer for this one row: an expense, or not
+      claimable: _tally.claimable == 1,
       onDelete: () async {
         if (await confirmDelete(context, zh: zh, what: _describe(e, zh))) {
           _delete(e, zh);

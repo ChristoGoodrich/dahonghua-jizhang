@@ -149,6 +149,11 @@ String addTemplate({
   name: name,
 );
 
+/// Whether the record sheet may offer to pin this direction as a template —
+/// `core::catalog::templatable`, which says not a transfer.
+bool templatable({required String io}) =>
+    RustLib.instance.api.crateApiCatalogTemplatable(io: io);
+
 void removeTemplate({required String id}) =>
     RustLib.instance.api.crateApiCatalogRemoveTemplate(id: id);
 

@@ -115,7 +115,15 @@ pub fn claims(zh: bool) -> ClaimList {
 /// Only `pending` clears. A settled claim re-opens rather than disappearing.
 #[frb(sync)]
 pub fn toggle_reimburse(id: String, now: i64) -> bool {
-    let wrote = core::toggle_reimburse(&mut store_marked().ledger, &id, now);
+    let wrote = {
+        let mut s = store_marked();
+        // An income or a transfer is not a claim, whatever a screen offered:
+        // `can_claim` is asked here as well as on the way to the button.
+        if !s.ledger.get(&id).is_some_and(core::can_claim) {
+            return false;
+        }
+        core::toggle_reimburse(&mut s.ledger, &id, now)
+    };
     marked(&id, wrote)
 }
 
@@ -142,6 +150,10 @@ pub fn unmark_reimburse(id: String, now: i64) -> bool {
 pub fn refund_entry(id: String, amount: f64, zh: bool, new_id: String, now: i64) -> f64 {
     let (r, new_id) = {
         let mut s = store_marked();
+        // Refunding an income would log a second income: only an expense.
+        if !s.ledger.get(&id).is_some_and(core::can_claim) {
+            return 0.0;
+        }
         let acct = s.current_account.clone();
         // An id no row holds, chosen under the same lock as the write, so the
         // row lands on exactly the id marked below. Handed a taken one, the

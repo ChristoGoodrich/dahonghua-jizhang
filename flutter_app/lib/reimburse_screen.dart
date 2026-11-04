@@ -284,7 +284,11 @@ Future<bool> showEntryActions(
   required bool isPending,
   bool zh = true,
   VoidCallback? onDelete,
+  bool claimable = true,
 }) async {
+  // An income or a transfer is not something to claim back or refund
+  // (`core::reimburse::can_claim`); the menu then holds 删除 alone.
+  if (!claimable && onDelete == null) return false;
   final action = await showModalBottomSheet<String>(
     context: context,
     backgroundColor: palette.card,
@@ -292,32 +296,34 @@ Future<bool> showEntryActions(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ListTile(
-            key: const Key('action-reimburse'),
-            leading: Icon(Icons.receipt_long, color: palette.hibiscus),
-            title: Text(
-              isPending
-                  ? (zh ? '取消待报销' : 'Clear the claim')
-                  : (zh ? '标为待报销' : 'Mark for reimbursement'),
-              style: TextStyle(fontSize: 15, color: palette.ink),
+          if (claimable) ...[
+            ListTile(
+              key: const Key('action-reimburse'),
+              leading: Icon(Icons.receipt_long, color: palette.hibiscus),
+              title: Text(
+                isPending
+                    ? (zh ? '取消待报销' : 'Clear the claim')
+                    : (zh ? '标为待报销' : 'Mark for reimbursement'),
+                style: TextStyle(fontSize: 15, color: palette.ink),
+              ),
+              onTap: () => Navigator.pop(ctx, 'reimburse'),
             ),
-            onTap: () => Navigator.pop(ctx, 'reimburse'),
-          ),
-          ListTile(
-            key: const Key('action-refund'),
-            leading: Icon(Icons.undo, color: palette.hibiscus),
-            title: Text(
-              zh ? '退款' : 'Refund',
-              style: TextStyle(fontSize: 15, color: palette.ink),
+            ListTile(
+              key: const Key('action-refund'),
+              leading: Icon(Icons.undo, color: palette.hibiscus),
+              title: Text(
+                zh ? '退款' : 'Refund',
+                style: TextStyle(fontSize: 15, color: palette.ink),
+              ),
+              subtitle: Text(
+                zh ? '退回一部分或全部，并记一笔收入' : 'Log the money coming back',
+                style: TextStyle(fontSize: 12, color: palette.inkSoft),
+              ),
+              onTap: () => Navigator.pop(ctx, 'refund'),
             ),
-            subtitle: Text(
-              zh ? '退回一部分或全部，并记一笔收入' : 'Log the money coming back',
-              style: TextStyle(fontSize: 12, color: palette.inkSoft),
-            ),
-            onTap: () => Navigator.pop(ctx, 'refund'),
-          ),
+          ],
           if (onDelete != null) ...[
-            Divider(height: 1, color: palette.line),
+            if (claimable) Divider(height: 1, color: palette.line),
             // Deleting is a swipe as well, which is how the shipping app did
             // it and still works. It is here too because a gesture with no
             // visible affordance is a gesture that has to be known about

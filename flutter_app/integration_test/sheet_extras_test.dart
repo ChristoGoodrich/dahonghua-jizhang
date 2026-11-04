@@ -153,6 +153,22 @@ void main() {
       expect(store.entryCount(), 0); // pinning is not recording
     });
 
+    testWidgets('a transfer offers no pin, and a long press pins nothing', (
+      tester,
+    ) async {
+      // a template logs one account, and a transfer needs two
+      await sheet(tester);
+      await tester.tap(find.byKey(const Key('dir-xfer')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('record-pin')), findsNothing);
+
+      await press(tester, '5');
+      await tester.longPress(find.byKey(const Key('key-save')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('tpl-name-dialog')), findsNothing);
+      expect(catalog.templates(), isEmpty);
+    });
+
     testWidgets('a long press on save still works too', (tester) async {
       await sheet(tester);
       for (final k in ['3', '5']) {

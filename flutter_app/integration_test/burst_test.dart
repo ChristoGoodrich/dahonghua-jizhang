@@ -176,6 +176,27 @@ void main() {
       expect(store.liveEntries(), hasLength(1));
     });
 
+    testWidgets('one pinned as a transfer logs nothing, and says why', (
+      tester,
+    ) async {
+      // what an earlier build let the sheet pin: the same template as a
+      // transfer, which would log a transfer with nowhere to go
+      coffee();
+      final cfg = store.snapshotConfig();
+      expect('"io":"exp"'.allMatches(cfg), hasLength(1));
+      expect(
+        store.loadConfig(json: cfg.replaceFirst('"io":"exp"', '"io":"xfer"')),
+        isTrue,
+      );
+      expect(catalog.templates().single.io, 'xfer');
+      await show(tester);
+
+      await tester.tap(find.byKey(const Key('tpl-chip-tpl-coffee')));
+      await tester.pumpAndSettle();
+      expect(store.liveEntries(), isEmpty);
+      expect(find.byKey(const Key('template-cannot-log')), findsOneWidget);
+    });
+
     testWidgets('is not there without templates', (tester) async {
       store.addEntry(
         entry: store.NewEntry(io: 'exp', cat: 'trans', amt: 4, ts: now),

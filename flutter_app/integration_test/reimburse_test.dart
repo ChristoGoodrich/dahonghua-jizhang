@@ -65,6 +65,50 @@ void main() {
   setUpAll(ensureRust);
   setUp(() => store.reset());
 
+  // 更多 offered 标为待报销 and 退款 on every row, and nothing behind it
+  // checked: refunding an income logged a second income. The shipping sheet
+  // offered both on an expense alone (`d.io === 'exp'`).
+  group('only an expense', () {
+    void earn(String id, String note) => store.addEntry(
+      entry: store.NewEntry(io: 'inc', cat: 'salary', amt: 900, note: note),
+      id: id,
+      now: now,
+    );
+
+    testWidgets('an income offers 删除 alone', (tester) async {
+      earn('pay', '十月薪水');
+      await showList(tester);
+      await openActions(tester, '十月薪水');
+
+      expect(find.byKey(const Key('action-reimburse')), findsNothing);
+      expect(find.byKey(const Key('action-refund')), findsNothing);
+      expect(find.byKey(const Key('action-delete')), findsOneWidget);
+    });
+
+    testWidgets('and an expense still offers both', (tester) async {
+      spend('lunch', 35, note: '午饭');
+      await showList(tester);
+      await openActions(tester, '午饭');
+
+      expect(find.byKey(const Key('action-reimburse')), findsOneWidget);
+      expect(find.byKey(const Key('action-refund')), findsOneWidget);
+    });
+
+    testWidgets('the bridge refuses either on an income, whatever offered', (
+      tester,
+    ) async {
+      earn('pay', '十月薪水');
+      expect(
+        rb.refundEntry(id: 'pay', amount: 100, zh: true, newId: 'r1', now: now),
+        0,
+      );
+      expect(rb.toggleReimburse(id: 'pay', now: now), isFalse);
+      expect(store.entryCount(), 1, reason: 'no second income');
+      final e = store.getEntry(id: 'pay')!;
+      expect((e.rb, e.refund), (null, null));
+    });
+  });
+
   group('the claim state', () {
     testWidgets('toggling marks an unmarked entry pending', (tester) async {
       spend('e1', 120);

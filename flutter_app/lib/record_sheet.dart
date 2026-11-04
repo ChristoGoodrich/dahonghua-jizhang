@@ -444,12 +444,14 @@ class _RecordSheetState extends State<RecordSheet> {
       ),
     // Visible, not only a long press on 保存: a gesture nobody is told
     // about is a feature that does not exist. The long press still works.
-    IconButton(
-      key: const Key('record-pin'),
-      onPressed: _fetching ? null : _saveAsTemplate,
-      tooltip: zh ? '存为模板' : 'Pin as a template',
-      icon: Icon(Icons.push_pin_outlined, color: palette.inkSoft),
-    ),
+    // Not for a transfer, which a template cannot log (`templatable`).
+    if (catalog.templatable(io: _form.io))
+      IconButton(
+        key: const Key('record-pin'),
+        onPressed: _fetching ? null : _saveAsTemplate,
+        tooltip: zh ? '存为模板' : 'Pin as a template',
+        icon: Icon(Icons.push_pin_outlined, color: palette.inkSoft),
+      ),
     // 再记: the shipping pair of 保存. One closes — the form going away
     // is the clear — and this one stays, so a run of similar entries
     // goes in one sitting.
@@ -886,6 +888,14 @@ class _RecordSheetState extends State<RecordSheet> {
   /// app put it — and the pin in the bar is the version a person can find.
   Future<void> _saveAsTemplate() async {
     final zh = widget.zh;
+    // The long press on 保存 reaches here too, with no button to hide.
+    if (!catalog.templatable(io: _form.io)) {
+      setState(() {
+        _flash = zh ? '转账不能存成模板' : 'A transfer cannot be a template';
+        _flashIsError = true;
+      });
+      return;
+    }
     final amt = calc.evalExpr(expr: _form.amt);
     if (amt <= 0) {
       setState(() {

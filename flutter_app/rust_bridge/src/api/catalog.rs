@@ -401,12 +401,19 @@ pub fn add_template(
     note: Option<String>,
     name: String,
 ) -> String {
+    let io = Io::parse(&io).unwrap_or(Io::Exp);
+    // Refused here, not in `core::add_template`, which the corpus pins taking
+    // anything: a transfer template would log a transfer with nowhere to go.
+    // Empty is "nothing pinned", the same answer the sheet hides the pin for.
+    if !core::templatable(io) {
+        return String::new();
+    }
     let mut l = library();
     let t = core::add_template(
         &mut l.templates,
         Template {
             id: String::new(),
-            io: Io::parse(&io).unwrap_or(Io::Exp),
+            io,
             cat,
             amt,
             note,
@@ -415,6 +422,13 @@ pub fn add_template(
         id,
     );
     t.id
+}
+
+/// Whether the record sheet may offer to pin this direction as a template —
+/// `core::catalog::templatable`, which says not a transfer.
+#[frb(sync)]
+pub fn templatable(io: String) -> bool {
+    core::templatable(Io::parse(&io).unwrap_or(Io::Exp))
 }
 
 #[frb(sync)]
