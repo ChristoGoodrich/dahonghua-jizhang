@@ -13,6 +13,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'src/rust/api/accounts.dart' as accounts;
@@ -163,6 +164,11 @@ class _RecordSheetState extends State<RecordSheet> {
   late record.FormView _form;
   final _note = TextEditingController();
 
+  /// A transfer's 手续费 and 优惠: typed, so held like the note and handed to
+  /// the core as text, which reads an unparseable one as none.
+  final _fee = TextEditingController();
+  final _discount = TextEditingController();
+
   /// A rate request is in flight. The save button is held rather than
   /// disabled-looking: pressing twice would write the row twice.
   bool _fetching = false;
@@ -211,12 +217,16 @@ class _RecordSheetState extends State<RecordSheet> {
     final at = widget.initialTs;
     if (id.isEmpty && at != null) _form = _form.withTs(at);
     _note.text = _form.note;
+    _fee.text = _form.fee;
+    _discount.text = _form.discount;
     _flash = null;
   }
 
   @override
   void dispose() {
     _note.dispose();
+    _fee.dispose();
+    _discount.dispose();
     super.dispose();
   }
 
@@ -284,7 +294,11 @@ class _RecordSheetState extends State<RecordSheet> {
     }
 
     final r = record.saveForm(
-      form: _form.copyWith(note: _note.text),
+      form: _form.copyWith(
+        note: _note.text,
+        fee: _fee.text,
+        discount: _discount.text,
+      ),
       editId: widget.editId ?? '',
       id: 'e${now}x${_form.amt.hashCode}',
       now: now,
@@ -315,6 +329,8 @@ class _RecordSheetState extends State<RecordSheet> {
     setState(() {
       _form = record.clearForNext(form: _form).copyWith(photo: '');
       _note.clear();
+      _fee.text = _form.fee;
+      _discount.text = _form.discount;
       _flash = r.staleRate
           ? (widget.zh ? '已保存 · 使用了缓存汇率' : 'Saved · used a cached rate')
           : (widget.zh ? '已保存' : 'Saved');
@@ -618,10 +634,61 @@ class _RecordSheetState extends State<RecordSheet> {
             zh,
             (id) => _form = _form.copyWith(acctTo: id),
           ),
+          // The fee comes off 转出 and the discount goes to 转入 — the core's
+          // arithmetic. They were carried all the way to the core and never
+          // drawn, so a transfer that cost ¥2 left both balances wrong.
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: _amountField(
+                  key: 'xfer-fee',
+                  label: zh ? '手续费' : 'Fee',
+                  controller: _fee,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _amountField(
+                  key: 'xfer-discount',
+                  label: zh ? '优惠' : 'Discount',
+                  controller: _discount,
+                ),
+              ),
+            ],
+          ),
         ],
       ],
     );
   }
+
+  /// A small amount typed with the phone's own keyboard, beside the keypad's
+  /// one amount: a fee is a figure off a receipt, not a sum to work out.
+  Widget _amountField({
+    required String key,
+    required String label,
+    required TextEditingController controller,
+  }) => TextField(
+    key: Key(key),
+    controller: controller,
+    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+    inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
+    decoration: InputDecoration(
+      labelText: label,
+      hintText: '0',
+      isDense: true,
+      filled: true,
+      fillColor: palette.card,
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(Rad.md),
+        borderSide: BorderSide(color: palette.line),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(Rad.md),
+        borderSide: BorderSide(color: palette.stamen, width: 2),
+      ),
+    ),
+  );
 
   Widget _acctLine(
     String label,
