@@ -800,6 +800,19 @@ class _CatDialogState extends State<_CatDialog> {
   }
 }
 
+/// Ask for a tag, ledger or subcategory name, cleaned as the library cleans
+/// one. For the record sheet's 「＋ 子分类」, so a subcategory made there is
+/// held to the same sixteen characters as one made here.
+Future<String?> askName(
+  BuildContext context, {
+  required bool zh,
+  required String title,
+  required String label,
+}) => showDialog<String>(
+  context: context,
+  builder: (_) => _NameDialog(zh: zh, title: title, label: label),
+);
+
 /// One field, one answer. Returns the trimmed name, or null when cancelled.
 class _NameDialog extends StatefulWidget {
   const _NameDialog({

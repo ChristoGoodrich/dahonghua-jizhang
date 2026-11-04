@@ -26,6 +26,7 @@ import 'src/rust/api/currency.dart' as cur;
 import 'src/rust/api/history.dart' as history;
 import 'src/rust/api/rates.dart' as rates;
 import 'date_field.dart';
+import 'library_screen.dart' show askName;
 import 'glass.dart';
 import 'segmented.dart';
 import 'tap.dart';
@@ -569,14 +570,26 @@ class _RecordSheetState extends State<RecordSheet> {
 
   Widget _categories(bool zh, Color accent) {
     final cats = catsOf(_form.io);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [_catChips(cats, zh), _subcatRow(zh, accent)],
+    );
+  }
+
+  Widget _catChips(List<CategoryView> cats, bool zh) {
     return Wrap(
       spacing: 8,
       runSpacing: 8,
       children: [
         for (final c in cats)
           Tap(
+            key: Key('cat-chip-${c.k}'),
             radius: Rad.pill,
-            onTap: () => setState(() => _form = _form.copyWith(cat: c.k)),
+            // `pickCategory` rather than `copyWith(cat:)`: a subcategory
+            // belongs to the category it was picked under.
+            onTap: () => setState(
+              () => _form = record.pickCategory(cat: c.k, form: _form),
+            ),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
               decoration: BoxDecoration(
@@ -602,6 +615,63 @@ class _RecordSheetState extends State<RecordSheet> {
           ),
       ],
     );
+  }
+
+  /// The chosen category's subcategories, and 「＋ 子分类」.
+  ///
+  /// The port saved a subcategory and could show one, and the library could
+  /// make them, but nothing on the sheet could pick one, so every entry was
+  /// saved without. Single-select, and tapping the chosen one clears it, as
+  /// the shipping chips did.
+  Widget _subcatRow(bool zh, Color accent) {
+    final subs = catalog.subcatsOf(catKey: _form.cat);
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          for (final sc in subs)
+            _pill(
+              key: 'subcat-chip-${sc.k}',
+              label: sc.name,
+              on: _form.subcat == sc.k,
+              accent: accent,
+              onTap: () => setState(() {
+                _form = _form.copyWith(
+                  subcat: _form.subcat == sc.k ? '' : sc.k,
+                );
+                _flash = null;
+              }),
+            ),
+          _pill(
+            key: 'subcat-add',
+            label: zh ? '＋ 子分类' : '+ Subcategory',
+            on: false,
+            accent: accent,
+            onTap: () => _addSubcat(zh),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// A new subcategory under the chosen category, picked as soon as it is
+  /// made: it was made to be used on this entry.
+  Future<void> _addSubcat(bool zh) async {
+    final cat = _form.cat;
+    final name = await askName(
+      context,
+      zh: zh,
+      title: zh ? '新建子分类' : 'New subcategory',
+      label: zh ? '名称' : 'Name',
+    );
+    if (name == null || !mounted) return;
+    final id = 'sc${DateTime.now().millisecondsSinceEpoch}';
+    catalog.addSubcat(catKey: cat, id: id, name: name);
+    // Under the category it was asked for, which is still the chosen one: the
+    // dialog covered the sheet while it was open.
+    setState(() => _form = _form.copyWith(subcat: id));
   }
 
   /// The account the money leaves, and — for a transfer — the one it lands in.
