@@ -10,11 +10,13 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/budget_screen.dart';
 import 'package:flutter_app/src/rust/api/budget.dart' as budget;
+import 'package:flutter_app/src/rust/api/catalog.dart' as catalog;
 import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_app/theme.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'rust_init.dart';
+import 'scroll.dart';
 
 const day = 86400000;
 int get now => DateTime.now().millisecondsSinceEpoch;
@@ -285,6 +287,114 @@ void main() {
         expect(textOf(tester, 'tier-monthly-text'), contains('未设上限'));
       },
     );
+  });
+
+  group('making and changing a category cap', () {
+    // The screen drew the caps and had no way to make one, so on a fresh
+    // install 分类预算 was an empty state for good.
+    Future<void> add(WidgetTester tester, String cat, String amount) async {
+      await scrollAndTap(tester, find.byKey(const Key('add-cap')));
+      await tester.tap(find.byKey(Key('cap-pick-$cat')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('cap-dialog')), findsOneWidget);
+      await tester.enterText(find.byKey(const Key('cap-field')), amount);
+      await tester.tap(find.byKey(const Key('cap-ok')));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('a category with no cap can be given one', (tester) async {
+      spend('a', 60, cat: 'food');
+      caps();
+      await show(tester);
+      expect(find.byKey(const Key('no-caps')), findsOneWidget);
+
+      await add(tester, 'food', '300');
+
+      final s = budget.settings();
+      expect(s.capCats, ['food']);
+      expect(s.capAmounts, [300]);
+      expect(textOf(tester, 'cap-food-pct'), '20%');
+      expect(find.byKey(const Key('no-caps')), findsNothing);
+    });
+
+    testWidgets('a new one goes after the ones already set', (tester) async {
+      caps(cats: {'food': 100});
+      await show(tester);
+      await add(tester, 'shop', '50');
+      expect(budget.settings().capCats, ['food', 'shop']);
+    });
+
+    testWidgets('a category that has one is not offered again', (tester) async {
+      caps(cats: {'food': 100});
+      await show(tester);
+      await scrollAndTap(tester, find.byKey(const Key('add-cap')));
+      expect(find.byKey(const Key('cap-pick-food')), findsNothing);
+      expect(find.byKey(const Key('cap-pick-shop')), findsOneWidget);
+    });
+
+    testWidgets('and once every one has, there is nothing to add', (
+      tester,
+    ) async {
+      final all = catalog.allCats(io: 'exp', custom: const []);
+      caps(cats: {for (final c in all) c.k: 10});
+      await show(tester);
+      // To the end of the list first: a ListView does not build what is off
+      // screen, so below the fold the button is missing either way.
+      await tester.drag(find.byType(ListView), const Offset(0, -20000));
+      await tester.pumpAndSettle();
+      // Untouched ties keep their order, so the last one set is the last row.
+      expect(find.byKey(Key('cap-row-${all.last.k}')), findsOneWidget);
+      expect(find.byKey(const Key('add-cap')), findsNothing);
+    });
+
+    testWidgets('a row opens its cap and an edit keeps its place', (
+      tester,
+    ) async {
+      // The order breaks ties between rows; an edit that moved a category to
+      // the end would reorder the screen on the first day of a cycle.
+      caps(cats: {'food': 100, 'shop': 50});
+      await show(tester);
+
+      await scrollAndTap(tester, find.byKey(const Key('cap-row-food')));
+      expect(find.text('100.00'), findsOneWidget);
+      await tester.enterText(find.byKey(const Key('cap-field')), '120');
+      await tester.tap(find.byKey(const Key('cap-ok')));
+      await tester.pumpAndSettle();
+
+      final s = budget.settings();
+      expect(s.capCats, ['food', 'shop']);
+      expect(s.capAmounts, [120, 50]);
+    });
+
+    testWidgets('an empty field takes the cap away', (tester) async {
+      caps(cats: {'food': 100, 'shop': 50});
+      await show(tester);
+
+      await scrollAndTap(tester, find.byKey(const Key('cap-row-food')));
+      await tester.enterText(find.byKey(const Key('cap-field')), '');
+      await tester.tap(find.byKey(const Key('cap-ok')));
+      await tester.pumpAndSettle();
+
+      // gone, rather than kept at zero — a second spelling of "no cap"
+      expect(budget.settings().capCats, ['shop']);
+      expect(find.byKey(const Key('cap-row-food')), findsNothing);
+      expect(find.byKey(const Key('cap-row-shop')), findsOneWidget);
+    });
+
+    testWidgets('a custom category is offered, and named as itself', (
+      tester,
+    ) async {
+      catalog.addCustomCat(io: 'exp', key: 'c1', name: '猫粮', emoji: '🐈');
+      caps();
+      await show(tester);
+
+      await add(tester, 'c1', '200');
+
+      expect(budget.settings().capCats, ['c1']);
+      // the row used to look it up without the custom list, and drew the
+      // fallback category's name instead
+      expect(find.textContaining('猫粮'), findsOneWidget);
+    });
   });
 
   group('the settings survive', () {

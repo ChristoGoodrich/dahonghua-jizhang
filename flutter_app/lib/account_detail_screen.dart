@@ -21,6 +21,7 @@ import 'src/rust/api/store.dart' as store;
 import 'glass.dart';
 import 'empty_note.dart';
 import 'amounts.dart';
+import 'cats.dart';
 import 'theme.dart';
 
 String _acctEmoji(String kind) => switch (kind) {
@@ -44,6 +45,8 @@ class AccountDetailScreen extends StatelessWidget {
     final match = all.where((a) => a.id == id);
     final account = match.isEmpty ? null : match.first;
     final rows = acct.rowsForAccount(id: id);
+    // a transfer row names the other account, which may since be archived
+    final names = {for (final a in accounts.accountNames(zh: zh)) a.id: a.name};
 
     final bal = account?.balance ?? 0;
     // A credit card with a negative balance is money owed, and calling that
@@ -106,7 +109,7 @@ class AccountDetailScreen extends StatelessWidget {
               text: zh ? '还没有流水' : 'Nothing here yet',
             )
           else
-            ...rows.map((r) => _row(r, p)),
+            ...rows.map((r) => _row(r, p, names)),
         ],
       ),
     );
@@ -168,8 +171,29 @@ class AccountDetailScreen extends StatelessWidget {
     ];
   }
 
-  Widget _row(acct.AcctRowView r, Palette p) {
+  /// The day an entry was on, as this list says it: 3月14日, or 3/14.
+  String _day(int ts) {
+    final d = DateTime.fromMillisecondsSinceEpoch(ts);
+    return zh ? '${d.month}月${d.day}日' : '${d.month}/${d.day}';
+  }
+
+  Widget _row(acct.AcctRowView r, Palette p, Map<String, String> names) {
     final e = r.entry;
+    // The category by its name, not its key: this printed `food`. And the day,
+    // which a list of what moved through an account is mostly about.
+    final label = catLabelOf(io: e.io, key: e.cat, zh: zh);
+    final note = (e.note ?? '').isEmpty ? null : e.note;
+    String name(String? id) =>
+        (id == null || id.isEmpty) ? '?' : (names[id] ?? id);
+    final title = e.io == 'xfer'
+        ? (zh ? '转账' : 'Transfer')
+        : (note ?? '${label.emoji} ${label.name}');
+    final sub = [
+      if (e.io == 'xfer') '${name(e.acct)} → ${name(e.acctTo)}',
+      if (e.io != 'xfer' && note != null) '${label.emoji} ${label.name}',
+      if (e.io == 'xfer' && note != null) note,
+      _day(e.ts.toInt()),
+    ].join(' · ');
     // The delta's sign, not the entry's direction. A transfer is an expense on
     // one side and income on the other, and the row is about *this* account.
     final positive = r.delta > 0;
@@ -190,22 +214,19 @@ class AccountDetailScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    e.io == 'xfer'
-                        ? (zh ? '转账' : 'Transfer')
-                        : (e.note?.isNotEmpty == true ? e.note! : e.cat),
+                    title,
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: p.ink,
                     ),
                   ),
-                  if (e.io != 'xfer' && e.note?.isNotEmpty == true) ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      e.cat,
-                      style: TextStyle(fontSize: 12, color: p.inkSoft),
-                    ),
-                  ],
+                  const SizedBox(height: 2),
+                  Text(
+                    sub,
+                    key: Key('acct-row-${e.id}-sub'),
+                    style: TextStyle(fontSize: 12, color: p.inkSoft),
+                  ),
                 ],
               ),
             ),

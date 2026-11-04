@@ -6,7 +6,7 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `custom_of`, `kind_of`, `library_of`, `library`, `of_mut`, `of`, `set_library_inner`
+// These functions are ignored because they are not marked as `pub`: `custom_cats_of`, `custom_of`, `kind_of`, `library_of`, `library`, `of_mut`, `of`, `set_library_inner`
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `CustomCats`, `Library`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`, `from`
 // These functions are ignored (category: IgnoreBecauseOwnerTyShouldIgnore): `default`, `default`
@@ -148,6 +148,11 @@ String addTemplate({
   note: note,
   name: name,
 );
+
+/// Whether the record sheet may offer to pin this direction as a template —
+/// `core::catalog::templatable`, which says not a transfer.
+bool templatable({required String io}) =>
+    RustLib.instance.api.crateApiCatalogTemplatable(io: io);
 
 void removeTemplate({required String id}) =>
     RustLib.instance.api.crateApiCatalogRemoveTemplate(id: id);

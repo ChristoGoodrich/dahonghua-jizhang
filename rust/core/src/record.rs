@@ -203,6 +203,21 @@ pub fn pick_io(
     out
 }
 
+/// What changes when a category is picked.
+///
+/// The subcategory clears when the category changes: it belongs to the one
+/// it was picked under, and 午餐 under 餐饮 is nothing under 交通. Tapping the
+/// category already chosen keeps it — the shipping sheet cleared it then too,
+/// which threw away a choice for a tap that changed nothing.
+pub fn pick_cat(f: &FormFields, cat: &str) -> FormFields {
+    let mut out = f.clone();
+    if out.cat != cat {
+        out.cat = cat.to_string();
+        out.subcat = String::new();
+    }
+    out
+}
+
 /// Whether an edit should write the date at all.
 ///
 /// Only when the user actually re-dated the entry. Patching an untouched date
@@ -622,6 +637,29 @@ mod tests {
             ..source()
         };
         assert_eq!(initial_fields(Some(&e), true, &defaults()).cur, "CNY");
+    }
+
+    // ---------- pick_cat ----------
+
+    #[test]
+    fn another_category_clears_the_subcategory() {
+        let f = FormFields {
+            cat: "food".into(),
+            subcat: "lunch".into(),
+            ..form()
+        };
+        let next = pick_cat(&f, "transport");
+        assert_eq!((next.cat.as_str(), next.subcat.as_str()), ("transport", ""));
+    }
+
+    #[test]
+    fn the_same_category_keeps_it() {
+        let f = FormFields {
+            cat: "food".into(),
+            subcat: "lunch".into(),
+            ..form()
+        };
+        assert_eq!(pick_cat(&f, "food"), f);
     }
 
     // ---------- pick_io ----------

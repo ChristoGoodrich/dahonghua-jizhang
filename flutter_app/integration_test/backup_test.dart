@@ -11,7 +11,9 @@
 // filesystem promises.
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/backup_screen.dart';
@@ -21,6 +23,7 @@ import 'package:flutter_app/record_sheet.dart' show FormEdit;
 import 'package:flutter_app/src/rust/api/backup.dart' as backup;
 import 'package:flutter_app/src/rust/api/record.dart' as record;
 import 'package:flutter_app/src/rust/api/store.dart' as store;
+import 'package:flutter_app/src/rust/api/sync.dart' as sync;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'rust_init.dart';
@@ -102,6 +105,11 @@ Future<List<String>> namesOnDisk() async {
       .toList()
     ..sort();
 }
+
+/// The 恢复 on the newest snapshot's row, by its key rather than its word:
+/// 从文件恢复 says 恢复 too, and is above the rows.
+Future<Finder> newestRestore() async =>
+    find.byKey(Key('backup-${(await listBackups()).first.name}-restore'));
 
 Future<void> show(WidgetTester tester, {bool zh = true}) async {
   await tester.pumpWidget(MaterialApp(home: BackupScreen(zh: zh)));
@@ -574,7 +582,7 @@ void main() {
       spend('new', 999);
       await show(tester);
 
-      await tester.tap(find.textContaining('恢复').first);
+      await tester.tap(await newestRestore());
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('restore-dialog')), findsOneWidget);
 
@@ -596,7 +604,7 @@ void main() {
       await show(tester);
       final before = (await listBackups()).length;
 
-      await tester.tap(find.textContaining('恢复').first);
+      await tester.tap(await newestRestore());
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('restore-ok')));
       await tester.pumpAndSettle();
@@ -661,7 +669,7 @@ void main() {
       );
       expect(btn.onPressed, isNotNull);
 
-      await tester.tap(find.textContaining('恢复').first);
+      await tester.tap(await newestRestore());
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('restore-ok')));
       await tester.pumpAndSettle();
@@ -683,7 +691,7 @@ void main() {
       spend('keep', 1);
       await show(tester);
 
-      await tester.tap(find.textContaining('恢复').first);
+      await tester.tap(await newestRestore());
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('restore-ok')));
       await tester.pumpAndSettle();
@@ -704,7 +712,7 @@ void main() {
       store.reset();
       await show(tester);
 
-      await tester.tap(find.textContaining('恢复').first);
+      await tester.tap(await newestRestore());
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('restore-ok')));
       await tester.pumpAndSettle();
@@ -776,6 +784,205 @@ void main() {
         find.byKey(const Key('backup-backup_100.enc.json-export')),
       );
       expect(export.onPressed, isNotNull);
+    });
+  });
+
+  // 从文件恢复. The screen asked for an export before an uninstall, and until
+  // this nothing could read the file back: the only restore read this app's
+  // own folder, which is exactly what the uninstall empties. These go the
+  // whole way round — export, then a ledger and a folder emptied as an
+  // uninstall would leave them, then the picked files back in.
+  group('restoring from a file', () {
+    /// The files 导出 handed out, copied somewhere the backup folder is not,
+    /// as the share sheet would have put them.
+    Future<List<PickedFile>> exported(File snapshot) async {
+      final out = await Directory.systemTemp.createTemp('exported');
+      addTearDown(() => out.delete(recursive: true));
+      final picked = <PickedFile>[];
+      for (final f in await filesToExport(snapshot.uri.pathSegments.last)) {
+        final copy = await f.copy('${out.path}/${f.uri.pathSegments.last}');
+        picked.add((name: copy.uri.pathSegments.last, read: copy.readAsBytes));
+      }
+      return picked;
+    }
+
+    PickedFile bytes(String name, String body) =>
+        (name: name, read: () async => Uint8List.fromList(utf8.encode(body)));
+
+    /// What an uninstall leaves: no ledger, no snapshots, no receipts.
+    Future<void> uninstall(List<String> receipts) async {
+      store.reset();
+      await clearBackups();
+      final dir = await attachmentsDir();
+      for (final r in receipts) {
+        final f = File('${dir.path}/$r');
+        if (await f.exists()) await f.delete();
+      }
+    }
+
+    Future<void> showPicking(
+      WidgetTester tester,
+      List<PickedFile> files,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(home: BackupScreen(pickFiles: () async => files)),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    String flash(WidgetTester tester) =>
+        tester.widget<Text>(find.byKey(const Key('backup-flash'))).data!;
+
+    /// Unsealing is slow on purpose, and off the UI thread.
+    Future<void> untilFlash(WidgetTester tester) async {
+      for (var i = 0; i < 300; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+        if (find.byKey(const Key('backup-flash')).evaluate().isNotEmpty) return;
+      }
+      fail('the restore never said how it went');
+    }
+
+    testWidgets('an exported snapshot comes back, receipts and all', (
+      tester,
+    ) async {
+      await spendWithReceipt('e1', 'r-file-1.jpg');
+      spend('e2', 20);
+      final picked = await exported(await createBackup());
+      expect(picked.map((f) => f.name), contains('r-file-1.jpg'));
+      await uninstall(['r-file-1.jpg']);
+
+      await showPicking(tester, picked);
+      await scrollAndTap(tester, find.byKey(const Key('restore-from-file')));
+      await tester.tap(find.byKey(const Key('restore-ok')));
+      await tester.pumpAndSettle();
+
+      expect(store.getEntry(id: 'e1')!.photo, 'r-file-1.jpg');
+      expect(store.getEntry(id: 'e2'), isNotNull);
+      final receipt = File('${(await attachmentsDir()).path}/r-file-1.jpg');
+      expect(await receipt.readAsString(), 'the receipt for e1');
+      expect(flash(tester), '已恢复 2 条，小票 1 张');
+    });
+
+    testWidgets('what it replaces is kept as a snapshot first', (tester) async {
+      spend('old', 10);
+      final picked = await exported(await createBackup());
+      await clearBackups();
+      store.reset();
+      spend('mine', 99);
+
+      await showPicking(tester, picked);
+      await scrollAndTap(tester, find.byKey(const Key('restore-from-file')));
+      await tester.tap(find.byKey(const Key('restore-ok')));
+      await tester.pumpAndSettle();
+
+      expect(store.getEntry(id: 'old'), isNotNull);
+      expect(
+        store.getEntry(id: 'mine'),
+        isNull,
+        reason: 'replaced, not merged',
+      );
+      final kept = await listBackups();
+      expect(kept, hasLength(1));
+      final body = await File(
+        '${(await backupDir()).path}/${kept.single.name}',
+      ).readAsString();
+      expect(body, contains('"mine"'), reason: 'the ledger it replaced');
+    });
+
+    testWidgets('a sealed one asks for its passphrase', (tester) async {
+      spend('e1', 35);
+      final picked = await exported(await createBackup(password: 'pw'));
+      await uninstall(const []);
+
+      await showPicking(tester, picked);
+      await scrollAndTap(tester, find.byKey(const Key('restore-from-file')));
+      await tester.tap(find.byKey(const Key('restore-ok')));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(const Key('password-field')), 'pw');
+      await tester.tap(find.byKey(const Key('password-ok')));
+      await untilFlash(tester);
+
+      expect(store.getEntry(id: 'e1'), isNotNull);
+      expect(flash(tester), '已恢复 1 条');
+    });
+
+    testWidgets('cancelling changes nothing', (tester) async {
+      spend('old', 10);
+      final picked = await exported(await createBackup());
+      store.reset();
+      spend('mine', 99);
+
+      await showPicking(tester, picked);
+      await scrollAndTap(tester, find.byKey(const Key('restore-from-file')));
+      await tester.tap(find.byKey(const Key('restore-cancel')));
+      await tester.pumpAndSettle();
+
+      expect(store.getEntry(id: 'mine'), isNotNull);
+      expect(store.getEntry(id: 'old'), isNull);
+    });
+
+    testWidgets('a sync file is sent to 同步, and nothing changes', (
+      tester,
+    ) async {
+      // it carries entries too: restored, it would replace this ledger with
+      // the other phone's rather than merge the two
+      spend('other', 10);
+      final doc = sync.syncDocument(now: now);
+      store.reset();
+      spend('mine', 99);
+
+      await showPicking(tester, [bytes('dahonghua-sync.json', doc)]);
+      await scrollAndTap(tester, find.byKey(const Key('restore-from-file')));
+
+      expect(find.byKey(const Key('restore-dialog')), findsNothing);
+      expect(flash(tester), contains('同步'));
+      expect(store.getEntry(id: 'mine'), isNotNull);
+      expect(store.getEntry(id: 'other'), isNull);
+    });
+
+    testWidgets('nothing that is a snapshot, and nothing changes', (
+      tester,
+    ) async {
+      spend('mine', 99);
+      await showPicking(tester, [
+        bytes('photo.jpg', 'not json'),
+        bytes('notes.json', '{"hello":1}'),
+      ]);
+      await scrollAndTap(tester, find.byKey(const Key('restore-from-file')));
+
+      expect(find.byKey(const Key('restore-dialog')), findsNothing);
+      expect(flash(tester), contains('没有找到'));
+      expect(store.entryCount(), 1);
+    });
+
+    testWidgets('two snapshots at once are one too many', (tester) async {
+      spend('e1', 10);
+      final a = backup.buildBackup(ts: 1);
+      await showPicking(tester, [bytes('a.json', a), bytes('b.json', a)]);
+      await scrollAndTap(tester, find.byKey(const Key('restore-from-file')));
+
+      expect(find.byKey(const Key('restore-dialog')), findsNothing);
+      expect(flash(tester), contains('一次只能恢复一份'));
+    });
+
+    testWidgets('a picked photo nothing names stays out of the folder', (
+      tester,
+    ) async {
+      await spendWithReceipt('e1', 'r-file-2.jpg');
+      final picked = await exported(await createBackup());
+      await uninstall(['r-file-2.jpg']);
+      final stranger = File('${(await attachmentsDir()).path}/stranger.jpg');
+      addTearDown(() async {
+        if (await stranger.exists()) await stranger.delete();
+      });
+
+      await showPicking(tester, [...picked, bytes('stranger.jpg', 'x')]);
+      await scrollAndTap(tester, find.byKey(const Key('restore-from-file')));
+      await tester.tap(find.byKey(const Key('restore-ok')));
+      await tester.pumpAndSettle();
+
+      expect(await stranger.exists(), isFalse);
+      expect(flash(tester), '已恢复 1 条，小票 1 张');
     });
   });
 }

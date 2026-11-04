@@ -111,6 +111,34 @@ pub fn is_encrypted_doc(json: String) -> bool {
     )
 }
 
+/// What a file picked for 从文件恢复 is: `sealed` (an envelope, which needs
+/// its passphrase), `backup` (a snapshot `core::backup::is_backup_doc` will
+/// restore), `sync` (a 同步 document, which is merged there rather than
+/// restored here), or `other`.
+///
+/// Asked before anything is replaced, so a sync file picked here by mistake
+/// is turned away with where it belongs instead of becoming the ledger.
+#[frb(sync)]
+pub fn backup_file_kind(json: String) -> String {
+    let Some(doc) = parse_checked(&json) else {
+        return "other".into();
+    };
+    let kind = if matches!(doc.get("enc"), Some(Value::Num(_)))
+        && matches!(doc.get("ct"), Some(Value::Str(_)))
+    {
+        "sealed"
+    } else if core::is_backup_doc(&doc) {
+        "backup"
+    } else if matches!(doc.get("v"), Some(Value::Num(_)))
+        && matches!(doc.get("entries"), Some(Value::Arr(_)))
+    {
+        "sync"
+    } else {
+        "other"
+    };
+    kind.into()
+}
+
 /// Open a sealed envelope with `password`.
 ///
 /// Refuses rather than returning a fragment: AES-GCM's authentication tag is

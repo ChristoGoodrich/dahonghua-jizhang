@@ -25,8 +25,10 @@ use flutter_rust_bridge::frb;
 use dahonghua_core::bills::{parse_bills, BillSource};
 use dahonghua_core::dedup::{existing_row, to_candidates, ExistingRow};
 use dahonghua_core::encoding::decode_bill_text;
+use dahonghua_core::entry::Io;
 use dahonghua_core::num::round2;
 
+use super::catalog::custom_cats_of;
 use super::store::{by_id, store};
 
 /// One row the import would add, or has recognised as already present.
@@ -84,10 +86,8 @@ pub struct ImportPreview {
 /// order, so dedup sees the entries as they are at the moment of the pick
 /// rather than as they were when the screen opened.
 ///
-/// Custom categories are passed empty: this port has no custom-category
-/// editor, so there are none to pass. When it gains one, they go here — the
-/// core already takes them, and `map_category` prefers a custom keyword match
-/// over a built-in one.
+/// The user's own categories go in: a bill whose label is a custom
+/// category's exact name is filed under it.
 #[frb(sync)]
 pub fn preview_bills(bytes: Vec<u8>, ids: Vec<String>, days_of: Vec<String>) -> ImportPreview {
     let text = decode_bill_text(&bytes);
@@ -105,7 +105,15 @@ pub fn preview_bills(bytes: Vec<u8>, ids: Vec<String>, days_of: Vec<String>) -> 
             .collect()
     };
 
-    let candidates = to_candidates(&parsed.bills, &existing, &[], &[]);
+    // The user's own categories, so a bill the wallet filed under 咖啡 lands in
+    // a custom 咖啡 rather than in `food`: an exact name beats the keyword
+    // table, and that is the only way a custom category is ever matched.
+    let candidates = to_candidates(
+        &parsed.bills,
+        &existing,
+        &custom_cats_of(Io::Exp),
+        &custom_cats_of(Io::Inc),
+    );
 
     let mut fresh_count = 0_u32;
     let mut exp_count = 0_u32;

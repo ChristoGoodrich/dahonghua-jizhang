@@ -111,6 +111,28 @@ void main() {
     });
   });
 
+  group('a row', () {
+    testWidgets('names its category and its day, not the category key', (
+      tester,
+    ) async {
+      // it printed `food`, and no date at all
+      add('e1', 35, acct: 'wallet', note: '午饭');
+      await show(tester, 'wallet');
+
+      final sub = textOf(tester, const Key('acct-row-e1-sub'));
+      final d = DateTime.fromMillisecondsSinceEpoch(t0);
+      expect(sub, contains('餐饮'));
+      expect(sub, isNot(contains('food')));
+      expect(sub, contains('${d.month}月${d.day}日'));
+    });
+
+    testWidgets('of a transfer names both accounts', (tester) async {
+      transfer('x', 100, from: 'wallet', to: 'bank');
+      await show(tester, 'bank');
+      expect(textOf(tester, const Key('acct-row-x-sub')), contains('钱包 → 银行'));
+    });
+  });
+
   group('a transfer', () {
     testWidgets('appears on both accounts', (tester) async {
       transfer('x', 100, from: 'wallet', to: 'bank');

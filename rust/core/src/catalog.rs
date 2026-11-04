@@ -153,6 +153,16 @@ pub struct TemplateDraft {
     pub ledger: Option<String>,
 }
 
+/// Whether a direction can be pinned as a template: not a transfer.
+///
+/// A template logs a draft with one account, and a transfer needs two, so a
+/// transfer template pressed on 明细 wrote a transfer with nowhere to go. The
+/// shipping sheet hid the pin for one (`io !== 'xfer'`); its store took
+/// whatever it was given, and so does `add_template`, which the corpus pins.
+pub fn templatable(io: Io) -> bool {
+    io != Io::Xfer
+}
+
 /// Build the entry a template would log. `None` for an unknown id, matching the
 /// TypeScript's `null`.
 pub fn template_draft(
@@ -311,6 +321,13 @@ pub fn remove_subcat(subcats: &mut Subcats, cat_key: &str, k: &str) {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_transfer_cannot_be_pinned_as_a_template() {
+        assert!(templatable(Io::Exp));
+        assert!(templatable(Io::Inc));
+        assert!(!templatable(Io::Xfer));
+    }
 
     fn tpl(id: &str, amt: f64, note: Option<&str>) -> Template {
         Template {

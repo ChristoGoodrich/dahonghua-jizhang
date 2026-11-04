@@ -177,6 +177,13 @@ pub(crate) fn library_of() -> Library {
     library().clone()
 }
 
+/// The user's own categories for one direction, for the other modules that
+/// name, match or pick a category. Every one of them that passed `&[]` drew a
+/// custom category as the fallback one, or could not match it at all.
+pub(crate) fn custom_cats_of(io: Io) -> Vec<core::Category> {
+    library().custom_cats.of(io).clone()
+}
+
 pub(crate) fn set_library_inner(l: Library) {
     *library() = l;
 }
@@ -401,12 +408,19 @@ pub fn add_template(
     note: Option<String>,
     name: String,
 ) -> String {
+    let io = Io::parse(&io).unwrap_or(Io::Exp);
+    // Refused here, not in `core::add_template`, which the corpus pins taking
+    // anything: a transfer template would log a transfer with nowhere to go.
+    // Empty is "nothing pinned", the same answer the sheet hides the pin for.
+    if !core::templatable(io) {
+        return String::new();
+    }
     let mut l = library();
     let t = core::add_template(
         &mut l.templates,
         Template {
             id: String::new(),
-            io: Io::parse(&io).unwrap_or(Io::Exp),
+            io,
             cat,
             amt,
             note,
@@ -415,6 +429,13 @@ pub fn add_template(
         id,
     );
     t.id
+}
+
+/// Whether the record sheet may offer to pin this direction as a template —
+/// `core::catalog::templatable`, which says not a transfer.
+#[frb(sync)]
+pub fn templatable(io: String) -> bool {
+    core::templatable(Io::parse(&io).unwrap_or(Io::Exp))
 }
 
 #[frb(sync)]

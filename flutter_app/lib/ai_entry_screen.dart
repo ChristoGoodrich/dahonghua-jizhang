@@ -24,6 +24,7 @@ import 'src/rust/api/catalog.dart' as catalog;
 import 'src/rust/api/money.dart' as money;
 import 'tap.dart';
 import 'cats.dart';
+import 'cat_pick.dart';
 import 'theme.dart';
 
 /// Where a picture comes from. The camera or the gallery by default; a test
@@ -192,48 +193,11 @@ class _AiEntryScreenState extends State<AiEntryScreen> {
 
   Future<void> _editCategory(_Row r) async {
     final cats = catsOf(r.d.io);
-    final k = await showModalBottomSheet<String>(
-      context: context,
-      backgroundColor: palette.card,
-      builder: (ctx) => SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(14, 16, 14, 10),
-          child: Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              for (final c in cats)
-                Tap(
-                  key: Key('draft-cat-${c.k}'),
-                  radius: Rad.md,
-                  onTap: () => Navigator.pop(ctx, c.k),
-                  child: Container(
-                    width: 78,
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    decoration: BoxDecoration(
-                      color: parseHex(
-                        c.c,
-                      ).withValues(alpha: palette.isDark ? 0.19 : 0.12),
-                      borderRadius: BorderRadius.circular(Rad.md),
-                    ),
-                    child: Column(
-                      children: [
-                        Text(c.e, style: const TextStyle(fontSize: 21)),
-                        const SizedBox(height: 4),
-                        Text(
-                          catalog.catName(cat: c, zh: _zh),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: 11.5, color: palette.ink),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ),
+    final k = await pickCategory(
+      context,
+      cats: cats,
+      zh: _zh,
+      keyPrefix: 'draft-cat',
     );
     if (k == null || !mounted) return;
     final c = cats.firstWhere((c) => c.k == k);

@@ -18,11 +18,12 @@ use dahonghua_core::ai::ask::{self, AskQuery, AskRow, Group, Metric};
 use dahonghua_core::ai::quick::{self, Custom, QuickDraft};
 use dahonghua_core::ai::wire::{self, Failure};
 use dahonghua_core::ai::words;
-use dahonghua_core::catalog::{cat_name, cat_of};
+use dahonghua_core::catalog::{cat_name, cat_of, Category};
 use dahonghua_core::entry::{Entry, Io};
 use dahonghua_core::jsval::Value;
 use flutter_rust_bridge::frb;
 
+use super::catalog::custom_cats_of;
 use super::store::{by_id, settings_of, store};
 
 /* -------------------------------------------------------------- settings -- */
@@ -119,11 +120,33 @@ pub struct AiRequest {
     pub timeout_secs: u32,
 }
 
-/// The port has no user-defined categories yet, so there is nothing of the
-/// user's own to send or to hold back. When it has, they go here — and
-/// `wire` already sends them only when allowed.
-fn custom() -> Custom<'static> {
-    Custom::default()
+/// The user's own categories, held for one call.
+///
+/// The readers on the phone use them: 一句话记账 can file under a custom
+/// category it has seen this user use, and a draft or an answer names one as
+/// itself rather than as the fallback category. What a request carries is
+/// another matter, and does not change here: every request below passes
+/// `share: false`, so `wire` leaves them out of the body — a custom category
+/// can be a name. `ai_test` holds that.
+struct Own {
+    exp: Vec<Category>,
+    inc: Vec<Category>,
+}
+
+impl Own {
+    fn get() -> Self {
+        Own {
+            exp: custom_cats_of(Io::Exp),
+            inc: custom_cats_of(Io::Inc),
+        }
+    }
+
+    fn view(&self) -> Custom<'_> {
+        Custom {
+            exp: &self.exp,
+            inc: &self.inc,
+        }
+    }
 }
 
 struct Resolved {
@@ -167,7 +190,7 @@ pub fn quick_request(text: String, today: String, zh: bool, key_prefix: String) 
             r.mimo,
             &text,
             parse_day(&today),
-            custom(),
+            Own::get().view(),
             false,
             zh,
         ),
@@ -193,7 +216,7 @@ pub fn receipt_request(
             &image_base64,
             &mime,
             parse_day(&today),
-            custom(),
+            Own::get().view(),
             false,
             zh,
         ),
@@ -213,7 +236,7 @@ pub fn ask_request(question: String, today: String, zh: bool, key_prefix: String
             r.mimo,
             &question,
             parse_day(&today),
-            custom(),
+            Own::get().view(),
             false,
             zh,
         ),
@@ -265,8 +288,8 @@ pub struct DraftView {
     pub color: String,
 }
 
-fn draft_view(d: QuickDraft, zh: bool) -> DraftView {
-    let c = cat_of(d.io, &d.cat, custom().of(d.io));
+fn draft_view(d: QuickDraft, zh: bool, own: &Own) -> DraftView {
+    let c = cat_of(d.io, &d.cat, own.view().of(d.io));
     DraftView {
         io: d.io.as_str().to_string(),
         cat: d.cat,
@@ -292,11 +315,12 @@ fn live_history(s: &dahonghua_core::store::Store) -> Vec<&Entry> {
 /// 一句话记账, on the phone: no request, no key.
 #[frb(sync)]
 pub fn quick_offline(text: String, today: String, zh: bool) -> Vec<DraftView> {
+    let own = Own::get();
     let s = store();
     let history = live_history(&s);
-    quick::parse_offline(&text, parse_day(&today), &history, custom())
+    quick::parse_offline(&text, parse_day(&today), &history, own.view())
         .into_iter()
-        .map(|d| draft_view(d, zh))
+        .map(|d| draft_view(d, zh, &own))
         .collect()
 }
 
@@ -313,11 +337,12 @@ pub fn drafts_reply(status: u16, body: String, today: String, zh: bool) -> Draft
             }
         }
     };
+    let own = Own::get();
     let s = store();
     let history = live_history(&s);
-    match quick::parse_reply(&content, parse_day(&today), &history, custom()) {
+    match quick::parse_reply(&content, parse_day(&today), &history, own.view()) {
         Ok(ds) => DraftsView {
-            drafts: ds.into_iter().map(|d| draft_view(d, zh)).collect(),
+            drafts: ds.into_iter().map(|d| draft_view(d, zh, &own)).collect(),
             failure: None,
         },
         Err(_) => DraftsView {
@@ -404,7 +429,7 @@ pub fn ask_offline(question: String, today: String) -> AskQueryView {
         &question,
         parse_day(&today),
         settings_of().cycle_start,
-        custom(),
+        Own::get().view(),
     );
     query_view(&q)
 }
@@ -427,7 +452,7 @@ pub fn ask_reply(status: u16, body: String, today: String) -> AskReplyView {
             &content,
             parse_day(&today),
             settings_of().cycle_start,
-            custom(),
+            Own::get().view(),
         ) {
             Some(q) => AskReplyView {
                 query: Some(query_view(&q)),
@@ -493,6 +518,7 @@ pub fn ask_run(
     today: String,
     zh: bool,
 ) -> AskAnswerView {
+    let own = Own::get();
     let s = store();
     let map = by_id(&s);
     let rows: Vec<AskRow> = ids
@@ -506,9 +532,9 @@ pub fn ask_run(
         })
         .collect();
     let q = query_of(&query);
-    let a = ask::run(&q, &rows, parse_day(&today), custom(), zh);
+    let a = ask::run(&q, &rows, parse_day(&today), own.view(), zh);
     let io = a.query.io;
-    let cat = |k: &str| cat_of(io, k, custom().of(io));
+    let cat = |k: &str| cat_of(io, k, own.view().of(io));
     AskAnswerView {
         cat_names: a.query.cats.iter().map(|k| cat_name(&cat(k), zh)).collect(),
         query: query_view(&a.query),

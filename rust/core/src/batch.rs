@@ -20,6 +20,7 @@
 //! salary.
 
 use crate::entry::{Entry, Io, Reimburse};
+use crate::reimburse::can_claim;
 
 /// What a selection comes to.
 ///
@@ -103,7 +104,7 @@ impl ClaimTo {
 /// stamped write precisely so it beats a device still holding `pending`.
 pub fn claim_targets<'a>(rows: impl IntoIterator<Item = &'a Entry>, to: ClaimTo) -> Vec<String> {
     rows.into_iter()
-        .filter(|e| e.io == Some(Io::Exp))
+        .filter(|e| can_claim(e))
         .filter(|e| !to.matches(e.rb))
         .map(|e| e.id.clone())
         .collect()
@@ -116,7 +117,7 @@ pub fn claim_targets<'a>(rows: impl IntoIterator<Item = &'a Entry>, to: ClaimTo)
 /// picked a state. Zero means the selection is all income and transfers, and
 /// the button is dimmed rather than being offered and then writing nothing.
 pub fn claimable<'a>(rows: impl IntoIterator<Item = &'a Entry>) -> usize {
-    rows.into_iter().filter(|e| e.io == Some(Io::Exp)).count()
+    rows.into_iter().filter(|e| can_claim(e)).count()
 }
 
 /// The ids a recategorisation writes.

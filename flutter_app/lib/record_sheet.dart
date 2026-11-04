@@ -13,6 +13,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'src/rust/api/accounts.dart' as accounts;
@@ -25,6 +26,7 @@ import 'src/rust/api/currency.dart' as cur;
 import 'src/rust/api/history.dart' as history;
 import 'src/rust/api/rates.dart' as rates;
 import 'date_field.dart';
+import 'library_screen.dart' show askName;
 import 'glass.dart';
 import 'segmented.dart';
 import 'tap.dart';
@@ -163,6 +165,11 @@ class _RecordSheetState extends State<RecordSheet> {
   late record.FormView _form;
   final _note = TextEditingController();
 
+  /// A transfer's 手续费 and 优惠: typed, so held like the note and handed to
+  /// the core as text, which reads an unparseable one as none.
+  final _fee = TextEditingController();
+  final _discount = TextEditingController();
+
   /// A rate request is in flight. The save button is held rather than
   /// disabled-looking: pressing twice would write the row twice.
   bool _fetching = false;
@@ -211,12 +218,16 @@ class _RecordSheetState extends State<RecordSheet> {
     final at = widget.initialTs;
     if (id.isEmpty && at != null) _form = _form.withTs(at);
     _note.text = _form.note;
+    _fee.text = _form.fee;
+    _discount.text = _form.discount;
     _flash = null;
   }
 
   @override
   void dispose() {
     _note.dispose();
+    _fee.dispose();
+    _discount.dispose();
     super.dispose();
   }
 
@@ -284,7 +295,11 @@ class _RecordSheetState extends State<RecordSheet> {
     }
 
     final r = record.saveForm(
-      form: _form.copyWith(note: _note.text),
+      form: _form.copyWith(
+        note: _note.text,
+        fee: _fee.text,
+        discount: _discount.text,
+      ),
       editId: widget.editId ?? '',
       id: 'e${now}x${_form.amt.hashCode}',
       now: now,
@@ -315,6 +330,8 @@ class _RecordSheetState extends State<RecordSheet> {
     setState(() {
       _form = record.clearForNext(form: _form).copyWith(photo: '');
       _note.clear();
+      _fee.text = _form.fee;
+      _discount.text = _form.discount;
       _flash = r.staleRate
           ? (widget.zh ? '已保存 · 使用了缓存汇率' : 'Saved · used a cached rate')
           : (widget.zh ? '已保存' : 'Saved');
@@ -444,12 +461,14 @@ class _RecordSheetState extends State<RecordSheet> {
       ),
     // Visible, not only a long press on 保存: a gesture nobody is told
     // about is a feature that does not exist. The long press still works.
-    IconButton(
-      key: const Key('record-pin'),
-      onPressed: _fetching ? null : _saveAsTemplate,
-      tooltip: zh ? '存为模板' : 'Pin as a template',
-      icon: Icon(Icons.push_pin_outlined, color: palette.inkSoft),
-    ),
+    // Not for a transfer, which a template cannot log (`templatable`).
+    if (catalog.templatable(io: _form.io))
+      IconButton(
+        key: const Key('record-pin'),
+        onPressed: _fetching ? null : _saveAsTemplate,
+        tooltip: zh ? '存为模板' : 'Pin as a template',
+        icon: Icon(Icons.push_pin_outlined, color: palette.inkSoft),
+      ),
     // 再记: the shipping pair of 保存. One closes — the form going away
     // is the clear — and this one stays, so a run of similar entries
     // goes in one sitting.
@@ -551,14 +570,26 @@ class _RecordSheetState extends State<RecordSheet> {
 
   Widget _categories(bool zh, Color accent) {
     final cats = catsOf(_form.io);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [_catChips(cats, zh), _subcatRow(zh, accent)],
+    );
+  }
+
+  Widget _catChips(List<CategoryView> cats, bool zh) {
     return Wrap(
       spacing: 8,
       runSpacing: 8,
       children: [
         for (final c in cats)
           Tap(
+            key: Key('cat-chip-${c.k}'),
             radius: Rad.pill,
-            onTap: () => setState(() => _form = _form.copyWith(cat: c.k)),
+            // `pickCategory` rather than `copyWith(cat:)`: a subcategory
+            // belongs to the category it was picked under.
+            onTap: () => setState(
+              () => _form = record.pickCategory(cat: c.k, form: _form),
+            ),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
               decoration: BoxDecoration(
@@ -584,6 +615,71 @@ class _RecordSheetState extends State<RecordSheet> {
           ),
       ],
     );
+  }
+
+  /// The chosen category's subcategories, and 「＋ 子分类」.
+  ///
+  /// The port saved a subcategory and could show one, and the library could
+  /// make them, but nothing on the sheet could pick one, so every entry was
+  /// saved without. Single-select, and tapping the chosen one clears it, as
+  /// the shipping chips did.
+  ///
+  /// Nothing at all for a category with none. The fields fill the space above
+  /// the keypad exactly, and a row of 「＋ 子分类」 alone on every sheet pushed
+  /// the learned notes under the keypad on a Pixel 7 — the note chips are
+  /// what most entries are made with; subcategories are what some people
+  /// keep. A category's first one is made in 库, as it was before the sheet
+  /// could pick one, and from then on the row is here with its 「＋」.
+  Widget _subcatRow(bool zh, Color accent) {
+    final subs = catalog.subcatsOf(catKey: _form.cat);
+    if (subs.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          for (final sc in subs)
+            _pill(
+              key: 'subcat-chip-${sc.k}',
+              label: sc.name,
+              on: _form.subcat == sc.k,
+              accent: accent,
+              onTap: () => setState(() {
+                _form = _form.copyWith(
+                  subcat: _form.subcat == sc.k ? '' : sc.k,
+                );
+                _flash = null;
+              }),
+            ),
+          _pill(
+            key: 'subcat-add',
+            label: zh ? '＋ 子分类' : '+ Subcategory',
+            on: false,
+            accent: accent,
+            onTap: () => _addSubcat(zh),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// A new subcategory under the chosen category, picked as soon as it is
+  /// made: it was made to be used on this entry.
+  Future<void> _addSubcat(bool zh) async {
+    final cat = _form.cat;
+    final name = await askName(
+      context,
+      zh: zh,
+      title: zh ? '新建子分类' : 'New subcategory',
+      label: zh ? '名称' : 'Name',
+    );
+    if (name == null || !mounted) return;
+    final id = 'sc${DateTime.now().millisecondsSinceEpoch}';
+    catalog.addSubcat(catKey: cat, id: id, name: name);
+    // Under the category it was asked for, which is still the chosen one: the
+    // dialog covered the sheet while it was open.
+    setState(() => _form = _form.copyWith(subcat: id));
   }
 
   /// The account the money leaves, and — for a transfer — the one it lands in.
@@ -616,10 +712,61 @@ class _RecordSheetState extends State<RecordSheet> {
             zh,
             (id) => _form = _form.copyWith(acctTo: id),
           ),
+          // The fee comes off 转出 and the discount goes to 转入 — the core's
+          // arithmetic. They were carried all the way to the core and never
+          // drawn, so a transfer that cost ¥2 left both balances wrong.
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: _amountField(
+                  key: 'xfer-fee',
+                  label: zh ? '手续费' : 'Fee',
+                  controller: _fee,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _amountField(
+                  key: 'xfer-discount',
+                  label: zh ? '优惠' : 'Discount',
+                  controller: _discount,
+                ),
+              ),
+            ],
+          ),
         ],
       ],
     );
   }
+
+  /// A small amount typed with the phone's own keyboard, beside the keypad's
+  /// one amount: a fee is a figure off a receipt, not a sum to work out.
+  Widget _amountField({
+    required String key,
+    required String label,
+    required TextEditingController controller,
+  }) => TextField(
+    key: Key(key),
+    controller: controller,
+    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+    inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
+    decoration: InputDecoration(
+      labelText: label,
+      hintText: '0',
+      isDense: true,
+      filled: true,
+      fillColor: palette.card,
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(Rad.md),
+        borderSide: BorderSide(color: palette.line),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(Rad.md),
+        borderSide: BorderSide(color: palette.stamen, width: 2),
+      ),
+    ),
+  );
 
   Widget _acctLine(
     String label,
@@ -886,6 +1033,14 @@ class _RecordSheetState extends State<RecordSheet> {
   /// app put it — and the pin in the bar is the version a person can find.
   Future<void> _saveAsTemplate() async {
     final zh = widget.zh;
+    // The long press on 保存 reaches here too, with no button to hide.
+    if (!catalog.templatable(io: _form.io)) {
+      setState(() {
+        _flash = zh ? '转账不能存成模板' : 'A transfer cannot be a template';
+        _flashIsError = true;
+      });
+      return;
+    }
     final amt = calc.evalExpr(expr: _form.amt);
     if (amt <= 0) {
       setState(() {

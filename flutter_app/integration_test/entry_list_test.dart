@@ -11,6 +11,7 @@ import 'package:flutter_app/bloom.dart';
 import 'package:flutter_app/entry_list.dart';
 import 'package:flutter_app/glass.dart';
 import 'package:flutter_app/home_header.dart';
+import 'package:flutter_app/src/rust/api/accounts.dart' as accounts;
 import 'package:flutter_app/src/rust/api/catalog.dart' as catalog;
 import 'package:flutter_app/src/rust/api/home.dart' as home;
 import 'package:flutter_app/src/rust/api/store.dart' as store;
@@ -327,6 +328,24 @@ void main() {
       expect(bloom.petal, isNull);
       expect(bloom.core, isNull);
     });
+  });
+
+  testWidgets('a transfer row is unsigned and names both accounts', (
+    tester,
+  ) async {
+    // it read 转账 +100.00, like income, and named neither account
+    accounts.addAccount(id: 'cmb', name: '招行', balance: 0, kind: 'cash');
+    accounts.addAccount(id: 'ali', name: '支付宝', balance: 0, kind: 'cash');
+    store.addTransfer(
+      transfer: store.NewTransfer(from: 'cmb', to: 'ali', amt: 100, ts: now),
+      id: 'x',
+      now: now,
+    );
+    await show(tester);
+
+    expect(find.text('100.00'), findsOneWidget);
+    expect(find.text('+100.00'), findsNothing);
+    expect(find.text('招行 → 支付宝'), findsOneWidget);
   });
 
   // 账本筛选 — the shipping list's `LedgerFilter`, which the port left out.

@@ -131,6 +131,28 @@ pub fn cat_budget_rows(cycle_entries: &[Entry], caps: &[(String, f64)]) -> Vec<C
     rows
 }
 
+/// Set one category's cap, or clear it.
+///
+/// `setCatBudget` in the shipping store: a cap above zero is set — in place
+/// when the category already has one, so the order [`cat_budget_rows`] breaks
+/// its ties by does not move under an edit, and at the end when it is new — and
+/// anything else deletes it. Zero is *unset* everywhere else, and a pair kept at
+/// zero would be a second spelling of "no cap" that every reader has to know
+/// to skip. A `NaN` is not above zero, so it clears too.
+pub fn set_cap(caps: &[(String, f64)], cat: &str, amt: f64) -> Vec<(String, f64)> {
+    let mut out: Vec<(String, f64)> = caps.to_vec();
+    let at = out.iter().position(|(k, _)| k == cat);
+    match (at, amt > 0.0) {
+        (Some(i), true) => out[i].1 = amt,
+        (Some(i), false) => {
+            out.remove(i);
+        }
+        (None, true) => out.push((cat.to_string(), amt)),
+        (None, false) => {}
+    }
+    out
+}
+
 /// How the budget's flower looks on 明细: fresh, wary, or wilted.
 ///
 /// `BudgetPot.tsx` coloured the flower by how much of the cap was gone — its
@@ -295,6 +317,42 @@ mod tests {
 
     fn cap(k: &str, v: f64) -> (String, f64) {
         (k.to_string(), v)
+    }
+
+    #[test]
+    fn a_new_cap_goes_at_the_end() {
+        let caps = vec![cap("food", 100.0)];
+        assert_eq!(
+            set_cap(&caps, "rent", 3000.0),
+            vec![cap("food", 100.0), cap("rent", 3000.0)]
+        );
+    }
+
+    #[test]
+    fn an_edited_cap_keeps_its_place() {
+        // The order breaks ties on the first day of a cycle; an edit that moved
+        // a category to the end would reorder the screen.
+        let caps = vec![cap("food", 100.0), cap("rent", 3000.0), cap("fun", 50.0)];
+        assert_eq!(
+            set_cap(&caps, "food", 120.0),
+            vec![cap("food", 120.0), cap("rent", 3000.0), cap("fun", 50.0)]
+        );
+    }
+
+    #[test]
+    fn zero_or_less_or_nan_clears_it() {
+        let caps = vec![cap("food", 100.0), cap("rent", 3000.0)];
+        for amt in [0.0, -5.0, f64::NAN] {
+            assert_eq!(set_cap(&caps, "food", amt), vec![cap("rent", 3000.0)]);
+        }
+        // and clearing one that is not set is nothing
+        assert_eq!(set_cap(&caps, "fun", 0.0), caps);
+    }
+
+    #[test]
+    fn a_cleared_cap_is_gone_from_the_rows() {
+        let caps = set_cap(&[cap("food", 100.0)], "food", 0.0);
+        assert!(cat_budget_rows(&[], &caps).is_empty());
     }
 
     #[test]

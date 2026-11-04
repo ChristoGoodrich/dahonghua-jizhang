@@ -18,6 +18,7 @@ use dahonghua_core::stats;
 use dahonghua_core::trends::{self, TrendRow};
 use flutter_rust_bridge::frb;
 
+use super::catalog::custom_cats_of;
 use super::store::{by_id, settings_of, store};
 
 /// Expense, income, balance and how many rows are in range.
@@ -330,12 +331,15 @@ fn polyline_view(values: &[f64], max: f64) -> Vec<ChartPoint> {
 }
 
 fn slices_of(rows: &[Entry], direction: Io, zh: bool) -> Vec<SliceView> {
+    // A slice of a custom category was drawn as the fallback category: the
+    // last one, which is the newest custom one or 其他.
+    let custom = custom_cats_of(direction);
     let cats = stats::by_category(rows, direction);
     let total: f64 = cats.iter().map(|c| c.amt).sum();
     stats::donut_slices(&cats, total)
         .iter()
         .map(|sl| {
-            let c = dahonghua_core::catalog::cat_of(direction, &sl.cat, &[]);
+            let c = dahonghua_core::catalog::cat_of(direction, &sl.cat, &custom);
             SliceView {
                 cat: sl.cat.clone(),
                 name: dahonghua_core::catalog::cat_name(&c, zh),
@@ -496,10 +500,11 @@ pub fn stats_page(
 
     let day_of: std::collections::HashMap<&str, Civil> =
         in_win.iter().map(|r| (r.0.id.as_str(), r.1)).collect();
+    let custom = custom_cats_of(direction);
     let top = stats::top_entries(&win_entries, direction, 5)
         .into_iter()
         .map(|e| {
-            let c = dahonghua_core::catalog::cat_of(direction, &e.cat, &[]);
+            let c = dahonghua_core::catalog::cat_of(direction, &e.cat, &custom);
             TopView {
                 id: e.id.clone(),
                 emoji: c.e.clone(),

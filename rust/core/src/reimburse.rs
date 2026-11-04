@@ -11,6 +11,17 @@ use crate::catalog::{cat_name, cat_of, Category};
 use crate::entry::{Entry, Io, Patch, Reimburse};
 use crate::ledger::Ledger;
 
+/// Whether an entry can be claimed back or refunded: only an expense.
+///
+/// Money that came in, or moved between two of the user's own accounts, is not
+/// something to get back. The shipping sheet offered neither on them
+/// (`d.io === 'exp'`), and refunding an income logged a second income. The
+/// TypeScript's store did not check, so `toggle_reimburse` and `refund_entry`
+/// do not either; the screens and the bridge ask this, and so does the batch.
+pub fn can_claim(e: &Entry) -> bool {
+    e.io == Some(Io::Exp)
+}
+
 /// Cycle the claim state.
 ///
 /// Only `pending` clears; **`done` goes back to `pending`**, not to nothing.
@@ -152,6 +163,18 @@ mod tests {
 
     fn ledger() -> Ledger {
         Ledger::from_entries(vec![expense("e0", 100.0)])
+    }
+
+    #[test]
+    fn only_an_expense_can_be_claimed_or_refunded() {
+        assert!(can_claim(&expense("e0", 1.0)));
+        for io in [Some(Io::Inc), Some(Io::Xfer), None] {
+            let e = Entry {
+                io,
+                ..expense("e1", 1.0)
+            };
+            assert!(!can_claim(&e), "{io:?}");
+        }
     }
 
     #[test]

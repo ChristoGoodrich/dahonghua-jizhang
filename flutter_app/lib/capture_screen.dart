@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'inbox.dart';
 import 'notif_capture.dart';
 import 'src/rust/api/capture.dart' as capture;
+import 'cats.dart';
 import 'glass.dart';
 import 'theme.dart';
 
@@ -371,7 +372,9 @@ class _CaptureScreenState extends State<CaptureScreen> {
           children: [
             Expanded(
               child: Text(
-                '${_sourceLabel(p.source)} · ${p.note}',
+                // what it will be filed as, before 记一笔 files it there
+                '${_sourceLabel(p.source)} · '
+                '${catLabelOf(io: p.io, key: p.cat, zh: zh).name} · ${p.note}',
                 style: TextStyle(fontSize: 14, color: palette.ink),
               ),
             ),

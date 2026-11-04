@@ -522,6 +522,47 @@ void main() {
       expect(balanceOf('支付宝'), 100);
     });
 
+    testWidgets('a transfer takes a fee off the source and a discount to the '
+        'destination', (tester) async {
+      // the two fields went all the way to the core and were never drawn
+      open('招行', balance: 1000);
+      open('支付宝', balance: 0);
+      await tester.pumpWidget(
+        MaterialApp(home: RecordSheet(onSaved: ({required staleRate}) {})),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('转账'));
+      await tester.pumpAndSettle();
+      await pick(tester, 'acct-招行');
+      await tester.pumpAndSettle();
+      await pick(tester, 'acct-to-支付宝');
+      await tester.pumpAndSettle();
+      for (final k in ['1', '0', '0']) {
+        await tester.tap(find.byKey(Key('key-$k')));
+        await tester.pumpAndSettle();
+      }
+      await tester.ensureVisible(find.byKey(const Key('xfer-fee')));
+      await tester.enterText(find.byKey(const Key('xfer-fee')), '2');
+      await tester.enterText(find.byKey(const Key('xfer-discount')), '1.5');
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('record-again')));
+      await tester.pumpAndSettle();
+
+      expect(balanceOf('招行'), 898);
+      expect(balanceOf('支付宝'), 101.5);
+      final x = store.liveEntries().single;
+      expect((x.fee, x.discount), (2, 1.5));
+      // and 再记 starts the next one without them
+      expect(
+        tester
+            .widget<TextField>(find.byKey(const Key('xfer-fee')))
+            .controller!
+            .text,
+        '',
+      );
+    });
+
     testWidgets('switching to a transfer picks a destination that is not the '
         'source', (tester) async {
       // `pick_io` fills `acctTo` with the first visible account that is not the

@@ -271,6 +271,43 @@ void main() {
       expect(find.text('现在：关着'), findsOneWidget);
     });
 
+    testWidgets('其他 takes any time, and it stays on offer', (tester) async {
+      // The bridge took any minute of the day; the screen offered four. A
+      // reminder at 19:45 had no way to be set.
+      final n = FakeNotifier();
+      await showSettings(tester, notifier: n);
+
+      await tapSetting(tester, const Key('remind-other'));
+      final fields = find.descendant(
+        of: find.byType(Dialog),
+        matching: find.byType(TextField),
+      );
+      expect(fields, findsNWidgets(2), reason: 'typed, not on the dial');
+      await tester.enterText(fields.at(0), '19');
+      await tester.enterText(fields.at(1), '45');
+      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+
+      expect(remind.dailyReminderAt(), '19:45');
+      expect(n.scheduled.single.kind, 'daily');
+      // Shown as the one chosen, so tapping it again turns it off, as the
+      // presets do.
+      await tapSetting(tester, const Key('remind-19:45'));
+      expect(remind.dailyReminderAt(), isEmpty);
+    });
+
+    testWidgets('a cancelled 其他 changes nothing', (tester) async {
+      final n = FakeNotifier();
+      await showSettings(tester, notifier: n);
+      await tapSetting(tester, const Key('remind-21:00'));
+
+      await tapSetting(tester, const Key('remind-other'));
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+
+      expect(remind.dailyReminderAt(), '21:00');
+    });
+
     testWidgets('a refusal is said on the screen', (tester) async {
       final n = FakeNotifier(permitted: false);
       await showSettings(tester, notifier: n);

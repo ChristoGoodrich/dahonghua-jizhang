@@ -63,6 +63,18 @@ pub fn set_settings(view: SettingsView) {
     });
 }
 
+/// Set one category's cap, or clear it with zero or less.
+///
+/// One call rather than a whole `SettingsView` handed back: the caps are an
+/// ordered list, and the rule for where an edit lands in it — in place, or at
+/// the end when new — is `core::set_cap`'s, not the screen's.
+#[frb(sync)]
+pub fn set_cat_cap(cat: String, amount: f64) {
+    let mut s = settings_of();
+    s.caps = core::set_cap(&s.caps, &cat, amount);
+    set_settings_inner(s);
+}
+
 /// The ids that fall inside the cycle containing `today`.
 ///
 /// The cycle is not the calendar month: it turns over on `cycle_start`, so a
@@ -192,10 +204,13 @@ pub fn cat_budget_rows(
     let caps: Vec<(String, f64)> = (0..n)
         .map(|i| (cap_cats[i].clone(), cap_amounts[i]))
         .collect();
+    // The user's own categories, or a cap on one is drawn as the fallback
+    // category's name and emoji.
+    let custom = super::catalog::custom_cats_of(Io::Exp);
     core::cat_budget_rows(&entries_of(&ids), &caps)
         .into_iter()
         .map(|r| {
-            let c = catalog::cat_of(Io::Exp, &r.cat, &[]);
+            let c = catalog::cat_of(Io::Exp, &r.cat, &custom);
             CatBudgetView {
                 cat: r.cat,
                 name: catalog::cat_name(&c, zh),

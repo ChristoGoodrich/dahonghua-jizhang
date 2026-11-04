@@ -392,6 +392,17 @@ pub fn pick_direction(next: String, form: FormView) -> FormView {
     view
 }
 
+/// What changes when a category is picked: the subcategory clears when the
+/// category moves. `core::pick_cat`.
+#[frb(sync)]
+pub fn pick_category(cat: String, form: FormView) -> FormView {
+    // The core's form has no photo, as for a direction.
+    let photo = form.photo.clone();
+    let mut view: FormView = core::pick_cat(&form.into(), &cat).into();
+    view.photo = photo;
+    view
+}
+
 /// What clears after 再记, so the next entry of the same kind can be typed.
 #[frb(sync)]
 pub fn clear_for_next(form: FormView) -> FormView {

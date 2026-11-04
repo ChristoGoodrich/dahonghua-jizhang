@@ -33,6 +33,8 @@ import 'reimburse_screen.dart';
 import 'tap.dart';
 import 'amounts.dart';
 import 'cats.dart';
+import 'cat_pick.dart';
+import 'src/rust/api/accounts.dart' as accounts;
 import 'photos.dart';
 import 'theme.dart';
 import 'toast.dart';
@@ -161,6 +163,9 @@ class _EntryListScreenState extends State<EntryListScreen> {
   String _scope = '';
   List<String> _ledgers = const [];
 
+  /// Every account's name by id, for a transfer row's 招行 → 支付宝.
+  Map<String, String> _acctNames = const {};
+
   /// 明细's other face: the cycle as a grid. Kept in the route's page storage
   /// rather than only here, because the shell rebuilds this screen after
   /// every save — and 补记这天 is a save made from the calendar, which would
@@ -274,6 +279,9 @@ class _EntryListScreenState extends State<EntryListScreen> {
       _allDays = allDays;
       _scope = scope;
       _ledgers = ledgers;
+      _acctNames = {
+        for (final a in accounts.accountNames(zh: widget.zh)) a.id: a.name,
+      };
     });
   }
 
@@ -443,6 +451,18 @@ class _EntryListScreenState extends State<EntryListScreen> {
   void _logTemplate(String id) {
     final d = catalog.templateDraft(id: id);
     if (d == null) return;
+    // One pinned as a transfer before the sheet stopped offering it would log
+    // a transfer with nowhere to go.
+    if (!catalog.templatable(io: d.io)) {
+      showToast(
+        context,
+        key: const Key('template-cannot-log'),
+        text: widget.zh
+            ? '转账模板没法一键记，可以在「模板」里删掉'
+            : 'A transfer template cannot be logged in one press',
+      );
+      return;
+    }
     final now = DateTime.now().millisecondsSinceEpoch;
     // The id it landed on, which is what 撤销 must remove: the core moves an
     // entry off an id another row holds, and removing the one handed over
@@ -1089,6 +1109,19 @@ class _EntryListScreenState extends State<EntryListScreen> {
     );
   }
 
+  /// The line under a row's category. A transfer says where the money went —
+  /// 招行 → 支付宝 — and then its note, if it has one; anything else its note.
+  /// A transfer row used to say 转账 +500.00 and nothing else, which read as
+  /// income and named neither account.
+  String? _subline(store.EntryView e) {
+    final note = (e.note ?? '').isEmpty ? null : e.note;
+    if (e.io != 'xfer') return note;
+    String name(String? id) =>
+        (id == null || id.isEmpty) ? '?' : (_acctNames[id] ?? id);
+    final route = '${name(e.acct)} → ${name(e.acctTo)}';
+    return note == null ? route : '$route · $note';
+  }
+
   Widget _entryCard(
     store.EntryView e,
     bool zh, {
@@ -1244,11 +1277,11 @@ class _EntryListScreenState extends State<EntryListScreen> {
                                 ),
                             ],
                           ),
-                          if (e.note != null && e.note!.isNotEmpty)
+                          if (_subline(e) case final sub?)
                             Padding(
                               padding: const EdgeInsets.only(top: 2),
                               child: Text(
-                                e.note!,
+                                sub,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
@@ -1268,7 +1301,13 @@ class _EntryListScreenState extends State<EntryListScreen> {
                         fontWeight: FontWeight.w700,
                         letterSpacing: -0.2,
                         fontFeatures: tabular,
-                        color: e.io == 'inc' ? palette.leafDeep : palette.ink,
+                        // a transfer is neither spent nor earned: unsigned,
+                        // and in the soft tone, as the shipping list drew it
+                        color: switch (e.io) {
+                          'inc' => palette.leafDeep,
+                          'xfer' => palette.inkSoft,
+                          _ => palette.ink,
+                        },
                       ),
                     ),
                   ],
@@ -1489,48 +1528,11 @@ class _EntryListScreenState extends State<EntryListScreen> {
   /// answered that — so an expense selection is never offered 工资.
   Future<void> _batchCategory(String io, bool zh) async {
     final cats = catsOf(io);
-    final key = await showModalBottomSheet<String>(
-      context: context,
-      backgroundColor: palette.card,
-      builder: (ctx) => SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(14, 16, 14, 10),
-          child: Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              for (final c in cats)
-                Tap(
-                  key: Key('batch-cat-${c.k}'),
-                  radius: Rad.md,
-                  onTap: () => Navigator.pop(ctx, c.k),
-                  child: Container(
-                    width: 78,
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    decoration: BoxDecoration(
-                      color: parseHex(
-                        c.c,
-                      ).withValues(alpha: palette.isDark ? 0.19 : 0.12),
-                      borderRadius: BorderRadius.circular(Rad.md),
-                    ),
-                    child: Column(
-                      children: [
-                        Text(c.e, style: const TextStyle(fontSize: 21)),
-                        const SizedBox(height: 4),
-                        Text(
-                          catalog.catName(cat: c, zh: zh),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: 11.5, color: palette.ink),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ),
+    final key = await pickCategory(
+      context,
+      cats: cats,
+      zh: zh,
+      keyPrefix: 'batch-cat',
     );
     if (key == null) return;
 
@@ -1592,6 +1594,8 @@ class _EntryListScreenState extends State<EntryListScreen> {
       amt: e.amt,
       isPending: e.rb == 'pending',
       zh: zh,
+      // the core's answer for this one row: an expense, or not
+      claimable: _tally.claimable == 1,
       onDelete: () async {
         if (await confirmDelete(context, zh: zh, what: _describe(e, zh))) {
           _delete(e, zh);

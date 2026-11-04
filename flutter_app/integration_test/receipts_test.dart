@@ -342,7 +342,12 @@ void main() {
 
         await tester.pumpWidget(const MaterialApp(home: BackupScreen()));
         await tester.pumpAndSettle();
-        await tester.tap(find.textContaining('恢复').first);
+        // by its key: 从文件恢复 says 恢复 too, and is above the rows
+        await tester.tap(
+          find.byKey(
+            Key('backup-${(await listBackups()).first.name}-restore'),
+          ),
+        );
         await tester.pumpAndSettle();
         await tester.tap(find.byKey(const Key('restore-ok')));
         await tester.pumpAndSettle();

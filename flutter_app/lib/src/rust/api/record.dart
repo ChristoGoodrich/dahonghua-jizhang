@@ -71,6 +71,11 @@ FormView initialForm({
 FormView pickDirection({required String next, required FormView form}) =>
     RustLib.instance.api.crateApiRecordPickDirection(next: next, form: form);
 
+/// What changes when a category is picked: the subcategory clears when the
+/// category moves. `core::pick_cat`.
+FormView pickCategory({required String cat, required FormView form}) =>
+    RustLib.instance.api.crateApiRecordPickCategory(cat: cat, form: form);
+
 /// What clears after 再记, so the next entry of the same kind can be typed.
 FormView clearForNext({required FormView form}) =>
     RustLib.instance.api.crateApiRecordClearForNext(form: form);

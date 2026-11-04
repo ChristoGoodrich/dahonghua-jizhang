@@ -63,6 +63,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   AccountBalance dco_decode_account_balance(dynamic raw);
 
   @protected
+  AccountName dco_decode_account_name(dynamic raw);
+
+  @protected
   AccountView dco_decode_account_view(dynamic raw);
 
   @protected
@@ -298,6 +301,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<AccountBalance> dco_decode_list_account_balance(dynamic raw);
+
+  @protected
+  List<AccountName> dco_decode_list_account_name(dynamic raw);
 
   @protected
   List<AccountView> dco_decode_list_account_view(dynamic raw);
@@ -671,6 +677,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   AccountBalance sse_decode_account_balance(SseDeserializer deserializer);
 
   @protected
+  AccountName sse_decode_account_name(SseDeserializer deserializer);
+
+  @protected
   AccountView sse_decode_account_view(SseDeserializer deserializer);
 
   @protected
@@ -922,6 +931,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<AccountBalance> sse_decode_list_account_balance(
     SseDeserializer deserializer,
   );
+
+  @protected
+  List<AccountName> sse_decode_list_account_name(SseDeserializer deserializer);
 
   @protected
   List<AccountView> sse_decode_list_account_view(SseDeserializer deserializer);
@@ -1344,6 +1356,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_account_name(AccountName self, SseSerializer serializer);
+
+  @protected
   void sse_encode_account_view(AccountView self, SseSerializer serializer);
 
   @protected
@@ -1652,6 +1667,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_account_balance(
     List<AccountBalance> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_account_name(
+    List<AccountName> self,
     SseSerializer serializer,
   );
 

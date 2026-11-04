@@ -18,6 +18,8 @@ analyzer:
     # a build had already fetched them, which is how CI was red for weeks while
     # every local run said "No issues found".
     - rust_builder/cargokit/**
+    - build/**
+    - android/**
 
 linter:
   # The lint rules applied to this project can be customized in the

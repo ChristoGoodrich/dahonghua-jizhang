@@ -14,10 +14,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 /// order, so dedup sees the entries as they are at the moment of the pick
 /// rather than as they were when the screen opened.
 ///
-/// Custom categories are passed empty: this port has no custom-category
-/// editor, so there are none to pass. When it gains one, they go here — the
-/// core already takes them, and `map_category` prefers a custom keyword match
-/// over a built-in one.
+/// The user's own categories go in: a bill whose label is a custom
+/// category's exact name is filed under it.
 ImportPreview previewBills({
   required List<int> bytes,
   required List<String> ids,

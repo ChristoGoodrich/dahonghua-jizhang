@@ -153,6 +153,22 @@ void main() {
       expect(store.entryCount(), 0); // pinning is not recording
     });
 
+    testWidgets('a transfer offers no pin, and a long press pins nothing', (
+      tester,
+    ) async {
+      // a template logs one account, and a transfer needs two
+      await sheet(tester);
+      await tester.tap(find.byKey(const Key('dir-xfer')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('record-pin')), findsNothing);
+
+      await press(tester, '5');
+      await tester.longPress(find.byKey(const Key('key-save')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('tpl-name-dialog')), findsNothing);
+      expect(catalog.templates(), isEmpty);
+    });
+
     testWidgets('a long press on save still works too', (tester) async {
       await sheet(tester);
       for (final k in ['3', '5']) {
@@ -320,6 +336,138 @@ void main() {
       expect(find.byKey(const Key('ledger-chip-旅行')), findsOneWidget);
     });
   });
+  group('subcategories on the sheet', () {
+    // The port saved a subcategory and the library could make them, but the
+    // sheet had no way to pick one, so every entry was saved without.
+    testWidgets('the chosen category offers its own, and one is saved', (
+      tester,
+    ) async {
+      catalog.addSubcat(catKey: 'food', id: 's1', name: '午餐');
+      catalog.addSubcat(catKey: 'trans', id: 's2', name: '地铁');
+      await sheet(tester);
+
+      expect(find.byKey(const Key('subcat-chip-s1')), findsOneWidget);
+      expect(find.byKey(const Key('subcat-chip-s2')), findsNothing);
+
+      await tapOnSheet(tester, const Key('subcat-chip-s1'));
+      await press(tester, '5');
+      await press(tester, 'save');
+
+      final e = store.liveEntries().single;
+      expect((e.cat, e.subcat), ('food', 's1'));
+    });
+
+    testWidgets('another category clears it, and offers its own', (
+      tester,
+    ) async {
+      catalog.addSubcat(catKey: 'food', id: 's1', name: '午餐');
+      catalog.addSubcat(catKey: 'trans', id: 's2', name: '地铁');
+      await sheet(tester);
+
+      await tapOnSheet(tester, const Key('subcat-chip-s1'));
+      await tapOnSheet(tester, const Key('cat-chip-trans'));
+      expect(find.byKey(const Key('subcat-chip-s1')), findsNothing);
+      expect(find.byKey(const Key('subcat-chip-s2')), findsOneWidget);
+      await press(tester, '5');
+      await press(tester, 'save');
+
+      // 午餐 under 交通 would be a subcategory of nothing
+      final e = store.liveEntries().single;
+      expect(e.cat, 'trans');
+      expect(e.subcat, anyOf(isNull, ''));
+    });
+
+    testWidgets('the category already chosen keeps it', (tester) async {
+      catalog.addSubcat(catKey: 'food', id: 's1', name: '午餐');
+      await sheet(tester);
+
+      await tapOnSheet(tester, const Key('subcat-chip-s1'));
+      await tapOnSheet(tester, const Key('cat-chip-food'));
+      await press(tester, '5');
+      await press(tester, 'save');
+
+      expect(store.liveEntries().single.subcat, 's1');
+    });
+
+    testWidgets('tapping the chosen one again clears it', (tester) async {
+      catalog.addSubcat(catKey: 'food', id: 's1', name: '午餐');
+      await sheet(tester);
+
+      await tapOnSheet(tester, const Key('subcat-chip-s1'));
+      await tapOnSheet(tester, const Key('subcat-chip-s1'));
+      await press(tester, '5');
+      await press(tester, 'save');
+
+      expect(store.liveEntries().single.subcat, anyOf(isNull, ''));
+    });
+
+    testWidgets('a category with none spends no row on them', (tester) async {
+      // The fields fill the space above the keypad exactly. A row holding
+      // only 「＋ 子分类」 on every sheet pushed the learned notes under the
+      // keypad on a Pixel 7, where history_test's tap on one missed.
+      catalog.addSubcat(catKey: 'trans', id: 's2', name: '地铁');
+      await sheet(tester);
+
+      expect(find.byKey(const Key('subcat-add')), findsNothing);
+      await tapOnSheet(tester, const Key('cat-chip-trans'));
+      expect(find.byKey(const Key('subcat-add')), findsOneWidget);
+    });
+
+    testWidgets('＋ 子分类 makes one under the category and picks it', (
+      tester,
+    ) async {
+      catalog.addSubcat(catKey: 'trans', id: 's2', name: '地铁');
+      await sheet(tester);
+      await tapOnSheet(tester, const Key('cat-chip-trans'));
+
+      await tapOnSheet(tester, const Key('subcat-add'));
+      // cleaned as the library cleans a name
+      await tester.enterText(find.byKey(const Key('name-field')), '  <打车>  ');
+      await tester.tap(find.byKey(const Key('name-ok')));
+      await tester.pumpAndSettle();
+
+      final made = catalog.subcatsOf(catKey: 'trans').last;
+      expect(made.name, '打车');
+      expect(catalog.subcatsOf(catKey: 'trans'), hasLength(2));
+      expect(catalog.subcatsOf(catKey: 'food'), isEmpty);
+      await press(tester, '5');
+      await press(tester, 'save');
+      expect(store.liveEntries().single.subcat, made.k);
+    });
+
+    testWidgets('an edit opens on the one it was saved with', (tester) async {
+      catalog.addSubcat(catKey: 'food', id: 's1', name: '午餐');
+      store.addEntry(
+        entry: store.NewEntry(
+          io: 'exp',
+          cat: 'food',
+          subcat: 's1',
+          amt: 20,
+          ts: now,
+        ),
+        id: 'e1',
+        now: now,
+      );
+      await sheet(tester, editId: 'e1');
+
+      await press(tester, 'save');
+
+      expect(store.getEntry(id: 'e1')!.subcat, 's1');
+    });
+
+    testWidgets('a transfer has no category, and so none', (tester) async {
+      catalog.addSubcat(catKey: 'food', id: 's1', name: '午餐');
+      await sheet(tester);
+      expect(find.byKey(const Key('subcat-add')), findsOneWidget);
+
+      await tester.tap(find.byKey(const Key('dir-xfer')));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('subcat-add')), findsNothing);
+      expect(find.byKey(const Key('subcat-chip-s1')), findsNothing);
+    });
+  });
+
   group("a receipt on the sheet", () {
     testWidgets("offers a picker", (tester) async {
       // The system picker is not driven here — a camera has no place in a

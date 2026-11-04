@@ -28,6 +28,10 @@ String curSymbol({required String code}) =>
 /// expense — which a refund adjustment can produce — still reads as an expense.
 /// That is what the shipping list does: `d.io === 'exp' ? '-' : '+'`, then the
 /// magnitude formatted separately.
+///
+/// A transfer has no sign. Money moved between two of the user's own accounts
+/// is neither spent nor earned, and the shipping list drew a transfer row on
+/// its own branch, unsigned. Given the `+`, a card repayment read as income.
 String fmtSigned({required double n, required String io}) =>
     RustLib.instance.api.crateApiMoneyFmtSigned(n: n, io: io);
 

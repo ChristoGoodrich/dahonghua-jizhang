@@ -42,9 +42,17 @@ pub fn cur_symbol(code: String) -> String {
 /// expense — which a refund adjustment can produce — still reads as an expense.
 /// That is what the shipping list does: `d.io === 'exp' ? '-' : '+'`, then the
 /// magnitude formatted separately.
+///
+/// A transfer has no sign. Money moved between two of the user's own accounts
+/// is neither spent nor earned, and the shipping list drew a transfer row on
+/// its own branch, unsigned. Given the `+`, a card repayment read as income.
 #[frb(sync)]
 pub fn fmt_signed(n: f64, io: String) -> String {
-    let sign = if io == "exp" { '-' } else { '+' };
+    let sign = match io.as_str() {
+        "exp" => "-",
+        "xfer" => "",
+        _ => "+",
+    };
     format!("{sign}{}", core::fmt_num(n))
 }
 
