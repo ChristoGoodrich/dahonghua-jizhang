@@ -623,8 +623,16 @@ class _RecordSheetState extends State<RecordSheet> {
   /// make them, but nothing on the sheet could pick one, so every entry was
   /// saved without. Single-select, and tapping the chosen one clears it, as
   /// the shipping chips did.
+  ///
+  /// Nothing at all for a category with none. The fields fill the space above
+  /// the keypad exactly, and a row of 「＋ 子分类」 alone on every sheet pushed
+  /// the learned notes under the keypad on a Pixel 7 — the note chips are
+  /// what most entries are made with; subcategories are what some people
+  /// keep. A category's first one is made in 库, as it was before the sheet
+  /// could pick one, and from then on the row is here with its 「＋」.
   Widget _subcatRow(bool zh, Color accent) {
     final subs = catalog.subcatsOf(catKey: _form.cat);
+    if (subs.isEmpty) return const SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.only(top: 10),
       child: Wrap(

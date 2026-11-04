@@ -401,9 +401,22 @@ void main() {
       expect(store.liveEntries().single.subcat, anyOf(isNull, ''));
     });
 
+    testWidgets('a category with none spends no row on them', (tester) async {
+      // The fields fill the space above the keypad exactly. A row holding
+      // only 「＋ 子分类」 on every sheet pushed the learned notes under the
+      // keypad on a Pixel 7, where history_test's tap on one missed.
+      catalog.addSubcat(catKey: 'trans', id: 's2', name: '地铁');
+      await sheet(tester);
+
+      expect(find.byKey(const Key('subcat-add')), findsNothing);
+      await tapOnSheet(tester, const Key('cat-chip-trans'));
+      expect(find.byKey(const Key('subcat-add')), findsOneWidget);
+    });
+
     testWidgets('＋ 子分类 makes one under the category and picks it', (
       tester,
     ) async {
+      catalog.addSubcat(catKey: 'trans', id: 's2', name: '地铁');
       await sheet(tester);
       await tapOnSheet(tester, const Key('cat-chip-trans'));
 
@@ -413,8 +426,9 @@ void main() {
       await tester.tap(find.byKey(const Key('name-ok')));
       await tester.pumpAndSettle();
 
-      final made = catalog.subcatsOf(catKey: 'trans').single;
+      final made = catalog.subcatsOf(catKey: 'trans').last;
       expect(made.name, '打车');
+      expect(catalog.subcatsOf(catKey: 'trans'), hasLength(2));
       expect(catalog.subcatsOf(catKey: 'food'), isEmpty);
       await press(tester, '5');
       await press(tester, 'save');
