@@ -8,7 +8,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'store.dart';
 
 // These functions are ignored because they are not marked as `pub`: `view`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `eq`, `fmt`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `eq`, `eq`, `fmt`, `fmt`
 
 /// Every account, with the balance each one is actually at.
 ///
@@ -21,11 +21,13 @@ List<AccountBalance> balances() =>
 /// Every account's balance added together.
 double totalBalance() => RustLib.instance.api.crateApiAccountsTotalBalance();
 
-/// The accounts a picker should offer: everything unarchived, plus whichever
-/// one is currently selected even when it is archived.
-///
-/// The exception is the point — editing an old entry that lives on an archived
-/// account must not silently move it somewhere else.
+/// Every account, archived ones too, by the name a row shows: in English its
+/// English name when it has one, else its name. For a transfer's 招行 → 支付宝,
+/// which can name an account since archived, and which `pickable` would leave
+/// out. Two screens wrote this fallback for themselves; it is here once now.
+List<AccountName> accountNames({required bool zh}) =>
+    RustLib.instance.api.crateApiAccountsAccountNames(zh: zh);
+
 List<AccountView> pickable({required String selected}) =>
     RustLib.instance.api.crateApiAccountsPickable(selected: selected);
 
@@ -137,4 +139,28 @@ class AccountBalance {
           fxRate == other.fxRate &&
           archived == other.archived &&
           isDefault == other.isDefault;
+}
+
+/// The accounts a picker should offer: everything unarchived, plus whichever
+/// one is currently selected even when it is archived.
+///
+/// The exception is the point — editing an old entry that lives on an archived
+/// account must not silently move it somewhere else.
+/// An account as a row names it.
+class AccountName {
+  final String id;
+  final String name;
+
+  const AccountName({required this.id, required this.name});
+
+  @override
+  int get hashCode => id.hashCode ^ name.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AccountName &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name;
 }

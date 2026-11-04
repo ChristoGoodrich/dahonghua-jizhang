@@ -92,6 +92,32 @@ pub fn total_balance() -> f64 {
 ///
 /// The exception is the point — editing an old entry that lives on an archived
 /// account must not silently move it somewhere else.
+/// An account as a row names it.
+#[derive(Debug, Clone, PartialEq)]
+pub struct AccountName {
+    pub id: String,
+    pub name: String,
+}
+
+/// Every account, archived ones too, by the name a row shows: in English its
+/// English name when it has one, else its name. For a transfer's 招行 → 支付宝,
+/// which can name an account since archived, and which `pickable` would leave
+/// out. Two screens wrote this fallback for themselves; it is here once now.
+#[frb(sync)]
+pub fn account_names(zh: bool) -> Vec<AccountName> {
+    store()
+        .accounts
+        .iter()
+        .map(|a| AccountName {
+            id: a.id.clone(),
+            name: match (&a.name_en, zh) {
+                (Some(en), false) if !en.is_empty() => en.clone(),
+                _ => a.name.clone(),
+            },
+        })
+        .collect()
+}
+
 #[frb(sync)]
 pub fn pickable(selected: String) -> Vec<AccountView> {
     let s = store();

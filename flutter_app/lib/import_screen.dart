@@ -26,6 +26,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge.dart' show Int64List;
 
 import 'src/rust/api/imports.dart' as imports;
 import 'src/rust/api/store.dart' as store;
+import 'cats.dart';
 import 'glass.dart';
 import 'theme.dart';
 
@@ -412,7 +413,8 @@ class _ImportScreenState extends State<ImportScreen> {
                 ),
               ),
               Text(
-                '${c.mo}/${c.d} · ${c.cat}'
+                // the category by its name; this printed the key, `food`
+                '${c.mo}/${c.d} · ${catLabelOf(io: c.io, key: c.cat, zh: zh).name}'
                 '${c.dup ? (zh ? " · 已记过" : " · already here") : ""}',
                 style: TextStyle(fontSize: 11.5, color: palette.inkSoft),
               ),

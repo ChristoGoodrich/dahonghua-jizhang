@@ -16,6 +16,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:flutter_app/capture_screen.dart';
+import 'package:flutter_app/cats.dart';
 import 'package:flutter_app/inbox.dart';
 import 'package:flutter_app/notif_capture.dart';
 import 'package:flutter_app/src/rust/api/capture.dart' as capture;
@@ -452,6 +453,20 @@ void main() {
       expect(find.textContaining('付款成功12.00元'), findsOneWidget,
           reason: 'the evidence for the guess is on screen');
       expect(find.text('12.00'), findsOneWidget);
+    });
+
+    testWidgets('a waiting payment says what it will be filed as', (
+      tester,
+    ) async {
+      final native = FakeNative(
+        queue: [notif(title: '支付宝', text: '付款成功12.00元')],
+      );
+      final inbox = await freshInbox(native);
+      await show(tester, native: native, inbox: inbox);
+
+      final p = inbox.pending.single;
+      final name = catLabelOf(io: p.io, key: p.cat, zh: true).name;
+      expect(find.textContaining('· $name ·'), findsOneWidget);
     });
 
     testWidgets('accepting one records it and clears it from the list',

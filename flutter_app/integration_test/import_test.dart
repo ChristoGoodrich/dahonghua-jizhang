@@ -208,6 +208,27 @@ void main() {
       expect(find.byKey(const Key('import-source')), findsOneWidget);
     });
 
+    testWidgets('a row names its category, not the category key', (
+      tester,
+    ) async {
+      await show(tester, file: alipayGbk);
+      await pickFile(tester);
+
+      final lines = tester
+          .widgetList<Text>(
+            find.byWidgetPredicate(
+              (w) => w is Text && RegExp(r'^\d+/\d+ · ').hasMatch(w.data ?? ''),
+            ),
+          )
+          .map((t) => t.data!)
+          .toList();
+      expect(lines, hasLength(3));
+      for (final l in lines) {
+        // `3/14 · food` is what it said
+        expect(l, isNot(matches(RegExp(r'· [a-z]+( |$)'))), reason: l);
+      }
+    });
+
     testWidgets('counts every row, duplicates included', (tester) async {
       await show(tester, file: alipayGbk);
       await pickFile(tester);
