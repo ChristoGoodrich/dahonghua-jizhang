@@ -203,6 +203,17 @@ pub fn add_tag(tags: &mut Tags, kind: TagKind, name: &str) {
     }
 }
 
+/// Whether an entry is in the ledger 明细 is scoped to.
+///
+/// `scope` is the current ledger, and empty is 全部 — every entry is in it.
+/// Otherwise only an entry tagged with exactly that ledger is; one with no
+/// ledger is in none of them. The shipping app's
+/// `!curLedger || d.ledger === curLedger`, and it scoped the head, the list and
+/// a search alike, so all three ask this rather than each writing it.
+pub fn in_ledger(entry_ledger: Option<&str>, scope: &str) -> bool {
+    scope.is_empty() || entry_ledger == Some(scope)
+}
+
 /// Remove a tag. Removing the *active* ledger also clears the filter, so the
 /// list does not stay filtered by something that no longer exists.
 pub fn remove_tag(tags: &mut Tags, kind: TagKind, name: &str, current_ledger: &mut String) {
@@ -341,6 +352,24 @@ mod tests {
     fn a_template_without_a_note_logs_an_empty_one_not_an_absent_one() {
         let list = vec![tpl("t0", 35.0, None)];
         assert_eq!(template_draft(&list, "t0", "a1", "").unwrap().note, "");
+    }
+
+    #[test]
+    fn every_entry_is_in_all_of_them() {
+        // an empty scope is 全部, the filter bar's first chip
+        assert!(in_ledger(None, ""));
+        assert!(in_ledger(Some("旅行"), ""));
+    }
+
+    #[test]
+    fn a_ledger_holds_only_what_is_tagged_with_it() {
+        assert!(in_ledger(Some("旅行"), "旅行"));
+        assert!(!in_ledger(Some("装修"), "旅行"));
+        // untagged is in none of them, not in every one
+        assert!(!in_ledger(None, "旅行"));
+        assert!(!in_ledger(Some(""), "旅行"));
+        // exactly that name, as the TypeScript's `===`
+        assert!(!in_ledger(Some("旅行2"), "旅行"));
     }
 
     #[test]

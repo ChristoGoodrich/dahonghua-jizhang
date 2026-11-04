@@ -202,7 +202,11 @@ class _RecordSheetState extends State<RecordSheet> {
     _form = record.initialForm(
       sourceId: id,
       editing: id.isNotEmpty,
-      ledger: '',
+      // A new entry goes into the ledger 明细 is filtered to, as the
+      // shipping sheet's did — recorded anywhere else, it would vanish from
+      // the list it was recorded on. An edit or a 再记 keeps its own: the core
+      // only reads this for a fresh form.
+      ledger: catalog.currentLedger(),
     );
     final at = widget.initialTs;
     if (id.isEmpty && at != null) _form = _form.withTs(at);

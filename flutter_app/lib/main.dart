@@ -631,6 +631,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       onRecordAt: (ts) => _record(at: ts),
       onLogged: () => _celebrate(),
       onPrivacy: _configChanged,
+      onLedger: _configChanged,
     ),
     StatsScreen(
       key: ValueKey(_versions[1]),

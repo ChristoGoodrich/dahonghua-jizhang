@@ -608,7 +608,24 @@ from Node running the JavaScript, because the first set was recalled and one
 of three was wrong. A test that looks for the flowers mid-flight is a test of
 the emulator's frame times, so `burst_test` counts `PetalBurst.planted`.
 
+明细's ledger filter was the same kind of gap. `LedgerFilter.tsx` put 全部 and
+each ledger over the rows, and the ledger picked scoped the summary, the
+pots, the insight, the rows and a search; a new entry went into it. The port
+kept `current_ledger` in the bridge and the config, and the core already
+cleared it when its ledger was archived or removed, but nothing ever set it,
+so a second ledger could be filed into and never looked at alone.
+`core::catalog::in_ledger` is the rule (empty is 全部, an untagged entry is
+in no ledger), `api::catalog::ids_in_ledger` applies it to the ids 明细 hands
+over, and `LedgerBar` in `home_header.dart` draws it — on the empty state
+too, or an empty ledger would leave no way back to 全部. The calendar is not
+scoped, as the shipping one was not: the bar is not over it. 我的's 本期 count
+is not scoped either, and there the shipping app did scope it — only because
+it counted the same filtered array — on a tab that shows no bar to explain
+why the number had changed.
+
 Worth checking the rest of `rn-final` the same way when something feels thin.
+The tag is not on GitHub; the tree is the parent of `b477954` (`chore!: remove
+the React Native app`), so `git show b477954^:src/...` reads any file of it.
 
 ## Two habits worth keeping
 
