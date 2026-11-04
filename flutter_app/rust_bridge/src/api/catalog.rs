@@ -177,6 +177,13 @@ pub(crate) fn library_of() -> Library {
     library().clone()
 }
 
+/// The user's own categories for one direction, for the other modules that
+/// name, match or pick a category. Every one of them that passed `&[]` drew a
+/// custom category as the fallback one, or could not match it at all.
+pub(crate) fn custom_cats_of(io: Io) -> Vec<core::Category> {
+    library().custom_cats.of(io).clone()
+}
+
 pub(crate) fn set_library_inner(l: Library) {
     *library() = l;
 }

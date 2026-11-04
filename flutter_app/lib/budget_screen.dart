@@ -25,6 +25,8 @@ import 'src/rust/api/stats.dart' as stats;
 import 'tap.dart';
 import 'glass.dart';
 import 'amounts.dart';
+import 'cat_pick.dart';
+import 'cats.dart';
 import 'theme.dart';
 
 String _day(DateTime d) => '${d.year}-${d.month}-${d.day}';
@@ -84,6 +86,38 @@ class _BudgetScreenState extends State<BudgetScreen> {
         zh: widget.zh,
       );
     });
+  }
+
+  /// The expense categories with no cap yet: what 添加分类上限 offers.
+  List<CategoryView> _uncapped() {
+    final capped = {for (final c in _cats) c.cat};
+    return [
+      for (final c in catsOf('exp'))
+        if (!capped.contains(c.k)) c,
+    ];
+  }
+
+  /// 添加分类上限: a category without a cap, then its cap.
+  ///
+  /// The port drew the caps and had no way to make one — `cap_cats` could only
+  /// be filled by a restore of the shipping app's config — so the section was
+  /// an empty state forever on a fresh install.
+  Future<void> _addCap() async {
+    final zh = widget.zh;
+    final cats = _uncapped();
+    final k = await pickCategory(
+      context,
+      cats: cats,
+      zh: zh,
+      keyPrefix: 'cap-pick',
+    );
+    if (k == null || !mounted) return;
+    final name = catLabelOf(io: 'exp', key: k, zh: zh).name;
+    await _editCap(
+      zh ? '$name上限' : '$name cap',
+      0,
+      (v) => budget.setCatCap(cat: k, amount: v),
+    );
   }
 
   Future<void> _editCap(
@@ -166,6 +200,8 @@ class _BudgetScreenState extends State<BudgetScreen> {
               ),
             ),
           for (final c in _cats) _catRow(c, zh),
+          // Once every category has one there is nothing left to add.
+          if (_uncapped().isNotEmpty) _addCapButton(zh),
         ],
       ),
     );
@@ -511,52 +547,77 @@ class _BudgetScreenState extends State<BudgetScreen> {
     ),
   );
 
+  Widget _addCapButton(bool zh) => Align(
+    alignment: Alignment.centerLeft,
+    child: TextButton.icon(
+      key: const Key('add-cap'),
+      onPressed: _addCap,
+      style: TextButton.styleFrom(foregroundColor: palette.hibiscus),
+      icon: const Icon(Icons.add, size: 18),
+      label: Text(zh ? '添加分类上限' : 'Add a category cap'),
+    ),
+  );
+
+  /// A row opens its cap; an empty field clears it, as it does for the cycle's.
   Widget _catRow(budget.CatBudgetView c, bool zh) {
     final sym = baseSymbol();
     final tone = c.status.over ? palette.warn : parseHex(c.color);
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        decoration: BoxDecoration(
-          color: palette.card,
-          borderRadius: BorderRadius.circular(Rad.md),
-          border: Border.all(color: palette.line),
+      child: Tap(
+        key: Key('cap-row-${c.cat}'),
+        radius: Rad.md,
+        onTap: () => _editCap(
+          zh ? '${c.name}上限' : '${c.name} cap',
+          c.status.limit,
+          (v) => budget.setCatCap(cat: c.cat, amount: v),
         ),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Text(
-                  '${c.emoji} ${c.name}',
-                  style: TextStyle(fontSize: 13.5, color: palette.ink),
-                ),
-                const Spacer(),
-                Text(
-                  '${money.fmt(n: c.status.used, symbol: sym)} / ${money.fmt(n: c.status.limit, symbol: sym)}',
-                  key: Key('cap-${c.cat}'),
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontFeatures: tabular,
-                    color: palette.inkSoft,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            color: palette.card,
+            borderRadius: BorderRadius.circular(Rad.md),
+            border: Border.all(color: palette.line),
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  // A custom category's name is the user's, and can be long.
+                  Expanded(
+                    child: Text(
+                      '${c.emoji} ${c.name}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 13.5, color: palette.ink),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '${c.status.pct.round()}%',
-                  key: Key('cap-${c.cat}-pct'),
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    fontFeatures: tabular,
-                    color: tone,
+                  Text(
+                    '${money.fmt(n: c.status.used, symbol: sym)} / ${money.fmt(n: c.status.limit, symbol: sym)}',
+                    key: Key('cap-${c.cat}'),
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontFeatures: tabular,
+                      color: palette.inkSoft,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            _bar(c.status, tone),
-          ],
+                  const SizedBox(width: 8),
+                  Text(
+                    '${c.status.pct.round()}%',
+                    key: Key('cap-${c.cat}-pct'),
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      fontFeatures: tabular,
+                      color: tone,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              _bar(c.status, tone),
+            ],
+          ),
         ),
       ),
     );

@@ -38,7 +38,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.12.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -541534399;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1827018790;
 
 // Section: executor
 
@@ -6767,6 +6767,39 @@ fn wire__crate__api__currency__set_base_currency_impl(
         },
     )
 }
+fn wire__crate__api__budget__set_cat_cap_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "set_cat_cap",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_cat = <String>::sse_decode(&mut deserializer);
+            let api_amount = <f64>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let output_ok = Result::<_, ()>::Ok({
+                    crate::api::budget::set_cat_cap(api_cat, api_amount);
+                })?;
+                Ok(output_ok)
+            })())
+        },
+    )
+}
 fn wire__crate__api__batch__set_claim_impl(
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -11377,10 +11410,10 @@ fn pde_ffi_dispatcher_primary_impl(
             rust_vec_len,
             data_len,
         ),
-        223 => {
+        224 => {
             wire__crate__api__budget__settings_view_default_impl(port, ptr, rust_vec_len, data_len)
         }
-        241 => wire__crate__api__receipts__sweep_receipts_impl(port, ptr, rust_vec_len, data_len),
+        242 => wire__crate__api__receipts__sweep_receipts_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -11589,56 +11622,57 @@ fn pde_ffi_dispatcher_sync_impl(
         207 => wire__crate__api__ai__set_ai_settings_impl(ptr, rust_vec_len, data_len),
         208 => wire__crate__api__networth__set_asset_no_count_impl(ptr, rust_vec_len, data_len),
         209 => wire__crate__api__currency__set_base_currency_impl(ptr, rust_vec_len, data_len),
-        210 => wire__crate__api__batch__set_claim_impl(ptr, rust_vec_len, data_len),
-        211 => wire__crate__api__record__set_currencies_impl(ptr, rust_vec_len, data_len),
-        212 => wire__crate__api__store__set_current_account_impl(ptr, rust_vec_len, data_len),
-        213 => wire__crate__api__catalog__set_current_ledger_impl(ptr, rust_vec_len, data_len),
-        214 => wire__crate__api__remind__set_daily_reminder_impl(ptr, rust_vec_len, data_len),
-        215 => wire__crate__api__privacy__set_hide_amounts_impl(ptr, rust_vec_len, data_len),
-        216 => wire__crate__api__store__set_language_impl(ptr, rust_vec_len, data_len),
-        217 => wire__crate__api__remind__set_monthly_report_impl(ptr, rust_vec_len, data_len),
-        218 => wire__crate__api__currency__set_rate_impl(ptr, rust_vec_len, data_len),
-        219 => wire__crate__api__budget__set_settings_impl(ptr, rust_vec_len, data_len),
-        220 => wire__crate__api__theme__set_theme_impl(ptr, rust_vec_len, data_len),
-        221 => wire__crate__api__remind__set_weekly_report_impl(ptr, rust_vec_len, data_len),
-        222 => wire__crate__api__budget__settings_impl(ptr, rust_vec_len, data_len),
-        224 => wire__crate__api__liquid__snap_impl(ptr, rust_vec_len, data_len),
-        225 => wire__crate__api__store__snapshot_config_impl(ptr, rust_vec_len, data_len),
-        226 => wire__crate__api__store__snapshot_entries_impl(ptr, rust_vec_len, data_len),
-        227 => wire__crate__api__statement__statement_of_impl(ptr, rust_vec_len, data_len),
-        228 => wire__crate__api__stats__stats_page_impl(ptr, rust_vec_len, data_len),
-        229 => wire__crate__api__period__step_period_impl(ptr, rust_vec_len, data_len),
-        230 => wire__crate__api__db__store_is_open_impl(ptr, rust_vec_len, data_len),
-        231 => wire__crate__api__db__store_schema_version_impl(ptr, rust_vec_len, data_len),
-        232 => wire__crate__api__backup__stray_lists_impl(ptr, rust_vec_len, data_len),
-        233 => wire__crate__api__backup__stray_packs_impl(ptr, rust_vec_len, data_len),
-        234 => wire__crate__api__history__streak_impl(ptr, rust_vec_len, data_len),
-        235 => wire__crate__api__subscriptions__sub_next_due_impl(ptr, rust_vec_len, data_len),
-        236 => wire__crate__api__catalog__subcats_of_impl(ptr, rust_vec_len, data_len),
-        237 => wire__crate__api__subscriptions__subs_impl(ptr, rust_vec_len, data_len),
-        238 => wire__crate__api__subscriptions__subs_commit_impl(ptr, rust_vec_len, data_len),
-        239 => wire__crate__api__subscriptions__subs_pending_impl(ptr, rust_vec_len, data_len),
-        240 => wire__crate__api__db__supported_schema_version_impl(ptr, rust_vec_len, data_len),
-        242 => wire__crate__api__sync__sync_document_impl(ptr, rust_vec_len, data_len),
-        243 => wire__crate__api__liquid__tab_at_impl(ptr, rust_vec_len, data_len),
-        244 => wire__crate__api__catalog__tags_impl(ptr, rust_vec_len, data_len),
-        245 => wire__crate__api__batch__tally_impl(ptr, rust_vec_len, data_len),
-        246 => wire__crate__api__catalog__templatable_impl(ptr, rust_vec_len, data_len),
-        247 => wire__crate__api__catalog__template_draft_impl(ptr, rust_vec_len, data_len),
-        248 => wire__crate__api__catalog__templates_impl(ptr, rust_vec_len, data_len),
-        249 => wire__crate__api__theme__theme_key_impl(ptr, rust_vec_len, data_len),
-        250 => wire__crate__api__theme__theme_options_impl(ptr, rust_vec_len, data_len),
-        251 => wire__crate__api__reimburse__toggle_reimburse_impl(ptr, rust_vec_len, data_len),
-        252 => wire__crate__api__accounts__total_balance_impl(ptr, rust_vec_len, data_len),
-        253 => wire__crate__api__glass__touch_light_color_impl(ptr, rust_vec_len, data_len),
-        254 => wire__crate__api__reimburse__unmark_reimburse_impl(ptr, rust_vec_len, data_len),
-        255 => wire__crate__api__batch__unremove_all_impl(ptr, rust_vec_len, data_len),
-        256 => wire__crate__api__store__unremove_entry_impl(ptr, rust_vec_len, data_len),
-        257 => wire__crate__api__store__update_entry_impl(ptr, rust_vec_len, data_len),
-        258 => wire__crate__api__record__validate_form_impl(ptr, rust_vec_len, data_len),
-        259 => wire__crate__api__glass__wash_color_impl(ptr, rust_vec_len, data_len),
-        260 => wire__crate__api__report__weekly_impl(ptr, rust_vec_len, data_len),
-        261 => wire__crate__api__remind__weekly_report_on_impl(ptr, rust_vec_len, data_len),
+        210 => wire__crate__api__budget__set_cat_cap_impl(ptr, rust_vec_len, data_len),
+        211 => wire__crate__api__batch__set_claim_impl(ptr, rust_vec_len, data_len),
+        212 => wire__crate__api__record__set_currencies_impl(ptr, rust_vec_len, data_len),
+        213 => wire__crate__api__store__set_current_account_impl(ptr, rust_vec_len, data_len),
+        214 => wire__crate__api__catalog__set_current_ledger_impl(ptr, rust_vec_len, data_len),
+        215 => wire__crate__api__remind__set_daily_reminder_impl(ptr, rust_vec_len, data_len),
+        216 => wire__crate__api__privacy__set_hide_amounts_impl(ptr, rust_vec_len, data_len),
+        217 => wire__crate__api__store__set_language_impl(ptr, rust_vec_len, data_len),
+        218 => wire__crate__api__remind__set_monthly_report_impl(ptr, rust_vec_len, data_len),
+        219 => wire__crate__api__currency__set_rate_impl(ptr, rust_vec_len, data_len),
+        220 => wire__crate__api__budget__set_settings_impl(ptr, rust_vec_len, data_len),
+        221 => wire__crate__api__theme__set_theme_impl(ptr, rust_vec_len, data_len),
+        222 => wire__crate__api__remind__set_weekly_report_impl(ptr, rust_vec_len, data_len),
+        223 => wire__crate__api__budget__settings_impl(ptr, rust_vec_len, data_len),
+        225 => wire__crate__api__liquid__snap_impl(ptr, rust_vec_len, data_len),
+        226 => wire__crate__api__store__snapshot_config_impl(ptr, rust_vec_len, data_len),
+        227 => wire__crate__api__store__snapshot_entries_impl(ptr, rust_vec_len, data_len),
+        228 => wire__crate__api__statement__statement_of_impl(ptr, rust_vec_len, data_len),
+        229 => wire__crate__api__stats__stats_page_impl(ptr, rust_vec_len, data_len),
+        230 => wire__crate__api__period__step_period_impl(ptr, rust_vec_len, data_len),
+        231 => wire__crate__api__db__store_is_open_impl(ptr, rust_vec_len, data_len),
+        232 => wire__crate__api__db__store_schema_version_impl(ptr, rust_vec_len, data_len),
+        233 => wire__crate__api__backup__stray_lists_impl(ptr, rust_vec_len, data_len),
+        234 => wire__crate__api__backup__stray_packs_impl(ptr, rust_vec_len, data_len),
+        235 => wire__crate__api__history__streak_impl(ptr, rust_vec_len, data_len),
+        236 => wire__crate__api__subscriptions__sub_next_due_impl(ptr, rust_vec_len, data_len),
+        237 => wire__crate__api__catalog__subcats_of_impl(ptr, rust_vec_len, data_len),
+        238 => wire__crate__api__subscriptions__subs_impl(ptr, rust_vec_len, data_len),
+        239 => wire__crate__api__subscriptions__subs_commit_impl(ptr, rust_vec_len, data_len),
+        240 => wire__crate__api__subscriptions__subs_pending_impl(ptr, rust_vec_len, data_len),
+        241 => wire__crate__api__db__supported_schema_version_impl(ptr, rust_vec_len, data_len),
+        243 => wire__crate__api__sync__sync_document_impl(ptr, rust_vec_len, data_len),
+        244 => wire__crate__api__liquid__tab_at_impl(ptr, rust_vec_len, data_len),
+        245 => wire__crate__api__catalog__tags_impl(ptr, rust_vec_len, data_len),
+        246 => wire__crate__api__batch__tally_impl(ptr, rust_vec_len, data_len),
+        247 => wire__crate__api__catalog__templatable_impl(ptr, rust_vec_len, data_len),
+        248 => wire__crate__api__catalog__template_draft_impl(ptr, rust_vec_len, data_len),
+        249 => wire__crate__api__catalog__templates_impl(ptr, rust_vec_len, data_len),
+        250 => wire__crate__api__theme__theme_key_impl(ptr, rust_vec_len, data_len),
+        251 => wire__crate__api__theme__theme_options_impl(ptr, rust_vec_len, data_len),
+        252 => wire__crate__api__reimburse__toggle_reimburse_impl(ptr, rust_vec_len, data_len),
+        253 => wire__crate__api__accounts__total_balance_impl(ptr, rust_vec_len, data_len),
+        254 => wire__crate__api__glass__touch_light_color_impl(ptr, rust_vec_len, data_len),
+        255 => wire__crate__api__reimburse__unmark_reimburse_impl(ptr, rust_vec_len, data_len),
+        256 => wire__crate__api__batch__unremove_all_impl(ptr, rust_vec_len, data_len),
+        257 => wire__crate__api__store__unremove_entry_impl(ptr, rust_vec_len, data_len),
+        258 => wire__crate__api__store__update_entry_impl(ptr, rust_vec_len, data_len),
+        259 => wire__crate__api__record__validate_form_impl(ptr, rust_vec_len, data_len),
+        260 => wire__crate__api__glass__wash_color_impl(ptr, rust_vec_len, data_len),
+        261 => wire__crate__api__report__weekly_impl(ptr, rust_vec_len, data_len),
+        262 => wire__crate__api__remind__weekly_report_on_impl(ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }

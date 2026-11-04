@@ -15,6 +15,14 @@ SettingsView settings() => RustLib.instance.api.crateApiBudgetSettings();
 void setSettings({required SettingsView view}) =>
     RustLib.instance.api.crateApiBudgetSetSettings(view: view);
 
+/// Set one category's cap, or clear it with zero or less.
+///
+/// One call rather than a whole `SettingsView` handed back: the caps are an
+/// ordered list, and the rule for where an edit lands in it — in place, or at
+/// the end when new — is `core::set_cap`'s, not the screen's.
+void setCatCap({required String cat, required double amount}) =>
+    RustLib.instance.api.crateApiBudgetSetCatCap(cat: cat, amount: amount);
+
 /// The ids that fall inside the cycle containing `today`.
 ///
 /// The cycle is not the calendar month: it turns over on `cycle_start`, so a

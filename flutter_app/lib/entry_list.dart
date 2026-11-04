@@ -33,6 +33,7 @@ import 'reimburse_screen.dart';
 import 'tap.dart';
 import 'amounts.dart';
 import 'cats.dart';
+import 'cat_pick.dart';
 import 'src/rust/api/accounts.dart' as accounts;
 import 'photos.dart';
 import 'theme.dart';
@@ -1527,48 +1528,11 @@ class _EntryListScreenState extends State<EntryListScreen> {
   /// answered that — so an expense selection is never offered 工资.
   Future<void> _batchCategory(String io, bool zh) async {
     final cats = catsOf(io);
-    final key = await showModalBottomSheet<String>(
-      context: context,
-      backgroundColor: palette.card,
-      builder: (ctx) => SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(14, 16, 14, 10),
-          child: Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              for (final c in cats)
-                Tap(
-                  key: Key('batch-cat-${c.k}'),
-                  radius: Rad.md,
-                  onTap: () => Navigator.pop(ctx, c.k),
-                  child: Container(
-                    width: 78,
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    decoration: BoxDecoration(
-                      color: parseHex(
-                        c.c,
-                      ).withValues(alpha: palette.isDark ? 0.19 : 0.12),
-                      borderRadius: BorderRadius.circular(Rad.md),
-                    ),
-                    child: Column(
-                      children: [
-                        Text(c.e, style: const TextStyle(fontSize: 21)),
-                        const SizedBox(height: 4),
-                        Text(
-                          catalog.catName(cat: c, zh: zh),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: 11.5, color: palette.ink),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ),
+    final key = await pickCategory(
+      context,
+      cats: cats,
+      zh: zh,
+      keyPrefix: 'batch-cat',
     );
     if (key == null) return;
 
