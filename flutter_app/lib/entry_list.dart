@@ -185,6 +185,23 @@ class _EntryListScreenState extends State<EntryListScreen> {
   final _query = TextEditingController();
   bool _searching = false;
 
+  /// The search's filter rows — the shipping `SearchFilter`: one side, one
+  /// category, one of six date words. Each applies with the box empty too,
+  /// and a second tap takes it off. The date is kept as the word, and read
+  /// the way the box reads it, so 本月 pressed and 本月 typed are one range.
+  String? _fio;
+  String? _fcat;
+  String? _fdate;
+  bool get _filtered => _fio != null || _fcat != null || _fdate != null;
+  static const _datePresets = [
+    ('今天', 'Today'),
+    ('昨天', 'Yesterday'),
+    ('本周', 'This week'),
+    ('上周', 'Last week'),
+    ('本月', 'This month'),
+    ('上月', 'Last month'),
+  ];
+
   /// 批量处理. Null when the screen is in its ordinary mode; a set — possibly
   /// empty — while rows are being ticked.
   ///
@@ -313,10 +330,11 @@ class _EntryListScreenState extends State<EntryListScreen> {
     );
 
     final q = _query.text.trim();
+    final filtering = _searching && (q.isNotEmpty || _filtered);
     // A cycle gone by shows its own rows under its own totals, as the
     // shipping list did; this one shows them all, as this list always has. A
     // search is over everything either way.
-    if (!head.current && q.isEmpty) {
+    if (!head.current && !filtering) {
       (ids, days) = _only(
         ids,
         days,
@@ -331,17 +349,23 @@ class _EntryListScreenState extends State<EntryListScreen> {
       );
     }
     search.ParsedQueryView? parsed;
-    if (q.isNotEmpty) {
+    if (filtering) {
       // The query may name a range, and a range is not something Rust can
       // resolve: midnight last Monday is a question about this device's zone.
-      parsed = search.parseQuery(query: q, today: localDay(DateTime.now()));
+      parsed = q.isEmpty ? null : search.parseQuery(query: q, today: today);
+      // A filter row's choice outranks a word in the box saying otherwise:
+      // it is the more deliberate of the two.
+      final preset = _fdate == null
+          ? null
+          : search.parseQuery(query: _fdate!, today: today);
       final keep = search
           .searchIds(
             ids: ids,
-            text: parsed.text,
-            io: parsed.io,
-            fromMs: _msOf(parsed.from),
-            toMs: _msOf(parsed.to),
+            text: parsed?.text ?? '',
+            io: _fio ?? parsed?.io,
+            cat: _fcat,
+            fromMs: _msOf(preset?.from ?? parsed?.from),
+            toMs: _msOf(preset?.to ?? parsed?.to),
             zh: widget.zh,
           )
           .toSet();
@@ -470,6 +494,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             b.header,
+                            if (_searching && !_selecting) _searchFilters(zh),
                             // Not over search results, which are about the
                             // query rather than the month, and not while
                             // ticking rows, where the title is the count.
@@ -938,6 +963,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
           if (_calendar) {
             _searching = false;
             _query.clear();
+            _clearFilters();
           }
         });
         _keepCal();
@@ -950,7 +976,10 @@ class _EntryListScreenState extends State<EntryListScreen> {
       onPressed: () {
         setState(() {
           _searching = !_searching;
-          if (!_searching) _query.clear();
+          if (!_searching) {
+            _query.clear();
+            _clearFilters();
+          }
           // a search is over rows, so it opens on the list
           if (_searching) _calendar = false;
         });
@@ -959,6 +988,128 @@ class _EntryListScreenState extends State<EntryListScreen> {
       },
     ),
   ];
+
+  void _clearFilters() {
+    _fio = null;
+    _fcat = null;
+    _fdate = null;
+  }
+
+  /// 支出 / 收入 / 转账, six date words, and a category — under the box while
+  /// it is open, over the results and over 没有找到 alike.
+  Widget _searchFilters(bool zh) {
+    Widget chip(String key, String label, bool on, VoidCallback onTap) => Tap(
+      key: Key(key),
+      radius: Rad.pill,
+      onTap: () {
+        setState(onTap);
+        _reload();
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
+        decoration: BoxDecoration(
+          color: on
+              ? palette.stamen.withValues(alpha: 0.18)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(Rad.pill),
+          border: Border.all(color: on ? palette.stamen : palette.line),
+        ),
+        child: Text(label, style: TextStyle(fontSize: 12, color: palette.ink)),
+      ),
+    );
+    final catIo = _fio == 'inc' ? 'inc' : 'exp';
+    return Padding(
+      key: const Key('search-filters'),
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Wrap(
+            spacing: 6,
+            runSpacing: 6,
+            children: [
+              for (final (io, zhL, enL) in const [
+                ('exp', '支出', 'Expense'),
+                ('inc', '收入', 'Income'),
+                ('xfer', '转账', 'Transfer'),
+              ])
+                chip('sf-io-$io', zh ? zhL : enL, _fio == io, () {
+                  _fio = _fio == io ? null : io;
+                  // a category is one side's; the other side has none of it
+                  if (_fcat != null && _fio != null && _fio != catIo) {
+                    _fcat = null;
+                  }
+                  if (_fio == 'xfer') _fcat = null;
+                }),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Wrap(
+            spacing: 6,
+            runSpacing: 6,
+            children: [
+              for (final (w, en) in _datePresets)
+                chip('sf-date-$w', zh ? w : en, _fdate == w, () {
+                  _fdate = _fdate == w ? null : w;
+                }),
+            ],
+          ),
+          // A transfer has no category to narrow by.
+          if (_fio != 'xfer') ...[
+            const SizedBox(height: 6),
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: [
+                if (_fcat == null)
+                  Tap(
+                    key: const Key('sf-cat'),
+                    radius: Rad.pill,
+                    onTap: () async {
+                      final k = await pickCategory(
+                        context,
+                        cats: catsOf(catIo),
+                        zh: zh,
+                        keyPrefix: 'sf-cat-pick',
+                      );
+                      if (k == null || !mounted) return;
+                      setState(() => _fcat = k);
+                      _reload();
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 11,
+                        vertical: 5,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(Rad.pill),
+                        border: Border.all(color: palette.line),
+                      ),
+                      child: Text(
+                        zh ? '＋ 分类' : '+ Category',
+                        style: TextStyle(fontSize: 12, color: palette.inkSoft),
+                      ),
+                    ),
+                  )
+                else
+                  chip(
+                    'sf-cat-on',
+                    '${catLabelOf(io: catIo, key: _fcat!, zh: zh).name} ×',
+                    true,
+                    () => _fcat = null,
+                  ),
+                if (_filtered)
+                  chip('sf-clear', zh ? '清除筛选' : 'Clear', false, _clearFilters),
+              ],
+            ),
+          ] else if (_filtered) ...[
+            const SizedBox(height: 6),
+            chip('sf-clear', zh ? '清除筛选' : 'Clear', false, _clearFilters),
+          ],
+        ],
+      ),
+    );
+  }
 
   /// Take everything on screen, or let it all go.
   Widget _selectAll(bool zh) {
@@ -1430,6 +1581,8 @@ class _EntryListScreenState extends State<EntryListScreen> {
     padding: EdgeInsets.fromLTRB(22, b.top, 22, 0),
     children: [
       b.header,
+      // Nothing matched is where a filter most needs changing.
+      if (_searching) _searchFilters(zh),
       // A cycle gone by with nothing in it keeps its head, ‹ › and all, or
       // there would be no way back from it.
       if (!_searching && _home != null && !_home!.current)
@@ -1494,7 +1647,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
           // same thing. Telling a user who is searching that they have never
           // recorded anything is worse than saying nothing.
           Text(
-            _query.text.trim().isNotEmpty
+            _query.text.trim().isNotEmpty || (_searching && _filtered)
                 ? (zh ? '没有找到' : 'Nothing matched')
                 : !(_home?.current ?? true)
                 ? (zh ? '这个周期没有记账' : 'Nothing in this cycle')
@@ -1505,7 +1658,9 @@ class _EntryListScreenState extends State<EntryListScreen> {
             key: const Key('list-empty'),
             style: TextStyle(fontSize: 13, color: palette.inkSoft),
           ),
-          if (_query.text.trim().isEmpty && (_home?.current ?? true)) ...[
+          if (_query.text.trim().isEmpty &&
+              !(_searching && _filtered) &&
+              (_home?.current ?? true)) ...[
             const SizedBox(height: 6),
             Text(
               _scope.isNotEmpty
