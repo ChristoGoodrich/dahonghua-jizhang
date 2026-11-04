@@ -86,6 +86,29 @@ pub fn set_rate(code: String, rate: f64) {
     set_currencies_inner(c);
 }
 
+/// 联网更新汇率: one quote per tracked code, as the live source gave it —
+/// "1 base = X code" — or none where it gave nothing. Each usable one is
+/// turned into this app's "1 code = N base" by `core::rates::invert`, the
+/// same rule every fetched rate goes through, and stored; the rest are left
+/// as they were. Returns the codes that changed — none means the answer had
+/// nothing usable, which the screen says rather than claiming an update.
+#[frb(sync)]
+pub fn apply_quotes(codes: Vec<String>, quotes: Vec<Option<f64>>) -> Vec<String> {
+    let mut c = currencies_of();
+    let mut changed = Vec::new();
+    for (code, q) in codes.iter().zip(quotes) {
+        if let Some(rate) = dahonghua_core::rates::invert(q) {
+            core::set_rate(&mut c, code, rate);
+            changed.push(code.clone());
+        }
+    }
+    if !changed.is_empty() {
+        db::mark_config();
+        set_currencies_inner(c);
+    }
+    changed
+}
+
 /// Start tracking a code, at parity.
 ///
 /// A code already sitting at **zero** counts as missing and is reset to one —

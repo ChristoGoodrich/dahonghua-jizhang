@@ -17,6 +17,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import 'src/rust/api/currency.dart' as cur;
 import 'src/rust/api/rates.dart' as rates;
 
 /// Frankfurter has history, so it is asked for the entry's own date.
@@ -36,6 +37,49 @@ const _timeout = Duration(seconds: 15);
 /// `j?.rates?.[target]` yields undefined for every one of them, and the core
 /// takes `None` for all of them too.
 typedef Fetch = Future<double?> Function(Uri url, String target);
+
+/// The whole quote table one request answered, or null.
+typedef TableFetch = Future<Map<Object?, Object?>?> Function(Uri url);
+
+Future<Map<Object?, Object?>?> _getTable(Uri url) async {
+  try {
+    final r = await http.get(url).timeout(_timeout);
+    if (r.statusCode != 200) return null;
+    final body = jsonDecode(r.body);
+    if (body is! Map) return null;
+    final table = body['rates'];
+    return table is Map ? table : null;
+  } catch (_) {
+    return null;
+  }
+}
+
+/// 联网更新汇率 — every tracked rate against the base, from the live source,
+/// in one request, as the shipping `updateRates` did.
+///
+/// Returns how many were updated: zero when there is nothing but the base to
+/// update, null when the answer had nothing usable — no network, or a table
+/// without these codes. Which quotes are believable, and how each becomes
+/// this app's convention, is the core's (`cur.applyQuotes`).
+Future<int?> updateRatesOnline({TableFetch fetch = _getTable}) async {
+  final base = cur.baseCurrency();
+  final codes = [
+    for (final r in cur.rates())
+      if (!r.isBase) r.code,
+  ];
+  if (codes.isEmpty) return 0;
+  final table = await fetch(Uri.parse('$_exchangerate/$base'));
+  if (table == null) return null;
+  final quotes = [
+    for (final c in codes)
+      switch (table[c]) {
+        final num n => n.toDouble(),
+        _ => null,
+      },
+  ];
+  final changed = cur.applyQuotes(codes: codes, quotes: quotes);
+  return changed.isEmpty ? null : changed.length;
+}
 
 Future<double?> _get(Uri url, String target) async {
   try {

@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 
 import 'src/rust/api/accounts.dart' as accounts;
 import 'src/rust/api/statement.dart' as statement;
+import 'src/rust/api/currency.dart' as currency;
 import 'src/rust/api/store.dart' as store;
 import 'account_detail_screen.dart';
 import 'amounts.dart';
@@ -556,6 +557,17 @@ class _NewAccountDialogState extends State<_NewAccountDialog> {
   int? _statementDay;
   int? _dueDay;
 
+  /// What a 外币 account holds. The shipping form asked for the code and
+  /// would not make one without it; the port passed null, so every foreign
+  /// account was 外币 of nothing in particular. Offered from the codes the
+  /// app can name, less the base, rather than typed: a code nothing knows is
+  /// a currency nothing converts.
+  String? _fxCode;
+  late final List<currency.RateView> _fxChoices = [
+    for (final c in currency.knownCurrencies())
+      if (c.code != currency.baseCurrency()) c,
+  ];
+
   @override
   void dispose() {
     _name.dispose();
@@ -581,6 +593,7 @@ class _NewAccountDialogState extends State<_NewAccountDialog> {
   void _submit() {
     final name = _name.text.trim();
     if (name.isEmpty) return; // a nameless account is not one
+    if (_kind == 'fx' && _fxCode == null) return; // nor a currency of none
     accounts.addAccount(
       id: 'a${DateTime.now().millisecondsSinceEpoch}',
       name: name,
@@ -591,7 +604,7 @@ class _NewAccountDialogState extends State<_NewAccountDialog> {
       // two ends saying the same thing.
       statementDay: _kind == 'credit' ? _statementDay : null,
       dueDay: _kind == 'credit' ? _dueDay : null,
-      fxCode: null,
+      fxCode: _kind == 'fx' ? _fxCode : null,
     );
     Navigator.pop(context, true);
   }
@@ -731,6 +744,46 @@ class _NewAccountDialogState extends State<_NewAccountDialog> {
                   ),
               ],
             ),
+            if (_kind == 'fx') ...[
+              const SizedBox(height: 12),
+              Text(
+                zh ? '持有的币种' : 'Currency held',
+                style: TextStyle(fontSize: 12, color: palette.inkSoft),
+              ),
+              const SizedBox(height: 6),
+              Wrap(
+                spacing: 6,
+                runSpacing: 6,
+                children: [
+                  for (final c in _fxChoices)
+                    GestureDetector(
+                      key: Key('fx-code-${c.code}'),
+                      onTap: () => setState(() => _fxCode = c.code),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: _fxCode == c.code
+                              ? palette.stamen.withValues(alpha: 0.18)
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(Rad.pill),
+                          border: Border.all(
+                            color: _fxCode == c.code
+                                ? palette.stamen
+                                : palette.line,
+                          ),
+                        ),
+                        child: Text(
+                          '${c.symbol} ${c.code}',
+                          style: TextStyle(fontSize: 12, color: palette.ink),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ],
             if (_kind == 'credit') ...[
               _dayPicker(
                 keyPrefix: 'stmt-day',

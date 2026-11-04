@@ -376,6 +376,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<LockAction> dco_decode_list_lock_action(dynamic raw);
 
   @protected
+  List<double?> dco_decode_list_opt_box_autoadd_f_64(dynamic raw);
+
+  @protected
   List<PendingView> dco_decode_list_pending_view(dynamic raw);
 
   @protected
@@ -1029,6 +1032,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<LockAction> sse_decode_list_lock_action(SseDeserializer deserializer);
+
+  @protected
+  List<double?> sse_decode_list_opt_box_autoadd_f_64(
+    SseDeserializer deserializer,
+  );
 
   @protected
   List<PendingView> sse_decode_list_pending_view(SseDeserializer deserializer);
@@ -1823,6 +1831,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_lock_action(
     List<LockAction> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_opt_box_autoadd_f_64(
+    List<double?> self,
     SseSerializer serializer,
   );
 
