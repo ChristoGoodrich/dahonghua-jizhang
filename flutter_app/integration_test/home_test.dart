@@ -12,7 +12,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/accounts_screen.dart';
 import 'package:flutter_app/assets_screen.dart';
 import 'package:flutter_app/entry_list.dart';
+import 'package:flutter_app/src/rust/api/accounts.dart' as accounts;
 import 'package:flutter_app/src/rust/api/budget.dart' as budget;
+import 'package:flutter_app/src/rust/api/catalog.dart' as catalog;
 import 'package:flutter_app/src/rust/api/privacy.dart' as privacy;
 import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_app/src/rust/api/theme.dart' as theme;
@@ -47,12 +49,14 @@ Future<void> show(
   WidgetTester tester, {
   VoidCallback? onOpenBudget,
   VoidCallback? onOpenStats,
+  ValueChanged<String>? onOpenAccount,
 }) async {
   await tester.pumpWidget(
     MaterialApp(
       home: EntryListScreen(
         onOpenBudget: onOpenBudget,
         onOpenStats: onOpenStats,
+        onOpenAccount: onOpenAccount,
       ),
     ),
   );
@@ -66,6 +70,100 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(ensureRust);
   setUp(() => store.reset());
+
+  group("a card's bill coming due", () {
+    // The shipping banner was `dueInsight ?? insight`, and tapping a card's
+    // reminder opened the card. The port had `credit_due_insight` in the core
+    // and called it nowhere, so a statement came due without a word on 明细.
+
+    /// A card whose cycle closed ten days back with ¥100 on it, due in three.
+    void dueCard() {
+      final closed = DateTime.now().subtract(const Duration(days: 10));
+      final due = DateTime.now().add(const Duration(days: 3));
+      accounts.addAccount(
+        id: 'card',
+        name: '信用卡',
+        balance: 0,
+        kind: 'credit',
+        statementDay: closed.day <= 28 ? closed.day : 28,
+        dueDay: due.day <= 28 ? due.day : 28,
+        fxCode: null,
+      );
+      final t = now - 15 * day;
+      store.addEntry(
+        entry: store.NewEntry(
+          io: 'exp',
+          cat: 'food',
+          amt: 100,
+          acct: 'card',
+          ts: t,
+        ),
+        id: 'charge',
+        now: t,
+      );
+    }
+
+    /// Three expenses this cycle: enough for a sentence about spending.
+    void spending() {
+      add('a', 'exp', 30);
+      add('b', 'exp', 20);
+      add('c', 'exp', 10, cat: 'shop');
+    }
+
+    testWidgets(
+      'comes before the sentence about spending, and opens the card',
+      (tester) async {
+        dueCard();
+        spending();
+        String? opened;
+        await show(tester, onOpenAccount: (id) => opened = id);
+
+        final banner = text(tester, 'home-insight-text');
+        expect(banner, contains('信用卡'));
+        expect(banner, contains('要还'));
+
+        await tester.tap(find.byKey(const Key('home-insight-open')));
+        await tester.pumpAndSettle();
+        expect(opened, 'card');
+      },
+    );
+
+    testWidgets('is read from the whole ledger, whatever the bar is on', (
+      tester,
+    ) async {
+      // The card's charge is in no ledger; the list is on 旅行, where one
+      // lunch is. A statement is every charge on the card, whichever ledger
+      // each was filed in.
+      dueCard();
+      catalog.addTag(kind: 'ledger', name: '旅行');
+      store.addEntry(
+        entry: store.NewEntry(
+          io: 'exp',
+          cat: 'food',
+          amt: 30,
+          ledger: '旅行',
+          ts: now,
+        ),
+        id: 'trip',
+        now: now,
+      );
+      catalog.setCurrentLedger(name: '旅行');
+      await show(tester, onOpenAccount: (_) {});
+
+      expect(text(tester, 'home-insight-text'), contains('信用卡'));
+    });
+
+    testWidgets('nothing due leaves the sentence about spending, unlinked', (
+      tester,
+    ) async {
+      spending();
+      await show(tester, onOpenAccount: (_) {});
+
+      expect(find.byKey(const Key('home-insight')), findsOneWidget);
+      expect(text(tester, 'home-insight-text'), isNot(contains('要还')));
+      expect(find.byKey(const Key('home-insight-open')), findsNothing);
+    });
+  });
 
   group('the summary', () {
     /// 本月攒下的 is the cycle's, not the ledger's: an expense two months back

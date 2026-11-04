@@ -15,15 +15,23 @@ import 'report.dart';
 /// `ids` and `days_of` are every live entry and the local day Dart resolved
 /// for each; the cycle is chosen here, from the setting, so the head and 统计
 /// cannot disagree about where this month began.
+///
+/// `all_ids` and `all_days_of` are the same before the ledger filter: a
+/// card's statement is every charge on the card, whichever ledger each was
+/// filed in, and the repayment reminder is read from those.
 HomeView home({
   required List<String> ids,
   required List<String> daysOf,
+  required List<String> allIds,
+  required List<String> allDaysOf,
   required String today,
   required bool zh,
   required InsightCopyView copy,
 }) => RustLib.instance.api.crateApiHomeHome(
   ids: ids,
   daysOf: daysOf,
+  allIds: allIds,
+  allDaysOf: allDaysOf,
   today: today,
   zh: zh,
   copy: copy,

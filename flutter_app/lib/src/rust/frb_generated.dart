@@ -475,6 +475,8 @@ abstract class RustLibApi extends BaseApi {
   HomeView crateApiHomeHome({
     required List<String> ids,
     required List<String> daysOf,
+    required List<String> allIds,
+    required List<String> allDaysOf,
     required String today,
     required bool zh,
     required InsightCopyView copy,
@@ -3655,6 +3657,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   HomeView crateApiHomeHome({
     required List<String> ids,
     required List<String> daysOf,
+    required List<String> allIds,
+    required List<String> allDaysOf,
     required String today,
     required bool zh,
     required InsightCopyView copy,
@@ -3665,6 +3669,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_list_String(ids, serializer);
           sse_encode_list_String(daysOf, serializer);
+          sse_encode_list_String(allIds, serializer);
+          sse_encode_list_String(allDaysOf, serializer);
           sse_encode_String(today, serializer);
           sse_encode_bool(zh, serializer);
           sse_encode_box_autoadd_insight_copy_view(copy, serializer);
@@ -3675,7 +3681,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           decodeErrorData: null,
         ),
         constMeta: kCrateApiHomeHomeConstMeta,
-        argValues: [ids, daysOf, today, zh, copy],
+        argValues: [ids, daysOf, allIds, allDaysOf, today, zh, copy],
         apiImpl: this,
       ),
     );
@@ -3683,7 +3689,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiHomeHomeConstMeta => const TaskConstMeta(
     debugName: "home",
-    argNames: ["ids", "daysOf", "today", "zh", "copy"],
+    argNames: ["ids", "daysOf", "allIds", "allDaysOf", "today", "zh", "copy"],
   );
 
   @override

@@ -24,6 +24,7 @@ import 'app_info.dart';
 import 'assets_screen.dart';
 import 'ask_screen.dart';
 import 'ai_entry_screen.dart';
+import 'account_detail_screen.dart';
 import 'backup_screen.dart';
 import 'bottom_nav.dart';
 import 'budget_screen.dart';
@@ -638,6 +639,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       onOpenBudget: () =>
           _push(BudgetScreen(zh: _zh, onChanged: _configChanged)),
       onOpenStats: () => setState(() => _tab = 1),
+      onOpenAccount: (id) => _push(AccountDetailScreen(id: id, zh: _zh)),
       onRecordAt: (ts) => _record(at: ts),
       onLogged: () => _celebrate(),
       onPrivacy: _configChanged,

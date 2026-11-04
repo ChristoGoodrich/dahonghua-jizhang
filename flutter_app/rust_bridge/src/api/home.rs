@@ -11,10 +11,11 @@ use dahonghua_core::budget::{self, DayRow, PotMood, TierStatus};
 use dahonghua_core::civil::Civil;
 use dahonghua_core::cycle::cycle_range;
 use dahonghua_core::entry::Entry;
+use dahonghua_core::insight;
 use dahonghua_core::stats;
 use flutter_rust_bridge::frb;
 
-use super::report::{insight_of, InsightCopyView, InsightView};
+use super::report::{copy_of, insight_of, view_of, InsightCopyView, InsightView};
 use super::store::{by_id, settings_of, store};
 
 /// One of the two budget pots.
@@ -65,10 +66,16 @@ fn pot(s: &TierStatus) -> Option<PotView> {
 /// `ids` and `days_of` are every live entry and the local day Dart resolved
 /// for each; the cycle is chosen here, from the setting, so the head and 统计
 /// cannot disagree about where this month began.
+///
+/// `all_ids` and `all_days_of` are the same before the ledger filter: a
+/// card's statement is every charge on the card, whichever ledger each was
+/// filed in, and the repayment reminder is read from those.
 #[frb(sync)]
 pub fn home(
     ids: Vec<String>,
     days_of: Vec<String>,
+    all_ids: Vec<String>,
+    all_days_of: Vec<String>,
     today: String,
     zh: bool,
     copy: InsightCopyView,
@@ -112,7 +119,19 @@ pub fn home(
             }
             .to_string()
         });
-    let insight = insight_of(&entries, &day_rows, today, zh, &copy);
+    // 要还款了 first, then the sentence about spending — the shipping banner's
+    // `dueInsight ?? insight`. A card's bill is money with a deadline, and the
+    // port computed the reminder nowhere: `credit_due_insight` was in the core
+    // and nothing called it.
+    let due = {
+        let rows = super::statement::dated(&all_ids, &all_days_of);
+        let symbol = super::money::cur_symbol(super::record::base_currency());
+        let s = store();
+        insight::credit_due_insight(&s.accounts, &rows, today, zh, &symbol, &copy_of(&copy))
+    };
+    let insight = due
+        .map(view_of)
+        .or_else(|| insight_of(&entries, &day_rows, today, zh, &copy));
 
     HomeView {
         start: show_day(cycle.start),

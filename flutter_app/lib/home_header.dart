@@ -27,6 +27,7 @@ class HomeHeader extends StatelessWidget {
     this.zh = true,
     this.onOpenBudget,
     this.onOpenStats,
+    this.onOpenAccount,
     this.templates = const [],
     this.onTemplate,
     this.ledgers = const [],
@@ -54,6 +55,9 @@ class HomeHeader extends StatelessWidget {
   final VoidCallback? onOpenBudget;
   final VoidCallback? onOpenStats;
 
+  /// A banner about one account — 要还款了 — opens it.
+  final ValueChanged<String>? onOpenAccount;
+
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(bottom: 4),
@@ -73,7 +77,13 @@ class HomeHeader extends StatelessWidget {
         ],
         if (view.insight != null) ...[
           const SizedBox(height: 10),
-          _Insight(icon: view.insight!.icon, text: view.insight!.text),
+          _Insight(
+            icon: view.insight!.icon,
+            text: view.insight!.text,
+            onTap: view.insight!.acctId != null && onOpenAccount != null
+                ? () => onOpenAccount!(view.insight!.acctId!)
+                : null,
+          ),
         ],
         // Under the insight and over the templates, where the shipping list
         // had its `LedgerFilter`.
@@ -513,16 +523,20 @@ class _BudgetPot extends StatelessWidget {
 }
 
 /// The one sentence — `core::insight`'s choice, in the report's words.
+///
+/// A sentence about one account — a card's bill coming due — opens that
+/// account, as the shipping banner did, and says so with a chevron.
 class _Insight extends StatelessWidget {
-  const _Insight({required this.icon, required this.text});
+  const _Insight({required this.icon, required this.text, this.onTap});
 
   final String icon;
   final String text;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final p = palette;
-    return Container(
+    final body = Container(
       key: const Key('home-insight'),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
       decoration: BoxDecoration(
@@ -537,11 +551,21 @@ class _Insight extends StatelessWidget {
           Expanded(
             child: Text(
               text,
+              key: const Key('home-insight-text'),
               style: TextStyle(fontSize: 13, height: 1.3, color: p.ink),
             ),
           ),
+          if (onTap != null)
+            Icon(Icons.chevron_right_rounded, size: 18, color: p.inkSoft),
         ],
       ),
+    );
+    if (onTap == null) return body;
+    return Tap(
+      key: const Key('home-insight-open'),
+      radius: Rad.md,
+      onTap: onTap,
+      child: body,
     );
   }
 }

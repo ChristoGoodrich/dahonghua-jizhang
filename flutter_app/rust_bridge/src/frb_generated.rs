@@ -3141,6 +3141,8 @@ fn wire__crate__api__home__home_impl(
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_ids = <Vec<String>>::sse_decode(&mut deserializer);
             let api_days_of = <Vec<String>>::sse_decode(&mut deserializer);
+            let api_all_ids = <Vec<String>>::sse_decode(&mut deserializer);
+            let api_all_days_of = <Vec<String>>::sse_decode(&mut deserializer);
             let api_today = <String>::sse_decode(&mut deserializer);
             let api_zh = <bool>::sse_decode(&mut deserializer);
             let api_copy = <crate::api::report::InsightCopyView>::sse_decode(&mut deserializer);
@@ -3149,6 +3151,8 @@ fn wire__crate__api__home__home_impl(
                 let output_ok = Result::<_, ()>::Ok(crate::api::home::home(
                     api_ids,
                     api_days_of,
+                    api_all_ids,
+                    api_all_days_of,
                     api_today,
                     api_zh,
                     api_copy,

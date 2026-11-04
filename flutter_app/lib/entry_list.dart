@@ -79,6 +79,7 @@ class EntryListScreen extends StatefulWidget {
     this.onSelecting,
     this.onOpenBudget,
     this.onOpenStats,
+    this.onOpenAccount,
     this.onPrivacy,
     this.onLedger,
     this.onRecordAt,
@@ -104,6 +105,9 @@ class EntryListScreen extends StatefulWidget {
   /// Where the head's budget flower and summary lead: 预算, and the 统计 tab.
   final VoidCallback? onOpenBudget;
   final VoidCallback? onOpenStats;
+
+  /// Where a banner about one account leads — 要还款了 opens that card.
+  final ValueChanged<String>? onOpenAccount;
 
   /// The eye was pressed. The shell saves the setting and redraws the tabs
   /// that show totals.
@@ -233,6 +237,8 @@ class _EntryListScreenState extends State<EntryListScreen> {
     final head = home.home(
       ids: ids,
       daysOf: days,
+      allIds: allIds,
+      allDaysOf: allDays,
       today: localDay(DateTime.now()),
       zh: widget.zh,
       copy: insightCopy(widget.zh),
@@ -402,6 +408,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
                                 },
                                 onOpenBudget: widget.onOpenBudget,
                                 onOpenStats: widget.onOpenStats,
+                                onOpenAccount: widget.onOpenAccount,
                                 templates: catalog.templates(),
                                 onTemplate: _logTemplate,
                                 ledgers: _ledgers,
