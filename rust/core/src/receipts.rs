@@ -207,8 +207,63 @@ pub fn sweep(files: &[String], entries: &[Entry], now: i64, holds: &Holds) -> Ve
     left_over(files, &referenced(entries, now), &sealed, holds.in_use)
 }
 
+/// Which of the files picked beside a snapshot go back into `attachments/`.
+///
+/// 从文件恢复 reads a snapshot from outside the app, with whatever files were
+/// picked with it — 导出 hands a plain snapshot out with its receipts, and the
+/// share sheet keeps their names. A picked file goes back only when the
+/// restored ledger names it (`carried`), and only under a plain name: the
+/// snapshot is whatever its file says and the picked name is whatever shared
+/// it, so a separator, `.` or `..` would be a path out of the folder, and is
+/// never written. Each name once, in the order picked.
+pub fn restorable(carried: &[String], picked: &[String]) -> Vec<String> {
+    let mut out: Vec<String> = Vec::new();
+    for p in picked {
+        if plain_name(p) && carried.contains(p) && !out.contains(p) {
+            out.push(p.clone());
+        }
+    }
+    out
+}
+
+/// A file name with no way out of the folder it is written into.
+fn plain_name(n: &str) -> bool {
+    !n.is_empty() && n != "." && n != ".." && !n.contains(['/', '\\', '\0'])
+}
+
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn a_picked_receipt_goes_back_when_the_ledger_names_it() {
+        let carried = vec!["r1.jpg".to_string(), "r2.jpg".to_string()];
+        let picked = vec![
+            "backup_1.json".to_string(),
+            "r2.jpg".to_string(),
+            "r1.jpg".to_string(),
+            "stranger.jpg".to_string(),
+            "r1.jpg".to_string(),
+        ];
+        // the snapshot itself and a photo nobody names stay out; a name
+        // picked twice goes once
+        assert_eq!(restorable(&carried, &picked), ["r2.jpg", "r1.jpg"]);
+    }
+
+    #[test]
+    fn a_name_that_is_a_path_is_never_restored() {
+        // the ledger can be made to name anything, so naming it is not enough
+        let evil = [
+            "../ledger.db",
+            "sub/r1.jpg",
+            "..\\x",
+            "..",
+            ".",
+            "",
+            "r1.jpg\0.png",
+        ];
+        let names: Vec<String> = evil.iter().map(|s| s.to_string()).collect();
+        assert!(restorable(&names, &names).is_empty());
+    }
+
     use super::*;
 
     const DAY: i64 = 86_400_000;

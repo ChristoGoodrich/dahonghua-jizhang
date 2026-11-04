@@ -47,6 +47,12 @@ Future<List<String>> sweepReceipts({
 List<String> carriedReceipts() =>
     RustLib.instance.api.crateApiReceiptsCarriedReceipts();
 
+/// Of the files picked beside a snapshot, the ones to put back into
+/// `attachments/`: those the ledger, as just restored, names — and only
+/// under a plain name. See `core::receipts::restorable`.
+List<String> restorableReceipts({required List<String> picked}) =>
+    RustLib.instance.api.crateApiReceiptsRestorableReceipts(picked: picked);
+
 /// The list a sealed snapshot writes beside it.
 String receiptList({required List<String> names}) =>
     RustLib.instance.api.crateApiReceiptsReceiptList(names: names);

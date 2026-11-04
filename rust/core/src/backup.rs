@@ -17,6 +17,8 @@
 //! a cipher is not a decision the ledger needs to own. The name says whether a
 //! file is encrypted; what that means is the platform's.
 
+use crate::jsval::Value;
+
 /// What a backup taken at `ts` is called.
 ///
 /// `f64` and not an integer, because the TypeScript takes a JS number and
@@ -192,8 +194,57 @@ pub const MAX_BACKUPS: usize = 10;
 /// numbers live in different documents and mean different things.
 pub const BACKUP_APP_VERSION: i64 = 8;
 
+/// Whether a document is one of this app's snapshots, and so one 从文件恢复 may
+/// restore: the object a snapshot is — `app: "dahonghua"` beside an `entries`
+/// array — or a bare array of entries, which is what an older export was.
+///
+/// A sync document is neither (it carries `v`, not `app`). Restoring one would
+/// replace this phone's ledger with whatever the other phone held, when what
+/// it is for is a merge, so it is sent to 同步 instead of being read here.
+pub fn is_backup_doc(doc: &Value) -> bool {
+    match doc {
+        Value::Arr(_) => true,
+        Value::Obj(_) => {
+            matches!(doc.get("app"), Some(Value::Str(a)) if a == "dahonghua")
+                && matches!(doc.get("entries"), Some(Value::Arr(_)))
+        }
+        _ => false,
+    }
+}
+
 #[cfg(test)]
 mod tests {
+    use crate::jsval::parse_checked;
+
+    fn doc(json: &str) -> Value {
+        parse_checked(json).expect("a test document parses")
+    }
+
+    #[test]
+    fn a_snapshot_is_a_backup_and_so_is_an_old_bare_array() {
+        assert!(is_backup_doc(&doc(
+            r#"{"app":"dahonghua","version":8,"entries":[],"config":{}}"#
+        )));
+        assert!(is_backup_doc(&doc(r#"[{"id":"e1"}]"#)));
+    }
+
+    #[test]
+    fn a_sync_document_is_not_one() {
+        // it carries entries too, and restoring it would replace the ledger
+        // rather than merge it
+        assert!(!is_backup_doc(&doc(
+            r#"{"v":1,"entries":[],"accounts":[]}"#
+        )));
+    }
+
+    #[test]
+    fn neither_is_another_app_s_file_or_one_without_entries() {
+        assert!(!is_backup_doc(&doc(r#"{"app":"other","entries":[]}"#)));
+        assert!(!is_backup_doc(&doc(r#"{"app":"dahonghua","entries":{}}"#)));
+        assert!(!is_backup_doc(&doc(r#"{"app":"dahonghua"}"#)));
+        assert!(!is_backup_doc(&doc(r#""dahonghua""#)));
+    }
+
     use super::*;
 
     fn names(v: &[&str]) -> Vec<String> {

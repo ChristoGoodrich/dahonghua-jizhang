@@ -35,6 +35,16 @@ Future<String> encryptBackup({
 bool isEncryptedDoc({required String json}) =>
     RustLib.instance.api.crateApiBackupIsEncryptedDoc(json: json);
 
+/// What a file picked for 从文件恢复 is: `sealed` (an envelope, which needs
+/// its passphrase), `backup` (a snapshot `core::backup::is_backup_doc` will
+/// restore), `sync` (a 同步 document, which is merged there rather than
+/// restored here), or `other`.
+///
+/// Asked before anything is replaced, so a sync file picked here by mistake
+/// is turned away with where it belongs instead of becoming the ledger.
+String backupFileKind({required String json}) =>
+    RustLib.instance.api.crateApiBackupBackupFileKind(json: json);
+
 /// Open a sealed envelope with `password`.
 ///
 /// Refuses rather than returning a fragment: AES-GCM's authentication tag is

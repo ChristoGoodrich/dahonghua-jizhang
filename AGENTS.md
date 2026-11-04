@@ -461,6 +461,20 @@ app's own storage**, where an uninstall takes them — and installing a properly
 signed build over a debug-signed one requires exactly that uninstall — so every
 snapshot has 导出, which hands it to the share sheet. 同步 writes a document.
 
+**And what 导出 hands out, 从文件恢复 reads back.** For a long time nothing
+did: the only restore read the app's own folder, which is what the uninstall
+empties, so the export the screen asked for was a file nothing could open.
+The user picks the snapshot — a plain one with the receipt photos 导出 gave
+out beside it; a sealed one carries none, they stayed in `attachments/` — and
+two things are the core's. Which picked file is the snapshot is asked of its
+contents (`backup_file_kind`, over `core::backup::is_backup_doc`), and a sync
+document is turned away to 同步: it carries entries too, and restored it would
+replace the ledger with the other phone's. Which picked files go back as
+receipts is `core::receipts::restorable` — only names the restored ledger
+names, and only plain names, because the document and the names both came
+from outside the app. A snapshot of what it replaces is taken first, as
+before any restore.
+
 Android's Auto Backup is the exception that used to exist silently.
 `allowBackup` defaults to on, which uploaded the ledger to the user's cloud
 backup while the manifest claimed nothing left the device unless someone sent

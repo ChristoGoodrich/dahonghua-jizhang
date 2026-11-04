@@ -69,6 +69,14 @@ pub fn carried_receipts() -> Vec<String> {
     core::carried(store().ledger.all())
 }
 
+/// Of the files picked beside a snapshot, the ones to put back into
+/// `attachments/`: those the ledger, as just restored, names — and only
+/// under a plain name. See `core::receipts::restorable`.
+#[frb(sync)]
+pub fn restorable_receipts(picked: Vec<String>) -> Vec<String> {
+    core::restorable(&core::carried(store().ledger.all()), &picked)
+}
+
 /// The list a sealed snapshot writes beside it.
 #[frb(sync)]
 pub fn receipt_list(names: Vec<String>) -> String {

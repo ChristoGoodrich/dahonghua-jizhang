@@ -23,6 +23,12 @@
 // than restoring the half it managed to parse — a ledger half replaced is worse
 // than one not replaced.
 //
+// And what is handed out can come back in: 从文件恢复 reads a snapshot from
+// outside the app — the one exported before the uninstall, or one carried from
+// another phone — with the receipts picked beside it. It used not to: the only
+// restore read this app's own folder, which an uninstall had emptied, so the
+// export this screen asked for was a file nothing could open again.
+//
 // Sealing is optional. AES-256-GCM over a PBKDF2 key, done in the bridge —
 // a cipher is not a decision the ledger needs to own. Empty password on the
 // way out means a plain snapshot; on the way back in there is no empty path.
@@ -30,8 +36,11 @@
 // copies beside a sealed document, and the seal dialog says so. It writes
 // down which ones it names instead, so the receipt sweep keeps them.
 
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -195,14 +204,34 @@ Future<List<File>> filesToExport(String name) async {
   return out;
 }
 
+/// A file picked for 从文件恢复: what it is called, and its bytes when asked —
+/// asked of the snapshot first and of a receipt only when it goes back.
+typedef PickedFile = ({String name, Future<Uint8List> Function() read});
+
+/// The system picker, several files at once: a plain snapshot was exported
+/// with its receipts beside it, and they come back the same way.
+Future<List<PickedFile>> _pickFromSystem() async => [
+  for (final f in await FilePicker.pickFiles())
+    (name: f.name, read: f.readAsBytes),
+];
+
 class BackupScreen extends StatefulWidget {
-  const BackupScreen({super.key, this.zh = true, this.onRestored});
+  const BackupScreen({
+    super.key,
+    this.zh = true,
+    this.onRestored,
+    this.pickFiles,
+  });
 
   final bool zh;
 
   /// A restore replaced the ledger and the config, so both files need writing
   /// and every screen needs rebuilding.
   final VoidCallback? onRestored;
+
+  /// Where 从文件恢复 gets its files. A test cannot drive the system picker;
+  /// what is worth testing is what happens to what it hands back.
+  final Future<List<PickedFile>> Function()? pickFiles;
 
   @override
   State<BackupScreen> createState() => _BackupScreenState();
@@ -277,18 +306,15 @@ class _BackupScreenState extends State<BackupScreen> {
     );
   }
 
-  Future<void> _restore(backup.BackupInfoView b) async {
+  /// Ask before anything is replaced. True when the user said 恢复.
+  Future<bool> _confirmRestore(String title) async {
     final zh = widget.zh;
-    final when = _when(b, zh);
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         key: const Key('restore-dialog'),
         backgroundColor: palette.card,
-        title: Text(
-          zh ? '恢复到 $when?' : 'Restore $when?',
-          style: TextStyle(fontSize: 16, color: palette.ink),
-        ),
+        title: Text(title, style: TextStyle(fontSize: 16, color: palette.ink)),
         content: Text(
           zh
               ? '现在的账目和设置会被这份快照整个替换。这一步没有撤销。'
@@ -312,7 +338,44 @@ class _BackupScreenState extends State<BackupScreen> {
         ],
       ),
     );
-    if (ok != true) return;
+    return ok == true;
+  }
+
+  /// A sealed document opened with the passphrase asked for here. Null when
+  /// the dialog was cancelled or the passphrase did not open it, and in the
+  /// second case the screen has said so.
+  Future<String?> _unseal(String json) async {
+    final zh = widget.zh;
+    if (!mounted) return null;
+    final password = await showDialog<String>(
+      context: context,
+      builder: (ctx) => _PasswordDialog(zh: zh, unlocking: true),
+    );
+    if (password == null || !mounted) return null;
+    // The slow part, and the screen says so while it runs. Nothing is
+    // replaced until it is done.
+    setState(() => _busy = true);
+    final unlocked = await backup.decryptBackup(
+      envelope: json,
+      password: password,
+    );
+    if (!mounted) return null;
+    setState(() => _busy = false);
+    if (!unlocked.ok) {
+      setState(
+        () => _flash = zh
+            ? '口令不对，或者文件坏了 — 没有改动'
+            : 'Wrong password, or the file is damaged — nothing changed',
+      );
+      return null;
+    }
+    return unlocked.json;
+  }
+
+  Future<void> _restore(backup.BackupInfoView b) async {
+    final zh = widget.zh;
+    final when = _when(b, zh);
+    if (!await _confirmRestore(zh ? '恢复到 $when?' : 'Restore $when?')) return;
 
     // Take a snapshot of what is about to be replaced. Restoring is the one
     // action here with no undo, and the cheapest undo is another backup.
@@ -324,30 +387,9 @@ class _BackupScreenState extends State<BackupScreen> {
     final dir = await backupDir();
     var json = await File('${dir.path}/${b.name}').readAsString();
     if (b.encrypted || backup.isEncryptedDoc(json: json)) {
-      if (!mounted) return;
-      final password = await showDialog<String>(
-        context: context,
-        builder: (ctx) => _PasswordDialog(zh: zh, unlocking: true),
-      );
-      if (password == null || !mounted) return;
-      // The slow part, and the screen says so while it runs. Nothing is
-      // replaced until it is done.
-      setState(() => _busy = true);
-      final unlocked = await backup.decryptBackup(
-        envelope: json,
-        password: password,
-      );
-      if (!mounted) return;
-      setState(() => _busy = false);
-      if (!unlocked.ok) {
-        setState(
-          () => _flash = zh
-              ? '口令不对，或者文件坏了 — 没有改动'
-              : 'Wrong password, or the file is damaged — nothing changed',
-        );
-        return;
-      }
-      json = unlocked.json;
+      final opened = await _unseal(json);
+      if (opened == null) return;
+      json = opened;
     }
     final r = backup.restoreBackup(json: json);
     final packName = backup.packName(name: b.name);
@@ -367,6 +409,104 @@ class _BackupScreenState extends State<BackupScreen> {
       _flash = r.ok
           ? (widget.zh ? '已恢复 ${r.entries} 条' : 'Restored ${r.entries} entries')
           : (widget.zh ? '这份文件读不了，没有改动' : 'Unreadable — nothing changed');
+    });
+    if (r.ok) widget.onRestored?.call();
+  }
+
+  /// 从文件恢复: a snapshot from outside this app's folder, and the receipts
+  /// picked with it.
+  ///
+  /// Which picked file is the snapshot is asked of each file's contents
+  /// (`backup_file_kind`), not of its name, which a share sheet may change.
+  /// Only the `.json` ones are read for it when there are any, so picking a
+  /// snapshot and its two hundred receipts does not read two hundred photos to
+  /// find one document. A sync file is turned away to 同步, where it is
+  /// merged; restored, it would replace the ledger with the other phone's.
+  Future<void> _restoreFromFile() async {
+    final zh = widget.zh;
+    setState(() => _flash = null);
+    final picked = await (widget.pickFiles ?? _pickFromSystem)();
+    if (picked.isEmpty || !mounted) return; // cancelled, which is not a failure
+
+    final named = [
+      for (var i = 0; i < picked.length; i++)
+        if (picked[i].name.toLowerCase().endsWith('.json')) i,
+    ];
+    final docs = <(int, String, String)>[];
+    var sawSync = false;
+    for (final i
+        in named.isEmpty ? List.generate(picked.length, (i) => i) : named) {
+      final json = utf8.decode(await picked[i].read(), allowMalformed: true);
+      final kind = backup.backupFileKind(json: json);
+      if (kind == 'backup' || kind == 'sealed') docs.add((i, json, kind));
+      if (kind == 'sync') sawSync = true;
+    }
+    if (!mounted) return;
+    if (docs.length != 1) {
+      setState(
+        () => _flash = docs.length > 1
+            ? (zh
+                  ? '选了不止一份备份，一次只能恢复一份 — 没有改动'
+                  : 'More than one snapshot was picked; restore one at a time '
+                        '— nothing changed')
+            : sawSync
+            ? (zh
+                  ? '这是「同步」写出的文件，请到「同步」里读入 — 没有改动'
+                  : 'That file is from Sync; read it in there — nothing changed')
+            : (zh
+                  ? '没有找到能恢复的备份文件 — 没有改动'
+                  : 'None of those is a snapshot this app can restore '
+                        '— nothing changed'),
+      );
+      return;
+    }
+    final (at, raw, kind) = docs.single;
+    final name = picked[at].name;
+    if (!await _confirmRestore(zh ? '用 $name 恢复？' : 'Restore $name?')) {
+      return;
+    }
+
+    // What is about to be replaced, kept — as before a restore from the list.
+    await createBackup();
+    if (!mounted) return;
+    var json = raw;
+    if (kind == 'sealed') {
+      final opened = await _unseal(json);
+      if (opened == null) return;
+      json = opened;
+    }
+    final r = backup.restoreBackup(json: json);
+    var photos = 0;
+    if (r.ok) {
+      // The receipts the restored ledger names, each once, under a plain
+      // name: which those are is `restorable`'s, because the names came from
+      // outside the app.
+      final wanted = receipts
+          .restorableReceipts(
+            picked: [
+              for (var i = 0; i < picked.length; i++)
+                if (i != at) picked[i].name,
+            ],
+          )
+          .toSet();
+      final dest = await attachmentsDir();
+      for (var i = 0; i < picked.length; i++) {
+        if (i == at || !wanted.remove(picked[i].name)) continue;
+        await File(
+          '${dest.path}/${picked[i].name}',
+        ).writeAsBytes(await picked[i].read());
+        photos++;
+      }
+    }
+    await _reload();
+    if (!mounted) return;
+    setState(() {
+      _flash = r.ok
+          ? (zh
+                ? '已恢复 ${r.entries} 条${photos > 0 ? '，小票 $photos 张' : ''}'
+                : 'Restored ${r.entries} entries'
+                      '${photos > 0 ? ' and $photos receipts' : ''}')
+          : (zh ? '这份文件读不了，没有改动' : 'Unreadable — nothing changed');
     });
     if (r.ok) widget.onRestored?.call();
   }
@@ -440,6 +580,16 @@ class _BackupScreenState extends State<BackupScreen> {
                   : palette.inkSoft,
             ),
           ),
+          const SizedBox(height: 12),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: OutlinedButton.icon(
+              key: const Key('restore-from-file'),
+              onPressed: _busy ? null : _restoreFromFile,
+              icon: const Icon(Icons.file_open_outlined, size: 18),
+              label: Text(zh ? '从文件恢复' : 'Restore from a file'),
+            ),
+          ),
           if (_flash != null) ...[
             const SizedBox(height: 10),
             Text(
@@ -461,11 +611,17 @@ class _BackupScreenState extends State<BackupScreen> {
           Text(
             zh
                 ? '快照在这个 app 的存储里，卸载会一起没有 —— 装正式签名的版本就要先卸载，'
-                      '所以换版本前请先「导出」一份。可以给备份设口令；忘了口令就打不开了。'
+                      '所以换版本前请先「导出」一份，装好后用「从文件恢复」读回来：'
+                      '普通快照连同它的小票照片一起选上。加密的快照不带照片，'
+                      '重装或换手机后照片就没有了。忘了口令，加密的备份就打不开了。'
                 : 'Snapshots live in this app storage and an uninstall takes '
                       'them — which is what installing a properly signed build '
-                      'needs. Export one first. You can seal a snapshot with a '
-                      'password; without it the file cannot be opened.',
+                      'needs. Export one first, and once installed bring it back '
+                      'with Restore from a file, picking a plain snapshot '
+                      'together with its receipt photos. A sealed snapshot does '
+                      'not carry the photos, so they do not survive a reinstall '
+                      'or a new phone. Without its password a sealed snapshot '
+                      'cannot be opened.',
             key: const Key('backup-note'),
             style: TextStyle(fontSize: 11.5, color: palette.inkSoft),
           ),
@@ -604,11 +760,14 @@ class _PasswordDialogState extends State<_PasswordDialog> {
                   ? (zh ? '这份快照是加密的。' : 'This snapshot is sealed.')
                   : (zh
                         ? '留空就是不加密的普通快照。加密的快照只存账目和设置，'
-                              '不带小票照片 —— 照片还在手机里，恢复后照样能看。'
+                              '不带小票照片 —— 在这台手机上恢复照样能看，'
+                              '但导出后带不走，重装或换手机照片就没有了。'
                               '忘了口令，加密的备份就打不开了。'
                         : 'Leave empty for a plain snapshot. A sealed one holds '
                               'the entries and settings but not the receipt '
-                              'photos, which stay on this phone. It cannot be '
+                              'photos: restored on this phone they are still '
+                              'here, but they do not go with an export, so a '
+                              'reinstall or a new phone loses them. It cannot be '
                               'opened without its password.'),
               style: TextStyle(fontSize: 12.5, color: palette.inkSoft),
             ),
