@@ -28,6 +28,7 @@ use dahonghua_core::entry::{Io, Reimburse};
 use dahonghua_core::reimburse as core;
 use flutter_rust_bridge::frb;
 
+use super::catalog::custom_cats_of;
 use super::store::{store, store_marked};
 use crate::api::db;
 
@@ -74,6 +75,9 @@ pub struct ClaimList {
 
 #[frb(sync)]
 pub fn claims(zh: bool) -> ClaimList {
+    // A claim is an expense, and is named as its own category, the user's
+    // included. Taken before the store.
+    let custom = custom_cats_of(Io::Exp);
     let s = store();
     let mut out = ClaimList::default();
     for e in s.ledger.all() {
@@ -91,7 +95,7 @@ pub fn claims(zh: bool) -> ClaimList {
         } else {
             out.done_sum += rb_amt;
         }
-        let c = catalog::cat_of(e.io.unwrap_or(Io::Exp), &e.cat, &[]);
+        let c = catalog::cat_of(e.io.unwrap_or(Io::Exp), &e.cat, &custom);
         out.items.push(ClaimView {
             id: e.id.clone(),
             state: state.to_string(),
@@ -148,6 +152,9 @@ pub fn unmark_reimburse(id: String, now: i64) -> bool {
 /// first would be a second implementation of it.
 #[frb(sync)]
 pub fn refund_entry(id: String, amount: f64, zh: bool, new_id: String, now: i64) -> f64 {
+    // The refund's note names the category refunded — "退款：猫粮", not the
+    // fallback category's name. Only an expense is refunded.
+    let custom = custom_cats_of(Io::Exp);
     let (r, new_id) = {
         let mut s = store_marked();
         // Refunding an income would log a second income: only an expense.
@@ -165,7 +172,7 @@ pub fn refund_entry(id: String, amount: f64, zh: bool, new_id: String, now: i64)
             &id,
             amount,
             zh,
-            &[],
+            &custom,
             &acct,
             new_id.clone(),
             now,

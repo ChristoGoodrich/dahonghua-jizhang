@@ -12,12 +12,13 @@
 use super::day::parse_day;
 use dahonghua_core::budget::DayRow;
 use dahonghua_core::civil::Civil;
-use dahonghua_core::entry::Entry;
+use dahonghua_core::entry::{Entry, Io};
 use dahonghua_core::insight::{self, InsightCopy};
 use dahonghua_core::recap;
 use dahonghua_core::weekly::{self, WeekRow};
 use flutter_rust_bridge::frb;
 
+use super::catalog::custom_cats_of;
 use super::store::{by_id, settings_of, store};
 
 /// The entries named by `ids`, paired with the day Dart resolved for each.
@@ -192,7 +193,9 @@ pub(crate) fn insight_of(
             cat_budgets: &set.caps,
             daily: set.daily_budget,
         },
-        &[],
+        // "猫粮 is over its cap" names the user's own category, not the
+        // fallback one
+        &custom_cats_of(Io::Exp),
         today,
         zh,
         &c,

@@ -19,8 +19,10 @@
 use super::day::parse_day;
 use flutter_rust_bridge::frb;
 
+use dahonghua_core::entry::Io;
 use dahonghua_core::export::{to_csv, CustomCats, ExportRow};
 
+use super::catalog::custom_cats_of;
 use super::store::{by_id, store};
 
 /// The whole ledger as CSV **bytes**, oldest first.
@@ -38,6 +40,8 @@ use super::store::{by_id, store};
 /// not what it has ever held.
 #[frb(sync)]
 pub fn export_csv(ids: Vec<String>, days_of: Vec<String>) -> Vec<u8> {
+    // Taken before the store. A transfer has no categories of the user's own.
+    let (exp, inc) = (custom_cats_of(Io::Exp), custom_cats_of(Io::Inc));
     let s = store();
     let by = by_id(&s);
     let n = ids.len().min(days_of.len());
@@ -55,13 +59,14 @@ pub fn export_csv(ids: Vec<String>, days_of: Vec<String>) -> Vec<u8> {
         .iter()
         .map(|a| (a.id.clone(), a.name.clone()))
         .collect();
-    // No custom categories: this port has no editor for them yet.
+    // The CSV names each row's category, and a custom one was written under
+    // the fallback category's name.
     to_csv(
         &rows,
         &accounts,
         CustomCats {
-            exp: &[],
-            inc: &[],
+            exp: &exp,
+            inc: &inc,
             xfer: &[],
         },
     )

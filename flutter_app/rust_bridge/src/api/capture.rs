@@ -166,8 +166,10 @@ pub fn drain_captures(raws: Vec<RawNotifView>, now: i64) -> DrainSummary {
     let raw: Vec<RawNotif> = raws.iter().map(RawNotif::from).collect();
     let mut inbox = inbox_lock();
 
-    // No custom categories: this port has no editor for them yet. The core
-    // already takes them and prefers a custom keyword over a built-in one.
+    // No custom categories, and not for want of them. A custom category is
+    // only ever matched by its exact name against the label a bill carries
+    // (`keywords::map_category`), and a notification carries none: its note
+    // goes to the keyword table, whose keys are all built-in.
     let mut outcome = {
         let s = store();
         drain(&raw, &inbox, s.ledger.all(), &[])

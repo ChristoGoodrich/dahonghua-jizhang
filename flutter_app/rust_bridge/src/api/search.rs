@@ -17,6 +17,7 @@ use dahonghua_core::entry::Io;
 use dahonghua_core::filter::{matches_filter, parse_search_query, FilterState};
 use dahonghua_core::search::matches_search;
 
+use super::catalog::custom_cats_of;
 use super::store::{by_id, store};
 
 /// A wall-clock instant the platform has yet to place. `mo` is 1-based,
@@ -92,6 +93,9 @@ pub fn search_ids(
         date_from: from_ms,
         date_to: to_ms,
     };
+    // Taken before the store: a search for 猫粮 finds the entries filed under
+    // a custom 猫粮, which it could not when the lookup had only built-ins.
+    let (exp, inc) = (custom_cats_of(Io::Exp), custom_cats_of(Io::Inc));
     let s = store();
     let by = by_id(&s);
     ids.into_iter()
@@ -99,9 +103,8 @@ pub fn search_ids(
             let Some(e) = by.get(id.as_str()).copied() else {
                 return false;
             };
-            // No custom categories: this port has no editor for them yet, and
-            // the core already prefers a custom name over a built-in one.
-            matches_filter(e, &filter) && matches_search(e, &text, &[], zh)
+            let custom = if e.io == Some(Io::Inc) { &inc } else { &exp };
+            matches_filter(e, &filter) && matches_search(e, &text, custom, zh)
         })
         .collect()
 }

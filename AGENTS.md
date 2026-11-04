@@ -430,6 +430,16 @@ id inside a loop over ids — not for one spelling of it.
 timing assertion is the right tool for once: a quadratic list and a linear one
 return byte-identical answers, so no correctness test can tell them apart.
 
+**A category lookup takes the user's categories.** `cat_of` falls back to
+the *last* category for a key it does not know, so a lookup handed `&[]`
+draws a custom category as some other one and says nothing. Nine bridge paths
+did — search, bill import, the CSV, claims, a refund's note, 统计 twice, the
+insight and the AI readers — while every picker offered the category. Pass
+`catalog::custom_cats_of(io)` (Dart: `cats.dart`). AI requests still leave
+them out (`share: false`), and `custom_cats_test` holds both halves. Capture
+passes none, correctly: a notification carries no label, and a custom category
+is only ever matched by its exact name.
+
 **One row per id.** `Ledger::add` used to push without checking, so a ledger
 could hold two rows with one id, and three readers answered three ways: `get`
 and `by_id` found the first, the entry list's Dart map drew the last, and
