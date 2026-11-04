@@ -252,6 +252,34 @@ void main() {
       expect(st, isNotNull, reason: 'a cycle was configured, so there is one');
     });
 
+    testWidgets('a day the presets do not name, through 其他', (tester) async {
+      // A card billing on the 7th could not be set up: the presets were the
+      // only days on offer.
+      await show(tester);
+      await tester.tap(find.byKey(const Key('add-account')));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(const Key('new-name')), '浦发');
+      await tester.tap(find.byKey(const Key('kind-credit')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('stmt-day-other')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('day-7')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('due-day-other')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('day-26')));
+      await tester.pumpAndSettle();
+      // Shown among the chips, as the chosen one.
+      expect(find.byKey(const Key('stmt-day-7')), findsOneWidget);
+      expect(find.byKey(const Key('due-day-26')), findsOneWidget);
+      await tester.tap(find.byKey(const Key('new-ok')));
+      await tester.pumpAndSettle();
+
+      final made = accounts.balances().firstWhere((a) => a.name == '浦发');
+      expect(made.statementDay, 7);
+      expect(made.dueDay, 26);
+    });
+
     testWidgets('tapping the chosen day again clears it', (tester) async {
       await show(tester);
       await tester.tap(find.byKey(const Key('add-account')));

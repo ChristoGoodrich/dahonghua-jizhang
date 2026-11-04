@@ -180,6 +180,32 @@ void main() {
       expect(find.byKey(const Key('cycle-31')), findsNothing);
     });
 
+    testWidgets('takes any day through 其他, and shows it as chosen', (
+      tester,
+    ) async {
+      // The presets were the only choices: a salary paid on the 7th could not
+      // start a cycle.
+      await show(tester);
+      await tapSetting(tester, const Key('cycle-other'));
+      expect(find.byKey(const Key('day-pick')), findsOneWidget);
+      expect(find.byKey(const Key('day-28')), findsOneWidget);
+      expect(find.byKey(const Key('day-29')), findsNothing);
+      await tester.tap(find.byKey(const Key('day-7')));
+      await tester.pumpAndSettle();
+
+      expect(budget.settings().cycleStart, 7);
+      expect(textOf(tester, 'cycle-current'), contains('7'));
+      expect(find.byKey(const Key('cycle-7')), findsOneWidget);
+    });
+
+    testWidgets('a cancelled pick changes nothing', (tester) async {
+      await show(tester);
+      await tapSetting(tester, const Key('cycle-other'));
+      await tester.tap(find.byKey(const Key('day-pick-cancel')));
+      await tester.pumpAndSettle();
+      expect(budget.settings().cycleStart, 1);
+    });
+
     testWidgets('changing it changes which entries the budget counts', (
       tester,
     ) async {

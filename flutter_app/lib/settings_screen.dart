@@ -25,6 +25,7 @@ import 'src/rust/api/theme.dart' as theme;
 import 'prompt.dart';
 import 'reminders.dart';
 import 'tap.dart';
+import 'day_pick.dart';
 import 'glass.dart';
 import 'theme.dart';
 import 'toast.dart';
@@ -150,6 +151,37 @@ class _SettingsScreenState extends State<SettingsScreen> {
               if (f.detail.isNotEmpty) f.detail,
             ].join('\n');
     });
+  }
+
+  Future<void> _setReminder(String at) async {
+    remind.setDailyReminder(at: at);
+    setState(() => _remindAt = remind.dailyReminderAt());
+    await _syncReminders();
+  }
+
+  /// 其他: any time, typed on the phone's own keyboard. Typed rather than on
+  /// the dial: two fields are quicker for a time somebody already has in
+  /// mind, and they say 24-hour plainly.
+  Future<void> _pickReminder() async {
+    final p = _remindAt.split(':');
+    final initial = p.length == 2
+        ? TimeOfDay(
+            hour: int.tryParse(p[0]) ?? 21,
+            minute: int.tryParse(p[1]) ?? 0,
+          )
+        : const TimeOfDay(hour: 21, minute: 0);
+    final t = await showTimePicker(
+      context: context,
+      initialTime: initial,
+      initialEntryMode: TimePickerEntryMode.input,
+      builder: (ctx, child) => MediaQuery(
+        data: MediaQuery.of(ctx).copyWith(alwaysUse24HourFormat: true),
+        child: child!,
+      ),
+    );
+    if (t == null || !mounted) return;
+    String two(int n) => n.toString().padLeft(2, '0');
+    await _setReminder('${two(t.hour)}:${two(t.minute)}');
   }
 
   /// Hand the operating system whatever is switched on, and say so if it
@@ -450,53 +482,37 @@ class _SettingsScreenState extends State<SettingsScreen> {
               style: TextStyle(fontSize: 12, color: palette.inkSoft),
             ),
             const SizedBox(height: 12),
-            Row(
+            Text(
+              zh ? '每日提醒' : 'Daily',
+              style: TextStyle(fontSize: 15, color: palette.ink),
+            ),
+            const SizedBox(height: 8),
+            // Off is a real state, so the row of times includes a way back to
+            // it: tapping the chosen one again turns the reminder off. The
+            // quick ones, the chosen one if it is not among them, and 其他 for
+            // any minute of the day — the bridge took any, and the screen
+            // offered four. Under the label rather than beside it: with
+            // 其他 and a time of the user's own, the row is wider than a
+            // 360dp phone leaves beside a label.
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
               children: [
-                Text(
-                  zh ? '每日提醒' : 'Daily',
-                  style: TextStyle(fontSize: 15, color: palette.ink),
-                ),
-                const Spacer(),
-                // Off is a real state, so the row of times includes a way back to
-                // it: tapping the chosen one again turns the reminder off.
-                Wrap(
-                  spacing: 6,
-                  children: [
-                    for (final t in const ['08:00', '12:00', '21:00', '22:00'])
-                      GestureDetector(
-                        key: Key('remind-$t'),
-                        onTap: () async {
-                          final next = _remindAt == t ? '' : t;
-                          remind.setDailyReminder(at: next);
-                          setState(() => _remindAt = remind.dailyReminderAt());
-                          await _syncReminders();
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 9,
-                            vertical: 5,
-                          ),
-                          decoration: BoxDecoration(
-                            color: _remindAt == t
-                                ? palette.stamen.withValues(alpha: 0.18)
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(Rad.pill),
-                            border: Border.all(
-                              color: _remindAt == t
-                                  ? palette.stamen
-                                  : palette.line,
-                            ),
-                          ),
-                          child: Text(
-                            t,
-                            style: TextStyle(
-                              fontSize: 11.5,
-                              color: palette.ink,
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
+                for (final t in {
+                  ...const ['08:00', '12:00', '21:00', '22:00'],
+                  if (_remindAt.isNotEmpty) _remindAt,
+                }.toList()..sort())
+                  _chip(
+                    key: 'remind-$t',
+                    label: t,
+                    on: _remindAt == t,
+                    onTap: () => _setReminder(_remindAt == t ? '' : t),
+                  ),
+                _chip(
+                  key: 'remind-other',
+                  label: zh ? '其他' : 'Other',
+                  on: false,
+                  onTap: _pickReminder,
                 ),
               ],
             ),
@@ -753,14 +769,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
               runSpacing: 6,
               children: [
                 // 1..28 and no further: the months that have no 29th, 30th or
-                // 31st would skip a cycle entirely.
-                for (final d in const [1, 5, 10, 15, 20, 25, 28])
+                // 31st would skip a cycle entirely. The quick ones, the one in
+                // force if it is not among them, and 其他 for the rest.
+                for (final d in dayChoices(dayPresets, _cycleStart))
                   _chip(
                     key: 'cycle-$d',
                     label: '$d',
                     on: _cycleStart == d,
                     onTap: () => _setCycle(d),
                   ),
+                _chip(
+                  key: 'cycle-other',
+                  label: zh ? '其他' : 'Other',
+                  on: false,
+                  onTap: () async {
+                    final d = await pickMonthDay(
+                      context,
+                      current: _cycleStart,
+                      zh: zh,
+                    );
+                    if (d != null && mounted) _setCycle(d);
+                  },
+                ),
               ],
             ),
             const SizedBox(height: 8),

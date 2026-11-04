@@ -19,6 +19,7 @@ import 'src/rust/api/store.dart' as store;
 import 'account_detail_screen.dart';
 import 'amounts.dart';
 import 'tap.dart';
+import 'day_pick.dart';
 import 'glass.dart';
 import 'theme.dart';
 
@@ -613,7 +614,10 @@ class _NewAccountDialogState extends State<_NewAccountDialog> {
         spacing: 6,
         runSpacing: 6,
         children: [
-          for (final d in const [1, 5, 10, 15, 20, 25, 28])
+          // The quick ones, the chosen one if it is not among them, and 其他
+          // for any day to the 28th: a card billing on the 7th was one this
+          // could not set up.
+          for (final d in dayChoices(dayPresets, value))
             GestureDetector(
               key: Key('$keyPrefix-$d'),
               // Tapping the chosen one clears it: a card whose cycle was
@@ -640,6 +644,24 @@ class _NewAccountDialogState extends State<_NewAccountDialog> {
                 ),
               ),
             ),
+          GestureDetector(
+            key: Key('$keyPrefix-other'),
+            onTap: () async {
+              final d = await pickMonthDay(context, current: value, zh: zh);
+              if (d != null && mounted) onPick(d);
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(Rad.pill),
+                border: Border.all(color: palette.line),
+              ),
+              child: Text(
+                zh ? '其他' : 'Other',
+                style: TextStyle(fontSize: 12, color: palette.inkSoft),
+              ),
+            ),
+          ),
         ],
       ),
     ],
