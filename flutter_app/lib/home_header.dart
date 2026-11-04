@@ -28,6 +28,7 @@ class HomeHeader extends StatelessWidget {
     this.onOpenBudget,
     this.onOpenStats,
     this.onOpenAccount,
+    this.onShift,
     this.templates = const [],
     this.onTemplate,
     this.ledgers = const [],
@@ -58,6 +59,9 @@ class HomeHeader extends StatelessWidget {
   /// A banner about one account — 要还款了 — opens it.
   final ValueChanged<String>? onOpenAccount;
 
+  /// ‹ and ›: the cycle before, or the one after, up to today's.
+  final ValueChanged<int>? onShift;
+
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(bottom: 4),
@@ -70,6 +74,7 @@ class HomeHeader extends StatelessWidget {
           zh: zh,
           onToggleHidden: onToggleHidden,
           onTap: onOpenStats,
+          onShift: onShift,
         ),
         if (view.monthly != null || view.daily != null) ...[
           const SizedBox(height: 10),
@@ -122,6 +127,7 @@ class _SummaryCard extends StatelessWidget {
     required this.zh,
     required this.onToggleHidden,
     this.onTap,
+    this.onShift,
   });
 
   final home.HomeView view;
@@ -129,6 +135,7 @@ class _SummaryCard extends StatelessWidget {
   final bool zh;
   final VoidCallback onToggleHidden;
   final VoidCallback? onTap;
+  final ValueChanged<int>? onShift;
 
   @override
   Widget build(BuildContext context) {
@@ -160,6 +167,14 @@ class _SummaryCard extends StatelessWidget {
       children: [
         Row(
           children: [
+            if (onShift != null)
+              IconButton(
+                key: const Key('home-prev'),
+                tooltip: zh ? '上一个周期' : 'Previous cycle',
+                visualDensity: VisualDensity.compact,
+                icon: Icon(Icons.chevron_left_rounded, color: p.inkSoft),
+                onPressed: () => onShift!(-1),
+              ),
             Expanded(
               child: Text(
                 _cycleLabel(view, zh),
@@ -173,6 +188,16 @@ class _SummaryCard extends StatelessWidget {
                 ),
               ),
             ),
+            // No further forward than the cycle today is in: there is
+            // nothing ahead of it to show.
+            if (onShift != null)
+              IconButton(
+                key: const Key('home-next'),
+                tooltip: zh ? '下一个周期' : 'Next cycle',
+                visualDensity: VisualDensity.compact,
+                icon: Icon(Icons.chevron_right_rounded, color: p.inkSoft),
+                onPressed: view.current ? null : () => onShift!(1),
+              ),
             IconButton(
               key: const Key('hide-amounts'),
               tooltip: hidden

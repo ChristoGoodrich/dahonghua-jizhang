@@ -49,6 +49,10 @@ pub struct HomeView {
     /// cycle's pot when there is one. `None` when no cap is set.
     pub mood: Option<String>,
     pub insight: Option<InsightView>,
+    /// The cycle shown is the one `today` is in. 明细's ‹ › go back from it
+    /// and no further forward than it; 今日's pot and a card's bill coming due
+    /// are about today, and only the current cycle has them.
+    pub current: bool,
 }
 
 fn pot(s: &TierStatus) -> Option<PotView> {
@@ -70,19 +74,25 @@ fn pot(s: &TierStatus) -> Option<PotView> {
 /// `all_ids` and `all_days_of` are the same before the ledger filter: a
 /// card's statement is every charge on the card, whichever ledger each was
 /// filed in, and the repayment reminder is read from those.
+///
+/// `anchor` is a day in the cycle to show — `today` for this one, an earlier
+/// day for 明细's ‹. The shipping summary card had the same two arrows.
 #[frb(sync)]
+#[allow(clippy::too_many_arguments)]
 pub fn home(
     ids: Vec<String>,
     days_of: Vec<String>,
     all_ids: Vec<String>,
     all_days_of: Vec<String>,
+    anchor: String,
     today: String,
     zh: bool,
     copy: InsightCopyView,
 ) -> HomeView {
     let today = parse_day(&today);
     let set = settings_of();
-    let cycle = cycle_range(today, set.cycle_start);
+    let cycle = cycle_range(parse_day(&anchor), set.cycle_start);
+    let current = cycle.start == cycle_range(today, set.cycle_start).start;
 
     let (entries, days): (Vec<Entry>, Vec<Civil>) = {
         let s = store();
@@ -108,7 +118,12 @@ pub fn home(
 
     let o = stats::overview(&entries);
     let monthly = budget::monthly_status(&entries, set.budget);
-    let daily = budget::daily_status(&day_rows, set.daily_budget, today);
+    // 今日 is today's, and a cycle gone by has no today in it.
+    let daily = if current {
+        budget::daily_status(&day_rows, set.daily_budget, today)
+    } else {
+        budget::tier_status(0.0, 0.0)
+    };
     let mood = budget::lead_tier(&monthly, &daily)
         .and_then(budget::pot_mood)
         .map(|m| {
@@ -123,13 +138,14 @@ pub fn home(
     // `dueInsight ?? insight`. A card's bill is money with a deadline, and the
     // port computed the reminder nowhere: `credit_due_insight` was in the core
     // and nothing called it.
-    let due = {
+    let due = current.then(|| {
         let rows = super::statement::dated(&all_ids, &all_days_of);
         let symbol = super::money::cur_symbol(super::record::base_currency());
         let s = store();
         insight::credit_due_insight(&s.accounts, &rows, today, zh, &symbol, &copy_of(&copy))
-    };
+    });
     let insight = due
+        .flatten()
         .map(view_of)
         .or_else(|| insight_of(&entries, &day_rows, today, zh, &copy));
 
@@ -144,5 +160,6 @@ pub fn home(
         daily: pot(&daily),
         mood,
         insight,
+        current,
     }
 }

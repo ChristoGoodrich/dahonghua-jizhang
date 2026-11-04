@@ -3181,6 +3181,7 @@ fn wire__crate__api__home__home_impl(
             let api_days_of = <Vec<String>>::sse_decode(&mut deserializer);
             let api_all_ids = <Vec<String>>::sse_decode(&mut deserializer);
             let api_all_days_of = <Vec<String>>::sse_decode(&mut deserializer);
+            let api_anchor = <String>::sse_decode(&mut deserializer);
             let api_today = <String>::sse_decode(&mut deserializer);
             let api_zh = <bool>::sse_decode(&mut deserializer);
             let api_copy = <crate::api::report::InsightCopyView>::sse_decode(&mut deserializer);
@@ -3191,6 +3192,7 @@ fn wire__crate__api__home__home_impl(
                     api_days_of,
                     api_all_ids,
                     api_all_days_of,
+                    api_anchor,
                     api_today,
                     api_zh,
                     api_copy,
@@ -9587,6 +9589,7 @@ impl SseDecode for crate::api::home::HomeView {
         let mut var_daily = <Option<crate::api::home::PotView>>::sse_decode(deserializer);
         let mut var_mood = <Option<String>>::sse_decode(deserializer);
         let mut var_insight = <Option<crate::api::report::InsightView>>::sse_decode(deserializer);
+        let mut var_current = <bool>::sse_decode(deserializer);
         return crate::api::home::HomeView {
             start: var_start,
             last: var_last,
@@ -9598,6 +9601,7 @@ impl SseDecode for crate::api::home::HomeView {
             daily: var_daily,
             mood: var_mood,
             insight: var_insight,
+            current: var_current,
         };
     }
 }
@@ -12918,6 +12922,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::home::HomeView {
             self.daily.into_into_dart().into_dart(),
             self.mood.into_into_dart().into_dart(),
             self.insight.into_into_dart().into_dart(),
+            self.current.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -14798,6 +14803,7 @@ impl SseEncode for crate::api::home::HomeView {
         <Option<crate::api::home::PotView>>::sse_encode(self.daily, serializer);
         <Option<String>>::sse_encode(self.mood, serializer);
         <Option<crate::api::report::InsightView>>::sse_encode(self.insight, serializer);
+        <bool>::sse_encode(self.current, serializer);
     }
 }
 

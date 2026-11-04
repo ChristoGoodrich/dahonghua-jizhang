@@ -484,6 +484,7 @@ abstract class RustLibApi extends BaseApi {
     required List<String> daysOf,
     required List<String> allIds,
     required List<String> allDaysOf,
+    required String anchor,
     required String today,
     required bool zh,
     required InsightCopyView copy,
@@ -3700,6 +3701,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     required List<String> daysOf,
     required List<String> allIds,
     required List<String> allDaysOf,
+    required String anchor,
     required String today,
     required bool zh,
     required InsightCopyView copy,
@@ -3712,6 +3714,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           sse_encode_list_String(daysOf, serializer);
           sse_encode_list_String(allIds, serializer);
           sse_encode_list_String(allDaysOf, serializer);
+          sse_encode_String(anchor, serializer);
           sse_encode_String(today, serializer);
           sse_encode_bool(zh, serializer);
           sse_encode_box_autoadd_insight_copy_view(copy, serializer);
@@ -3722,7 +3725,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           decodeErrorData: null,
         ),
         constMeta: kCrateApiHomeHomeConstMeta,
-        argValues: [ids, daysOf, allIds, allDaysOf, today, zh, copy],
+        argValues: [ids, daysOf, allIds, allDaysOf, anchor, today, zh, copy],
         apiImpl: this,
       ),
     );
@@ -3730,7 +3733,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiHomeHomeConstMeta => const TaskConstMeta(
     debugName: "home",
-    argNames: ["ids", "daysOf", "allIds", "allDaysOf", "today", "zh", "copy"],
+    argNames: [
+      "ids",
+      "daysOf",
+      "allIds",
+      "allDaysOf",
+      "anchor",
+      "today",
+      "zh",
+      "copy",
+    ],
   );
 
   @override
@@ -9707,8 +9719,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   HomeView dco_decode_home_view(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 10)
-      throw Exception('unexpected arr length: expect 10 but see ${arr.length}');
+    if (arr.length != 11)
+      throw Exception('unexpected arr length: expect 11 but see ${arr.length}');
     return HomeView(
       start: dco_decode_String(arr[0]),
       last: dco_decode_String(arr[1]),
@@ -9720,6 +9732,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       daily: dco_decode_opt_box_autoadd_pot_view(arr[7]),
       mood: dco_decode_opt_String(arr[8]),
       insight: dco_decode_opt_box_autoadd_insight_view(arr[9]),
+      current: dco_decode_bool(arr[10]),
     );
   }
 
@@ -12091,6 +12104,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_daily = sse_decode_opt_box_autoadd_pot_view(deserializer);
     var var_mood = sse_decode_opt_String(deserializer);
     var var_insight = sse_decode_opt_box_autoadd_insight_view(deserializer);
+    var var_current = sse_decode_bool(deserializer);
     return HomeView(
       start: var_start,
       last: var_last,
@@ -12102,6 +12116,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       daily: var_daily,
       mood: var_mood,
       insight: var_insight,
+      current: var_current,
     );
   }
 
@@ -14755,6 +14770,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_opt_box_autoadd_pot_view(self.daily, serializer);
     sse_encode_opt_String(self.mood, serializer);
     sse_encode_opt_box_autoadd_insight_view(self.insight, serializer);
+    sse_encode_bool(self.current, serializer);
   }
 
   @protected

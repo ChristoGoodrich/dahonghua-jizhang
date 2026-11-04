@@ -232,6 +232,13 @@ class _EntryListScreenState extends State<EntryListScreen> {
 
   static const _calKey = 'ledger-calendar';
 
+  /// A day in the cycle the head shows, or null for the one today is in —
+  /// 明细's ‹ ›, the shipping summary card's. Null rather than today's date,
+  /// so a list left open over midnight follows the day. Kept in page storage
+  /// for the calendar's reason: the shell rebuilds this screen after a save.
+  String? _headAnchor;
+  static const _headKey = 'ledger-head-anchor';
+
   @override
   void initState() {
     super.initState();
@@ -243,6 +250,10 @@ class _EntryListScreenState extends State<EntryListScreen> {
       _calAnchor = anchor;
       _calPicked = picked;
     }
+    final head = PageStorage.maybeOf(
+      context,
+    )?.readState(context, identifier: _headKey);
+    if (head is String) _headAnchor = head;
     _reload();
   }
 
@@ -283,12 +294,14 @@ class _EntryListScreenState extends State<EntryListScreen> {
     }
     final ledgers = catalog.pickableLedgers(keep: scope);
 
+    final today = localDay(DateTime.now());
     final head = home.home(
       ids: ids,
       daysOf: days,
       allIds: allIds,
       allDaysOf: allDays,
-      today: localDay(DateTime.now()),
+      anchor: _headAnchor ?? today,
+      today: today,
       zh: widget.zh,
       copy: insightCopy(widget.zh),
     );
@@ -300,6 +313,23 @@ class _EntryListScreenState extends State<EntryListScreen> {
     );
 
     final q = _query.text.trim();
+    // A cycle gone by shows its own rows under its own totals, as the
+    // shipping list did; this one shows them all, as this list always has. A
+    // search is over everything either way.
+    if (!head.current && q.isEmpty) {
+      (ids, days) = _only(
+        ids,
+        days,
+        period
+            .idsInPeriod(
+              ids: ids,
+              daysOf: days,
+              anchor: _headAnchor ?? today,
+              period: 'month',
+            )
+            .toSet(),
+      );
+    }
     search.ParsedQueryView? parsed;
     if (q.isNotEmpty) {
       // The query may name a range, and a range is not something Rust can
@@ -458,6 +488,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
                                 onOpenBudget: widget.onOpenBudget,
                                 onOpenStats: widget.onOpenStats,
                                 onOpenAccount: widget.onOpenAccount,
+                                onShift: _shiftHead,
                                 templates: catalog.templates(),
                                 onTemplate: _logTemplate,
                                 ledgers: _ledgers,
@@ -564,6 +595,23 @@ class _EntryListScreenState extends State<EntryListScreen> {
         },
       ),
     );
+  }
+
+  /// 明细's ‹ ›: the head, and the rows under it, a cycle earlier or later.
+  /// No further forward than the cycle today is in, which is null again.
+  void _shiftHead(int dir) {
+    final today = localDay(DateTime.now());
+    final next = period.stepPeriod(
+      anchor: _headAnchor ?? today,
+      period: 'month',
+      dir: dir,
+    );
+    _headAnchor = next;
+    _reload();
+    if (_home?.current ?? true) _headAnchor = null;
+    PageStorage.maybeOf(
+      context,
+    )?.writeState(context, _headAnchor, identifier: _headKey);
   }
 
   void _stepCal(int dir) {
@@ -1382,9 +1430,26 @@ class _EntryListScreenState extends State<EntryListScreen> {
     padding: EdgeInsets.fromLTRB(22, b.top, 22, 0),
     children: [
       b.header,
+      // A cycle gone by with nothing in it keeps its head, ‹ › and all, or
+      // there would be no way back from it.
+      if (!_searching && _home != null && !_home!.current)
+        HomeHeader(
+          view: _home!,
+          zh: zh,
+          hidden: privacy.hideAmounts(),
+          onToggleHidden: () {
+            privacy.setHideAmounts(hidden: !privacy.hideAmounts());
+            setState(() {});
+            widget.onPrivacy?.call();
+          },
+          onShift: _shiftHead,
+          ledgers: _ledgers,
+          ledger: _scope,
+          onLedger: _pickLedger,
+        )
       // An empty ledger picked in the bar is still a list with a bar over
       // it: without one here there would be no way back to 全部.
-      if (!_searching && _ledgers.isNotEmpty) ...[
+      else if (!_searching && _ledgers.isNotEmpty) ...[
         LedgerBar(
           ledgers: _ledgers,
           current: _scope,
@@ -1395,7 +1460,9 @@ class _EntryListScreenState extends State<EntryListScreen> {
       ],
       // A first launch may already have templates — imported, or synced from
       // another phone — and one press is the quickest first entry there is.
-      if (!_searching && catalog.templates().isNotEmpty)
+      if (!_searching &&
+          (_home?.current ?? true) &&
+          catalog.templates().isNotEmpty)
         TemplateChips(
           templates: catalog.templates(),
           zh: zh,
@@ -1429,6 +1496,8 @@ class _EntryListScreenState extends State<EntryListScreen> {
           Text(
             _query.text.trim().isNotEmpty
                 ? (zh ? '没有找到' : 'Nothing matched')
+                : !(_home?.current ?? true)
+                ? (zh ? '这个周期没有记账' : 'Nothing in this cycle')
                 // a ledger with nothing in it yet is not an empty app
                 : _scope.isNotEmpty
                 ? (zh ? '「$_scope」里还没有账' : 'Nothing in $_scope yet')
@@ -1436,7 +1505,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
             key: const Key('list-empty'),
             style: TextStyle(fontSize: 13, color: palette.inkSoft),
           ),
-          if (_query.text.trim().isEmpty) ...[
+          if (_query.text.trim().isEmpty && (_home?.current ?? true)) ...[
             const SizedBox(height: 6),
             Text(
               _scope.isNotEmpty

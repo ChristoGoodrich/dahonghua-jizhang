@@ -165,6 +165,77 @@ void main() {
     });
   });
 
+  group('another cycle', () {
+    // The shipping summary card had ‹ and ›, and moved the totals, the pots,
+    // the insight and the rows to the cycle chosen. The port's head showed
+    // this cycle and only this one.
+    int lastCycle(int day) {
+      final n = DateTime.now();
+      return DateTime(n.year, n.month - 1, day, 12).millisecondsSinceEpoch;
+    }
+
+    testWidgets('‹ shows the last one, its totals and its rows', (
+      tester,
+    ) async {
+      add('now', 'exp', 30);
+      add('then', 'exp', 50, ts: lastCycle(10));
+      await show(tester);
+      final here = text(tester, 'home-cycle');
+      expect(find.byKey(const Key('row-now')), findsOneWidget);
+
+      await tester.tap(find.byKey(const Key('home-prev')));
+      await tester.pumpAndSettle();
+
+      expect(text(tester, 'home-cycle'), isNot(here));
+      expect(text(tester, 'home-net'), contains('50'));
+      expect(find.byKey(const Key('row-then')), findsOneWidget);
+      expect(find.byKey(const Key('row-now')), findsNothing);
+
+      await tester.tap(find.byKey(const Key('home-next')));
+      await tester.pumpAndSettle();
+      expect(text(tester, 'home-cycle'), here);
+      // this cycle's list is the whole ledger, as it always was
+      expect(find.byKey(const Key('row-now')), findsOneWidget);
+      expect(find.byKey(const Key('row-then')), findsOneWidget);
+    });
+
+    testWidgets('› goes no further than this one', (tester) async {
+      add('now', 'exp', 30);
+      await show(tester);
+      final next = tester.widget<IconButton>(
+        find.byKey(const Key('home-next')),
+      );
+      expect(next.onPressed, isNull);
+    });
+
+    testWidgets('a cycle with nothing in it keeps its arrows', (tester) async {
+      // Without them an empty month would be a dead end.
+      add('now', 'exp', 30);
+      await show(tester);
+
+      await tester.tap(find.byKey(const Key('home-prev')));
+      await tester.pumpAndSettle();
+      expect(find.text('这个周期没有记账'), findsOneWidget);
+
+      await tester.tap(find.byKey(const Key('home-next')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('row-now')), findsOneWidget);
+    });
+
+    testWidgets("today's pot is this cycle's only", (tester) async {
+      setBudget(monthly: 1000, daily: 100);
+      add('now', 'exp', 30);
+      add('then', 'exp', 50, ts: lastCycle(10));
+      await show(tester);
+      expect(find.byKey(const Key('pot-day-line')), findsOneWidget);
+
+      await tester.tap(find.byKey(const Key('home-prev')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('pot-day-line')), findsNothing);
+      expect(find.byKey(const Key('pot-month-line')), findsOneWidget);
+    });
+  });
+
   group('the summary', () {
     /// 本月攒下的 is the cycle's, not the ledger's: an expense two months back
     /// is in the list below and not in the card above it.
