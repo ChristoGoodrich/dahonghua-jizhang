@@ -12,6 +12,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/main.dart' show App;
+import 'package:flutter_app/src/rust/api/accounts.dart' as accounts;
+import 'package:flutter_app/src/rust/api/catalog.dart' as catalog;
 import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_app/src/rust/api/subscriptions.dart' as subs;
 import 'package:flutter_app/subs_screen.dart';
@@ -315,6 +317,110 @@ void main() {
   });
 
   group('creating one', () {
+    /// Into view inside the dialog first: its content scrolls, and a chip
+    /// below the fold is not one a tap can reach.
+    Future<void> pick(WidgetTester tester, String key) async {
+      await tester.ensureVisible(find.byKey(Key(key)));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(Key(key)));
+      await tester.pumpAndSettle();
+    }
+
+    Future<void> open(WidgetTester tester, String name, String amt) async {
+      await show(tester);
+      await tester.tap(find.byKey(const Key('add-sub')));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(const Key('sub-name')), name);
+      await tester.enterText(find.byKey(const Key('sub-amt')), amt);
+    }
+
+    testWidgets('a yearly one charges in the month picked', (tester) async {
+      // It was stamped with the month it was made in, whatever the renewal.
+      await open(tester, '域名', '68');
+      await pick(tester, 'freq-yearly');
+      await pick(tester, 'sub-month-3');
+      await pick(tester, 'sub-ok');
+
+      final made = subs.subs().single;
+      expect((made.freq, made.month), ('yearly', 3));
+    });
+
+    testWidgets('every category is offered, the user\'s own too', (
+      tester,
+    ) async {
+      // only the first six were, which left out 医疗 and 学习
+      catalog.addCustomCat(io: 'exp', key: 'c1', name: '猫粮', emoji: '🐈');
+      await open(tester, '猫粮月供', '120');
+      expect(find.byKey(const Key('sub-cat-health')), findsOneWidget);
+      expect(find.byKey(const Key('sub-cat-study')), findsOneWidget);
+      await pick(tester, 'sub-cat-c1');
+      await pick(tester, 'sub-ok');
+      expect(subs.subs().single.cat, 'c1');
+    });
+
+    testWidgets('a transfer, between two accounts', (tester) async {
+      accounts.addAccount(id: 'card', name: '招行', balance: 0, kind: 'cash');
+      await open(tester, '每月存钱', '1000');
+      await pick(tester, 'sub-kind-xfer');
+      expect(find.byKey(const Key('sub-periods')), findsNothing);
+      await pick(tester, 'sub-to-card');
+      await pick(tester, 'sub-ok');
+
+      final made = subs.subs().single;
+      expect(made.isTransfer, isTrue);
+      expect(made.to, 'card');
+      expect(made.from, isNot('card'));
+      expect(made.cat, 'transfer');
+      // and its row says where the money goes
+      expect(
+        tester.widget<Text>(find.byKey(Key('sub-${made.id}-due'))).data,
+        contains('→ 招行'),
+      );
+    });
+
+    testWidgets('and never to where it comes from', (tester) async {
+      accounts.addAccount(id: 'card', name: '招行', balance: 0, kind: 'cash');
+      await open(tester, '还信用卡', '500');
+      await pick(tester, 'sub-kind-xfer');
+      await pick(tester, 'sub-to-card');
+      // the from takes the to's account, and the to moves aside
+      await pick(tester, 'sub-from-card');
+      expect(find.byKey(const Key('sub-to-card')), findsNothing);
+      await pick(tester, 'sub-ok');
+
+      final made = subs.subs().single;
+      expect(made.from, 'card');
+      expect(made.to, isNot('card'));
+    });
+
+    testWidgets('a transfer is not offered with one account', (tester) async {
+      await open(tester, 'x', '1');
+      expect(find.byKey(const Key('sub-kind-xfer')), findsNothing);
+    });
+
+    testWidgets('and one with the same account at both ends is refused', (
+      tester,
+    ) async {
+      // a restored file or a future screen could ask; the store says no
+      final id = subs.addSub(
+        sub: const subs.NewSub(
+          name: 'x',
+          amt: 1,
+          freq: 'monthly',
+          day: 1,
+          cat: 'transfer',
+          emoji: '🔄',
+          isTransfer: true,
+          from: 'default',
+          to: 'default',
+        ),
+        id: 's1',
+        now: 0,
+      );
+      expect(id, isEmpty);
+      expect(subs.subs(), isEmpty);
+    });
+
     testWidgets('takes a name, an amount, a frequency and a day',
         (tester) async {
       await show(tester);

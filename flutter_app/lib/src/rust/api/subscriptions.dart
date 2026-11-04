@@ -11,7 +11,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 List<SubView> subs() => RustLib.instance.api.crateApiSubscriptionsSubs();
 
-/// Create a subscription. Returns its id.
+/// Create a subscription. Returns its id, or an empty one for a transfer that
+/// does not name two different accounts (`subs::transfer_ends_valid`).
 ///
 /// `day` is clamped to 1..=28 and `month` to 1..=12, as the shipping form does:
 /// a subscription billed on the 31st would skip February, and the picker never

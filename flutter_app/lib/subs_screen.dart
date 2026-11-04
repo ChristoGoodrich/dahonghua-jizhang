@@ -16,8 +16,10 @@ import 'package:flutter/material.dart';
 // different type with the same name, and passing it here does not typecheck.
 import 'package:flutter_rust_bridge/flutter_rust_bridge.dart' show Int64List;
 
+import 'src/rust/api/accounts.dart' as accounts;
 import 'src/rust/api/catalog.dart' as catalog;
 import 'src/rust/api/money.dart' as money;
+import 'src/rust/api/store.dart' as store;
 import 'src/rust/api/subscriptions.dart' as subs;
 import 'tap.dart';
 import 'glass.dart';
@@ -227,6 +229,15 @@ class _SubsScreenState extends State<SubsScreen> {
               ? '下次 ${dueDate.month}月${dueDate.day}日'
               : 'Next ${dueDate.month}/${dueDate.day}');
     final plan = s.periods == null ? '' : '${s.charged}/${s.periods} · ';
+    // A transfer says where it moves the money, as the shipping row did.
+    final route = s.isTransfer && s.from != null && s.to != null
+        ? () {
+            final names = {
+              for (final a in accounts.accountNames(zh: zh)) a.id: a.name,
+            };
+            return '${names[s.from] ?? s.from} → ${names[s.to] ?? s.to} · ';
+          }()
+        : '';
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
@@ -268,7 +279,7 @@ class _SubsScreenState extends State<SubsScreen> {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    '$plan$freqLabel · $dueLabel',
+                    '$route$plan$freqLabel · $dueLabel',
                     key: Key('sub-${s.id}-due'),
                     style: TextStyle(
                       fontSize: 12,
@@ -327,6 +338,21 @@ class _NewSubDialogState extends State<_NewSubDialog> {
   String _freq = 'monthly';
   String _cat = 'home';
 
+  /// 支出 or 转账. A transfer moves money between two of the user's accounts
+  /// each period — a savings plan, a card's repayment — and the sweep could
+  /// always post one; only the form could not make one.
+  bool _transfer = false;
+  late final List<store.AccountView> _accounts = accounts.pickable(
+    selected: '',
+  );
+  late String _from = _accounts.isEmpty ? '' : _accounts.first.id;
+  late String _to = _accounts.length < 2 ? '' : _accounts[1].id;
+
+  /// The month a yearly one charges in. It was stamped with the month the
+  /// subscription was made in, so a renewal due in March, set up in
+  /// November, charged in November.
+  int _month = DateTime.now().month;
+
   @override
   void dispose() {
     _name.dispose();
@@ -345,21 +371,38 @@ class _NewSubDialogState extends State<_NewSubDialog> {
     if (amt <= 0) return;
 
     final cat = catOf(io: 'exp', key: _cat);
-    subs.addSub(
-      sub: subs.NewSub(
-        name: name,
-        amt: amt,
-        freq: _freq,
-        day: int.tryParse(_day.text) ?? 1,
-        month: DateTime.now().month,
-        cat: _cat,
-        emoji: cat.e.isEmpty ? '🔁' : cat.e,
-        isTransfer: false,
-        periods: int.tryParse(_periods.text),
-      ),
+    final id = subs.addSub(
+      sub: _transfer
+          // the shipping form's transfer: its own mark and category, and
+          // no instalments — a plan pays off a debt, not a move
+          ? subs.NewSub(
+              name: name,
+              amt: amt,
+              freq: _freq,
+              day: int.tryParse(_day.text) ?? 1,
+              month: _month,
+              cat: 'transfer',
+              emoji: '🔄',
+              isTransfer: true,
+              from: _from,
+              to: _to,
+            )
+          : subs.NewSub(
+              name: name,
+              amt: amt,
+              freq: _freq,
+              day: int.tryParse(_day.text) ?? 1,
+              month: _month,
+              cat: _cat,
+              emoji: cat.e.isEmpty ? '🔁' : cat.e,
+              isTransfer: false,
+              periods: int.tryParse(_periods.text),
+            ),
       id: 's${DateTime.now().millisecondsSinceEpoch}',
       now: DateTime.now().millisecondsSinceEpoch,
     );
+    // refused: a transfer with no second account, or one to itself
+    if (id.isEmpty) return;
     Navigator.pop(context, true);
   }
 
@@ -404,6 +447,28 @@ class _NewSubDialogState extends State<_NewSubDialog> {
               cursorColor: palette.stamen,
               decoration: _field(zh ? '金额' : 'Amount'),
             ),
+            // 转账 needs two accounts to be one, so with fewer it is not
+            // offered, as the shipping form did not offer it.
+            if (_accounts.length >= 2) ...[
+              const SizedBox(height: 14),
+              Wrap(
+                spacing: 6,
+                children: [
+                  _chip(
+                    key: 'sub-kind-exp',
+                    label: zh ? '支出' : 'Expense',
+                    on: !_transfer,
+                    onTap: () => setState(() => _transfer = false),
+                  ),
+                  _chip(
+                    key: 'sub-kind-xfer',
+                    label: zh ? '转账' : 'Transfer',
+                    on: _transfer,
+                    onTap: () => setState(() => _transfer = true),
+                  ),
+                ],
+              ),
+            ],
             const SizedBox(height: 14),
             Wrap(
               spacing: 6,
@@ -419,6 +484,22 @@ class _NewSubDialogState extends State<_NewSubDialog> {
                   ),
               ],
             ),
+            if (_freq == 'yearly') ...[
+              const SizedBox(height: 10),
+              Wrap(
+                spacing: 4,
+                runSpacing: 4,
+                children: [
+                  for (var m = 1; m <= 12; m++)
+                    _chip(
+                      key: 'sub-month-$m',
+                      label: zh ? '$m月' : '$m',
+                      on: _month == m,
+                      onTap: () => setState(() => _month = m),
+                    ),
+                ],
+              ),
+            ],
             const SizedBox(height: 10),
             Row(
               children: [
@@ -432,32 +513,54 @@ class _NewSubDialogState extends State<_NewSubDialog> {
                     decoration: _field(zh ? '日' : 'Day'),
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: TextField(
-                    key: const Key('sub-periods'),
-                    controller: _periods,
-                    keyboardType: TextInputType.number,
-                    cursorColor: palette.stamen,
-                    decoration: _field(zh ? '分期数（可空）' : 'Instalments'),
+                if (!_transfer) ...[
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: TextField(
+                      key: const Key('sub-periods'),
+                      controller: _periods,
+                      keyboardType: TextInputType.number,
+                      cursorColor: palette.stamen,
+                      decoration: _field(zh ? '分期数（可空）' : 'Instalments'),
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
             const SizedBox(height: 14),
-            Wrap(
-              spacing: 6,
-              runSpacing: 6,
-              children: [
-                for (final c in cats.take(6))
-                  _chip(
-                    key: 'sub-cat-${c.k}',
-                    label: '${c.e} ${catalog.catName(cat: c, zh: zh)}',
-                    on: _cat == c.k,
-                    onTap: () => setState(() => _cat = c.k),
-                  ),
-              ],
-            ),
+            if (_transfer) ...[
+              _accountRow(zh ? '转出' : 'From', 'sub-from', _from, zh, (id) {
+                _from = id;
+                // never to where it comes from: the other end moves aside
+                if (_to == id) {
+                  _to = _accounts.firstWhere((a) => a.id != id).id;
+                }
+              }),
+              const SizedBox(height: 10),
+              _accountRow(
+                zh ? '转入' : 'To',
+                'sub-to',
+                _to,
+                zh,
+                (id) => _to = id,
+                except: _from,
+              ),
+            ] else
+              // Every category, the user's own included: the first six left
+              // out 医疗, 学习 and every custom one.
+              Wrap(
+                spacing: 6,
+                runSpacing: 6,
+                children: [
+                  for (final c in cats)
+                    _chip(
+                      key: 'sub-cat-${c.k}',
+                      label: '${c.e} ${catalog.catName(cat: c, zh: zh)}',
+                      on: _cat == c.k,
+                      onTap: () => setState(() => _cat = c.k),
+                    ),
+                ],
+              ),
           ],
         ),
       ),
@@ -477,6 +580,35 @@ class _NewSubDialogState extends State<_NewSubDialog> {
       ],
     );
   }
+
+  Widget _accountRow(
+    String label,
+    String keyPrefix,
+    String selected,
+    bool zh,
+    ValueChanged<String> pick, {
+    String? except,
+  }) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(label, style: TextStyle(fontSize: 12, color: palette.inkSoft)),
+      const SizedBox(height: 6),
+      Wrap(
+        spacing: 6,
+        runSpacing: 6,
+        children: [
+          for (final a in _accounts)
+            if (a.id != except)
+              _chip(
+                key: '$keyPrefix-${a.id}',
+                label: zh ? a.name : (a.nameEn ?? a.name),
+                on: selected == a.id,
+                onTap: () => setState(() => pick(a.id)),
+              ),
+        ],
+      ),
+    ],
+  );
 
   Widget _chip({
     required String key,
