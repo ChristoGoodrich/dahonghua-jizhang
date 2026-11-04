@@ -471,6 +471,14 @@ app's own storage**, where an uninstall takes them — and installing a properly
 signed build over a debug-signed one requires exactly that uninstall — so every
 snapshot has 导出, which hands it to the share sheet. 同步 writes a document.
 
+**自动备份 takes one at launch** when it is on and the newest snapshot is a
+day or a week old — `core::backup::auto_due`, the shipping rule, except that
+a snapshot dated after now (a clock set back) does not hold it off. It runs
+before the receipt sweep and, like the sweep, **only when the ledger
+loaded**: a snapshot of an unread, empty ledger would push a good one off
+the shelf. The setting is in the config under the shipping keys,
+`settings.autoBackup` and `settings.backupFrequency`.
+
 **And what 导出 hands out, 从文件恢复 reads back.** For a long time nothing
 did: the only restore read the app's own folder, which is what the uninstall
 empties, so the export the screen asked for was a file nothing could open.

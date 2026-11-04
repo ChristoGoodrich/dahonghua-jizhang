@@ -213,3 +213,56 @@ Future<bool> confirmDelete(
   );
   return ok ?? false;
 }
+
+/// 删除之前问一句, for what is not an entry: a tag, a ledger, a category, a
+/// subcategory, an asset, a loan.
+///
+/// These deleted on the first tap. None of them has a 撤销, an unsettled
+/// loan is money somebody still owes, and a deleted category is one every
+/// entry filed under it stops being shown as. So the dialog says what the
+/// delete leaves behind — `body`, the caller's, because only the caller knows
+/// — and that it cannot be undone, which is what the shipping app said.
+Future<bool> confirmRemove(
+  BuildContext context, {
+  required bool zh,
+  required String title,
+  required String body,
+}) async {
+  final p = palette;
+  final ok = await showDialog<bool>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      key: const Key('remove-confirm'),
+      backgroundColor: p.card,
+      title: Text(
+        title,
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w700,
+          color: p.ink,
+        ),
+      ),
+      content: Text(
+        zh ? '$body\n删除后不能撤销。' : '$body\nThis cannot be undone.',
+        style: TextStyle(fontSize: 14, height: 1.5, color: p.inkSoft),
+      ),
+      actions: [
+        TextButton(
+          key: const Key('remove-cancel'),
+          onPressed: () => Navigator.pop(ctx, false),
+          child: Text(zh ? '取消' : 'Cancel', style: TextStyle(color: p.ink)),
+        ),
+        TextButton(
+          key: const Key('remove-ok'),
+          onPressed: () => Navigator.pop(ctx, true),
+          style: TextButton.styleFrom(foregroundColor: p.warn),
+          child: Text(
+            zh ? '删除' : 'Delete',
+            style: const TextStyle(fontWeight: FontWeight.w700),
+          ),
+        ),
+      ],
+    ),
+  );
+  return ok ?? false;
+}

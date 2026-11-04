@@ -69,12 +69,22 @@ Future<void> main() async {
   // wait on a folder, and a receipt picked meanwhile is held. A sweep that
   // fails has deleted at most some of what it should have, and the next
   // launch asks again.
-  unawaited(
-    sweepReceipts(store).catchError((Object e) {
+  //
+  // 自动备份 first, then the sweep: one after the other rather than side by
+  // side, because a snapshot copies receipts out of the folder the sweep
+  // deletes from. Neither blocks the first frame, and a snapshot that fails
+  // is said in 诊断 and does not stop the sweep.
+  unawaited(() async {
+    try {
+      await runAutoBackup(healthy: store.healthy);
+    } catch (e) {
+      diag.note('backup: automatic snapshot failed: $e');
+    }
+    await sweepReceipts(store).catchError((Object e) {
       diag.note('receipts: sweep failed: $e');
       return const <String>[];
-    }),
-  );
+    });
+  }());
   watchPowerSaving();
   // Which build this is, for 关于大红花 and the head of the diagnostic trail.
   // Not awaited: nothing on the first frame shows it.
@@ -821,6 +831,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                 zh: zh,
                 // a restore replaces both files and every screen's contents
                 onRestored: _bothChanged,
+                onChanged: _configChanged,
               ),
             ),
           ),

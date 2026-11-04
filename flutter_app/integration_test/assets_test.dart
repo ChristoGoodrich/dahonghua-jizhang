@@ -157,10 +157,25 @@ void main() {
       await show(tester);
       await tester.tap(find.byKey(const Key('nw-asset-as-车-delete')));
       await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('remove-ok')));
+      await tester.pumpAndSettle();
 
       expect(nw.assets(), isEmpty);
       expect(textOf(tester, 'net-worth'), '￥0.00');
       expect(find.byKey(const Key('no-assets')), findsOneWidget);
+    });
+  });
+
+  group('an asset asks before it goes', () {
+    testWidgets('and cancel keeps it', (tester) async {
+      asset('车', 80000);
+      await show(tester);
+      await tester.tap(find.byKey(const Key('nw-asset-as-车-delete')));
+      await tester.pumpAndSettle();
+      expect(find.text('删除「车」？'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('remove-cancel')));
+      await tester.pumpAndSettle();
+      expect(nw.assets(), hasLength(1));
     });
   });
 
@@ -238,9 +253,29 @@ void main() {
       await show(tester);
       await tester.tap(find.byKey(const Key('nw-loan-ln-小王-delete')));
       await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('remove-ok')));
+      await tester.pumpAndSettle();
 
       expect(nw.loans(), isEmpty);
       expect(textOf(tester, 'net-worth'), '￥0.00');
+    });
+
+    testWidgets('an unsettled one asks first, and says what is still owed', (
+      tester,
+    ) async {
+      // It went on the first tap, and it is the only record of the money.
+      loan('小王', 2000);
+      nw.repayLoan(id: 'ln-小王', amount: 500);
+      await show(tester);
+      await tester.tap(find.byKey(const Key('nw-loan-ln-小王-delete')));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('remove-confirm')), findsOneWidget);
+      expect(find.textContaining('1,500.00'), findsWidgets);
+      expect(find.textContaining('没有结清'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('remove-cancel')));
+      await tester.pumpAndSettle();
+      expect(nw.loans(), hasLength(1));
     });
   });
 

@@ -22,6 +22,7 @@ import 'empty_note.dart';
 import 'tap.dart';
 import 'cats.dart';
 import 'theme.dart';
+import 'toast.dart';
 
 class TagsScreen extends StatefulWidget {
   const TagsScreen({super.key, this.zh = true, this.onChanged});
@@ -100,7 +101,17 @@ class _TagsScreenState extends State<TagsScreen> {
             builder: (g) => _chip(
               g,
               keyName: 'tag-$g',
-              onRemove: () {
+              onRemove: () async {
+                final ok = await confirmRemove(
+                  context,
+                  zh: zh,
+                  title: zh ? '删除标签「$g」？' : 'Delete the tag "$g"?',
+                  body: zh
+                      ? '已经打上它的账目不变，只是记账时不再提供它。'
+                      : 'Entries that carry it keep it; it is just no longer '
+                            'offered.',
+                );
+                if (!ok || !mounted) return;
                 catalog.removeTag(kind: 'normal', name: g);
                 _changed();
               },
@@ -167,10 +178,7 @@ class _TagsScreenState extends State<TagsScreen> {
               return _chip(
                 '${c.e} ${catalog.catName(cat: c, zh: zh)}',
                 keyName: 'cat-exp-$k',
-                onRemove: () {
-                  catalog.removeCustomCat(io: 'exp', key: k);
-                  _changed();
-                },
+                onRemove: () => _removeCat('exp', c, zh),
                 onTap: () => _subcats(k, zh),
               );
             },
@@ -191,10 +199,7 @@ class _TagsScreenState extends State<TagsScreen> {
               return _chip(
                 '${c.e} ${catalog.catName(cat: c, zh: zh)}',
                 keyName: 'cat-inc-$k',
-                onRemove: () {
-                  catalog.removeCustomCat(io: 'inc', key: k);
-                  _changed();
-                },
+                onRemove: () => _removeCat('inc', c, zh),
                 onTap: () => _subcats(k, zh),
               );
             },
@@ -202,6 +207,25 @@ class _TagsScreenState extends State<TagsScreen> {
         ],
       ),
     );
+  }
+
+  /// A category's entries stay, and are shown as another category from then
+  /// on — the lookup falls back to the last one — and its subcategories go
+  /// with it.
+  Future<void> _removeCat(String io, catalog.CategoryView c, bool zh) async {
+    final name = catalog.catName(cat: c, zh: zh);
+    final ok = await confirmRemove(
+      context,
+      zh: zh,
+      title: zh ? '删除分类「$name」？' : 'Delete the category "$name"?',
+      body: zh
+          ? '记在它下面的账目不会删除，但以后会显示成别的分类；它的子分类也会一起删除。'
+          : 'Entries filed under it stay, but are shown under another '
+                'category from now on, and its subcategories go too.',
+    );
+    if (!ok || !mounted) return;
+    catalog.removeCustomCat(io: io, key: c.k);
+    _changed();
   }
 
   Future<void> _addCustomCat(String io) async {
@@ -361,7 +385,17 @@ class _TagsScreenState extends State<TagsScreen> {
           padding: EdgeInsets.zero,
           iconSize: 15,
           icon: Icon(Icons.delete_outline, color: palette.inkSoft),
-          onPressed: () {
+          onPressed: () async {
+            final ok = await confirmRemove(
+              context,
+              zh: zh,
+              title: zh ? '删除账本「$l」？' : 'Delete the ledger "$l"?',
+              body: zh
+                  ? '它下面的账目不会删除，但明细里再也不能单独看这个账本。'
+                  : 'Its entries stay, but the list can no longer be '
+                        'narrowed to this ledger.',
+            );
+            if (!ok || !mounted) return;
             catalog.removeTag(kind: 'ledger', name: l);
             _changed();
           },
@@ -654,7 +688,18 @@ class _SubcatsSheetState extends State<_SubcatsSheet> {
                       key: Key('subcat-${s.k}'),
                       label: Text(s.name),
                       deleteIcon: const Icon(Icons.close, size: 15),
-                      onDeleted: () {
+                      onDeleted: () async {
+                        final ok = await confirmRemove(
+                          context,
+                          zh: zh,
+                          title: zh
+                              ? '删除子分类「${s.name}」？'
+                              : 'Delete the subcategory "${s.name}"?',
+                          body: zh
+                              ? '已经记下的账目不会删除。'
+                              : 'Entries already recorded are kept.',
+                        );
+                        if (!ok || !mounted) return;
                         catalog.removeSubcat(catKey: widget.catKey, k: s.k);
                         setState(
                           () => _list = catalog.subcatsOf(

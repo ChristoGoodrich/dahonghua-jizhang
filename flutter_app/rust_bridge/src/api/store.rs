@@ -1079,6 +1079,7 @@ pub fn snapshot_config() -> String {
                 settings_obj.push(("dailyBudget".into(), Value::Num(set.daily_budget)));
                 settings_obj.push(("cycleStart".into(), Value::Num(set.cycle_start as f64)));
                 settings_obj.push(("catBudgets".into(), Value::Obj(caps)));
+                settings_obj.extend(super::backup::auto_backup_settings());
                 // absent rather than an empty array when nothing is archived,
                 // or a sync round-trip would carry it back as a field that is
                 // set — the same falsy-means-absent rule as everywhere else
@@ -1156,6 +1157,7 @@ pub fn load_config(json: String) -> bool {
     // on, and prompting here would ask before there is a screen to ask over.
     super::lock::lock_load(matches!(v.get("lock"), Some(Value::Bool(true))));
     super::privacy::set_hide_amounts(matches!(v.get("hideAmounts"), Some(Value::Bool(true))));
+    super::backup::load_auto_backup(v.get("settings"));
     super::ai::load_settings(v.get("ai"));
     super::remind::load_reminders(
         match v.get("remindAt") {
@@ -1391,5 +1393,6 @@ pub fn reset() {
     super::catalog::set_library_inner(Default::default());
     set_language("zh".to_string());
     super::privacy::set_hide_amounts(false);
+    super::backup::load_auto_backup(None);
     super::ai::reset_settings();
 }
