@@ -146,6 +146,10 @@ class _CaptureScreenState extends State<CaptureScreen> {
             )
           else ...[
             ..._permission(zh),
+            if (_granted && _capturing) ...[
+              const SizedBox(height: 12),
+              _keepAlive(zh),
+            ],
             const SizedBox(height: 20),
             if (_flash != null)
               Padding(
@@ -274,6 +278,62 @@ class _CaptureScreenState extends State<CaptureScreen> {
       ),
     ];
   }
+
+  /// 让它一直在后台 — the step the shipping screen had third, and the port
+  /// dropped: 「让它活着（小米必做）」.
+  ///
+  /// Xiaomi's HyperOS and MIUI stop background services, and a stopped
+  /// listener records nothing and says nothing: it looks like a quiet week.
+  /// The two switches that prevent it are on this app's own page in system
+  /// settings, where no app can reach them for itself, so the most this can do
+  /// is say which they are and open the page. Shown once capture is on,
+  /// because that is when it starts to matter.
+  Widget _keepAlive(bool zh) => Container(
+    key: const Key('capture-keepalive'),
+    padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
+    decoration: BoxDecoration(
+      color: palette.card,
+      borderRadius: BorderRadius.circular(Rad.lg),
+      border: Border.all(color: palette.line),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          zh ? '让它一直在后台' : 'Keep it running',
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
+            color: palette.ink,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          zh
+              ? '小米、红米（HyperOS / MIUI）会清理后台，清掉以后自动记账就停了，'
+                    '不会有任何提示。在本应用的系统设置里打开「自启动」，把「省电策略」'
+                    '改成「无限制」，再在最近任务里把它锁住。其他品牌的手机如果过几天'
+                    '就不记了，也是这几处。'
+              : 'Xiaomi phones (HyperOS / MIUI) stop background services, and '
+                    'capture then stops without any sign. In this app\'s system '
+                    'settings, turn on Autostart and set Battery saver to No '
+                    'restrictions, then lock it in recent apps. On other phones '
+                    'that stop recording after a few days, it is the same '
+                    'places.',
+          style: TextStyle(fontSize: 12.5, height: 1.5, color: palette.inkSoft),
+        ),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: TextButton(
+            key: const Key('open-app-settings'),
+            onPressed: _native.openAppDetails,
+            style: TextButton.styleFrom(foregroundColor: palette.hibiscus),
+            child: Text(zh ? '打开本应用的系统设置' : "Open this app's settings"),
+          ),
+        ),
+      ],
+    ),
+  );
 
   List<Widget> _permissionAction(bool zh) => [
     if (!_granted) ...[

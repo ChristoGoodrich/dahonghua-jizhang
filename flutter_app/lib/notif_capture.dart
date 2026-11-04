@@ -77,6 +77,11 @@ class NotifCapture {
   /// for this permission.
   Future<void> openSettings() => _channel.invokeMethod<void>('openSettings');
 
+  /// Open this app's own page in system settings, where Xiaomi keeps 自启动
+  /// and 省电策略. Neither can be changed by the app itself.
+  Future<void> openAppDetails() =>
+      _channel.invokeMethod<void>('openAppDetails');
+
   /// Capture stays off until the user turns it on, even once access has been
   /// granted — permission and intent are separate decisions.
   Future<bool> isCapturing() async =>

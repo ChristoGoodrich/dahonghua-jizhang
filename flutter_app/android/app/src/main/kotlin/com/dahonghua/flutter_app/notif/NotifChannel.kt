@@ -3,6 +3,7 @@ package com.dahonghua.flutter_app.notif
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.provider.Settings
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodChannel
@@ -34,6 +35,20 @@ object NotifChannel {
           context.startActivity(
             Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
               .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+          )
+          result.success(null)
+        }
+
+        // This app's own page in system settings. On Xiaomi's HyperOS and
+        // MIUI that is where 自启动 and 省电策略 are; without both, the
+        // system stops the listener after a few days and capture ends with
+        // no sign of it. No app can change either for itself.
+        "openAppDetails" -> {
+          context.startActivity(
+            Intent(
+              Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+              Uri.fromParts("package", context.packageName, null),
+            ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
           )
           result.success(null)
         }

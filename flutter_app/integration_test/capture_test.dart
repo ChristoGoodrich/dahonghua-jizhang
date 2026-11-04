@@ -47,6 +47,7 @@ class FakeNative implements NotifCapture {
   /// Every id the app said it had taken responsibility for.
   final List<String> consumed = [];
   int settingsOpened = 0;
+  int appDetailsOpened = 0;
 
   /// How many entries were in the ledger at the moment the queue was
   /// acknowledged. The ORDER is the thing worth checking and it is invisible
@@ -65,6 +66,9 @@ class FakeNative implements NotifCapture {
 
   @override
   Future<void> openSettings() async => settingsOpened++;
+
+  @override
+  Future<void> openAppDetails() async => appDetailsOpened++;
 
   @override
   Future<int> pendingCount() async => queue.length;
@@ -426,6 +430,36 @@ void main() {
       expect(find.byKey(const Key('capture-not-granted')), findsNothing);
       expect(find.byKey(const Key('capture-toggle')), findsOneWidget);
       expect(find.text('权限有了，还没开'), findsOneWidget);
+    });
+
+    testWidgets('once it is on, says how to keep it running, and opens the page',
+        (tester) async {
+      // The shipping screen's third step, 「让它活着（小米必做）」: HyperOS stops
+      // the listener after a few days unless 自启动 and 省电策略 are set, and
+      // a stopped listener records nothing and says nothing.
+      final native = FakeNative();
+      await show(tester, native: native, inbox: await freshInbox(native));
+
+      expect(find.byKey(const Key('capture-keepalive')), findsOneWidget);
+      expect(find.textContaining('自启动'), findsOneWidget);
+      expect(find.textContaining('省电策略'), findsOneWidget);
+
+      await tester.ensureVisible(find.byKey(const Key('open-app-settings')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('open-app-settings')));
+      await tester.pumpAndSettle();
+      expect(native.appDetailsOpened, 1);
+      expect(native.settingsOpened, 0, reason: 'not the listener page');
+    });
+
+    testWidgets('and says nothing of it before it is on', (tester) async {
+      for (final native in [
+        FakeNative(granted: false),
+        FakeNative(capturing: false),
+      ]) {
+        await show(tester, native: native, inbox: await freshInbox(native));
+        expect(find.byKey(const Key('capture-keepalive')), findsNothing);
+      }
     });
 
     testWidgets('turning it on drains what was already queued', (tester) async {
