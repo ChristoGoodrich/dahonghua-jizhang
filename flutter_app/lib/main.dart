@@ -26,6 +26,7 @@ import 'ask_screen.dart';
 import 'ai_entry_screen.dart';
 import 'account_detail_screen.dart';
 import 'backup_screen.dart';
+import 'budget_warn.dart';
 import 'bottom_nav.dart';
 import 'budget_screen.dart';
 import 'petal_burst.dart';
@@ -520,7 +521,23 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             ? (_zh ? '已记 · 用了缓存汇率' : 'Saved · used a cached rate')
             : (_zh ? '贴上一朵花' : 'One more flower'),
       );
+      // Then the budget, if it needs saying — but not after the stale-rate
+      // notice, which is worth reading on its own; the shipping app held it
+      // back for the same reason. Only from the sheet: a template and
+      // 一句话记账 say 撤销, and this would take that notice's place.
+      if (!usedStaleRate) _warnBudgetLater();
     }
+  }
+
+  /// 预算提醒, [budgetWarnDelay] after a new entry: over the cycle's cap, or
+  /// at 80% of it, or of a category's.
+  void _warnBudgetLater() {
+    Future<void>.delayed(budgetWarnDelay, () {
+      if (!mounted) return;
+      final text = budgetWarningText(zh: _zh);
+      if (text == null) return;
+      showToast(context, key: const Key('budget-warn'), text: text);
+    });
   }
 
   /// 贴上一朵花: flowers out of the + button, and a word to say why.
