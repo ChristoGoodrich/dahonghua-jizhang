@@ -261,14 +261,21 @@ void main() {
       await tester.enterText(find.byKey(const Key('new-name')), '浦发');
       await tester.tap(find.byKey(const Key('kind-credit')));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('stmt-day-other')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('day-7')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('due-day-other')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('day-26')));
-      await tester.pumpAndSettle();
+      // Scrolled to first. 还款日's 其他 is the last thing in the dialog's
+      // scroll view, flush with its bottom edge, so a keyboard left up by the
+      // name field puts it out of sight; on CI's emulator one did, and the
+      // tap landed on the dialog instead.
+      Future<void> pick(String key) async {
+        await tester.ensureVisible(find.byKey(Key(key)));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(Key(key)));
+        await tester.pumpAndSettle();
+      }
+
+      await pick('stmt-day-other');
+      await pick('day-7');
+      await pick('due-day-other');
+      await pick('day-26');
       // Shown among the chips, as the chosen one.
       expect(find.byKey(const Key('stmt-day-7')), findsOneWidget);
       expect(find.byKey(const Key('due-day-26')), findsOneWidget);
