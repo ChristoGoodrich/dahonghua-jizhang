@@ -482,15 +482,32 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   ///
   /// A route rather than a tab: saving pops back to whatever was underneath,
   /// which is the behaviour without the shell having to track it.
-  Future<void> _record({String? editId, int? at}) async {
+  Future<void> _record({String? editId, int? at, String? dupeOf}) async {
     var saved = 0;
     var smart = false;
+    var deleted = false;
+    var dupe = false;
     var usedStaleRate = false;
     await _cover(
       MaterialPageRoute<void>(
         builder: (ctx) => sheet.RecordSheet(
           editId: editId,
+          dupeId: dupeOf,
           initialTs: at,
+          // An edit's 删除 and 再记一笔 close the sheet first, as 一句话记账
+          // does, and the shell does the rest once it has gone.
+          onDelete: editId == null
+              ? null
+              : () {
+                  deleted = true;
+                  Navigator.of(ctx).pop();
+                },
+          onDuplicate: editId == null
+              ? null
+              : () {
+                  dupe = true;
+                  Navigator.of(ctx).pop();
+                },
           zh: _zh,
           onSaved: ({required bool staleRate}) {
             saved++;
@@ -510,6 +527,19 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     );
     if (smart && mounted) {
       unawaited(_smart());
+      return;
+    }
+    if (deleted && editId != null && mounted) {
+      removeEntryWithUndo(
+        context,
+        id: editId,
+        zh: _zh,
+        onChanged: _entriesChanged,
+      );
+      return;
+    }
+    if (dupe && editId != null && mounted) {
+      unawaited(_record(dupeOf: editId));
       return;
     }
     // A flower for each new entry, the shipping app's reward — played once

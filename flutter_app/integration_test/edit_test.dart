@@ -8,6 +8,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/entry_list.dart';
+import 'package:flutter_app/main.dart' show App;
 import 'package:flutter_app/toast.dart';
 import 'package:flutter_app/record_sheet.dart';
 import 'package:flutter_app/src/rust/api/store.dart' as store;
@@ -268,6 +269,123 @@ void main() {
         tester.widget<Text>(find.byKey(const Key('amount-expr'))).data,
         '22',
       );
+    });
+  });
+  group('删除 and 再记一笔 in an edit', () {
+    // The shipping app opened a row on a detail sheet with both; the port
+    // opened it straight into this one, which had neither.
+    String amountShown(WidgetTester tester) =>
+        tester.widget<Text>(find.byKey(const Key('amount-expr'))).data!;
+
+    testWidgets("are an edit's, and not a new entry's", (tester) async {
+      add('e1', 35.5);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: RecordSheet(editId: 'e1', onDelete: () {}, onDuplicate: () {}),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('record-delete')), findsOneWidget);
+      expect(find.byKey(const Key('record-dupe')), findsOneWidget);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          key: const ValueKey('new'),
+          home: RecordSheet(onDelete: () {}, onDuplicate: () {}),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('record-delete')), findsNothing);
+      expect(find.byKey(const Key('record-dupe')), findsNothing);
+    });
+
+    testWidgets('删除 asks, naming the row, and a no keeps it', (tester) async {
+      add('e1', 35.5, note: '午饭');
+      var deleted = 0;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: RecordSheet(editId: 'e1', onDelete: () => deleted++),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const Key('record-delete')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('entry-delete-confirm')), findsOneWidget);
+      expect(find.textContaining('午饭'), findsWidgets);
+      await tester.tap(find.byKey(const Key('entry-delete-cancel')));
+      await tester.pumpAndSettle();
+      expect(deleted, 0);
+
+      await tester.tap(find.byKey(const Key('record-delete')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('entry-delete-ok')));
+      await tester.pumpAndSettle();
+      expect(deleted, 1);
+    });
+
+    testWidgets('a duplicate is a new entry on the same fields, today', (
+      tester,
+    ) async {
+      final lastWeek = now - 7 * 86400000;
+      add('e1', 35.5, note: '午饭', cat: 'trans', ts: lastWeek);
+      await tester.pumpWidget(
+        const MaterialApp(home: RecordSheet(dupeId: 'e1')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('记一笔'), findsOneWidget); // not 编辑
+      expect(amountShown(tester), '35.5');
+      expect(find.text('午饭'), findsOneWidget);
+      await press(tester, 'save');
+
+      final live = store.liveEntries();
+      expect(live, hasLength(2), reason: 'a new row, the source untouched');
+      final made = live.firstWhere((e) => e.id != 'e1');
+      expect((made.cat, made.amt, made.note), ('trans', 35.5, '午饭'));
+      expect(made.ts, greaterThan(lastWeek + 6 * 86400000));
+      expect(store.getEntry(id: 'e1')!.ts, lastWeek);
+    });
+
+    testWidgets('through the shell: 删除 goes, with 撤销', (tester) async {
+      add('e1', 35.5, note: '午饭');
+      await tester.pumpWidget(const App());
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('午饭'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('record-delete')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('entry-delete-ok')));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('key-save')), findsNothing, reason: 'closed');
+      expect(store.liveEntries(), isEmpty);
+      expect(find.byKey(const Key('deleted-toast')), findsOneWidget);
+
+      await tester.tap(find.byKey(const Key('deleted-undo')));
+      await tester.pumpAndSettle();
+      expect(store.liveEntries().single.id, 'e1');
+      expect(find.text('午饭'), findsOneWidget);
+    });
+
+    testWidgets('through the shell: 再记一笔 opens a new one on its fields', (
+      tester,
+    ) async {
+      add('e1', 35.5, note: '午饭');
+      await tester.pumpWidget(const App());
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('午饭'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('record-dupe')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('记一笔'), findsOneWidget);
+      expect(amountShown(tester), '35.5');
+      await press(tester, 'save');
+
+      expect(store.liveEntries(), hasLength(2));
     });
   });
 }

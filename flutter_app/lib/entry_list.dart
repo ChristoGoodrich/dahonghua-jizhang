@@ -43,6 +43,55 @@ import 'toast.dart';
 /// is where an instant becomes a day — never on the other side of the boundary.
 String localDay(DateTime d) => '${d.year}-${d.month}-${d.day}';
 
+/// What a delete is about to take, in the words of the row: its category,
+/// its note, its amount and its day.
+String describeEntry(store.EntryView e, bool zh) {
+  final label = catLabelOf(io: e.io, key: e.cat, zh: zh);
+  final d = DateTime.fromMillisecondsSinceEpoch(e.ts);
+  final note = (e.note ?? '').isEmpty ? '' : ' · ${e.note}';
+  final day = zh ? '${d.month}月${d.day}日' : '${d.month}/${d.day}';
+  return '${label.name}$note  ${money.fmtSigned(n: e.amt, io: e.io)}  $day';
+}
+
+/// Delete one row, and say so with 撤销 — from 明细's swipe and ⋯ menu, and
+/// from the edit sheet's 删除. One function, so the two cannot come to differ
+/// about what a delete leaves to undo.
+///
+/// `onChanged` follows the delete and the undo both: the ledger needs writing
+/// either way. `onUndone` is for whoever is still on the screen; the notice
+/// can outlive the screen that put it up.
+void removeEntryWithUndo(
+  BuildContext context, {
+  required String id,
+  required bool zh,
+  required VoidCallback onChanged,
+  VoidCallback? onUndone,
+}) {
+  final undo = store.removeEntry(
+    id: id,
+    now: DateTime.now().millisecondsSinceEpoch,
+  );
+  onChanged();
+  if (undo == null || !context.mounted) return;
+  showToast(
+    context,
+    key: const Key('deleted-toast'),
+    text: zh ? '已删除' : 'Deleted',
+    action: ToastAction(
+      key: const Key('deleted-undo'),
+      label: zh ? '撤销' : 'Undo',
+      onPressed: () {
+        store.unremoveEntry(
+          undo: undo,
+          now: DateTime.now().millisecondsSinceEpoch,
+        );
+        onChanged();
+        onUndone?.call();
+      },
+    ),
+  );
+}
+
 /// The day names the core does not spell.
 String dayHeading(String label, String ymd, bool zh) {
   if (label == 'today') return zh ? '今天' : 'Today';
@@ -998,7 +1047,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
       // most often made on the way to something else; declined, the row
       // slides back.
       confirmDismiss: (_) =>
-          confirmDelete(context, zh: zh, what: _describe(e, zh)),
+          confirmDelete(context, zh: zh, what: describeEntry(e, zh)),
       onDismissed: (_) => _delete(e, zh),
       child: _entryCard(e, zh, group: group),
     );
@@ -1015,44 +1064,19 @@ class _EntryListScreenState extends State<EntryListScreen> {
       );
 
   void _delete(store.EntryView e, bool zh) {
-    final undo = store.removeEntry(
-      id: e.id,
-      now: DateTime.now().millisecondsSinceEpoch,
-    );
-    widget.onChanged?.call();
-    _reload();
-    if (undo == null || !mounted) return;
-
-    showToast(
+    removeEntryWithUndo(
       context,
-      key: const Key('deleted-toast'),
-      text: zh ? '已删除' : 'Deleted',
-      action: ToastAction(
-        key: const Key('deleted-undo'),
-        label: zh ? '撤销' : 'Undo',
-        onPressed: () {
-          store.unremoveEntry(
-            undo: undo,
-            now: DateTime.now().millisecondsSinceEpoch,
-          );
-          widget.onChanged?.call();
-          // The shell recreated this list when the row went, so the one that
-          // put the notice up is usually gone by the time 撤销 is pressed; the
-          // new one reads the store itself.
-          if (mounted) _reload();
-        },
-      ),
+      id: e.id,
+      zh: zh,
+      onChanged: () => widget.onChanged?.call(),
+      // The shell recreated this list when the row went, so the one that put
+      // the notice up is usually gone by the time 撤销 is pressed; the new one
+      // reads the store itself.
+      onUndone: () {
+        if (mounted) _reload();
+      },
     );
-  }
-
-  /// What a delete is about to take, in the words of the row: its category,
-  /// its note, its amount and its day.
-  String _describe(store.EntryView e, bool zh) {
-    final label = catLabelOf(io: e.io, key: e.cat, zh: zh);
-    final d = DateTime.fromMillisecondsSinceEpoch(e.ts);
-    final note = (e.note ?? '').isEmpty ? '' : ' · ${e.note}';
-    final day = zh ? '${d.month}月${d.day}日' : '${d.month}/${d.day}';
-    return '${label.name}$note  ${money.fmtSigned(n: e.amt, io: e.io)}  $day';
+    _reload();
   }
 
   Widget _header(store.ListItem item, bool zh) {
@@ -1486,7 +1510,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
     final ids = _picked!.toList();
     final rows = [
       for (final id in ids.take(3))
-        if (_byId[id] != null) _describe(_byId[id]!, zh),
+        if (_byId[id] != null) describeEntry(_byId[id]!, zh),
     ];
     final ok = await confirmDelete(
       context,
@@ -1604,7 +1628,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
       // the core's answer for this one row: an expense, or not
       claimable: _tally.claimable == 1,
       onDelete: () async {
-        if (await confirmDelete(context, zh: zh, what: _describe(e, zh))) {
+        if (await confirmDelete(context, zh: zh, what: describeEntry(e, zh))) {
           _delete(e, zh);
         }
       },

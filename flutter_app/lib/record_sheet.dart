@@ -33,6 +33,9 @@ import 'tap.dart';
 import 'cats.dart';
 import 'photos.dart';
 import 'theme.dart';
+import 'toast.dart' show confirmDelete;
+import 'entry_list.dart' show describeEntry;
+import 'src/rust/api/store.dart' as store;
 
 /// The refusals `validate_form` can answer, spelled.
 ///
@@ -124,9 +127,12 @@ class RecordSheet extends StatefulWidget {
     this.zh = true,
     this.onSaved,
     this.editId,
+    this.dupeId,
     this.fetchRate,
     this.initialTs,
     this.onSmart,
+    this.onDelete,
+    this.onDuplicate,
   });
 
   final bool zh;
@@ -144,6 +150,20 @@ class RecordSheet extends StatefulWidget {
 
   /// 一句话记账 instead: the shell closes this sheet and opens that one.
   final VoidCallback? onSmart;
+
+  /// 再记一笔's source: a new entry with that one's fields, dated today and
+  /// with no receipt — `initial_form` with `editing: false`. Ignored when
+  /// editing.
+  final String? dupeId;
+
+  /// The edit's 删除, once it has been confirmed here. The shell closes the
+  /// sheet and deletes, with 撤销, the way 明细 does.
+  final VoidCallback? onDelete;
+
+  /// The edit's 再记一笔: the shell closes this sheet and opens a new one on
+  /// [dupeId]. The shipping app offered both from the entry's detail sheet,
+  /// which the port replaced with this one and left without either.
+  final VoidCallback? onDuplicate;
 
   /// Where the exchange rate comes from. A test has no network, and the part
   /// worth testing is what this screen does with each answer.
@@ -201,13 +221,15 @@ class _RecordSheetState extends State<RecordSheet> {
     super.didUpdateWidget(old);
     // the shell reuses one sheet for every target, so switching which entry is
     // being edited has to reload the fields rather than keep the last one's
-    if (old.editId != widget.editId) _loadForm();
+    if (old.editId != widget.editId || old.dupeId != widget.dupeId) {
+      _loadForm();
+    }
   }
 
   void _loadForm() {
     final id = widget.editId ?? '';
     _form = record.initialForm(
-      sourceId: id,
+      sourceId: id.isNotEmpty ? id : (widget.dupeId ?? ''),
       editing: id.isNotEmpty,
       // A new entry goes into the ledger 明细 is filtered to, as the
       // shipping sheet's did — recorded anywhere else, it would vanish from
@@ -472,6 +494,23 @@ class _RecordSheetState extends State<RecordSheet> {
     // 再记: the shipping pair of 保存. One closes — the form going away
     // is the clear — and this one stays, so a run of similar entries
     // goes in one sitting.
+    // An edit's own two: 再记一笔, a new entry on this one's fields, and 删除,
+    // which asks first. Only these two in an edit's bar beside the receipt
+    // and the pin, so four at most, as on a new one.
+    if (widget.editId != null && widget.onDuplicate != null)
+      IconButton(
+        key: const Key('record-dupe'),
+        onPressed: widget.onDuplicate,
+        tooltip: zh ? '再记一笔' : 'Record another like this',
+        icon: Icon(Icons.copy_all_outlined, color: palette.inkSoft),
+      ),
+    if (widget.editId != null && widget.onDelete != null)
+      IconButton(
+        key: const Key('record-delete'),
+        onPressed: _confirmDelete,
+        tooltip: zh ? '删除' : 'Delete',
+        icon: Icon(Icons.delete_outline, color: palette.inkSoft),
+      ),
     if (widget.editId == null)
       IconButton(
         key: const Key('record-again'),
@@ -481,6 +520,18 @@ class _RecordSheetState extends State<RecordSheet> {
       ),
     const SizedBox(width: 6),
   ];
+
+  /// 删除, from the edit: the same question 明细 asks, naming the row.
+  Future<void> _confirmDelete() async {
+    final e = store.getEntry(id: widget.editId!);
+    if (e == null) return;
+    final ok = await confirmDelete(
+      context,
+      zh: widget.zh,
+      what: describeEntry(e, widget.zh),
+    );
+    if (ok && mounted) widget.onDelete?.call();
+  }
 
   Widget _directions(bool zh) => Segmented(
     keyPrefix: 'dir',
