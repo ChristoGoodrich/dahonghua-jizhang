@@ -24,6 +24,7 @@ import 'src/rust/api/privacy.dart' as privacy;
 import 'tap.dart';
 import 'glass.dart';
 import 'theme.dart';
+import 'toast.dart';
 
 class AssetsScreen extends StatefulWidget {
   const AssetsScreen({super.key, this.zh = true, this.onChanged});
@@ -527,7 +528,14 @@ class _AssetsScreenState extends State<AssetsScreen> {
           key: Key('nw-asset-${a.id}-delete'),
           tooltip: zh ? '删除' : 'Delete',
           icon: Icon(Icons.delete_outline, size: 19, color: palette.warn),
-          onPressed: () {
+          onPressed: () async {
+            final ok = await confirmRemove(
+              context,
+              zh: zh,
+              title: zh ? '删除「${a.name}」？' : 'Delete "${a.name}"?',
+              body: zh ? '它不再计入净资产。' : 'It leaves the net worth.',
+            );
+            if (!ok || !mounted) return;
             nw.removeAsset(id: a.id);
             _changed();
           },
@@ -566,7 +574,23 @@ class _AssetsScreenState extends State<AssetsScreen> {
             key: Key('nw-loan-${l.id}-delete'),
             tooltip: zh ? '删除' : 'Delete',
             icon: Icon(Icons.delete_outline, size: 19, color: palette.warn),
-            onPressed: () {
+            onPressed: () async {
+              // An unsettled loan is money somebody still owes, and this
+              // is the only record of it.
+              final ok = await confirmRemove(
+                context,
+                zh: zh,
+                title: zh
+                    ? '删除和${l.who}的借贷？'
+                    : 'Delete the loan with ${l.who}?',
+                body: settled
+                    ? (zh ? '它已经结清。' : 'It is settled.')
+                    : (zh
+                          ? '还有 ${_m(l.remaining)} 没有结清，删除后这笔账就没有记录了。'
+                          : '${_m(l.remaining)} is still outstanding, and '
+                                'this is the only record of it.'),
+              );
+              if (!ok || !mounted) return;
               nw.removeLoan(id: l.id);
               _changed();
             },

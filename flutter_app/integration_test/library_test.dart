@@ -56,6 +56,8 @@ void main() {
 
       await tester.tap(find.byKey(const Key('tag-报销-remove')));
       await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('remove-ok')));
+      await tester.pumpAndSettle();
       expect(catalog.tags(), isEmpty);
     });
 
@@ -128,6 +130,8 @@ void main() {
       await showTags(tester);
 
       await tester.tap(find.byKey(const Key('archived-旅行-delete')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('remove-ok')));
       await tester.pumpAndSettle();
 
       expect(catalog.ledgers(), isEmpty);
@@ -281,6 +285,8 @@ void main() {
 
       await tester.tap(find.byKey(Key('cat-exp-${added.k}-remove')));
       await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('remove-ok')));
+      await tester.pumpAndSettle();
       expect(catalog.customCats(io: 'exp'), isEmpty);
     });
 
@@ -339,6 +345,76 @@ void main() {
       // removing the category takes its subcategories with it
       catalog.removeCustomCat(io: 'exp', key: 'c1');
       expect(catalog.subcatsOf(catKey: 'c1'), isEmpty);
+    });
+  });
+
+  group('a delete asks first', () {
+    // Each of these went on the first tap, and none has a 撤销. The shipping
+    // app asked for tags and ledgers.
+    Future<void> cancel(WidgetTester tester) async {
+      expect(find.byKey(const Key('remove-confirm')), findsOneWidget);
+      await tester.tap(find.byKey(const Key('remove-cancel')));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('a tag, named in the question, and cancel keeps it', (
+      tester,
+    ) async {
+      catalog.addTag(kind: 'normal', name: '报销');
+      await showTags(tester);
+      await tester.tap(find.byKey(const Key('tag-报销-remove')));
+      await tester.pumpAndSettle();
+      expect(find.text('删除标签「报销」？'), findsOneWidget);
+      await cancel(tester);
+      expect(catalog.tags(), ['报销']);
+    });
+
+    testWidgets('an archived ledger', (tester) async {
+      catalog.addTag(kind: 'ledger', name: '旅行');
+      catalog.archiveLedger(name: '旅行', archive: true);
+      await showTags(tester);
+      await tester.tap(find.byKey(const Key('archived-旅行-delete')));
+      await tester.pumpAndSettle();
+      await cancel(tester);
+      expect(catalog.ledgers(), ['旅行']);
+    });
+
+    testWidgets('a custom category, and says its entries stay', (tester) async {
+      catalog.addCustomCat(io: 'inc', key: 'c1', name: '红包', emoji: '🧧');
+      await showTags(tester);
+      await tester.ensureVisible(find.byKey(const Key('cat-inc-c1-remove')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('cat-inc-c1-remove')));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('账目不会删除'), findsOneWidget);
+      await cancel(tester);
+      expect(catalog.customCats(io: 'inc'), hasLength(1));
+    });
+
+    testWidgets('a subcategory, from its sheet', (tester) async {
+      catalog.addCustomCat(io: 'exp', key: 'c1', name: '宠物', emoji: '🐈');
+      catalog.addSubcat(catKey: 'c1', id: 's1', name: '猫粮');
+      await showTags(tester);
+      await tester.ensureVisible(find.byKey(const Key('cat-exp-c1')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('cat-exp-c1')));
+      await tester.pumpAndSettle();
+      final close = find.descendant(
+        of: find.byKey(const Key('subcat-s1')),
+        matching: find.byIcon(Icons.close),
+      );
+
+      await tester.tap(close);
+      await tester.pumpAndSettle();
+      await cancel(tester);
+      expect(catalog.subcatsOf(catKey: 'c1'), hasLength(1));
+
+      await tester.tap(close);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('remove-ok')));
+      await tester.pumpAndSettle();
+      expect(catalog.subcatsOf(catKey: 'c1'), isEmpty);
+      expect(find.byKey(const Key('no-subcats')), findsOneWidget);
     });
   });
 
