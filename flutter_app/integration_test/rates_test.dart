@@ -272,10 +272,10 @@ void main() {
 
       await tester.tap(find.byKey(const Key('key-9')));
       await tester.pumpAndSettle();
-      expect(tester.widget<Text>(find.byKey(line)).data, '≈ ¥63.00');
+      expect(tester.widget<Text>(find.byKey(line)).data, '≈ ￥63.00');
       await tester.tap(find.byKey(const Key('key-0')));
       await tester.pumpAndSettle();
-      expect(tester.widget<Text>(find.byKey(line)).data, '≈ ¥630.00');
+      expect(tester.widget<Text>(find.byKey(line)).data, '≈ ￥630.00');
 
       await tester.tap(find.byKey(const Key('cur-CNY')));
       await tester.pumpAndSettle();

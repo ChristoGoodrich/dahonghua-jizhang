@@ -30,6 +30,7 @@ import 'library_screen.dart' show addCustomCategory, askName;
 import 'glass.dart';
 import 'segmented.dart';
 import 'tap.dart';
+import 'amounts.dart' show baseSymbol;
 import 'cats.dart';
 import 'photos.dart';
 import 'theme.dart';
@@ -622,13 +623,13 @@ class _RecordSheetState extends State<RecordSheet> {
 
   /// A foreign amount in the base currency, while it is being typed: the
   /// shipping sheet's "≈ ¥72.00". Approximate because it is the cached rate,
-  /// and the save asks for the entry's own day first.
+  /// and the save asks for the entry's own day first. In the base symbol
+  /// every other base amount is written in — ￥, not the form's ¥.
   Widget? _converted() {
     final n = record.convertedAmount(form: _form);
     if (n == null) return null;
-    final symbol = money.curSymbol(code: record.baseCurrency());
     return Text(
-      '≈ ${money.fmt(n: n, symbol: symbol)}',
+      '≈ ${money.fmt(n: n, symbol: baseSymbol())}',
       key: const Key('amount-converted'),
       style: TextStyle(
         fontSize: 13,
