@@ -39,6 +39,8 @@ void cap(double monthly) => budget.setSettings(
   ),
 );
 
+/// Key in an amount and press save — and stop at the save, without settling,
+/// so what follows it can be watched from the moment it landed.
 Future<void> record(WidgetTester tester, List<String> keys) async {
   await tester.tap(find.byKey(const Key('record-button')));
   await tester.pumpAndSettle();
@@ -47,7 +49,27 @@ Future<void> record(WidgetTester tester, List<String> keys) async {
     await tester.pumpAndSettle();
   }
   await tester.tap(find.byKey(const Key('key-save')));
-  await tester.pumpAndSettle();
+  await tester.pump();
+}
+
+final warn = find.byKey(const Key('budget-warn'));
+
+/// Long enough for the notice to have come, if it was coming.
+final watch = budgetWarnDelay + const Duration(seconds: 2);
+
+/// Whether [f] shows in any frame for [span], looked for every 100ms.
+///
+/// On the device a timer runs on the wall clock, and so does settling: the
+/// sheet going and the flowers can take longer than [budgetWarnDelay], so
+/// "settle, then wait the delay" can land after the notice came — or after
+/// it went again. Watching from the save is right whichever it was.
+Future<bool> seen(WidgetTester tester, Finder f, Duration span) async {
+  const step = Duration(milliseconds: 100);
+  for (var waited = Duration.zero; waited < span; waited += step) {
+    await tester.pump(step);
+    if (f.evaluate().isNotEmpty) return true;
+  }
+  return false;
 }
 
 void main() {
@@ -109,11 +131,9 @@ void main() {
       await tester.pumpAndSettle();
 
       await record(tester, ['2', '0']);
-      expect(find.byKey(const Key('budget-warn')), findsNothing);
-      await tester.pump(budgetWarnDelay);
-      await tester.pumpAndSettle();
-
-      expect(find.byKey(const Key('budget-warn')), findsOneWidget);
+      // Not with the save: 贴上一朵花 has its say first.
+      expect(warn, findsNothing);
+      expect(await seen(tester, warn, watch), isTrue);
       expect(find.textContaining('已超'), findsOneWidget);
     });
 
@@ -123,10 +143,7 @@ void main() {
       await tester.pumpAndSettle();
 
       await record(tester, ['2', '0']);
-      await tester.pump(budgetWarnDelay);
-      await tester.pumpAndSettle();
-
-      expect(find.byKey(const Key('budget-warn')), findsNothing);
+      expect(await seen(tester, warn, watch), isFalse);
     });
 
     testWidgets('an edit brings none', (tester) async {
@@ -140,11 +157,8 @@ void main() {
       await tester.tap(find.text('-130.00'));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('key-save')));
-      await tester.pumpAndSettle();
-      await tester.pump(budgetWarnDelay);
-      await tester.pumpAndSettle();
-
-      expect(find.byKey(const Key('budget-warn')), findsNothing);
+      await tester.pump();
+      expect(await seen(tester, warn, watch), isFalse);
     });
   });
 }
