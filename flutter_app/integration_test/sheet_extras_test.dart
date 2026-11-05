@@ -468,6 +468,71 @@ void main() {
     });
   });
 
+  group('a new category from the sheet', () {
+    // The shipping picker ended its grid with 「新分类」. The port could make
+    // one only in 分类管理, which is not where anyone is when they find they
+    // need one.
+    Future<void> make(WidgetTester tester, String name, {String? emoji}) async {
+      await tapOnSheet(tester, const Key('cat-new'));
+      await tester.enterText(find.byKey(const Key('cat-name')), name);
+      if (emoji != null) {
+        await tester.tap(find.byKey(Key('cat-emoji-$emoji')));
+        await tester.pumpAndSettle();
+      }
+      await tester.tap(find.byKey(const Key('cat-ok')));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('is made, picked, and the entry is filed under it', (
+      tester,
+    ) async {
+      await sheet(tester);
+      await make(tester, '猫粮', emoji: '🐱');
+
+      final made = catalog.customCats(io: 'exp').single;
+      expect(made.zh, '猫粮');
+      expect(made.e, '🐱');
+      // the same category 分类管理 shows, and none for the other direction
+      expect(catalog.customCats(io: 'inc'), isEmpty);
+      expect(find.byKey(Key('cat-chip-${made.k}')), findsOneWidget);
+
+      await press(tester, '5');
+      await press(tester, 'save');
+      expect(store.liveEntries().single.cat, made.k);
+    });
+
+    testWidgets('an income one is an income category', (tester) async {
+      await sheet(tester);
+      await tester.tap(find.byKey(const Key('dir-inc')));
+      await tester.pumpAndSettle();
+      await make(tester, '稿费');
+
+      expect(catalog.customCats(io: 'exp'), isEmpty);
+      final made = catalog.customCats(io: 'inc').single;
+      await press(tester, '5');
+      await press(tester, 'save');
+      final e = store.liveEntries().single;
+      expect(e.io, 'inc');
+      expect(e.cat, made.k);
+    });
+
+    testWidgets('cancelling makes none and keeps the category picked', (
+      tester,
+    ) async {
+      await sheet(tester);
+      await tapOnSheet(tester, const Key('cat-chip-trans'));
+      await tapOnSheet(tester, const Key('cat-new'));
+      await tester.enterText(find.byKey(const Key('cat-name')), '猫粮');
+      await tester.tap(find.byKey(const Key('cat-cancel')));
+      await tester.pumpAndSettle();
+
+      expect(catalog.customCats(io: 'exp'), isEmpty);
+      await press(tester, '5');
+      await press(tester, 'save');
+      expect(store.liveEntries().single.cat, 'trans');
+    });
+  });
+
   group("a receipt on the sheet", () {
     testWidgets("offers a picker", (tester) async {
       // The system picker is not driven here — a camera has no place in a

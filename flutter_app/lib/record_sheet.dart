@@ -26,10 +26,11 @@ import 'src/rust/api/currency.dart' as cur;
 import 'src/rust/api/history.dart' as history;
 import 'src/rust/api/rates.dart' as rates;
 import 'date_field.dart';
-import 'library_screen.dart' show askName;
+import 'library_screen.dart' show addCustomCategory, askName;
 import 'glass.dart';
 import 'segmented.dart';
 import 'tap.dart';
+import 'amounts.dart' show baseSymbol;
 import 'cats.dart';
 import 'photos.dart';
 import 'theme.dart';
@@ -612,12 +613,31 @@ class _RecordSheetState extends State<RecordSheet> {
                     color: palette.inkSoft,
                   ),
                 ),
+              ?_converted(),
             ],
           ),
         ),
       ],
     ),
   );
+
+  /// A foreign amount in the base currency, while it is being typed: the
+  /// shipping sheet's "≈ ¥72.00". Approximate because it is the cached rate,
+  /// and the save asks for the entry's own day first. In the base symbol
+  /// every other base amount is written in — ￥, not the form's ¥.
+  Widget? _converted() {
+    final n = record.convertedAmount(form: _form);
+    if (n == null) return null;
+    return Text(
+      '≈ ${money.fmt(n: n, symbol: baseSymbol())}',
+      key: const Key('amount-converted'),
+      style: TextStyle(
+        fontSize: 13,
+        fontFeatures: tabular,
+        color: palette.inkSoft,
+      ),
+    );
+  }
 
   Widget _categories(bool zh, Color accent) {
     final cats = catsOf(_form.io);
@@ -664,8 +684,36 @@ class _RecordSheetState extends State<RecordSheet> {
               ),
             ),
           ),
+        // 「新分类」, last, as the shipping grid had it. On a Pixel 7 in
+        // Chinese it lands in the room the last row already had, so the
+        // fields under it do not move.
+        Tap(
+          key: const Key('cat-new'),
+          radius: Rad.pill,
+          onTap: () => _addCategory(zh),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(Rad.pill),
+              border: Border.all(color: palette.line),
+            ),
+            child: Text(
+              zh ? '＋ 新分类' : '+ New',
+              style: TextStyle(fontSize: 13, color: palette.inkSoft),
+            ),
+          ),
+        ),
       ],
     );
+  }
+
+  /// A new category for this entry's direction, picked as soon as it is
+  /// made: it was made to be used on this entry.
+  Future<void> _addCategory(bool zh) async {
+    final io = _form.io;
+    final key = await addCustomCategory(context, zh: zh, io: io);
+    if (key == null || !mounted) return;
+    setState(() => _form = record.pickCategory(cat: key, form: _form));
   }
 
   /// The chosen category's subcategories, and 「＋ 子分类」.
@@ -1405,6 +1453,7 @@ class _RecordSheetState extends State<RecordSheet> {
       child: Tap(
         radius: Rad.md,
         key: Key('key-$k'),
+        haptic: true,
         // Held while a rate is in flight: pressing twice would write twice.
         onTap: () => isSave ? (_fetching ? null : _save()) : _key(k),
         onLongPress: isSave ? _saveAsTemplate : null,

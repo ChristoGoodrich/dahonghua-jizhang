@@ -257,6 +257,48 @@ void main() {
       expect(find.textContaining('缓存汇率'), findsOneWidget);
     });
 
+    testWidgets('a foreign amount says what it comes to, as it is typed',
+        (tester) async {
+      // the shipping sheet's "≈ ¥63.00", at the rate it has to hand
+      currency.setRate(code: 'USD', rate: 7.0);
+      await tester.pumpWidget(
+          MaterialApp(home: sheet.RecordSheet(fetchRate: FakeRates().call)));
+      await tester.pumpAndSettle();
+      const line = Key('amount-converted');
+
+      await tester.tap(find.byKey(const Key('cur-USD')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(line), findsNothing, reason: 'no amount yet');
+
+      await tester.tap(find.byKey(const Key('key-9')));
+      await tester.pumpAndSettle();
+      expect(tester.widget<Text>(find.byKey(line)).data, '≈ ￥63.00');
+      await tester.tap(find.byKey(const Key('key-0')));
+      await tester.pumpAndSettle();
+      expect(tester.widget<Text>(find.byKey(line)).data, '≈ ￥630.00');
+
+      await tester.tap(find.byKey(const Key('cur-CNY')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(line), findsNothing, reason: 'nothing to convert');
+    });
+
+    testWidgets('a transfer says nothing: its amount is not converted',
+        (tester) async {
+      currency.setRate(code: 'USD', rate: 7.0);
+      await tester.pumpWidget(
+          MaterialApp(home: sheet.RecordSheet(fetchRate: FakeRates().call)));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('key-9')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('cur-USD')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('amount-converted')), findsOneWidget);
+
+      await tester.tap(find.byKey(const Key('dir-xfer')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('amount-converted')), findsNothing);
+    });
+
     testWidgets('the day asked for is the entry own day, not today',
         (tester) async {
       // The reason to fetch at all: an expense entered a week late converted

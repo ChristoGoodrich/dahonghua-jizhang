@@ -312,6 +312,14 @@ pub fn save_form(
     }
 }
 
+/// The form's amount in the base currency, for the "≈" line under a foreign
+/// amount — `core::record::converted`, at the cached rate.
+#[frb(sync)]
+pub fn converted_amount(form: FormView) -> Option<f64> {
+    let c = currencies_of();
+    core::converted(&form.into(), &c.base, &c)
+}
+
 /// The cached rate for a code, which the platform's fetcher compares against.
 #[frb(sync)]
 pub fn cached_rate(code: String) -> Option<f64> {

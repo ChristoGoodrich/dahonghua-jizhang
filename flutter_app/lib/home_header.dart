@@ -722,6 +722,7 @@ class TemplateChips extends StatelessWidget {
               return Tap(
                 key: Key('tpl-chip-${t.id}'),
                 radius: Rad.pill,
+                haptic: true,
                 onTap: () => onTap(t.id),
                 semanticLabel: zh
                     ? '一按记一笔 ${t.name.isEmpty ? label.name : t.name}'

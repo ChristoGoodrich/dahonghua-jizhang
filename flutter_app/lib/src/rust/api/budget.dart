@@ -8,7 +8,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'stats.dart';
 
 // These functions are ignored because they are not marked as `pub`: `entries_of`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`
 
 SettingsView settings() => RustLib.instance.api.crateApiBudgetSettings();
 
@@ -47,6 +47,9 @@ List<String> cycleIds({
 /// is Dart's.
 String nextCycle({required String today}) =>
     RustLib.instance.api.crateApiBudgetNextCycle(today: today);
+
+CycleSpan cycleSpan({required String today}) =>
+    RustLib.instance.api.crateApiBudgetCycleSpan(today: today);
 
 /// The cycle's expense against the cycle's cap.
 TierView monthlyStatus({required List<String> ids, required double budget}) =>
@@ -189,6 +192,26 @@ class CatBudgetView {
           emoji == other.emoji &&
           color == other.color &&
           status == other.status;
+}
+
+/// The cycle `today` is in, by its first and last day — the two days 明细's
+/// head names it by, and so 回顾's 分享 too.
+class CycleSpan {
+  final String start;
+  final String last;
+
+  const CycleSpan({required this.start, required this.last});
+
+  @override
+  int get hashCode => start.hashCode ^ last.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CycleSpan &&
+          runtimeType == other.runtimeType &&
+          start == other.start &&
+          last == other.last;
 }
 
 /// The forecast and the chart over it — 本期走势 on 预算.

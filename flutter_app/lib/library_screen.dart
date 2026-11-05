@@ -229,17 +229,8 @@ class _TagsScreenState extends State<TagsScreen> {
   }
 
   Future<void> _addCustomCat(String io) async {
-    final zh = widget.zh;
-    final picked = await showDialog<(String, String)>(
-      context: context,
-      builder: (_) => _CatDialog(zh: zh),
-    );
-    if (picked == null || !mounted) return;
-    final (name, emoji) = picked;
-    // Key is the caller's, as everywhere: `'c' + Date.now()` was the
-    // shipping one, and a clock is the platform's to read.
-    final key = 'c${DateTime.now().millisecondsSinceEpoch}';
-    catalog.addCustomCat(io: io, key: key, name: name, emoji: emoji);
+    final key = await addCustomCategory(context, zh: widget.zh, io: io);
+    if (key == null || !mounted) return;
     _changed();
   }
 
@@ -715,6 +706,29 @@ class _SubcatsSheetState extends State<_SubcatsSheet> {
       ),
     );
   }
+}
+
+/// A new custom category, named and given an emoji in [_CatDialog]: its key,
+/// or null when the dialog was dismissed.
+///
+/// 分类管理 makes one, and so does the record sheet, where the shipping
+/// picker had 「新分类」 at the end of its grid: a category is usually thought
+/// of at the moment there is something to file under it.
+Future<String?> addCustomCategory(
+  BuildContext context, {
+  required bool zh,
+  required String io,
+}) async {
+  final picked = await showDialog<(String, String)>(
+    context: context,
+    builder: (_) => _CatDialog(zh: zh),
+  );
+  if (picked == null) return null;
+  final (name, emoji) = picked;
+  // Key is the caller's, as everywhere: `'c' + Date.now()` was the
+  // shipping one, and a clock is the platform's to read.
+  final key = 'c${DateTime.now().millisecondsSinceEpoch}';
+  return catalog.addCustomCat(io: io, key: key, name: name, emoji: emoji).k;
 }
 
 /// Name and emoji for a new custom category.

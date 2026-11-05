@@ -330,6 +330,31 @@ pub fn draft(
     })
 }
 
+/// What a foreign amount comes to in the base currency: the "≈ ¥72.00" the
+/// shipping sheet put under the number while it was being typed. `None` when
+/// there is nothing to say — the base currency, no amount yet, a transfer
+/// (whose amount is never converted), or no rate to convert at.
+///
+/// It is [`draft`]'s own conversion at the cached rate, so it cannot disagree
+/// with the save about how. It can only disagree about the rate: the save asks
+/// for the entry's own day first, which is why the sheet says ≈. And where
+/// the shipping line converted at no rate at all — showing 100 dollars as
+/// ≈ ¥100 — this says nothing; the save refuses that form anyway.
+pub fn converted(f: &FormFields, base: &str, currencies: &Currencies) -> Option<f64> {
+    if f.cur.is_empty() || f.cur == base {
+        return None;
+    }
+    let rate = currencies
+        .rates
+        .get(&f.cur)
+        .copied()
+        .filter(|r| r.is_finite() && *r > 0.0)?;
+    match draft(f, base, currencies, Some(rate))? {
+        Draft::Entry { amt, .. } => Some(amt),
+        Draft::Xfer { .. } => None,
+    }
+}
+
 /// `parseFloat(s) || 0`.
 ///
 /// Not `s.parse::<f64>()`, in two ways. `parseFloat` reads a *leading* number
@@ -536,6 +561,73 @@ mod tests {
             ..form()
         };
         assert_eq!(validate(&f, "CNY", &rates()), Some(Rejection::Amount));
+    }
+
+    // ---------- converted ----------
+
+    #[test]
+    fn a_foreign_amount_is_converted_as_the_save_would() {
+        let f = FormFields {
+            cur: "USD".into(),
+            amt: "10+2.5".into(),
+            ..form()
+        };
+        assert_eq!(converted(&f, "CNY", &currencies()), Some(90.0));
+        // and the save, at the same rate, stores that amount
+        match draft(&f, "CNY", &currencies(), None) {
+            Some(Draft::Entry { amt, .. }) => assert_eq!(amt, 90.0),
+            other => panic!("{other:?}"),
+        }
+    }
+
+    #[test]
+    fn nothing_is_said_when_there_is_nothing_to_convert() {
+        let usd = FormFields {
+            cur: "USD".into(),
+            ..form()
+        };
+        // the base currency, and no currency at all
+        assert_eq!(converted(&form(), "CNY", &currencies()), None);
+        let none = FormFields {
+            cur: String::new(),
+            ..form()
+        };
+        assert_eq!(converted(&none, "CNY", &currencies()), None);
+        // no amount yet, or one that is not saveable
+        for amt in ["", "0", "5-9"] {
+            let f = FormFields {
+                amt: amt.into(),
+                ..usd.clone()
+            };
+            assert_eq!(converted(&f, "CNY", &currencies()), None, "{amt}");
+        }
+        // a transfer's amount is never converted
+        let x = FormFields {
+            io: Some(Io::Xfer),
+            acct_to: "cash".into(),
+            ..usd.clone()
+        };
+        assert_eq!(converted(&x, "CNY", &currencies()), None);
+    }
+
+    #[test]
+    fn a_currency_with_no_usable_rate_is_not_shown_as_the_base() {
+        // the shipping line fell through `toBase` and showed $100 as ≈ ¥100
+        let eur = FormFields {
+            cur: "EUR".into(),
+            amt: "100".into(),
+            ..form()
+        };
+        assert_eq!(converted(&eur, "CNY", &currencies()), None);
+        let zero = Currencies {
+            base: "CNY".into(),
+            rates: HashMap::from([("USD".to_string(), 0.0)]),
+        };
+        let usd = FormFields {
+            cur: "USD".into(),
+            ..form()
+        };
+        assert_eq!(converted(&usd, "CNY", &zero), None);
     }
 
     // ---------- rate_source ----------

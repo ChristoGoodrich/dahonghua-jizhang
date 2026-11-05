@@ -7,6 +7,7 @@
 // here is when it plays and when it does not.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_app/entry_list.dart';
 import 'package:flutter_app/main.dart';
 import 'package:flutter_app/petal_burst.dart';
@@ -138,6 +139,26 @@ void main() {
       );
       await tester.pumpAndSettle();
     }
+
+    testWidgets('a press ticks under the finger, as the shipping chips did', (
+      tester,
+    ) async {
+      final ticks = <Object?>[];
+      final messenger = tester.binding.defaultBinaryMessenger;
+      messenger.setMockMethodCallHandler(SystemChannels.platform, (call) async {
+        if (call.method == 'HapticFeedback.vibrate') ticks.add(call.arguments);
+        return null;
+      });
+      addTearDown(
+        () => messenger.setMockMethodCallHandler(SystemChannels.platform, null),
+      );
+      coffee();
+      await show(tester);
+
+      await tester.tap(find.byKey(const Key('tpl-chip-tpl-coffee')));
+      await tester.pumpAndSettle();
+      expect(ticks, ['HapticFeedbackType.selectionClick']);
+    });
 
     testWidgets('records in one press, says what it recorded, and undoes', (
       tester,
