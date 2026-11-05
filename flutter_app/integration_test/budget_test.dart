@@ -420,34 +420,44 @@ void main() {
   group('the forecast', () {
     String ymd(DateTime d) => '${d.year}-${d.month}-${d.day}';
 
-    budget.OutlookView? outlook() {
+    budget.OutlookView? outlook(DateTime today) {
       final live = store.liveEntries();
       return budget.outlook(
         ids: [for (final e in live) e.id],
         daysOf: [
           for (final e in live) ymd(DateTime.fromMillisecondsSinceEpoch(e.ts)),
         ],
-        today: ymd(DateTime.now()),
+        today: ymd(today),
       );
     }
 
-    final t = DateTime.now();
-    final elapsed = t.day; // the cycle starts on the 1st in these tests
-    final days = DateTime(t.year, t.month + 1, 0).day;
+    // The clock is read in each test, not once for the group. A group's body
+    // runs when the suite is declared, minutes before its tests, and a run
+    // that crossed midnight in between expected yesterday's day of the cycle.
+    ({DateTime today, int elapsed, int days}) cycle() {
+      final t = DateTime.now();
+      return (
+        today: t,
+        elapsed: t.day, // the cycle starts on the 1st in these tests
+        days: DateTime(t.year, t.month + 1, 0).day,
+      );
+    }
 
     testWidgets('is not there without a cap', (tester) async {
+      final today = cycle().today;
       spend('a', 300);
       await show(tester);
       expect(find.byKey(const Key('outlook')), findsNothing);
-      expect(outlook(), isNull);
+      expect(outlook(today), isNull);
     });
 
     testWidgets('runs the pace so far on to the end of the cycle', (
       tester,
     ) async {
+      final (:today, :elapsed, :days) = cycle();
       caps(budget_: 3000);
       spend('a', 300);
-      final o = outlook()!;
+      final o = outlook(today)!;
       expect(o.elapsed, elapsed);
       expect(o.days, days);
       expect(o.dailyRate, closeTo(300 / elapsed, 1e-9));
@@ -462,9 +472,10 @@ void main() {
     /// The spent line stops at today rather than running flat to the end,
     /// and the dashes carry on from where it stops.
     testWidgets('the chart stops at today', (tester) async {
+      final (:today, :elapsed, :days) = cycle();
       caps(budget_: 3000);
       spend('a', 300);
-      final o = outlook()!;
+      final o = outlook(today)!;
       expect(o.actual, hasLength(elapsed));
       if (elapsed < days) {
         expect(o.projection, hasLength(2));
@@ -474,7 +485,8 @@ void main() {
     });
 
     testWidgets('a pace past the cap says by how much', (tester) async {
-      if (elapsed == days) return; // on the last day the pace is the total
+      final c = cycle();
+      if (c.elapsed == c.days) return; // on the last day the pace is the total
       caps(budget_: 3000);
       spend('a', 3000);
       await show(tester);
