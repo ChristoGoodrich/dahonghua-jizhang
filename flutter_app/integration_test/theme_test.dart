@@ -274,10 +274,16 @@ void main() {
         await tester.pumpAndSettle();
         await tester.tap(find.byKey(const Key('tab-我的')));
         await tester.pumpAndSettle();
-        await tester.ensureVisible(find.byKey(const Key('me-settings')));
-        await tester.pumpAndSettle();
-        await tester.tap(find.byKey(const Key('me-settings')));
-        await tester.pumpAndSettle();
+        // Scrolled to, not `ensureVisible`d: the hub is lazy, and 设置 is far
+        // enough down it not to be built while the top is showing.
+        await scrollAndTap(
+          tester,
+          find.byKey(const Key('me-settings')),
+          scrollable: find.descendant(
+            of: find.byKey(const Key('me-list')),
+            matching: find.byType(Scrollable),
+          ),
+        );
 
         // The theme group is partway down a scrolling screen. Tapping a control
         // below the fold lands on whatever is at those coordinates instead —
