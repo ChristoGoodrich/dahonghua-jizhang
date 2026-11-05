@@ -350,4 +350,75 @@ testWidgets("the year span recaps the calendar year", (tester) async {
       expect(textOf(tester, 'recap-count'), '0');
     });
   });
+
+  // The shipping 「分享战报」: the recap as a few lines for the share sheet.
+  group('分享', () {
+    Future<String> shared(WidgetTester tester,
+        {bool zh = true, bool year = false}) async {
+      String? sent;
+      await tester.pumpWidget(MaterialApp(
+        home: ReportScreen(zh: zh, share: (t) async => sent = t),
+      ));
+      await tester.pumpAndSettle();
+      if (year) {
+        await tester.ensureVisible(find.byKey(const Key('report-span-year')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const Key('report-span-year')));
+        await tester.pumpAndSettle();
+      }
+      await tester.ensureVisible(find.byKey(const Key('report-share')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('report-share')));
+      await tester.pumpAndSettle();
+      expect(sent, isNotNull, reason: 'the button shares something');
+      return sent!;
+    }
+
+    testWidgets('says what the recap says, and the streak', (tester) async {
+      // today and the two days before it: a three-day streak
+      spend('a', 150, ts: now);
+      spend('b', 50, ts: now - day);
+      earn('c', 1000, ts: now - 2 * day);
+      final t = await shared(tester);
+
+      final lines = t.split('\n');
+      expect(lines, hasLength(4));
+      expect(lines[0], startsWith('🌺 大红花记账 · 回顾 · '));
+      // net, spent and earned are the screen's own numbers
+      expect(t, contains('结余 ${textOf(tester, 'recap-net')}'));
+      expect(t, contains('支出 ${textOf(tester, 'recap-exp')}'));
+      expect(t, contains('收入 ${textOf(tester, 'recap-inc')}'));
+      expect(
+        t,
+        contains('记了 ${textOf(tester, 'recap-count')} 笔 · 连续记账 3 天'),
+      );
+    });
+
+    testWidgets('names the cycle by the days 明细 names it by', (tester) async {
+      caps(cycleStart: 1);
+      final n = DateTime.now();
+      final last = DateTime(n.year, n.month + 1, 0).day;
+      final t = await shared(tester);
+      expect(t.split('\n').first, endsWith('${n.month}月1日 – ${n.month}月$last日'));
+    });
+
+    testWidgets('今年 is named by the year, and recaps the year', (tester) async {
+      final n = DateTime.now();
+      final lastYear = DateTime(n.year - 1, 6, 15).millisecondsSinceEpoch;
+      spend('old', 999, ts: lastYear);
+      spend('e1', 40);
+      final t = await shared(tester, year: true);
+      expect(t.split('\n').first, endsWith('${n.year}年'));
+      expect(t, contains('支出 ￥40.00'));
+      expect(t, isNot(contains('999')));
+    });
+
+    testWidgets('in English too', (tester) async {
+      spend('a', 20);
+      final t = await shared(tester, zh: false);
+      expect(t.split('\n').first, startsWith('🌺 Dahonghua · Report · '));
+      expect(t, contains('Spent ￥20.00'));
+      expect(t, contains('1 entry · a 1-day streak'));
+    });
+  });
 }

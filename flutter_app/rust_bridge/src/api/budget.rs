@@ -104,6 +104,25 @@ pub fn next_cycle(today: String) -> String {
     show_day(dahonghua_core::cycle::cycle_range(parse_day(&today), start).end)
 }
 
+/// The cycle `today` is in, by its first and last day — the two days 明细's
+/// head names it by, and so 回顾's 分享 too.
+#[derive(Debug, Clone, PartialEq)]
+pub struct CycleSpan {
+    pub start: String,
+    pub last: String,
+}
+
+#[frb(sync)]
+pub fn cycle_span(today: String) -> CycleSpan {
+    let c = dahonghua_core::cycle::cycle_range(parse_day(&today), settings_of().cycle_start);
+    CycleSpan {
+        start: show_day(c.start),
+        last: show_day(dahonghua_core::civil::Civil::from_day_number(
+            c.end.day_number() - 1,
+        )),
+    }
+}
+
 /// A spend total against a cap.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct TierView {

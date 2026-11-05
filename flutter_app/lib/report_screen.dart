@@ -12,11 +12,13 @@
 // a sentence about two rows is noise.
 
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'ledger_days.dart';
 
 import 'src/rust/api/budget.dart' as budget;
 import 'src/rust/api/catalog.dart' as catalog;
+import 'src/rust/api/history.dart' as history;
 import 'src/rust/api/money.dart' as money;
 import 'src/rust/api/report.dart' as report;
 import 'glass.dart';
@@ -58,10 +60,51 @@ report.InsightCopyView insightCopy(bool zh) => zh
         overdue: '%d days overdue',
       );
 
+/// 分享: what the recap says, as a few lines of text for the share sheet —
+/// the shipping 「分享战报」.
+///
+/// [span] is the cycle's first and last day (`YYYY-M-D`), or null for 今年,
+/// which is named by its year. The amounts are as the screen shows them;
+/// 隐藏金额 covers 明细, 资产 and 账户, and 回顾 never hid them.
+String recapShareText({
+  required bool zh,
+  required report.RecapView recap,
+  required int streak,
+  required String year,
+  budget.CycleSpan? span,
+}) {
+  String m(double v) => money.fmt(n: v, symbol: baseSymbol());
+  final String when;
+  if (span == null) {
+    when = zh ? '$year年' : year;
+  } else {
+    List<String> p(String ymd) => ymd.split('-');
+    final a = p(span.start);
+    final b = p(span.last);
+    when = zh
+        ? '${a[1]}月${a[2]}日 – ${b[1]}月${b[2]}日'
+        : '${a[1]}/${a[2]} – ${b[1]}/${b[2]}';
+  }
+  return [
+    zh ? '🌺 大红花记账 · 回顾 · $when' : '🌺 Dahonghua · Report · $when',
+    zh ? '结余 ${m(recap.net)}' : 'Net ${m(recap.net)}',
+    zh
+        ? '支出 ${m(recap.exp)} · 收入 ${m(recap.inc)}'
+        : 'Spent ${m(recap.exp)} · Earned ${m(recap.inc)}',
+    zh
+        ? '记了 ${recap.count} 笔 · 连续记账 $streak 天'
+        : '${recap.count} ${recap.count == 1 ? 'entry' : 'entries'}'
+              ' · a $streak-day streak',
+  ].join('\n');
+}
+
 class ReportScreen extends StatefulWidget {
-  const ReportScreen({super.key, this.zh = true});
+  const ReportScreen({super.key, this.zh = true, this.share});
 
   final bool zh;
+
+  /// Where 分享's text goes. A test cannot drive a share sheet.
+  final Future<void> Function(String text)? share;
 
   @override
   State<ReportScreen> createState() => _ReportScreenState();
@@ -162,9 +205,41 @@ class _ReportScreenState extends State<ReportScreen> {
           _recapCard(zh),
           const SizedBox(height: 16),
           _weekCard(zh),
+          const SizedBox(height: 18),
+          FilledButton.icon(
+            key: const Key('report-share'),
+            onPressed: _share,
+            style: FilledButton.styleFrom(
+              backgroundColor: palette.hibiscus,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 14),
+            ),
+            icon: const Icon(Icons.ios_share, size: 18),
+            label: Text(zh ? '分享这份回顾' : 'Share this report'),
+          ),
         ],
       ),
     );
+  }
+
+  /// The recap as it is on the screen — this cycle or this year — and the
+  /// streak, which is the whole ledger's whichever is showing.
+  Future<void> _share() async {
+    final l = LedgerDays.current();
+    final now = DateTime.now();
+    final today = reportDay(now);
+    final text = recapShareText(
+      zh: widget.zh,
+      recap: _recap,
+      streak: history.streak(days: l.days, today: today).toInt(),
+      year: '${now.year}',
+      span: _year ? null : budget.cycleSpan(today: today),
+    );
+    if (widget.share != null) {
+      await widget.share!(text);
+    } else {
+      await SharePlus.instance.share(ShareParams(text: text));
+    }
   }
 
   /// One sentence, when there is one worth saying.

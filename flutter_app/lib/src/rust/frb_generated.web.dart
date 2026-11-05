@@ -241,6 +241,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   CubicView dco_decode_cubic_view(dynamic raw);
 
   @protected
+  CycleSpan dco_decode_cycle_span(dynamic raw);
+
+  @protected
   DayCell dco_decode_day_cell(dynamic raw);
 
   @protected
@@ -894,6 +897,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   CubicView sse_decode_cubic_view(SseDeserializer deserializer);
+
+  @protected
+  CycleSpan sse_decode_cycle_span(SseDeserializer deserializer);
 
   @protected
   DayCell sse_decode_day_cell(SseDeserializer deserializer);
@@ -1664,6 +1670,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_cubic_view(CubicView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_cycle_span(CycleSpan self, SseSerializer serializer);
 
   @protected
   void sse_encode_day_cell(DayCell self, SseSerializer serializer);
