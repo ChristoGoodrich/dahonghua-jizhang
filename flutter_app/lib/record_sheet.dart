@@ -1453,6 +1453,7 @@ class _RecordSheetState extends State<RecordSheet> {
       child: Tap(
         radius: Rad.md,
         key: Key('key-$k'),
+        haptic: true,
         // Held while a rate is in flight: pressing twice would write twice.
         onTap: () => isSave ? (_fetching ? null : _save()) : _key(k),
         onLongPress: isSave ? _saveAsTemplate : null,

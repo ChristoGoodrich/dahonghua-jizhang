@@ -21,6 +21,7 @@
 // were missing.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'theme.dart';
 
@@ -43,6 +44,7 @@ class Tap extends StatefulWidget {
     this.scaleTo,
     this.behavior = HitTestBehavior.opaque,
     this.semanticLabel,
+    this.haptic = false,
   });
 
   final Widget child;
@@ -62,6 +64,12 @@ class Tap extends StatefulWidget {
 
   final HitTestBehavior behavior;
   final String? semanticLabel;
+
+  /// A light tick under the finger as the press lands — the shipping `Tap`'s
+  /// `haptic`, which it gave the keypad's keys and the template chips: the
+  /// presses made many times in a row without looking. Android's own
+  /// touch-feedback setting still decides whether the phone vibrates.
+  final bool haptic;
 
   @override
   State<Tap> createState() => _TapState();
@@ -126,7 +134,12 @@ class _TapState extends State<Tap> {
 
     final detector = GestureDetector(
       behavior: widget.behavior,
-      onTap: widget.onTap,
+      onTap: widget.onTap == null || !widget.haptic
+          ? widget.onTap
+          : () {
+              HapticFeedback.selectionClick();
+              widget.onTap!();
+            },
       onLongPress: widget.onLongPress,
       onTapDown: (_) => _set(true),
       onTapUp: (_) => _set(false),

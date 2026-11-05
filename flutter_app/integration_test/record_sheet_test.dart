@@ -10,6 +10,7 @@ import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_app/photos.dart';
 import 'package:flutter_app/record_sheet.dart';
 import 'package:flutter_app/src/rust/api/accounts.dart' as accounts;
@@ -70,6 +71,32 @@ void main() {
   setUp(() => store.reset());
 
   group('the keypad', () {
+    testWidgets('each key ticks under the finger, as the shipping keys did', (
+      tester,
+    ) async {
+      // Caught on the way out: whether the phone vibrates is Android's
+      // touch-feedback setting, and nothing a test should depend on.
+      final ticks = <Object?>[];
+      final messenger = tester.binding.defaultBinaryMessenger;
+      messenger.setMockMethodCallHandler(SystemChannels.platform, (call) async {
+        if (call.method == 'HapticFeedback.vibrate') ticks.add(call.arguments);
+        return null;
+      });
+      addTearDown(
+        () => messenger.setMockMethodCallHandler(SystemChannels.platform, null),
+      );
+      await show(tester);
+
+      await type(tester, '35');
+      await press(tester, '+');
+      expect(ticks, List.filled(3, 'HapticFeedbackType.selectionClick'));
+
+      // a category is a choice, not a keystroke, and stays quiet
+      await tester.tap(find.byKey(const Key('cat-chip-trans')));
+      await tester.pumpAndSettle();
+      expect(ticks, hasLength(3));
+    });
+
     testWidgets('builds an expression a digit at a time', (tester) async {
       await show(tester);
       await type(tester, '35');
