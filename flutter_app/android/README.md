@@ -56,9 +56,10 @@ up somewhere that is not this machine.
 
 ## The existing app
 
-The React Native build published as `com.dahonghua.app` was signed by EAS, and
-the Flutter build claims the same package name because it is the same app. If
-the original key is not available, installing this over the old one will fail
-with a signature mismatch — the path is then uninstall, install, and bring the
-ledger across with the JSON backup that Settings → 导出 writes. That export
-exists partly for this.
+The React Native build published as `com.dahonghua.app` (v1.0.0) was signed
+with React Native's template debug key, not by EAS, and the Flutter build
+claims the same package name because it is the same app. A build signed with
+the release key cannot replace that one, or any debug-signed Flutter build:
+Android refuses on the signature, and the way past is an uninstall.
+[RELEASE.md](../../RELEASE.md#installing-over-the-old-app) says how a
+debug-signed Flutter build carries its ledger across, and why v1.0.0's cannot.

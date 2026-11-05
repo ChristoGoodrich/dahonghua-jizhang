@@ -14,6 +14,8 @@ git push origin v1.1.0
 - `cd flutter_app && flutter test integration_test/all_test.dart`
 - Bump `version:` in `flutter_app/pubspec.yaml`. The part after `+` is the
   versionCode, and Android refuses an update whose versionCode did not increase.
+- Write `release-notes/v<version>.md`. It becomes the release's text, and the
+  release workflow refuses a tag that has none before it builds anything.
 
 CI's release workflow re-runs the core gate (goldens, unit tests, clippy) before
 it builds. It does not re-run the emulator suite — that is what the push CI is
@@ -50,7 +52,24 @@ under `com.dahonghua.app` forever.
 
 ## Installing over the old app
 
-The React Native build published as `com.dahonghua.app` and was signed by EAS.
-If that key is not available, Android refuses the update on a signature
-mismatch and the path is uninstall, install, and carry the ledger across with
-Settings → 导出. That export exists partly for this.
+Nothing published before v1.1.0 was signed with the release key, so none of it
+can be updated by a signed build. Android refuses on the signature mismatch,
+and the way past is an uninstall, which deletes the ledger.
+
+**A debug-signed Flutter build** — 设置 › 关于大红花 shows `-debugsigned` — carries
+its ledger across with its own snapshot:
+
+1. 我的 › 备份, take a snapshot with ＋, **without a password**. A sealed
+   snapshot leaves its receipt photos in the app's own storage, which the
+   uninstall empties.
+2. 导出 that snapshot somewhere outside the app.
+3. Uninstall, then install the signed build.
+4. 我的 › 备份 › 从文件恢复, and pick the exported file, with its photos.
+
+**v1.0.0, the React Native app**, cannot be carried across. Its release was
+built by Gradle with React Native's template debug key, not by EAS. The only
+way its data left the phone was 设置 › 导出备份 (JSON). That document keeps
+its rows under `data`, not `entries`, so 从文件恢复 does not recognise it. When
+v1.1.0 was cut nobody was on v1.0.0, so no importer was written. If that
+changes, the document is `buildBackup()` in `src/store/state.ts` at the
+`v1.0.0` tag.

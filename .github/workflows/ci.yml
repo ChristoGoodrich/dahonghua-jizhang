@@ -77,7 +77,12 @@ jobs:
     # first test (Flutter, the emulator, the debug build), about 32 for the
     # suite with animations on — the blur is rendered in software — and then
     # the release build. 45 cut the release build off 36 seconds in.
-    timeout-minutes: 90
+    #
+    # Measured again on 2026-11-05, with 1,000-odd tests: 51 minutes on one
+    # run and 82 on the next, on the same kind of runner. 90 left one bad
+    # runner and a few more test files between a green suite and a timeout,
+    # and a timeout reads as red without saying which test.
+    timeout-minutes: 120
 
     steps:
       - name: Checkout
