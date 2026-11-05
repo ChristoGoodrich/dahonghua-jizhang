@@ -35,6 +35,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
+      # The release text is `release-notes/<tag>.md`, written before the tag.
+      # Without this the release went up with an APK and no words, and a
+      # release whose notes do not say how to move from a debug-signed build
+      # is one that costs somebody their ledger. Checked first, so a missing
+      # file fails in seconds rather than after the build.
+      - name: Release notes for this tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          NOTES="release-notes/${GITHUB_REF_NAME}.md"
+          if [ ! -s "$NOTES" ]; then
+            echo "::error::no $NOTES — write the release notes before tagging"
+            exit 1
+          fi
+
       - name: Set up Node
         uses: actions/setup-node@v7
         with:
@@ -141,4 +155,5 @@ jobs:
         uses: softprops/action-gh-release@v3
         if: startsWith(github.ref, 'refs/tags/v')
         with:
+          body_path: release-notes/${{ github.ref_name }}.md
           files: flutter_app/build/app/outputs/flutter-apk/app-arm64-v8a-release.apk

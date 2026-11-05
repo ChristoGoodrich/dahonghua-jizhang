@@ -14,6 +14,8 @@ git push origin v1.1.0
 - `cd flutter_app && flutter test integration_test/all_test.dart`
 - Bump `version:` in `flutter_app/pubspec.yaml`. The part after `+` is the
   versionCode, and Android refuses an update whose versionCode did not increase.
+- Write `release-notes/v<version>.md`. It becomes the release's text, and the
+  release workflow refuses a tag that has none before it builds anything.
 
 CI's release workflow re-runs the core gate (goldens, unit tests, clippy) before
 it builds. It does not re-run the emulator suite — that is what the push CI is
