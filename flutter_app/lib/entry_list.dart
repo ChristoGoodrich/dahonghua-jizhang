@@ -43,6 +43,55 @@ import 'toast.dart';
 /// is where an instant becomes a day — never on the other side of the boundary.
 String localDay(DateTime d) => '${d.year}-${d.month}-${d.day}';
 
+/// What a delete is about to take, in the words of the row: its category,
+/// its note, its amount and its day.
+String describeEntry(store.EntryView e, bool zh) {
+  final label = catLabelOf(io: e.io, key: e.cat, zh: zh);
+  final d = DateTime.fromMillisecondsSinceEpoch(e.ts);
+  final note = (e.note ?? '').isEmpty ? '' : ' · ${e.note}';
+  final day = zh ? '${d.month}月${d.day}日' : '${d.month}/${d.day}';
+  return '${label.name}$note  ${money.fmtSigned(n: e.amt, io: e.io)}  $day';
+}
+
+/// Delete one row, and say so with 撤销 — from 明细's swipe and ⋯ menu, and
+/// from the edit sheet's 删除. One function, so the two cannot come to differ
+/// about what a delete leaves to undo.
+///
+/// `onChanged` follows the delete and the undo both: the ledger needs writing
+/// either way. `onUndone` is for whoever is still on the screen; the notice
+/// can outlive the screen that put it up.
+void removeEntryWithUndo(
+  BuildContext context, {
+  required String id,
+  required bool zh,
+  required VoidCallback onChanged,
+  VoidCallback? onUndone,
+}) {
+  final undo = store.removeEntry(
+    id: id,
+    now: DateTime.now().millisecondsSinceEpoch,
+  );
+  onChanged();
+  if (undo == null || !context.mounted) return;
+  showToast(
+    context,
+    key: const Key('deleted-toast'),
+    text: zh ? '已删除' : 'Deleted',
+    action: ToastAction(
+      key: const Key('deleted-undo'),
+      label: zh ? '撤销' : 'Undo',
+      onPressed: () {
+        store.unremoveEntry(
+          undo: undo,
+          now: DateTime.now().millisecondsSinceEpoch,
+        );
+        onChanged();
+        onUndone?.call();
+      },
+    ),
+  );
+}
+
 /// The day names the core does not spell.
 String dayHeading(String label, String ymd, bool zh) {
   if (label == 'today') return zh ? '今天' : 'Today';
@@ -79,6 +128,7 @@ class EntryListScreen extends StatefulWidget {
     this.onSelecting,
     this.onOpenBudget,
     this.onOpenStats,
+    this.onOpenAccount,
     this.onPrivacy,
     this.onLedger,
     this.onRecordAt,
@@ -104,6 +154,9 @@ class EntryListScreen extends StatefulWidget {
   /// Where the head's budget flower and summary lead: 预算, and the 统计 tab.
   final VoidCallback? onOpenBudget;
   final VoidCallback? onOpenStats;
+
+  /// Where a banner about one account leads — 要还款了 opens that card.
+  final ValueChanged<String>? onOpenAccount;
 
   /// The eye was pressed. The shell saves the setting and redraws the tabs
   /// that show totals.
@@ -131,6 +184,23 @@ class _EntryListScreenState extends State<EntryListScreen> {
 
   final _query = TextEditingController();
   bool _searching = false;
+
+  /// The search's filter rows — the shipping `SearchFilter`: one side, one
+  /// category, one of six date words. Each applies with the box empty too,
+  /// and a second tap takes it off. The date is kept as the word, and read
+  /// the way the box reads it, so 本月 pressed and 本月 typed are one range.
+  String? _fio;
+  String? _fcat;
+  String? _fdate;
+  bool get _filtered => _fio != null || _fcat != null || _fdate != null;
+  static const _datePresets = [
+    ('今天', 'Today'),
+    ('昨天', 'Yesterday'),
+    ('本周', 'This week'),
+    ('上周', 'Last week'),
+    ('本月', 'This month'),
+    ('上月', 'Last month'),
+  ];
 
   /// 批量处理. Null when the screen is in its ordinary mode; a set — possibly
   /// empty — while rows are being ticked.
@@ -179,6 +249,13 @@ class _EntryListScreenState extends State<EntryListScreen> {
 
   static const _calKey = 'ledger-calendar';
 
+  /// A day in the cycle the head shows, or null for the one today is in —
+  /// 明细's ‹ ›, the shipping summary card's. Null rather than today's date,
+  /// so a list left open over midnight follows the day. Kept in page storage
+  /// for the calendar's reason: the shell rebuilds this screen after a save.
+  String? _headAnchor;
+  static const _headKey = 'ledger-head-anchor';
+
   @override
   void initState() {
     super.initState();
@@ -190,6 +267,10 @@ class _EntryListScreenState extends State<EntryListScreen> {
       _calAnchor = anchor;
       _calPicked = picked;
     }
+    final head = PageStorage.maybeOf(
+      context,
+    )?.readState(context, identifier: _headKey);
+    if (head is String) _headAnchor = head;
     _reload();
   }
 
@@ -230,10 +311,14 @@ class _EntryListScreenState extends State<EntryListScreen> {
     }
     final ledgers = catalog.pickableLedgers(keep: scope);
 
+    final today = localDay(DateTime.now());
     final head = home.home(
       ids: ids,
       daysOf: days,
-      today: localDay(DateTime.now()),
+      allIds: allIds,
+      allDaysOf: allDays,
+      anchor: _headAnchor ?? today,
+      today: today,
       zh: widget.zh,
       copy: insightCopy(widget.zh),
     );
@@ -245,18 +330,42 @@ class _EntryListScreenState extends State<EntryListScreen> {
     );
 
     final q = _query.text.trim();
+    final filtering = _searching && (q.isNotEmpty || _filtered);
+    // A cycle gone by shows its own rows under its own totals, as the
+    // shipping list did; this one shows them all, as this list always has. A
+    // search is over everything either way.
+    if (!head.current && !filtering) {
+      (ids, days) = _only(
+        ids,
+        days,
+        period
+            .idsInPeriod(
+              ids: ids,
+              daysOf: days,
+              anchor: _headAnchor ?? today,
+              period: 'month',
+            )
+            .toSet(),
+      );
+    }
     search.ParsedQueryView? parsed;
-    if (q.isNotEmpty) {
+    if (filtering) {
       // The query may name a range, and a range is not something Rust can
       // resolve: midnight last Monday is a question about this device's zone.
-      parsed = search.parseQuery(query: q, today: localDay(DateTime.now()));
+      parsed = q.isEmpty ? null : search.parseQuery(query: q, today: today);
+      // A filter row's choice outranks a word in the box saying otherwise:
+      // it is the more deliberate of the two.
+      final preset = _fdate == null
+          ? null
+          : search.parseQuery(query: _fdate!, today: today);
       final keep = search
           .searchIds(
             ids: ids,
-            text: parsed.text,
-            io: parsed.io,
-            fromMs: _msOf(parsed.from),
-            toMs: _msOf(parsed.to),
+            text: parsed?.text ?? '',
+            io: _fio ?? parsed?.io,
+            cat: _fcat,
+            fromMs: _msOf(preset?.from ?? parsed?.from),
+            toMs: _msOf(preset?.to ?? parsed?.to),
             zh: widget.zh,
           )
           .toSet();
@@ -385,6 +494,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             b.header,
+                            if (_searching && !_selecting) _searchFilters(zh),
                             // Not over search results, which are about the
                             // query rather than the month, and not while
                             // ticking rows, where the title is the count.
@@ -402,6 +512,8 @@ class _EntryListScreenState extends State<EntryListScreen> {
                                 },
                                 onOpenBudget: widget.onOpenBudget,
                                 onOpenStats: widget.onOpenStats,
+                                onOpenAccount: widget.onOpenAccount,
+                                onShift: _shiftHead,
                                 templates: catalog.templates(),
                                 onTemplate: _logTemplate,
                                 ledgers: _ledgers,
@@ -508,6 +620,23 @@ class _EntryListScreenState extends State<EntryListScreen> {
         },
       ),
     );
+  }
+
+  /// 明细's ‹ ›: the head, and the rows under it, a cycle earlier or later.
+  /// No further forward than the cycle today is in, which is null again.
+  void _shiftHead(int dir) {
+    final today = localDay(DateTime.now());
+    final next = period.stepPeriod(
+      anchor: _headAnchor ?? today,
+      period: 'month',
+      dir: dir,
+    );
+    _headAnchor = next;
+    _reload();
+    if (_home?.current ?? true) _headAnchor = null;
+    PageStorage.maybeOf(
+      context,
+    )?.writeState(context, _headAnchor, identifier: _headKey);
   }
 
   void _stepCal(int dir) {
@@ -834,6 +963,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
           if (_calendar) {
             _searching = false;
             _query.clear();
+            _clearFilters();
           }
         });
         _keepCal();
@@ -846,7 +976,10 @@ class _EntryListScreenState extends State<EntryListScreen> {
       onPressed: () {
         setState(() {
           _searching = !_searching;
-          if (!_searching) _query.clear();
+          if (!_searching) {
+            _query.clear();
+            _clearFilters();
+          }
           // a search is over rows, so it opens on the list
           if (_searching) _calendar = false;
         });
@@ -855,6 +988,128 @@ class _EntryListScreenState extends State<EntryListScreen> {
       },
     ),
   ];
+
+  void _clearFilters() {
+    _fio = null;
+    _fcat = null;
+    _fdate = null;
+  }
+
+  /// 支出 / 收入 / 转账, six date words, and a category — under the box while
+  /// it is open, over the results and over 没有找到 alike.
+  Widget _searchFilters(bool zh) {
+    Widget chip(String key, String label, bool on, VoidCallback onTap) => Tap(
+      key: Key(key),
+      radius: Rad.pill,
+      onTap: () {
+        setState(onTap);
+        _reload();
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
+        decoration: BoxDecoration(
+          color: on
+              ? palette.stamen.withValues(alpha: 0.18)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(Rad.pill),
+          border: Border.all(color: on ? palette.stamen : palette.line),
+        ),
+        child: Text(label, style: TextStyle(fontSize: 12, color: palette.ink)),
+      ),
+    );
+    final catIo = _fio == 'inc' ? 'inc' : 'exp';
+    return Padding(
+      key: const Key('search-filters'),
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Wrap(
+            spacing: 6,
+            runSpacing: 6,
+            children: [
+              for (final (io, zhL, enL) in const [
+                ('exp', '支出', 'Expense'),
+                ('inc', '收入', 'Income'),
+                ('xfer', '转账', 'Transfer'),
+              ])
+                chip('sf-io-$io', zh ? zhL : enL, _fio == io, () {
+                  _fio = _fio == io ? null : io;
+                  // a category is one side's; the other side has none of it
+                  if (_fcat != null && _fio != null && _fio != catIo) {
+                    _fcat = null;
+                  }
+                  if (_fio == 'xfer') _fcat = null;
+                }),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Wrap(
+            spacing: 6,
+            runSpacing: 6,
+            children: [
+              for (final (w, en) in _datePresets)
+                chip('sf-date-$w', zh ? w : en, _fdate == w, () {
+                  _fdate = _fdate == w ? null : w;
+                }),
+            ],
+          ),
+          // A transfer has no category to narrow by.
+          if (_fio != 'xfer') ...[
+            const SizedBox(height: 6),
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: [
+                if (_fcat == null)
+                  Tap(
+                    key: const Key('sf-cat'),
+                    radius: Rad.pill,
+                    onTap: () async {
+                      final k = await pickCategory(
+                        context,
+                        cats: catsOf(catIo),
+                        zh: zh,
+                        keyPrefix: 'sf-cat-pick',
+                      );
+                      if (k == null || !mounted) return;
+                      setState(() => _fcat = k);
+                      _reload();
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 11,
+                        vertical: 5,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(Rad.pill),
+                        border: Border.all(color: palette.line),
+                      ),
+                      child: Text(
+                        zh ? '＋ 分类' : '+ Category',
+                        style: TextStyle(fontSize: 12, color: palette.inkSoft),
+                      ),
+                    ),
+                  )
+                else
+                  chip(
+                    'sf-cat-on',
+                    '${catLabelOf(io: catIo, key: _fcat!, zh: zh).name} ×',
+                    true,
+                    () => _fcat = null,
+                  ),
+                if (_filtered)
+                  chip('sf-clear', zh ? '清除筛选' : 'Clear', false, _clearFilters),
+              ],
+            ),
+          ] else if (_filtered) ...[
+            const SizedBox(height: 6),
+            chip('sf-clear', zh ? '清除筛选' : 'Clear', false, _clearFilters),
+          ],
+        ],
+      ),
+    );
+  }
 
   /// Take everything on screen, or let it all go.
   Widget _selectAll(bool zh) {
@@ -991,7 +1246,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
       // most often made on the way to something else; declined, the row
       // slides back.
       confirmDismiss: (_) =>
-          confirmDelete(context, zh: zh, what: _describe(e, zh)),
+          confirmDelete(context, zh: zh, what: describeEntry(e, zh)),
       onDismissed: (_) => _delete(e, zh),
       child: _entryCard(e, zh, group: group),
     );
@@ -1008,44 +1263,19 @@ class _EntryListScreenState extends State<EntryListScreen> {
       );
 
   void _delete(store.EntryView e, bool zh) {
-    final undo = store.removeEntry(
-      id: e.id,
-      now: DateTime.now().millisecondsSinceEpoch,
-    );
-    widget.onChanged?.call();
-    _reload();
-    if (undo == null || !mounted) return;
-
-    showToast(
+    removeEntryWithUndo(
       context,
-      key: const Key('deleted-toast'),
-      text: zh ? '已删除' : 'Deleted',
-      action: ToastAction(
-        key: const Key('deleted-undo'),
-        label: zh ? '撤销' : 'Undo',
-        onPressed: () {
-          store.unremoveEntry(
-            undo: undo,
-            now: DateTime.now().millisecondsSinceEpoch,
-          );
-          widget.onChanged?.call();
-          // The shell recreated this list when the row went, so the one that
-          // put the notice up is usually gone by the time 撤销 is pressed; the
-          // new one reads the store itself.
-          if (mounted) _reload();
-        },
-      ),
+      id: e.id,
+      zh: zh,
+      onChanged: () => widget.onChanged?.call(),
+      // The shell recreated this list when the row went, so the one that put
+      // the notice up is usually gone by the time 撤销 is pressed; the new one
+      // reads the store itself.
+      onUndone: () {
+        if (mounted) _reload();
+      },
     );
-  }
-
-  /// What a delete is about to take, in the words of the row: its category,
-  /// its note, its amount and its day.
-  String _describe(store.EntryView e, bool zh) {
-    final label = catLabelOf(io: e.io, key: e.cat, zh: zh);
-    final d = DateTime.fromMillisecondsSinceEpoch(e.ts);
-    final note = (e.note ?? '').isEmpty ? '' : ' · ${e.note}';
-    final day = zh ? '${d.month}月${d.day}日' : '${d.month}/${d.day}';
-    return '${label.name}$note  ${money.fmtSigned(n: e.amt, io: e.io)}  $day';
+    _reload();
   }
 
   Widget _header(store.ListItem item, bool zh) {
@@ -1351,9 +1581,28 @@ class _EntryListScreenState extends State<EntryListScreen> {
     padding: EdgeInsets.fromLTRB(22, b.top, 22, 0),
     children: [
       b.header,
+      // Nothing matched is where a filter most needs changing.
+      if (_searching) _searchFilters(zh),
+      // A cycle gone by with nothing in it keeps its head, ‹ › and all, or
+      // there would be no way back from it.
+      if (!_searching && _home != null && !_home!.current)
+        HomeHeader(
+          view: _home!,
+          zh: zh,
+          hidden: privacy.hideAmounts(),
+          onToggleHidden: () {
+            privacy.setHideAmounts(hidden: !privacy.hideAmounts());
+            setState(() {});
+            widget.onPrivacy?.call();
+          },
+          onShift: _shiftHead,
+          ledgers: _ledgers,
+          ledger: _scope,
+          onLedger: _pickLedger,
+        )
       // An empty ledger picked in the bar is still a list with a bar over
       // it: without one here there would be no way back to 全部.
-      if (!_searching && _ledgers.isNotEmpty) ...[
+      else if (!_searching && _ledgers.isNotEmpty) ...[
         LedgerBar(
           ledgers: _ledgers,
           current: _scope,
@@ -1364,7 +1613,9 @@ class _EntryListScreenState extends State<EntryListScreen> {
       ],
       // A first launch may already have templates — imported, or synced from
       // another phone — and one press is the quickest first entry there is.
-      if (!_searching && catalog.templates().isNotEmpty)
+      if (!_searching &&
+          (_home?.current ?? true) &&
+          catalog.templates().isNotEmpty)
         TemplateChips(
           templates: catalog.templates(),
           zh: zh,
@@ -1396,8 +1647,10 @@ class _EntryListScreenState extends State<EntryListScreen> {
           // same thing. Telling a user who is searching that they have never
           // recorded anything is worse than saying nothing.
           Text(
-            _query.text.trim().isNotEmpty
+            _query.text.trim().isNotEmpty || (_searching && _filtered)
                 ? (zh ? '没有找到' : 'Nothing matched')
+                : !(_home?.current ?? true)
+                ? (zh ? '这个周期没有记账' : 'Nothing in this cycle')
                 // a ledger with nothing in it yet is not an empty app
                 : _scope.isNotEmpty
                 ? (zh ? '「$_scope」里还没有账' : 'Nothing in $_scope yet')
@@ -1405,7 +1658,9 @@ class _EntryListScreenState extends State<EntryListScreen> {
             key: const Key('list-empty'),
             style: TextStyle(fontSize: 13, color: palette.inkSoft),
           ),
-          if (_query.text.trim().isEmpty) ...[
+          if (_query.text.trim().isEmpty &&
+              !(_searching && _filtered) &&
+              (_home?.current ?? true)) ...[
             const SizedBox(height: 6),
             Text(
               _scope.isNotEmpty
@@ -1479,7 +1734,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
     final ids = _picked!.toList();
     final rows = [
       for (final id in ids.take(3))
-        if (_byId[id] != null) _describe(_byId[id]!, zh),
+        if (_byId[id] != null) describeEntry(_byId[id]!, zh),
     ];
     final ok = await confirmDelete(
       context,
@@ -1597,7 +1852,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
       // the core's answer for this one row: an expense, or not
       claimable: _tally.claimable == 1,
       onDelete: () async {
-        if (await confirmDelete(context, zh: zh, what: _describe(e, zh))) {
+        if (await confirmDelete(context, zh: zh, what: describeEntry(e, zh))) {
           _delete(e, zh);
         }
       },

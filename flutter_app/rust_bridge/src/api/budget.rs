@@ -222,6 +222,63 @@ pub fn cat_budget_rows(
         .collect()
 }
 
+/// The notice after a new entry, when the budget needs one.
+#[derive(Debug, Clone, PartialEq)]
+pub struct BudgetWarningView {
+    /// `over`, `near`, `cat_over` or `cat_near`.
+    pub kind: String,
+    /// The category's name, for the two about one; empty otherwise.
+    pub name: String,
+    /// How far over, or what is left — `near` only.
+    pub amount: f64,
+    /// How much of the cap is gone, for the two `near`s.
+    pub pct: f64,
+}
+
+/// 记一笔's budget notice: `core::budget::warning` over the cycle `today` is
+/// in, chosen the way 预算 chooses it, so the two cannot disagree about
+/// which entries count. `None` when nothing is near a cap.
+#[frb(sync)]
+pub fn budget_warning(
+    ids: Vec<String>,
+    days_of: Vec<String>,
+    today: String,
+    zh: bool,
+) -> Option<BudgetWarningView> {
+    let set = settings_of();
+    let entries = entries_of(&cycle_ids(ids, days_of, today));
+    let monthly = core::monthly_status(&entries, set.budget);
+    let rows = core::cat_budget_rows(&entries, &set.caps);
+    let custom = super::catalog::custom_cats_of(Io::Exp);
+    let name = |k: &str| catalog::cat_name(&catalog::cat_of(Io::Exp, k, &custom), zh);
+    Some(match core::warning(&monthly, &rows)? {
+        core::BudgetWarning::Over { by } => BudgetWarningView {
+            kind: "over".into(),
+            name: String::new(),
+            amount: by,
+            pct: 0.0,
+        },
+        core::BudgetWarning::Near { pct, left } => BudgetWarningView {
+            kind: "near".into(),
+            name: String::new(),
+            amount: left,
+            pct,
+        },
+        core::BudgetWarning::CatOver { cat, by } => BudgetWarningView {
+            kind: "cat_over".into(),
+            name: name(&cat),
+            amount: by,
+            pct: 0.0,
+        },
+        core::BudgetWarning::CatNear { cat, pct } => BudgetWarningView {
+            kind: "cat_near".into(),
+            name: name(&cat),
+            amount: 0.0,
+            pct,
+        },
+    })
+}
+
 // ---------------------------------------------------------------------------
 // Where the cycle is heading.
 // ---------------------------------------------------------------------------

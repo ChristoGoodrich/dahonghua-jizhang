@@ -119,7 +119,8 @@ pub struct NewSub {
     pub periods: Option<u32>,
 }
 
-/// Create a subscription. Returns its id.
+/// Create a subscription. Returns its id, or an empty one for a transfer that
+/// does not name two different accounts (`subs::transfer_ends_valid`).
 ///
 /// `day` is clamped to 1..=28 and `month` to 1..=12, as the shipping form does:
 /// a subscription billed on the 31st would skip February, and the picker never
@@ -139,6 +140,11 @@ pub fn add_sub(sub: NewSub, id: String, now: i64) -> String {
         to,
         periods,
     } = sub;
+    // A transfer from nowhere, or to where it came from, is refused rather
+    // than stored for the sweep to post — empty, as `add_template` says no.
+    if is_transfer && !subs::transfer_ends_valid(from.as_deref(), to.as_deref()) {
+        return String::new();
+    }
     let s = Sub {
         id: id.clone(),
         name,

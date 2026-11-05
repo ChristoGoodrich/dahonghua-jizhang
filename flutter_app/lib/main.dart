@@ -24,7 +24,10 @@ import 'app_info.dart';
 import 'assets_screen.dart';
 import 'ask_screen.dart';
 import 'ai_entry_screen.dart';
+import 'account_detail_screen.dart';
 import 'backup_screen.dart';
+import 'budget_warn.dart';
+import 'forecast_screen.dart';
 import 'bottom_nav.dart';
 import 'budget_screen.dart';
 import 'petal_burst.dart';
@@ -480,15 +483,32 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   ///
   /// A route rather than a tab: saving pops back to whatever was underneath,
   /// which is the behaviour without the shell having to track it.
-  Future<void> _record({String? editId, int? at}) async {
+  Future<void> _record({String? editId, int? at, String? dupeOf}) async {
     var saved = 0;
     var smart = false;
+    var deleted = false;
+    var dupe = false;
     var usedStaleRate = false;
     await _cover(
       MaterialPageRoute<void>(
         builder: (ctx) => sheet.RecordSheet(
           editId: editId,
+          dupeId: dupeOf,
           initialTs: at,
+          // An edit's 删除 and 再记一笔 close the sheet first, as 一句话记账
+          // does, and the shell does the rest once it has gone.
+          onDelete: editId == null
+              ? null
+              : () {
+                  deleted = true;
+                  Navigator.of(ctx).pop();
+                },
+          onDuplicate: editId == null
+              ? null
+              : () {
+                  dupe = true;
+                  Navigator.of(ctx).pop();
+                },
           zh: _zh,
           onSaved: ({required bool staleRate}) {
             saved++;
@@ -510,6 +530,19 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       unawaited(_smart());
       return;
     }
+    if (deleted && editId != null && mounted) {
+      removeEntryWithUndo(
+        context,
+        id: editId,
+        zh: _zh,
+        onChanged: _entriesChanged,
+      );
+      return;
+    }
+    if (dupe && editId != null && mounted) {
+      unawaited(_record(dupeOf: editId));
+      return;
+    }
     // A flower for each new entry, the shipping app's reward — played once
     // the sheet has gone, where the + button it comes out of can be seen.
     // Not for an edit, which planted nothing.
@@ -519,7 +552,23 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             ? (_zh ? '已记 · 用了缓存汇率' : 'Saved · used a cached rate')
             : (_zh ? '贴上一朵花' : 'One more flower'),
       );
+      // Then the budget, if it needs saying — but not after the stale-rate
+      // notice, which is worth reading on its own; the shipping app held it
+      // back for the same reason. Only from the sheet: a template and
+      // 一句话记账 say 撤销, and this would take that notice's place.
+      if (!usedStaleRate) _warnBudgetLater();
     }
+  }
+
+  /// 预算提醒, [budgetWarnDelay] after a new entry: over the cycle's cap, or
+  /// at 80% of it, or of a category's.
+  void _warnBudgetLater() {
+    Future<void>.delayed(budgetWarnDelay, () {
+      if (!mounted) return;
+      final text = budgetWarningText(zh: _zh);
+      if (text == null) return;
+      showToast(context, key: const Key('budget-warn'), text: text);
+    });
   }
 
   /// 贴上一朵花: flowers out of the + button, and a word to say why.
@@ -638,6 +687,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       onOpenBudget: () =>
           _push(BudgetScreen(zh: _zh, onChanged: _configChanged)),
       onOpenStats: () => setState(() => _tab = 1),
+      onOpenAccount: (id) => _push(AccountDetailScreen(id: id, zh: _zh)),
       onRecordAt: (ts) => _record(at: ts),
       onLogged: () => _celebrate(),
       onPrivacy: _configChanged,
@@ -741,6 +791,15 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                 ? '这个周期和这一周，过得怎么样'
                 : 'How the cycle and the week are going',
             onTap: () => _push(ReportScreen(zh: zh)),
+          ),
+          MeRow(
+            id: 'forecast',
+            icon: Icons.trending_up_rounded,
+            title: zh ? '下月预测' : 'Next cycle',
+            desc: zh
+                ? '照前三个周期的走势，下个周期大概花多少'
+                : 'What the next cycle will likely cost, from the last three',
+            onTap: () => _push(ForecastScreen(zh: zh)),
           ),
           MeRow(
             id: 'reimburse',

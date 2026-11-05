@@ -188,6 +188,107 @@ void main() {
       expect(find.text('大红花记账'), findsOneWidget);
     });
 
+    group('the filter rows', () {
+      // The shipping search had 支出/收入/转账, six date words and a category
+      // under the box, each working with nothing typed. The port had the box.
+      Future<void> open(WidgetTester tester) async {
+        await tester.tap(find.byKey(const Key('search-toggle')));
+        await tester.pumpAndSettle();
+      }
+
+      Future<void> press(WidgetTester tester, String key) async {
+        await tester.ensureVisible(find.byKey(Key(key)));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(Key(key)));
+        await tester.pumpAndSettle();
+      }
+
+      testWidgets('a side narrows with nothing typed, and a second tap '
+          'takes it off', (tester) async {
+        add('a', note: '午饭');
+        add('b', io: 'inc', cat: 'salary', note: '工资', amt: 9000);
+        await show(tester);
+        await open(tester);
+
+        await press(tester, 'sf-io-inc');
+        expect(find.text('工资'), findsWidgets);
+        expect(find.text('午饭'), findsNothing);
+
+        await press(tester, 'sf-io-inc');
+        expect(find.text('午饭'), findsWidgets);
+      });
+
+      testWidgets('a date word pressed is the word typed', (tester) async {
+        add('a', note: '今天的午饭');
+        add(
+          'b',
+          note: '很久以前',
+          at: DateTime.now().subtract(const Duration(days: 40)),
+        );
+        await show(tester);
+        await open(tester);
+
+        await press(tester, 'sf-date-今天');
+        expect(find.text('今天的午饭'), findsWidgets);
+        expect(find.text('很久以前'), findsNothing);
+      });
+
+      testWidgets('a category, from the sheet, and off again', (tester) async {
+        add('a', note: '午饭');
+        add('b', cat: 'shop', note: '跑鞋');
+        await show(tester);
+        await open(tester);
+
+        await press(tester, 'sf-cat');
+        await tester.tap(find.byKey(const Key('sf-cat-pick-shop')));
+        await tester.pumpAndSettle();
+        expect(find.text('跑鞋'), findsWidgets);
+        expect(find.text('午饭'), findsNothing);
+
+        await press(tester, 'sf-cat-on');
+        expect(find.text('午饭'), findsWidgets);
+      });
+
+      testWidgets('they combine with what is typed', (tester) async {
+        add('a', note: '咖啡');
+        add('b', io: 'inc', cat: 'other', note: '咖啡 报销');
+        await show(tester);
+        await type(tester, '咖啡');
+
+        await press(tester, 'sf-io-exp');
+        expect(find.text('咖啡'), findsWidgets);
+        expect(find.text('咖啡 报销'), findsNothing);
+      });
+
+      testWidgets('nothing matched keeps them, to change', (tester) async {
+        add('a', note: '午饭');
+        await show(tester);
+        await open(tester);
+
+        await press(tester, 'sf-io-xfer');
+        expect(find.text('没有找到'), findsOneWidget);
+        expect(find.byKey(const Key('search-filters')), findsOneWidget);
+        // a transfer has no category to narrow by
+        expect(find.byKey(const Key('sf-cat')), findsNothing);
+        await press(tester, 'sf-clear');
+        expect(find.text('午饭'), findsWidgets);
+      });
+
+      testWidgets('closing the search lets them go', (tester) async {
+        add('a', note: '午饭');
+        add('b', io: 'inc', cat: 'salary', note: '工资', amt: 9000);
+        await show(tester);
+        await open(tester);
+        await press(tester, 'sf-io-inc');
+
+        await tester.tap(find.byKey(const Key('search-toggle')));
+        await tester.pumpAndSettle();
+        expect(find.text('午饭'), findsWidgets);
+        await open(tester);
+        expect(find.text('午饭'), findsWidgets);
+      });
+    });
+
     testWidgets('typing narrows the list', (tester) async {
       add('a', note: '星巴克');
       add('b', note: '地铁');

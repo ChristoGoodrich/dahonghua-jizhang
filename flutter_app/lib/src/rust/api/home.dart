@@ -15,15 +15,28 @@ import 'report.dart';
 /// `ids` and `days_of` are every live entry and the local day Dart resolved
 /// for each; the cycle is chosen here, from the setting, so the head and 统计
 /// cannot disagree about where this month began.
+///
+/// `all_ids` and `all_days_of` are the same before the ledger filter: a
+/// card's statement is every charge on the card, whichever ledger each was
+/// filed in, and the repayment reminder is read from those.
+///
+/// `anchor` is a day in the cycle to show — `today` for this one, an earlier
+/// day for 明细's ‹. The shipping summary card had the same two arrows.
 HomeView home({
   required List<String> ids,
   required List<String> daysOf,
+  required List<String> allIds,
+  required List<String> allDaysOf,
+  required String anchor,
   required String today,
   required bool zh,
   required InsightCopyView copy,
 }) => RustLib.instance.api.crateApiHomeHome(
   ids: ids,
   daysOf: daysOf,
+  allIds: allIds,
+  allDaysOf: allDaysOf,
+  anchor: anchor,
   today: today,
   zh: zh,
   copy: copy,
@@ -52,6 +65,11 @@ class HomeView {
   final String? mood;
   final InsightView? insight;
 
+  /// The cycle shown is the one `today` is in. 明细's ‹ › go back from it
+  /// and no further forward than it; 今日's pot and a card's bill coming due
+  /// are about today, and only the current cycle has them.
+  final bool current;
+
   const HomeView({
     required this.start,
     required this.last,
@@ -63,6 +81,7 @@ class HomeView {
     this.daily,
     this.mood,
     this.insight,
+    required this.current,
   });
 
   @override
@@ -76,7 +95,8 @@ class HomeView {
       monthly.hashCode ^
       daily.hashCode ^
       mood.hashCode ^
-      insight.hashCode;
+      insight.hashCode ^
+      current.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -92,7 +112,8 @@ class HomeView {
           monthly == other.monthly &&
           daily == other.daily &&
           mood == other.mood &&
-          insight == other.insight;
+          insight == other.insight &&
+          current == other.current;
 }
 
 /// One of the two budget pots.

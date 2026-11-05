@@ -378,6 +378,41 @@ void main() {
   });
 
   group('creating an account', () {
+    // The shipping form asked a 外币 account for its currency, and would not
+    // make one without; the port passed none, so each was 外币 of nothing.
+    Future<void> foreign(WidgetTester tester) async {
+      await show(tester);
+      await tester.tap(find.byKey(const Key('add-account')));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(const Key('new-name')), '美元户');
+      await tester.tap(find.byKey(const Key('kind-fx')));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('a foreign one holds the currency picked', (tester) async {
+      await foreign(tester);
+      // the base is not a foreign currency
+      expect(find.byKey(const Key('fx-code-CNY')), findsNothing);
+      await tester.ensureVisible(find.byKey(const Key('fx-code-USD')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('fx-code-USD')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('new-ok')));
+      await tester.pumpAndSettle();
+
+      final made = accounts.balances().firstWhere((a) => a.name == '美元户');
+      expect((made.kind, made.fxCode), ('fx', 'USD'));
+    });
+
+    testWidgets('and is not made without one', (tester) async {
+      await foreign(tester);
+      await tester.tap(find.byKey(const Key('new-ok')));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('fx-code-USD')), findsOneWidget);
+      expect(accounts.balances().where((a) => a.name == '美元户'), isEmpty);
+    });
+
     testWidgets('takes a name, an opening balance and a kind', (tester) async {
       await show(tester);
       await tester.tap(find.byKey(const Key('add-account')));

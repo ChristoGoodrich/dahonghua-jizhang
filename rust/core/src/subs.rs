@@ -159,6 +159,19 @@ pub fn allowed_charges(sub: &Sub, charges: usize) -> usize {
     }
 }
 
+/// Whether a transfer subscription names the two accounts it moves money
+/// between: both, and not the same one twice.
+///
+/// The shipping form refused anything else (`!from || !to || from === to`).
+/// A sweep that posted such a transfer would write a row from an account to
+/// nowhere, or from an account to itself.
+pub fn transfer_ends_valid(from: Option<&str>, to: Option<&str>) -> bool {
+    match (from, to) {
+        (Some(f), Some(t)) => !f.is_empty() && !t.is_empty() && f != t,
+        _ => false,
+    }
+}
+
 /// The deterministic id a charge posts under: `sub_<subscription>_<epoch ms>`.
 ///
 /// Derived rather than random, for the reason the module header gives.
@@ -291,6 +304,15 @@ pub fn run_subscriptions(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_transfer_needs_two_different_ends() {
+        assert!(transfer_ends_valid(Some("cash"), Some("card")));
+        assert!(!transfer_ends_valid(Some("cash"), Some("cash")));
+        assert!(!transfer_ends_valid(Some("cash"), None));
+        assert!(!transfer_ends_valid(None, Some("card")));
+        assert!(!transfer_ends_valid(Some(""), Some("card")));
+    }
 
     fn sub(freq: SubFreq, day: u32) -> Sub {
         Sub {

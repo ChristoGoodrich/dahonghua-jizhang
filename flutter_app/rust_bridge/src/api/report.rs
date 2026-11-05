@@ -174,17 +174,7 @@ pub(crate) fn insight_of(
     copy: &InsightCopyView,
 ) -> Option<InsightView> {
     let set = settings_of();
-    let c = InsightCopy {
-        over_budget: &copy.over_budget,
-        near_budget: &copy.near_budget,
-        daily_over: &copy.daily_over,
-        cat_over: &copy.cat_over,
-        top_cat: &copy.top_cat,
-        credit_due: &copy.credit_due,
-        days_left: &copy.days_left,
-        due_today: &copy.due_today,
-        overdue: &copy.overdue,
-    };
+    let c = copy_of(copy);
     insight::compute_insight(
         entries,
         day_rows,
@@ -200,9 +190,28 @@ pub(crate) fn insight_of(
         zh,
         &c,
     )
-    .map(|i| InsightView {
+    .map(view_of)
+}
+
+/// The core's copy, borrowed from the one Dart sent.
+pub(crate) fn copy_of(copy: &InsightCopyView) -> InsightCopy<'_> {
+    InsightCopy {
+        over_budget: &copy.over_budget,
+        near_budget: &copy.near_budget,
+        daily_over: &copy.daily_over,
+        cat_over: &copy.cat_over,
+        top_cat: &copy.top_cat,
+        credit_due: &copy.credit_due,
+        days_left: &copy.days_left,
+        due_today: &copy.due_today,
+        overdue: &copy.overdue,
+    }
+}
+
+pub(crate) fn view_of(i: insight::Insight) -> InsightView {
+    InsightView {
         icon: i.ic,
         text: i.text,
         acct_id: i.acct_id,
-    })
+    }
 }

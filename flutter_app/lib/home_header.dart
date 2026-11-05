@@ -27,6 +27,8 @@ class HomeHeader extends StatelessWidget {
     this.zh = true,
     this.onOpenBudget,
     this.onOpenStats,
+    this.onOpenAccount,
+    this.onShift,
     this.templates = const [],
     this.onTemplate,
     this.ledgers = const [],
@@ -54,6 +56,12 @@ class HomeHeader extends StatelessWidget {
   final VoidCallback? onOpenBudget;
   final VoidCallback? onOpenStats;
 
+  /// A banner about one account — 要还款了 — opens it.
+  final ValueChanged<String>? onOpenAccount;
+
+  /// ‹ and ›: the cycle before, or the one after, up to today's.
+  final ValueChanged<int>? onShift;
+
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(bottom: 4),
@@ -66,6 +74,7 @@ class HomeHeader extends StatelessWidget {
           zh: zh,
           onToggleHidden: onToggleHidden,
           onTap: onOpenStats,
+          onShift: onShift,
         ),
         if (view.monthly != null || view.daily != null) ...[
           const SizedBox(height: 10),
@@ -73,7 +82,13 @@ class HomeHeader extends StatelessWidget {
         ],
         if (view.insight != null) ...[
           const SizedBox(height: 10),
-          _Insight(icon: view.insight!.icon, text: view.insight!.text),
+          _Insight(
+            icon: view.insight!.icon,
+            text: view.insight!.text,
+            onTap: view.insight!.acctId != null && onOpenAccount != null
+                ? () => onOpenAccount!(view.insight!.acctId!)
+                : null,
+          ),
         ],
         // Under the insight and over the templates, where the shipping list
         // had its `LedgerFilter`.
@@ -112,6 +127,7 @@ class _SummaryCard extends StatelessWidget {
     required this.zh,
     required this.onToggleHidden,
     this.onTap,
+    this.onShift,
   });
 
   final home.HomeView view;
@@ -119,6 +135,7 @@ class _SummaryCard extends StatelessWidget {
   final bool zh;
   final VoidCallback onToggleHidden;
   final VoidCallback? onTap;
+  final ValueChanged<int>? onShift;
 
   @override
   Widget build(BuildContext context) {
@@ -150,6 +167,14 @@ class _SummaryCard extends StatelessWidget {
       children: [
         Row(
           children: [
+            if (onShift != null)
+              IconButton(
+                key: const Key('home-prev'),
+                tooltip: zh ? '上一个周期' : 'Previous cycle',
+                visualDensity: VisualDensity.compact,
+                icon: Icon(Icons.chevron_left_rounded, color: p.inkSoft),
+                onPressed: () => onShift!(-1),
+              ),
             Expanded(
               child: Text(
                 _cycleLabel(view, zh),
@@ -163,6 +188,16 @@ class _SummaryCard extends StatelessWidget {
                 ),
               ),
             ),
+            // No further forward than the cycle today is in: there is
+            // nothing ahead of it to show.
+            if (onShift != null)
+              IconButton(
+                key: const Key('home-next'),
+                tooltip: zh ? '下一个周期' : 'Next cycle',
+                visualDensity: VisualDensity.compact,
+                icon: Icon(Icons.chevron_right_rounded, color: p.inkSoft),
+                onPressed: view.current ? null : () => onShift!(1),
+              ),
             IconButton(
               key: const Key('hide-amounts'),
               tooltip: hidden
@@ -513,16 +548,20 @@ class _BudgetPot extends StatelessWidget {
 }
 
 /// The one sentence — `core::insight`'s choice, in the report's words.
+///
+/// A sentence about one account — a card's bill coming due — opens that
+/// account, as the shipping banner did, and says so with a chevron.
 class _Insight extends StatelessWidget {
-  const _Insight({required this.icon, required this.text});
+  const _Insight({required this.icon, required this.text, this.onTap});
 
   final String icon;
   final String text;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final p = palette;
-    return Container(
+    final body = Container(
       key: const Key('home-insight'),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
       decoration: BoxDecoration(
@@ -537,11 +576,21 @@ class _Insight extends StatelessWidget {
           Expanded(
             child: Text(
               text,
+              key: const Key('home-insight-text'),
               style: TextStyle(fontSize: 13, height: 1.3, color: p.ink),
             ),
           ),
+          if (onTap != null)
+            Icon(Icons.chevron_right_rounded, size: 18, color: p.inkSoft),
         ],
       ),
+    );
+    if (onTap == null) return body;
+    return Tap(
+      key: const Key('home-insight-open'),
+      radius: Rad.md,
+      onTap: onTap,
+      child: body,
     );
   }
 }

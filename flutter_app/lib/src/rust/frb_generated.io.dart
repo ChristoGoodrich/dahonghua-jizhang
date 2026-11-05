@@ -17,6 +17,7 @@ import 'api/catalog.dart';
 import 'api/currency.dart';
 import 'api/db.dart';
 import 'api/export.dart';
+import 'api/forecast.dart';
 import 'api/glass.dart';
 import 'api/history.dart';
 import 'api/home.dart';
@@ -115,6 +116,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool dco_decode_box_autoadd_bool(dynamic raw);
 
   @protected
+  BudgetWarningView dco_decode_box_autoadd_budget_warning_view(dynamic raw);
+
+  @protected
   CategoryView dco_decode_box_autoadd_category_view(dynamic raw);
 
   @protected
@@ -187,6 +191,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BudgetSettings dco_decode_budget_settings(dynamic raw);
 
   @protected
+  BudgetWarningView dco_decode_budget_warning_view(dynamic raw);
+
+  @protected
   BurstView dco_decode_burst_view(dynamic raw);
 
   @protected
@@ -200,6 +207,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   CatBudgetView dco_decode_cat_budget_view(dynamic raw);
+
+  @protected
+  CatForecastView dco_decode_cat_forecast_view(dynamic raw);
 
   @protected
   CatLabel dco_decode_cat_label(dynamic raw);
@@ -257,6 +267,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   FailureView dco_decode_failure_view(dynamic raw);
+
+  @protected
+  ForecastView dco_decode_forecast_view(dynamic raw);
 
   @protected
   FormView dco_decode_form_view(dynamic raw);
@@ -334,6 +347,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<CatBudgetView> dco_decode_list_cat_budget_view(dynamic raw);
 
   @protected
+  List<CatForecastView> dco_decode_list_cat_forecast_view(dynamic raw);
+
+  @protected
   List<CategoryView> dco_decode_list_category_view(dynamic raw);
 
   @protected
@@ -368,6 +384,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<LockAction> dco_decode_list_lock_action(dynamic raw);
+
+  @protected
+  List<double?> dco_decode_list_opt_box_autoadd_f_64(dynamic raw);
 
   @protected
   List<PendingView> dco_decode_list_pending_view(dynamic raw);
@@ -476,6 +495,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   bool? dco_decode_opt_box_autoadd_bool(dynamic raw);
+
+  @protected
+  BudgetWarningView? dco_decode_opt_box_autoadd_budget_warning_view(
+    dynamic raw,
+  );
 
   @protected
   CompareView? dco_decode_opt_box_autoadd_compare_view(dynamic raw);
@@ -733,6 +757,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool sse_decode_box_autoadd_bool(SseDeserializer deserializer);
 
   @protected
+  BudgetWarningView sse_decode_box_autoadd_budget_warning_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   CategoryView sse_decode_box_autoadd_category_view(
     SseDeserializer deserializer,
   );
@@ -815,6 +844,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BudgetSettings sse_decode_budget_settings(SseDeserializer deserializer);
 
   @protected
+  BudgetWarningView sse_decode_budget_warning_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   BurstView sse_decode_burst_view(SseDeserializer deserializer);
 
   @protected
@@ -828,6 +862,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   CatBudgetView sse_decode_cat_budget_view(SseDeserializer deserializer);
+
+  @protected
+  CatForecastView sse_decode_cat_forecast_view(SseDeserializer deserializer);
 
   @protected
   CatLabel sse_decode_cat_label(SseDeserializer deserializer);
@@ -885,6 +922,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   FailureView sse_decode_failure_view(SseDeserializer deserializer);
+
+  @protected
+  ForecastView sse_decode_forecast_view(SseDeserializer deserializer);
 
   @protected
   FormView sse_decode_form_view(SseDeserializer deserializer);
@@ -972,6 +1012,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  List<CatForecastView> sse_decode_list_cat_forecast_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   List<CategoryView> sse_decode_list_category_view(
     SseDeserializer deserializer,
   );
@@ -1008,6 +1053,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<LockAction> sse_decode_list_lock_action(SseDeserializer deserializer);
+
+  @protected
+  List<double?> sse_decode_list_opt_box_autoadd_f_64(
+    SseDeserializer deserializer,
+  );
 
   @protected
   List<PendingView> sse_decode_list_pending_view(SseDeserializer deserializer);
@@ -1134,6 +1184,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   bool? sse_decode_opt_box_autoadd_bool(SseDeserializer deserializer);
+
+  @protected
+  BudgetWarningView? sse_decode_opt_box_autoadd_budget_warning_view(
+    SseDeserializer deserializer,
+  );
 
   @protected
   CompareView? sse_decode_opt_box_autoadd_compare_view(
@@ -1420,6 +1475,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_box_autoadd_bool(bool self, SseSerializer serializer);
 
   @protected
+  void sse_encode_box_autoadd_budget_warning_view(
+    BudgetWarningView self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_box_autoadd_category_view(
     CategoryView self,
     SseSerializer serializer,
@@ -1549,6 +1610,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_budget_warning_view(
+    BudgetWarningView self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_burst_view(BurstView self, SseSerializer serializer);
 
   @protected
@@ -1562,6 +1629,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_cat_budget_view(CatBudgetView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_cat_forecast_view(
+    CatForecastView self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_cat_label(CatLabel self, SseSerializer serializer);
@@ -1619,6 +1692,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_failure_view(FailureView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_forecast_view(ForecastView self, SseSerializer serializer);
 
   @protected
   void sse_encode_form_view(FormView self, SseSerializer serializer);
@@ -1732,6 +1808,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_list_cat_forecast_view(
+    List<CatForecastView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_list_category_view(
     List<CategoryView> self,
     SseSerializer serializer,
@@ -1785,6 +1867,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_lock_action(
     List<LockAction> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_opt_box_autoadd_f_64(
+    List<double?> self,
     SseSerializer serializer,
   );
 
@@ -1964,6 +2052,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_opt_box_autoadd_bool(bool? self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_opt_box_autoadd_budget_warning_view(
+    BudgetWarningView? self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_opt_box_autoadd_compare_view(

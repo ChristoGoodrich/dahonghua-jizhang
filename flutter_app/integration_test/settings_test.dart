@@ -45,12 +45,18 @@ String textOf(WidgetTester tester, String key) =>
 /// The hub grows. A row that fitted on screen when its test was written does
 /// not stay fitted, and tapping one that has dropped below the fold lands on
 /// the tab bar instead — which looks enough like success to keep passing.
+/// And it is lazy: once it grew past what it builds below the fold, a row
+/// down there is not in the tree at all, so `ensureVisible` has nothing to
+/// find. It is scrolled to instead, as a finger would.
 Future<void> tapMeRow(WidgetTester tester, String key) async {
-  final f = find.byKey(Key(key));
-  await tester.ensureVisible(f);
-  await tester.pumpAndSettle();
-  await tester.tap(f);
-  await tester.pumpAndSettle();
+  await scrollAndTap(
+    tester,
+    find.byKey(Key(key)),
+    scrollable: find.descendant(
+      of: find.byKey(const Key('me-list')),
+      matching: find.byType(Scrollable),
+    ),
+  );
 }
 
 /// The same thing one screen over, and with the other scroll call.

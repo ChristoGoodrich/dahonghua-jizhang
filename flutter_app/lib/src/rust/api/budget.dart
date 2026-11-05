@@ -8,7 +8,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'stats.dart';
 
 // These functions are ignored because they are not marked as `pub`: `entries_of`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `from`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`
 
 SettingsView settings() => RustLib.instance.api.crateApiBudgetSettings();
 
@@ -86,6 +86,21 @@ List<CatBudgetView> catBudgetRows({
   zh: zh,
 );
 
+/// 记一笔's budget notice: `core::budget::warning` over the cycle `today` is
+/// in, chosen the way 预算 chooses it, so the two cannot disagree about
+/// which entries count. `None` when nothing is near a cap.
+BudgetWarningView? budgetWarning({
+  required List<String> ids,
+  required List<String> daysOf,
+  required String today,
+  required bool zh,
+}) => RustLib.instance.api.crateApiBudgetBudgetWarning(
+  ids: ids,
+  daysOf: daysOf,
+  today: today,
+  zh: zh,
+);
+
 /// The cycle `today` is in, run on at its pace. `None` without a cap.
 ///
 /// `ids` and `days_of` are every live entry and its local day, as for the
@@ -101,6 +116,42 @@ OutlookView? outlook({
   daysOf: daysOf,
   today: today,
 );
+
+/// The notice after a new entry, when the budget needs one.
+class BudgetWarningView {
+  /// `over`, `near`, `cat_over` or `cat_near`.
+  final String kind;
+
+  /// The category's name, for the two about one; empty otherwise.
+  final String name;
+
+  /// How far over, or what is left — `near` only.
+  final double amount;
+
+  /// How much of the cap is gone, for the two `near`s.
+  final double pct;
+
+  const BudgetWarningView({
+    required this.kind,
+    required this.name,
+    required this.amount,
+    required this.pct,
+  });
+
+  @override
+  int get hashCode =>
+      kind.hashCode ^ name.hashCode ^ amount.hashCode ^ pct.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BudgetWarningView &&
+          runtimeType == other.runtimeType &&
+          kind == other.kind &&
+          name == other.name &&
+          amount == other.amount &&
+          pct == other.pct;
+}
 
 /// One category with a cap, and how it is doing against it.
 class CatBudgetView {

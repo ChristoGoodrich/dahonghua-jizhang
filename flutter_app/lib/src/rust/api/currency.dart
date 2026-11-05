@@ -24,6 +24,20 @@ String baseCurrency() => RustLib.instance.api.crateApiCurrencyBaseCurrency();
 void setRate({required String code, required double rate}) =>
     RustLib.instance.api.crateApiCurrencySetRate(code: code, rate: rate);
 
+/// 联网更新汇率: one quote per tracked code, as the live source gave it —
+/// "1 base = X code" — or none where it gave nothing. Each usable one is
+/// turned into this app's "1 code = N base" by `core::rates::invert`, the
+/// same rule every fetched rate goes through, and stored; the rest are left
+/// as they were. Returns the codes that changed — none means the answer had
+/// nothing usable, which the screen says rather than claiming an update.
+List<String> applyQuotes({
+  required List<String> codes,
+  required List<double?> quotes,
+}) => RustLib.instance.api.crateApiCurrencyApplyQuotes(
+  codes: codes,
+  quotes: quotes,
+);
+
 /// Start tracking a code, at parity.
 ///
 /// A code already sitting at **zero** counts as missing and is reset to one —

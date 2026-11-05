@@ -18,7 +18,7 @@ use dahonghua_core::statement::{due_soon, statement_summary, DatedEntry};
 use super::store::{by_id, store};
 
 /// The entries named by `ids`, paired with the day Dart resolved for each.
-fn dated(ids: &[String], days_of: &[String]) -> Vec<DatedEntry> {
+pub(crate) fn dated(ids: &[String], days_of: &[String]) -> Vec<DatedEntry> {
     let s = store();
     let by = by_id(&s);
     let n = ids.len().min(days_of.len());

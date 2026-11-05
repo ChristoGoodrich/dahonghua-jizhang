@@ -321,4 +321,88 @@ void main() {
       expect(baseSymbol(), contains('XYZ'));
     });
   });
+
+  group('联网更新汇率', () {
+    // The shipping screen fetched every tracked rate in one request; the
+    // port's could only be typed, so a table set up before a trip stayed at
+    // that day's rates.
+    Future<void> showWith(
+      WidgetTester tester,
+      Map<Object?, Object?>? table, {
+      List<Uri>? asked,
+    }) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: CurrencyScreen(
+            fetchTable: (url) async {
+              asked?.add(url);
+              return table;
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    Future<void> update(WidgetTester tester) async {
+      await tester.ensureVisible(find.byKey(const Key('rates-update')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('rates-update')));
+      await tester.pumpAndSettle();
+    }
+
+    double rateOf(String code) =>
+        cur.rates().firstWhere((r) => r.code == code).rate;
+
+    testWidgets('updates each tracked rate, in this app\'s convention', (
+      tester,
+    ) async {
+      cur.addRate(code: 'USD');
+      cur.addRate(code: 'JPY');
+      final asked = <Uri>[];
+      // the service answers "1 base = X code"; the table holds the inverse
+      await showWith(tester, {
+        'USD': 0.14,
+        'JPY': 20.0,
+        'EUR': 0.13,
+      }, asked: asked);
+
+      await update(tester);
+
+      expect(asked.single.path, endsWith('/CNY'), reason: 'one request');
+      expect(rateOf('USD'), 7.142857);
+      expect(rateOf('JPY'), 0.05);
+      expect(cur.rates().any((r) => r.code == 'EUR'), isFalse);
+      expect(find.text('已更新 2 个汇率'), findsOneWidget);
+    });
+
+    testWidgets('a quote that is no rate leaves the rate as it was', (
+      tester,
+    ) async {
+      cur.addRate(code: 'USD');
+      cur.setRate(code: 'USD', rate: 7.1);
+      await showWith(tester, {'USD': 0});
+
+      await update(tester);
+
+      expect(rateOf('USD'), 7.1);
+      expect(find.textContaining('没拿到可用的汇率'), findsOneWidget);
+    });
+
+    testWidgets('no answer says so, and changes nothing', (tester) async {
+      cur.addRate(code: 'USD');
+      cur.setRate(code: 'USD', rate: 7.1);
+      await showWith(tester, null);
+
+      await update(tester);
+
+      expect(rateOf('USD'), 7.1);
+      expect(find.textContaining('可以手动填'), findsOneWidget);
+    });
+
+    testWidgets('is not offered with nothing but the base', (tester) async {
+      await showWith(tester, const {});
+      expect(find.byKey(const Key('rates-update')), findsNothing);
+    });
+  });
 }

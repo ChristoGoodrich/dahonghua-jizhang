@@ -153,6 +153,66 @@ pub fn set_cap(caps: &[(String, f64)], cat: &str, amt: f64) -> Vec<(String, f64)
     out
 }
 
+/// What to say after an entry is recorded, if the budget needs saying.
+#[derive(Debug, Clone, PartialEq)]
+pub enum BudgetWarning {
+    /// The cycle's cap is spent, by `by`.
+    Over {
+        by: f64,
+    },
+    /// At least four fifths of it is: `pct` of it, `left` remaining.
+    Near {
+        pct: f64,
+        left: f64,
+    },
+    /// A category's cap is spent, by `by`.
+    CatOver {
+        cat: String,
+        by: f64,
+    },
+    CatNear {
+        cat: String,
+        pct: f64,
+    },
+}
+
+/// The notice after a new entry: the shipping `checkBudgetWarning`.
+///
+/// The cycle's cap first — over it, then at 80% of it — and only when it has
+/// none to say, the categories in [`cat_budget_rows`] order, which is closest
+/// to its cap first: the first one over, or at 80%. One notice at most; a
+/// cap of zero is unset and says nothing, as everywhere else.
+pub fn warning(monthly: &TierStatus, cats: &[CatBudgetRow]) -> Option<BudgetWarning> {
+    if monthly.limit > 0.0 {
+        if monthly.over {
+            return Some(BudgetWarning::Over {
+                by: monthly.used - monthly.limit,
+            });
+        }
+        if monthly.pct >= 80.0 {
+            return Some(BudgetWarning::Near {
+                pct: monthly.pct,
+                left: monthly.left,
+            });
+        }
+    }
+    cats.iter().find_map(|r| {
+        if r.status.over {
+            Some(BudgetWarning::CatOver {
+                cat: r.cat.clone(),
+                by: r.status.used - r.status.limit,
+            })
+        } else if r.status.pct >= 80.0 {
+            Some(BudgetWarning::CatNear {
+                cat: r.cat.clone(),
+                pct: r.status.pct,
+            })
+        } else {
+            None
+        }
+    })
+}
+
 /// How the budget's flower looks on 明细: fresh, wary, or wilted.
 ///
 /// `BudgetPot.tsx` coloured the flower by how much of the cap was gone — its
@@ -317,6 +377,65 @@ mod tests {
 
     fn cap(k: &str, v: f64) -> (String, f64) {
         (k.to_string(), v)
+    }
+
+    // ---------- warning ----------
+
+    fn row(cat: &str, used: f64, limit: f64) -> CatBudgetRow {
+        CatBudgetRow {
+            cat: cat.into(),
+            status: tier_status(used, limit),
+        }
+    }
+
+    #[test]
+    fn the_cycle_over_its_cap_says_by_how_much() {
+        let w = warning(&tier_status(1200.0, 1000.0), &[row("food", 900.0, 100.0)]);
+        assert_eq!(w, Some(BudgetWarning::Over { by: 200.0 }));
+    }
+
+    #[test]
+    fn four_fifths_of_it_says_what_is_left() {
+        assert_eq!(
+            warning(&tier_status(800.0, 1000.0), &[]),
+            Some(BudgetWarning::Near {
+                pct: 80.0,
+                left: 200.0
+            })
+        );
+        assert_eq!(warning(&tier_status(799.0, 1000.0), &[]), None);
+    }
+
+    #[test]
+    fn a_category_only_when_the_cycle_has_nothing_to_say() {
+        let rows = [row("shop", 95.0, 100.0), row("food", 150.0, 100.0)];
+        // rows arrive closest to the cap first; the first that says anything wins
+        let w = warning(&tier_status(100.0, 1000.0), &rows);
+        assert_eq!(
+            w,
+            Some(BudgetWarning::CatNear {
+                cat: "shop".into(),
+                pct: 95.0
+            })
+        );
+        let w = warning(&tier_status(100.0, 0.0), &[row("food", 150.0, 100.0)]);
+        assert_eq!(
+            w,
+            Some(BudgetWarning::CatOver {
+                cat: "food".into(),
+                by: 50.0
+            })
+        );
+    }
+
+    #[test]
+    fn nothing_near_a_cap_says_nothing() {
+        assert_eq!(
+            warning(&tier_status(10.0, 1000.0), &[row("food", 10.0, 100.0)]),
+            None
+        );
+        // no cap at all is not a cap of zero
+        assert_eq!(warning(&tier_status(500.0, 0.0), &[]), None);
     }
 
     #[test]

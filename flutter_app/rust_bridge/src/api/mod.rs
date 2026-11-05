@@ -20,6 +20,7 @@ pub mod currency;
 pub mod day;
 pub mod db;
 pub mod export;
+pub mod forecast;
 pub mod glass;
 pub mod history;
 pub mod home;

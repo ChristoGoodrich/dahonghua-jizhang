@@ -12,15 +12,25 @@
 
 import 'package:flutter/material.dart';
 
+import 'rate_fetch.dart';
 import 'src/rust/api/currency.dart' as cur;
 import 'glass.dart';
 import 'empty_note.dart';
 import 'theme.dart';
 
 class CurrencyScreen extends StatefulWidget {
-  const CurrencyScreen({super.key, this.zh = true, this.onChanged});
+  const CurrencyScreen({
+    super.key,
+    this.zh = true,
+    this.onChanged,
+    this.fetchTable,
+  });
 
   final bool zh;
+
+  /// Where 联网更新汇率 gets its table. A test has no network; what is worth
+  /// testing is what the screen does with each answer.
+  final TableFetch? fetchTable;
 
   /// The rate table changed, or the base did — a base switch rewrites the
   /// ledger too.
@@ -34,6 +44,33 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
   List<cur.RateView> _rates = const [];
   String _base = 'CNY';
   String? _flash;
+  bool _updating = false;
+
+  /// 联网更新汇率. The shipping screen had it; the port's rates could only be
+  /// typed, so a table set up before a trip stayed at that day's rates.
+  Future<void> _update() async {
+    final zh = widget.zh;
+    setState(() {
+      _updating = true;
+      _flash = null;
+    });
+    final n = widget.fetchTable == null
+        ? await updateRatesOnline()
+        : await updateRatesOnline(fetch: widget.fetchTable!);
+    if (!mounted) return;
+    setState(() {
+      _updating = false;
+      _flash = switch (n) {
+        null =>
+          zh
+              ? '没拿到可用的汇率，可以手动填'
+              : 'No usable rates came back — set them by hand',
+        0 => zh ? '还没有别的币种要更新' : 'No other currency to update',
+        _ => zh ? '已更新 $n 个汇率' : 'Updated $n rates',
+      };
+    });
+    if (n != null && n > 0) _changed();
+  }
 
   @override
   void initState() {
@@ -250,6 +287,22 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
                   : 'Add one with + to record in it',
             ),
           for (final r in _rates) _row(r, zh),
+          if (_rates.any((r) => !r.isBase)) ...[
+            const SizedBox(height: 6),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: OutlinedButton.icon(
+                key: const Key('rates-update'),
+                onPressed: _updating ? null : _update,
+                icon: const Icon(Icons.sync, size: 18),
+                label: Text(
+                  _updating
+                      ? (zh ? '更新中…' : 'Updating…')
+                      : (zh ? '联网更新汇率' : 'Update rates online'),
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );
