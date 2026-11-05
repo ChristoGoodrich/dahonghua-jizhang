@@ -612,12 +612,31 @@ class _RecordSheetState extends State<RecordSheet> {
                     color: palette.inkSoft,
                   ),
                 ),
+              ?_converted(),
             ],
           ),
         ),
       ],
     ),
   );
+
+  /// A foreign amount in the base currency, while it is being typed: the
+  /// shipping sheet's "≈ ¥72.00". Approximate because it is the cached rate,
+  /// and the save asks for the entry's own day first.
+  Widget? _converted() {
+    final n = record.convertedAmount(form: _form);
+    if (n == null) return null;
+    final symbol = money.curSymbol(code: record.baseCurrency());
+    return Text(
+      '≈ ${money.fmt(n: n, symbol: symbol)}',
+      key: const Key('amount-converted'),
+      style: TextStyle(
+        fontSize: 13,
+        fontFeatures: tabular,
+        color: palette.inkSoft,
+      ),
+    );
+  }
 
   Widget _categories(bool zh, Color accent) {
     final cats = catsOf(_form.io);

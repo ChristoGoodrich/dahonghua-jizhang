@@ -43,6 +43,11 @@ SaveResult saveForm({
   rateWasCached: rateWasCached,
 );
 
+/// The form's amount in the base currency, for the "≈" line under a foreign
+/// amount — `core::record::converted`, at the cached rate.
+double? convertedAmount({required FormView form}) =>
+    RustLib.instance.api.crateApiRecordConvertedAmount(form: form);
+
 /// The cached rate for a code, which the platform's fetcher compares against.
 double? cachedRate({required String code}) =>
     RustLib.instance.api.crateApiRecordCachedRate(code: code);
