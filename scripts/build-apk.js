@@ -45,6 +45,13 @@ const TEMP =
     ? 'C:\\Temp\\dahonghua-build'
     : path.join(require('node:os').tmpdir(), 'dahonghua-build'));
 
+// Made here, not assumed. Pointing TEMP and TMP at a folder that does not
+// exist breaks every tool that makes a temporary directory, Dart included:
+// cargokit's build tool failed on the release runner with "Creation of
+// temporary directory failed, path = '/tmp/dahonghua-build'". On Windows the
+// README had people create it by hand; nobody did on the runner.
+fs.mkdirSync(TEMP, { recursive: true });
+
 function mb(file) {
   return (fs.statSync(file).size / 1048576).toFixed(1);
 }
