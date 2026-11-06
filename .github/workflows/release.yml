@@ -1,6 +1,10 @@
 name: Release
 
-# Tag a version, get a signed APK attached to a GitHub release.
+# Tag a version, get a signed APK attached to a GitHub release. Or run it by
+# hand from the Actions tab with a version (`v1.1.0`): it then makes that tag
+# itself, on the commit the run is on, which is how a release is cut from
+# somewhere that cannot push a tag. Run by hand with no version, it builds
+# and publishes nothing.
 #
 # Rewritten when the React Native tree was removed: this used to run
 # `expo prebuild` and Gradle against the generated project, and EAS on top.
@@ -13,13 +17,25 @@ name: Release
 # flutter_app/android/README.md.
 #
 #   ANDROID_KEYSTORE_BASE64   the .jks, base64 encoded
-#   ANDROID_KEY_PROPERTIES    the key.properties contents, with storeFile
-#                             pointing at android/keystore.jks
+#   ANDROID_KEY_PROPERTIES    the key.properties contents: storePassword,
+#                             keyPassword and keyAlias. Its storeFile is
+#                             ignored — the step that writes the key says
+#                             where it put it.
 
 on:
   push:
     tags: ['v*']
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Version to release, e.g. v1.1.0, tagged on the commit this run builds. Empty: build only.'
+        required: false
+        default: ''
+
+# The release, and on a run by hand the tag with it, are written with the
+# workflow's own token.
+permissions:
+  contents: write
 
 jobs:
   apk:
@@ -30,22 +46,46 @@ jobs:
     # `if:`, and a secret cannot be read from a step-level `if` at all.
     env:
       HAVE_KEY: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+      # The version this run releases: the tag that was pushed, or the one a
+      # run by hand was given. Empty for a run by hand that only builds.
+      TAG: ${{ github.event_name == 'push' && github.ref_name || inputs.tag }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v7
 
-      # The release text is `release-notes/<tag>.md`, written before the tag.
-      # Without this the release went up with an APK and no words, and a
-      # release whose notes do not say how to move from a debug-signed build
-      # is one that costs somebody their ledger. Checked first, so a missing
-      # file fails in seconds rather than after the build.
-      - name: Release notes for this tag
-        if: startsWith(github.ref, 'refs/tags/v')
+      # What a release has to be before anything is built. Checked first, so
+      # a mistake fails in seconds rather than after the build:
+      #
+      # - a version, `vMAJOR.MINOR.PATCH`, and the one pubspec says — a tag
+      #   that disagrees with the APK's own versionName is a release that
+      #   describes a different build;
+      # - with its notes, `release-notes/<tag>.md`. Without them the release
+      #   went up with an APK and no words, and a release whose notes do not
+      #   say how to move from a debug-signed build is one that costs
+      #   somebody their ledger;
+      # - and, run by hand, a version not already released: this run makes
+      #   the tag, and one that exists already names other code.
+      - name: Release checks
+        if: env.TAG != ''
         run: |
-          NOTES="release-notes/${GITHUB_REF_NAME}.md"
+          if ! printf '%s\n' "$TAG" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::'$TAG' is not a version like v1.1.0"
+            exit 1
+          fi
+          PUBSPEC=$(sed -n 's/^version:[[:space:]]*\([^+[:space:]]*\).*/\1/p' flutter_app/pubspec.yaml)
+          if [ "v$PUBSPEC" != "$TAG" ]; then
+            echo "::error::releasing $TAG, but flutter_app/pubspec.yaml says '$PUBSPEC'"
+            exit 1
+          fi
+          NOTES="release-notes/$TAG.md"
           if [ ! -s "$NOTES" ]; then
-            echo "::error::no $NOTES — write the release notes before tagging"
+            echo "::error::no $NOTES — write the release notes before releasing"
+            exit 1
+          fi
+          if [ "$GITHUB_EVENT_NAME" = workflow_dispatch ] &&
+             git ls-remote --exit-code --tags origin "refs/tags/$TAG" > /dev/null; then
+            echo "::error::$TAG already exists — a run by hand makes the tag, so pick the next version"
             exit 1
           fi
 
@@ -103,12 +143,33 @@ jobs:
           flutter build apk --debug --config-only
           cd android && ./gradlew :app:testDebugUnitTest --console=plain
 
+      # The secrets arrive through `env`, not pasted into the script: a
+      # password with a `$`, a backtick or a quote in it was rewritten by the
+      # shell before it was written down. A secret saved from a browser can
+      # carry carriage returns, which `base64 -d` refuses, so they go.
+      #
+      # `storeFile` is this step's to say, not the secret's: Gradle reads it
+      # relative to android/app, so the `android/keystore.jks` the docs once
+      # gave pointed at a file that was never there. Whatever the secret
+      # says, the line is replaced with the absolute path of the key written
+      # here.
       - name: Restore the signing key
         if: env.HAVE_KEY == 'true'
         working-directory: flutter_app/android
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEY_PROPERTIES: ${{ secrets.ANDROID_KEY_PROPERTIES }}
         run: |
-          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > keystore.jks
-          echo "${{ secrets.ANDROID_KEY_PROPERTIES }}" > key.properties
+          printf '%s' "$KEYSTORE_BASE64" | tr -d ' \r\n' | base64 -d > keystore.jks
+          printf '%s\n' "$KEY_PROPERTIES" | tr -d '\r' |
+            { grep -v '^[[:space:]]*storeFile[[:space:]]*[=:]' || true; } > key.properties
+          printf 'storeFile=%s\n' "$PWD/keystore.jks" >> key.properties
+          for k in storePassword keyPassword keyAlias; do
+            if ! grep -q "^[[:space:]]*$k[[:space:]]*[=:]" key.properties; then
+              echo "::error::ANDROID_KEY_PROPERTIES has no $k"
+              exit 1
+            fi
+          done
 
       - name: Dependencies
         working-directory: flutter_app
@@ -132,7 +193,7 @@ jobs:
       # check never matched anything. AGENTS.md's injection habit: an empty
       # VERSION is a failed check, not a free pass.
       - name: Refuse to publish a debug-signed release
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: env.TAG != ''
         working-directory: flutter_app
         run: |
           APK=build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
@@ -151,9 +212,15 @@ jobs:
               ;;
           esac
 
-      - name: Attach to the release
+      # On a run by hand the tag does not exist yet: the release creates it,
+      # on the commit this run checked out and built. A tag made with the
+      # workflow's own token starts no second run.
+      - name: Publish the release
         uses: softprops/action-gh-release@v3
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: env.TAG != ''
         with:
-          body_path: release-notes/${{ github.ref_name }}.md
+          tag_name: ${{ env.TAG }}
+          name: ${{ env.TAG }}
+          target_commitish: ${{ github.sha }}
+          body_path: release-notes/${{ env.TAG }}.md
           files: flutter_app/build/app/outputs/flutter-apk/app-arm64-v8a-release.apk

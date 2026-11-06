@@ -7,6 +7,14 @@ git tag -a v1.1.0 -m "…"
 git push origin v1.1.0
 ```
 
+Or, from somewhere that cannot push a tag: Actions › Release › Run workflow,
+on `main`, with the version (`v1.1.0`). That run makes the tag itself, on the
+commit it built, and refuses a version that is already tagged. Run with no
+version, it builds and publishes nothing.
+
+Either way the version has to be the one `flutter_app/pubspec.yaml` says, and
+`release-notes/<version>.md` has to exist — both are checked before the build.
+
 ## Before you tag
 
 - `npm run goldens` — the core still answers what the shipping app answered
@@ -44,7 +52,11 @@ publishing one quietly is a mistake that surfaces months later.
 | Secret | What |
 | --- | --- |
 | `ANDROID_KEYSTORE_BASE64` | the `.jks`, base64 encoded |
-| `ANDROID_KEY_PROPERTIES` | the contents of `key.properties`, with `storeFile=android/keystore.jks` |
+| `ANDROID_KEY_PROPERTIES` | `storePassword=…`, `keyPassword=…` and `keyAlias=dahonghua`, one per line |
+
+A `storeFile` line in the second is ignored: the workflow writes the key and
+points `storeFile` at it. This table used to say `storeFile=android/keystore.jks`,
+which Gradle reads relative to `android/app` and so pointed at nothing.
 
 [flutter_app/android/README.md](flutter_app/android/README.md) covers making the
 key, why `-validity 10000`, and why losing it ends the app's ability to update
