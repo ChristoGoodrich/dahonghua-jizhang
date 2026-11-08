@@ -251,7 +251,9 @@ void main() {
           await tester.dragFrom(const Offset(2, 400), const Offset(320, 0));
           await tester.pumpAndSettle();
           expect(find.byIcon(Icons.arrow_back_ios_new), findsNothing);
-          expect(find.text('记账工具'), findsOneWidget, reason: 'back on the hub');
+          // The hub is on top again: the row that opened the screen can be
+        // pressed. (Its heading is scrolled away: the row was scrolled to.)
+        expect(row.hitTestable(), findsOneWidget, reason: 'back on the hub');
         } finally {
           debugDefaultTargetPlatformOverride = null;
         }
