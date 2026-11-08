@@ -4,6 +4,7 @@
 // pull, the readability curve) is a Rust call, not a Dart one. These are the
 // inputs to that, and the ink the material is read against.
 
+import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -228,6 +229,22 @@ ThemeData appTheme() {
   return ThemeData(
     colorScheme: scheme,
     scaffoldBackgroundColor: palette.paper,
+    // A screen comes in from the side and goes back the same way, on every
+    // phone: the iPhone's own, and the one its edge swipe follows a finger
+    // through. Android had Material's fade, an iPhone the slide, and the app
+    // looked like two apps. Android's back gesture still works over it.
+    pageTransitionsTheme: PageTransitionsTheme(
+      builders: {
+        for (final p in TargetPlatform.values)
+          p: const CupertinoPageTransitionsBuilder(),
+      },
+    ),
+    // And back is the iPhone's chevron, close its xmark, with no words beside
+    // them — Apple's guidance — on both phones for the same reason.
+    actionIconTheme: ActionIconThemeData(
+      backButtonIconBuilder: (_) => const Icon(Icons.arrow_back_ios_new),
+      closeButtonIconBuilder: (_) => const Icon(Icons.close),
+    ),
     // 按压反馈, for the widgets that answer a touch themselves.
     //
     // `Tap` is this app's press feedback and sixty-four Material widgets were

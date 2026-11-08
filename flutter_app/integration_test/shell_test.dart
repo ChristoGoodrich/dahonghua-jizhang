@@ -9,6 +9,7 @@
 // slots and this app has twenty screens; the six-tab arrangement this replaced
 // had already stopped being able to grow.
 
+import 'package:flutter/cupertino.dart' show CupertinoPageTransition;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/main.dart';
@@ -221,6 +222,42 @@ void main() {
   });
 
   group('the 我的 hub', () {
+    /// One way in and out on both phones: the iPhone's slide, its edge
+    /// swipe, and its chevron. Android had Material's fade and arrow, so the
+    /// same app looked like two. Run as Android, the phone that changed.
+    testWidgets(
+      'a screen slides in from the side, and an edge swipe takes it back',
+      (tester) async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.android;
+        try {
+          await shell(tester);
+          await tapTab(tester, '我的');
+          final row = find.byKey(const Key('me-budget'));
+          await tester.ensureVisible(row);
+          await tester.pumpAndSettle();
+          await tester.tap(row);
+          await tester.pump();
+          await tester.pump(const Duration(milliseconds: 100));
+          expect(
+            find.byType(CupertinoPageTransition),
+            findsWidgets,
+            reason: 'mid-push, the slide',
+          );
+          await tester.pumpAndSettle();
+          expect(find.byIcon(Icons.arrow_back_ios_new), findsOneWidget);
+          expect(find.byIcon(Icons.arrow_back), findsNothing);
+
+          // From the very edge, the way a thumb does it.
+          await tester.dragFrom(const Offset(2, 400), const Offset(320, 0));
+          await tester.pumpAndSettle();
+          expect(find.byIcon(Icons.arrow_back_ios_new), findsNothing);
+          expect(find.text('记账工具'), findsOneWidget, reason: 'back on the hub');
+        } finally {
+          debugDefaultTargetPlatformOverride = null;
+        }
+      },
+    );
+
     testWidgets('reaches the budget screen and comes back', (tester) async {
       await shell(tester);
       await tapTab(tester, '我的');

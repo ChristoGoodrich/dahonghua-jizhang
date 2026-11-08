@@ -277,6 +277,21 @@ showed the list on its own, where nothing recreates anything. A callback that
 outlives its screen checks `mounted`, and `shell_test` presses 撤销 in the
 shell.
 
+## Going in and coming back
+
+A pushed screen comes in from the side and goes back the same way on every
+phone, through the iPhone's own transition. `appTheme()` sets
+`CupertinoPageTransitionsBuilder` for every platform. The edge swipe follows a
+finger back through that transition, and Android's back gesture still works
+over it. Back is the chevron and close is the xmark, with no words beside
+them (`actionIconTheme`). It used to be Material's fade and arrow on Android
+and the slide on an iPhone, so the same app looked like two.
+`shell_test` holds it as Android, the phone that changed.
+
+iOS 26 takes the swipe from anywhere in the content, not only the edge. That
+part is not here: Flutter's route takes it from a 20dp strip, and a swipe
+from the middle of 明细 is a row's swipe.
+
 ## Saying "too much"
 
 The flower is the accent, and for years it was also the warning: an overspent

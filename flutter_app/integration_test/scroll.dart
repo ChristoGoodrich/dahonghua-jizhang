@@ -30,6 +30,7 @@ Future<void> goBack(WidgetTester tester) async {
     find.byType(BackButton),
     find.byIcon(Icons.arrow_back),
     find.byIcon(Icons.arrow_back_ios),
+    find.byIcon(Icons.arrow_back_ios_new),
   ];
   for (final f in candidates) {
     if (f.evaluate().isNotEmpty) {
