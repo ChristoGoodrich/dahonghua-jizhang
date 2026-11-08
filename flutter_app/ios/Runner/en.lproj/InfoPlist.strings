@@ -1,0 +1,7 @@
+/* The name under the icon, and what each permission prompt says it is for. */
+"CFBundleDisplayName" = "Big Red Flower";
+"CFBundleName" = "Big Red Flower";
+"NSFaceIDUsageDescription" = "Unlock Big Red Flower with Face ID.";
+"NSCameraUsageDescription" = "Take a photo of a receipt to keep with an entry.";
+"NSPhotoLibraryUsageDescription" = "Pick a receipt or a payment screenshot from your photos.";
+"NSPhotoLibraryAddUsageDescription" = "Save a receipt photo you are sharing to your photos.";
