@@ -282,6 +282,16 @@ ThemeData appTheme() {
     elevatedButtonTheme: ElevatedButtonThemeData(style: _pressStyle),
     iconButtonTheme: IconButtonThemeData(style: _pressStyle),
     dialogTheme: DialogThemeData(backgroundColor: palette.card),
+    // A sheet carries the iPhone's grabber, which says it can be pulled away
+    // and is what a finger reaches for to do it. Two of the six sheets asked
+    // for Material's handle and four had none; stated here, every sheet has
+    // the same one, at Apple's size, and a sheet added later has it too.
+    bottomSheetTheme: BottomSheetThemeData(
+      backgroundColor: palette.card,
+      showDragHandle: true,
+      dragHandleSize: const Size(36, 5),
+      dragHandleColor: palette.ink.withValues(alpha: 0.22),
+    ),
     textSelectionTheme: TextSelectionThemeData(
       cursorColor: palette.stamen,
       selectionColor: palette.stamen.withValues(alpha: 0.28),

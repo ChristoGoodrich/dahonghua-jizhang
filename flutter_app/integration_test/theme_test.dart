@@ -7,6 +7,8 @@
 // restart. Each of those is a place a correct palette can fail to arrive.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/cat_pick.dart';
+import 'package:flutter_app/cats.dart';
 import 'package:flutter_app/main.dart';
 import 'package:flutter_app/settings_screen.dart';
 import 'package:flutter_app/src/rust/api/store.dart' as store;
@@ -198,6 +200,45 @@ void main() {
         isNot(light),
         reason: 'the ink differs between the rooms, so the veil does too',
       );
+    });
+  });
+
+  /// The iPhone's grabber on every sheet: four of six had no handle at all.
+  /// The category picker is one of the four.
+  group('a sheet', () {
+    testWidgets("has the grabber, at Apple's size", (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: appTheme(),
+          home: Builder(
+            builder: (context) => TextButton(
+              key: const Key('open'),
+              onPressed: () => pickCategory(
+                context,
+                cats: catsOf('exp'),
+                zh: true,
+                keyPrefix: 'cat',
+              ),
+              child: const Text('open'),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.byKey(const Key('open')));
+      await tester.pumpAndSettle();
+
+      final handle = find.descendant(
+        of: find.byType(BottomSheet),
+        matching: find.byWidgetPredicate(
+          (w) =>
+              w is Container &&
+              w.decoration is BoxDecoration &&
+              (w.decoration! as BoxDecoration).color ==
+                  palette.ink.withValues(alpha: 0.22),
+        ),
+      );
+      expect(handle, findsOneWidget);
+      expect(tester.getSize(handle), const Size(36, 5));
     });
   });
 

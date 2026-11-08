@@ -288,6 +288,10 @@ them (`actionIconTheme`). It used to be Material's fade and arrow on Android
 and the slide on an iPhone, so the same app looked like two.
 `shell_test` holds it as Android, the phone that changed.
 
+Every bottom sheet has the iPhone's grabber, at Apple's 36×5, because
+`bottomSheetTheme` sets it, so a sheet added later has it too. Two of the six
+asked for Material's handle and four had none.
+
 iOS 26 takes the swipe from anywhere in the content, not only the edge. That
 part is not here: Flutter's route takes it from a 20dp strip, and a swipe
 from the middle of 明细 is a row's swipe.
