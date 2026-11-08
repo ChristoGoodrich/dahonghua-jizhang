@@ -9,6 +9,7 @@
 // slots and this app has twenty screens; the six-tab arrangement this replaced
 // had already stopped being able to grow.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/main.dart';
 import 'package:flutter_app/src/rust/api/store.dart' as store;
@@ -271,6 +272,39 @@ void main() {
         expect(find.text('记账工具'), findsNothing, reason: '$k went nowhere');
         await backToHub(tester);
         expect(find.text('记账工具'), findsOneWidget);
+      }
+    });
+  });
+
+  // 自动记账 reads other apps' payment notifications, which Android allows
+  // and iOS does not, so the hub offers it on the one and not the other.
+  group('自动记账 on the hub', () {
+    // Both say which phone they are asking about, so the answer does not
+    // depend on which one the suite happens to run on.
+    testWidgets('is offered on an Android phone', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      try {
+        await shell(tester);
+        await tapTab(tester, '我的');
+        expect(await meRowKeys(tester), contains('me-capture'));
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+    });
+
+    testWidgets('is not offered on an iPhone, which cannot read them', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      try {
+        await shell(tester);
+        await tapTab(tester, '我的');
+        final keys = await meRowKeys(tester);
+        expect(keys, isNot(contains('me-capture')));
+        // the walk reached the group 自动记账 sits in
+        expect(keys, contains('me-import'));
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
       }
     });
   });

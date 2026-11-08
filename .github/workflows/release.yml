@@ -224,3 +224,55 @@ jobs:
           target_commitish: ${{ github.sha }}
           body_path: release-notes/${{ env.TAG }}.md
           files: flutter_app/build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+
+  # The iPhone package, beside the APK: the same commit, built on a Mac and
+  # left unsigned (see ios.yml and RELEASE.md, "On an iPhone"). After the APK
+  # job, because that job makes the release — and on a run by hand, the tag —
+  # and this one adds a file to it. Run by hand with no version it builds and
+  # keeps the package as an artifact, as the APK job builds and publishes
+  # nothing.
+  ipa:
+    needs: apk
+    runs-on: macos-latest
+    timeout-minutes: 60
+    env:
+      TAG: ${{ github.event_name == 'push' && github.ref_name || inputs.tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Use the newest Xcode on the runner
+        run: scripts/ios/select-xcode.sh
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Set up Rust for the iOS target
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-ios
+
+      - name: Dependencies
+        working-directory: flutter_app
+        run: flutter pub get
+
+      - name: Build
+        run: scripts/ios/build-ipa.sh
+
+      - name: Keep the unsigned ipa
+        uses: actions/upload-artifact@v4
+        with:
+          name: dahonghua-ios-unsigned
+          path: flutter_app/build/ios/dahonghua-ios-unsigned.ipa
+          if-no-files-found: error
+
+      # The release exists — the APK job made it — so this adds the file and
+      # leaves the text as that job wrote it.
+      - name: Add it to the release
+        uses: softprops/action-gh-release@v3
+        if: env.TAG != ''
+        with:
+          tag_name: ${{ env.TAG }}
+          files: flutter_app/build/ios/dahonghua-ios-unsigned.ipa

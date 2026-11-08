@@ -400,7 +400,8 @@ void main() {
         'templates',
         'currency',
         'tags',
-        'capture',
+        // 自动记账 is Android's: an iPhone's hub does not offer it.
+        if (defaultTargetPlatform == TargetPlatform.android) 'capture',
         'import',
         'backup',
         'sync',

@@ -856,14 +856,20 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       (
         zh ? '更多' : 'More',
         [
-          MeRow(
-            id: 'capture',
-            icon: Icons.notifications_active_outlined,
-            title: zh ? '自动记账' : 'Auto-capture',
-            desc: zh ? '支付通知一到就记下' : 'A payment push becomes an entry',
-            onTap: () =>
-                _push(CaptureScreen(zh: zh, onChanged: _entriesChanged)),
-          ),
+          // Reading another app's notifications is Android's to allow and
+          // not iOS's, so on an iPhone the row is not offered at all rather
+          // than offered and refused. The platform the framework adapts to,
+          // not dart:io's: the same answer on a phone, and a test can ask
+          // what an iPhone would show.
+          if (defaultTargetPlatform == TargetPlatform.android)
+            MeRow(
+              id: 'capture',
+              icon: Icons.notifications_active_outlined,
+              title: zh ? '自动记账' : 'Auto-capture',
+              desc: zh ? '支付通知一到就记下' : 'A payment push becomes an entry',
+              onTap: () =>
+                  _push(CaptureScreen(zh: zh, onChanged: _entriesChanged)),
+            ),
           MeRow(
             id: 'import',
             icon: Icons.file_upload_outlined,

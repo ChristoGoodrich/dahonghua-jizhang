@@ -17,6 +17,7 @@ import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'rust_init.dart';
+import 'scroll.dart';
 
 String day(DateTime d) => '${d.year}-${d.month}-${d.day}';
 
@@ -232,11 +233,13 @@ void main() {
       await tester.tap(find.byKey(const Key('add-account')));
       await tester.pumpAndSettle();
       await tester.enterText(find.byKey(const Key('new-name')), '招行');
-      await tester.tap(find.byKey(const Key('kind-credit')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('stmt-day-10')));
-      await tester.tap(find.byKey(const Key('due-day-25')));
-      await tester.pumpAndSettle();
+      await putKeyboardAway(tester);
+      for (final k in ['kind-credit', 'stmt-day-10', 'due-day-25']) {
+        await tester.ensureVisible(find.byKey(Key(k)));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(Key(k)));
+        await tester.pumpAndSettle();
+      }
       await tester.tap(find.byKey(const Key('new-ok')));
       await tester.pumpAndSettle();
 

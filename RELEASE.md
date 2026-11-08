@@ -85,3 +85,43 @@ its rows under `data`, not `entries`, so 从文件恢复 does not recognise it. 
 v1.1.0 was cut nobody was on v1.0.0, so no importer was written. If that
 changes, the document is `buildBackup()` in `src/store/state.ts` at the
 `v1.0.0` tag.
+
+## On an iPhone
+
+A release carries `dahonghua-ios-unsigned.ipa` beside the APK, built from the
+same commit on one of GitHub's Macs (`ios.yml` builds the same file on every
+push and keeps it as an artifact). iOS installs nothing unsigned, and there is
+no paid developer account, so the person installing signs it with their own
+Apple ID. On Windows that is [Sideloadly](https://sideloadly.io):
+
+1. Install iTunes and iCloud from Apple's website — the Microsoft Store
+   versions do not work with it — and then Sideloadly.
+2. Connect the iPhone by cable and trust the computer.
+3. On the iPhone, turn on 设置 › 隐私与安全性 › 开发者模式 (iOS asks for it before
+   it will open an app signed this way) and restart when it asks.
+4. Drag the `.ipa` into Sideloadly, enter the Apple ID, and start.
+5. On the iPhone, trust the profile under 设置 › 通用 › VPN与设备管理.
+
+A signature from a free Apple ID lasts **seven days**. After that the app does
+not open until it is signed again; the ledger is still there. Signing the same
+`.ipa` again with the same Apple ID installs over the app and keeps it, so a
+re-sign is step 4 and nothing else. Sideloadly can do it unattended over Wi-Fi
+while the computer is on.
+
+Keep the Apple ID and the bundle id the same every time. iOS ties the app's
+data to its bundle id, so a different one is a different app, which sees none
+of the ledger. If Sideloadly says `com.dahonghua.app` is taken, give it one of
+your own in its advanced options and use that one from then on.
+
+Nothing the app keeps goes to iCloud (AGENTS.md, "The iPhone"), so the only
+copy is the phone's: 我的 › 备份 › 导出 is how a copy leaves it.
+
+### Bringing the ledger from Android
+
+The iPhone app reads the Android app's snapshots: they are the same core.
+
+1. On Android: 我的 › 备份, take a snapshot with ＋ **without a password** —
+   a sealed one leaves its receipt photos behind — and 导出 it, with its photos.
+2. Send the files to the iPhone: AirDrop does not reach Android, so a chat
+   app's file transfer, mail or a network drive, saved into the Files app.
+3. On the iPhone: 我的 › 备份 › 从文件恢复, and pick the snapshot and its photos.

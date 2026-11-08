@@ -1,0 +1,7 @@
+/* 图标下的名字，和每个权限弹窗说它是用来做什么的。 */
+"CFBundleDisplayName" = "大红花记账";
+"CFBundleName" = "大红花记账";
+"NSFaceIDUsageDescription" = "用面容 ID 解锁大红花记账。";
+"NSCameraUsageDescription" = "拍下小票，附在这一笔账上。";
+"NSPhotoLibraryUsageDescription" = "从照片里选小票或付款截图。";
+"NSPhotoLibraryAddUsageDescription" = "把分享出去的小票照片存进照片。";

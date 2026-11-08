@@ -16,6 +16,7 @@ import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'rust_init.dart';
+import 'scroll.dart';
 
 Future<void> showTags(WidgetTester tester, {bool zh = true}) async {
   await tester.pumpWidget(MaterialApp(home: TagsScreen(zh: zh)));
@@ -295,6 +296,9 @@ void main() {
       await tester.tap(find.byKey(const Key('add-cat-exp')));
       await tester.pumpAndSettle();
       await tester.enterText(find.byKey(const Key('cat-name')), '咖啡');
+      await putKeyboardAway(tester);
+      await tester.ensureVisible(find.byKey(const Key('cat-emoji-☕')));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('cat-emoji-☕')));
       await tester.tap(find.byKey(const Key('cat-ok')));
       await tester.pumpAndSettle();

@@ -90,13 +90,37 @@ Future<void> scrollTo(
   final top = tester.getRect(target).top;
   if (top >= floor) return;
 
-  // A drag rather than another `scrollUntilVisible`: that one would stop
-  // immediately, the target being in the viewport already. Positive dy moves
-  // the content down, which is the direction that pushes it clear.
+  // Not another `scrollUntilVisible`: that one would stop immediately, the
+  // target being in the viewport already. And not a drag, which this was: a
+  // drag shorter than the touch slop barely moves a list, and iOS's bouncing
+  // physics hold back a few points more before they move at all. On an
+  // iPhone a 23-point drag moved the list four, and 资产's 管理 stayed under
+  // the bar it was meant to clear. The position is moved by exactly what is
+  // needed instead, the same on every phone.
   final list = find
       .ancestor(of: target, matching: find.byType(Scrollable))
       .first;
-  await tester.drag(list, Offset(0, floor - top));
+  final position = tester.state<ScrollableState>(list).position;
+  position.jumpTo(
+    (position.pixels - (floor - top)).clamp(
+      position.minScrollExtent,
+      position.maxScrollExtent,
+    ),
+  );
+  await tester.pumpAndSettle();
+}
+
+/// Put the phone's keyboard away, as a tap outside the field would.
+///
+/// For a form whose choices sit under a field the test has just typed into.
+/// A focused field keeps its dialog scrolled to its caret: with a keyboard up,
+/// `ensureVisible` on a chip below it scrolled the dialog to its end and the
+/// next frames pulled it back to the field (132, then 59), so the tap landed
+/// on the dialog. A finger's scroll is not pulled back — but a person picking
+/// from the chips usually puts the keyboard away first, and so does this. The
+/// Android emulator in CI never raises a keyboard; the iPhone simulator does.
+Future<void> putKeyboardAway(WidgetTester tester) async {
+  FocusManager.instance.primaryFocus?.unfocus();
   await tester.pumpAndSettle();
 }
 

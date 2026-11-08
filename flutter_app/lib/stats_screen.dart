@@ -813,13 +813,17 @@ class _StatsScreenState extends State<StatsScreen>
             ),
           ),
           const SizedBox(height: 12),
-          Row(
+          // A Wrap, not a Row: in English on a 360-point iPhone the two keys
+          // came to 4.5 points more than the card, in San Francisco's widths;
+          // the second now takes a line of its own when they do not fit.
+          Wrap(
+            spacing: 18,
+            runSpacing: 6,
             children: [
               key(
                 p.hibiscus,
                 '${zh ? '本月' : 'This month'} ${_short(c.thisTotal)}',
               ),
-              const SizedBox(width: 18),
               key(
                 p.inkSoft,
                 '${zh ? '上月同期' : 'Last month'} ${_short(c.lastTotal)}',
