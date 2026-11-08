@@ -20,6 +20,7 @@ import 'package:flutter_app/subs_screen.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'rust_init.dart';
+import 'scroll.dart';
 
 int get now => DateTime.now().millisecondsSinceEpoch;
 
@@ -320,6 +321,9 @@ void main() {
     /// Into view inside the dialog first: its content scrolls, and a chip
     /// below the fold is not one a tap can reach.
     Future<void> pick(WidgetTester tester, String key) async {
+      // The name was just typed: a focused field pulls the dialog back to
+      // its caret, undoing the scroll, wherever a keyboard comes up.
+      await putKeyboardAway(tester);
       await tester.ensureVisible(find.byKey(Key(key)));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(Key(key)));

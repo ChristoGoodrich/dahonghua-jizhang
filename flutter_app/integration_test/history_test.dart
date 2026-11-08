@@ -155,6 +155,10 @@ void main() {
       await tester.pumpWidget(const MaterialApp(home: sheet.RecordSheet()));
       await tester.pumpAndSettle();
 
+      // Into view first: an iPhone has less height above the keypad than a
+      // Pixel 7, and the hints sit below the fold there.
+      await tester.ensureVisible(find.byKey(const Key('note-hint-公司食堂')));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('note-hint-公司食堂')));
       await tester.pumpAndSettle();
 
