@@ -36,6 +36,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
+import 'accessibility.dart';
 import 'power.dart';
 import 'src/rust/api/glass.dart' as g;
 import 'theme.dart';
@@ -48,7 +49,7 @@ import 'theme.dart';
 /// surface that missed it would be the one blur left on a phone that asked
 /// for none.
 g.GlassTier glassTier(BuildContext context) => g.resolveTier(
-  reduceTransparency: MediaQuery.maybeDisableAnimationsOf(context) ?? false,
+  reduceTransparency: lessTransparency(context),
   powerSave: PowerSaving.of(context),
   isWeb: false,
 );

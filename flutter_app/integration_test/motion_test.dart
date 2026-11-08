@@ -13,8 +13,10 @@
 // counterpart with motion on beside it, so a check that cannot fail shows.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/accessibility.dart';
 import 'package:flutter_app/charts.dart';
 import 'package:flutter_app/glass.dart';
+import 'package:flutter_app/liquid.dart';
 import 'package:flutter_app/main.dart';
 import 'package:flutter_app/petal_burst.dart';
 import 'package:flutter_app/src/rust/api/store.dart' as store;
@@ -33,10 +35,57 @@ void still(WidgetTester tester) => _motion(tester, off: true);
 /// prove can fail.
 void moving(WidgetTester tester) => _motion(tester, off: false);
 
-void _motion(WidgetTester tester, {required bool off}) {
-  tester.platformDispatcher.accessibilityFeaturesTestValue =
-      FakeAccessibilityFeatures(disableAnimations: off);
+void _motion(WidgetTester tester, {required bool off}) =>
+    _features(tester, FakeAccessibilityFeatures(disableAnimations: off));
+
+void _features(WidgetTester tester, FakeAccessibilityFeatures f) {
+  tester.platformDispatcher.accessibilityFeaturesTestValue = f;
   addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
+}
+
+/// The iPhone's Reduce Motion. iOS does not set `disableAnimations` for it —
+/// Flutter's own documentation says so — so it is a separate flag.
+void reduceMotion(WidgetTester tester) =>
+    _features(tester, const FakeAccessibilityFeatures(reduceMotion: true));
+
+/// The iPhone's Reduce Transparency, as its platform side reports it.
+void clearGlass(WidgetTester tester, bool on) {
+  reduceTransparency.value = on;
+  addTearDown(() => reduceTransparency.value = false);
+}
+
+/// The lens's stretch along its travel: 1 is none.
+double stretchOf(WidgetTester tester) => tester
+    .widget<Transform>(
+      find
+          .descendant(
+            of: find.byType(LiquidLens),
+            matching: find.byType(Transform),
+          )
+          .last,
+    )
+    .transform
+    .entry(0, 0);
+
+Future<void> lensAt(WidgetTester tester, double velocity) async {
+  await tester.pumpWidget(
+    MaterialApp(
+      home: Center(
+        child: LiquidLens(width: 80, height: 40, velocity: velocity),
+      ),
+    ),
+  );
+  await tester.pump();
+}
+
+/// Solid: no blur anywhere in the shell, and every wash opaque.
+void expectSolid(WidgetTester tester) {
+  expect(everywhere(BackdropFilter), findsNothing);
+  final glass = everywhere(Glass).evaluate().toList();
+  expect(glass, isNotEmpty);
+  for (final g in glass) {
+    expect(washOf(tester, g).a, 1.0, reason: '${g.widget}');
+  }
 }
 
 /// Built, whether or not it is showing: the four tabs are all alive in an
@@ -185,6 +234,89 @@ void main() {
       expect(donutProgress(tester), lessThan(1.0));
       await tester.pumpAndSettle();
       expect(donutProgress(tester), 1.0);
+    });
+  });
+
+  /// The iPhone asks for these by name, and none of them reached the app:
+  /// it answered only Android's 移除动画.
+  group('on an iPhone', () {
+    testWidgets('Reduce Motion: a new entry plants no flowers', (tester) async {
+      reduceMotion(tester);
+      final before = PetalBurst.planted;
+      await tester.pumpWidget(const App());
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('record-button')));
+      await tester.pumpAndSettle();
+      await press(tester, '4');
+      await tester.tap(find.byKey(const Key('key-save')));
+      await tester.pumpAndSettle();
+      expect(PetalBurst.planted, before);
+      expect(store.liveEntries(), hasLength(1));
+    });
+
+    testWidgets('Reduce Motion: the charts arrive drawn', (tester) async {
+      final now = DateTime.now().millisecondsSinceEpoch;
+      store.addEntry(
+        entry: store.NewEntry(io: 'exp', cat: 'food', amt: 30, ts: now),
+        id: 'lunch',
+        now: now,
+      );
+      reduceMotion(tester);
+      await tester.pumpWidget(const MaterialApp(home: StatsScreen()));
+      expect(donutProgress(tester), 1.0);
+    });
+
+    /// Apple's Reduce Motion takes the elastic part out of its own glass.
+    testWidgets('Reduce Motion: a thrown lens does not stretch', (
+      tester,
+    ) async {
+      reduceMotion(tester);
+      await lensAt(tester, 2000);
+      expect(stretchOf(tester), 1.0);
+    });
+
+    testWidgets('with motion on, a thrown lens stretches', (tester) async {
+      moving(tester);
+      await lensAt(tester, 2000);
+      expect(stretchOf(tester), greaterThan(1.0));
+    });
+
+    /// Reduce Motion is about movement; the material is Reduce
+    /// Transparency's to change.
+    testWidgets('Reduce Motion leaves the glass as glass', (tester) async {
+      reduceMotion(tester);
+      await tester.pumpWidget(const App());
+      await tester.pumpAndSettle();
+      expect(everywhere(BackdropFilter), findsWidgets);
+    });
+
+    testWidgets('Reduce Transparency: the glass goes solid', (tester) async {
+      moving(tester);
+      clearGlass(tester, true);
+      await tester.pumpWidget(const App());
+      await tester.pumpAndSettle();
+      expectSolid(tester);
+    });
+
+    testWidgets('Reduce Transparency turned on while the app is open', (
+      tester,
+    ) async {
+      moving(tester);
+      clearGlass(tester, false);
+      await tester.pumpWidget(const App());
+      await tester.pumpAndSettle();
+      expect(everywhere(BackdropFilter), findsWidgets);
+
+      reduceTransparency.value = true;
+      await tester.pumpAndSettle();
+      expectSolid(tester);
+    });
+
+    testWidgets('Increase Contrast: the glass goes solid', (tester) async {
+      _features(tester, const FakeAccessibilityFeatures(highContrast: true));
+      await tester.pumpWidget(const App());
+      await tester.pumpAndSettle();
+      expectSolid(tester);
     });
   });
 }

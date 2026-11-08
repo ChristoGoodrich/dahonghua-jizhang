@@ -23,6 +23,7 @@ import 'package:flutter/material.dart';
 import 'ledger_days.dart';
 import 'package:flutter/services.dart';
 
+import 'accessibility.dart';
 import 'charts.dart';
 import 'glass.dart';
 import 'segmented.dart';
@@ -142,11 +143,8 @@ class _StatsScreenState extends State<StatsScreen>
       _page = page;
       _picked = null;
     });
-    final still = WidgetsBinding
-        .instance
-        .platformDispatcher
-        .accessibilityFeatures
-        .disableAnimations;
+    // Not `lessMotion`: this runs from `initState` too.
+    final still = lessMotionNow();
     if (still) {
       _reveal.value = 1;
     } else {

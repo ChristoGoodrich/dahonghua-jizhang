@@ -43,6 +43,7 @@ import 'lock_gate.dart';
 import 'import_screen.dart';
 import 'persistence.dart';
 import 'photos.dart';
+import 'accessibility.dart';
 import 'power.dart';
 import 'record_sheet.dart' as sheet;
 import 'reimburse_screen.dart';
@@ -92,6 +93,7 @@ Future<void> main() async {
     });
   }());
   watchPowerSaving();
+  watchReduceTransparency();
   // Which build this is, for 关于大红花 and the head of the diagnostic trail.
   // Not awaited: nothing on the first frame shows it.
   unawaited(loadAppInfo());
@@ -188,7 +190,7 @@ class _AppState extends State<App> {
     final zh = store.language() != 'en';
     // Above the app, so every route sees battery saver; and a change reaches
     // only the glass that depends on it, not this root.
-    return FollowPowerSaving(child: _app(zh));
+    return FollowPowerSaving(child: FollowPhoneAsks(child: _app(zh)));
   }
 
   Widget _app(bool zh) {
@@ -593,7 +595,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   /// The burst is skipped under reduced motion, and the word is not — it is
   /// the part that says the entry landed.
   void _celebrate({String? toast}) {
-    final still = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
+    final still = lessMotion(context);
     final box = _addKey.currentContext?.findRenderObject() as RenderBox?;
     if (!still && box != null && box.attached) {
       final at = box.localToGlobal(box.size.center(Offset.zero));

@@ -390,6 +390,25 @@ instead of drawing themselves in. CI runs with animations on, so
 `motion_test` is the only thing that takes this path. Each of its checks has
 a counterpart with motion on, so a check that cannot fail would show up.
 
+**On an iPhone none of that happened.** iOS asks with three settings, and
+`disableAnimations` is none of them. Flutter's own documentation says iOS
+does not set it.
+
+* **Reduce Motion** reaches Flutter only as `accessibilityFeatures.reduceMotion`.
+* **Reduce Transparency** does not reach Flutter at all, so `NativeChannels.swift`
+  reports it, as Kotlin reports battery saver.
+* **Increase Contrast** arrives as `MediaQuery.highContrast`.
+
+`lib/accessibility.dart` asks the two questions once each. `lessMotion`
+covers the flowers, the charts, a row's swipe, and the lens, which keeps
+moving but stops stretching, the elastic part Apple's Reduce Motion removes
+from its own glass. `lessTransparency` is what `glassTier` hands
+`resolve_tier`. Android's 移除动画 still answers yes to both. Ask these, not
+`MediaQuery.maybeDisableAnimationsOf`: the surface that asks for itself is
+the one a fourth setting misses. A state's `initState` cannot depend on an
+inherited widget, so 统计 asks `lessMotionNow`, the phone's answer at that
+moment.
+
 ## Following the phone's room
 
 The room, lit or dark, follows the phone unless somebody chose one: 设置 ›

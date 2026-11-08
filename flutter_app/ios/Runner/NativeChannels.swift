@@ -6,6 +6,9 @@
 // clock is in, and whether the phone is saving power. The widget and the
 // notification listener have no iOS side yet — the Dart side already treats
 // a missing channel as "not on this phone".
+//
+// And one Android has no counterpart for: Reduce Transparency, which Flutter
+// does not carry (accessibility.dart).
 
 import Flutter
 import UIKit
@@ -44,27 +47,49 @@ enum NativeChannels {
 
     // 低电量模式, as Android's battery saver: the glass drops its blur.
     FlutterEventChannel(name: "com.dahonghua/power", binaryMessenger: messenger)
-      .setStreamHandler(PowerStream.shared)
+      .setStreamHandler(power)
+
+    // 降低透明度: the glass goes solid, as it does for 移除动画.
+    FlutterEventChannel(name: "com.dahonghua/transparency", binaryMessenger: messenger)
+      .setStreamHandler(transparency)
   }
+
+  static let power = FlagStream(
+    changed: .NSProcessInfoPowerStateDidChange,
+    read: { ProcessInfo.processInfo.isLowPowerModeEnabled })
+
+  static let transparency = FlagStream(
+    changed: UIAccessibility.reduceTransparencyStatusDidChangeNotification,
+    // UIKit's, so the main actor's. Flutter calls onListen on the main
+    // thread and the observer is queued there, which this asserts rather
+    // than assumes.
+    read: { MainActor.assumeIsolated { UIAccessibility.isReduceTransparencyEnabled } })
 }
 
-/// The current Low Power Mode first, then every change — the same shape as
-/// PowerChannel.kt, so a change cannot land between a read and a listen.
-final class PowerStream: NSObject, FlutterStreamHandler {
-  static let shared = PowerStream()
-
+/// One setting of the phone's: its current value first, then every change —
+/// the same shape as PowerChannel.kt, so a change cannot land between a read
+/// and a listen.
+final class FlagStream: NSObject, FlutterStreamHandler {
+  private let changed: Notification.Name
+  private let read: () -> Bool
   private var sink: FlutterEventSink?
   private var observer: NSObjectProtocol?
+
+  init(changed: Notification.Name, read: @escaping () -> Bool) {
+    self.changed = changed
+    self.read = read
+  }
 
   func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink)
     -> FlutterError?
   {
     sink = events
-    events(ProcessInfo.processInfo.isLowPowerModeEnabled)
+    events(read())
     observer = NotificationCenter.default.addObserver(
-      forName: .NSProcessInfoPowerStateDidChange, object: nil, queue: .main
+      forName: changed, object: nil, queue: .main
     ) { [weak self] _ in
-      self?.sink?(ProcessInfo.processInfo.isLowPowerModeEnabled)
+      guard let self else { return }
+      self.sink?(self.read())
     }
     return nil
   }

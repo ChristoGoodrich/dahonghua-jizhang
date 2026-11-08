@@ -15,6 +15,8 @@
 
 import 'package:flutter/material.dart';
 
+import 'accessibility.dart';
+
 /// One button behind a row.
 class SwipeAction {
   const SwipeAction({
@@ -116,7 +118,7 @@ class _SwipeActionsState extends State<SwipeActions>
     if (_scroll?.isScrollingNotifier.value == true && _isOpen) _close();
   }
 
-  bool get _still => MediaQuery.maybeDisableAnimationsOf(context) ?? false;
+  bool get _still => lessMotion(context);
 
   void _settle(double to) {
     if (_still) {
