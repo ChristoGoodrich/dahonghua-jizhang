@@ -1,0 +1,117 @@
+name: iOS
+
+# The iPhone build, beside ci.yml's Android one: the same app, the same Rust
+# core, the same suite. Two jobs, in parallel on two Macs:
+#
+# - ipa: the release build, unsigned, packed as an .ipa. iOS installs nothing
+#   unsigned; the person installing signs it with their own Apple ID (see
+#   RELEASE.md, "On an iPhone"). It is uploaded as an artifact on every run
+#   so a change can be put on a phone before it is released.
+# - simulator: integration_test/all_test.dart on an iPhone simulator. The
+#   suite was written on Android; this is what says it holds on iOS too.
+#
+# macOS minutes are free for public repositories, which this one is.
+
+on:
+  push:
+    # The working branches too, so a change is built for iOS before there is
+    # a pull request to show it on.
+    branches: [main, develop, 'claude/**']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# A pull request from a working branch would run everything twice — once for
+# the push, once for the pull request — on the same commit. Each job's `if`
+# keeps the push run; the pull request's checks show it, being on the same
+# commit.
+jobs:
+  ipa:
+    if: github.event_name != 'pull_request' || !startsWith(github.head_ref, 'claude/')
+    runs-on: macos-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Use the newest Xcode on the runner
+        run: scripts/ios/select-xcode.sh
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Set up Rust for the iOS targets
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-ios,aarch64-apple-ios-sim
+
+      - name: Cache cargo
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            flutter_app/rust_bridge/target
+          key: ios-bridge-${{ hashFiles('flutter_app/rust_bridge/Cargo.lock', 'rust/**/Cargo.toml') }}
+          restore-keys: ios-bridge-
+
+      - name: Dependencies
+        working-directory: flutter_app
+        run: flutter pub get
+
+      - name: Build
+        run: scripts/ios/build-ipa.sh
+
+      - name: Upload the unsigned ipa
+        uses: actions/upload-artifact@v4
+        with:
+          name: dahonghua-ios-unsigned
+          path: flutter_app/build/ios/dahonghua-ios-unsigned.ipa
+          if-no-files-found: error
+
+  simulator:
+    if: github.event_name != 'pull_request' || !startsWith(github.head_ref, 'claude/')
+    runs-on: macos-latest
+    # Unmeasured on iOS yet. Android's is 50 to 85 minutes, and a timeout
+    # reads as red without naming a test.
+    timeout-minutes: 120
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Use the newest Xcode on the runner
+        run: scripts/ios/select-xcode.sh
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Set up Rust for the simulator
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-ios-sim
+
+      - name: Cache cargo
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            flutter_app/rust_bridge/target
+          key: ios-sim-bridge-${{ hashFiles('flutter_app/rust_bridge/Cargo.lock', 'rust/**/Cargo.toml') }}
+          restore-keys: ios-sim-bridge-
+
+      - name: Dependencies
+        working-directory: flutter_app
+        run: flutter pub get
+
+      - name: Boot an iPhone
+        id: sim
+        run: echo "udid=$(scripts/ios/boot-simulator.sh)" >> "$GITHUB_OUTPUT"
+
+      - name: Integration tests
+        working-directory: flutter_app
+        run: flutter test integration_test/all_test.dart -d "${{ steps.sim.outputs.udid }}"
