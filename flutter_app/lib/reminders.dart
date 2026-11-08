@@ -45,6 +45,7 @@ class DeviceNotifier implements Notifier {
       importance: Importance.defaultImportance,
       priority: Priority.defaultPriority,
     ),
+    iOS: DarwinNotificationDetails(),
   );
 
   Future<void> _init() async {
@@ -62,6 +63,14 @@ class DeviceNotifier implements Notifier {
         // A silhouette: the status bar draws a small icon from its alpha, and
         // the launcher icon, opaque edge to edge, came out a grey square.
         android: AndroidInitializationSettings('@drawable/ic_stat_flower'),
+        // Without iOS settings the plugin refuses to start on an iPhone at
+        // all. Nothing is asked for here: the permission prompt belongs to
+        // the moment a reminder is switched on, as on Android, not to launch.
+        iOS: DarwinInitializationSettings(
+          requestAlertPermission: false,
+          requestBadgePermission: false,
+          requestSoundPermission: false,
+        ),
       ),
     );
     _ready = true;
@@ -72,8 +81,15 @@ class DeviceNotifier implements Notifier {
     await _init();
     final android = _plugin.resolvePlatformSpecificImplementation<
         AndroidFlutterLocalNotificationsPlugin>();
-    if (android == null) return false;
-    return await android.requestNotificationsPermission() ?? false;
+    if (android != null) {
+      return await android.requestNotificationsPermission() ?? false;
+    }
+    final ios = _plugin.resolvePlatformSpecificImplementation<
+        IOSFlutterLocalNotificationsPlugin>();
+    if (ios != null) {
+      return await ios.requestPermissions(alert: true, sound: true) ?? false;
+    }
+    return false;
   }
 
   @override
