@@ -100,6 +100,15 @@ Palette get palette => _active ??= Palette(theme.currentTheme());
 /// rebuilds it from the core.
 void refreshPalette() => _active = null;
 
+/// Tell the core whether the phone's own room is dark. Which room the app is
+/// in is the core's answer (`core::theme::Appearance`); the phone's setting
+/// is the platform's to know.
+void followSystemRoom() => theme.setSystemDark(
+  dark:
+      WidgetsBinding.instance.platformDispatcher.platformBrightness ==
+      Brightness.dark,
+);
+
 /// The status and navigation bars' own colours.
 ///
 /// Declared rather than inherited, which it was not. Nothing in this app ever

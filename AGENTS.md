@@ -390,6 +390,26 @@ instead of drawing themselves in. CI runs with animations on, so
 `motion_test` is the only thing that takes this path. Each of its checks has
 a counterpart with motion on, so a check that cannot fail would show up.
 
+## Following the phone's room
+
+The room, lit or dark, follows the phone unless somebody chose one: 设置 ›
+外观 is 跟随系统, 浅色 or 深色, and 跟随系统 is the default. It used to be
+a 夜间模式 switch that ignored the phone, so a phone set dark at night opened
+this app lit, which Apple's guidance and Android's both say not to do.
+`core::theme::Appearance` is the rule, including what an old config means.
+A config written before the choice has only `dark`. `dark: true` was a switch
+somebody turned on, so it stays dark. Off cannot be told from never touched,
+so it follows the phone.
+
+The phone's room is the platform's to know. `followSystemRoom` reports it at
+launch and from the shell's `didChangePlatformBrightness`, which rebuilds only
+when the room actually moved. The config saves the choice, never the phone's
+room at the moment of the save. That would make every sunset a config write
+and hand an older build whatever the evening was. `dark` is still written
+beside `appearance` for such a build, and is true only for a room chosen dark.
+`setTheme(key, dark)` is still there: tests and the tour use it to stand in a
+known room, and it chooses that room explicitly.
+
 ## Changing the store under a screen
 
 "The screens 我的 opens stutter" was measured before anything was changed, with

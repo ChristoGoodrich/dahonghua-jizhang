@@ -6,7 +6,7 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `choice`, `view`
+// These functions are ignored because they are not marked as `pub`: `choice`, `dark`, `load_choice`, `saved_appearance`, `view`
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `Choice`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `eq`, `eq`, `fmt`, `fmt`
 
@@ -17,10 +17,29 @@ ThemeView currentTheme() => RustLib.instance.api.crateApiThemeCurrentTheme();
 /// which is what a config written by a build with one more flower should do.
 String themeKey() => RustLib.instance.api.crateApiThemeThemeKey();
 
+/// Whether the room is dark now: the choice, or the phone's when the choice
+/// is to follow it.
 bool isDark() => RustLib.instance.api.crateApiThemeIsDark();
 
+/// `system`, `light` or `dark`.
+String appearance() => RustLib.instance.api.crateApiThemeAppearance();
+
+/// The flower, and a room chosen lit or dark — not the phone's. What a test
+/// or the tour uses to stand in a known room.
 void setTheme({required String key, required bool dark}) =>
     RustLib.instance.api.crateApiThemeSetTheme(key: key, dark: dark);
+
+/// The flower alone, leaving the room as it was chosen.
+void setFlower({required String key}) =>
+    RustLib.instance.api.crateApiThemeSetFlower(key: key);
+
+/// The room: `system`, `light` or `dark`. Anything else follows the phone.
+void setAppearance({required String appearance}) =>
+    RustLib.instance.api.crateApiThemeSetAppearance(appearance: appearance);
+
+/// Whether the phone's own room is dark, as the platform reports it.
+void setSystemDark({required bool dark}) =>
+    RustLib.instance.api.crateApiThemeSetSystemDark(dark: dark);
 
 /// Every theme, in the order the picker shows them.
 List<ThemeOption> themeOptions() =>

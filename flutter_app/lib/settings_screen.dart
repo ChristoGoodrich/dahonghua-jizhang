@@ -66,7 +66,7 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   late int _cycleStart;
   late String _themeKey;
-  late bool _dark;
+  late String _appearance;
   late bool _lock;
   late String _remindAt;
   late bool _weekly;
@@ -202,12 +202,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
   /// Change the palette, then throw away the cached one so the next read
   /// rebuilds it. The shell rebuilds too — a theme that only repainted the
   /// screen that changed it would be the language bug all over again.
-  void _setTheme(String key, bool dark) {
-    theme.setTheme(key: key, dark: dark);
+  void _setFlower(String key) {
+    theme.setFlower(key: key);
+    _themeChanged();
+  }
+
+  void _setAppearance(String a) {
+    theme.setAppearance(appearance: a);
+    _themeChanged();
+  }
+
+  void _themeChanged() {
     refreshPalette();
     setState(() {
-      _themeKey = key;
-      _dark = dark;
+      _themeKey = theme.themeKey();
+      _appearance = theme.appearance();
     });
     widget.onChanged?.call();
   }
@@ -316,7 +325,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.initState();
     _cycleStart = budget.settings().cycleStart;
     _themeKey = theme.themeKey();
-    _dark = theme.isDark();
+    _appearance = theme.appearance();
     _lock = lock.lockEnabled();
     _remindAt = remind.dailyReminderAt();
     _weekly = remind.weeklyReportOn();
@@ -417,7 +426,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   // phone's comfortable target and had no press feedback.
                   Tap(
                     key: Key('theme-${o.key}'),
-                    onTap: () => _setTheme(o.key, _dark),
+                    onTap: () => _setFlower(o.key),
                     filled: false,
                     semanticLabel: o.key,
                     child: SizedBox(
@@ -447,34 +456,37 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             ),
             const SizedBox(height: 14),
-            // A row rather than a `SwitchListTile`: a ListTile inside a
-            // decorated box cannot paint its own ink, and Flutter says so
-            // loudly. The rest of this screen is rows and chips anyway.
-            Row(
+            // The room: the phone's, unless this app is wanted otherwise.
+            // It was a 夜间模式 switch that ignored the phone, so a phone set
+            // dark at night opened this app lit; Apple's guidance is to
+            // follow the system, and the system is the default
+            // (`core::theme::Appearance`).
+            Text(
+              zh ? '外观' : 'Appearance',
+              style: TextStyle(fontSize: 15, color: palette.ink),
+            ),
+            Text(
+              zh
+                  ? '花还是那朵花，只是灯关了'
+                  : 'The flower keeps its colour; the room does not',
+              style: TextStyle(fontSize: 12, color: palette.inkSoft),
+            ),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
               children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        zh ? '夜间模式' : 'Dark',
-                        style: TextStyle(fontSize: 15, color: palette.ink),
-                      ),
-                      Text(
-                        zh
-                            ? '花还是那朵花，只是灯关了'
-                            : 'The flower keeps its colour; the room does not',
-                        style: TextStyle(fontSize: 12, color: palette.inkSoft),
-                      ),
-                    ],
+                for (final (a, zhName, enName) in const [
+                  ('system', '跟随系统', 'System'),
+                  ('light', '浅色', 'Light'),
+                  ('dark', '深色', 'Dark'),
+                ])
+                  _chip(
+                    key: 'appearance-$a',
+                    label: zh ? zhName : enName,
+                    on: _appearance == a,
+                    onTap: () => _setAppearance(a),
                   ),
-                ),
-                Switch(
-                  key: const Key('dark-toggle'),
-                  value: _dark,
-                  onChanged: (v) => _setTheme(_themeKey, v),
-                  activeThumbColor: palette.hibiscus,
-                ),
               ],
             ),
           ]),

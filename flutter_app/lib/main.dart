@@ -63,6 +63,9 @@ import 'ledger_days.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await RustLib.init();
+  // The phone's room, before the first palette is read: the default is to
+  // follow it. The shell keeps it current (`didChangePlatformBrightness`).
+  followSystemRoom();
   final store = await Persistence.open();
   // Catch up any subscription charges that came due while the app was closed.
   // Before the first frame, so the list does not visibly gain rows a moment
@@ -378,6 +381,20 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     widget.store?.touchEntries();
     _pushWidget();
     _invalidate();
+  }
+
+  /// The phone went dark or light. Only a room that follows the phone moves,
+  /// and only then does anything rebuild: the same look check a setting
+  /// goes through, without writing a config nothing in has changed.
+  @override
+  void didChangePlatformBrightness() {
+    followSystemRoom();
+    final look = _lookNow();
+    if (look == _look) return;
+    _look = look;
+    refreshPalette();
+    _invalidate();
+    widget.onThemeChanged?.call();
   }
 
   void _configChanged() {

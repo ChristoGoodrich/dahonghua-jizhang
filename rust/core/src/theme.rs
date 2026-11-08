@@ -72,6 +72,76 @@ impl ThemeKey {
     }
 }
 
+/// Whether the room is lit: the phone's choice, or one of the two made here.
+///
+/// Apple's guidance is that an app follows the system's appearance rather
+/// than keeping a setting of its own, and Android's is the same. The app had
+/// only its own switch, so a phone set to dark at night opened it lit. The
+/// choice is kept, because a reader may want this one app dark all day, and
+/// the system is the default.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Appearance {
+    System,
+    Light,
+    Dark,
+}
+
+impl Appearance {
+    /// The order the picker shows them in.
+    pub const ALL: [Appearance; 3] = [Appearance::System, Appearance::Light, Appearance::Dark];
+
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Appearance::System => "system",
+            Appearance::Light => "light",
+            Appearance::Dark => "dark",
+        }
+    }
+
+    /// An unknown value is `None`, so a caller can tell a value it does not
+    /// know from one it does.
+    pub fn parse(s: &str) -> Option<Appearance> {
+        match s {
+            "system" => Some(Appearance::System),
+            "light" => Some(Appearance::Light),
+            "dark" => Some(Appearance::Dark),
+            _ => None,
+        }
+    }
+
+    /// Whether the room is dark, given whether the phone's is.
+    pub fn is_dark(self, system_dark: bool) -> bool {
+        match self {
+            Appearance::System => system_dark,
+            Appearance::Light => false,
+            Appearance::Dark => true,
+        }
+    }
+
+    /// What a saved config means, from its `appearance` and its `dark`.
+    ///
+    /// A config written before the choice existed has only `dark`, a switch
+    /// that was off unless somebody turned it on. On is a choice that was
+    /// made, and stays dark. Off cannot be told apart from never touched, so
+    /// it follows the phone: on a lit phone that is the room it had, and on
+    /// a dark one it is the room Apple says it should have had. A value this
+    /// build does not know, from a newer one, is read the same way.
+    pub fn from_config(appearance: Option<&str>, dark: Option<bool>) -> Appearance {
+        match appearance.and_then(Appearance::parse) {
+            Some(a) => a,
+            None if dark == Some(true) => Appearance::Dark,
+            None => Appearance::System,
+        }
+    }
+
+    /// The `dark` a config still carries beside `appearance`, for a build
+    /// that reads only `dark`: true only for a room chosen dark, so such a
+    /// build is never handed whatever the phone happened to be at the save.
+    pub fn legacy_dark(self) -> bool {
+        self == Appearance::Dark
+    }
+}
+
 /// Every colour a screen may ask for, as `#RRGGBB`, `#RRGGBBAA` or `rgba(…)`.
 ///
 /// Strings rather than a packed integer, because that is what the TypeScript
@@ -316,6 +386,67 @@ fn is_warm(hex: &str) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn the_system_room_follows_the_phone_and_the_others_do_not() {
+        assert!(Appearance::System.is_dark(true));
+        assert!(!Appearance::System.is_dark(false));
+        assert!(!Appearance::Light.is_dark(true));
+        assert!(Appearance::Dark.is_dark(false));
+    }
+
+    #[test]
+    fn an_appearance_reads_back_as_itself() {
+        for a in Appearance::ALL {
+            assert_eq!(Appearance::parse(a.as_str()), Some(a));
+            assert_eq!(Appearance::from_config(Some(a.as_str()), None), a);
+        }
+        assert_eq!(Appearance::parse("Dark"), None);
+        assert_eq!(Appearance::parse(""), None);
+    }
+
+    #[test]
+    fn a_config_from_before_the_choice_keeps_a_dark_room_dark() {
+        // `dark: true` was a switch somebody turned on.
+        assert_eq!(Appearance::from_config(None, Some(true)), Appearance::Dark);
+        // Off, or absent, cannot be told from never touched: the phone's.
+        assert_eq!(
+            Appearance::from_config(None, Some(false)),
+            Appearance::System
+        );
+        assert_eq!(Appearance::from_config(None, None), Appearance::System);
+    }
+
+    #[test]
+    fn the_choice_wins_over_the_old_switch() {
+        assert_eq!(
+            Appearance::from_config(Some("light"), Some(true)),
+            Appearance::Light
+        );
+        assert_eq!(
+            Appearance::from_config(Some("system"), Some(true)),
+            Appearance::System
+        );
+    }
+
+    #[test]
+    fn a_choice_from_a_newer_build_is_read_like_no_choice() {
+        assert_eq!(
+            Appearance::from_config(Some("sepia"), Some(true)),
+            Appearance::Dark
+        );
+        assert_eq!(
+            Appearance::from_config(Some("sepia"), None),
+            Appearance::System
+        );
+    }
+
+    #[test]
+    fn the_old_switch_is_written_on_only_for_a_room_chosen_dark() {
+        assert!(Appearance::Dark.legacy_dark());
+        assert!(!Appearance::Light.legacy_dark());
+        assert!(!Appearance::System.legacy_dark());
+    }
 
     #[test]
     fn the_default_theme_is_the_hibiscus_the_app_is_named_for() {
