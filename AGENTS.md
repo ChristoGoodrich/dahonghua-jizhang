@@ -249,9 +249,18 @@ and any bare `InkWell`, which read the ambient theme instead of a button
 style. A widget added next year gets it without being told — and `theme_test`
 holds the numbers, because nothing else would notice them going.
 
-**A delete asks first**, and says which row: `confirmDelete` in `toast.dart`,
-on the swipe, on the ⋯ menu and on the selection bar. A swipe is the cheapest
-gesture in the list and the one most often made on the way to scrolling.
+**A swipe opens a row; it does not delete it.** `SwipeActions`
+(`swipe_actions.dart`) slides the row aside onto a red 删除, and pressing that
+is the delete, with 撤销 after it. A swipe is the cheapest gesture in the list
+and the one most often made on the way to scrolling, so it used to swipe the
+row away and then ask, a dialog about something already done. Apple's rule
+is that a delete which can be undone is not confirmed, so an entry's delete
+asks nothing anywhere: on the swipe, on the ⋯ menu, on the selection bar or
+in the edit sheet. `confirmRemove` still asks, for what has no 撤销: a
+category, a ledger, an asset, a loan, a template, a subscription, an account.
+One row is open at a time, and a scroll, a tap on it or a finger on another
+row shuts it. A screen reader gets 删除 as a custom action on the row's own
+node, because a swipe is a gesture its users do not make.
 
 **The notices are capsules**, the phone's own shape — a small pill low on the
 screen, the flower, a few words, the action at the end — rather than a

@@ -276,12 +276,8 @@ void main() {
       await pickByLongPress(tester, '午饭');
       await alsoPick(tester, '咖啡');
       await tapBatch(tester, 'delete');
-      // it asks, and names what it is about to take
-      expect(find.text('删除选中的 2 笔？'), findsOneWidget);
-      expect(store.liveEntries().length, 3, reason: 'nothing gone yet');
-      await tester.tap(find.byKey(const Key('entry-delete-ok')));
-      await tester.pumpAndSettle();
-
+      // No question: 撤销 below takes the lot back.
+      expect(find.byType(AlertDialog), findsNothing);
       expect(store.liveEntries().length, 1);
       expect(find.text('汽水'), findsOneWidget);
       // and it left the selection behind it

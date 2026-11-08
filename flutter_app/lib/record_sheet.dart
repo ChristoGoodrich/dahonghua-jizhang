@@ -34,9 +34,6 @@ import 'amounts.dart' show baseSymbol;
 import 'cats.dart';
 import 'photos.dart';
 import 'theme.dart';
-import 'toast.dart' show confirmDelete;
-import 'entry_list.dart' show describeEntry;
-import 'src/rust/api/store.dart' as store;
 
 /// The refusals `validate_form` can answer, spelled.
 ///
@@ -508,7 +505,9 @@ class _RecordSheetState extends State<RecordSheet> {
     if (widget.editId != null && widget.onDelete != null)
       IconButton(
         key: const Key('record-delete'),
-        onPressed: _confirmDelete,
+        // Straight to the delete, which 撤销 takes back: the sheet closes
+        // and the notice says what went.
+        onPressed: widget.onDelete,
         tooltip: zh ? '删除' : 'Delete',
         icon: Icon(Icons.delete_outline, color: palette.inkSoft),
       ),
@@ -521,18 +520,6 @@ class _RecordSheetState extends State<RecordSheet> {
       ),
     const SizedBox(width: 6),
   ];
-
-  /// 删除, from the edit: the same question 明细 asks, naming the row.
-  Future<void> _confirmDelete() async {
-    final e = store.getEntry(id: widget.editId!);
-    if (e == null) return;
-    final ok = await confirmDelete(
-      context,
-      zh: widget.zh,
-      what: describeEntry(e, widget.zh),
-    );
-    if (ok && mounted) widget.onDelete?.call();
-  }
 
   Widget _directions(bool zh) => Segmented(
     keyPrefix: 'dir',

@@ -7,6 +7,7 @@
 // rather than writing a second row.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_app/entry_list.dart';
 import 'package:flutter_app/main.dart' show App;
 import 'package:flutter_app/toast.dart';
@@ -48,7 +49,7 @@ void main() {
 
       await tester.drag(find.byKey(const Key('row-e1')), const Offset(-500, 0));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('entry-delete-ok')));
+      await tester.tap(find.byKey(const Key('row-delete-e1')));
       await tester.pumpAndSettle();
 
       expect(find.text('午饭'), findsNothing);
@@ -68,7 +69,7 @@ void main() {
 
       await tester.drag(find.byKey(const Key('row-e1')), const Offset(-500, 0));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('entry-delete-ok')));
+      await tester.tap(find.byKey(const Key('row-delete-e1')));
       await tester.pumpAndSettle();
       expect(find.text('撤销'), findsOneWidget);
 
@@ -84,31 +85,135 @@ void main() {
     });
 
     /// A swipe is the cheapest gesture in the list, and one made on the way
-    /// to scrolling used to take the row with it. It asks now, says which row,
-    /// and a no puts the row back where it was.
-    testWidgets('a swipe asks first, and a no keeps the row', (tester) async {
+    /// to scrolling used to take the row with it; then it asked, about a row
+    /// already gone. Now it opens the row on 删除 and takes nothing: the
+    /// press is the decision, and no dialog asks about a delete 撤销 can
+    /// take back.
+    testWidgets('a swipe opens the row on 删除 and deletes nothing', (
+      tester,
+    ) async {
+      add('e1', 35.5, note: '午饭');
+      await tester.pumpWidget(const MaterialApp(home: EntryListScreen()));
+      await tester.pumpAndSettle();
+      final delete = find.byKey(const Key('row-delete-e1'));
+      expect(delete, findsNothing, reason: 'closed, the row has no button');
+
+      await tester.drag(find.byKey(const Key('row-e1')), const Offset(-500, 0));
+      await tester.pumpAndSettle();
+      expect(delete.hitTestable(), findsOneWidget);
+      expect(
+        find.descendant(of: delete, matching: find.text('删除')),
+        findsOneWidget,
+      );
+      expect(find.byType(AlertDialog), findsNothing, reason: 'nothing asks');
+      expect(store.liveEntries(), hasLength(1), reason: 'nothing gone yet');
+      expect(find.byType(ToastCapsule), findsNothing);
+    });
+
+    testWidgets('a short swipe springs back shut', (tester) async {
       add('e1', 35.5, note: '午饭');
       await tester.pumpWidget(const MaterialApp(home: EntryListScreen()));
       await tester.pumpAndSettle();
 
+      // Slowly, so it is the distance that decides and not a flick.
+      await tester.timedDrag(
+        find.byKey(const Key('row-e1')),
+        const Offset(-24, 0),
+        const Duration(milliseconds: 600),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('row-delete-e1')), findsNothing);
+    });
+
+    testWidgets('a tap on the open row shuts it, and opens nothing', (
+      tester,
+    ) async {
+      add('e1', 35.5, note: '午饭');
+      final opened = <String>[];
+      await tester.pumpWidget(
+        MaterialApp(home: EntryListScreen(onEdit: opened.add)),
+      );
+      await tester.pumpAndSettle();
       await tester.drag(find.byKey(const Key('row-e1')), const Offset(-500, 0));
       await tester.pumpAndSettle();
-      expect(find.byKey(const Key('entry-delete-confirm')), findsOneWidget);
-      expect(
-        find.descendant(
-          of: find.byKey(const Key('entry-delete-confirm')),
-          matching: find.textContaining('午饭'),
-        ),
-        findsOneWidget,
-        reason: 'it says which row',
-      );
-      expect(store.liveEntries(), hasLength(1), reason: 'nothing gone yet');
 
-      await tester.tap(find.byKey(const Key('entry-delete-cancel')));
+      await tester.tap(find.text('午饭'));
       await tester.pumpAndSettle();
+      expect(find.byKey(const Key('row-delete-e1')), findsNothing);
+      expect(opened, isEmpty, reason: 'the tap answered the open row');
       expect(store.liveEntries(), hasLength(1));
-      expect(find.text('午饭'), findsOneWidget, reason: 'the row is back');
-      expect(find.byType(ToastCapsule), findsNothing);
+
+      await tester.tap(find.text('午饭'));
+      await tester.pumpAndSettle();
+      expect(opened, ['e1'], reason: 'shut, the row opens its entry again');
+    });
+
+    testWidgets('a finger on another row shuts the open one', (tester) async {
+      add('a', 1, note: 'first');
+      add('b', 2, note: 'second');
+      await tester.pumpWidget(const MaterialApp(home: EntryListScreen()));
+      await tester.pumpAndSettle();
+
+      await tester.drag(find.byKey(const Key('row-a')), const Offset(-500, 0));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('row-delete-a')), findsOneWidget);
+
+      // A swipe too short to open b still shuts a.
+      await tester.timedDrag(
+        find.byKey(const Key('row-b')),
+        const Offset(-24, 0),
+        const Duration(milliseconds: 600),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('row-delete-a')), findsNothing);
+      expect(find.byKey(const Key('row-delete-b')), findsNothing);
+
+      await tester.drag(find.byKey(const Key('row-a')), const Offset(-500, 0));
+      await tester.pumpAndSettle();
+      await tester.drag(find.byKey(const Key('row-b')), const Offset(-500, 0));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('row-delete-b')), findsOneWidget);
+      expect(find.byKey(const Key('row-delete-a')), findsNothing);
+    });
+
+    testWidgets('scrolling the list shuts the open row', (tester) async {
+      // Enough rows that the list scrolls, on whichever phone this runs.
+      for (var i = 0; i < 40; i++) {
+        add('r$i', i + 1.0, note: 'row $i', ts: now - i * 3600000);
+      }
+      await tester.pumpWidget(const MaterialApp(home: EntryListScreen()));
+      await tester.pumpAndSettle();
+      final row = find.byKey(const Key('row-r0'));
+      await tester.drag(row, const Offset(-500, 0));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('row-delete-r0')), findsOneWidget);
+
+      await tester.drag(find.text('row 3'), const Offset(0, -120));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('row-delete-r0')), findsNothing);
+      expect(store.liveEntries(), hasLength(40));
+    });
+
+    testWidgets('a screen reader deletes without the swipe', (tester) async {
+      final semantics = tester.ensureSemantics();
+      add('e1', 35.5, note: '午饭');
+      await tester.pumpWidget(const MaterialApp(home: EntryListScreen()));
+      await tester.pumpAndSettle();
+
+      final node = find.semantics.byPredicate(
+        (n) =>
+            n.label.contains('午饭') &&
+            n.getSemanticsData().hasAction(SemanticsAction.customAction),
+      );
+      expect(node, findsOne, reason: 'the row offers 删除 on its own node');
+      tester.semantics.customAction(
+        node,
+        const CustomSemanticsAction(label: '删除'),
+      );
+      await tester.pumpAndSettle();
+      expect(store.liveEntries(), isEmpty);
+      expect(find.byKey(const Key('deleted-undo')), findsOneWidget);
+      semantics.dispose();
     });
 
     /// The notice is the phone's shape — a capsule with the flower, the words
@@ -121,7 +226,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.drag(find.byKey(const Key('row-e1')), const Offset(-500, 0));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('entry-delete-ok')));
+      await tester.tap(find.byKey(const Key('row-delete-e1')));
       await tester.pumpAndSettle();
 
       final capsule = find.byType(ToastCapsule);
@@ -156,7 +261,7 @@ void main() {
 
       await tester.drag(find.byKey(const Key('row-b')), const Offset(-500, 0));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('entry-delete-ok')));
+      await tester.tap(find.byKey(const Key('row-delete-b')));
       await tester.pumpAndSettle();
 
       expect(store.liveEntries().map((e) => e.id), unorderedEquals(['a', 'c']));
@@ -299,7 +404,9 @@ void main() {
       expect(find.byKey(const Key('record-dupe')), findsNothing);
     });
 
-    testWidgets('删除 asks, naming the row, and a no keeps it', (tester) async {
+    /// 删除 in the edit is a press on a labelled button, and 撤销 follows
+    /// it, so it does not ask (see the swipe's tests above).
+    testWidgets('删除 goes without a question', (tester) async {
       add('e1', 35.5, note: '午饭');
       var deleted = 0;
       await tester.pumpWidget(
@@ -311,16 +418,7 @@ void main() {
 
       await tester.tap(find.byKey(const Key('record-delete')));
       await tester.pumpAndSettle();
-      expect(find.byKey(const Key('entry-delete-confirm')), findsOneWidget);
-      expect(find.textContaining('午饭'), findsWidgets);
-      await tester.tap(find.byKey(const Key('entry-delete-cancel')));
-      await tester.pumpAndSettle();
-      expect(deleted, 0);
-
-      await tester.tap(find.byKey(const Key('record-delete')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('entry-delete-ok')));
-      await tester.pumpAndSettle();
+      expect(find.byType(AlertDialog), findsNothing);
       expect(deleted, 1);
     });
 
@@ -355,8 +453,6 @@ void main() {
       await tester.tap(find.text('午饭'));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('record-delete')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('entry-delete-ok')));
       await tester.pumpAndSettle();
 
       expect(find.byKey(const Key('key-save')), findsNothing, reason: 'closed');

@@ -122,14 +122,15 @@ void main() {
       await tester.tap(find.byKey(const Key('calendar-toggle')));
       await tester.pumpAndSettle();
 
-      // a delete: it asks, and then says so with 撤销 — which is used, so the
-      // shots after this one have the same month in them. The rows by key
-      // (month.dart): tour-0 is 早餐 豆浆油条, tour-1 午饭 牛肉面, tour-3 咖啡.
+      // a delete: the swipe opens the row on 删除, and the press says so
+      // with 撤销 — which is used, so the shots after this one have the same
+      // month in them. The rows by key (month.dart): tour-0 is 早餐 豆浆油条,
+      // tour-1 午饭 牛肉面, tour-3 咖啡.
       Finder row(int i) => find.byKey(Key('row-tour-$i'));
       await nearby(tester, row(0));
       await tester.drag(row(0), const Offset(-500, 0));
-      await shot(tester, '$room-01e-delete-asks');
-      await tester.tap(find.byKey(const Key('entry-delete-ok')));
+      await shot(tester, '$room-01e-delete-open');
+      await tester.tap(find.byKey(const Key('row-delete-tour-0')));
       await shot(tester, '$room-01f-deleted');
       await tester.tap(find.byKey(const Key('deleted-undo')));
       await tester.pumpAndSettle();

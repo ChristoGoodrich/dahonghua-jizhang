@@ -339,7 +339,7 @@ void main() {
       await shell(tester);
       await tester.drag(find.byKey(const Key('row-e1')), const Offset(-500, 0));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('entry-delete-ok')));
+      await tester.tap(find.byKey(const Key('row-delete-e1')));
       await tester.pumpAndSettle();
       expect(store.liveEntries(), isEmpty);
 

@@ -262,7 +262,7 @@ void main() {
       await reach(tester, breakfast);
       await tester.drag(breakfast, const Offset(-500, 0));
       await tester.pumpAndSettle();
-      await tap(tester, 'entry-delete-ok');
+      await tap(tester, 'row-delete-tour-0');
       await tap(tester, 'deleted-undo');
     });
 

@@ -11,6 +11,7 @@
 // core answers *which* of three names a day takes and this file writes it.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 
 import 'ledger_days.dart';
 
@@ -36,22 +37,13 @@ import 'cats.dart';
 import 'cat_pick.dart';
 import 'src/rust/api/accounts.dart' as accounts;
 import 'photos.dart';
+import 'swipe_actions.dart';
 import 'theme.dart';
 import 'toast.dart';
 
 /// `y-m-d` for a local calendar day. The timezone is the platform's, so this
 /// is where an instant becomes a day — never on the other side of the boundary.
 String localDay(DateTime d) => '${d.year}-${d.month}-${d.day}';
-
-/// What a delete is about to take, in the words of the row: its category,
-/// its note, its amount and its day.
-String describeEntry(store.EntryView e, bool zh) {
-  final label = catLabelOf(io: e.io, key: e.cat, zh: zh);
-  final d = DateTime.fromMillisecondsSinceEpoch(e.ts);
-  final note = (e.note ?? '').isEmpty ? '' : ' · ${e.note}';
-  final day = zh ? '${d.month}月${d.day}日' : '${d.month}/${d.day}';
-  return '${label.name}$note  ${money.fmtSigned(n: e.amt, io: e.io)}  $day';
-}
 
 /// Delete one row, and say so with 撤销 — from 明细's swipe and ⋯ menu, and
 /// from the edit sheet's 删除. One function, so the two cannot come to differ
@@ -850,8 +842,12 @@ class _EntryListScreenState extends State<EntryListScreen> {
                               // and noon sorts a backfilled lunch where lunch
                               // goes.
                               widget.onRecordAt!(
-                                DateTime(d[0], d[1], d[2], 12)
-                                    .millisecondsSinceEpoch,
+                                DateTime(
+                                  d[0],
+                                  d[1],
+                                  d[2],
+                                  12,
+                                ).millisecondsSinceEpoch,
                               );
                             },
                       icon: const Icon(Icons.add_rounded, size: 18),
@@ -1225,29 +1221,27 @@ class _EntryListScreenState extends State<EntryListScreen> {
     bool zh, {
     ({bool first, bool last})? group,
   }) {
-    final row = Dismissible(
+    final row = SwipeActions(
       key: Key('row-${e.id}'),
       // Not while ticking. A drag across a row is how a finger scrolls a list it
-      // is also selecting from, and a swipe that deleted one mid-selection would
-      // be the most expensive gesture in the app.
-      direction: _selecting
-          ? DismissDirection.none
-          : DismissDirection.endToStart,
-      background: Container(
-        alignment: Alignment.centerRight,
-        padding: EdgeInsets.only(right: 20, bottom: group == null ? 8 : 0),
-        decoration: BoxDecoration(
-          color: palette.warn.withValues(alpha: 0.12),
-          borderRadius: group == null ? BorderRadius.circular(Rad.md) : null,
+      // is also selecting from, and a row that opened under it would be in the
+      // way.
+      enabled: !_selecting,
+      radius: group == null ? BorderRadius.circular(Rad.md) : BorderRadius.zero,
+      gap: group == null ? 8 : 0,
+      // The swipe opens the row on 删除 and the press is the delete, with
+      // 撤销 after it. It used to swipe the row away and then ask: a dialog
+      // about something already done, for a delete that could be undone
+      // anyway, which is the confirmation Apple's guidance says not to ask.
+      actions: [
+        SwipeAction(
+          key: Key('row-delete-${e.id}'),
+          label: zh ? '删除' : 'Delete',
+          icon: Icons.delete_outline,
+          color: palette.warn,
+          onPressed: () => _delete(e, zh),
         ),
-        child: Icon(Icons.delete_outline, color: palette.warn),
-      ),
-      // Asks first. A swipe is the cheapest gesture in the list and the one
-      // most often made on the way to something else; declined, the row
-      // slides back.
-      confirmDismiss: (_) =>
-          confirmDelete(context, zh: zh, what: describeEntry(e, zh)),
-      onDismissed: (_) => _delete(e, zh),
+      ],
       child: _entryCard(e, zh, group: group),
     );
     if (group == null) return row;
@@ -1306,7 +1300,6 @@ class _EntryListScreenState extends State<EntryListScreen> {
       ),
     );
   }
-
 
   /// Full-screen receipt. InteractiveViewer so a pinch can look at the
   /// small print on a paper that was photographed across a table.
@@ -1375,6 +1368,14 @@ class _EntryListScreenState extends State<EntryListScreen> {
       label:
           '${label.name}, ${money.fmtSigned(n: e.amt, io: e.io)}'
           '${e.note != null ? ', ${e.note}' : ''}',
+      // The swipe's 删除, for a screen reader: a swipe is a gesture its users
+      // do not make, so the row offers the action on its own node.
+      customSemanticsActions: _selecting
+          ? null
+          : {
+              CustomSemanticsAction(label: zh ? '删除' : 'Delete'): () =>
+                  _delete(e, zh),
+            },
       // The row's gap is a Padding outside the Tap rather than a margin on the
       // Container inside it: the press veil fills the Tap, and a margin within
       // it would let the veil paint the gap between rows as well.
@@ -1730,25 +1731,8 @@ class _EntryListScreenState extends State<EntryListScreen> {
   /// order they have to go back in: deleting an expense tombstones the refund
   /// incomes that point at it, and restoring an income first would restore it
   /// pointing at a row that is still deleted.
-  Future<void> _batchDelete(bool zh) async {
+  void _batchDelete(bool zh) {
     final ids = _picked!.toList();
-    final rows = [
-      for (final id in ids.take(3))
-        if (_byId[id] != null) describeEntry(_byId[id]!, zh),
-    ];
-    final ok = await confirmDelete(
-      context,
-      zh: zh,
-      count: ids.length,
-      what: [
-        ...rows,
-        if (ids.length > rows.length)
-          zh
-              ? '…还有 ${ids.length - rows.length} 笔'
-              : '…and ${ids.length - rows.length} more',
-      ].join('\n'),
-    );
-    if (!ok || !mounted) return;
     final undo = batch.removeAll(
       ids: ids,
       now: DateTime.now().millisecondsSinceEpoch,
@@ -1851,11 +1835,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
       zh: zh,
       // the core's answer for this one row: an expense, or not
       claimable: _tally.claimable == 1,
-      onDelete: () async {
-        if (await confirmDelete(context, zh: zh, what: describeEntry(e, zh))) {
-          _delete(e, zh);
-        }
-      },
+      onDelete: () => _delete(e, zh),
     );
     _endSelecting();
     if (changed) widget.onChanged?.call();
