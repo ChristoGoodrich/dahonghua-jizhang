@@ -132,7 +132,10 @@ void main() {
 
       expect(find.byKey(const Key('select-count')), findsNothing);
       expect(find.byKey(const Key('selection-bar')), findsNothing);
-      expect(find.text('大红花记账'), findsOneWidget);
+      expect(
+        find.descendant(of: find.byType(AppBar), matching: find.text('明细')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('the shell is told, so its nav bar can stand down', (

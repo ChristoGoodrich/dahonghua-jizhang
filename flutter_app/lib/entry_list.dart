@@ -432,7 +432,9 @@ class _EntryListScreenState extends State<EntryListScreen> {
         if (!didPop) _endSelecting();
       },
       // One header for three modes, and the large title is what changes. At
-      // rest it is the app's name. Ticking rows, it is the count — large, the
+      // rest it is the tab's name, as on the other three tabs — it was the
+      // app's name, which Apple's guidance says a title should not be: the
+      // phone already says which app this is. Ticking rows, it is the count — large, the
       // way 小米笔记 says 已选中2项, and not the 17px line it used to be squeezed
       // into beside the close button. Searching, there is no large title at
       // all: a heading over a list of results would be a heading for the
@@ -440,7 +442,7 @@ class _EntryListScreenState extends State<EntryListScreen> {
       child: TitledScaffold(
         title: t != null
             ? (zh ? '已选中 ${t.count} 项' : '${t.count} selected')
-            : (zh ? '大红花记账' : 'Big Red Flower'),
+            : (zh ? '明细' : 'Entries'),
         titleKey: t != null ? const Key('select-count') : null,
         subtitle: t == null ? null : _sums(t, zh),
         // Hidden while searching — unless rows are being ticked, when the

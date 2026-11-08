@@ -746,6 +746,16 @@ iOS lets no app read another's notifications — and the hub decides that by
 `defaultTargetPlatform`, not `dart:io`'s `Platform`, so a test can ask what an
 iPhone would show; a channel call still asks `Platform`.
 
+**The first frame and the icon.** The launch screen is the colour of the
+paper, lit or dark, from the `LaunchBackground` named colour. Its values are
+Android's `splash_background`, so neither phone flashes white at launch.
+It has no logo, as Apple's guidance asks.
+
+The icon has a dark variant: the Android adaptive icon's flower, scaled to sit
+exactly where the light icon's does, on a transparent ground that iOS fills.
+There is no tinted variant, because iOS makes one from the plain icon when
+none is given.
+
 **Nothing goes to iCloud.** iOS backs Documents up unless told not to, and
 Documents is where the ledger, the config, the receipts and the snapshots all
 are. `BackupExclusion` marks it excluded at every launch, before Flutter

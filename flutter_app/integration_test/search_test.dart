@@ -185,7 +185,10 @@ void main() {
       await show(tester);
 
       expect(find.byKey(const Key('search-field')), findsNothing);
-      expect(find.text('大红花记账'), findsOneWidget);
+      expect(
+        find.descendant(of: find.byType(AppBar), matching: find.text('明细')),
+        findsOneWidget,
+      );
     });
 
     group('the filter rows', () {

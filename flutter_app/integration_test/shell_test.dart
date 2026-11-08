@@ -367,7 +367,7 @@ void main() {
       await shell(tester);
       final rows = <String, double>{};
       for (final (tab, heading) in [
-        ('明细', '大红花记账'),
+        ('明细', '明细'),
         ('统计', '统计'),
         ('资产', '资产'),
         ('我的', '我的'),
@@ -386,7 +386,7 @@ void main() {
 
       // 明细's three buttons are on that row too
       await tapTab(tester, '明细');
-      final y = tester.getCenter(title('大红花记账')).dy;
+      final y = tester.getCenter(title('明细')).dy;
       for (final k in ['select-toggle', 'calendar-toggle', 'search-toggle']) {
         final b = find.byKey(Key(k));
         expect(b, findsOneWidget, reason: k);
