@@ -232,9 +232,18 @@ void main() {
         try {
           await shell(tester);
           await tapTab(tester, '我的');
+          // Clear of the header, not just inside the viewport: on an iPhone
+          // `ensureVisible` left the row under the transparent bar, which
+          // took the tap (scroll.dart).
           final row = find.byKey(const Key('me-budget'));
-          await tester.ensureVisible(row);
-          await tester.pumpAndSettle();
+          await scrollTo(
+            tester,
+            row,
+            scrollable: find.descendant(
+              of: find.byKey(const Key('me-list')),
+              matching: find.byType(Scrollable),
+            ),
+          );
           await tester.tap(row);
           await tester.pump();
           await tester.pump(const Duration(milliseconds: 100));
@@ -252,8 +261,8 @@ void main() {
           await tester.pumpAndSettle();
           expect(find.byIcon(Icons.arrow_back_ios_new), findsNothing);
           // The hub is on top again: the row that opened the screen can be
-        // pressed. (Its heading is scrolled away: the row was scrolled to.)
-        expect(row.hitTestable(), findsOneWidget, reason: 'back on the hub');
+          // pressed. (Its heading is scrolled away: the row was scrolled to.)
+          expect(row.hitTestable(), findsOneWidget, reason: 'back on the hub');
         } finally {
           debugDefaultTargetPlatformOverride = null;
         }
