@@ -117,9 +117,12 @@ jobs:
       # remind_test's "on the device" hands one to the system and watches it
       # leave the pending list, so the simulator is given the answer a person
       # would give the prompt. simctl cannot grant this one; applesimutils can.
+      # Homebrew refuses a formula from a third-party tap until it is trusted,
+      # and only this one formula is: not the rest of wix/brew.
       - name: Allow notifications on the simulator
         run: |
           brew tap wix/brew
+          brew trust --formula wix/brew/applesimutils
           brew install applesimutils
           applesimutils --byId "${{ steps.sim.outputs.udid }}" \
             --bundle com.dahonghua.app --setPermissions notifications=YES
