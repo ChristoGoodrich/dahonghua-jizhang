@@ -112,6 +112,18 @@ jobs:
         id: sim
         run: echo "udid=$(scripts/ios/boot-simulator.sh)" >> "$GITHUB_OUTPUT"
 
+      # iOS takes a scheduled notification only from an app the person has
+      # allowed to post them; Android takes the schedule either way.
+      # remind_test's "on the device" hands one to the system and watches it
+      # leave the pending list, so the simulator is given the answer a person
+      # would give the prompt. simctl cannot grant this one; applesimutils can.
+      - name: Allow notifications on the simulator
+        run: |
+          brew tap wix/brew
+          brew install applesimutils
+          applesimutils --byId "${{ steps.sim.outputs.udid }}" \
+            --bundle com.dahonghua.app --setPermissions notifications=YES
+
       - name: Integration tests
         working-directory: flutter_app
         run: flutter test integration_test/all_test.dart -d "${{ steps.sim.outputs.udid }}"
