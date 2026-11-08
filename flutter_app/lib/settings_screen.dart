@@ -190,7 +190,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final ok = await syncReminders(zh: widget.zh, notifier: widget.notifier);
     if (!mounted) return;
     setState(
-      () => _flash = ok
+      () => _remindRefused = ok
           ? null
           : (widget.zh
                 ? '系统没给通知权限，提醒发不出来'
@@ -214,6 +214,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   bool _busy = false;
   String? _flash;
+
+  /// A refused permission, said under the switches that asked for it. It
+  /// used to share [_flash], which is drawn under 导出诊断 two groups down:
+  /// on a phone the size of an iPhone that part of the list is not even
+  /// built while the reminders are on screen, so the refusal went unseen.
+  String? _remindRefused;
 
   /// Write the ledger to a file and hand it to whatever the user picks.
   ///
@@ -565,6 +571,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ],
             ),
+            // In the warning hue: a switch that is on and schedules nothing
+            // is a thing going wrong, not a thing done.
+            if (_remindRefused != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text(
+                  _remindRefused!,
+                  key: const Key('remind-refused'),
+                  style: TextStyle(fontSize: 12.5, color: palette.warnDeep),
+                ),
+              ),
           ]),
           const SizedBox(height: 20),
           _group(zh ? '安全' : 'Security', [

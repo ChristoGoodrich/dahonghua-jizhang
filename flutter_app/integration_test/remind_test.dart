@@ -314,6 +314,13 @@ void main() {
 
       await tapSetting(tester, const Key('remind-12:00'));
 
+      // Under the switches, where the person who pressed one is looking —
+      // not two groups down under 导出诊断, which a short phone has not even
+      // built while the reminders are showing.
+      expect(
+        find.byKey(const Key('remind-refused')).hitTestable(),
+        findsOneWidget,
+      );
       expect(find.textContaining('通知权限'), findsOneWidget);
     });
 
