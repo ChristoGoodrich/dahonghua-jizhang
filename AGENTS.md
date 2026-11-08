@@ -1,6 +1,7 @@
 # 大红花记账
 
-A Rust core with a Flutter UI, for Android. There is no JavaScript in this app.
+A Rust core with a Flutter UI, for Android and iPhone. There is no JavaScript in
+this app.
 
 This file used to say "Expo HAS CHANGED — read the versioned docs before
 writing any code." There is no Expo any more. The React Native app was the
@@ -15,6 +16,8 @@ it had been ported and shipped; it is still in history at the `rn-final` tag.
     flutter_app/lib    the UI.
     flutter_app/android/…/kotlin   two Android components: the notification
                        listener and the home-screen widget.
+    flutter_app/ios/Runner   the iPhone side: three channels in Swift, and
+                       Documents kept out of iCloud. See "The iPhone".
 
 ## The rule the whole thing rests on
 
@@ -679,10 +682,46 @@ writing it, and diff the file afterwards.
 because the emulator died is not a passing suite. Check for device errors
 before believing a result.
 
+## The iPhone
+
+This file used to list iOS as deliberately absent: nobody had a device to test
+on, and shipping a binary nobody has run is not shipping. Then the person this
+app is for moved to an iPhone. `flutter_app/ios` is the same app, the same
+core and the same suite, with three things to know.
+
+**What iOS has, and what it does not yet.** `NativeChannels.swift` answers
+three of the five channels the Kotlin side answers: `app_info`, `zone` and
+`power` (Low Power Mode, as battery saver). The widget and the notification
+listener have no iOS side, and the Dart side treats a missing channel as "not
+on this phone", as it always did. 自动记账 is not offered on an iPhone at all —
+iOS lets no app read another's notifications — and the hub decides that by
+`defaultTargetPlatform`, not `dart:io`'s `Platform`, so a test can ask what an
+iPhone would show; a channel call still asks `Platform`.
+
+**Nothing goes to iCloud.** iOS backs Documents up unless told not to, and
+Documents is where the ledger, the config, the receipts and the snapshots all
+are. `BackupExclusion` marks it excluded at every launch, before Flutter
+starts. It is the same promise `data_extraction_rules.xml` keeps on Android.
+
+**How it reaches a phone.** Without a paid developer account. `ios.yml` builds
+the release unsigned and packs it as an `.ipa`; the person installing signs it
+with their own Apple ID (Sideloadly, on Windows), and RELEASE.md says how. Such
+a signature lasts seven days, and re-signing with the same Apple ID and the
+same bundle id installs over the app with the ledger intact; a different id is
+a different app, which sees none of it. A free account may not carry every
+capability — App Groups, which a widget needs to share data, is the one to find
+out about before building on it.
+
+The Xcode project is edited with the `xcodeproj` gem, never by hand: a file
+added to the folder but not to the target is not compiled, and a hand-edited
+`project.pbxproj` fails in ways that only show on a Mac. `ios.yml` runs the
+whole suite on an iPhone simulator beside the Android emulator, and builds the
+package on every push to a working branch — this machine has no Swift
+compiler, so CI is the first thing that compiles any Swift.
+
 ## What is deliberately absent
 
-iOS — nobody has a device to test on, and shipping a binary nobody has run is
-not shipping. `xlsxWrite` — CSV opens everywhere and xlsx would cost the core a
+`xlsxWrite` — CSV opens everywhere and xlsx would cost the core a
 pile of dependencies. Cloud sync — sync is a file you carry, so the app
 reaches the network for an exchange rate and, when the user turned AI on and
 pressed something, for the AI service they chose — and `AndroidManifest.xml`
