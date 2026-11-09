@@ -7,8 +7,9 @@
 // notification listener have no iOS side yet — the Dart side already treats
 // a missing channel as "not on this phone".
 //
-// And one Android has no counterpart for: Reduce Transparency, which Flutter
-// does not carry (accessibility.dart).
+// And two Android has no counterpart for: Reduce Transparency, which Flutter
+// does not carry (accessibility.dart), and the Shortcuts queue, which is the
+// iPhone's 自动记账 (shortcuts.dart).
 
 import Flutter
 import UIKit
@@ -52,6 +53,33 @@ enum NativeChannels {
     // 降低透明度: the glass goes solid, as it does for 移除动画.
     FlutterEventChannel(name: "com.dahonghua/transparency", binaryMessenger: messenger)
       .setStreamHandler(transparency)
+
+    // 快捷指令: the queue the App Intents write to (ShortcutQueue), read and
+    // acknowledged by shortcuts.dart, and told when a request arrives while
+    // the app is open.
+    let shortcuts = FlutterMethodChannel(
+      name: "com.dahonghua/shortcuts", binaryMessenger: messenger)
+    shortcuts.setMethodCallHandler { call, result in
+      switch call.method {
+      case "pending":
+        result(ShortcutQueue.shared.pending())
+      case "consume":
+        ShortcutQueue.shared.consume(call.arguments as? [String] ?? [])
+        result(nil)
+      case "openShortcuts":
+        if let url = URL(string: "shortcuts://") {
+          MainActor.assumeIsolated { UIApplication.shared.open(url) }
+        }
+        result(nil)
+      default:
+        result(FlutterMethodNotImplemented)
+      }
+    }
+    _ = NotificationCenter.default.addObserver(
+      forName: ShortcutQueue.queued, object: nil, queue: .main
+    ) { _ in
+      shortcuts.invokeMethod("queued", arguments: nil)
+    }
   }
 
   static let power = FlagStream(
