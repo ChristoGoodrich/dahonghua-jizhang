@@ -30,6 +30,7 @@ import 'package:flutter_app/src/rust/api/lock.dart' as lock;
 import 'package:flutter_app/src/rust/api/networth.dart' as nw;
 import 'package:flutter_app/src/rust/api/privacy.dart' as privacy;
 import 'package:flutter_app/src/rust/api/remind.dart' as remind;
+import 'package:flutter_app/src/rust/api/shortcut.dart' as sc;
 import 'package:flutter_app/src/rust/api/subscriptions.dart' as subs;
 import 'package:flutter_app/src/rust/api/theme.dart' as theme;
 import 'package:flutter_app/subs_screen.dart' show runDueCharges;
@@ -693,6 +694,22 @@ void main() {
         },
       ),
       _RowCase(
+        '快捷指令: what a sentence and a payment asked for',
+        act: () => _postShortcuts(),
+        rows: () => 2,
+        check: () {
+          expect(store.getEntry(id: 'sq1-0')!.note, '午饭');
+          expect(store.getEntry(id: 'sp1-0')!.src, 'notif');
+        },
+      ),
+      _RowCase(
+        '快捷指令: a request already recorded writes nothing',
+        arrange: _postShortcuts,
+        act: () => expect(_postShortcuts(), isEmpty),
+        rows: () => 0,
+        check: () => expect(store.getEntry(id: 'sq1-0'), isNotNull),
+      ),
+      _RowCase(
         '自动记账: a payment the drain posts',
         arrange: capture.resetInbox,
         act: () => capture.drainCaptures(
@@ -1210,6 +1227,33 @@ void main() {
 
 /// One action a screen takes, what it should queue, and what a restart should
 /// still show of it.
+/// What `shortcuts.dart`'s drain writes for a sentence and a payment.
+List<String> _postShortcuts() => sc.postShortcutEntries(
+  entries: [
+    for (final d in sc.shortcutDrafts(
+      requests: const [
+        sc.ShortcutRequestView(id: 'q1', sentence: '午饭35', today: '2026-11-9'),
+        sc.ShortcutRequestView(
+          id: 'p1',
+          amount: 9,
+          merchant: '店',
+          today: '2026-11-9',
+        ),
+      ],
+    ))
+      sc.ShortcutEntryView(
+        id: d.id,
+        io: d.io,
+        cat: d.cat,
+        amt: d.amt,
+        note: d.note,
+        ts: 1700000000000,
+        captured: d.captured,
+      ),
+  ],
+  now: 1700000000001,
+);
+
 class _RowCase {
   const _RowCase(
     this.name, {

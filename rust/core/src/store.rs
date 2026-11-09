@@ -189,7 +189,8 @@ impl Store {
     /// nothing in the TypeScript because the TypeScript generates its own; the
     /// caller is expected to supply one id per bill.
     pub fn import_bills(&mut self, bills: &[ImportedBill], ids: &[String], now: i64) -> usize {
-        self.push_batch(bills, ids, now, EntrySource::Bill).len()
+        self.push_batch(bills, ids, now, Some(EntrySource::Bill))
+            .len()
     }
 
     /// Record payments the notification listener captured. Returns how many
@@ -209,7 +210,33 @@ impl Store {
         ids: &[String],
         now: i64,
     ) -> Vec<String> {
-        self.push_batch(drafts, ids, now, EntrySource::Notif)
+        self.push_batch(drafts, ids, now, Some(EntrySource::Notif))
+    }
+
+    /// Record what a shortcut asked for (`crate::shortcut`). Returns the ids
+    /// the rows landed on.
+    ///
+    /// `src` is the draft's own: a Wallet payment is a capture, as Android's
+    /// 自动记账 rows are, and a sentence is the user's words, which carry
+    /// none. The ids are derived from the request, and the caller has already
+    /// dropped any the ledger holds (`shortcut::unrecorded`).
+    pub fn post_shortcut(
+        &mut self,
+        drafts: &[ImportedBill],
+        ids: &[String],
+        srcs: &[Option<EntrySource>],
+        now: i64,
+    ) -> Vec<String> {
+        let mut landed = Vec::new();
+        for (i, ((b, id), src)) in drafts.iter().zip(ids).zip(srcs).enumerate() {
+            landed.extend(self.push_batch(
+                std::slice::from_ref(b),
+                std::slice::from_ref(id),
+                now + i as i64,
+                *src,
+            ));
+        }
+        landed
     }
 
     /// One write for a batch of rows that arrived from outside the app.
@@ -221,7 +248,7 @@ impl Store {
         bills: &[ImportedBill],
         ids: &[String],
         now: i64,
-        src: EntrySource,
+        src: Option<EntrySource>,
     ) -> Vec<String> {
         if bills.is_empty() {
             return Vec::new();
@@ -237,7 +264,7 @@ impl Store {
                 cat: b.cat.clone(),
                 amt: b.amt,
                 note: (!b.note.is_empty()).then(|| b.note.clone()),
-                src: Some(src),
+                src,
                 updated_at: Some(now + i as i64),
                 ..Default::default()
             })
@@ -274,6 +301,34 @@ pub fn set_cat_budget(budgets: &mut Budgets, cat_key: &str, amt: f64) {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_shortcuts_rows_keep_their_own_source_and_land_where_asked() {
+        let mut store = Store::default();
+        let bill = |amt: f64, note: &str| ImportedBill {
+            io: Io::Exp,
+            cat: "food".into(),
+            amt,
+            note: note.into(),
+            ts: 100,
+        };
+        let landed = store.post_shortcut(
+            &[bill(35.0, "星巴克"), bill(12.0, "午饭")],
+            &["sp1-0".to_string(), "sq1-0".to_string()],
+            &[Some(EntrySource::Notif), None],
+            1000,
+        );
+        assert_eq!(landed, ["sp1-0", "sq1-0"]);
+        let pay = store.ledger.get("sp1-0").unwrap();
+        let said = store.ledger.get("sq1-0").unwrap();
+        assert_eq!(
+            (pay.src, pay.amt, pay.ts),
+            (Some(EntrySource::Notif), 35.0, 100)
+        );
+        assert_eq!((said.src, said.note.as_deref()), (None, Some("午饭")));
+        // ordered, like any batch: the later row is the later write
+        assert!(said.updated_at > pay.updated_at);
+    }
     use crate::entry::Io;
 
     fn expense(amt: f64, acct: Option<&str>) -> Entry {

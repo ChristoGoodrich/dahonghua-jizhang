@@ -39,6 +39,7 @@ pub mod reimburse;
 pub mod remind;
 pub mod report;
 pub mod search;
+pub mod shortcut;
 pub mod statement;
 pub mod stats;
 pub mod store;
