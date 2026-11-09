@@ -14,12 +14,22 @@ use std::sync::{Mutex, MutexGuard, OnceLock};
 
 use flutter_rust_bridge::frb;
 
-use dahonghua_core::theme::{make_theme, swatch, warn, ThemeKey};
+use dahonghua_core::theme::{make_theme, swatch, warn, Appearance, ThemeKey};
 
-/// The chosen flower, and whether the room is lit.
+/// The chosen flower, the chosen room, and the phone's room.
+///
+/// `system_dark` is the platform's to know and is not saved: Dart reports it
+/// at launch and whenever the phone changes it.
 struct Choice {
     key: String,
-    dark: bool,
+    appearance: Appearance,
+    system_dark: bool,
+}
+
+impl Choice {
+    fn dark(&self) -> bool {
+        self.appearance.is_dark(self.system_dark)
+    }
 }
 
 fn choice() -> MutexGuard<'static, Choice> {
@@ -27,7 +37,8 @@ fn choice() -> MutexGuard<'static, Choice> {
     let m = C.get_or_init(|| {
         Mutex::new(Choice {
             key: "default".into(),
-            dark: false,
+            appearance: Appearance::System,
+            system_dark: false,
         })
     });
     m.lock().unwrap_or_else(|e| e.into_inner())
@@ -103,7 +114,7 @@ fn view(key: ThemeKey, dark: bool) -> ThemeView {
 #[frb(sync)]
 pub fn current_theme() -> ThemeView {
     let c = choice();
-    view(ThemeKey::parse(&c.key), c.dark)
+    view(ThemeKey::parse(&c.key), c.dark())
 }
 
 /// Which flower is chosen. An unknown stored key reads back as `default`,
@@ -113,18 +124,62 @@ pub fn theme_key() -> String {
     ThemeKey::parse(&choice().key).as_str().to_string()
 }
 
+/// Whether the room is dark now: the choice, or the phone's when the choice
+/// is to follow it.
 #[frb(sync)]
 pub fn is_dark() -> bool {
-    choice().dark
+    choice().dark()
 }
 
+/// `system`, `light` or `dark`.
+#[frb(sync)]
+pub fn appearance() -> String {
+    choice().appearance.as_str().to_string()
+}
+
+/// The flower, and a room chosen lit or dark — not the phone's. What a test
+/// or the tour uses to stand in a known room.
 #[frb(sync)]
 pub fn set_theme(key: String, dark: bool) {
     let mut c = choice();
     // Normalised on the way in, so what is stored is always a key this build
     // understands and the config never carries a typo forward.
     c.key = ThemeKey::parse(&key).as_str().to_string();
-    c.dark = dark;
+    c.appearance = if dark {
+        Appearance::Dark
+    } else {
+        Appearance::Light
+    };
+}
+
+/// The flower alone, leaving the room as it was chosen.
+#[frb(sync)]
+pub fn set_flower(key: String) {
+    choice().key = ThemeKey::parse(&key).as_str().to_string();
+}
+
+/// The room: `system`, `light` or `dark`. Anything else follows the phone.
+#[frb(sync)]
+pub fn set_appearance(appearance: String) {
+    choice().appearance = Appearance::parse(&appearance).unwrap_or(Appearance::System);
+}
+
+/// Whether the phone's own room is dark, as the platform reports it.
+#[frb(sync)]
+pub fn set_system_dark(dark: bool) {
+    choice().system_dark = dark;
+}
+
+/// A saved config's choice, read back. Not for Dart: the config is.
+pub(crate) fn load_choice(key: String, appearance: Appearance) {
+    let mut c = choice();
+    c.key = ThemeKey::parse(&key).as_str().to_string();
+    c.appearance = appearance;
+}
+
+/// The room as saved, in the two keys a config carries for it.
+pub(crate) fn saved_appearance() -> Appearance {
+    choice().appearance
 }
 
 /// Every theme, in the order the picker shows them.

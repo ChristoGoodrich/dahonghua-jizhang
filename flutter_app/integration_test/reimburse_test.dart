@@ -373,9 +373,7 @@ void main() {
       await openActions(tester, '打车');
       await tester.tap(find.byKey(const Key('action-delete')));
       await tester.pumpAndSettle();
-      expect(store.liveEntries(), hasLength(1), reason: 'it asks first');
-      await tester.tap(find.byKey(const Key('entry-delete-ok')));
-      await tester.pumpAndSettle();
+      expect(find.byType(AlertDialog), findsNothing, reason: '撤销 is the net');
 
       expect(find.text('打车'), findsNothing);
       expect(store.liveEntries(), isEmpty);

@@ -193,13 +193,13 @@ void main() {
 
     at360('明细', (tester, o) async {
       o.at = '明细';
-      // The app's name beside three buttons. "Big Red Flower" is about 6dp
-      // wider than the room 360dp leaves it, and an ellipsized title is not
-      // an overflow, so it is asked for: laid out whole, shrunk by no more
-      // than a tenth, and clear of the first button.
+      // The tab's name beside three buttons. It was the app's name, and
+      // "Big Red Flower" was about 6dp wider than the room 360dp leaves it;
+      // an ellipsized title is not an overflow, so it is asked for: laid out
+      // whole, shrunk by no more than a tenth, and clear of the first button.
       final name = find.descendant(
         of: find.byType(AppBar),
-        matching: find.text(zh ? '大红花记账' : 'Big Red Flower'),
+        matching: find.text(zh ? '明细' : 'Entries'),
       );
       final title = tester.renderObject<RenderParagraph>(name);
       final whole = title.getMaxIntrinsicWidth(double.infinity);
@@ -262,7 +262,7 @@ void main() {
       await reach(tester, breakfast);
       await tester.drag(breakfast, const Offset(-500, 0));
       await tester.pumpAndSettle();
-      await tap(tester, 'entry-delete-ok');
+      await tap(tester, 'row-delete-tour-0');
       await tap(tester, 'deleted-undo');
     });
 

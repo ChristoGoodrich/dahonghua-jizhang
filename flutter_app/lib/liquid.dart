@@ -30,6 +30,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
+import 'accessibility.dart';
 import 'glass.dart';
 import 'src/rust/api/glass.dart' as g;
 import 'src/rust/api/liquid.dart' as q;
@@ -62,7 +63,13 @@ class LiquidLens extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = palette;
     final spec = q.liquidSpec(isDark: p.isDark);
-    final lens = q.lens(isDark: p.isDark, velocity: velocity);
+    // Still, under Reduce Motion or 移除动画: the lens moves to where it is
+    // going but does not stretch, trail or lag. Apple's Reduce Motion takes
+    // the elastic part out of its own glass.
+    final lens = q.lens(
+      isDark: p.isDark,
+      velocity: lessMotion(context) ? 0 : velocity,
+    );
     final accent = tint ?? p.hibiscus;
     final r = height / 2;
     final shape = BorderRadius.circular(r);

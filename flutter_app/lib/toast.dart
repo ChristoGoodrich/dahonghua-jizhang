@@ -160,62 +160,12 @@ class ToastCapsule extends StatelessWidget {
   }
 }
 
-/// 删除之前问一句 — a delete asks first.
-///
-/// A swipe is the easiest gesture in the list and the one most often made by
-/// accident, and a row deleted on the way to scrolling was only recoverable if
-/// the notice was noticed. So every delete of an entry asks, and says what it
-/// is about to take; the notice with 撤销 still follows, for the one that was
-/// meant and then regretted.
-Future<bool> confirmDelete(
-  BuildContext context, {
-  required bool zh,
-  required String what,
-  int count = 1,
-}) async {
-  final p = palette;
-  final ok = await showDialog<bool>(
-    context: context,
-    builder: (ctx) => AlertDialog(
-      key: const Key('entry-delete-confirm'),
-      backgroundColor: p.card,
-      title: Text(
-        count == 1
-            ? (zh ? '删除这笔记录？' : 'Delete this entry?')
-            : (zh ? '删除选中的 $count 笔？' : 'Delete $count entries?'),
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-          color: p.ink,
-        ),
-      ),
-      content: Text(
-        zh ? '$what\n删掉后可以马上撤销。' : '$what\nYou can undo it right after.',
-        style: TextStyle(fontSize: 14, height: 1.5, color: p.inkSoft),
-      ),
-      actions: [
-        TextButton(
-          key: const Key('entry-delete-cancel'),
-          onPressed: () => Navigator.pop(ctx, false),
-          child: Text(zh ? '取消' : 'Cancel', style: TextStyle(color: p.ink)),
-        ),
-        TextButton(
-          key: const Key('entry-delete-ok'),
-          onPressed: () => Navigator.pop(ctx, true),
-          style: TextButton.styleFrom(foregroundColor: p.warn),
-          child: Text(
-            zh ? '删除' : 'Delete',
-            style: const TextStyle(fontWeight: FontWeight.w700),
-          ),
-        ),
-      ],
-    ),
-  );
-  return ok ?? false;
-}
-
 /// 删除之前问一句, for what is not an entry: a tag, a ledger, a category, a
 /// subcategory, an asset, a loan.
+///
+/// An entry is not asked about. Its delete has 撤销, and a delete that can be
+/// taken back is not confirmed — Apple's rule, and the one the list follows:
+/// its swipe opens the row on 删除, and the press is the decision.
 ///
 /// These deleted on the first tap. None of them has a 撤销, an unsettled
 /// loan is money somebody still owes, and a deleted category is one every

@@ -4,6 +4,7 @@
 // pull, the readability curve) is a Rust call, not a Dart one. These are the
 // inputs to that, and the ink the material is read against.
 
+import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -99,6 +100,15 @@ Palette get palette => _active ??= Palette(theme.currentTheme());
 /// Forget the cached palette. Call after changing the theme; the next read
 /// rebuilds it from the core.
 void refreshPalette() => _active = null;
+
+/// Tell the core whether the phone's own room is dark. Which room the app is
+/// in is the core's answer (`core::theme::Appearance`); the phone's setting
+/// is the platform's to know.
+void followSystemRoom() => theme.setSystemDark(
+  dark:
+      WidgetsBinding.instance.platformDispatcher.platformBrightness ==
+      Brightness.dark,
+);
 
 /// The status and navigation bars' own colours.
 ///
@@ -219,6 +229,22 @@ ThemeData appTheme() {
   return ThemeData(
     colorScheme: scheme,
     scaffoldBackgroundColor: palette.paper,
+    // A screen comes in from the side and goes back the same way, on every
+    // phone: the iPhone's own, and the one its edge swipe follows a finger
+    // through. Android had Material's fade, an iPhone the slide, and the app
+    // looked like two apps. Android's back gesture still works over it.
+    pageTransitionsTheme: PageTransitionsTheme(
+      builders: {
+        for (final p in TargetPlatform.values)
+          p: const CupertinoPageTransitionsBuilder(),
+      },
+    ),
+    // And back is the iPhone's chevron, close its xmark, with no words beside
+    // them — Apple's guidance — on both phones for the same reason.
+    actionIconTheme: ActionIconThemeData(
+      backButtonIconBuilder: (_) => const Icon(Icons.arrow_back_ios_new),
+      closeButtonIconBuilder: (_) => const Icon(Icons.close),
+    ),
     // 按压反馈, for the widgets that answer a touch themselves.
     //
     // `Tap` is this app's press feedback and sixty-four Material widgets were
@@ -256,6 +282,16 @@ ThemeData appTheme() {
     elevatedButtonTheme: ElevatedButtonThemeData(style: _pressStyle),
     iconButtonTheme: IconButtonThemeData(style: _pressStyle),
     dialogTheme: DialogThemeData(backgroundColor: palette.card),
+    // A sheet carries the iPhone's grabber, which says it can be pulled away
+    // and is what a finger reaches for to do it. Two of the six sheets asked
+    // for Material's handle and four had none; stated here, every sheet has
+    // the same one, at Apple's size, and a sheet added later has it too.
+    bottomSheetTheme: BottomSheetThemeData(
+      backgroundColor: palette.card,
+      showDragHandle: true,
+      dragHandleSize: const Size(36, 5),
+      dragHandleColor: palette.ink.withValues(alpha: 0.22),
+    ),
     textSelectionTheme: TextSelectionThemeData(
       cursorColor: palette.stamen,
       selectionColor: palette.stamen.withValues(alpha: 0.28),

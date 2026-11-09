@@ -264,10 +264,13 @@ void main() {
       await tester.enterText(find.byKey(const Key('new-name')), '浦发');
       await tester.tap(find.byKey(const Key('kind-credit')));
       await tester.pumpAndSettle();
-      // Scrolled to first. 还款日's 其他 is the last thing in the dialog's
-      // scroll view, flush with its bottom edge, so a keyboard left up by the
-      // name field puts it out of sight; on CI's emulator one did, and the
-      // tap landed on the dialog instead.
+      // The keyboard away first: left up by the name field, it comes and goes
+      // on the device's own time, and the dialog it squeezes moved between a
+      // scroll and the tap that followed — on CI's emulator the tap on 还款日's
+      // 其他 landed on the dialog's button.
+      await putKeyboardAway(tester);
+      // Scrolled to as well. 还款日's 其他 is the last thing in the dialog's
+      // scroll view, flush with its bottom edge.
       Future<void> pick(String key) async {
         await tester.ensureVisible(find.byKey(Key(key)));
         await tester.pumpAndSettle();

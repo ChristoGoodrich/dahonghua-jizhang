@@ -111,6 +111,35 @@ Future<List<String>> namesOnDisk() async {
 Future<Finder> newestRestore() async =>
     find.byKey(Key('backup-${(await listBackups()).first.name}-restore'));
 
+/// Until [done], or fail saying [what] never happened.
+///
+/// A restore does real file work after its dialog closes — a snapshot of
+/// what it replaces, then the read — and `pumpAndSettle` stops at the last
+/// frame, not at the last file. On a slow simulator the frames ran out first,
+/// and a test looked for the restored row before the restore had read it.
+/// Unsealing is slower still, on purpose, and off the UI thread.
+Future<void> until(
+  WidgetTester tester,
+  bool Function() done,
+  String what,
+) async {
+  for (var i = 0; i < 300; i++) {
+    await tester.pump(const Duration(milliseconds: 100));
+    if (done()) return;
+  }
+  fail('never: $what');
+}
+
+bool _shows(String key) => find.byKey(Key(key)).evaluate().isNotEmpty;
+
+/// Until a restore has said how it went, which is the last thing it does.
+Future<void> untilFlash(WidgetTester tester) =>
+    until(tester, () => _shows('backup-flash'), 'the restore said how it went');
+
+/// Until a sealed snapshot's restore has asked for its password.
+Future<void> untilAsked(WidgetTester tester) =>
+    until(tester, () => _shows('password-dialog'), 'the password was asked');
+
 Future<void> show(WidgetTester tester, {bool zh = true}) async {
   await tester.pumpWidget(MaterialApp(home: BackupScreen(zh: zh)));
   await tester.pumpAndSettle();
@@ -711,7 +740,7 @@ void main() {
       await tester.tap(await newestRestore());
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('restore-ok')));
-      await tester.pumpAndSettle();
+      await untilFlash(tester);
 
       expect(store.getEntry(id: 'old'), isNotNull);
       expect(store.getEntry(id: 'new'), isNull);
@@ -737,12 +766,19 @@ void main() {
       expect((await listBackups()).length, backup.maxBackups());
       expect((await listBackups()).last.name, name);
       // the receipt is in the oldest one's folder and nowhere else
-      await File('${(await attachmentsDir()).path}/r-old.jpg').delete();
+      final receipt = File('${(await attachmentsDir()).path}/r-old.jpg');
+      await receipt.delete();
 
       await show(tester);
       await scrollAndTap(tester, find.byKey(Key('backup-$name-restore')));
       await tester.tap(find.byKey(const Key('restore-ok')));
-      await tester.pumpAndSettle();
+      // Not the notice: it is at the top of a list scrolled to the bottom of
+      // a full shelf, and not built. What the checks below read instead.
+      await until(
+        tester,
+        () => store.getEntry(id: 'old') != null && receipt.existsSync(),
+        'the oldest came back, receipt and all',
+      );
 
       expect(store.getEntry(id: 'old'), isNotNull);
       expect(store.getEntry(id: 'new'), isNull);
@@ -776,7 +812,7 @@ void main() {
       await tester.tap(await newestRestore());
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('restore-ok')));
-      await tester.pumpAndSettle();
+      await untilAsked(tester);
       expect(find.byKey(const Key('password-dialog')), findsOneWidget);
 
       await tester.enterText(
@@ -798,7 +834,7 @@ void main() {
       await tester.tap(await newestRestore());
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('restore-ok')));
-      await tester.pumpAndSettle();
+      await untilAsked(tester);
       await tester.enterText(find.byKey(const Key('password-field')), 'nope');
       await tester.tap(find.byKey(const Key('password-ok')));
       await tester.pumpAndSettle();
@@ -819,7 +855,7 @@ void main() {
       await tester.tap(await newestRestore());
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('restore-ok')));
-      await tester.pumpAndSettle();
+      await untilAsked(tester);
       await tester.enterText(
         find.byKey(const Key('password-field')),
         'correct horse',
@@ -937,15 +973,6 @@ void main() {
     String flash(WidgetTester tester) =>
         tester.widget<Text>(find.byKey(const Key('backup-flash'))).data!;
 
-    /// Unsealing is slow on purpose, and off the UI thread.
-    Future<void> untilFlash(WidgetTester tester) async {
-      for (var i = 0; i < 300; i++) {
-        await tester.pump(const Duration(milliseconds: 100));
-        if (find.byKey(const Key('backup-flash')).evaluate().isNotEmpty) return;
-      }
-      fail('the restore never said how it went');
-    }
-
     testWidgets('an exported snapshot comes back, receipts and all', (
       tester,
     ) async {
@@ -958,7 +985,7 @@ void main() {
       await showPicking(tester, picked);
       await scrollAndTap(tester, find.byKey(const Key('restore-from-file')));
       await tester.tap(find.byKey(const Key('restore-ok')));
-      await tester.pumpAndSettle();
+      await untilFlash(tester);
 
       expect(store.getEntry(id: 'e1')!.photo, 'r-file-1.jpg');
       expect(store.getEntry(id: 'e2'), isNotNull);
@@ -977,7 +1004,7 @@ void main() {
       await showPicking(tester, picked);
       await scrollAndTap(tester, find.byKey(const Key('restore-from-file')));
       await tester.tap(find.byKey(const Key('restore-ok')));
-      await tester.pumpAndSettle();
+      await untilFlash(tester);
 
       expect(store.getEntry(id: 'old'), isNotNull);
       expect(
@@ -1001,7 +1028,7 @@ void main() {
       await showPicking(tester, picked);
       await scrollAndTap(tester, find.byKey(const Key('restore-from-file')));
       await tester.tap(find.byKey(const Key('restore-ok')));
-      await tester.pumpAndSettle();
+      await untilAsked(tester);
       await tester.enterText(find.byKey(const Key('password-field')), 'pw');
       await tester.tap(find.byKey(const Key('password-ok')));
       await untilFlash(tester);
@@ -1083,7 +1110,7 @@ void main() {
       await showPicking(tester, [...picked, bytes('stranger.jpg', 'x')]);
       await scrollAndTap(tester, find.byKey(const Key('restore-from-file')));
       await tester.tap(find.byKey(const Key('restore-ok')));
-      await tester.pumpAndSettle();
+      await untilFlash(tester);
 
       expect(await stranger.exists(), isFalse);
       expect(flash(tester), '已恢复 1 条，小票 1 张');

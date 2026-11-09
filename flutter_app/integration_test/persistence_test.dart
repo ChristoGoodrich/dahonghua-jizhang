@@ -280,6 +280,19 @@ void main() {
       p.dispose();
     });
 
+    /// `restartAll` forgets the room as 'light', so a 'system' that was not
+    /// saved comes back as the wrong one.
+    testWidgets('a room that follows the phone', (tester) async {
+      var p = await open();
+      theme.setFlower(key: 'ocean');
+      theme.setAppearance(appearance: 'system');
+
+      p = await restartAll(p);
+      expect(theme.themeKey(), 'ocean');
+      expect(theme.appearance(), 'system');
+      p.dispose();
+    });
+
     testWidgets('the budget', (tester) async {
       var p = await open();
       budget.setSettings(

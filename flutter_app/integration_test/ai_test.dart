@@ -431,10 +431,16 @@ void main() {
 
       await read(tester, '奶茶18 地铁4');
       await tester.tap(find.byKey(const Key('ai-save')));
-      await tester.pumpAndSettle();
-      expect(find.byType(AiEntryScreen), findsNothing);
+      // Not settled first: the notice lives four seconds, and settling the
+      // shell after the screen closed took longer than that on CI's emulator.
+      await pumpUntil(
+        tester,
+        () =>
+            find.byType(AiEntryScreen).evaluate().isEmpty &&
+            find.text('记了 2 笔').evaluate().length == 1,
+        'the screen closed and the notice up',
+      );
       expect(store.liveEntries().where((e) => e.note == '奶茶'), hasLength(1));
-      expect(find.text('记了 2 笔'), findsOneWidget);
 
       await tester.tap(find.byKey(const Key('smart-undo')));
       await tester.pumpAndSettle();

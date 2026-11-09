@@ -7,6 +7,8 @@
 // restart. Each of those is a place a correct palette can fail to arrive.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/cat_pick.dart';
+import 'package:flutter_app/cats.dart';
 import 'package:flutter_app/main.dart';
 import 'package:flutter_app/settings_screen.dart';
 import 'package:flutter_app/src/rust/api/store.dart' as store;
@@ -30,6 +32,8 @@ void main() {
     // The palette is process-global and cached, so one test's flower is
     // another's fixture unless this is here.
     theme.setTheme(key: 'default', dark: false);
+    // And the phone's room is a fixture too: the emulator may be in either.
+    theme.setSystemDark(dark: false);
     refreshPalette();
   });
 
@@ -199,13 +203,56 @@ void main() {
     });
   });
 
+  /// The iPhone's grabber on every sheet: four of six had no handle at all.
+  /// The category picker is one of the four.
+  group('a sheet', () {
+    testWidgets("has the grabber, at Apple's size", (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: appTheme(),
+          home: Builder(
+            builder: (context) => TextButton(
+              key: const Key('open'),
+              onPressed: () => pickCategory(
+                context,
+                cats: catsOf('exp'),
+                zh: true,
+                keyPrefix: 'cat',
+              ),
+              child: const Text('open'),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.byKey(const Key('open')));
+      await tester.pumpAndSettle();
+
+      final handle = find.descendant(
+        of: find.byType(BottomSheet),
+        matching: find.byWidgetPredicate(
+          (w) =>
+              w is Container &&
+              w.decoration is BoxDecoration &&
+              (w.decoration! as BoxDecoration).color ==
+                  palette.ink.withValues(alpha: 0.22),
+        ),
+      );
+      expect(handle, findsOneWidget);
+      expect(tester.getSize(handle), const Size(36, 5));
+    });
+  });
+
   group('the settings screen', () {
-    testWidgets('offers a swatch per flower and a dark switch', (tester) async {
+    testWidgets('offers a swatch per flower and the three rooms', (
+      tester,
+    ) async {
       await showSettings(tester);
 
       expect(find.byKey(const Key('theme-default')), findsOneWidget);
       expect(find.byKey(const Key('theme-sunset')), findsOneWidget);
-      expect(find.byKey(const Key('dark-toggle')), findsOneWidget);
+      for (final a in ['system', 'light', 'dark']) {
+        expect(find.byKey(Key('appearance-$a')), findsOneWidget);
+      }
     });
 
     testWidgets('tapping a swatch changes the palette', (tester) async {
@@ -222,24 +269,32 @@ void main() {
       );
     });
 
-    testWidgets('the switch turns the light off without losing the flower', (
+    testWidgets('深色 turns the light off without losing the flower', (
       tester,
     ) async {
       await showSettings(tester);
       await tester.tap(find.byKey(const Key('theme-sunset')));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byKey(const Key('dark-toggle')));
-      await tester.pumpAndSettle();
+      await scrollAndTap(tester, find.byKey(const Key('appearance-dark')));
 
       expect(theme.isDark(), isTrue);
+      expect(theme.appearance(), 'dark');
       expect(theme.themeKey(), 'sunset');
+    });
+
+    testWidgets('a flower does not change the room', (tester) async {
+      await showSettings(tester);
+      await scrollAndTap(tester, find.byKey(const Key('appearance-system')));
+      await scrollAndTap(tester, find.byKey(const Key('theme-ocean')));
+
+      expect(theme.themeKey(), 'ocean');
+      expect(theme.appearance(), 'system');
     });
 
     testWidgets('the screen it is chosen on repaints itself', (tester) async {
       await showSettings(tester);
-      await tester.tap(find.byKey(const Key('dark-toggle')));
-      await tester.pumpAndSettle();
+      await scrollAndTap(tester, find.byKey(const Key('appearance-dark')));
 
       // The settings screen paints its own background from the palette, so it
       // is the first thing that would show a stale one.
@@ -260,6 +315,80 @@ void main() {
       await tester.pumpAndSettle();
       final note = tester.widget<Text>(find.byKey(const Key('settings-note')));
       expect(note.data, isNot(contains('主题')));
+    });
+  });
+
+  /// Apple's guidance is that an app follows the system's appearance. The app
+  /// had a switch of its own and nothing else, so a phone set dark at night
+  /// opened it lit.
+  group('following the phone', () {
+    tearDown(() {
+      TestWidgetsFlutterBinding.instance.platformDispatcher
+          .clearPlatformBrightnessTestValue();
+    });
+
+    testWidgets('a new install follows it', (tester) async {
+      expect(store.loadConfig(json: '{}'), isTrue);
+      expect(theme.appearance(), 'system');
+    });
+
+    Future<void> phone(WidgetTester tester, Brightness b) async {
+      tester.platformDispatcher.platformBrightnessTestValue = b;
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('a phone going dark darkens a room that follows it', (
+      tester,
+    ) async {
+      theme.setAppearance(appearance: 'system');
+      refreshPalette();
+      await tester.pumpWidget(const App());
+      await tester.pumpAndSettle();
+      expect(palette.isDark, isFalse);
+
+      await phone(tester, Brightness.dark);
+      expect(theme.isDark(), isTrue);
+      expect(palette.isDark, isTrue, reason: 'the cached palette moved too');
+      final app = tester.widget<MaterialApp>(find.byType(MaterialApp));
+      expect(app.theme!.colorScheme.brightness, Brightness.dark);
+
+      await phone(tester, Brightness.light);
+      expect(theme.isDark(), isFalse);
+      expect(
+        tester
+            .widget<MaterialApp>(find.byType(MaterialApp))
+            .theme!
+            .colorScheme
+            .brightness,
+        Brightness.light,
+      );
+    });
+
+    testWidgets('a room chosen lit stays lit when the phone goes dark', (
+      tester,
+    ) async {
+      theme.setAppearance(appearance: 'light');
+      refreshPalette();
+      await tester.pumpWidget(const App());
+      await tester.pumpAndSettle();
+
+      await phone(tester, Brightness.dark);
+      expect(theme.isDark(), isFalse);
+      expect(palette.isDark, isFalse);
+    });
+
+    testWidgets('跟随系统 in settings hands the room back to the phone', (
+      tester,
+    ) async {
+      tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+      theme.setSystemDark(dark: true);
+      await showSettings(tester);
+      expect(theme.isDark(), isFalse, reason: 'chosen lit in setUp');
+
+      await scrollAndTap(tester, find.byKey(const Key('appearance-system')));
+      expect(theme.appearance(), 'system');
+      expect(theme.isDark(), isTrue);
+      expect(palette.isDark, isTrue);
     });
   });
 
@@ -289,7 +418,7 @@ void main() {
         // below the fold lands on whatever is at those coordinates instead —
         // and now that the body runs behind the header, so does one scrolled
         // to the very top. See scroll.dart.
-        await scrollAndTap(tester, find.byKey(const Key('dark-toggle')));
+        await scrollAndTap(tester, find.byKey(const Key('appearance-dark')));
 
         final app = tester.widget<MaterialApp>(find.byType(MaterialApp));
         expect(app.theme!.colorScheme.brightness, Brightness.dark);
@@ -307,7 +436,7 @@ void main() {
       expect(theme.isDark(), isTrue);
     });
 
-    testWidgets('a config written before dark mode existed is a lit room', (
+    testWidgets('a config written before dark mode existed follows the phone', (
       tester,
     ) async {
       theme.setTheme(key: 'ocean', dark: true);
@@ -315,11 +444,28 @@ void main() {
       expect(store.loadConfig(json: '{"theme":"forest"}'), isTrue);
 
       expect(theme.themeKey(), 'forest');
-      expect(
-        theme.isDark(),
-        isFalse,
-        reason: 'a missing key is not a dark room',
-      );
+      expect(theme.appearance(), 'system');
+      expect(theme.isDark(), isFalse, reason: 'on a lit phone, a lit room');
+    });
+
+    testWidgets('a config from before the choice keeps a dark room dark', (
+      tester,
+    ) async {
+      // `dark: true` was a switch somebody turned on; the phone is lit.
+      expect(store.loadConfig(json: '{"theme":"forest","dark":true}'), isTrue);
+      expect(theme.appearance(), 'dark');
+      expect(theme.isDark(), isTrue);
+    });
+
+    testWidgets('the room is saved as chosen, not as the phone has it', (
+      tester,
+    ) async {
+      theme.setAppearance(appearance: 'system');
+      theme.setSystemDark(dark: true);
+      final blob = store.snapshotConfig();
+      expect(blob, contains('"appearance":"system"'));
+      // A build that reads only `dark` gets the choice, not the evening.
+      expect(blob, contains('"dark":false'));
     });
 
     testWidgets('a config with no theme at all is the default flower', (

@@ -9,6 +9,7 @@
 // slots and this app has twenty screens; the six-tab arrangement this replaced
 // had already stopped being able to grow.
 
+import 'package:flutter/cupertino.dart' show CupertinoPageTransition;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/main.dart';
@@ -221,6 +222,53 @@ void main() {
   });
 
   group('the 我的 hub', () {
+    /// One way in and out on both phones: the iPhone's slide, its edge
+    /// swipe, and its chevron. Android had Material's fade and arrow, so the
+    /// same app looked like two. Run as Android, the phone that changed.
+    testWidgets(
+      'a screen slides in from the side, and an edge swipe takes it back',
+      (tester) async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.android;
+        try {
+          await shell(tester);
+          await tapTab(tester, '我的');
+          // Clear of the header, not just inside the viewport: on an iPhone
+          // `ensureVisible` left the row under the transparent bar, which
+          // took the tap (scroll.dart).
+          final row = find.byKey(const Key('me-budget'));
+          await scrollTo(
+            tester,
+            row,
+            scrollable: find.descendant(
+              of: find.byKey(const Key('me-list')),
+              matching: find.byType(Scrollable),
+            ),
+          );
+          await tester.tap(row);
+          await tester.pump();
+          await tester.pump(const Duration(milliseconds: 100));
+          expect(
+            find.byType(CupertinoPageTransition),
+            findsWidgets,
+            reason: 'mid-push, the slide',
+          );
+          await tester.pumpAndSettle();
+          expect(find.byIcon(Icons.arrow_back_ios_new), findsOneWidget);
+          expect(find.byIcon(Icons.arrow_back), findsNothing);
+
+          // From the very edge, the way a thumb does it.
+          await tester.dragFrom(const Offset(2, 400), const Offset(320, 0));
+          await tester.pumpAndSettle();
+          expect(find.byIcon(Icons.arrow_back_ios_new), findsNothing);
+          // The hub is on top again: the row that opened the screen can be
+          // pressed. (Its heading is scrolled away: the row was scrolled to.)
+          expect(row.hitTestable(), findsOneWidget, reason: 'back on the hub');
+        } finally {
+          debugDefaultTargetPlatformOverride = null;
+        }
+      },
+    );
+
     testWidgets('reaches the budget screen and comes back', (tester) async {
       await shell(tester);
       await tapTab(tester, '我的');
@@ -339,7 +387,7 @@ void main() {
       await shell(tester);
       await tester.drag(find.byKey(const Key('row-e1')), const Offset(-500, 0));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('entry-delete-ok')));
+      await tester.tap(find.byKey(const Key('row-delete-e1')));
       await tester.pumpAndSettle();
       expect(store.liveEntries(), isEmpty);
 
@@ -367,7 +415,7 @@ void main() {
       await shell(tester);
       final rows = <String, double>{};
       for (final (tab, heading) in [
-        ('明细', '大红花记账'),
+        ('明细', '明细'),
         ('统计', '统计'),
         ('资产', '资产'),
         ('我的', '我的'),
@@ -386,7 +434,7 @@ void main() {
 
       // 明细's three buttons are on that row too
       await tapTab(tester, '明细');
-      final y = tester.getCenter(title('大红花记账')).dy;
+      final y = tester.getCenter(title('明细')).dy;
       for (final k in ['select-toggle', 'calendar-toggle', 'search-toggle']) {
         final b = find.byKey(Key(k));
         expect(b, findsOneWidget, reason: k);

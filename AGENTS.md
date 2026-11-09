@@ -249,9 +249,18 @@ and any bare `InkWell`, which read the ambient theme instead of a button
 style. A widget added next year gets it without being told — and `theme_test`
 holds the numbers, because nothing else would notice them going.
 
-**A delete asks first**, and says which row: `confirmDelete` in `toast.dart`,
-on the swipe, on the ⋯ menu and on the selection bar. A swipe is the cheapest
-gesture in the list and the one most often made on the way to scrolling.
+**A swipe opens a row; it does not delete it.** `SwipeActions`
+(`swipe_actions.dart`) slides the row aside onto a red 删除, and pressing that
+is the delete, with 撤销 after it. A swipe is the cheapest gesture in the list
+and the one most often made on the way to scrolling, so it used to swipe the
+row away and then ask, a dialog about something already done. Apple's rule
+is that a delete which can be undone is not confirmed, so an entry's delete
+asks nothing anywhere: on the swipe, on the ⋯ menu, on the selection bar or
+in the edit sheet. `confirmRemove` still asks, for what has no 撤销: a
+category, a ledger, an asset, a loan, a template, a subscription, an account.
+One row is open at a time, and a scroll, a tap on it or a finger on another
+row shuts it. A screen reader gets 删除 as a custom action on the row's own
+node, because a swipe is a gesture its users do not make.
 
 **The notices are capsules**, the phone's own shape — a small pill low on the
 screen, the flower, a few words, the action at the end — rather than a
@@ -267,6 +276,25 @@ that is gone by the time it is pressed: it put the row back and then called
 showed the list on its own, where nothing recreates anything. A callback that
 outlives its screen checks `mounted`, and `shell_test` presses 撤销 in the
 shell.
+
+## Going in and coming back
+
+A pushed screen comes in from the side and goes back the same way on every
+phone, through the iPhone's own transition. `appTheme()` sets
+`CupertinoPageTransitionsBuilder` for every platform. The edge swipe follows a
+finger back through that transition, and Android's back gesture still works
+over it. Back is the chevron and close is the xmark, with no words beside
+them (`actionIconTheme`). It used to be Material's fade and arrow on Android
+and the slide on an iPhone, so the same app looked like two.
+`shell_test` holds it as Android, the phone that changed.
+
+Every bottom sheet has the iPhone's grabber, at Apple's 36×5, because
+`bottomSheetTheme` sets it, so a sheet added later has it too. Two of the six
+asked for Material's handle and four had none.
+
+iOS 26 takes the swipe from anywhere in the content, not only the edge. That
+part is not here: Flutter's route takes it from a 20dp strip, and a swipe
+from the middle of 明细 is a row's swipe.
 
 ## Saying "too much"
 
@@ -380,6 +408,45 @@ entry plants no flowers. 统计's charts appear fully drawn
 instead of drawing themselves in. CI runs with animations on, so
 `motion_test` is the only thing that takes this path. Each of its checks has
 a counterpart with motion on, so a check that cannot fail would show up.
+
+**On an iPhone none of that happened.** iOS asks with three settings, and
+`disableAnimations` is none of them. Flutter's own documentation says iOS
+does not set it.
+
+* **Reduce Motion** reaches Flutter only as `accessibilityFeatures.reduceMotion`.
+* **Reduce Transparency** does not reach Flutter at all, so `NativeChannels.swift`
+  reports it, as Kotlin reports battery saver.
+* **Increase Contrast** arrives as `MediaQuery.highContrast`.
+
+`lib/accessibility.dart` asks the two questions once each. `lessMotion`
+covers the flowers, the charts, a row's swipe, and the lens, which keeps
+moving but stops stretching, the elastic part Apple's Reduce Motion removes
+from its own glass. `lessTransparency` is what `glassTier` hands
+`resolve_tier`. Android's 移除动画 still answers yes to both. Ask these, not
+`MediaQuery.maybeDisableAnimationsOf`: the surface that asks for itself is
+the one a fourth setting misses. A state's `initState` cannot depend on an
+inherited widget, so 统计 asks `lessMotionNow`, the phone's answer at that
+moment.
+
+## Following the phone's room
+
+The room, lit or dark, follows the phone unless somebody chose one: 设置 ›
+外观 is 跟随系统, 浅色 or 深色, and 跟随系统 is the default. It used to be
+a 夜间模式 switch that ignored the phone, so a phone set dark at night opened
+this app lit, which Apple's guidance and Android's both say not to do.
+`core::theme::Appearance` is the rule, including what an old config means.
+A config written before the choice has only `dark`. `dark: true` was a switch
+somebody turned on, so it stays dark. Off cannot be told from never touched,
+so it follows the phone.
+
+The phone's room is the platform's to know. `followSystemRoom` reports it at
+launch and from the shell's `didChangePlatformBrightness`, which rebuilds only
+when the room actually moved. The config saves the choice, never the phone's
+room at the moment of the save. That would make every sunset a config write
+and hand an older build whatever the evening was. `dark` is still written
+beside `appearance` for such a build, and is true only for a room chosen dark.
+`setTheme(key, dark)` is still there: tests and the tour use it to stand in a
+known room, and it chooses that room explicitly.
 
 ## Changing the store under a screen
 
@@ -697,6 +764,16 @@ on this phone", as it always did. 自动记账 is not offered on an iPhone at al
 iOS lets no app read another's notifications — and the hub decides that by
 `defaultTargetPlatform`, not `dart:io`'s `Platform`, so a test can ask what an
 iPhone would show; a channel call still asks `Platform`.
+
+**The first frame and the icon.** The launch screen is the colour of the
+paper, lit or dark, from the `LaunchBackground` named colour. Its values are
+Android's `splash_background`, so neither phone flashes white at launch.
+It has no logo, as Apple's guidance asks.
+
+The icon has a dark variant: the Android adaptive icon's flower, scaled to sit
+exactly where the light icon's does, on a transparent ground that iOS fills.
+There is no tinted variant, because iOS makes one from the plain icon when
+none is given.
 
 **Nothing goes to iCloud.** iOS backs Documents up unless told not to, and
 Documents is where the ledger, the config, the receipts and the snapshots all

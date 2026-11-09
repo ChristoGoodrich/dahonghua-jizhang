@@ -36,6 +36,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
+import 'accessibility.dart';
 import 'power.dart';
 import 'src/rust/api/glass.dart' as g;
 import 'theme.dart';
@@ -48,7 +49,7 @@ import 'theme.dart';
 /// surface that missed it would be the one blur left on a phone that asked
 /// for none.
 g.GlassTier glassTier(BuildContext context) => g.resolveTier(
-  reduceTransparency: MediaQuery.maybeDisableAnimationsOf(context) ?? false,
+  reduceTransparency: lessTransparency(context),
   powerSave: PowerSaving.of(context),
   isWeb: false,
 );
@@ -770,10 +771,10 @@ class _TitledScaffoldState extends State<TitledScaffold> {
         automaticallyImplyLeading: false,
         titleSpacing: widget.leading == null ? 22 : 0,
         // A title a little wider than the room beside the actions shrinks to
-        // fit instead of losing its end. "Big Red Flower" is 172dp at 26px
-        // and a 360dp phone leaves 明细 166dp next to its three buttons, so it
-        // was "Big Red Flow…" there. narrow_test holds it whole and at least
-        // 90% of its size.
+        // fit instead of losing its end. 明细 was titled "Big Red Flower",
+        // 172dp at 26px, and a 360dp phone leaves it 166dp next to its three
+        // buttons, so it was "Big Red Flow…" there. narrow_test holds every
+        // tab's title whole.
         title:
             widget.barTitle ??
             (widget.largeTitle

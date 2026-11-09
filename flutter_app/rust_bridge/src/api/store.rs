@@ -32,6 +32,7 @@ use dahonghua_core::model::{Asset, AssetKind, Loan, LoanKind, Sub, SubFreq, Temp
 use dahonghua_core::money::Currencies;
 use dahonghua_core::rows::{entry_from_value, entry_to_value};
 use dahonghua_core::store::{ImportedBill, Store, TransferOpts};
+use dahonghua_core::theme::Appearance;
 use flutter_rust_bridge::frb;
 use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::{Mutex, MutexGuard, OnceLock};
@@ -1048,7 +1049,17 @@ pub fn snapshot_config() -> String {
         ("curLedger".into(), Value::Str(lib.current_ledger.clone())),
         ("lang".into(), Value::Str(language())),
         ("theme".into(), Value::Str(super::theme::theme_key())),
-        ("dark".into(), Value::Bool(super::theme::is_dark())),
+        (
+            "appearance".into(),
+            Value::Str(super::theme::saved_appearance().as_str().into()),
+        ),
+        // Still written, for a build that knows only `dark`: on only for a
+        // room chosen dark, never for the phone's room at the moment of the
+        // save — which would also make every sunset a config write.
+        (
+            "dark".into(),
+            Value::Bool(super::theme::saved_appearance().legacy_dark()),
+        ),
         ("lock".into(), Value::Bool(super::lock::lock_enabled())),
         (
             "hideAmounts".into(),
@@ -1140,9 +1151,9 @@ pub fn load_config(json: String) -> bool {
         set_language(l.clone());
     }
     {
-        // Read together, because they are one choice. A config with a theme
-        // and no `dark` key is one written before dark mode existed, and its
-        // room was lit.
+        // Read together, because they are one choice. Which room a config
+        // means — including one written before `appearance` existed — is
+        // `core::theme::Appearance::from_config`.
         let key = v
             .get("theme")
             .and_then(|x| match x {
@@ -1150,8 +1161,17 @@ pub fn load_config(json: String) -> bool {
                 _ => None,
             })
             .unwrap_or_else(|| "default".into());
-        let dark = matches!(v.get("dark"), Some(Value::Bool(true)));
-        super::theme::set_theme(key, dark);
+        let appearance = Appearance::from_config(
+            match v.get("appearance") {
+                Some(Value::Str(s)) => Some(s.as_str()),
+                _ => None,
+            },
+            match v.get("dark") {
+                Some(Value::Bool(b)) => Some(*b),
+                _ => None,
+            },
+        );
+        super::theme::load_choice(key, appearance);
     }
     // Restored, not switched on: loading a file is not a user turning the lock
     // on, and prompting here would ask before there is a screen to ask over.
