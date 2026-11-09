@@ -6,10 +6,12 @@
 # the build is left unsigned and an .ipa is just the app in a Payload folder,
 # zipped. Run from the repository root, after `flutter pub get`.
 set -euo pipefail
-cd "$(dirname "$0")/../../flutter_app"
+here=$(cd "$(dirname "$0")" && pwd)
+cd "$here/../../flutter_app"
 flutter build ios --release --no-codesign
 app=build/ios/iphoneos/Runner.app
 test -d "$app" || { echo "::error::no $app after the build"; exit 1; }
+"$here/check-intents.sh" "$app"
 out=build/ios/dahonghua-ios-unsigned.ipa
 stage=$(mktemp -d)
 mkdir -p "$stage/Payload"

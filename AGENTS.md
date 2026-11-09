@@ -793,9 +793,33 @@ says `queued`. It works the way `inbox.dart` drains Android's:
   included. So a replay after a crash writes nothing twice, and a payment
   somebody deleted stays deleted.
 
+**Wallet's amount is words, not a number.** The automation hands over
+`¥35.00`, `US$5.40` or `100,50 €`, written by the phone's own currency
+formatter, so 记一笔付款's amount is a text parameter: a number parameter
+would leave Shortcuts to coerce that, and nobody can test the coercion
+without a phone. The intent passes the words through with the region's
+currency (`Locale.current.currency`), and `core::shortcut::read_amount`
+reads both. Whichever of `.` and `,` comes last with one or two digits after
+it is the decimal mark. A bare `$` or `¥` is the region's own currency when
+the region writes it that way: on a phone in China the dollar is `US$`, and
+in Japan the yuan is `CN¥`. A minus sign is a refund, and the automation does
+not run for one, so the request is ignored rather than recorded as an
+expense.
+
+A payment in another currency is written as the record sheet writes one:
+the base amount, with the original and the rate beside it. Dart fetches the
+rate for the payment's own day through `rate_fetch.dart` and falls back to
+the rate the app already holds. If there is no rate, the core writes nothing
+(`shortcut::priced`) and the request stays in the queue for the next drain.
+The 快捷指令 screen shows the waiting count, because nothing else would.
+
 我的 › 快捷指令记账 says how to set each one up, because iOS gives an app no
 way to create an automation itself. App Intents need no entitlement, so a
-build signed with a free Apple ID keeps them.
+build signed with a free Apple ID keeps them. Siri offers an intent only if
+Xcode extracted its metadata into the bundle. When a build succeeds, Flutter
+shows none of xcodebuild's output, so a failed extraction would go unseen.
+`scripts/ios/check-intents.sh` looks inside the built app, and the ipa job
+fails without it.
 
 **The widget waits.** A WidgetKit widget runs in an extension, which can read
 the app's data only through an App Group. An App Group is an entitlement a
