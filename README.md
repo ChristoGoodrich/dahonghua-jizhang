@@ -34,7 +34,8 @@ A **Rust core** decides everything: money arithmetic, budget cycles, statistics,
 statement dates, the merge between two devices. A **Flutter UI** draws it, and two small
 Kotlin components handle what only Android can — reading payment notifications, and the
 home-screen widget. On the iPhone a little Swift answers the same channels where iOS has
-an answer.
+an answer, and gives Shortcuts two App Intents: Siri, the Action button and Apple Pay
+can record without the app open.
 
 The rule is that the core decides and everything else transports or draws. A screen that
 computes its own answer can disagree with the rest of the app, and its answer is the one
@@ -134,7 +135,7 @@ The React Native app had these; this one does not.
 | | Why |
 | --- | --- |
 | **Web** | A ledger that lives on the phone has no reason to be a web page. |
-| **iPhone: 自动记账 and the widget** | iOS lets no app read another's payment notifications, so 自动记账 is Android's. The iPhone widget is not built yet. |
+| **iPhone: 自动记账 and the widget** | iOS lets no app read another's payment notifications, so 自动记账 is Android's. On an iPhone, Shortcuts does that job instead: Siri, the Action button, and an automation after every Apple Pay payment (我的 › 快捷指令记账). The iPhone widget is not built yet: it needs an App Group, which a free Apple ID may not be able to grant. |
 | **Cloud sync (Supabase)** | Replaced by file sync, above. The merge logic is the same code, and far better tested. |
 | **PDF monthly report** | The report exists as a screen. Rendering it to a PDF does not. |
 | **xlsx export** | CSV opens in every spreadsheet, and writing xlsx would cost the core a pile of dependencies for no decision. |
@@ -181,8 +182,8 @@ flutter_app/
   rust_bridge/     the FFI layer (flutter_rust_bridge). Its own cargo project.
   integration_test/  601 tests. all_test.dart runs them in one build.
   android/…/kotlin/  the notification listener and the home-screen widget.
-  ios/Runner/      the iPhone side: three channels in Swift, Documents kept
-                   out of iCloud.
+  ios/Runner/      the iPhone side: channels and App Intents in Swift,
+                   Documents kept out of iCloud.
   tool/gen_icons.py  launcher icon and splash, from assets/images/.
 
 scripts/           goldens, corpus generators, the test aggregator.
@@ -242,7 +243,7 @@ does not uninstall the app that phone is using.
 | Storage | SQLite via `rusqlite`, bundled and compiled per ABI |
 | UI | Flutter, `flutter_rust_bridge` 2.12 |
 | Android | Kotlin: a `NotificationListenerService` and a `RemoteViews` widget |
-| iPhone | Swift: the version, the time zone and Low Power Mode, over the same channels |
+| iPhone | Swift: the version, the time zone, Low Power Mode and Reduce Transparency over the same channels; App Intents for Shortcuts |
 | Sync | A file you carry. No server, no account, no credentials |
 | Platform | Android, and iPhone on iOS 17 or later — see AGENTS.md, "The iPhone" |
 

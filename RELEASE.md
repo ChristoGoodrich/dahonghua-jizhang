@@ -116,6 +116,15 @@ your own in its advanced options and use that one from then on.
 Nothing the app keeps goes to iCloud (AGENTS.md, "The iPhone"), so the only
 copy is the phone's: 我的 › 备份 › 导出 is how a copy leaves it.
 
+### Recording without opening the app
+
+The iPhone has no 自动记账, because iOS lets no app read another's
+notifications. Shortcuts does that job: 我的 › 快捷指令记账 says what to set
+up for Siri, the Action button, and an automation that records every Apple Pay
+payment (Shortcuts › Automation › Wallet › Record a payment). What they ask
+for is written down at once and reaches the ledger the next time the app
+opens. These work with a free Apple ID: App Intents need no entitlement.
+
 ### Bringing the ledger from Android
 
 The iPhone app reads the Android app's snapshots: they are the same core.

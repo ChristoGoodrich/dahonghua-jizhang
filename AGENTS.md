@@ -16,8 +16,9 @@ it had been ported and shipped; it is still in history at the `rn-final` tag.
     flutter_app/lib    the UI.
     flutter_app/android/…/kotlin   two Android components: the notification
                        listener and the home-screen widget.
-    flutter_app/ios/Runner   the iPhone side: three channels in Swift, and
-                       Documents kept out of iCloud. See "The iPhone".
+    flutter_app/ios/Runner   the iPhone side: channels and App Intents in
+                       Swift, and Documents kept out of iCloud. See
+                       "The iPhone".
 
 ## The rule the whole thing rests on
 
@@ -758,12 +759,48 @@ core and the same suite, with three things to know.
 
 **What iOS has, and what it does not yet.** `NativeChannels.swift` answers
 three of the five channels the Kotlin side answers: `app_info`, `zone` and
-`power` (Low Power Mode, as battery saver). The widget and the notification
-listener have no iOS side, and the Dart side treats a missing channel as "not
-on this phone", as it always did. 自动记账 is not offered on an iPhone at all —
-iOS lets no app read another's notifications — and the hub decides that by
-`defaultTargetPlatform`, not `dart:io`'s `Platform`, so a test can ask what an
-iPhone would show; a channel call still asks `Platform`.
+`power` (Low Power Mode, as battery saver). It also answers two the Kotlin side
+does not: `transparency` (see "Less motion") and `shortcuts`, below. The widget
+and the notification listener have no iOS side, and the Dart side treats a
+missing channel as "not on this phone", as it always did. 自动记账 is not
+offered on an iPhone at all, because iOS lets no app read another's
+notifications. The hub decides that by `defaultTargetPlatform`, not
+`dart:io`'s `Platform`, so a test can ask what an iPhone would show. A channel
+call still asks `Platform`.
+
+**快捷指令 is the iPhone's 自动记账.** What iOS has instead of reading
+notifications is Shortcuts, and `ShortcutIntents.swift` gives it two App
+Intents:
+
+* 记一笔, a sentence, offered to Siri, Spotlight and the Action button.
+* 记一笔付款, an amount and a merchant, for the Wallet automation that runs
+  after every Apple Pay payment.
+
+An intent can run with the app closed, where no Dart runs. So it only writes
+the request to `ShortcutQueue` (Application Support, not Documents) and
+returns. The Wallet automation is known to time out on a slow action.
+`shortcuts.dart` drains the queue at launch, on resume and when the channel
+says `queued`. It works the way `inbox.dart` drains Android's:
+
+* `core::shortcut` decides what a request means. A sentence goes through
+  一句话记账's own reader. A payment is one expense filed by its merchant, and
+  written as a capture (`src: notif`).
+* Dart puts the time on each entry. It is the moment the shortcut ran, or noon
+  of a day the words named, and 昨天 counts from when it was said, not from
+  when the app next opened.
+* The ledger is saved before the queue is acknowledged. Entry ids derive from
+  the request's, and the core skips an id the ledger holds, a tombstone
+  included. So a replay after a crash writes nothing twice, and a payment
+  somebody deleted stays deleted.
+
+我的 › 快捷指令记账 says how to set each one up, because iOS gives an app no
+way to create an automation itself. App Intents need no entitlement, so a
+build signed with a free Apple ID keeps them.
+
+**The widget waits.** A WidgetKit widget runs in an extension, which can read
+the app's data only through an App Group. An App Group is an entitlement a
+free Apple ID's provisioning cannot be counted on to grant, and Sideloadly can
+strip extensions outright. Find that out on a phone before building on it.
 
 **The first frame and the icon.** The launch screen is the colour of the
 paper, lit or dark, from the `LaunchBackground` named colour. Its values are

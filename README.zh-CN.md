@@ -28,7 +28,8 @@
 
 一个 **Rust 内核**决定一切：金额算术、预算周期、统计、账单日、两台设备之间的合并。
 一个 **Flutter 界面**把它画出来，另外两个小的 Kotlin 组件处理只有 Android 能做的事 ——
-读取支付通知，和桌面小组件。在 iPhone 上，一小段 Swift 在 iOS 有对应能力的地方回答同样的通道。
+读取支付通知，和桌面小组件。在 iPhone 上，一小段 Swift 在 iOS 有对应能力的地方回答同样的通道，
+还给“快捷指令”提供两个 App Intent：Siri、操作按钮和 Apple Pay 不打开 App 也能记账。
 
 规则是：**内核做决定，其余的只负责搬运和绘制。** 一个自己算答案的界面可能和 App 的其余
 部分给出不同的结果，而那个答案恰恰是没人会想到去测的。
@@ -116,7 +117,7 @@ U 盘都行 —— 另一台设备读它、**合并**、再写回去。两边都
 | | 为什么 |
 | --- | --- |
 | **Web** | 账本住在手机里，没有理由做成网页。 |
-| **iPhone 上的自动记账和小组件** | iOS 不允许应用读取别的应用的支付通知，所以自动记账只有 Android 有。iPhone 的小组件还没做。 |
+| **iPhone 上的自动记账和小组件** | iOS 不允许应用读取别的应用的支付通知，所以自动记账只有 Android 有。iPhone 上由“快捷指令”来做这件事：Siri、操作按钮，以及每次 Apple Pay 付款后的自动化（我的 › 快捷指令记账）。iPhone 的小组件还没做：它需要 App 组，免费 Apple ID 不一定给得了。 |
 | **云同步（Supabase）** | 换成了上面那个文件同步。合并逻辑是同一份代码，而且测得好得多。 |
 | **PDF 月报** | 回顾作为一个屏幕是在的，渲染成 PDF 没有。 |
 | **xlsx 导出** | CSV 每个表格软件都认得，而写 xlsx 要给内核加一堆依赖，却没有任何决策在里面。 |
@@ -169,7 +170,7 @@ flutter_app/
   rust_bridge/     FFI 层（flutter_rust_bridge）。自己独立的 cargo 项目。
   integration_test/  601 个测试。all_test.dart 一次构建跑完全部。
   android/…/kotlin/  通知监听服务和桌面小组件。
-  ios/Runner/      iPhone 端：三个 Swift 写的通道，以及不让 Documents 进 iCloud。
+  ios/Runner/      iPhone 端：Swift 写的通道和 App Intent，以及不让 Documents 进 iCloud。
   tool/gen_icons.py  从 assets/images/ 生成图标和启动图。
 
 scripts/           goldens、语料生成器、测试聚合器。
@@ -224,7 +225,7 @@ debug 构建装成 `com.dahonghua.app.debug`，所以在手机上跑测试不会
 | 存储 | SQLite，`rusqlite`，按 ABI 从源码编译 |
 | 界面 | Flutter，`flutter_rust_bridge` 2.12 |
 | Android | Kotlin：一个 `NotificationListenerService` 和一个 `RemoteViews` 小组件 |
-| iPhone | Swift：版本号、时区和低电量模式，走同样的通道 |
+| iPhone | Swift：版本号、时区、低电量模式和降低透明度，走同样的通道；以及给快捷指令用的 App Intent |
 | 同步 | 一个你自己搬运的文件。没有服务器、没有账号、没有凭据 |
 | 平台 | Android，以及 iOS 17 及以上的 iPhone —— 见 AGENTS.md「The iPhone」 |
 
