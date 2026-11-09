@@ -16,6 +16,7 @@ import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'rust_init.dart';
+import 'scroll.dart';
 
 int get now => DateTime.now().millisecondsSinceEpoch;
 
@@ -453,11 +454,16 @@ void main() {
       await tester.tap(find.text('午饭'));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('record-delete')));
-      await tester.pumpAndSettle();
-
-      expect(find.byKey(const Key('key-save')), findsNothing, reason: 'closed');
+      // Not settled first: the notice lives four seconds, and settling the
+      // shell after the sheet closed took longer than that on CI's emulator.
+      await pumpUntil(
+        tester,
+        () =>
+            find.byKey(const Key('key-save')).evaluate().isEmpty &&
+            find.byKey(const Key('deleted-toast')).evaluate().length == 1,
+        'the sheet closed and the notice up',
+      );
       expect(store.liveEntries(), isEmpty);
-      expect(find.byKey(const Key('deleted-toast')), findsOneWidget);
 
       await tester.tap(find.byKey(const Key('deleted-undo')));
       await tester.pumpAndSettle();

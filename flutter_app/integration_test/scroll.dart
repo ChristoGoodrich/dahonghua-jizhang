@@ -136,3 +136,24 @@ Future<void> scrollAndTap(
   await tester.tap(target);
   await tester.pumpAndSettle();
 }
+
+/// Frame by frame until [done], or fail saying [what] never happened.
+///
+/// For what is on the screen for only a few seconds of real time, which a
+/// notice is: four seconds with 撤销 in it. On a device `pumpAndSettle` after
+/// a route closes can take longer than that — the route's exit, the notice's
+/// entrance, and the shell refreshing its tabs a frame at a time — and on
+/// CI's emulator it did, so a test that settled first found the notice
+/// already gone. Looked for as it comes up instead, the way burst_test and
+/// motion_test look for theirs.
+Future<void> pumpUntil(
+  WidgetTester tester,
+  bool Function() done,
+  String what,
+) async {
+  for (var i = 0; i < 300; i++) {
+    if (done()) return;
+    await tester.pump(const Duration(milliseconds: 16));
+  }
+  fail('never: $what');
+}
