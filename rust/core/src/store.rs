@@ -216,27 +216,32 @@ impl Store {
     /// Record what a shortcut asked for (`crate::shortcut`). Returns the ids
     /// the rows landed on.
     ///
-    /// `src` is the draft's own: a Wallet payment is a capture, as Android's
-    /// 自动记账 rows are, and a sentence is the user's words, which carry
-    /// none. The ids are derived from the request, and the caller has already
-    /// dropped any the ledger holds (`shortcut::unrecorded`).
-    pub fn post_shortcut(
-        &mut self,
-        drafts: &[ImportedBill],
-        ids: &[String],
-        srcs: &[Option<EntrySource>],
-        now: i64,
-    ) -> Vec<String> {
-        let mut landed = Vec::new();
-        for (i, ((b, id), src)) in drafts.iter().zip(ids).zip(srcs).enumerate() {
-            landed.extend(self.push_batch(
-                std::slice::from_ref(b),
-                std::slice::from_ref(id),
-                now + i as i64,
-                *src,
-            ));
-        }
-        landed
+    /// Each row's `src` is its own: a Wallet payment is a capture, as
+    /// Android's 自动记账 rows are, and a sentence is the user's words, which
+    /// carry none. A foreign payment keeps its currency, its own amount and
+    /// the rate beside the base amount, as the record sheet's rows do. The ids
+    /// are derived from the request, and the caller has already dropped any
+    /// the ledger holds (`shortcut::unrecorded`).
+    pub fn post_shortcut(&mut self, rows: &[crate::shortcut::Row], now: i64) -> Vec<String> {
+        let rows = rows
+            .iter()
+            .enumerate()
+            .map(|(i, r)| Entry {
+                id: r.id.clone(),
+                ts: r.ts,
+                io: Some(r.io),
+                cat: r.cat.clone(),
+                amt: r.money.amt,
+                note: (!r.note.is_empty()).then(|| r.note.clone()),
+                cur: r.money.cur.clone(),
+                orig_amt: r.money.orig_amt,
+                rate: r.money.rate,
+                src: r.src,
+                updated_at: Some(now + i as i64),
+                ..Default::default()
+            })
+            .collect();
+        self.ledger.push_all(rows)
     }
 
     /// One write for a batch of rows that arrived from outside the app.
@@ -304,28 +309,53 @@ mod tests {
 
     #[test]
     fn a_shortcuts_rows_keep_their_own_source_and_land_where_asked() {
+        use crate::shortcut::{priced, Row};
         let mut store = Store::default();
-        let bill = |amt: f64, note: &str| ImportedBill {
+        let row = |id: &str, note: &str, src, money| Row {
+            id: id.into(),
             io: Io::Exp,
             cat: "food".into(),
-            amt,
             note: note.into(),
             ts: 100,
+            src,
+            money,
         };
         let landed = store.post_shortcut(
-            &[bill(35.0, "星巴克"), bill(12.0, "午饭")],
-            &["sp1-0".to_string(), "sq1-0".to_string()],
-            &[Some(EntrySource::Notif), None],
+            &[
+                row(
+                    "sp1-0",
+                    "星巴克",
+                    Some(EntrySource::Notif),
+                    priced(35.0, None, None).unwrap(),
+                ),
+                row("sq1-0", "午饭", None, priced(12.0, None, None).unwrap()),
+                row(
+                    "sp2-0",
+                    "Blue Bottle",
+                    Some(EntrySource::Notif),
+                    priced(5.0, Some("USD"), Some(7.0)).unwrap(),
+                ),
+            ],
             1000,
         );
-        assert_eq!(landed, ["sp1-0", "sq1-0"]);
+        assert_eq!(landed, ["sp1-0", "sq1-0", "sp2-0"]);
         let pay = store.ledger.get("sp1-0").unwrap();
         let said = store.ledger.get("sq1-0").unwrap();
+        let abroad = store.ledger.get("sp2-0").unwrap();
         assert_eq!(
-            (pay.src, pay.amt, pay.ts),
-            (Some(EntrySource::Notif), 35.0, 100)
+            (pay.src, pay.amt, pay.ts, &pay.cur),
+            (Some(EntrySource::Notif), 35.0, 100, &None)
         );
         assert_eq!((said.src, said.note.as_deref()), (None, Some("午饭")));
+        assert_eq!(
+            (
+                abroad.amt,
+                abroad.cur.as_deref(),
+                abroad.orig_amt,
+                abroad.rate
+            ),
+            (35.0, Some("USD"), Some(5.0), Some(7.0))
+        );
         // ordered, like any batch: the later row is the later write
         assert!(said.updated_at > pay.updated_at);
     }

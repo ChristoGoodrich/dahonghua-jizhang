@@ -14,8 +14,8 @@ List<ShortcutDraftView> shortcutDrafts({
   required List<ShortcutRequestView> requests,
 }) => RustLib.instance.api.crateApiShortcutShortcutDrafts(requests: requests);
 
-/// Write `entries`, skipping any id the ledger already holds. Returns the ids
-/// that landed, each marked for the save.
+/// Write `entries`, skipping any id the ledger already holds and any foreign
+/// one without a rate. Returns the ids that landed, each marked for the save.
 List<String> postShortcutEntries({
   required List<ShortcutEntryView> entries,
   required PlatformInt64 now,
@@ -33,6 +33,8 @@ class ShortcutDraftView {
   final String requestId;
   final String io;
   final String cat;
+
+  /// In `cur` when that is set.
   final double amt;
   final String note;
 
@@ -41,6 +43,9 @@ class ShortcutDraftView {
 
   /// A Wallet payment: written as a capture, as Android's 自动记账 rows are.
   final bool captured;
+
+  /// A payment's currency when it is not the ledger's: it needs a rate.
+  final String? cur;
 
   const ShortcutDraftView({
     required this.id,
@@ -51,6 +56,7 @@ class ShortcutDraftView {
     required this.note,
     this.day,
     required this.captured,
+    this.cur,
   });
 
   @override
@@ -62,7 +68,8 @@ class ShortcutDraftView {
       amt.hashCode ^
       note.hashCode ^
       day.hashCode ^
-      captured.hashCode;
+      captured.hashCode ^
+      cur.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -76,7 +83,8 @@ class ShortcutDraftView {
           amt == other.amt &&
           note == other.note &&
           day == other.day &&
-          captured == other.captured;
+          captured == other.captured &&
+          cur == other.cur;
 }
 
 /// One entry to write, its moment decided.
@@ -84,10 +92,17 @@ class ShortcutEntryView {
   final String id;
   final String io;
   final String cat;
+
+  /// In `cur` when that is set.
   final double amt;
   final String note;
   final PlatformInt64 ts;
   final bool captured;
+  final String? cur;
+
+  /// One of `cur` in the ledger's currency. Without one a foreign entry is
+  /// not written.
+  final double? rate;
 
   const ShortcutEntryView({
     required this.id,
@@ -97,6 +112,8 @@ class ShortcutEntryView {
     required this.note,
     required this.ts,
     required this.captured,
+    this.cur,
+    this.rate,
   });
 
   @override
@@ -107,7 +124,9 @@ class ShortcutEntryView {
       amt.hashCode ^
       note.hashCode ^
       ts.hashCode ^
-      captured.hashCode;
+      captured.hashCode ^
+      cur.hashCode ^
+      rate.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -120,7 +139,9 @@ class ShortcutEntryView {
           amt == other.amt &&
           note == other.note &&
           ts == other.ts &&
-          captured == other.captured;
+          captured == other.captured &&
+          cur == other.cur &&
+          rate == other.rate;
 }
 
 /// One request off the queue, as the iPhone wrote it down.
@@ -130,8 +151,14 @@ class ShortcutEntryView {
 class ShortcutRequestView {
   final String id;
   final String? sentence;
-  final double? amount;
+
+  /// As Wallet wrote it: `¥35.00`, `US$5.40`. Read by the core.
+  final String? amount;
   final String? merchant;
+
+  /// The phone's region's currency when the shortcut ran: what a bare `$`
+  /// or `¥` in `amount` means.
+  final String? region;
 
   /// The day the shortcut ran, `y-m-d`: what 昨天 in its words is counted
   /// from. Not the day the queue is read, which may be days later.
@@ -142,6 +169,7 @@ class ShortcutRequestView {
     this.sentence,
     this.amount,
     this.merchant,
+    this.region,
     required this.today,
   });
 
@@ -151,6 +179,7 @@ class ShortcutRequestView {
       sentence.hashCode ^
       amount.hashCode ^
       merchant.hashCode ^
+      region.hashCode ^
       today.hashCode;
 
   @override
@@ -162,5 +191,6 @@ class ShortcutRequestView {
           sentence == other.sentence &&
           amount == other.amount &&
           merchant == other.merchant &&
+          region == other.region &&
           today == other.today;
 }

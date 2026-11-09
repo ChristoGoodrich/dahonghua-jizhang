@@ -11567,6 +11567,7 @@ impl SseDecode for crate::api::shortcut::ShortcutDraftView {
         let mut var_note = <String>::sse_decode(deserializer);
         let mut var_day = <Option<String>>::sse_decode(deserializer);
         let mut var_captured = <bool>::sse_decode(deserializer);
+        let mut var_cur = <Option<String>>::sse_decode(deserializer);
         return crate::api::shortcut::ShortcutDraftView {
             id: var_id,
             request_id: var_requestId,
@@ -11576,6 +11577,7 @@ impl SseDecode for crate::api::shortcut::ShortcutDraftView {
             note: var_note,
             day: var_day,
             captured: var_captured,
+            cur: var_cur,
         };
     }
 }
@@ -11590,6 +11592,8 @@ impl SseDecode for crate::api::shortcut::ShortcutEntryView {
         let mut var_note = <String>::sse_decode(deserializer);
         let mut var_ts = <i64>::sse_decode(deserializer);
         let mut var_captured = <bool>::sse_decode(deserializer);
+        let mut var_cur = <Option<String>>::sse_decode(deserializer);
+        let mut var_rate = <Option<f64>>::sse_decode(deserializer);
         return crate::api::shortcut::ShortcutEntryView {
             id: var_id,
             io: var_io,
@@ -11598,6 +11602,8 @@ impl SseDecode for crate::api::shortcut::ShortcutEntryView {
             note: var_note,
             ts: var_ts,
             captured: var_captured,
+            cur: var_cur,
+            rate: var_rate,
         };
     }
 }
@@ -11607,14 +11613,16 @@ impl SseDecode for crate::api::shortcut::ShortcutRequestView {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_id = <String>::sse_decode(deserializer);
         let mut var_sentence = <Option<String>>::sse_decode(deserializer);
-        let mut var_amount = <Option<f64>>::sse_decode(deserializer);
+        let mut var_amount = <Option<String>>::sse_decode(deserializer);
         let mut var_merchant = <Option<String>>::sse_decode(deserializer);
+        let mut var_region = <Option<String>>::sse_decode(deserializer);
         let mut var_today = <String>::sse_decode(deserializer);
         return crate::api::shortcut::ShortcutRequestView {
             id: var_id,
             sentence: var_sentence,
             amount: var_amount,
             merchant: var_merchant,
+            region: var_region,
             today: var_today,
         };
     }
@@ -14318,6 +14326,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::shortcut::ShortcutDraftView {
             self.note.into_into_dart().into_dart(),
             self.day.into_into_dart().into_dart(),
             self.captured.into_into_dart().into_dart(),
+            self.cur.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -14344,6 +14353,8 @@ impl flutter_rust_bridge::IntoDart for crate::api::shortcut::ShortcutEntryView {
             self.note.into_into_dart().into_dart(),
             self.ts.into_into_dart().into_dart(),
             self.captured.into_into_dart().into_dart(),
+            self.cur.into_into_dart().into_dart(),
+            self.rate.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -14367,6 +14378,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::shortcut::ShortcutRequestView
             self.sentence.into_into_dart().into_dart(),
             self.amount.into_into_dart().into_dart(),
             self.merchant.into_into_dart().into_dart(),
+            self.region.into_into_dart().into_dart(),
             self.today.into_into_dart().into_dart(),
         ]
         .into_dart()
@@ -16653,6 +16665,7 @@ impl SseEncode for crate::api::shortcut::ShortcutDraftView {
         <String>::sse_encode(self.note, serializer);
         <Option<String>>::sse_encode(self.day, serializer);
         <bool>::sse_encode(self.captured, serializer);
+        <Option<String>>::sse_encode(self.cur, serializer);
     }
 }
 
@@ -16666,6 +16679,8 @@ impl SseEncode for crate::api::shortcut::ShortcutEntryView {
         <String>::sse_encode(self.note, serializer);
         <i64>::sse_encode(self.ts, serializer);
         <bool>::sse_encode(self.captured, serializer);
+        <Option<String>>::sse_encode(self.cur, serializer);
+        <Option<f64>>::sse_encode(self.rate, serializer);
     }
 }
 
@@ -16674,8 +16689,9 @@ impl SseEncode for crate::api::shortcut::ShortcutRequestView {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <String>::sse_encode(self.id, serializer);
         <Option<String>>::sse_encode(self.sentence, serializer);
-        <Option<f64>>::sse_encode(self.amount, serializer);
+        <Option<String>>::sse_encode(self.amount, serializer);
         <Option<String>>::sse_encode(self.merchant, serializer);
+        <Option<String>>::sse_encode(self.region, serializer);
         <String>::sse_encode(self.today, serializer);
     }
 }

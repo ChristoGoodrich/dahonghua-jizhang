@@ -29,8 +29,9 @@ final class ShortcutQueue: @unchecked Sendable {
     url = base.appendingPathComponent("shortcuts.json")
   }
 
-  /// Write a request down: `sentence`, or `amount` and `merchant`. Its id and
-  /// the moment are added here, and the moment is what an entry is put at.
+  /// Write a request down: `sentence`, or `amount`, `merchant` and `region`.
+  /// Its id and the moment are added here, and the moment is what an entry
+  /// is put at.
   func append(_ fields: [String: Any]) {
     var row = fields
     row["id"] = UUID().uuidString

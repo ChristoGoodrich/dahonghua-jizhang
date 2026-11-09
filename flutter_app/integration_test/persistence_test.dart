@@ -694,12 +694,18 @@ void main() {
         },
       ),
       _RowCase(
-        '快捷指令: what a sentence and a payment asked for',
+        '快捷指令: what a sentence and two payments asked for',
         act: () => _postShortcuts(),
-        rows: () => 2,
+        rows: () => 3,
         check: () {
           expect(store.getEntry(id: 'sq1-0')!.note, '午饭');
           expect(store.getEntry(id: 'sp1-0')!.src, 'notif');
+          // a foreign one's own amount and rate are columns of their own
+          final abroad = store.getEntry(id: 'sp2-0')!;
+          expect(
+            (abroad.amt, abroad.cur, abroad.origAmt, abroad.rate),
+            (35.0, 'USD', 5.0, 7.0),
+          );
         },
       ),
       _RowCase(
@@ -1235,8 +1241,16 @@ List<String> _postShortcuts() => sc.postShortcutEntries(
         sc.ShortcutRequestView(id: 'q1', sentence: '午饭35', today: '2026-11-9'),
         sc.ShortcutRequestView(
           id: 'p1',
-          amount: 9,
+          amount: '¥9.00',
           merchant: '店',
+          region: 'CNY',
+          today: '2026-11-9',
+        ),
+        sc.ShortcutRequestView(
+          id: 'p2',
+          amount: 'US\$5.00',
+          merchant: 'Blue Bottle',
+          region: 'CNY',
           today: '2026-11-9',
         ),
       ],
@@ -1249,6 +1263,8 @@ List<String> _postShortcuts() => sc.postShortcutEntries(
         note: d.note,
         ts: 1700000000000,
         captured: d.captured,
+        cur: d.cur,
+        rate: d.cur == null ? null : 7.0,
       ),
   ],
   now: 1700000000001,

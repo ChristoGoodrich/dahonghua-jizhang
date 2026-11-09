@@ -124,6 +124,8 @@ up for Siri, the Action button, and an automation that records every Apple Pay
 payment (Shortcuts › Automation › Wallet › Record a payment). What they ask
 for is written down at once and reaches the ledger the next time the app
 opens. These work with a free Apple ID: App Intents need no entitlement.
+A payment abroad is converted at the rate for the day it was made. If the
+app is offline and holds no rate, it is recorded later.
 
 ### Bringing the ledger from Android
 

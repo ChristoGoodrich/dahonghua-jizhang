@@ -4,6 +4,13 @@
 // switched on from inside the app: an automation is the user's own, made in
 // the Shortcuts app, and iOS gives an app no way to create one. So this
 // screen says exactly what to tap, and opens Shortcuts.
+//
+// It also says what is still in the queue. The app drains it at launch, on
+// coming back and whenever a request arrives, so what is left when this
+// screen opens is a payment in another currency that found no rate: it is
+// recorded once one can be had, and until then nothing else would say so.
+
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 
@@ -11,7 +18,7 @@ import 'glass.dart';
 import 'shortcuts.dart';
 import 'theme.dart';
 
-class ShortcutsScreen extends StatelessWidget {
+class ShortcutsScreen extends StatefulWidget {
   const ShortcutsScreen({
     super.key,
     required this.zh,
@@ -22,8 +29,33 @@ class ShortcutsScreen extends StatelessWidget {
   final ShortcutQueue queue;
 
   @override
+  State<ShortcutsScreen> createState() => _ShortcutsScreenState();
+}
+
+class _ShortcutsScreenState extends State<ShortcutsScreen> {
+  /// Requests still in the queue; null until it has been read.
+  int? _waiting;
+
+  @override
+  void initState() {
+    super.initState();
+    unawaited(_count());
+  }
+
+  Future<void> _count() async {
+    try {
+      final rows = await widget.queue.pending();
+      if (mounted) setState(() => _waiting = rows.length);
+    } on Exception {
+      // no queue to read: nothing to say about it
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final p = palette;
+    final zh = widget.zh;
+    final waiting = _waiting ?? 0;
     return ScrimScaffold(
       title: Text(zh ? '快捷指令记账' : 'Shortcuts'),
       body: ListView(
@@ -43,6 +75,22 @@ class ShortcutsScreen extends StatelessWidget {
             key: const Key('shortcuts-note'),
             style: TextStyle(color: p.inkSoft, height: 1.5),
           ),
+          if (waiting > 0) ...[
+            const SizedBox(height: 12),
+            Text(
+              zh
+                  ? '还有 $waiting 笔外币付款在等汇率。联网后打开大红花，会按付款那天的汇率记上。'
+                  : waiting == 1
+                  ? 'One payment in another currency is waiting for an '
+                        'exchange rate. It is recorded at that day\'s rate the '
+                        'next time the app opens online.'
+                  : '$waiting payments in another currency are waiting for '
+                        'an exchange rate. They are recorded at their day\'s '
+                        'rate the next time the app opens online.',
+              key: const Key('shortcuts-waiting'),
+              style: TextStyle(color: p.ink, height: 1.5),
+            ),
+          ],
           const SizedBox(height: 20),
           _Card(
             key: const Key('shortcuts-siri'),
@@ -81,6 +129,7 @@ class ShortcutsScreen extends StatelessWidget {
                       '3. 新建空白自动化，添加操作，搜“大红花记账”，选“记一笔付款”。\n'
                       '4. 点“金额”，选快捷指令输入里的金额；点“商户”，选快捷指令输入里的商户。完成。\n'
                       '之后每刷一次，下次打开大红花就记上一笔支出，分类按商户猜，和你以前怎么记过它一致。'
+                      '外币付款按付款那天的汇率换成记账货币，原币金额一并留着。'
                 : '1. Open the Shortcuts app, tap Automation, then ＋.\n'
                       '2. Choose Wallet (Transaction on older systems), the '
                       'cards to record, and Run Immediately; tap Next.\n'
@@ -90,12 +139,14 @@ class ShortcutsScreen extends StatelessWidget {
                       'tap Merchant and pick its merchant. Done.\n'
                       'Every payment then becomes an expense the next time '
                       'this app opens, its category guessed from the merchant '
-                      'and from how you filed it before.',
+                      'and from how you filed it before. A payment in another '
+                      'currency is converted at that day\'s rate, and its own '
+                      'amount kept beside it.',
           ),
           const SizedBox(height: 20),
           FilledButton.tonal(
             key: const Key('open-shortcuts'),
-            onPressed: () => queue.openShortcuts(),
+            onPressed: () => widget.queue.openShortcuts(),
             child: Text(zh ? '打开“快捷指令”' : 'Open Shortcuts'),
           ),
         ],

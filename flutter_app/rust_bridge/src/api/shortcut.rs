@@ -6,15 +6,19 @@
 //! 一句话记账's `saveDrafts` does). Nothing writes to the ledger between the
 //! two, so what the first found unrecorded is still unrecorded at the second;
 //! the second checks again all the same, because it is the one that writes.
+//!
+//! The gap is also where a foreign payment's rate is fetched: the network is
+//! Dart's, as it is for the record sheet. A payment that gets none is not
+//! handed to the second call, and its request stays in the queue.
 
 use flutter_rust_bridge::frb;
 
 use dahonghua_core::ai::quick::Custom;
 use dahonghua_core::entry::{EntrySource, Io};
-use dahonghua_core::shortcut::{read, unrecorded, Ask, Request};
-use dahonghua_core::store::ImportedBill;
+use dahonghua_core::shortcut::{priced, read, unrecorded, Ask, Request, Row};
 
 use super::catalog::custom_cats_of;
+use super::currency::base_currency;
 use super::day::{parse_day, show_day};
 use super::store::{store, store_marked};
 use crate::api::db;
@@ -27,8 +31,12 @@ use crate::api::db;
 pub struct ShortcutRequestView {
     pub id: String,
     pub sentence: Option<String>,
-    pub amount: Option<f64>,
+    /// As Wallet wrote it: `¥35.00`, `US$5.40`. Read by the core.
+    pub amount: Option<String>,
     pub merchant: Option<String>,
+    /// The phone's region's currency when the shortcut ran: what a bare `$`
+    /// or `¥` in `amount` means.
+    pub region: Option<String>,
     /// The day the shortcut ran, `y-m-d`: what 昨天 in its words is counted
     /// from. Not the day the queue is read, which may be days later.
     pub today: String,
@@ -43,12 +51,15 @@ pub struct ShortcutDraftView {
     pub request_id: String,
     pub io: String,
     pub cat: String,
+    /// In `cur` when that is set.
     pub amt: f64,
     pub note: String,
     /// `y-m-d` when the words named a day.
     pub day: Option<String>,
     /// A Wallet payment: written as a capture, as Android's 自动记账 rows are.
     pub captured: bool,
+    /// A payment's currency when it is not the ledger's: it needs a rate.
+    pub cur: Option<String>,
 }
 
 /// One entry to write, its moment decided.
@@ -57,18 +68,24 @@ pub struct ShortcutEntryView {
     pub id: String,
     pub io: String,
     pub cat: String,
+    /// In `cur` when that is set.
     pub amt: f64,
     pub note: String,
     pub ts: i64,
     pub captured: bool,
+    pub cur: Option<String>,
+    /// One of `cur` in the ledger's currency. Without one a foreign entry is
+    /// not written.
+    pub rate: Option<f64>,
 }
 
 fn request_of(v: &ShortcutRequestView) -> Option<Request> {
-    let ask = match (&v.sentence, v.amount) {
+    let ask = match (&v.sentence, &v.amount) {
         (Some(s), _) => Ask::Sentence(s.clone()),
         (None, Some(amount)) => Ask::Payment {
-            amount,
+            amount: amount.clone(),
             merchant: v.merchant.clone().unwrap_or_default(),
+            region: v.region.clone().unwrap_or_default(),
         },
         (None, None) => return None,
     };
@@ -87,6 +104,7 @@ pub fn shortcut_drafts(requests: Vec<ShortcutRequestView>) -> Vec<ShortcutDraftV
         exp: &exp,
         inc: &inc,
     };
+    let base = base_currency();
     let s = store();
     let history: Vec<_> = s.ledger.live().collect();
     let mut out = Vec::new();
@@ -95,7 +113,7 @@ pub fn shortcut_drafts(requests: Vec<ShortcutRequestView>) -> Vec<ShortcutDraftV
             continue;
         };
         let today = parse_day(&v.today);
-        let drafts = unrecorded(read(&req, today, &history, custom), &s.ledger);
+        let drafts = unrecorded(read(&req, today, &history, custom, &base), &s.ledger);
         out.extend(drafts.into_iter().map(|d| ShortcutDraftView {
             id: d.id,
             request_id: req.id.clone(),
@@ -105,41 +123,38 @@ pub fn shortcut_drafts(requests: Vec<ShortcutRequestView>) -> Vec<ShortcutDraftV
             note: d.note,
             day: d.day.map(show_day),
             captured: d.src == Some(EntrySource::Notif),
+            cur: d.cur,
         }));
     }
     out
 }
 
-/// Write `entries`, skipping any id the ledger already holds. Returns the ids
-/// that landed, each marked for the save.
+/// Write `entries`, skipping any id the ledger already holds and any foreign
+/// one without a rate. Returns the ids that landed, each marked for the save.
 #[frb(sync)]
 pub fn post_shortcut_entries(entries: Vec<ShortcutEntryView>, now: i64) -> Vec<String> {
-    let fresh: Vec<&ShortcutEntryView> = {
+    let rows: Vec<Row> = {
         let s = store();
         entries
             .iter()
             .filter(|e| s.ledger.get(&e.id).is_none())
+            .filter_map(|e| {
+                Some(Row {
+                    id: e.id.clone(),
+                    io: Io::parse(&e.io).unwrap_or(Io::Exp),
+                    cat: e.cat.clone(),
+                    note: e.note.clone(),
+                    ts: e.ts,
+                    src: e.captured.then_some(EntrySource::Notif),
+                    money: priced(e.amt, e.cur.as_deref(), e.rate)?,
+                })
+            })
             .collect()
     };
-    if fresh.is_empty() {
+    if rows.is_empty() {
         return Vec::new();
     }
-    let bills: Vec<ImportedBill> = fresh
-        .iter()
-        .map(|e| ImportedBill {
-            io: Io::parse(&e.io).unwrap_or(Io::Exp),
-            cat: e.cat.clone(),
-            amt: e.amt,
-            note: e.note.clone(),
-            ts: e.ts,
-        })
-        .collect();
-    let ids: Vec<String> = fresh.iter().map(|e| e.id.clone()).collect();
-    let srcs: Vec<Option<EntrySource>> = fresh
-        .iter()
-        .map(|e| e.captured.then_some(EntrySource::Notif))
-        .collect();
-    let landed = store_marked().post_shortcut(&bills, &ids, &srcs, now);
+    let landed = store_marked().post_shortcut(&rows, now);
     db::mark_many(landed.clone());
     landed
 }

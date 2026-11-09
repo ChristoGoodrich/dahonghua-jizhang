@@ -32,14 +32,21 @@ struct RecordEntryIntent: AppIntent {
 
 /// 记一笔付款: for the Wallet automation, which hands over the amount and the
 /// merchant of every Apple Pay payment. Silent: it runs after each payment.
+///
+/// The amount is text, not a number. Wallet writes it with its currency —
+/// `¥35.00`, `US$5.40`, `100,50 €` — and a number parameter would leave
+/// Shortcuts to coerce that, in a way nobody here can test without a phone.
+/// The words go through as they are, with the currency of the phone's
+/// region, which is what a bare `$` or `¥` in them means; the core reads both
+/// (`core::shortcut::read_amount`).
 struct RecordPaymentIntent: AppIntent {
   static var title: LocalizedStringResource = "Record a payment"
   static var description = IntentDescription(
-    "For the Wallet automation: an amount and a merchant, recorded as an expense."
+    "For the Wallet automation: the amount as Wallet writes it, and the merchant, recorded as an expense."
   )
 
   @Parameter(title: "Amount")
-  var amount: Double
+  var amount: String
 
   @Parameter(title: "Merchant")
   var merchant: String?
@@ -51,6 +58,7 @@ struct RecordPaymentIntent: AppIntent {
   func perform() async throws -> some IntentResult {
     var row: [String: Any] = ["amount": amount]
     if let merchant { row["merchant"] = merchant }
+    if let region = Locale.current.currency?.identifier { row["region"] = region }
     ShortcutQueue.shared.append(row)
     return .result()
   }

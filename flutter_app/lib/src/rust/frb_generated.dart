@@ -11124,8 +11124,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ShortcutDraftView dco_decode_shortcut_draft_view(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 8)
-      throw Exception('unexpected arr length: expect 8 but see ${arr.length}');
+    if (arr.length != 9)
+      throw Exception('unexpected arr length: expect 9 but see ${arr.length}');
     return ShortcutDraftView(
       id: dco_decode_String(arr[0]),
       requestId: dco_decode_String(arr[1]),
@@ -11135,6 +11135,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       note: dco_decode_String(arr[5]),
       day: dco_decode_opt_String(arr[6]),
       captured: dco_decode_bool(arr[7]),
+      cur: dco_decode_opt_String(arr[8]),
     );
   }
 
@@ -11142,8 +11143,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ShortcutEntryView dco_decode_shortcut_entry_view(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 7)
-      throw Exception('unexpected arr length: expect 7 but see ${arr.length}');
+    if (arr.length != 9)
+      throw Exception('unexpected arr length: expect 9 but see ${arr.length}');
     return ShortcutEntryView(
       id: dco_decode_String(arr[0]),
       io: dco_decode_String(arr[1]),
@@ -11152,6 +11153,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       note: dco_decode_String(arr[4]),
       ts: dco_decode_i_64(arr[5]),
       captured: dco_decode_bool(arr[6]),
+      cur: dco_decode_opt_String(arr[7]),
+      rate: dco_decode_opt_box_autoadd_f_64(arr[8]),
     );
   }
 
@@ -11159,14 +11162,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ShortcutRequestView dco_decode_shortcut_request_view(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 5)
-      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
+    if (arr.length != 6)
+      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
     return ShortcutRequestView(
       id: dco_decode_String(arr[0]),
       sentence: dco_decode_opt_String(arr[1]),
-      amount: dco_decode_opt_box_autoadd_f_64(arr[2]),
+      amount: dco_decode_opt_String(arr[2]),
       merchant: dco_decode_opt_String(arr[3]),
-      today: dco_decode_String(arr[4]),
+      region: dco_decode_opt_String(arr[4]),
+      today: dco_decode_String(arr[5]),
     );
   }
 
@@ -14163,6 +14167,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_note = sse_decode_String(deserializer);
     var var_day = sse_decode_opt_String(deserializer);
     var var_captured = sse_decode_bool(deserializer);
+    var var_cur = sse_decode_opt_String(deserializer);
     return ShortcutDraftView(
       id: var_id,
       requestId: var_requestId,
@@ -14172,6 +14177,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       note: var_note,
       day: var_day,
       captured: var_captured,
+      cur: var_cur,
     );
   }
 
@@ -14187,6 +14193,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_note = sse_decode_String(deserializer);
     var var_ts = sse_decode_i_64(deserializer);
     var var_captured = sse_decode_bool(deserializer);
+    var var_cur = sse_decode_opt_String(deserializer);
+    var var_rate = sse_decode_opt_box_autoadd_f_64(deserializer);
     return ShortcutEntryView(
       id: var_id,
       io: var_io,
@@ -14195,6 +14203,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       note: var_note,
       ts: var_ts,
       captured: var_captured,
+      cur: var_cur,
+      rate: var_rate,
     );
   }
 
@@ -14205,14 +14215,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_id = sse_decode_String(deserializer);
     var var_sentence = sse_decode_opt_String(deserializer);
-    var var_amount = sse_decode_opt_box_autoadd_f_64(deserializer);
+    var var_amount = sse_decode_opt_String(deserializer);
     var var_merchant = sse_decode_opt_String(deserializer);
+    var var_region = sse_decode_opt_String(deserializer);
     var var_today = sse_decode_String(deserializer);
     return ShortcutRequestView(
       id: var_id,
       sentence: var_sentence,
       amount: var_amount,
       merchant: var_merchant,
+      region: var_region,
       today: var_today,
     );
   }
@@ -16741,6 +16753,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_String(self.note, serializer);
     sse_encode_opt_String(self.day, serializer);
     sse_encode_bool(self.captured, serializer);
+    sse_encode_opt_String(self.cur, serializer);
   }
 
   @protected
@@ -16756,6 +16769,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_String(self.note, serializer);
     sse_encode_i_64(self.ts, serializer);
     sse_encode_bool(self.captured, serializer);
+    sse_encode_opt_String(self.cur, serializer);
+    sse_encode_opt_box_autoadd_f_64(self.rate, serializer);
   }
 
   @protected
@@ -16766,8 +16781,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_String(self.id, serializer);
     sse_encode_opt_String(self.sentence, serializer);
-    sse_encode_opt_box_autoadd_f_64(self.amount, serializer);
+    sse_encode_opt_String(self.amount, serializer);
     sse_encode_opt_String(self.merchant, serializer);
+    sse_encode_opt_String(self.region, serializer);
     sse_encode_String(self.today, serializer);
   }
 

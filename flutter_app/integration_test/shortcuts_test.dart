@@ -4,8 +4,9 @@
 // the core reads each request (`core::shortcut`, whose own tests hold what a
 // sentence or a payment means), and this holds the rest: the time each entry
 // is put at, the order of the save and the acknowledgement, a replay written
-// once, the shell draining at launch and while open, and the hub offering it
-// on an iPhone and not on an Android phone.
+// once, a payment in another currency priced at its day's rate or left
+// waiting, the shell draining at launch and while open, and the hub offering
+// it on an iPhone and not on an Android phone.
 //
 // The queue is a fake: the real one is Swift's, and a test cannot run an
 // App Intent.
@@ -64,11 +65,38 @@ final ran = DateTime(2026, 11, 9, 8, 30).millisecondsSinceEpoch;
 ShortcutRequest said(String id, String sentence, {int? at}) =>
     ShortcutRequest(id: id, at: at ?? ran, sentence: sentence);
 
-ShortcutRequest paid(String id, double amount, String merchant) =>
-    ShortcutRequest(id: id, at: ran, amount: amount, merchant: merchant);
+/// A payment, its amount as Wallet writes it, on a phone in China.
+ShortcutRequest paid(
+  String id,
+  String amount,
+  String merchant, {
+  String region = 'CNY',
+}) => ShortcutRequest(
+  id: id,
+  at: ran,
+  amount: amount,
+  merchant: merchant,
+  region: region,
+);
 
-Future<List<String>> drain(FakeQueue q) =>
-    drainShortcuts(q, persist: () async => q.log.add('persist'));
+/// The network's rates, and what was asked of it.
+class FakeRates {
+  FakeRates([Map<String, double>? table]) : table = {...?table};
+
+  final Map<String, double> table;
+  final asked = <(String, DateTime)>[];
+
+  Future<double?> call(String cur, DateTime at) async {
+    asked.add((cur, at));
+    return table[cur];
+  }
+}
+
+Future<List<String>> drain(FakeQueue q, {FakeRates? rates}) => drainShortcuts(
+  q,
+  persist: () async => q.log.add('persist'),
+  rate: (rates ?? FakeRates()).call,
+);
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -118,7 +146,7 @@ void main() {
     testWidgets(
       'a payment is an expense, filed by its merchant, as a capture',
       (tester) async {
-        await drain(FakeQueue([paid('p1', 23.5, '滴滴出行')]));
+        await drain(FakeQueue([paid('p1', '¥23.50', '滴滴出行')]));
         final e = store.liveEntries().single;
         expect(
           (e.io, e.cat, e.amt, e.note, e.ts),
@@ -133,14 +161,14 @@ void main() {
     testWidgets('the queue forgets only after the ledger is saved', (
       tester,
     ) async {
-      final q = FakeQueue([paid('p1', 9, '店')]);
+      final q = FakeQueue([paid('p1', '9', '店')]);
       await drain(q);
       expect(q.log, ['read', 'persist', 'consume']);
       expect(q.consumed, ['p1']);
     });
 
     testWidgets('handed over again, nothing is written twice', (tester) async {
-      final rows = [said('q1', '午饭35'), paid('p1', 9, '店')];
+      final rows = [said('q1', '午饭35'), paid('p1', '9', '店')];
       await drain(FakeQueue(rows));
       expect(store.liveEntries(), hasLength(2));
 
@@ -155,7 +183,7 @@ void main() {
     testWidgets('a deleted one stays deleted when handed over again', (
       tester,
     ) async {
-      final rows = [paid('p1', 9, '店')];
+      final rows = [paid('p1', '9', '店')];
       final id = (await drain(FakeQueue(rows))).single;
       store.removeEntry(id: id, now: DateTime.now().millisecondsSinceEpoch);
       expect(await drain(FakeQueue(rows)), isEmpty);
@@ -165,14 +193,112 @@ void main() {
     testWidgets('a request that asks for nothing is still forgotten', (
       tester,
     ) async {
-      final q = FakeQueue([said('q1', '今天天气不错'), paid('p1', 0, '店')]);
+      final q = FakeQueue([said('q1', '今天天气不错'), paid('p1', '¥0.00', '店')]);
       expect(await drain(q), isEmpty);
       expect(store.liveEntries(), isEmpty);
       expect(q.consumed, ['q1', 'p1'], reason: 'or it is read on every launch');
     });
 
+    testWidgets('a payment as Wallet writes it, thousands and all', (
+      tester,
+    ) async {
+      final rates = FakeRates();
+      await drain(FakeQueue([paid('p1', 'CN¥1,234.50', '宜家家居')]), rates: rates);
+      final e = store.liveEntries().single;
+      expect((e.amt, e.cur, e.origAmt), (1234.5, null, null));
+      expect(rates.asked, isEmpty, reason: 'the ledger\'s own needs no rate');
+    });
+
+    testWidgets('one in another currency is converted at its day\'s rate', (
+      tester,
+    ) async {
+      final rates = FakeRates({'USD': 7.1});
+      await drain(
+        FakeQueue([paid('p1', 'US\$5.00', 'Blue Bottle')]),
+        rates: rates,
+      );
+      final e = store.liveEntries().single;
+      expect(e.amt, closeTo(35.5, 1e-9));
+      expect(
+        (e.cur, e.origAmt, e.rate),
+        ('USD', 5.0, 7.1),
+        reason: 'its own amount kept beside it, as the record sheet keeps it',
+      );
+      expect(rates.asked, [
+        ('USD', DateTime.fromMillisecondsSinceEpoch(ran)),
+      ], reason: 'the day it was paid, not the day it was read');
+    });
+
+    testWidgets('a rate is asked once for a currency and a day', (
+      tester,
+    ) async {
+      final rates = FakeRates({'USD': 7.0});
+      await drain(
+        FakeQueue([
+          paid('p1', 'US\$5.00', 'Blue Bottle'),
+          paid('p2', 'US\$3.00', 'Muni'),
+        ]),
+        rates: rates,
+      );
+      expect(store.liveEntries(), hasLength(2));
+      expect(rates.asked, hasLength(1));
+    });
+
+    /// A bare ¥ is the yen on a phone in Japan: the region travels with the
+    /// request, and the core reads it.
+    testWidgets('a bare ¥ is the region\'s own currency', (tester) async {
+      final rates = FakeRates({'JPY': 0.047});
+      await drain(
+        FakeQueue([paid('p1', '¥500', 'ローソン', region: 'JPY')]),
+        rates: rates,
+      );
+      expect(rates.asked.single.$1, 'JPY');
+      expect(store.liveEntries().single.origAmt, 500);
+    });
+
+    /// No network and no rate held: the payment is not written at a made-up
+    /// rate. It stays in the queue, and the next drain that can price it
+    /// records it.
+    testWidgets('with no rate it waits in the queue, and is recorded later', (
+      tester,
+    ) async {
+      final q = FakeQueue([
+        said('q1', '午饭35'),
+        paid('p1', 'US\$5.00', 'Blue Bottle'),
+      ]);
+      final rates = FakeRates();
+      await drain(q, rates: rates);
+      expect([for (final e in store.liveEntries()) e.note], ['午饭']);
+      expect(q.consumed, ['q1'], reason: 'the payment is left to wait');
+
+      rates.table['USD'] = 7.0;
+      final ids = await drain(q, rates: rates);
+      expect(ids, ['sp1-0']);
+      expect(store.getEntry(id: 'sp1-0')!.amt, 35);
+      expect(q.consumed, ['q1', 'p1']);
+    });
+
+    testWidgets('a request read off the channel', (tester) async {
+      final r = ShortcutRequest.fromMap(const {
+        'id': 'p1',
+        'at': 5,
+        'amount': '¥35.00',
+        'merchant': '店',
+        'region': 'CNY',
+      });
+      expect(
+        (r.id, r.at, r.amount, r.merchant, r.region),
+        ('p1', 5, '¥35.00', '店', 'CNY'),
+      );
+      // a number typed into a shortcut by hand is read as its words
+      expect(
+        ShortcutRequest.fromMap(const {'id': 'p', 'amount': 35.5}).amount,
+        '35.5',
+      );
+    });
+
     testWidgets('a phone with no Shortcuts reads nothing', (tester) async {
-      final q = FakeQueue([paid('p1', 9, '店')], here: false);
+      final q = FakeQueue([paid('p1', '9', '店')], here: false);
       expect(await drain(q), isEmpty);
       expect(q.log, isEmpty);
       expect(store.liveEntries(), isEmpty);
@@ -219,7 +345,7 @@ void main() {
       await shell(tester, q);
       expect(store.liveEntries(), isEmpty);
 
-      q.rows.add(paid('p1', 18, '奶茶'));
+      q.rows.add(paid('p1', '¥18.00', '奶茶'));
       q.onQueued!();
       await pumpUntil(
         tester,
@@ -232,7 +358,7 @@ void main() {
     testWidgets('and on coming back to the foreground', (tester) async {
       final q = FakeQueue([]);
       await shell(tester, q);
-      q.rows.add(paid('p1', 30, '超市'));
+      q.rows.add(paid('p1', '¥30.00', '超市'));
       tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
       tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
       await pumpUntil(
@@ -260,7 +386,24 @@ void main() {
       expect(find.textContaining('记一笔付款'), findsOneWidget);
 
       await scrollAndTap(tester, find.byKey(const Key('open-shortcuts')));
-      expect(q.log, ['open']);
+      expect(q.log, ['read', 'open']);
+      expect(
+        find.byKey(const Key('shortcuts-waiting')),
+        findsNothing,
+        reason: 'nothing is waiting',
+      );
+    });
+
+    /// What is left in the queue when the screen opens found no rate, and
+    /// nothing else says so.
+    testWidgets('says what is waiting for a rate', (tester) async {
+      final q = FakeQueue([paid('p1', 'US\$5.00', 'Blue Bottle')]);
+      await tester.pumpWidget(
+        MaterialApp(home: ShortcutsScreen(zh: true, queue: q)),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('shortcuts-waiting')), findsOneWidget);
+      expect(find.textContaining('还有 1 笔外币付款在等汇率'), findsOneWidget);
     });
 
     testWidgets('in English too', (tester) async {
