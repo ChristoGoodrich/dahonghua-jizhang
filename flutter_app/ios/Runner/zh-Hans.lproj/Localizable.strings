@@ -1,0 +1,11 @@
+/* 快捷指令: the App Intents' words (ShortcutIntents.swift). */
+"Record an entry" = "记一笔";
+"Say what you spent, like “lunch 35, taxi 12”. It reaches the ledger the next time the app opens." = "说花了什么，比如“午饭35，打车12”。下次打开 App 时记进账本。";
+"What you spent" = "花了什么";
+"What did you spend?" = "花了什么？";
+"Noted. It reaches the ledger the next time Big Red Flower opens." = "记下了，下次打开大红花记账时入账。";
+"Record a payment" = "记一笔付款";
+"For the Wallet automation: the amount as Wallet writes it, and the merchant, recorded as an expense." = "给“钱包”自动化用：钱包给的金额（带币种也行）和商户，记成一笔支出。";
+"Amount" = "金额";
+"Merchant" = "商户";
+"Record ${amount} at ${merchant}" = "记 ${amount}，商户 ${merchant}";

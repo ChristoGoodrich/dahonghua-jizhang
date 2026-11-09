@@ -189,7 +189,8 @@ impl Store {
     /// nothing in the TypeScript because the TypeScript generates its own; the
     /// caller is expected to supply one id per bill.
     pub fn import_bills(&mut self, bills: &[ImportedBill], ids: &[String], now: i64) -> usize {
-        self.push_batch(bills, ids, now, EntrySource::Bill).len()
+        self.push_batch(bills, ids, now, Some(EntrySource::Bill))
+            .len()
     }
 
     /// Record payments the notification listener captured. Returns how many
@@ -209,7 +210,38 @@ impl Store {
         ids: &[String],
         now: i64,
     ) -> Vec<String> {
-        self.push_batch(drafts, ids, now, EntrySource::Notif)
+        self.push_batch(drafts, ids, now, Some(EntrySource::Notif))
+    }
+
+    /// Record what a shortcut asked for (`crate::shortcut`). Returns the ids
+    /// the rows landed on.
+    ///
+    /// Each row's `src` is its own: a Wallet payment is a capture, as
+    /// Android's 自动记账 rows are, and a sentence is the user's words, which
+    /// carry none. A foreign payment keeps its currency, its own amount and
+    /// the rate beside the base amount, as the record sheet's rows do. The ids
+    /// are derived from the request, and the caller has already dropped any
+    /// the ledger holds (`shortcut::unrecorded`).
+    pub fn post_shortcut(&mut self, rows: &[crate::shortcut::Row], now: i64) -> Vec<String> {
+        let rows = rows
+            .iter()
+            .enumerate()
+            .map(|(i, r)| Entry {
+                id: r.id.clone(),
+                ts: r.ts,
+                io: Some(r.io),
+                cat: r.cat.clone(),
+                amt: r.money.amt,
+                note: (!r.note.is_empty()).then(|| r.note.clone()),
+                cur: r.money.cur.clone(),
+                orig_amt: r.money.orig_amt,
+                rate: r.money.rate,
+                src: r.src,
+                updated_at: Some(now + i as i64),
+                ..Default::default()
+            })
+            .collect();
+        self.ledger.push_all(rows)
     }
 
     /// One write for a batch of rows that arrived from outside the app.
@@ -221,7 +253,7 @@ impl Store {
         bills: &[ImportedBill],
         ids: &[String],
         now: i64,
-        src: EntrySource,
+        src: Option<EntrySource>,
     ) -> Vec<String> {
         if bills.is_empty() {
             return Vec::new();
@@ -237,7 +269,7 @@ impl Store {
                 cat: b.cat.clone(),
                 amt: b.amt,
                 note: (!b.note.is_empty()).then(|| b.note.clone()),
-                src: Some(src),
+                src,
                 updated_at: Some(now + i as i64),
                 ..Default::default()
             })
@@ -274,6 +306,59 @@ pub fn set_cat_budget(budgets: &mut Budgets, cat_key: &str, amt: f64) {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_shortcuts_rows_keep_their_own_source_and_land_where_asked() {
+        use crate::shortcut::{priced, Row};
+        let mut store = Store::default();
+        let row = |id: &str, note: &str, src, money| Row {
+            id: id.into(),
+            io: Io::Exp,
+            cat: "food".into(),
+            note: note.into(),
+            ts: 100,
+            src,
+            money,
+        };
+        let landed = store.post_shortcut(
+            &[
+                row(
+                    "sp1-0",
+                    "星巴克",
+                    Some(EntrySource::Notif),
+                    priced(35.0, None, None).unwrap(),
+                ),
+                row("sq1-0", "午饭", None, priced(12.0, None, None).unwrap()),
+                row(
+                    "sp2-0",
+                    "Blue Bottle",
+                    Some(EntrySource::Notif),
+                    priced(5.0, Some("USD"), Some(7.0)).unwrap(),
+                ),
+            ],
+            1000,
+        );
+        assert_eq!(landed, ["sp1-0", "sq1-0", "sp2-0"]);
+        let pay = store.ledger.get("sp1-0").unwrap();
+        let said = store.ledger.get("sq1-0").unwrap();
+        let abroad = store.ledger.get("sp2-0").unwrap();
+        assert_eq!(
+            (pay.src, pay.amt, pay.ts, &pay.cur),
+            (Some(EntrySource::Notif), 35.0, 100, &None)
+        );
+        assert_eq!((said.src, said.note.as_deref()), (None, Some("午饭")));
+        assert_eq!(
+            (
+                abroad.amt,
+                abroad.cur.as_deref(),
+                abroad.orig_amt,
+                abroad.rate
+            ),
+            (35.0, Some("USD"), Some(5.0), Some(7.0))
+        );
+        // ordered, like any batch: the later row is the later write
+        assert!(said.updated_at > pay.updated_at);
+    }
     use crate::entry::Io;
 
     fn expense(amt: f64, acct: Option<&str>) -> Entry {

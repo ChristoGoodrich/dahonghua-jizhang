@@ -13,6 +13,7 @@ import 'package:flutter/cupertino.dart' show CupertinoPageTransition;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/main.dart';
+import 'package:flutter_app/shortcuts_screen.dart';
 import 'package:flutter_app/src/rust/api/store.dart' as store;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -334,7 +335,9 @@ void main() {
       try {
         await shell(tester);
         await tapTab(tester, '我的');
-        expect(await meRowKeys(tester), contains('me-capture'));
+        final keys = await meRowKeys(tester);
+        expect(keys, contains('me-capture'));
+        expect(keys, isNot(contains('me-shortcuts')), reason: 'the iPhone\'s');
       } finally {
         debugDefaultTargetPlatformOverride = null;
       }
@@ -351,6 +354,10 @@ void main() {
         expect(keys, isNot(contains('me-capture')));
         // the walk reached the group 自动记账 sits in
         expect(keys, contains('me-import'));
+        // and what it has instead, which opens
+        expect(keys, contains('me-shortcuts'));
+        await tapMeRow(tester, 'me-shortcuts');
+        expect(find.byType(ShortcutsScreen), findsOneWidget);
       } finally {
         debugDefaultTargetPlatformOverride = null;
       }

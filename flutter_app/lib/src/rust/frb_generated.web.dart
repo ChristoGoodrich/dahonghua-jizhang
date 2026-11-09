@@ -38,6 +38,7 @@ import 'api/reimburse.dart';
 import 'api/remind.dart';
 import 'api/report.dart';
 import 'api/search.dart';
+import 'api/shortcut.dart';
 import 'api/statement.dart';
 import 'api/stats.dart';
 import 'api/store.dart';
@@ -445,6 +446,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<ScrimBand> dco_decode_list_scrim_band(dynamic raw);
 
   @protected
+  List<ShortcutDraftView> dco_decode_list_shortcut_draft_view(dynamic raw);
+
+  @protected
+  List<ShortcutEntryView> dco_decode_list_shortcut_entry_view(dynamic raw);
+
+  @protected
+  List<ShortcutRequestView> dco_decode_list_shortcut_request_view(dynamic raw);
+
+  @protected
   List<SliceView> dco_decode_list_slice_view(dynamic raw);
 
   @protected
@@ -621,6 +631,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   SettingsView dco_decode_settings_view(dynamic raw);
+
+  @protected
+  ShortcutDraftView dco_decode_shortcut_draft_view(dynamic raw);
+
+  @protected
+  ShortcutEntryView dco_decode_shortcut_entry_view(dynamic raw);
+
+  @protected
+  ShortcutRequestView dco_decode_shortcut_request_view(dynamic raw);
 
   @protected
   SliceView dco_decode_slice_view(dynamic raw);
@@ -1129,6 +1148,21 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<ScrimBand> sse_decode_list_scrim_band(SseDeserializer deserializer);
 
   @protected
+  List<ShortcutDraftView> sse_decode_list_shortcut_draft_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  List<ShortcutEntryView> sse_decode_list_shortcut_entry_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  List<ShortcutRequestView> sse_decode_list_shortcut_request_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   List<SliceView> sse_decode_list_slice_view(SseDeserializer deserializer);
 
   @protected
@@ -1329,6 +1363,21 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   SettingsView sse_decode_settings_view(SseDeserializer deserializer);
+
+  @protected
+  ShortcutDraftView sse_decode_shortcut_draft_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ShortcutEntryView sse_decode_shortcut_entry_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ShortcutRequestView sse_decode_shortcut_request_view(
+    SseDeserializer deserializer,
+  );
 
   @protected
   SliceView sse_decode_slice_view(SseDeserializer deserializer);
@@ -1984,6 +2033,24 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_list_shortcut_draft_view(
+    List<ShortcutDraftView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_shortcut_entry_view(
+    List<ShortcutEntryView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_shortcut_request_view(
+    List<ShortcutRequestView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_list_slice_view(
     List<SliceView> self,
     SseSerializer serializer,
@@ -2228,6 +2295,24 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_settings_view(SettingsView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_shortcut_draft_view(
+    ShortcutDraftView self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_shortcut_entry_view(
+    ShortcutEntryView self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_shortcut_request_view(
+    ShortcutRequestView self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_slice_view(SliceView self, SseSerializer serializer);

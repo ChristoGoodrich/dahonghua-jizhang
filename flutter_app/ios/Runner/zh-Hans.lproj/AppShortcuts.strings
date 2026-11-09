@@ -1,0 +1,3 @@
+/* 快捷指令: what to say to Siri (ShortcutIntents.swift). */
+"Record an entry in ${applicationName}" = "用${applicationName}记一笔";
+"${applicationName} record an entry" = "${applicationName}记一笔";

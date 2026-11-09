@@ -45,6 +45,8 @@ import 'persistence.dart';
 import 'photos.dart';
 import 'accessibility.dart';
 import 'power.dart';
+import 'shortcuts.dart';
+import 'shortcuts_screen.dart';
 import 'record_sheet.dart' as sheet;
 import 'reimburse_screen.dart';
 import 'settings_screen.dart';
@@ -244,9 +246,17 @@ class _AppState extends State<App> {
 
 /// The shell: four tabs, a record button, and routes behind the hubs.
 class Home extends StatefulWidget {
-  const Home({super.key, this.store, this.onThemeChanged});
+  const Home({
+    super.key,
+    this.store,
+    this.onThemeChanged,
+    this.shortcuts = const ShortcutQueue(),
+  });
 
   final Persistence? store;
+
+  /// The iPhone's Shortcuts queue. A test hands in a fake.
+  final ShortcutQueue shortcuts;
 
   /// The palette changed, so the root has to rebuild for the Material
   /// defaults to follow. Null when the shell is shown without a root above
@@ -326,6 +336,14 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     // does not wait on it.
     WidgetsBinding.instance.addPostFrameCallback((_) => _pushWidget());
     unawaited(_drain());
+    // What Siri, the Action button or Apple Pay asked for while the app was
+    // closed, and anything asked while it is open.
+    if (widget.shortcuts.supported) {
+      widget.shortcuts.listen(() => unawaited(_drainShortcuts()));
+    }
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => unawaited(_drainShortcuts()),
+    );
   }
 
   Future<void> _drain() async {
@@ -369,6 +387,48 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       _pushWidget();
     }
     unawaited(_drain());
+    unawaited(_drainShortcuts());
+  }
+
+  bool _drainingShortcuts = false;
+
+  /// The Shortcuts queue into the ledger (`shortcuts.dart`), and a notice
+  /// with 撤销 for what it wrote. The ledger is saved before the queue is
+  /// told to forget, so a kill in between hands the requests over again.
+  Future<void> _drainShortcuts() async {
+    if (_drainingShortcuts) return;
+    _drainingShortcuts = true;
+    try {
+      final ids = await drainShortcuts(
+        widget.shortcuts,
+        persist: () async {
+          widget.store?.touchEntries();
+          await widget.store?.flush();
+        },
+      );
+      if (ids.isEmpty || !mounted) return;
+      _entriesChanged();
+      showToast(
+        context,
+        key: const Key('shortcut-logged'),
+        text: _zh
+            ? '快捷指令记了 ${ids.length} 笔'
+            : 'Shortcuts recorded ${ids.length}',
+        action: ToastAction(
+          key: const Key('shortcut-undo'),
+          label: _zh ? '撤销' : 'Undo',
+          onPressed: () {
+            final now = DateTime.now().millisecondsSinceEpoch;
+            for (final id in ids) {
+              store.removeEntry(id: id, now: now);
+            }
+            _entriesChanged();
+          },
+        ),
+      );
+    } finally {
+      _drainingShortcuts = false;
+    }
   }
 
   /// The home-screen widget shows the budget, and the budget is a function of
@@ -888,6 +948,18 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
               desc: zh ? '支付通知一到就记下' : 'A payment push becomes an entry',
               onTap: () =>
                   _push(CaptureScreen(zh: zh, onChanged: _entriesChanged)),
+            ),
+          // Its iPhone counterpart: what Shortcuts can do instead, and how.
+          if (defaultTargetPlatform == TargetPlatform.iOS)
+            MeRow(
+              id: 'shortcuts',
+              icon: Icons.bolt_outlined,
+              title: zh ? '快捷指令记账' : 'Shortcuts',
+              desc: zh
+                  ? 'Siri、操作按钮、Apple Pay 付款后'
+                  : 'Siri, the Action button, Apple Pay',
+              onTap: () =>
+                  _push(ShortcutsScreen(zh: zh, queue: widget.shortcuts)),
             ),
           MeRow(
             id: 'import',
